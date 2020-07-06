@@ -1,0 +1,33 @@
+@import uk.gov.hmrc.plasticpackagingtaxregistrationfrontend.config.AppConfig
+@import uk.gov.hmrc.play.views.html.layouts.{Article, Sidebar}
+
+@this(govuk_wrapper: govuk_wrapper,
+  mkSidebar: Sidebar,
+  mkArticle: Article)
+
+@(title: String,
+  sidebarLinks: Option[Html] = None,
+  contentHeader: Option[Html] = None,
+  bodyClasses: Option[String] = None,
+  mainClass: Option[String] = None,
+  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
+
+@serviceInfoContent = {}
+
+@sidebar = {
+    @if(sidebarLinks.isDefined) {
+        @mkSidebar(sidebarLinks.get, Some("sidebar"))
+    }
+}
+
+
+@govuk_wrapper(appConfig = appConfig,
+               title = title,
+               mainClass = mainClass,
+               bodyClasses = bodyClasses,
+               sidebar = sidebar,
+               contentHeader = contentHeader,
+               mainContent = mkArticle(mainContent),
+               serviceInfoContent = serviceInfoContent,
+               scriptElem = scriptElem
+)

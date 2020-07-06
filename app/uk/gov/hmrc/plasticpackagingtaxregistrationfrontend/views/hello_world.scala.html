@@ -1,0 +1,9 @@
+@import uk.gov.hmrc.plasticpackagingtaxregistrationfrontend.config.AppConfig
+
+@this(main_template: main_template)
+
+@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@main_template(title = "Hello from plastic-packaging-tax-registration-frontend", bodyClasses = None) {
+    <h1>Hello from plastic-packaging-tax-registration-frontend !</h1>
+}
