@@ -28,3 +28,20 @@ lazy val microservice = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
+  .settings(scoverageSettings)
+
+lazy val scoverageSettings: Seq[Setting[_]] = Seq(
+  coverageExcludedPackages := List(
+    "<empty>",
+    "Reverse.*",
+    "metrics\\..*",
+    "features\\..*",
+    "test\\..*",
+    ".*(BuildInfo|Routes|Options).*",
+    "logger.*\\(.*\\)"
+  ).mkString(";"),
+  coverageMinimum := 86,
+  coverageFailOnMinimum := true,
+  coverageHighlighting := true,
+  parallelExecution in Test := false
+)
