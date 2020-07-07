@@ -26,11 +26,11 @@ import uk.gov.hmrc.plasticpackagingtaxregistrationfrontend.views.html.hello_worl
 import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject()(
+class HelloWorldController @Inject() (
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
-  hello_world: hello_world)
-    extends FrontendController(mcc) {
+  hello_world: hello_world
+) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
