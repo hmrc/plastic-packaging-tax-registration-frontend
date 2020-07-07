@@ -4,6 +4,8 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "plastic-packaging-tax-registration-frontend"
 
+PlayKeys.devSettings := Seq("play.server.http.port" -> "8503")
+
 val silencerVersion = "1.7.0"
 
 lazy val microservice = Project(appName, file("."))
