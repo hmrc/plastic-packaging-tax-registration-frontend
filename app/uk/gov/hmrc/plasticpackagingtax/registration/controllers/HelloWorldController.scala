@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtaxregistrationfrontend.controllers
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.mvc._
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.hello_world
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtaxregistrationfrontend.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtaxregistrationfrontend.views.html.hello_world
 
 import scala.concurrent.Future
 

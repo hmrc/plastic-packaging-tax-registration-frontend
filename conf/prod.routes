@@ -1,5 +1,5 @@
 # Add all the application routes to the app.routes file
-->         /plastic-packaging-tax-registration-frontend              app.Routes
+->         /plastic-packaging-tax     app.Routes
 ->         /                          health.Routes
 ->         /template                  template.Routes
 
