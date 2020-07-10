@@ -14,37 +14,72 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.govuk_wrapper
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-@import uk.gov.hmrc.play.views.html.layouts.{Article, Sidebar}
+@import play.api.mvc.Security.AuthenticatedRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.siteHeader
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBanner
 
-@this(govuk_wrapper: govuk_wrapper,
-  mkSidebar: Sidebar,
-  mkArticle: Article)
+@this(
+        govukHeader: GovukHeader,
+        govukLayout: GovukLayout,
+        govukPhaseBanner: GovukPhaseBanner,
+        govukBackLink: GovukBackLink,
+        siteHeader: siteHeader,
+        phaseBanner: phaseBanner
+)
+@(title: Title,
+  backButton: Option[BackButton] = None,
+  useCustomContentWidth: Boolean = false
+)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@useTimeoutDialog = @{ request.isInstanceOf[AuthenticatedRequest[_,_]]}
 
-@(title: String,
-  sidebarLinks: Option[Html] = None,
-  contentHeader: Option[Html] = None,
-  bodyClasses: Option[String] = None,
-  mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
-
-@serviceInfoContent = {}
-
-@sidebar = {
-    @if(sidebarLinks.isDefined) {
-        @mkSidebar(sidebarLinks.get, Some("sidebar"))
-    }
+@head = {
+    <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/application.css")' rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href='@routes.Assets.versioned("/lib/govuk-frontend/govuk/assets/images/favicon.ico")' type="image/x-icon" />
+    <meta name="format-detection" content="telephone=no" />
+        <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
+        <!--[if gt IE 8]><!--><link href='@routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" /><!--<![endif]-->
 }
 
+@scripts = {
+    <script src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
+    <script>window.GOVUKFrontend.initAll();</script>
+}
 
-@govuk_wrapper(appConfig = appConfig,
-               title = title,
-               mainClass = mainClass,
-               bodyClasses = bodyClasses,
-               sidebar = sidebar,
-               contentHeader = contentHeader,
-               mainContent = mkArticle(mainContent),
-               serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem
-)
+@beforeContentBlock = {
+    @phaseBanner("alpha")
+}
+
+@content = {
+    <div class="govuk-back-link-div">
+        @backButton.map(back =>
+            govukBackLink(BackLink(
+                content = Text(back.title),
+                attributes = Map("id" -> "back-link"),
+                classes = "govuk-!-display-none-print",
+                href = back.call.url
+            ))
+        )
+    </div>
+    @contentBlock
+}
+
+@footer = @{
+    Seq(
+        FooterItem(href = Some("help/cookies"), text = Some("Cookies")),
+        FooterItem(href = Some("help/privacy"), text = Some("Privacy Policy")),
+        FooterItem(href = Some("help/terms-and-conditions"), text = Some("Terms and conditions")),
+        FooterItem(href = Some("help"), text = Some("Help using GOV.UK"))
+    )
+}
+
+@govukLayout(
+    pageTitle = Some(title.toString),
+    headBlock = Some(head),
+    beforeContentBlock = Some(beforeContentBlock),
+    bodyEndBlock = None,
+    scriptsBlock = Some(scripts),
+    headerBlock = Some(siteHeader()),
+    footerItems = footer
+)(content)

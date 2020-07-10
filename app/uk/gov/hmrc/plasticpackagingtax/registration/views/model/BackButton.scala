@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
-@this(govukLayout: main_template)
+import play.api.mvc.Call
 
-@()(implicit request: Request[_], messages: Messages)
-
-@govukLayout(title = Title("Hello World")) {
-    <h1>Hello from plastic-packaging-tax-registration-frontend !</h1>
-}
+case class BackButton(title: String, call: Call)

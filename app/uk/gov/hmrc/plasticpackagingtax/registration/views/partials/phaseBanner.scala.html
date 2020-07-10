@@ -14,13 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(govukLayout: main_template)
+@this(govukPhaseBanner: GovukPhaseBanner)
 
-@()(implicit request: Request[_], messages: Messages)
+@(phase: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("Hello World")) {
-    <h1>Hello from plastic-packaging-tax-registration-frontend !</h1>
+@link = {<a href="todo">@messages("feedback.link")</a>}
+@feedbackBanner = {
+ @Html(messages("feedback", link))
 }
+
+@govukPhaseBanner(PhaseBanner(
+    tag = Some(Tag(content = Text(phase))),
+    content = HtmlContent(feedbackBanner),
+    classes ="govuk-!-display-none-print"
+))
