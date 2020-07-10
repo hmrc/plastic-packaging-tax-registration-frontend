@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtaxregistrationfrontend.config
+package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
