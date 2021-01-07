@@ -34,10 +34,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
-  .settings(
-    resolvers += Resolver.jcenterRepo,
-    resolvers += Resolver.bintrayRepo("hmrc", "releases")
-  )
+  .settings(resolvers += Resolver.jcenterRepo)
   .settings(scoverageSettings)
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
