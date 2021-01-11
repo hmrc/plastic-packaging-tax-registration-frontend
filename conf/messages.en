@@ -4,3 +4,4 @@ feedback.link=feedback
 service.name=Plastic Packaging Tax
 
 title.format={0} - {1} - GOV.UK
+title.withSection.format={0} - {1} - {2} - GOV.UK
