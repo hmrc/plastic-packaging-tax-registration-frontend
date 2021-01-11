@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.siteHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBanner
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
 
 @this(
         govukHeader: GovukHeader,
@@ -26,7 +27,8 @@
         govukPhaseBanner: GovukPhaseBanner,
         govukBackLink: GovukBackLink,
         siteHeader: siteHeader,
-        phaseBanner: phaseBanner
+        phaseBanner: phaseBanner,
+        hmrcFooter: hmrcStandardFooter,
 )
 @(title: Title,
   backButton: Option[BackButton] = None,
@@ -44,6 +46,8 @@
 
 @scripts = {
     <script src='@routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
+    <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+    <script>window.HMRCFrontend.initAll();</script>
     <script>window.GOVUKFrontend.initAll();</script>
 }
 
@@ -65,15 +69,6 @@
     @contentBlock
 }
 
-@footer = @{
-    Seq(
-        FooterItem(href = Some("help/cookies"), text = Some("Cookies")),
-        FooterItem(href = Some("help/privacy"), text = Some("Privacy Policy")),
-        FooterItem(href = Some("help/terms-and-conditions"), text = Some("Terms and conditions")),
-        FooterItem(href = Some("help"), text = Some("Help using GOV.UK"))
-    )
-}
-
 @govukLayout(
     pageTitle = Some(title.toString),
     headBlock = Some(head),
@@ -81,5 +76,5 @@
     bodyEndBlock = None,
     scriptsBlock = Some(scripts),
     headerBlock = Some(siteHeader()),
-    footerItems = footer
+    footerBlock = Some(hmrcFooter())
 )(content)
