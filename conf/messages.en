@@ -27,7 +27,6 @@ startPage.informationYouNeed.line.1 = You will need:
 startPage.informationYouNeed.listItem.1 = you will need the Corporation Tax Number or Unique Taxpayer Reference for your organisation if you are UK registered business
 startPage.informationYouNeed.listItem.2 = address and contact details for the business you are registering
 startPage.informationYouNeed.listItem.3 = the volume of plastic packaging that the business has imported or manufactured in the last 12 months
-startPage.informationYouNeed.listItem.4 = the date the business became liable for the tax
 startPage.makeDeclaration.header = Make a declaration
 startPage.problemsWithServiceNotice = Online services may be slow during busy times. Check if there are any {0}.
 startPage.problemsWithServiceNotice.link = problems with this service

@@ -36,26 +36,28 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("startPage.title.sectionHeader")
       messages must haveTranslationFor("startPage.title")
       messages must haveTranslationFor("startPage.description")
+      messages must haveTranslationFor("startPage.hmrcUrl")
+      messages must haveTranslationFor("startPage.from")
+      messages must haveTranslationFor("startPage.information")
       messages must haveTranslationFor("startPage.contents.header")
       messages must haveTranslationFor("startPage.useThisServiceTo.header")
       messages must haveTranslationFor("startPage.useThisServiceTo.listItem.1")
       messages must haveTranslationFor("startPage.useThisServiceTo.listItem.2")
       messages must haveTranslationFor("startPage.useThisServiceTo.listItem.3")
       messages must haveTranslationFor("startPage.useThisServiceTo.listItem.4")
+      messages must haveTranslationFor("startPage.overview.header")
       messages must haveTranslationFor("startPage.overview.line.1")
+      messages must haveTranslationFor("startPage.overview.line.2")
+      messages must haveTranslationFor("startPage.overview.line.3")
       messages must haveTranslationFor("startPage.informationYouNeed.header")
       messages must haveTranslationFor("startPage.informationYouNeed.line.1")
       messages must haveTranslationFor("startPage.informationYouNeed.listItem.1")
       messages must haveTranslationFor("startPage.informationYouNeed.listItem.2")
       messages must haveTranslationFor("startPage.informationYouNeed.listItem.3")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.4")
       messages must haveTranslationFor("startPage.makeDeclaration.header")
       messages must haveTranslationFor("startPage.problemsWithServiceNotice")
       messages must haveTranslationFor("startPage.problemsWithServiceNotice.link")
       messages must haveTranslationFor("startPage.buttonName")
-      messages must haveTranslationFor("startPage.hmrcUrl")
-      messages must haveTranslationFor("startPage.from")
-      messages must haveTranslationFor("startPage.information")
       messages must haveTranslationFor("startPage.explorePpt")
     }
 
@@ -146,11 +148,10 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
       val informationYouNeedList = view.getElementsByClass("govuk-list--bullet").get(1)
 
-      informationYouNeedList must haveChildCount(4)
+      informationYouNeedList must haveChildCount(3)
       informationYouNeedList.child(0) must containMessage("startPage.informationYouNeed.listItem.1")
       informationYouNeedList.child(1) must containMessage("startPage.informationYouNeed.listItem.2")
       informationYouNeedList.child(2) must containMessage("startPage.informationYouNeed.listItem.3")
-      informationYouNeedList.child(3) must containMessage("startPage.informationYouNeed.listItem.4")
     }
 
     "display 'Make a declaration' section" in {
