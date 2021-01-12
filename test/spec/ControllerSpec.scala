@@ -22,5 +22,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.DefaultAwaitTimeout
 
-trait ControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach with DefaultAwaitTimeout {
-}
+trait ControllerSpec
+    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach
+    with DefaultAwaitTimeout {}

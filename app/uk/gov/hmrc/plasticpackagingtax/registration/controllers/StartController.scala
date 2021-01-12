@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.start_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -26,12 +25,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class StartController @Inject()(
-  mcc: MessagesControllerComponents,
-  startPage: start_page
-) extends FrontendController(mcc) with I18nSupport {
+class StartController @Inject()(mcc: MessagesControllerComponents, startPage: start_page)
+  extends FrontendController(mcc) with I18nSupport {
 
   val displayStartPage: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(startPage()))
   }
+
 }

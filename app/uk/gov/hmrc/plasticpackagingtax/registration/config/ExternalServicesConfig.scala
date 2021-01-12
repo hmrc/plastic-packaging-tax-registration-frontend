@@ -20,13 +20,15 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
-class ExternalServicesConfig @Inject()(val configuration: Configuration) {
+class ExternalServicesConfig @Inject() (val configuration: Configuration) {
 
   private def loadUrl(key: String): String =
-    configuration.getOptional[String](s"urls.$key").getOrElse(throw new Exception(s"Missing configuration key: urls.$key"))
+    configuration.getOptional[String](s"urls.$key").getOrElse(
+      throw new Exception(s"Missing configuration key: urls.$key")
+    )
 
   val serviceAvailabilityUrl: String = loadUrl("serviceAvailability")
-  val govUkUrl: String = loadUrl("govUk")
-  val organisationsUrl: String = loadUrl("organisationsLink")
-  val explorePpt: String = loadUrl("explorePpt")
+  val govUkUrl: String               = loadUrl("govUk")
+  val organisationsUrl: String       = loadUrl("organisationsLink")
+  val explorePpt: String             = loadUrl("explorePpt")
 }

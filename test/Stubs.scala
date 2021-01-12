@@ -24,8 +24,17 @@ import play.api.test.NoMaterializer
 import uk.gov.hmrc.govukfrontend.views.html.components
 import uk.gov.hmrc.govukfrontend.views.html.components.{GovukHeader, Footer => _, _}
 import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, TrackingConsentConfig}
-import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcBanner, HmrcFooter, HmrcHeader, HmrcReportTechnicalIssue}
-import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcFooterItems, HmrcTrackingConsentSnippet, hmrcStandardFooter}
+import uk.gov.hmrc.hmrcfrontend.views.html.components.{
+  HmrcBanner,
+  HmrcFooter,
+  HmrcHeader,
+  HmrcReportTechnicalIssue
+}
+import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{
+  hmrcStandardFooter,
+  HmrcFooterItems,
+  HmrcTrackingConsentSnippet
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.{phaseBanner, siteHeader}
@@ -53,7 +62,8 @@ trait Stubs {
       executionContext
     )
 
-  private val minimalConfig: Config = ConfigFactory.parseString("""
+  private val minimalConfig: Config =
+    ConfigFactory.parseString("""
       |assets.url="localhost"
       |assets.version="version"
       |google-analytics.token=N/A
@@ -79,33 +89,43 @@ trait Stubs {
   val minimalConfiguration = Configuration(minimalConfig)
 
   private def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
-  private def appConfig(conf: Configuration) = new AppConfig(conf, servicesConfig(conf))
+  private def appConfig(conf: Configuration)      = new AppConfig(conf, servicesConfig(conf))
 
   val minimalAppConfig = appConfig(minimalConfiguration)
 
-  val gdsGovukLayout = new GovukLayout(
-    new components.GovukTemplate(govukHeader = new GovukHeader(), govukFooter = new GovukFooter(), new GovukSkipLink()),
-    new GovukHeader(),
-    new GovukFooter(),
-    new GovukBackLink()
+  val gdsGovukLayout = new GovukLayout(new components.GovukTemplate(govukHeader = new GovukHeader(),
+                                                                    govukFooter = new GovukFooter(),
+                                                                    new GovukSkipLink()
+                                       ),
+                                       new GovukHeader(),
+                                       new GovukFooter(),
+                                       new GovukBackLink()
   )
 
-  val hmrcFooter = new hmrcStandardFooter(new HmrcFooter(), new HmrcFooterItems(new AccessibilityStatementConfig(minimalConfiguration)))
+  val hmrcFooter = new hmrcStandardFooter(new HmrcFooter(),
+                                          new HmrcFooterItems(
+                                            new AccessibilityStatementConfig(minimalConfiguration)
+                                          )
+  )
 
-  val hmrcTrackingConsentSnippet = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(Configuration(minimalConfig)))
+  val hmrcTrackingConsentSnippet = new HmrcTrackingConsentSnippet(
+    new TrackingConsentConfig(Configuration(minimalConfig))
+  )
+
   val hmrcReportTechnicalIssue = new HmrcReportTechnicalIssue()
 
   val govukHeader = new GovukHeader()
-  val sHeader = new siteHeader(new HmrcHeader(new HmrcBanner()))
-  val govPBanner = new GovukPhaseBanner(new govukTag())
-  val pBanner = new phaseBanner(govPBanner)
-  val gdsMainTemplate = new main_template(
-    govukHeader = govukHeader,
-    govukLayout = gdsGovukLayout,
-    govukBackLink = new components.GovukBackLink(),
-    siteHeader = sHeader,
-    govukPhaseBanner = govPBanner,
-    hmrcFooter = hmrcFooter,
-    phaseBanner = pBanner
+  val sHeader     = new siteHeader(new HmrcHeader(new HmrcBanner()))
+  val govPBanner  = new GovukPhaseBanner(new govukTag())
+  val pBanner     = new phaseBanner(govPBanner)
+
+  val gdsMainTemplate = new main_template(govukHeader = govukHeader,
+                                          govukLayout = gdsGovukLayout,
+                                          govukBackLink = new components.GovukBackLink(),
+                                          siteHeader = sHeader,
+                                          govukPhaseBanner = govPBanner,
+                                          hmrcFooter = hmrcFooter,
+                                          phaseBanner = pBanner
   )
+
 }

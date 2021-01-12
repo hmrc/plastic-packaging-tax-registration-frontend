@@ -51,7 +51,7 @@ call = Call("GET", externalServicesConfig.serviceAvailabilityUrl)
 )
 }
 
-@govukLayout(title = Title("hello world")) {
+@govukLayout(title = Title("startPage.title")) {
 
 <div class="govuk-!-width-two-thirds">
     @sectionHeader(messages("startPage.title.sectionHeader"))
@@ -68,7 +68,7 @@ call = Call("GET", externalServicesConfig.serviceAvailabilityUrl)
         @dashList(
         title = Some(messages("startPage.contents.header")),
         elements = Seq(
-        link(text = messages("startPage.overview.header"), call = Call("GET", "#before-you-start")),
+        link(text = messages("startPage.overview.header"), call = Call("GET", "#overview")),
         link(text = messages("startPage.informationYouNeed.header"), call = Call("GET", "#information-you-need")),
         link(text = messages("startPage.makeDeclaration.header"), call = Call("GET", "#make-declaration"))
         )
@@ -87,9 +87,9 @@ call = Call("GET", externalServicesConfig.serviceAvailabilityUrl)
 
     <div>
         <h2 id="overview" class="govuk-heading-m">@messages("startPage.overview.header")</h2>
-        @paragraphBody(message = messages("startPage.beforeYouStart.line.1"), id = Some("overview-element-1"))
-        @paragraphBody(message = messages("startPage.beforeYouStart.line.2"), id = Some("overview-element-2"))
-        @paragraphBody(message = messages("startPage.beforeYouStart.line.3"), id = Some("overview-element-3"))
+        @paragraphBody(message = messages("startPage.overview.line.1"), id = Some("overview-element-1"))
+        @paragraphBody(message = messages("startPage.overview.line.2"), id = Some("overview-element-2"))
+        @paragraphBody(message = messages("startPage.overview.line.3"), id = Some("overview-element-3"))
     </div>
 
     <div class="govuk-!-margin-bottom-9">
