@@ -36,5 +36,4 @@ class StartController @Inject()(
   val displayStartPage: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(startPage()))
   }
-
 }

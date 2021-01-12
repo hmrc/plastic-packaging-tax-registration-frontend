@@ -14,23 +14,24 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.ExternalServicesConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.gds._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+
 @this(
-govukLayout: main_template,
-pageTitle: pageTitle,
-sectionHeader: sectionHeader,
-paragraphBody: paragraphBody,
-link: link,
-dashList: dashList,
-bulletList: bulletList,
-govukInsetText: GovukInsetText,
-govukButton: GovukButton,
-externalServicesConfig: ExternalServicesConfig
+    govukLayout: main_template,
+    pageTitle: pageTitle,
+    sectionHeader: sectionHeader,
+    paragraphBody: paragraphBody,
+    link: link,
+    dashList: dashList,
+    bulletList: bulletList,
+    govukInsetText: GovukInsetText,
+    govukButton: GovukButton,
+    externalServicesConfig: ExternalServicesConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -50,9 +51,7 @@ call = Call("GET", externalServicesConfig.serviceAvailabilityUrl)
 )
 }
 
-@govukLayout(
-title = Title("hello world"),
-useCustomContentWidth = true) {
+@govukLayout(title = Title("hello world")) {
 
 <div class="govuk-!-width-two-thirds">
     @sectionHeader(messages("startPage.title.sectionHeader"))
