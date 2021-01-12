@@ -59,6 +59,9 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("startPage.problemsWithServiceNotice.link")
       messages must haveTranslationFor("startPage.buttonName")
       messages must haveTranslationFor("startPage.explorePpt")
+      messages must haveTranslationFor("url.explorePpt")
+      messages must haveTranslationFor("url.organisationsLink")
+      messages must haveTranslationFor("url.serviceAvailability")
     }
 
     val view: Html = createView()

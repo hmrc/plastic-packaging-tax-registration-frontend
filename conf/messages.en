@@ -1,6 +1,10 @@
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
+url.explorePpt = "https://www.gov.uk/topic/business-tax/import-export"
+url.organisationsLink = "https://www.gov.uk/government/organisations/hm-revenue-customs"
+url.serviceAvailability = "https://www.gov.uk/guidance/customs-declaration-service-service-availability-and-issues"
+
 service.name=Plastic Packaging Tax
 
 title.format={0} - {1} - GOV.UK

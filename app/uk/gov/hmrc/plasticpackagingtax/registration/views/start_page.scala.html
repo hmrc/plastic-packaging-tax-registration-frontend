@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.ExternalServicesConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -30,8 +29,7 @@
     dashList: dashList,
     bulletList: bulletList,
     govukInsetText: GovukInsetText,
-    govukButton: GovukButton,
-    externalServicesConfig: ExternalServicesConfig
+    govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -39,7 +37,7 @@
 @linkText = @{link(
 id = Some("hmrc_link"),
 text = messages("startPage.hmrcUrl"),
-call = Call("GET", externalServicesConfig.organisationsUrl),
+call = Call("GET", messages("url.organisationsLink")),
 target = "_blank",
 classes = "govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold"
 )}
@@ -47,7 +45,7 @@ classes = "govuk-link govuk-link--no-visited-state govuk-!-font-weight-bold"
 @serviceAvailabilityLink = @{
 link(
 text = messages("startPage.problemsWithServiceNotice.link"),
-call = Call("GET", externalServicesConfig.serviceAvailabilityUrl)
+call = Call("GET", messages("url.serviceAvailability"))
 )
 }
 
@@ -142,7 +140,7 @@ call = Call("GET", externalServicesConfig.serviceAvailabilityUrl)
             Some("explore-the-topic"))
             <ul class="govuk-list">
                 <li>
-                    <a class="govuk-link govuk-!-font-size-16" href="@{externalServicesConfig.explorePpt}">
+                    <a class="govuk-link govuk-!-font-size-16" href=@messages("url.explorePpt")>
                         @messages("startPage.explorePpt")
                     </a>
                 </li>

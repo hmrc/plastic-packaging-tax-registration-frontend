@@ -62,36 +62,7 @@ trait Stubs {
       executionContext
     )
 
-  private val minimalConfig: Config =
-    ConfigFactory.parseString("""
-      |assets.url="localhost"
-      |assets.version="version"
-      |google-analytics.token=N/A
-      |google-analytics.host=localhostGoogle
-      |tracking-consent-frontend.gtm.container=a
-      |metrics.name=""
-      |metrics.rateUnit="SECONDS"
-      |metrics.durationUnit="SECONDS"
-      |metrics.showSamples=false
-      |metrics.jvm=false
-      |metrics.logback=false
-      |draft.timeToLive=1d
-      |timeoutDialog.timeout=13min
-      |timeoutDialog.countdown=3min
-      |list-of-available-journeys = "SMP,STD,CAN,SUB,CON"
-      |microservice.services.features.default=disabled
-      |microservice.services.features.use-improved-error-messages=true
-      |urls.tradeTariff=tradeTariff
-      |urls.classificationHelp=classificationHelp
-      |urls.ecicsTool=ecicsTool
-    """.stripMargin)
-
-  val minimalConfiguration = Configuration(minimalConfig)
-
-  private def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
-  private def appConfig(conf: Configuration)      = new AppConfig(conf, servicesConfig(conf))
-
-  val minimalAppConfig = appConfig(minimalConfiguration)
+  private val minimalConfig: Config = ConfigFactory.empty()
 
   val gdsGovukLayout = new GovukLayout(new components.GovukTemplate(govukHeader = new GovukHeader(),
                                                                     govukFooter = new GovukFooter(),
@@ -102,10 +73,9 @@ trait Stubs {
                                        new GovukBackLink()
   )
 
-  val hmrcFooter = new hmrcStandardFooter(new HmrcFooter(),
-                                          new HmrcFooterItems(
-                                            new AccessibilityStatementConfig(minimalConfiguration)
-                                          )
+  val hmrcFooter = new hmrcStandardFooter(
+    new HmrcFooter(),
+    new HmrcFooterItems(new AccessibilityStatementConfig(Configuration(minimalConfig)))
   )
 
   val hmrcTrackingConsentSnippet = new HmrcTrackingConsentSnippet(
