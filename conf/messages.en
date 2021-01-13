@@ -5,3 +5,26 @@ service.name=Plastic Packaging Tax
 
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
+
+startPage.title.sectionHeader = Guidance
+startPage.title = Plastic Packaging Tax Service
+startPage.description = If you’re a business manufacturing or importing plastic packaging into UK you can use Plastic Packaging Tax Service to make tax return
+startPage.hmrcUrl = HM Revenue & Customs
+startPage.information = All times recorded in this service will be in UK local time
+startPage.contents.header = Contents
+startPage.useThisServiceTo.header = Use this service to:
+startPage.useThisServiceTo.listItem.1 = start a new declaration
+startPage.useThisServiceTo.listItem.2 = complete or discard any drafts
+startPage.useThisServiceTo.listItem.3 = cancel declarations you’ve already submitted
+startPage.useThisServiceTo.listItem.4 = view notifications
+startPage.overview.header = Overview
+startPage.overview.line.1 = Plastic Packaging Tax has been introduced into UK law from 1st April 2022.
+startPage.overview.line.2 = All businesses who are liable to pay plastic packaging must be registered before April 1st 2022.
+startPage.overview.line.3 = Accounts must be provided to HMRC on a quarterly basis, with payment of liabilities due within one month of the accounts due date.
+startPage.informationYouNeed.header = Information you need
+startPage.informationYouNeed.line.1 = You will need:
+startPage.informationYouNeed.listItem.1 = you will need the Corporation Tax Number or Unique Taxpayer Reference for your organisation if you are UK registered business
+startPage.informationYouNeed.listItem.2 = address and contact details for the business you are registering
+startPage.informationYouNeed.listItem.3 = the volume of plastic packaging that the business has imported or manufactured in the last 12 months
+startPage.makeDeclaration.header = Make a declaration
+startPage.buttonName = Start now

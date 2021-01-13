@@ -19,14 +19,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import spec.UnitViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.hello_world
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.start_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class FooterViewSpec extends UnitViewSpec with Matchers {
 
-  private val helloWorldPage     = instanceOf[hello_world]
-  private def createView(): Html = helloWorldPage()
+  private val startPage          = instanceOf[start_page]
+  private def createView(): Html = startPage()
 
   "Footer" should {
 

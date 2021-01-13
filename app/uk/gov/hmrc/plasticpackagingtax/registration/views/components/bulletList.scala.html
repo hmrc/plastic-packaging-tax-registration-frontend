@@ -14,13 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 
-@this(govukLayout: main_template)
+@this(paragraphBody: paragraphBody)
 
-@()(implicit request: Request[_], messages: Messages)
+@(title: Option[String] = None, elements: Seq[Html])(implicit messages: Messages)
 
-@govukLayout(title = Title("Hello World")) {
-    <h1>Hello from plastic-packaging-tax-registration!</h1>
-}
+<nav>
+    @title.map(paragraphBody(_, "govuk-body"))
+    <ul class="govuk-list govuk-list--bullet">
+        @elements.map { element =>
+            <li class="dashed-list-item">
+                @element
+            </li>
+        }
+    </ul>
+</nav>
