@@ -17,13 +17,13 @@
 package spec
 
 import base.Injector
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 
-class UnitViewSpec extends AnyWordSpec with ViewMatchers with Injector {
+class UnitViewSpec extends AnyWordSpec with ViewMatchers with Injector with GuiceOneAppPerSuite {
 
   import utils.FakeRequestCSRFSupport._
 

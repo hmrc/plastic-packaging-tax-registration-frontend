@@ -37,7 +37,6 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("startPage.title")
       messages must haveTranslationFor("startPage.description")
       messages must haveTranslationFor("startPage.hmrcUrl")
-      messages must haveTranslationFor("startPage.from")
       messages must haveTranslationFor("startPage.information")
       messages must haveTranslationFor("startPage.contents.header")
       messages must haveTranslationFor("startPage.useThisServiceTo.header")
@@ -55,13 +54,7 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("startPage.informationYouNeed.listItem.2")
       messages must haveTranslationFor("startPage.informationYouNeed.listItem.3")
       messages must haveTranslationFor("startPage.makeDeclaration.header")
-      messages must haveTranslationFor("startPage.problemsWithServiceNotice")
-      messages must haveTranslationFor("startPage.problemsWithServiceNotice.link")
       messages must haveTranslationFor("startPage.buttonName")
-      messages must haveTranslationFor("startPage.explorePpt")
-      messages must haveTranslationFor("url.explorePpt")
-      messages must haveTranslationFor("url.organisationsLink")
-      messages must haveTranslationFor("url.serviceAvailability")
     }
 
     val view: Html = createView()
@@ -167,31 +160,13 @@ class StartViewSpec extends UnitViewSpec with Matchers {
     "display 'Start now' button" in {
 
       view.getElementsByClass("govuk-button").first() must containMessage("startPage.buttonName")
-      view.getElementsByClass("govuk-button").first() must haveHref(
-        uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.HelloWorldController.helloWorld().url
-      )
-    }
-
-    "display problems with service notice" in {
-
-      view.getElementsByClass("govuk-inset-text").get(1) must containMessage(
-        "startPage.problemsWithServiceNotice",
-        "problems with this service "
-      )
+      view.getElementsByClass("govuk-button").first() must haveHref("")
     }
 
     "display link to go back to Contents section" in {
 
       view.getElementById("back-to-top") must containMessage("startPage.contents.header")
       view.getElementById("back-to-top").child(0) must haveHref("#contents")
-    }
-
-    "display explore the topic section" in {
-
-      view.getElementById("explore-the-topic") must containMessage("startPage.explorePpt")
-      view.getElementsByClass("govuk-link govuk-!-font-size-16").first() must containMessage(
-        "startPage.explorePpt"
-      )
     }
   }
 }

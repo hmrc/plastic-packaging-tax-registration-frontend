@@ -1,10 +1,6 @@
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
-url.explorePpt = "https://www.gov.uk/topic/business-tax/import-export"
-url.organisationsLink = "https://www.gov.uk/government/organisations/hm-revenue-customs"
-url.serviceAvailability = "https://www.gov.uk/guidance/customs-declaration-service-service-availability-and-issues"
-
 service.name=Plastic Packaging Tax
 
 title.format={0} - {1} - GOV.UK
@@ -14,7 +10,6 @@ startPage.title.sectionHeader = Guidance
 startPage.title = Plastic Packaging Tax Service
 startPage.description = If you’re a business manufacturing or importing plastic packaging into UK you can use Plastic Packaging Tax Service to make tax return
 startPage.hmrcUrl = HM Revenue & Customs
-startPage.from = From:
 startPage.information = All times recorded in this service will be in UK local time
 startPage.contents.header = Contents
 startPage.useThisServiceTo.header = Use this service to:
@@ -32,7 +27,4 @@ startPage.informationYouNeed.listItem.1 = you will need the Corporation Tax Numb
 startPage.informationYouNeed.listItem.2 = address and contact details for the business you are registering
 startPage.informationYouNeed.listItem.3 = the volume of plastic packaging that the business has imported or manufactured in the last 12 months
 startPage.makeDeclaration.header = Make a declaration
-startPage.problemsWithServiceNotice = Online services may be slow during busy times. Check if there are any {0}.
-startPage.problemsWithServiceNotice.link = problems with this service
 startPage.buttonName = Start now
-startPage.explorePpt = Plastic Packaging Tax

@@ -1,5 +1,4 @@
 # microservice specific routes
 
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
-GET        /hello-world             uk.gov.hmrc.plasticpackagingtax.registration.controllers.HelloWorldController.helloWorld()
 GET        /start                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
