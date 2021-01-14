@@ -35,10 +35,8 @@ import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{
   HmrcFooterItems,
   HmrcTrackingConsentSnippet
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.{phaseBanner, siteHeader}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
 

@@ -27,6 +27,7 @@ case class Title(
 
   def toString(implicit messages: Messages): String = {
     def args = headingArgs.getOrElse(Seq(headingArg))
+
     if (sectionKey.isEmpty)
       messages("title.format", messages(headingKey, args: _*), messages("service.name"))
     else

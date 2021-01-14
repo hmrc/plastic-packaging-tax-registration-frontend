@@ -36,7 +36,8 @@ trait ViewMatchers {
   implicit private def elements2Scala(elements: Elements): Iterator[Element] =
     elements.iterator().asScala
 
-  implicit protected def htmlBodyOf(html: Html): Document   = Jsoup.parse(html.toString())
+  implicit protected def htmlBodyOf(html: Html): Document = Jsoup.parse(html.toString())
+
   implicit protected def htmlBodyOf(page: String): Document = Jsoup.parse(page)
 
   implicit protected def htmlBodyOf(result: Future[Result]): Document =

@@ -20,7 +20,6 @@ import akka.http.scaladsl.model.StatusCodes.OK
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat

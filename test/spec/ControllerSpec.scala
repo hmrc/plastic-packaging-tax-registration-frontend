@@ -16,12 +16,21 @@
 
 package spec
 
+import base.MockAuthAction
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.mvc.Result
 import play.api.test.DefaultAwaitTimeout
+import play.api.test.Helpers.contentAsString
+import play.twirl.api.Html
+
+import scala.concurrent.Future
 
 trait ControllerSpec
-    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with BeforeAndAfterEach
-    with DefaultAwaitTimeout {}
+    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockAuthAction
+    with BeforeAndAfterEach with DefaultAwaitTimeout {
+
+  protected def viewOf(result: Future[Result]) = Html(contentAsString(result))
+}

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,32 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
-@this(govukPhaseBanner: GovukPhaseBanner)
+sealed trait TaskStatus
 
-@(phase: String)(implicit request: Request[_], messages: Messages)
+object TaskStatus {
 
-@link = {<a href="todo" class="govuk-link">@messages("feedback.link")</a>}
-@feedbackBanner = {
- @Html(messages("feedback", link))
+  case object NotStarted extends TaskStatus {}
+
+  case object InProgress extends TaskStatus {}
+
+  case object Completed extends TaskStatus {}
+
 }
 
-@govukPhaseBanner(PhaseBanner(
-    tag = Some(Tag(content = Text(phase))),
-    content = HtmlContent(feedbackBanner),
-    classes ="govuk-!-display-none-print"
-))
+sealed trait TaskName
+
+object TaskName {
+
+  case object OrganisationDetails extends TaskName
+
+  case object PlasticPackagingDetails extends TaskName
+
+  case object BusinessContactDetails extends TaskName
+
+  case object ApplicantContactDetails extends TaskName
+
+}
