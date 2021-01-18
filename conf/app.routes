@@ -1,5 +1,10 @@
 # microservice specific routes
 
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
+
 GET        /start                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
+
 GET        /registration            uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationController.displayPage()
+
+GET        /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.displayPage()
+POST       /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.submit()

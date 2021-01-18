@@ -6,6 +6,12 @@ service.name=Plastic Packaging Tax
 title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
+site.back = Back
+site.button.continue = Continue
+
+honestyDeclaration.title = Declaration
+honestyDeclaration.description = By submitting this application to register for Plastic Packaging Tax, you are making a legal declaration that the information is correct and complete to the best of your knowledge and belief. A false declaration can result in prosecution.
+
 startPage.title.sectionHeader = Guidance
 startPage.title = Plastic Packaging Tax Service
 startPage.description = If you’re a business manufacturing or importing plastic packaging into UK you can use Plastic Packaging Tax Service to make tax return
