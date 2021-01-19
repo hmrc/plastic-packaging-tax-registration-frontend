@@ -17,11 +17,17 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import org.scalatest.matchers.must.Matchers
-import play.api.test.Helpers.stubMessagesApi
+import play.api.http.Status
+import play.api.test.DefaultAwaitTimeout
+import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
 import spec.UnitViewSpec
+import uk.gov.hmrc.auth.core.NoActiveSession
+import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
 
-class ErrorHandlerTest extends UnitViewSpec with Matchers {
+import scala.concurrent.Future
+
+class ErrorHandlerTest extends UnitViewSpec with Matchers with DefaultAwaitTimeout {
 
   private val errorPage    = instanceOf[error_template]
   private val appConfig    = app.injector.instanceOf[AppConfig]
@@ -36,6 +42,18 @@ class ErrorHandlerTest extends UnitViewSpec with Matchers {
       result must include("title")
       result must include("heading")
       result must include("message")
+    }
+
+    "handle no active session authorisation exception" in {
+
+      val error            = new NoActiveSession("A user is not logged in") {}
+      val result           = Future.successful(errorHandler.resolveError(request, error))
+      val encodedTargetUrl = urlEncode("http://localhost:8503/plastic-packaging-tax/registration")
+      val expectedLocation =
+        s"http://localhost:9949/auth-login-stub/gg-sign-in?continue=$encodedTargetUrl"
+
+      status(result) mustBe Status.SEE_OTHER
+      redirectLocation(result) mustBe Some(expectedLocation)
     }
   }
 }

@@ -28,3 +28,20 @@ startPage.informationYouNeed.listItem.2 = address and contact details for the bu
 startPage.informationYouNeed.listItem.3 = the volume of plastic packaging that the business has imported or manufactured in the last 12 months
 startPage.makeDeclaration.header = Make a declaration
 startPage.buttonName = Start now
+
+registrationPage.title = Plastic Packaging Tax Service
+registrationPage.organisationDetails = Organisation Details
+registrationPage.businessInfo = Business Information
+registrationPage.plasticPackagingDetails = Plastic Packaging Details
+registrationPage.plasticPackagingInfo = Liability Start Date
+registrationPage.businessContactDetails = Business Contact Details
+registrationPage.businessContactInfo = Contact Details
+registrationPage.applicantContactDetails = Applicant Contact Details
+registrationPage.applicantContactInfo = Primary Contact Details
+registrationPage.declaration.header = Review Declaration
+registrationPage.declaration.description = To review and submit your application you will need to complete the sections above.
+registrationPage.declaration.buttonName = Review Declaration
+
+task.status.notStarted = Not Started
+task.status.inProgress = In Progress
+task.status.completed = Completed

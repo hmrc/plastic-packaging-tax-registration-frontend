@@ -21,15 +21,15 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 
 @this(
-    govukLayout: main_template,
-    pageTitle: pageTitle,
-    sectionHeader: sectionHeader,
-    paragraphBody: paragraphBody,
-    link: link,
-    dashList: dashList,
-    bulletList: bulletList,
-    govukInsetText: GovukInsetText,
-    govukButton: GovukButton
+govukLayout: main_template,
+pageTitle: pageTitle,
+sectionHeader: sectionHeader,
+paragraphBody: paragraphBody,
+link: link,
+dashList: dashList,
+bulletList: bulletList,
+govukInsetText: GovukInsetText,
+govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -96,7 +96,7 @@
 
     @govukButton(
     Button(
-    href = Some(""),
+    href = Some(RegistrationController.displayPage().url),
     isStartButton = true,
     content = Text(messages("startPage.buttonName"))
     )

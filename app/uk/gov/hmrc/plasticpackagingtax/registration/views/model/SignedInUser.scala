@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
-@this(govukPhaseBanner: GovukPhaseBanner)
+import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.request.IdentityData
 
-@(phase: String)(implicit request: Request[_], messages: Messages)
-
-@link = {<a href="todo" class="govuk-link">@messages("feedback.link")</a>}
-@feedbackBanner = {
- @Html(messages("feedback", link))
-}
-
-@govukPhaseBanner(PhaseBanner(
-    tag = Some(Tag(content = Text(phase))),
-    content = HtmlContent(feedbackBanner),
-    classes ="govuk-!-display-none-print"
-))
+case class SignedInUser(enrolments: Enrolments, identityData: IdentityData)

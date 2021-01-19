@@ -37,4 +37,6 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   val reportAProblemNonJSUrl: String =
     s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
 
+  lazy val loginUrl         = config.get[String]("urls.login")
+  lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
 }
