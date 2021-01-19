@@ -74,20 +74,4 @@ class RegistrationControllerSpec extends ControllerSpec {
       }
     }
   }
-  "Registration Controller" should {
-
-    "display task list" when {
-
-      "display page method is invoked" in {
-        authorizedUser()
-        val result = controller.displayPage()(fakeRequest)
-
-        viewOf(result) must be(
-          registrationPage(controller.taskStatuses)(fakeRequest,
-                                                    controller.messagesApi.preferred(fakeRequest)
-          )
-        )
-      }
-    }
-  }
 }

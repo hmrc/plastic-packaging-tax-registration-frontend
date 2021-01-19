@@ -23,8 +23,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActi
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.honesty_declaration
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.Future
-
 @Singleton
 class HonestyDeclarationController @Inject() (
   authenticate: AuthAction,
@@ -39,7 +37,7 @@ class HonestyDeclarationController @Inject() (
 
   def submit(): Action[AnyContent] =
     authenticate { implicit request =>
-      Ok(honesty_declaration())
+      Redirect(routes.HonestyDeclarationController.displayPage())
     }
 
 }

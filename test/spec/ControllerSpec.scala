@@ -21,9 +21,10 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.Result
-import play.api.test.DefaultAwaitTimeout
+import play.api.libs.json.JsValue
+import play.api.mvc.{AnyContentAsJson, Request, Result}
 import play.api.test.Helpers.contentAsString
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
 
 import scala.concurrent.Future
@@ -32,5 +33,13 @@ trait ControllerSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockAuthAction
     with BeforeAndAfterEach with DefaultAwaitTimeout {
 
+  import utils.FakeRequestCSRFSupport._
+
   protected def viewOf(result: Future[Result]) = Html(contentAsString(result))
+
+  protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
+    FakeRequest("POST", "")
+      .withJsonBody(body)
+      .withCSRFToken
+
 }
