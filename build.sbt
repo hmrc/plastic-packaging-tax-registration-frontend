@@ -1,5 +1,3 @@
-import sbt.GlobFilter
-import sbt.Keys.includeFilter
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
@@ -47,7 +45,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*(BuildInfo|Routes|Options).*",
     "logger.*\\(.*\\)"
   ).mkString(";"),
-  coverageMinimum := 85,
+  coverageMinimum := 88,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false
