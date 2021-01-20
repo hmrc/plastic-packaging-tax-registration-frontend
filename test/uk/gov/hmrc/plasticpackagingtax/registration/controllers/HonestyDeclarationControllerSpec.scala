@@ -17,39 +17,39 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import akka.http.scaladsl.model.StatusCodes.OK
+import controllers.Assets.SEE_OTHER
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.FakeRequest
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.honesty_declaration
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class RegistrationControllerSpec extends ControllerSpec {
-
-  private val fakeRequest      = FakeRequest("GET", "/")
-  private val mcc              = stubMessagesControllerComponents()
-  private val registrationPage = mock[registration_page]
+class HonestyDeclarationControllerSpec extends ControllerSpec {
+  private val page        = mock[honesty_declaration]
+  private val fakeRequest = FakeRequest("GET", "/")
+  private val mcc         = stubMessagesControllerComponents()
 
   private val controller =
-    new RegistrationController(authenticate = mockAuthAction,
-                               mcc = mcc,
-                               registration_page = registrationPage
+    new HonestyDeclarationController(authenticate = mockAuthAction,
+                                     mcc = mcc,
+                                     honesty_declaration = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(registrationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(registrationPage)
+    reset(page)
     super.afterEach()
   }
 
-  "Registration Controller" should {
+  "Honesty Declaration Controller" should {
 
     "return 200" when {
 
@@ -60,17 +60,24 @@ class RegistrationControllerSpec extends ControllerSpec {
         status(result) mustBe OK.intValue
       }
     }
-  }
 
-  "Registration Controller" should {
-
-    "return error" when {
+    "return an error" when {
 
       "user is not authorised" in {
         unAuthorizedUser()
         val result = controller.displayPage()(fakeRequest)
 
         intercept[RuntimeException](status(result))
+      }
+    }
+
+    "return 303 (SEE_OTHER) and redirect to honesty declaration" when {
+      "user submits the honesty declaration form" in {
+        authorizedUser()
+        val result = controller.submit()(FakeRequest("POST", ""))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.HonestyDeclarationController.displayPage().url)
       }
     }
   }

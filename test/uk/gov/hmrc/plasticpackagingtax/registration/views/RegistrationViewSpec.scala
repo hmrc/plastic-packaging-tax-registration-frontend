@@ -17,8 +17,10 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
 import play.twirl.api.Html
 import spec.UnitViewSpec
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskName, TaskStatus}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -26,13 +28,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
-  private val registrationPage: registration_page = instanceOf[registration_page]
-
   val taskStatuses: Map[TaskName, TaskStatus] = Map(
     TaskName.OrganisationDetails     -> TaskStatus.Completed,
     TaskName.PlasticPackagingDetails -> TaskStatus.InProgress,
     TaskName.BusinessContactDetails  -> TaskStatus.NotStarted
   )
+
+  private val registrationPage: registration_page = instanceOf[registration_page]
 
   private def createView(): Html = registrationPage(taskStatuses)
 
@@ -81,7 +83,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
         title: String,
         description: String,
         tagStatus: String,
-        href: String
+        href: Call
       ) = {
         taskListElementHeader.get(index).text() must include(messages(title))
         val taskItem = taskItems.get(index)
@@ -94,25 +96,25 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
                    "registrationPage.organisationDetails",
                    "registrationPage.businessInfo",
                    "task.status.completed",
-                   "http://businessInfo"
+                   routes.HonestyDeclarationController.displayPage()
       )
       validateTask(1,
                    "registrationPage.plasticPackagingDetails",
                    "registrationPage.plasticPackagingInfo",
                    "task.status.inProgress",
-                   "http://plasticPackagingInfo"
+                   routes.RegistrationController.displayPage()
       )
       validateTask(2,
                    "registrationPage.businessContactDetails",
                    "registrationPage.businessContactInfo",
                    "task.status.notStarted",
-                   "http://businessContactInfo"
+                   routes.RegistrationController.displayPage()
       )
       validateTask(3,
                    "registrationPage.applicantContactDetails",
                    "registrationPage.applicantContactInfo",
                    "task.status.notStarted",
-                   "http://applicantContactInfo"
+                   routes.RegistrationController.displayPage()
       )
     }
 
