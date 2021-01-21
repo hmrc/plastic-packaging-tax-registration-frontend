@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
+import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import spec.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.honesty_declaration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest

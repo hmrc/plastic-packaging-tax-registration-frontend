@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
+import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
-import spec.UnitViewSpec
 
 class TitleSpec extends UnitViewSpec with Matchers {
 

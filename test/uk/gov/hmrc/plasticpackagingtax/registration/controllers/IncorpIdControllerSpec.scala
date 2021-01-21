@@ -16,44 +16,28 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import akka.http.scaladsl.model.StatusCodes.OK
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import controllers.Assets.SEE_OTHER
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.FakeRequest
-import play.api.test.Helpers.status
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.start_page
+import play.api.test.Helpers.{redirectLocation, status}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class StartControllerSpec extends ControllerSpec {
+class IncorpIdControllerSpec extends ControllerSpec {
 
   private val fakeRequest = FakeRequest("GET", "/")
   private val mcc         = stubMessagesControllerComponents()
-  private val startPage   = mock[start_page]
-  private val controller  = new StartController(mcc, startPage)
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    when(startPage.apply()(any(), any())).thenReturn(HtmlFormat.empty)
-  }
+  private val controller =
+    new IncorpIdController(authenticate = mockAuthAction, mcc)(config, ec)
 
-  override protected def afterEach(): Unit = {
-    reset(startPage)
-    super.afterEach()
-  }
+  "incorpIdCallback" should {
+    "redirect to the registration page" in {
+      authorizedUser()
+      val result = controller.incorpIdCallback("uuid-id")(fakeRequest)
 
-  "Start Controller" should {
-
-    "return 200" when {
-
-      "display page method is invoked" in {
-
-        val result = controller.displayStartPage()(fakeRequest)
-
-        status(result) mustBe OK.intValue
-      }
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
     }
   }
 }

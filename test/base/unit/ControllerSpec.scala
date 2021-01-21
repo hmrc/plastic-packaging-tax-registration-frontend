@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package spec
+package base.unit
 
 import base.MockAuthAction
 import org.scalatest.BeforeAndAfterEach
@@ -26,14 +26,19 @@ import play.api.mvc.{AnyContentAsJson, Request, Result}
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
     extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockAuthAction
     with BeforeAndAfterEach with DefaultAwaitTimeout {
 
   import utils.FakeRequestCSRFSupport._
+
+  implicit val ec: ExecutionContext = ExecutionContext.global
+
+  implicit val config: AppConfig = mock[AppConfig]
 
   protected def viewOf(result: Future[Result]) = Html(contentAsString(result))
 

@@ -21,22 +21,33 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
-  private val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
+class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesConfig) {
 
-  private val assetsUrl         = config.get[String]("assets.url")
-  private val serviceIdentifier = "MyService"
+  lazy val assetsUrl: String = config.get[String]("assets.url")
 
-  val assetsPrefix: String   = assetsUrl + config.get[String]("assets.version")
-  val analyticsToken: String = config.get[String](s"google-analytics.token")
-  val analyticsHost: String  = config.get[String](s"google-analytics.host")
+  lazy val assetsPrefix: String = assetsUrl + config.get[String]("assets.version")
 
-  val reportAProblemPartialUrl: String =
+  lazy val serviceIdentifier = "plastic-packaging-tax"
+
+  lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
+
+  lazy val reportAProblemPartialUrl: String =
     s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
 
-  val reportAProblemNonJSUrl: String =
+  lazy val reportAProblemNonJSUrl: String =
     s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
 
   lazy val loginUrl         = config.get[String]("urls.login")
   lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
+
+  lazy val incorpIdHost: String =
+    servicesConfig.baseUrl("incorporated-entity-identification-frontend")
+
+  lazy val exitSurveyUrl: String = config.get[String]("urls.exitSurvey")
+
+  lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
+
+  def createIncorpIdJourneyUrl: String =
+    s"$incorpIdHost/incorporated-entity-identification/api/journey"
+
 }

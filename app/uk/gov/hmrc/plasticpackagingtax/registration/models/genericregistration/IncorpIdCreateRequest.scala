@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.connectors
+package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-case class GenericRegistrationConnector()
+import play.api.libs.json.{Json, OFormat}
+
+case class IncorpIdCreateRequest(
+  continueUrl: String,
+  optServiceName: Option[String] = None,
+  deskProServiceId: String,
+  signOutUrl: String
+)
+
+object IncorpIdCreateRequest {
+  implicit val format: OFormat[IncorpIdCreateRequest] = Json.format[IncorpIdCreateRequest]
+}
