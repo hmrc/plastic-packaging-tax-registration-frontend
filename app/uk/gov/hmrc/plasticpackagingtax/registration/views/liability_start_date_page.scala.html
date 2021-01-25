@@ -1,0 +1,89 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+
+
+@this(
+  formHelper: FormWithCSRF,
+  govukLayout: main_template,
+  govukButton: GovukButton,
+  govukDateInput : GovukDateInput,
+  sectionHeader: sectionHeader,
+)
+
+@(form: Form[Date])(implicit request: Request[_], messages: Messages)
+
+@dayField = @{form("day")}
+@monthField = @{form("month")}
+@yearField = @{form("year")}
+
+@errorMessages = @{
+    val errors = (form.errors).map(err => messages(err.message, err.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@govukLayout(
+  title = Title("liabilityStartDatePage.title"),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage()))) {
+
+    @sectionHeader(messages("liabilityStartDatePage.sectionHeader"))
+
+    @formHelper(action = pptRoutes.LiabilityStartDateController.submit(), 'autoComplete -> "off") {
+        @govukDateInput(
+            DateInput(
+                id = "liability-start-date",
+                hint = Some(Hint(content = Text(messages("liabilityStartDatePage.hint")))),
+                errorMessage = errorMessages,
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(messages("liabilityStartDatePage.question")),
+                            classes = "govuk-fieldset__legend--l",
+                            isPageHeading = true))
+                )),
+                items = Seq(
+                    InputItem(
+                        id = s"${dayField.name}-id",
+                        name = dayField.name,
+                        label = Some(messages("date.day")),
+                        value = dayField.value,
+                        classes = s"govuk-input--width-2 ${if( dayField.hasErrors) "govuk-input--error"}"
+                    ),
+                    InputItem(
+                        id = s"${monthField.name}-id",
+                        name = monthField.name,
+                        label = Some(messages("date.month")),
+                        value = monthField.value,
+                        classes = s"govuk-input--width-2 ${if( monthField.hasErrors) "govuk-input--error"}"
+                    ),
+                    InputItem(
+                        id = s"${yearField.name}-id",
+                        name = yearField.name,
+                        label = Some(messages("date.year")),
+                        value = yearField.value,
+                        classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
+                    )))
+                )
+        @govukButton(Button(content = Text(messages("site.button.continue")), attributes = Map("id" -> "submit")))
+        }
+}

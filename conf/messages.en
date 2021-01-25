@@ -9,6 +9,11 @@ title.withSection.format={0} - {1} - {2} - GOV.UK
 site.back = Back
 site.button.continue = Continue
 
+date.day = Day
+date.month = Month
+date.year = Year
+date.empty.error = Error: {0} cannot be empty
+
 honestyDeclaration.title = Declaration
 honestyDeclaration.description = By submitting this application to register for Plastic Packaging Tax, you are making a legal declaration that the information is correct and complete to the best of your knowledge and belief. A false declaration can result in prosecution.
 
@@ -51,3 +56,10 @@ registrationPage.declaration.buttonName = Review Declaration
 task.status.notStarted = Not Started
 task.status.inProgress = In Progress
 task.status.completed = Completed
+
+liabilityStartDatePage.sectionHeader = Plastic Packaging Details
+liabilityStartDatePage.title = Liability Start Date
+liabilityStartDatePage.hint = For example, 12 11 2007
+liabilityStartDatePage.question = What is the date you first became liable?
+liabilityStartDate.formatting.error = Liability start date - wrong format
+liabilityStartDate.outOfRange.error = Liability start date - out of range

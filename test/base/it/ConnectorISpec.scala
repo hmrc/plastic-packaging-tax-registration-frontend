@@ -17,9 +17,6 @@
 package base.it
 
 import com.codahale.metrics.SharedMetricRegistries
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.{BeforeAndAfterEach, WordSpec}
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
