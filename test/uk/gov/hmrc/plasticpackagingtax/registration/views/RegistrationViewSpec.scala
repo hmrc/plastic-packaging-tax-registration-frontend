@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
+import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
-import spec.UnitViewSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskName, TaskStatus}

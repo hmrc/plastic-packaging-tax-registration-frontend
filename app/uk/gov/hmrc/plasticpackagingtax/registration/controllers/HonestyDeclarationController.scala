@@ -19,16 +19,23 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.IncorpIdConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorpIdCreateRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.honesty_declaration
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class HonestyDeclarationController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
-  honesty_declaration: honesty_declaration
-) extends FrontendController(mcc) with I18nSupport {
+  honesty_declaration: honesty_declaration,
+  incorpIdConnector: IncorpIdConnector
+)(implicit appConfig: AppConfig, val executionContext: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate { implicit request =>
@@ -36,8 +43,14 @@ class HonestyDeclarationController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Redirect(routes.HonestyDeclarationController.displayPage())
+    authenticate.async { implicit request =>
+      incorpIdConnector.createJourney(
+        IncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+                              Some(request2Messages(request)("service.name")),
+                              appConfig.serviceIdentifier,
+                              appConfig.exitSurveyUrl
+        )
+      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
     }
 
 }

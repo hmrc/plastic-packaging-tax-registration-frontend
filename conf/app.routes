@@ -8,3 +8,5 @@ GET        /registration            uk.gov.hmrc.plasticpackagingtax.registration
 
 GET        /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.displayPage()
 POST       /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.submit()
+
+GET        /incorp-id-callback      uk.gov.hmrc.plasticpackagingtax.registration.controllers.IncorpIdController.incorpIdCallback(journeyId)

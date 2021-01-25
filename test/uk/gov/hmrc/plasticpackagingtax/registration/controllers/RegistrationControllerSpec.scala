@@ -17,13 +17,13 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import akka.http.scaladsl.model.StatusCodes.OK
+import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
-import spec.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

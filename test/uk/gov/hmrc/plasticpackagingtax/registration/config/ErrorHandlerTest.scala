@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
+import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.http.Status
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
-import spec.UnitViewSpec
 import uk.gov.hmrc.auth.core.NoActiveSession
 import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template

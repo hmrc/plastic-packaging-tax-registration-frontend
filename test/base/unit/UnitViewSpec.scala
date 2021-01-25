@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package spec
+package base.unit
 
 import base.Injector
 import org.scalatest.wordspec.AnyWordSpec
@@ -22,6 +22,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
+import spec.ViewMatchers
 
 class UnitViewSpec extends AnyWordSpec with ViewMatchers with Injector with GuiceOneAppPerSuite {
 
