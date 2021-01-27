@@ -102,7 +102,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
                    "registrationPage.plasticPackagingDetails",
                    "registrationPage.plasticPackagingInfo",
                    "task.status.inProgress",
-                   routes.RegistrationController.displayPage()
+                   routes.LiabilityStartDateController.displayPage()
       )
       validateTask(2,
                    "registrationPage.businessContactDetails",

@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
-
 @this(paragraphBody: paragraphBody)
 
-@(title: Option[String] = None, elements: Seq[Html])(implicit messages: Messages)
+@(title: Option[String] = None, elements: Seq[Html])
 
 <nav>
     @title.map(paragraphBody(_, "govuk-body"))

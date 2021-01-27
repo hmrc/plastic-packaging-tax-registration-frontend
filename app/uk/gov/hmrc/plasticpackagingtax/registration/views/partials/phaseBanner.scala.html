@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukPhaseBanner
 
 @this(govukPhaseBanner: GovukPhaseBanner)
 
-@(phase: String)(implicit request: Request[_], messages: Messages)
+@(phase: String)(implicit messages: Messages)
 
 @link = {<a href="todo" class="govuk-link">@messages("feedback.link")</a>}
 @feedbackBanner = {

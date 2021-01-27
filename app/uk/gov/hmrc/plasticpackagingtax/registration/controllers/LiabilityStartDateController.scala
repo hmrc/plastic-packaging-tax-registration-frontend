@@ -16,31 +16,35 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskName, TaskStatus}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RegistrationController @Inject() (
+class LiabilityStartDateController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
-  registration_page: registration_page
+  liability_start_date_page: liability_start_date_page
 ) extends FrontendController(mcc) with I18nSupport {
-
-  val taskStatuses: Map[TaskName, TaskStatus] = Map(
-    TaskName.OrganisationDetails     -> TaskStatus.Completed,
-    TaskName.PlasticPackagingDetails -> TaskStatus.InProgress,
-    TaskName.BusinessContactDetails  -> TaskStatus.NotStarted
-  )
 
   def displayPage(): Action[AnyContent] =
     authenticate { implicit request =>
-      Ok(registration_page(taskStatuses))
+      Ok(liability_start_date_page(LiabilityStartDate.form()))
+    }
+
+  def submit(): Action[AnyContent] =
+    authenticate { implicit request =>
+      LiabilityStartDate.form()
+        .bindFromRequest()
+        .fold((formWithErrors: Form[Date]) => BadRequest(liability_start_date_page(formWithErrors)),
+              liabilityStartDate => Redirect(routes.RegistrationController.displayPage())
+        )
     }
 
 }

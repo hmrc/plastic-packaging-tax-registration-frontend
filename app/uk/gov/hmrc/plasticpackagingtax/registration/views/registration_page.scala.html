@@ -14,12 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTag
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskName, TaskStatus, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.link
 
 @this(
     govukLayout: main_template,
@@ -72,7 +74,7 @@
         </li>
         <li>
             @task(2, "registrationPage.plasticPackagingDetails", "registrationPage.plasticPackagingInfo",
-                pptRoutes.RegistrationController.displayPage(), getStatus(TaskName.PlasticPackagingDetails))
+                pptRoutes.LiabilityStartDateController.displayPage(), getStatus(TaskName.PlasticPackagingDetails))
         </li>
         <li>
             @task(3, "registrationPage.businessContactDetails", "registrationPage.businessContactInfo",

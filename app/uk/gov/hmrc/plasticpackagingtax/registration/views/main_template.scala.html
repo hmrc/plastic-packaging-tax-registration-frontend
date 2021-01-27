@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import play.api.mvc.Security.AuthenticatedRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.siteHeader
@@ -34,7 +33,6 @@
   backButton: Option[BackButton] = None,
   useCustomContentWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages)
-@useTimeoutDialog = @{ request.isInstanceOf[AuthenticatedRequest[_,_]]}
 
 @head = {
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/application.css")' rel="stylesheet" type="text/css" />
