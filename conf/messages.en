@@ -63,3 +63,10 @@ liabilityStartDatePage.hint = For example, 12 11 2007
 liabilityStartDatePage.question = What is the date you first became liable?
 liabilityStartDate.formatting.error = Liability start date - wrong format
 liabilityStartDate.outOfRange.error = Liability start date - out of range
+
+liabilityWeightPage.title = Total Liability Weight
+liabilityWeightPage.question = What was the total weight of plastic packaging processed in the last 12 months?
+liabilityWeightPage.hint = This includes all manufactured, imported and converted plastic packaging except for any external transit packaging that was applied to imported goods before they entered the UK.
+liabilityWeightPage.sectionHeader = Plastic Packaging Details
+liabilityWeight.outOfRange.error = Weight out of range
+liabilityWeight.empty.error = Weight cannot be empty

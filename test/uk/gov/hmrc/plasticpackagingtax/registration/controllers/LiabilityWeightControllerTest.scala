@@ -17,9 +17,10 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import akka.http.scaladsl.model.StatusCodes.OK
+import base.unit.ControllerSpec
+import controllers.Assets.{BAD_REQUEST, SEE_OTHER}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import controllers.Assets.{BAD_REQUEST, SEE_OTHER}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -27,26 +28,24 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import base.unit.ControllerSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class LiabilityStartDateControllerTest extends ControllerSpec {
+class LiabilityWeightControllerTest extends ControllerSpec {
 
-  private val page        = mock[liability_start_date_page]
-  private val fakeRequest = FakeRequest("GET", "/")
-  private val mcc         = stubMessagesControllerComponents()
+  private val page = mock[liability_weight_page]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new LiabilityStartDateController(authenticate = mockAuthAction,
-                                     mcc = mcc,
-                                     liability_start_date_page = page
+    new LiabilityWeightController(authenticate = mockAuthAction,
+                                  mcc = mcc,
+                                  liability_weight_page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Date]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[LiabilityWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -54,38 +53,38 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
     super.afterEach()
   }
 
-  "Liability Start Date Controller" should {
+  "Liability Weight Controller" should {
 
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
-        val result = controller.displayPage()(fakeRequest)
+        val result = controller.displayPage()(FakeRequest("GET", "/"))
 
         status(result) mustBe OK.intValue
       }
     }
 
     "return 200 (OK)" when {
-      "user submits the liability start date" in {
+      "user submits the liability total weight" in {
         authorizedUser()
         val result = controller.submit()(
           FakeRequest("POST", "")
-            .withJsonBody(Json.toJson(Date(Some(1), Some(4), Some(2022))))
+            .withJsonBody(Json.toJson(LiabilityWeight(Some(1000))))
             .withCSRFToken
         )
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.LiabilityWeightController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
-      "user submits invalid liability start date" in {
+      "user submits invalid liability weight" in {
         authorizedUser()
         val result = controller.submit()(
           FakeRequest("POST", "")
-            .withJsonBody(Json.toJson(Date(Some(1), Some(4), Some(1900))))
+            .withJsonBody(Json.toJson(LiabilityWeight(Some(999))))
             .withCSRFToken
         )
 
@@ -97,7 +96,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
 
       "user is not authorised" in {
         unAuthorizedUser()
-        val result = controller.displayPage()(fakeRequest)
+        val result = controller.displayPage()(FakeRequest("GET", "/"))
 
         intercept[RuntimeException](status(result))
       }

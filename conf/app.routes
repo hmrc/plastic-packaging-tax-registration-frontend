@@ -13,3 +13,6 @@ GET        /incorp-id-callback      uk.gov.hmrc.plasticpackagingtax.registration
 
 GET        /liability-start-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.displayPage()
 POST       /liability-start-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.submit()
+
+GET        /liability-weight    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.displayPage()
+POST       /liability-weight    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.submit()
