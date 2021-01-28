@@ -20,30 +20,32 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class LiabilityStartDateController @Inject() (
+class LiabilityWeightController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
-  liability_start_date_page: liability_start_date_page
+  liability_weight_page: liability_weight_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate { implicit request =>
-      Ok(liability_start_date_page(LiabilityStartDate.form()))
+      Ok(liability_weight_page(LiabilityWeight.form()))
     }
 
   def submit(): Action[AnyContent] =
     authenticate { implicit request =>
-      LiabilityStartDate.form()
+      LiabilityWeight.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[Date]) => BadRequest(liability_start_date_page(formWithErrors)),
-              liabilityStartDate => Redirect(routes.LiabilityWeightController.displayPage())
+        .fold(
+          (formWithErrors: Form[LiabilityWeight]) =>
+            BadRequest(liability_weight_page(formWithErrors)),
+          liabilityWeight => Redirect(routes.RegistrationController.displayPage())
         )
     }
 

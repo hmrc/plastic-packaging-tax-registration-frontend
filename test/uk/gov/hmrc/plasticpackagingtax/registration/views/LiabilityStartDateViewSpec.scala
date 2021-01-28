@@ -66,7 +66,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display page hint" in {
+    "display question hint" in {
 
       view.getElementById("liability-start-date-hint") must containMessage(
         "liabilityStartDatePage.hint"

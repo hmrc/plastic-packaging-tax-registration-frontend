@@ -112,22 +112,6 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
     "provided with year" which {
 
-      "is less than 2000" in {
-
-        val input          = Map("year" -> "1999", "month" -> "7", "day" -> "13")
-        val expectedErrors = Seq(FormError("", dateOutOfRangeError))
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
-
-      "is more than 2099" in {
-
-        val input          = Map("year" -> "2100", "month" -> "7", "day" -> "13")
-        val expectedErrors = Seq(FormError("", dateOutOfRangeError))
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
-
       "contains alphanumerical or special character" in {
 
         val input          = Map("year" -> "20A#", "month" -> "7", "day" -> "13")
