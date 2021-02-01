@@ -24,6 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.IncorpIdConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorpIdCreateRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.honesty_declaration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
@@ -31,6 +32,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class HonestyDeclarationController @Inject() (
   authenticate: AuthAction,
+  journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   honesty_declaration: honesty_declaration,
   incorpIdConnector: IncorpIdConnector
@@ -43,7 +45,7 @@ class HonestyDeclarationController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    authenticate.async { implicit request =>
+    (authenticate andThen journeyAction).async { implicit request =>
       incorpIdConnector.createJourney(
         IncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
                               Some(request2Messages(request)("service.name")),

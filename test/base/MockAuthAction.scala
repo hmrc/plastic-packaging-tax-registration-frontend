@@ -29,7 +29,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActionImpl
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 
 import scala.concurrent.Future
 
@@ -39,7 +39,7 @@ trait MockAuthAction extends MockitoSugar {
 
   val mockAuthAction = new AuthActionImpl(mockAuthConnector, stubMessagesControllerComponents())
 
-  private val exampleUser     = newUser("external1")
+  private val exampleUser     = newUser("external1", "123")
   val nrsGroupIdentifierValue = Some("groupIdentifierValue")
   val nrsCredentialRole       = Some(User)
   val nrsMdtpInformation      = MdtpInformation("deviceId", "sessionId")

@@ -20,6 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskName, TaskStatus}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -28,6 +29,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class RegistrationController @Inject() (
   authenticate: AuthAction,
+  journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   registration_page: registration_page
 ) extends FrontendController(mcc) with I18nSupport {
@@ -39,7 +41,7 @@ class RegistrationController @Inject() (
   )
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       Ok(registration_page(taskStatuses))
     }
 

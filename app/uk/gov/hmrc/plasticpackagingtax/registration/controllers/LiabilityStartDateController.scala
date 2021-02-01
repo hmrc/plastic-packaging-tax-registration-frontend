@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -29,17 +30,18 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class LiabilityStartDateController @Inject() (
   authenticate: AuthAction,
+  journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   liability_start_date_page: liability_start_date_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       Ok(liability_start_date_page(LiabilityStartDate.form()))
     }
 
   def submit(): Action[AnyContent] =
-    authenticate { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       LiabilityStartDate.form()
         .bindFromRequest()
         .fold((formWithErrors: Form[Date]) => BadRequest(liability_start_date_page(formWithErrors)),

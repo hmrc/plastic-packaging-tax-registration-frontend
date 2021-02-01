@@ -17,19 +17,23 @@
 package base.it
 
 import com.codahale.metrics.SharedMetricRegistries
+import com.kenshoo.play.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.DefaultAwaitTimeout
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite {
+class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout {
 
   def overrideConfig: Map[String, Any] =
     Map("microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,
-        "microservice.services.incorporated-entity-identification-frontend.port" -> incorpIdWirePort
+        "microservice.services.incorporated-entity-identification-frontend.port" -> wirePort,
+        "microservice.services.plastic-packaging-tax-registration.host"          -> wireHost,
+        "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort
     )
 
   override def fakeApplication(): Application = {
@@ -40,4 +44,5 @@ class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite {
   protected implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   protected implicit val hc: HeaderCarrier    = HeaderCarrier()
   protected val httpClient: DefaultHttpClient = app.injector.instanceOf[DefaultHttpClient]
+  protected val metrics: Metrics              = app.injector.instanceOf[Metrics]
 }

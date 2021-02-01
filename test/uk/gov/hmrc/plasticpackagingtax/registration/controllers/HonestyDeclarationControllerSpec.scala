@@ -39,6 +39,7 @@ class HonestyDeclarationControllerSpec extends ControllerSpec {
 
   private val controller =
     new HonestyDeclarationController(authenticate = mockAuthAction,
+                                     mockJourneyAction,
                                      mcc = mcc,
                                      honesty_declaration = page,
                                      incorpIdConnector = mockIncorpIdConnector

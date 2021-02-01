@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import akka.http.scaladsl.model.StatusCodes.OK
+import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import controllers.Assets.{BAD_REQUEST, SEE_OTHER}
@@ -27,7 +28,6 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import base.unit.ControllerSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -40,6 +40,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
 
   private val controller =
     new LiabilityStartDateController(authenticate = mockAuthAction,
+                                     mockJourneyAction,
                                      mcc = mcc,
                                      liability_start_date_page = page
     )

@@ -25,7 +25,14 @@ sm -s
 
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
 * Enter the redirect url: http://localhost:8503/plastic-packaging-tax/start and press **Submit**.
-  
+
+### Login
+
+Single enrolment is required:
+    
+    EnrolmentKey: HMRC-CUS-ORG
+    IdentifierName: UTR
+    Value: any String/Int (if you pass same it'll pull out existing registration, otherwise create new one)
 
 ### Precheck
 
