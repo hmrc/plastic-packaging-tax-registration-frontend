@@ -33,12 +33,12 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    WireMock.configureFor(wireHost, incorpIdWirePort)
-    incorpIdWireMockServer.start()
+    WireMock.configureFor(wireHost, wirePort)
+    wireMockServer.start()
   }
 
   override protected def afterAll(): Unit = {
-    incorpIdWireMockServer.stop()
+    wireMockServer.stop()
     super.afterAll()
   }
 

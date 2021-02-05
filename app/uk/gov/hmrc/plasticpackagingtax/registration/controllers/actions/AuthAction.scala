@@ -22,8 +22,8 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.request.{
+import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest,
   IdentityData
 }
@@ -48,7 +48,6 @@ class AuthActionImpl @Inject() (
     request: Request[A],
     block: AuthenticatedRequest[A] => Future[Result]
   ): Future[Result] = {
-
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
     authorised()
@@ -78,11 +77,29 @@ class AuthActionImpl @Inject() (
                                           Some(loginTimes)
           )
 
-          val cdsLoggedInUser = SignedInUser(allEnrolments, identityData)
-          block(new AuthenticatedRequest(request, cdsLoggedInUser))
+          val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
+          block(
+            new AuthenticatedRequest(request, pptLoggedInUser, getPptEnrolmentId(allEnrolments))
+          )
       }
   }
 
+  private def getPptEnrolmentId(enrolments: Enrolments): Option[String] =
+    getPptEnrolment(enrolments) match {
+      case Some(enrolmentId) => Option(enrolmentId).filter(_.value.trim.nonEmpty).map(_.value)
+      case None              => Option.empty
+    }
+
+  private def getPptEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] =
+    enrolments
+      .getEnrolment(AuthAction.pptEnrolmentKey)
+      .flatMap(_.getIdentifier(AuthAction.pptEnrolmentIdentifierName))
+
+}
+
+object AuthAction {
+  val pptEnrolmentKey            = "HMRC-CUS-ORG"
+  val pptEnrolmentIdentifierName = "UTR"
 }
 
 @ImplementedBy(classOf[AuthActionImpl])

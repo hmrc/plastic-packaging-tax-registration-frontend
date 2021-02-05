@@ -17,9 +17,12 @@
 package base.unit
 
 import base.Injector
+import com.codahale.metrics.SharedMetricRegistries
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import spec.ViewMatchers
@@ -37,6 +40,12 @@ class UnitViewSpec extends AnyWordSpec with ViewMatchers with Injector with Guic
     messages(request)(key, args: _*)
 
   val realMessagesApi = UnitViewSpec.realMessagesApi
+
+  override def fakeApplication(): Application = {
+    SharedMetricRegistries.clear()
+    new GuiceApplicationBuilder().build()
+  }
+
 }
 
 object UnitViewSpec extends Injector {

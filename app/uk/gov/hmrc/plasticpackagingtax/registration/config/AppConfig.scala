@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import javax.inject.{Inject, Singleton}
@@ -43,11 +59,18 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
 
+  lazy val pptServiceHost: String =
+    servicesConfig.baseUrl("plastic-packaging-tax-registration")
+
   lazy val exitSurveyUrl: String = config.get[String]("urls.exitSurvey")
 
   lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
 
   def createIncorpIdJourneyUrl: String =
     s"$incorpIdHost/incorporated-entity-identification/api/journey"
+
+  def pptRegistrationUrl: String = s"$pptServiceHost/registrations"
+
+  def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
 
 }

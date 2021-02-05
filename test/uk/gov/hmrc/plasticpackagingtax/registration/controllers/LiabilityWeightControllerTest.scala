@@ -39,6 +39,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
   private val controller =
     new LiabilityWeightController(authenticate = mockAuthAction,
+                                  mockJourneyAction,
                                   mcc = mcc,
                                   liability_weight_page = page
     )

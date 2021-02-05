@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model.request
+package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import org.joda.time.{DateTime, LocalDate}
 import play.api.libs.json._

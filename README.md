@@ -17,15 +17,33 @@ This service integrates with the HMRC Strategic Generic Registration service, na
 sm --start PLASTIC_PACKAGING_TAX_ALL -f
 
 # start the incorporated Entity Identification Frontend and dependencies
-sm --start INCORPORATED_ENTITY_IDENTIFICATION_ALL
+sm --start INCORPORATED_ENTITY_IDENTIFICATION_ALL -f
 
 # confirm all services are running
 sm -s 
 ```
 
+### Login/Access
+
+* Visit the HMRC [Generic Registration service feature switch config page](http://localhost:9718/identify-your-incorporated-business/test-only/feature-switches) and
+select the appropriate stubbing behaviour _(select all)_. 
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
 * Enter the redirect url: http://localhost:8503/plastic-packaging-tax/start and press **Submit**.
-  
+* Choose affinity group as `Organisation`
+* Single enrolment required:
+```
+    EnrolmentKey: HMRC-CUS-ORG
+    IdentifierName: UTR
+    Value: any String/Int (if you pass same it'll pull out existing registration, otherwise create new one)
+```
+* Enter `Submit`
+
+### User Journey autocompletion scripts
+
+In order to allow any stakeholder to submit a user journey on any HMRC environment, without having to manually enter any information, we rely on [TamperMonkey](https://www.tampermonkey.net/).
+Install it as an extension to Google Chrome of Mozilla Firefox and then copy and install the following scripts:
+ * [Plastic Packaging Tax (PPT) Auth Autocomplete](https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-frontend/master/tampermonkey/PPT_Auth_AutoComplete.js) 
+
 
 ### Precheck
 

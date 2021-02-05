@@ -35,6 +35,7 @@ class RegistrationControllerSpec extends ControllerSpec {
 
   private val controller =
     new RegistrationController(authenticate = mockAuthAction,
+                               mockJourneyAction,
                                mcc = mcc,
                                registration_page = registrationPage
     )

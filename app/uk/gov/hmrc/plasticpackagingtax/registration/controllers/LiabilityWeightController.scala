@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -29,6 +30,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class LiabilityWeightController @Inject() (
   authenticate: AuthAction,
+  journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   liability_weight_page: liability_weight_page
 ) extends FrontendController(mcc) with I18nSupport {
@@ -39,7 +41,7 @@ class LiabilityWeightController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    authenticate { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       LiabilityWeight.form()
         .bindFromRequest()
         .fold(

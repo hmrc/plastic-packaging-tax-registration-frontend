@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model.request
+package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignedInUser
+import play.api.libs.json.{Json, OFormat}
 
-class AuthenticatedRequest[+A](request: Request[A], val user: SignedInUser)
-    extends WrappedRequest[A](request) {}
+case class CreateRegistrationRequest(enrolmentId: String) {}
+
+object CreateRegistrationRequest {
+  implicit val format: OFormat[CreateRegistrationRequest] = Json.format[CreateRegistrationRequest]
+}

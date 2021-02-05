@@ -19,7 +19,8 @@ package base.unit
 import base.MockAuthAction
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.JsValue
 import play.api.mvc.{AnyContentAsJson, Request, Result}
@@ -31,8 +32,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
-    extends AnyWordSpec with Matchers with GuiceOneAppPerSuite with MockAuthAction
-    with BeforeAndAfterEach with DefaultAwaitTimeout {
+    extends AnyWordSpecLike with MockitoSugar with Matchers with GuiceOneAppPerSuite
+    with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout with MockJourneyAction {
 
   import utils.FakeRequestCSRFSupport._
 

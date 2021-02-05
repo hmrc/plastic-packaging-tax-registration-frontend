@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model
+package uk.gov.hmrc.plasticpackagingtax.registration.models
 
 import uk.gov.hmrc.auth.core.Enrolments
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.request.IdentityData
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
 
 case class SignedInUser(enrolments: Enrolments, identityData: IdentityData)
