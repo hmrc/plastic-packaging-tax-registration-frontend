@@ -17,14 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
+import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  CreateRegistrationRequest,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -50,10 +47,10 @@ class RegistrationConnector @Inject() (
   }
 
   def create(
-    payload: CreateRegistrationRequest
+    payload: Registration
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
     val timer = metrics.defaultRegistry.timer("ppt.create.registration.timer").time()
-    httpClient.POST[CreateRegistrationRequest, Registration](appConfig.pptRegistrationUrl, payload)
+    httpClient.POST[Registration, Registration](appConfig.pptRegistrationUrl, payload)
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toRegistration))
       .recover {

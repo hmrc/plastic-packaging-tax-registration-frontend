@@ -18,10 +18,17 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Registration(id: String, incorpJourneyId: Option[String] = None) {
+case class Registration(
+  id: String,
+  incorpJourneyId: Option[String] = None,
+  liabilityDetails: LiabilityDetails = LiabilityDetails()
+) {
 
   def toRegistration: Registration =
-    Registration(id = this.id, incorpJourneyId = this.incorpJourneyId)
+    Registration(id = this.id,
+                 incorpJourneyId = this.incorpJourneyId,
+                 liabilityDetails = this.liabilityDetails
+    )
 
 }
 

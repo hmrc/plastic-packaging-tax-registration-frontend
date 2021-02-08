@@ -97,7 +97,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
     "display 'Continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit") must containMessage("Continue")
+      view.getElementById("submit").text() mustBe "Save and Continue"
     }
   }
 }

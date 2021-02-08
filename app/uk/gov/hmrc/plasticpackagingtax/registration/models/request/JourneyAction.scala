@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
+import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result, Results}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.CreateRegistrationRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyAction @Inject() (registrationConnector: RegistrationConnector)(implicit
@@ -56,7 +56,7 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector)(imp
       case Right(reg) =>
         reg
           .map(r => Future.successful(Right(r)))
-          .getOrElse(registrationConnector.create(CreateRegistrationRequest(id)))
+          .getOrElse(registrationConnector.create(Registration(id)))
       case Left(error) => Future.successful(Left(error))
     }
 

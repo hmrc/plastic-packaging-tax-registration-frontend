@@ -32,8 +32,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
-    extends AnyWordSpecLike with MockitoSugar with Matchers with GuiceOneAppPerSuite
-    with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout with MockJourneyAction {
+    extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
+    with GuiceOneAppPerSuite with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout
+    with MockJourneyAction {
 
   import utils.FakeRequestCSRFSupport._
 

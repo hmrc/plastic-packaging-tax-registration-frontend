@@ -7,7 +7,7 @@ title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
 site.back = Back
-site.button.continue = Continue
+site.button.continue = Save and Continue
 
 date.day = Day
 date.month = Month
