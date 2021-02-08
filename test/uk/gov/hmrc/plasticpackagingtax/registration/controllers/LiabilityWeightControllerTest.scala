@@ -16,16 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import akka.http.scaladsl.model.StatusCodes.OK
 import base.unit.ControllerSpec
-import controllers.Assets.{BAD_REQUEST, SEE_OTHER}
+import controllers.Assets.{BAD_REQUEST, OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
@@ -43,7 +40,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                                   mockJourneyAction,
                                   mockRegistrationConnector,
                                   mcc = mcc,
-                                  liability_weight_page = page
+                                  page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -62,7 +59,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
-        val result = controller.displayPage()(FakeRequest("GET", "/"))
+        val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
@@ -97,11 +94,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     "return 400 (BAD_REQUEST)" when {
       "user submits invalid liability weight" in {
         authorizedUser()
-        val result = controller.submit()(
-          FakeRequest("POST", "")
-            .withJsonBody(Json.toJson(LiabilityWeight(Some(999))))
-            .withCSRFToken
-        )
+        val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(999)))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -111,7 +104,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
       "user is not authorised" in {
         unAuthorizedUser()
-        val result = controller.displayPage()(FakeRequest("GET", "/"))
+        val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
       }

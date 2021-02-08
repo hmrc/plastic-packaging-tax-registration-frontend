@@ -36,27 +36,28 @@ class LiabilityStartDateController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  liability_start_date_page: liability_start_date_page
+  page: liability_start_date_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(liability_start_date_page(LiabilityStartDate.form()))
+      request.registration.liabilityDetails.startDate match {
+        case Some(data) => Ok(page(LiabilityStartDate.form().fill(data)))
+        case _          => Ok(page(LiabilityStartDate.form()))
+      }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       LiabilityStartDate.form()
         .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[Date]) =>
-            Future.successful(BadRequest(liability_start_date_page(formWithErrors))),
-          liabilityStartDate =>
-            updateRegistration(liabilityStartDate).map {
-              case Right(_)    => Redirect(routes.LiabilityWeightController.displayPage())
-              case Left(error) => throw error
-            }
+        .fold((formWithErrors: Form[Date]) => Future.successful(BadRequest(page(formWithErrors))),
+              liabilityStartDate =>
+                updateRegistration(liabilityStartDate).map {
+                  case Right(_)    => Redirect(routes.LiabilityWeightController.displayPage())
+                  case Left(error) => throw error
+                }
         )
     }
 

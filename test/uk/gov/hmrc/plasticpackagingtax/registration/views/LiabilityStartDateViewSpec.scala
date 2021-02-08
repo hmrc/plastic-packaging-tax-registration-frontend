@@ -19,8 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import base.unit.UnitViewSpec
+import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityStartDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Date,
+  LiabilityStartDate,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -29,7 +34,8 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[liability_start_date_page]
 
-  private def createView(): Document = page(LiabilityStartDate.form())(request, messages)
+  private def createView(form: Form[Date] = LiabilityStartDate.form()): Document =
+    page(form)(request, messages)
 
   "Liability Start Date View" should {
 
@@ -98,6 +104,21 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and Continue"
+    }
+  }
+
+  "Liability Weight View when filled" should {
+
+    "display data in date inputs" in {
+
+      val form = LiabilityStartDate
+        .form()
+        .fill(aRegistration().liabilityDetails.startDate.get)
+      val view = createView(form)
+
+      view.getElementById("day-id").attr("value") mustBe "1"
+      view.getElementById("month-id").attr("value") mustBe "4"
+      view.getElementById("year-id").attr("value") mustBe "2022"
     }
   }
 }

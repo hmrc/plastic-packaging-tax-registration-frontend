@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
+import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
@@ -29,7 +30,8 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[liability_weight_page]
 
-  private def createView(): Document = page(LiabilityWeight.form())(request, messages)
+  private def createView(form: Form[LiabilityWeight] = LiabilityWeight.form()): Document =
+    page(form)(request, messages)
 
   "Liability Weight View" should {
 
@@ -84,6 +86,19 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and Continue"
+    }
+  }
+
+  "Liability Weight View when filled" should {
+
+    "display data in weight input" in {
+
+      val form = LiabilityWeight
+        .form()
+        .fill(aRegistration().liabilityDetails.weight.get)
+      val view = createView(form)
+
+      view.getElementById("totalKg-id").attr("value") mustBe "1000"
     }
   }
 }

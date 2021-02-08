@@ -36,13 +36,16 @@ class LiabilityWeightController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  liability_weight_page: liability_weight_page
+  page: liability_weight_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Ok(liability_weight_page(LiabilityWeight.form()))
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.liabilityDetails.weight match {
+        case Some(data) => Ok(page(LiabilityWeight.form().fill(data)))
+        case _          => Ok(page(LiabilityWeight.form()))
+      }
     }
 
   def submit(): Action[AnyContent] =
@@ -51,7 +54,7 @@ class LiabilityWeightController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[LiabilityWeight]) =>
-            Future.successful(BadRequest(liability_weight_page(formWithErrors))),
+            Future.successful(BadRequest(page(formWithErrors))),
           liabilityWeight =>
             updateRegistration(liabilityWeight).map {
               case Right(_)    => Redirect(routes.RegistrationController.displayPage())

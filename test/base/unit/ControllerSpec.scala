@@ -23,7 +23,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.JsValue
-import play.api.mvc.{AnyContentAsJson, Request, Result}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsJson, Request, Result}
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
@@ -48,5 +48,8 @@ trait ControllerSpec
     FakeRequest("POST", "")
       .withJsonBody(body)
       .withCSRFToken
+
+  def getRequest(): Request[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "").withCSRFToken
 
 }
