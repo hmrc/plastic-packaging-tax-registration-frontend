@@ -17,9 +17,10 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
 
-case class CreateRegistrationRequest(enrolmentId: String) {}
+case class LiabilityDetails(weight: Option[LiabilityWeight] = None, startDate: Option[Date] = None)
 
-object CreateRegistrationRequest {
-  implicit val format: OFormat[CreateRegistrationRequest] = Json.format[CreateRegistrationRequest]
+object LiabilityDetails {
+  implicit val format: OFormat[LiabilityDetails] = Json.format[LiabilityDetails]
 }

@@ -25,10 +25,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  CreateRegistrationRequest,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 class RegistrationConnectorSpec
     extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
@@ -56,7 +53,7 @@ class RegistrationConnectorSpec
                                        Json.toJsObject(Registration("123")).toString
         )
 
-        val res = await(connector.create(CreateRegistrationRequest("123")))
+        val res = await(connector.create(Registration("123")))
 
         res.right.value.id mustBe "123"
       }
@@ -65,7 +62,7 @@ class RegistrationConnectorSpec
 
         givenPostToRegistrationReturns(Status.OK, Json.toJsObject(Registration("123")).toString)
 
-        val res = await(connector.create(CreateRegistrationRequest("123")))
+        val res = await(connector.create(Registration("123")))
 
         res.right.value.id mustBe "123"
 
@@ -78,7 +75,7 @@ class RegistrationConnectorSpec
 
         givenPostToRegistrationReturns(Status.BAD_REQUEST)
 
-        val res = await(connector.create(CreateRegistrationRequest("123")))
+        val res = await(connector.create(Registration("123")))
 
         res.left.value.getMessage must include("Failed to create registration")
       }
@@ -87,7 +84,7 @@ class RegistrationConnectorSpec
 
         givenPostToRegistrationReturns(Status.CREATED, "someRubbish")
 
-        val res = await(connector.create(CreateRegistrationRequest("123")))
+        val res = await(connector.create(Registration("123")))
 
         res.left.value.getMessage must include("Failed to create registration")
       }

@@ -16,39 +16,62 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LiabilityWeightController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  liability_weight_page: liability_weight_page
-) extends FrontendController(mcc) with I18nSupport {
+  page: liability_weight_page
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Ok(liability_weight_page(LiabilityWeight.form()))
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.liabilityDetails.weight match {
+        case Some(data) => Ok(page(LiabilityWeight.form().fill(data)))
+        case _          => Ok(page(LiabilityWeight.form()))
+      }
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen journeyAction).async { implicit request =>
       LiabilityWeight.form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[LiabilityWeight]) =>
-            BadRequest(liability_weight_page(formWithErrors)),
-          liabilityWeight => Redirect(routes.RegistrationController.displayPage())
+            Future.successful(BadRequest(page(formWithErrors))),
+          liabilityWeight =>
+            updateRegistration(liabilityWeight).map {
+              case Right(_)    => Redirect(routes.RegistrationController.displayPage())
+              case Left(error) => throw error
+            }
         )
+    }
+
+  private def updateRegistration(
+    formData: LiabilityWeight
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      val updatedLiabilityDetails =
+        registration.liabilityDetails.copy(startDate = registration.liabilityDetails.startDate,
+                                           weight = Some(formData)
+        )
+      registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
 }

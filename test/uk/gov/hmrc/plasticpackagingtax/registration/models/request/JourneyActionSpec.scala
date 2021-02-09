@@ -36,10 +36,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  CreateRegistrationRequest,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -99,9 +96,7 @@ class JourneyActionSpec
           Future.successful(Right(None))
         )
         given(
-          mockRegistrationConnector.create(refEq(CreateRegistrationRequest("999")))(
-            any[HeaderCarrier]
-          )
+          mockRegistrationConnector.create(refEq(Registration("999")))(any[HeaderCarrier])
         ).willReturn(Future.successful(Right(Registration("999"))))
 
         await(actionRefiner.invokeBlock(request(Some("999")), responseGenerator)) mustBe Results.Ok

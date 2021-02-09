@@ -27,22 +27,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockJourneyAction extends BeforeAndAfterEach with MockitoSugar {
+trait MockJourneyAction
+    extends MockRegistrationConnector with BeforeAndAfterEach with MockitoSugar {
   self: MockitoSugar with Suite =>
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-
-  val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
   val mockJourneyAction: JourneyAction = new JourneyAction(mockRegistrationConnector)(
     ExecutionContext.global
   )
 
   override protected def beforeEach() {
-
+    super.beforeEach()
     given(mockRegistrationConnector.find(any())(any())).willReturn(
       Future.successful(Right(Option(Registration("001"))))
     )
-    super.beforeEach()
   }
 
 }
