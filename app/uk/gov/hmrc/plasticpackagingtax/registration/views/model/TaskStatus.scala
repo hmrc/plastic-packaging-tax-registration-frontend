@@ -20,24 +20,12 @@ sealed trait TaskStatus
 
 object TaskStatus {
 
+  case object CannotStartYet extends TaskStatus {}
+
   case object NotStarted extends TaskStatus {}
 
   case object InProgress extends TaskStatus {}
 
   case object Completed extends TaskStatus {}
-
-}
-
-sealed trait TaskName
-
-object TaskName {
-
-  case object OrganisationDetails extends TaskName
-
-  case object PlasticPackagingDetails extends TaskName
-
-  case object BusinessContactDetails extends TaskName
-
-  case object ApplicantContactDetails extends TaskName
 
 }

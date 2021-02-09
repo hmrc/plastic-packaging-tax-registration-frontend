@@ -56,6 +56,7 @@ registrationPage.declaration.buttonName = Review Declaration
 task.status.notStarted = Not Started
 task.status.inProgress = In Progress
 task.status.completed = Completed
+task.status.cannotStartYet = Cannot Start Yet
 
 liabilityStartDatePage.sectionHeader = Plastic Packaging Details
 liabilityStartDatePage.title = Liability Start Date

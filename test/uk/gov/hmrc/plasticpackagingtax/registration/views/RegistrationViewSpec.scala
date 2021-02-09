@@ -21,22 +21,21 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  LiabilityDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskName, TaskStatus}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
-  val taskStatuses: Map[TaskName, TaskStatus] = Map(
-    TaskName.OrganisationDetails     -> TaskStatus.Completed,
-    TaskName.PlasticPackagingDetails -> TaskStatus.InProgress,
-    TaskName.BusinessContactDetails  -> TaskStatus.NotStarted
-  )
-
   private val registrationPage: registration_page = instanceOf[registration_page]
 
-  private def createView(): Html = registrationPage(taskStatuses)
+  private def createView(registration: Registration = aRegistration()): Html =
+    registrationPage(registration)
 
   "Registration Page view" should {
 
@@ -72,6 +71,13 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'list of tasks' section" in {
+      val view: Html = createView(
+        aRegistration(
+          withLiabilityDetails(
+            LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+          )
+        )
+      )
 
       val taskListElement       = view.getElementsByClass("app-task-list").get(0)
       val taskListElementHeader = taskListElement.getElementsByClass("app-task-list__section")
@@ -113,7 +119,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
       validateTask(3,
                    "registrationPage.applicantContactDetails",
                    "registrationPage.applicantContactInfo",
-                   "task.status.notStarted",
+                   "task.status.cannotStartYet",
                    routes.RegistrationController.displayPage()
       )
     }

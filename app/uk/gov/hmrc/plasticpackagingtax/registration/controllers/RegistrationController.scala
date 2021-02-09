@@ -21,7 +21,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskName, TaskStatus}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -34,15 +33,9 @@ class RegistrationController @Inject() (
   registration_page: registration_page
 ) extends FrontendController(mcc) with I18nSupport {
 
-  val taskStatuses: Map[TaskName, TaskStatus] = Map(
-    TaskName.OrganisationDetails     -> TaskStatus.Completed,
-    TaskName.PlasticPackagingDetails -> TaskStatus.InProgress,
-    TaskName.BusinessContactDetails  -> TaskStatus.NotStarted
-  )
-
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(registration_page(taskStatuses))
+      Ok(registration_page(request.registration))
     }
 
 }

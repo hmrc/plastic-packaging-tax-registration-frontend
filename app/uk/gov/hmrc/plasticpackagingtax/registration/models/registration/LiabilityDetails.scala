@@ -18,8 +18,21 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
-case class LiabilityDetails(weight: Option[LiabilityWeight] = None, startDate: Option[Date] = None)
+case class LiabilityDetails(
+  weight: Option[LiabilityWeight] = None,
+  startDate: Option[Date] = None
+) {
+  def isCompleted: Boolean  = weight.isDefined && startDate.isDefined
+  def isInProgress: Boolean = weight.isDefined || startDate.isDefined
+
+  def status: TaskStatus =
+    if (isCompleted) TaskStatus.Completed
+    else if (isInProgress) TaskStatus.InProgress
+    else TaskStatus.NotStarted
+
+}
 
 object LiabilityDetails {
   implicit val format: OFormat[LiabilityDetails] = Json.format[LiabilityDetails]
