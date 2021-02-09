@@ -75,53 +75,77 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
         aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
-          )
+          ),
+          withIncorpJourneyId(Some("123"))
         )
       )
 
-      val taskListElement       = view.getElementsByClass("app-task-list").get(0)
-      val taskListElementHeader = taskListElement.getElementsByClass("app-task-list__section")
-      val taskItems             = taskListElement.getElementsByClass("app-task-list__item")
-      taskItems must haveSize(4)
-
-      def validateTask(
-        index: Int,
-        title: String,
-        description: String,
-        tagStatus: String,
-        href: Call
-      ) = {
-        taskListElementHeader.get(index).text() must include(messages(title))
-        val taskItem = taskItems.get(index)
-        taskItem.text must include(messages(description))
-        taskItem.getElementsByClass("govuk-tag").text() must include(messages(tagStatus))
-        taskItem.getElementsByClass("govuk-link").get(0) must haveHref(href)
-      }
-
-      validateTask(0,
+      validateTask(view,
+                   0,
                    "registrationPage.organisationDetails",
                    "registrationPage.businessInfo",
                    "task.status.completed",
                    routes.HonestyDeclarationController.displayPage()
       )
-      validateTask(1,
+      validateTask(view,
+                   1,
                    "registrationPage.plasticPackagingDetails",
                    "registrationPage.plasticPackagingInfo",
                    "task.status.inProgress",
                    routes.LiabilityStartDateController.displayPage()
       )
-      validateTask(2,
+      validateTask(view,
+                   2,
                    "registrationPage.businessContactDetails",
                    "registrationPage.businessContactInfo",
                    "task.status.notStarted",
                    routes.RegistrationController.displayPage()
       )
-      validateTask(3,
+      validateTask(view,
+                   3,
                    "registrationPage.applicantContactDetails",
                    "registrationPage.applicantContactInfo",
                    "task.status.cannotStartYet",
                    routes.RegistrationController.displayPage()
       )
+    }
+
+    "display 'organisation details' section as NotStarted when incorpId not exist" in {
+      val view: Html = createView(
+        aRegistration(
+          withLiabilityDetails(
+            LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+          ),
+          withIncorpJourneyId(None)
+        )
+      )
+
+      validateTask(view,
+                   0,
+                   "registrationPage.organisationDetails",
+                   "registrationPage.businessInfo",
+                   "task.status.notStarted",
+                   routes.HonestyDeclarationController.displayPage()
+      )
+    }
+
+    def validateTask(
+      view: Html,
+      index: Int,
+      title: String,
+      description: String,
+      tagStatus: String,
+      href: Call
+    ) = {
+      val taskListElement       = view.getElementsByClass("app-task-list").get(0)
+      val taskListElementHeader = taskListElement.getElementsByClass("app-task-list__section")
+      val taskItems             = taskListElement.getElementsByClass("app-task-list__item")
+
+      taskListElementHeader.get(index).text() must include(messages(title))
+      val taskItem = taskItems.get(index)
+      taskItem.text must include(messages(description))
+      taskItem.getElementsByClass("govuk-tag").text() must include(messages(tagStatus))
+      taskItem.getElementsByClass("govuk-link").get(0) must haveHref(href)
     }
 
     "review declaration section" in {

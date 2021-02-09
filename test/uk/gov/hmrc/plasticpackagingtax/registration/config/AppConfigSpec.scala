@@ -30,6 +30,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       """
         |microservice.services.incorporated-entity-identification-frontend.host=localhost
         |microservice.services.incorporated-entity-identification-frontend.port=9718
+        |microservice.services.plastic-packaging-tax-registration.host=localhost
+        |microservice.services.plastic-packaging-tax-registration.port=8502
       """.stripMargin
     )
 
@@ -43,10 +45,14 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   "The config" should {
 
-    "have 'createIncorpIdJourneyUrl' defined" in {
-      validAppConfig.createIncorpIdJourneyUrl must be(
+    "have 'incorpJourneyUrl' defined" in {
+      validAppConfig.incorpJourneyUrl must be(
         "http://localhost:9718/incorporated-entity-identification/api/journey"
       )
+    }
+
+    "have 'pptRegistrationUrl' defined" in {
+      validAppConfig.pptRegistrationUrl must be("http://localhost:8502/registrations")
     }
   }
 }
