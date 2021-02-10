@@ -16,13 +16,13 @@
 
 package builders
 
-import java.util.UUID
-
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   Registration
 }
+
+import java.util.UUID
 
 //noinspection ScalaStyle
 trait RegistrationBuilder {
@@ -43,8 +43,8 @@ trait RegistrationBuilder {
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)
 
-  def withIncorpJourneyId(incorpJourneyId: String): RegistrationModifier =
-    _.copy(incorpJourneyId = Some(incorpJourneyId))
+  def withIncorpJourneyId(incorpJourneyId: Option[String]): RegistrationModifier =
+    _.copy(incorpJourneyId = incorpJourneyId)
 
   def withLiabilityDetails(liabilityDetails: LiabilityDetails): RegistrationModifier =
     _.copy(liabilityDetails = liabilityDetails)

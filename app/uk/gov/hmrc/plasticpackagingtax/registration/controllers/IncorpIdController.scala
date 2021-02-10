@@ -16,26 +16,35 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class IncorpIdController @Inject() (authenticate: AuthAction, mcc: MessagesControllerComponents)(
-  implicit
-  appConfig: AppConfig,
-  val executionContext: ExecutionContext
-) extends FrontendController(mcc) with I18nSupport {
+class IncorpIdController @Inject() (
+  authenticate: AuthAction,
+  journeyAction: JourneyAction,
+  override val registrationConnector: RegistrationConnector,
+  mcc: MessagesControllerComponents
+)(implicit appConfig: AppConfig, val executionContext: ExecutionContext)
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def incorpIdCallback(journeyId: String): Action[AnyContent] =
-    authenticate {
+    (authenticate andThen journeyAction).async {
       implicit request =>
-        Redirect(routes.RegistrationController.displayPage())
+        update(model => model.copy(incorpJourneyId = Some(journeyId)))
+          .map {
+            case Right(_)    => Redirect(routes.RegistrationController.displayPage())
+            case Left(error) => throw error
+          }
     }
 
 }

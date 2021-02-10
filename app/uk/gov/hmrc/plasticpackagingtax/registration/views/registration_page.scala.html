@@ -68,7 +68,8 @@
 
         <li>
             @task(1, "registrationPage.organisationDetails", "registrationPage.businessInfo",
-                pptRoutes.HonestyDeclarationController.displayPage(), TaskStatus.Completed)
+                pptRoutes.HonestyDeclarationController.displayPage(),
+            {if (registration.incorpJourneyId.nonEmpty) {TaskStatus.Completed} else {TaskStatus.NotStarted}})
         </li>
         <li>
             @task(2, "registrationPage.plasticPackagingDetails", "registrationPage.plasticPackagingInfo",

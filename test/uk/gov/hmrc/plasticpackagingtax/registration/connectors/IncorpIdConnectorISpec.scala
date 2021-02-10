@@ -90,4 +90,5 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
       }
     }
   }
+
 }
