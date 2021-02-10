@@ -121,4 +121,21 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("year-id").attr("value") mustBe "2022"
     }
   }
+
+  "display error" when {
+
+    "Start date is not entered" in {
+
+      val form = LiabilityStartDate
+        .form()
+        .fillAndValidate(Date(None, None, None))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("liability-start-date", "day cannot be empty")
+      view must haveGovukFieldError("liability-start-date", "month cannot be empty")
+      view must haveGovukFieldError("liability-start-date", "year cannot be empty")
+    }
+  }
 }

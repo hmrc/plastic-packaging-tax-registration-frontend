@@ -101,4 +101,19 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("totalKg-id").attr("value") mustBe "1000"
     }
   }
+
+  "display error" when {
+
+    "weight is not entered" in {
+
+      val form = LiabilityWeight
+        .form()
+        .fillAndValidate(LiabilityWeight(None))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("totalKg-id", "Weight cannot be empty")
+    }
+  }
 }

@@ -8,6 +8,7 @@ title.withSection.format={0} - {1} - {2} - GOV.UK
 
 site.back = Back
 site.button.continue = Save and Continue
+site.error.summary.title = There is a problem
 
 date.day = Day
 date.month = Month

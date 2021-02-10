@@ -16,10 +16,10 @@
 
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 
@@ -30,6 +30,7 @@
   govukButton: GovukButton,
   govukDateInput : GovukDateInput,
   sectionHeader: sectionHeader,
+  errorSummary: errorSummary
 )
 
 @(form: Form[Date])(implicit request: Request[_], messages: Messages)
@@ -46,6 +47,7 @@
 @govukLayout(
   title = Title("liabilityStartDatePage.title"),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage()))) {
+    @errorSummary(form.errors)
 
     @sectionHeader(messages("liabilityStartDatePage.sectionHeader"))
 
