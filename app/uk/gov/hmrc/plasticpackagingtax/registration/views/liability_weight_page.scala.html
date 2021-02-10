@@ -20,10 +20,11 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.govukFieldset
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 
 
 @this(
@@ -33,9 +34,9 @@
   govukInput: GovukInput,
   sectionHeader: sectionHeader,
   govukFieldset: govukFieldset,
+  errorSummary: errorSummary,
   formHelper: FormWithCSRF
 )
-
 @(form: Form[LiabilityWeight])(implicit request: Request[_], messages: Messages)
 
 @totalWeightField = @{form("totalKg")}
@@ -48,17 +49,20 @@
 @govukLayout(
   title = Title("liabilityWeightPage.title"),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityStartDateController.displayPage()))) {
+  @errorSummary(form.errors)
+
   @sectionHeader(messages("liabilityWeightPage.sectionHeader"))
+
   @formHelper(action = pptRoutes.LiabilityWeightController.submit(), 'autoComplete -> "off") {
     @govukInput(
     Input(
-        id = s"${totalWeightField.name}-id",
+        id = s"${totalWeightField.name}",
         name = totalWeightField.name,
         value = totalWeightField.value,
         hint = Some(Hint(content = HtmlContent(Html( messages("liabilityWeightPage.hint"))))),
         label = Label(
             isPageHeading = true,
-            classes = s"govuk-label--l ${if(totalWeightField.hasErrors) "govuk-input--error"}",
+            classes = s"govuk-label--l",
             content = Text(messages("liabilityWeightPage.question"))),
             errorMessage = errorMessages)
         )

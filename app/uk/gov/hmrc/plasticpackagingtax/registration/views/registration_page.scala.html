@@ -53,7 +53,7 @@
 @getTag(status: TaskStatus) = {
     @status match {
         case TaskStatus.Completed  => {@govukTag(Tag(content = Text(messages("task.status.completed")),  classes = "govuk-tag app-task-list__task-completed"))}
-        case TaskStatus.InProgress => {@govukTag(Tag(content = Text(messages("task.status.inProgress")), classes = "govuk-tag govuk-tag--to-do app-task-list__task-completed govuk-tag--red"))}
+        case TaskStatus.InProgress => {@govukTag(Tag(content = Text(messages("task.status.inProgress")), classes = "govuk-tag govuk-tag--to-do app-task-list__task-completed govuk-tag--blue"))}
         case TaskStatus.NotStarted => {@govukTag(Tag(content = Text(messages("task.status.notStarted")), classes = "govuk-tag govuk-tag--to-do app-task-list__task-completed govuk-tag--grey"))}
         case _                     => {@govukTag(Tag(content = Text(messages("task.status.cannotStartYet")), classes = "govuk-tag govuk-tag--to-do app-task-list__task-completed govuk-tag--grey"))}
     }
