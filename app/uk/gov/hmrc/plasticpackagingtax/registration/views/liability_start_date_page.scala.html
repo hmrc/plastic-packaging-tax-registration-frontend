@@ -65,21 +65,21 @@
                 )),
                 items = Seq(
                     InputItem(
-                        id = s"${dayField.name}-id",
+                        id = s"${dayField.name}",
                         name = dayField.name,
                         label = Some(messages("date.day")),
                         value = dayField.value,
                         classes = s"govuk-input--width-2 ${if( dayField.hasErrors) "govuk-input--error"}"
                     ),
                     InputItem(
-                        id = s"${monthField.name}-id",
+                        id = s"${monthField.name}",
                         name = monthField.name,
                         label = Some(messages("date.month")),
                         value = monthField.value,
                         classes = s"govuk-input--width-2 ${if( monthField.hasErrors) "govuk-input--error"}"
                     ),
                     InputItem(
-                        id = s"${yearField.name}-id",
+                        id = s"${yearField.name}",
                         name = yearField.name,
                         label = Some(messages("date.year")),
                         value = yearField.value,

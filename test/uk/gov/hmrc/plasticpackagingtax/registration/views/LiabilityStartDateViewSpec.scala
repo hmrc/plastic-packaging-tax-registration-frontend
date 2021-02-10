@@ -116,9 +116,9 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
         .fill(aRegistration().liabilityDetails.startDate.get)
       val view = createView(form)
 
-      view.getElementById("day-id").attr("value") mustBe "1"
-      view.getElementById("month-id").attr("value") mustBe "4"
-      view.getElementById("year-id").attr("value") mustBe "2022"
+      view.getElementById("day").attr("value") mustBe "1"
+      view.getElementById("month").attr("value") mustBe "4"
+      view.getElementById("year").attr("value") mustBe "2022"
     }
   }
 

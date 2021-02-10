@@ -56,7 +56,7 @@
   @formHelper(action = pptRoutes.LiabilityWeightController.submit(), 'autoComplete -> "off") {
     @govukInput(
     Input(
-        id = s"${totalWeightField.name}-id",
+        id = s"${totalWeightField.name}",
         name = totalWeightField.name,
         value = totalWeightField.value,
         hint = Some(Hint(content = HtmlContent(Html( messages("liabilityWeightPage.hint"))))),

@@ -67,19 +67,19 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display liability weight question" in {
 
-      view.getElementsByAttributeValueMatching("for", "totalKg-id").text() must include(
+      view.getElementsByAttributeValueMatching("for", "totalKg").text() must include(
         messages("liabilityWeightPage.question")
       )
     }
 
     "display question hint" in {
 
-      view.getElementById("totalKg-id-hint") must containMessage("liabilityWeightPage.hint")
+      view.getElementById("totalKg-hint") must containMessage("liabilityWeightPage.hint")
     }
 
     "display total weight input box" in {
 
-      view must containElementWithID("totalKg-id")
+      view must containElementWithID("totalKg")
     }
 
     "display 'Continue' button" in {
@@ -98,7 +98,7 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
         .fill(aRegistration().liabilityDetails.weight.get)
       val view = createView(form)
 
-      view.getElementById("totalKg-id").attr("value") mustBe "1000"
+      view.getElementById("totalKg").attr("value") mustBe "1000"
     }
   }
 
@@ -113,7 +113,7 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg-id", "Weight cannot be empty")
+      view must haveGovukFieldError("totalKg", "Weight cannot be empty")
     }
   }
 }
