@@ -42,12 +42,14 @@ trait ControllerSpec
 
   implicit val config: AppConfig = mock[AppConfig]
 
-  protected def viewOf(result: Future[Result]) = Html(contentAsString(result))
+  protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
   protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
-    FakeRequest("POST", "")
+    postRequest
       .withJsonBody(body)
       .withCSRFToken
+
+  protected def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
   def getRequest(): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withCSRFToken

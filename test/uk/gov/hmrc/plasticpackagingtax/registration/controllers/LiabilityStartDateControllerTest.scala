@@ -26,7 +26,6 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents

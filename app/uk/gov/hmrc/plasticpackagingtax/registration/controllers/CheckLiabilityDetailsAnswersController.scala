@@ -18,33 +18,30 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 @Singleton
-class IncorpIdController @Inject() (
+class CheckLiabilityDetailsAnswersController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents
-)(implicit val executionContext: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+  mcc: MessagesControllerComponents,
+  page: check_liability_details_answers_page
+) extends FrontendController(mcc) with I18nSupport {
 
-  def incorpIdCallback(journeyId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async {
-      implicit request =>
-        update(model => model.copy(incorpJourneyId = Some(journeyId)))
-          .map {
-            case Right(_)    => Redirect(routes.RegistrationController.displayPage())
-            case Left(error) => throw error
-          }
+  def displayPage(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok(page(request.registration))
+    }
+
+  def submit(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      Future.successful(Redirect(routes.RegistrationController.displayPage()))
     }
 
 }

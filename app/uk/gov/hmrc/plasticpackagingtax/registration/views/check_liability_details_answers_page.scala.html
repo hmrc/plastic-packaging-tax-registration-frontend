@@ -1,0 +1,91 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.RegistrationController
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.LiabilityStartDateController
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.LiabilityWeightController
+@import java.time.format.DateTimeFormatter
+
+@this(
+  govukLayout: main_template,
+  govukButton: GovukButton,
+  govukSummaryList: GovukSummaryList,
+  pageTitle: pageTitle,
+)
+@(registration: Registration)(implicit request: Request[_], messages: Messages)
+
+@govukLayout(
+  title = Title("checkLiabilityDetailsAnswers.title"),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage()))) {
+
+    @pageTitle(text = messages("checkLiabilityDetailsAnswers.title"))
+
+    @govukSummaryList(
+        SummaryList(
+            rows = Seq(
+                SummaryListRow(
+                    key = Key(
+                        content = Text(messages("checkLiabilityDetailsAnswers.date"))
+                        ),
+                    value = Value(
+                    content = Text(registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
+                        ),
+                    actions = Some(Actions(
+                        items = Seq(
+                            ActionItem(
+                                href = LiabilityStartDateController.displayPage().url,
+                                content = Text(messages("site.link.change"))
+                            )
+                        )
+                    ))
+                ),
+                SummaryListRow(
+                    key = Key(
+                        content = Text(messages("checkLiabilityDetailsAnswers.weight"))
+                        ),
+                    value = Value(
+                        content = Text(registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse(""))
+                        ),
+                    actions = Some(Actions(
+                        items = Seq(
+                            ActionItem(
+                                href = LiabilityWeightController.displayPage().url,
+                                content = Text(messages("site.link.change"))
+                                )
+                            )
+                        ))
+                    )
+
+            ).filterNot(_.value.content == Empty)
+        )
+    )
+
+    @govukButton(
+        Button(
+            href = Some(RegistrationController.displayPage().url),
+            isStartButton = false,
+            content = Text(messages("site.button.continue"))
+        )
+    )
+  }
+)

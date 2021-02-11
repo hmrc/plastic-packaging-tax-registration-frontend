@@ -16,39 +16,41 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import akka.http.scaladsl.model.StatusCodes.OK
+import controllers.Assets.OK
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.BDDMockito.`given`
+import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class RegistrationControllerSpec extends ControllerSpec {
-
-  private val mcc              = stubMessagesControllerComponents()
-  private val registrationPage = mock[registration_page]
+class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
+  private val page = mock[check_liability_details_answers_page]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new RegistrationController(authenticate = mockAuthAction,
-                               mockJourneyAction,
-                               mcc = mcc,
-                               registration_page = registrationPage
+    new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
+                                               mockJourneyAction,
+                                               mcc = mcc,
+                                               page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(registrationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    val registration = aRegistration()
+    mockRegistrationFind(registration)
+    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(registrationPage)
+    reset(page)
     super.afterEach()
   }
 
-  "Registration Controller" should {
+  "Check liability details answers Controller" should {
 
     "return 200" when {
 
@@ -56,14 +58,11 @@ class RegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         val result = controller.displayPage()(getRequest())
 
-        status(result) mustBe OK.intValue
+        status(result) mustBe OK
       }
     }
-  }
 
-  "Registration Controller" should {
-
-    "return error" when {
+    "return an error" when {
 
       "user is not authorised" in {
         unAuthorizedUser()
@@ -72,5 +71,16 @@ class RegistrationControllerSpec extends ControllerSpec {
         intercept[RuntimeException](status(result))
       }
     }
+
+    "redirects to registration page" when {
+      "user proceed" in {
+        authorizedUser()
+
+        val result = controller.submit()(postRequest)
+
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+      }
+    }
   }
+
 }

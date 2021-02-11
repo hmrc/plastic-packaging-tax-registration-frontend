@@ -33,7 +33,6 @@ import scala.concurrent.Future
 
 class HonestyDeclarationControllerSpec extends ControllerSpec {
   private val page                  = mock[honesty_declaration]
-  private val fakeRequest           = FakeRequest("GET", "/")
   private val mcc                   = stubMessagesControllerComponents()
   private val mockIncorpIdConnector = mock[IncorpIdConnector]
 
@@ -61,7 +60,7 @@ class HonestyDeclarationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
-        val result = controller.displayPage()(fakeRequest)
+        val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK.intValue
       }
@@ -71,7 +70,7 @@ class HonestyDeclarationControllerSpec extends ControllerSpec {
 
       "user is not authorised" in {
         unAuthorizedUser()
-        val result = controller.displayPage()(fakeRequest)
+        val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
       }

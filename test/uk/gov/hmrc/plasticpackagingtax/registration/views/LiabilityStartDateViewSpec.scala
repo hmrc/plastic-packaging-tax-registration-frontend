@@ -21,11 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import base.unit.UnitViewSpec
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
-  Date,
-  LiabilityStartDate,
-  LiabilityWeight
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 

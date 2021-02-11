@@ -57,7 +57,7 @@ class LiabilityWeightController @Inject() (
             Future.successful(BadRequest(page(formWithErrors))),
           liabilityWeight =>
             updateRegistration(liabilityWeight).map {
-              case Right(_)    => Redirect(routes.RegistrationController.displayPage())
+              case Right(_)    => Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
               case Left(error) => throw error
             }
         )

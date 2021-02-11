@@ -164,6 +164,12 @@ const liabilityWeight = () => {
     }
 }
 
+const liabilityCheckYourAnswers = () => {
+    if (currentPageIs('/plastic-packaging-tax/check-liability-details-answers')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
@@ -185,4 +191,5 @@ const completeJourney = () => {
     // Liability Details
     liabilityStartDate()
     liabilityWeight()
+    liabilityCheckYourAnswers()
 }

@@ -19,38 +19,33 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import controllers.Assets.SEE_OTHER
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.verify
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import scala.concurrent.Future
-
 class IncorpIdControllerSpec extends ControllerSpec {
 
-  private val fakeRequest = FakeRequest("GET", "/")
-  private val mcc         = stubMessagesControllerComponents()
+  private val mcc          = stubMessagesControllerComponents()
+  private val registration = aRegistration()
 
   private val controller =
     new IncorpIdController(authenticate = mockAuthAction,
                            mockJourneyAction,
                            mockRegistrationConnector,
                            mcc
-    )(config, ec)
+    )(ec)
 
   "incorpIdCallback" should {
 
     "redirect to the registration page" in {
       authorizedUser()
-      given(mockRegistrationConnector.update(any())(any())).willReturn(
-        Future(Right(Registration("uuid-id")))
-      )
-      val result = controller.incorpIdCallback("uuid-id")(fakeRequest)
+      mockRegistrationUpdate(registration)
+
+      val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
@@ -58,22 +53,19 @@ class IncorpIdControllerSpec extends ControllerSpec {
 
     "update registration with journey id" in {
       authorizedUser()
-      given(mockRegistrationConnector.update(any())(any())).willReturn(
-        Future(Right(Registration("uuid-id")))
-      )
-      await(controller.incorpIdCallback("uuid-id")(fakeRequest))
+      mockRegistrationUpdate(registration)
 
-      getRegistration.incorpJourneyId mustBe Some("uuid-id")
+      await(controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest()))
+
+      getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
     }
 
     "throw exception when journey id update fails" in {
       authorizedUser()
-      given(mockRegistrationConnector.update(any())(any())).willReturn(
-        Future(Left(DownstreamServiceError("error", new RuntimeException())))
-      )
+      mockRegistrationFailure()
 
       intercept[DownstreamServiceError] {
-        await(controller.incorpIdCallback("uuid-id")(fakeRequest))
+        await(controller.incorpIdCallback("uuid-id")(getRequest()))
       }
     }
   }

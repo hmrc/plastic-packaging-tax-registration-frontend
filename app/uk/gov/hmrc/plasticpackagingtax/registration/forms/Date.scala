@@ -24,9 +24,9 @@ import java.time.LocalDate
 
 case class Date(day: Option[Int], month: Option[Int], year: Option[Int]) {
 
-  override def toString: String =
-    LocalDate.of(year.getOrElse(0), month.getOrElse(0), day.getOrElse(0)).toString
+  override def toString: String = asLocalDate.toString
 
+  def asLocalDate: LocalDate = LocalDate.of(year.getOrElse(0), month.getOrElse(0), day.getOrElse(0))
 }
 
 object Date {

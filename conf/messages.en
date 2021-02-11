@@ -9,6 +9,7 @@ title.withSection.format={0} - {1} - {2} - GOV.UK
 site.back = Back
 site.button.continue = Save and Continue
 site.error.summary.title = There is a problem
+site.link.change = Change
 
 date.day = Day
 date.month = Month
@@ -72,3 +73,7 @@ liabilityWeightPage.hint = This includes all manufactured, imported and converte
 liabilityWeightPage.sectionHeader = Plastic Packaging Details
 liabilityWeight.outOfRange.error = Weight out of range
 liabilityWeight.empty.error = Weight cannot be empty
+
+checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
+checkLiabilityDetailsAnswers.date = Liability Start Date
+checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight

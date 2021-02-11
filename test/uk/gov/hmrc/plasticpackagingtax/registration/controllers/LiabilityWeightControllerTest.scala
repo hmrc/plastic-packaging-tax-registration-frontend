@@ -87,7 +87,9 @@ class LiabilityWeightControllerTest extends ControllerSpec {
           Date(Some(1), Some(4), Some(2022))
         )
 
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          routes.CheckLiabilityDetailsAnswersController.displayPage().url
+        )
       }
     }
 

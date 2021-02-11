@@ -21,7 +21,6 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.start_page
@@ -29,10 +28,9 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class StartControllerSpec extends ControllerSpec {
 
-  private val fakeRequest = FakeRequest("GET", "/")
-  private val mcc         = stubMessagesControllerComponents()
-  private val startPage   = mock[start_page]
-  private val controller  = new StartController(mcc, startPage)
+  private val mcc        = stubMessagesControllerComponents()
+  private val startPage  = mock[start_page]
+  private val controller = new StartController(mcc, startPage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -50,7 +48,7 @@ class StartControllerSpec extends ControllerSpec {
 
       "display page method is invoked" in {
 
-        val result = controller.displayStartPage()(fakeRequest)
+        val result = controller.displayStartPage()(getRequest())
 
         status(result) mustBe OK.intValue
       }
