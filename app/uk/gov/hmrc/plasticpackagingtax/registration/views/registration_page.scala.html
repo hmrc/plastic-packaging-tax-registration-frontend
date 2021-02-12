@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTag
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskStatus, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskStatus, Title, TaskSection}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
@@ -35,19 +35,25 @@
 
 @(registration: Registration)(implicit request: Request[_], messages: Messages)
 
-@task(index: Int, title: String, linkText: String, linkCall: Call, status: TaskStatus) = {
+@task(index: Int, title: String, sections: Set[TaskSection]) = {
     <h2 class="app-task-list__section">
         <span class="app-task-list__section-number">@{index}.</span>
         @messages(title)
     </h2>
-    <div class="app-task-list__items no-item-padding">
-        <div class="app-task-list__item">
-            <span class='app-task-list__task-name'>
-                @link(text = messages(linkText), call = linkCall)
-            </span>
-            @getTag(status)
-        </div>
-    </div>
+    <ul class="app-task-list__items">
+        @for(section <- sections) {
+            <li class="app-task-list__item">
+                <span class='app-task-list__task-name'>
+                  @if(section.showLink) {
+                      @link(text = messages(section.title), call = section.link)
+                  } else {
+                      @messages(section.title)
+                  }
+                </span>
+                @getTag(section.status)
+            </li>
+        }
+    </ul>
 }
 
 @getTag(status: TaskStatus) = {
@@ -64,35 +70,41 @@
 
     @pageTitle(text = messages("registrationPage.title"))
 
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application @if(registration.isRegistrationComplete) { complete } else { incomplete }</h2>
+    @paragraphBody(message = messages("registrationPage.completedSections", registration.numberOfCompletedSections), classes = "govuk-body govuk-!-margin-bottom-7")
+
     <ol class="app-task-list">
 
         <li>
-            @task(1, "registrationPage.organisationDetails", "registrationPage.businessInfo",
-                pptRoutes.HonestyDeclarationController.displayPage(),
-            {if (registration.incorpJourneyId.nonEmpty) {TaskStatus.Completed} else {TaskStatus.NotStarted}})
+            @task(1, "registrationPage.prepareApplication", Set(
+                TaskSection(
+                    title  = "registrationPage.companyInformation",
+                    link   = pptRoutes.HonestyDeclarationController.displayPage(),
+                    status = registration.companyDetailsStatus
+                ),
+                TaskSection(
+                    title  = "registrationPage.primaryContactDetails",
+                    link   = pptRoutes.RegistrationController.displayPage(),
+                    showLink = registration.isCompanyDetailsComplete,
+                    status = registration.primaryContactDetailsStatus
+                ),
+                TaskSection(
+                    title  = "registrationPage.liabilityDetails",
+                    link   = pptRoutes.LiabilityStartDateController.displayPage(),
+                    showLink = registration.isCompanyDetailsComplete,
+                    status = registration.liabilityDetailsStatus
+                )
+            ))
         </li>
         <li>
-            @task(2, "registrationPage.plasticPackagingDetails", "registrationPage.plasticPackagingInfo",
-                pptRoutes.LiabilityStartDateController.displayPage(), registration.liabilityDetails.status)
+            @task(2, "registrationPage.apply", Set(
+                TaskSection(
+                    title  = "registrationPage.checkAndSubmit",
+                    link   = pptRoutes.RegistrationController.displayPage(),
+                    showLink = registration.isCheckAndSubmitComplete,
+                    status = registration.checkAndSubmitStatus
+                )
+            ))
         </li>
-        <li>
-            @task(3, "registrationPage.businessContactDetails", "registrationPage.businessContactInfo",
-                pptRoutes.RegistrationController.displayPage(), TaskStatus.NotStarted)
-        </li>
-        <li>
-            @task(4, "registrationPage.applicantContactDetails", "registrationPage.applicantContactInfo",
-                pptRoutes.RegistrationController.displayPage(), TaskStatus.CannotStartYet)
-        </li>
-
     </ol>
-
-    <h2 id="review-declaration" class="govuk-heading-m">@messages("registrationPage.declaration.header")</h2>
-    @paragraphBody(message = messages("registrationPage.declaration.description"), id = Some("review-declaration-element"))
-    @govukButton(
-        Button(
-            href = Some(""),
-            isStartButton = true,
-            content = Text(messages("registrationPage.declaration.buttonName"))
-        )
-    )
 }
