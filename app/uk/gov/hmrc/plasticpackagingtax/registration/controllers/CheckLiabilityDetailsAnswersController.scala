@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
@@ -40,7 +40,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    (authenticate andThen journeyAction).async { _ =>
       Future.successful(Redirect(routes.RegistrationController.displayPage()))
     }
 

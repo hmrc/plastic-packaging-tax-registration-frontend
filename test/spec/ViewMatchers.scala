@@ -19,8 +19,8 @@ package spec
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import org.scalatest.MustMatchers
 import org.scalatest.matchers._
+import org.scalatest.matchers.must.Matchers
 import play.api.i18n.Messages
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{contentAsString, _}
@@ -43,7 +43,7 @@ trait ViewMatchers {
   implicit protected def htmlBodyOf(result: Future[Result]): Document =
     htmlBodyOf(contentAsString(result))
 
-  implicit class PageComplexChecks(document: Document) extends MustMatchers {
+  implicit class PageComplexChecks(document: Document) extends Matchers {
 
     def checkErrorsSummary(): Unit = {
       document.getElementById("error-summary-heading").text() mustBe "error.summary.title"

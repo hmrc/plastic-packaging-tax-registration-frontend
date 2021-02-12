@@ -71,7 +71,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val pptRegistrationUrl: String = s"$pptServiceHost/registrations"
 
-  def getIncorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
+  def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
 }
