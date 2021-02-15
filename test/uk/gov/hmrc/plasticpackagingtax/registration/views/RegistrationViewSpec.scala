@@ -59,6 +59,12 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
     val view: Html = createView()
 
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe true
+
+    }
+
     "display title" in {
 
       view.select("title").text() must include(messages("registrationPage.title"))
