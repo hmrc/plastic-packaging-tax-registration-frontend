@@ -16,7 +16,7 @@
 
 package base.unit
 
-import base.Injector
+import base.{Injector, PptTestData}
 import com.codahale.metrics.SharedMetricRegistries
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -26,14 +26,16 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import spec.ViewMatchers
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 class UnitViewSpec
-    extends AnyWordSpec with MockRegistrationConnector with ViewMatchers with Injector
-    with GuiceOneAppPerSuite {
+    extends AnyWordSpec with MockRegistrationConnector with ViewMatchers with ViewAssertions
+    with Injector with GuiceOneAppPerSuite {
 
   import utils.FakeRequestCSRFSupport._
 
-  implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
+  implicit val request: Request[AnyContent] =
+    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser(), Some("123"))
 
   protected implicit def messages(implicit request: Request[_]): Messages =
     realMessagesApi.preferred(request)

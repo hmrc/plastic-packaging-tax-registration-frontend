@@ -19,11 +19,15 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.siteHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.TimeoutDialogConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.timeoutDialog
 
 @this(
         govukHeader: GovukHeader,
         govukLayout: GovukLayout,
         govukPhaseBanner: GovukPhaseBanner,
+        timeoutDialogConfig: TimeoutDialogConfig,
         govukBackLink: GovukBackLink,
         siteHeader: siteHeader,
         phaseBanner: phaseBanner,
@@ -33,6 +37,8 @@
   backButton: Option[BackButton] = None,
   useCustomContentWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+
+@useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]]}
 
 @head = {
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/application.css")' rel="stylesheet" type="text/css" />
@@ -47,10 +53,18 @@
     <script src='@routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
     <script>window.HMRCFrontend.initAll();</script>
     <script>window.GOVUKFrontend.initAll();</script>
+
+    @if(useTimeoutDialog) {
+        <script src='@routes.Assets.versioned("javascripts/timeoutDialog.js")'> </script>
+    }
 }
 
 @beforeContentBlock = {
     @phaseBanner("alpha")
+
+    @if(useTimeoutDialog) {
+        @timeoutDialog(request.uri, timeoutDialogConfig.timeout, timeoutDialogConfig.countdown)
+    }
 }
 
 @content = {

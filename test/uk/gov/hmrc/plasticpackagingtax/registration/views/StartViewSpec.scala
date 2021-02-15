@@ -18,12 +18,17 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.start_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import utils.FakeRequestCSRFSupport._
 
 @ViewTest
 class StartViewSpec extends UnitViewSpec with Matchers {
+
+  override implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   private val startPage = instanceOf[start_page]
 
@@ -58,6 +63,12 @@ class StartViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view: Html = createView()
+
+    "not contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe false
+
+    }
 
     "display title" in {
 

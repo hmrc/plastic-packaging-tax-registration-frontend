@@ -45,6 +45,12 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     val view                      = createView()
     val viewWithEmptyRegistration = createView(Registration("id"))
 
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe true
+
+    }
+
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(routes.LiabilityWeightController.displayPage())

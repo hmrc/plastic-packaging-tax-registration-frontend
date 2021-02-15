@@ -11,6 +11,11 @@ site.button.continue = Save and Continue
 site.error.summary.title = There is a problem
 site.link.change = Change
 
+timeoutDialog.title = Your session will timeout soon
+timeoutDialog.message = For your security, we will sign you out in
+timeoutDialog.keepAlive.text = Stay signed in
+timeoutDialog.signout.text= Sign out
+
 date.day = Day
 date.month = Month
 date.year = Year

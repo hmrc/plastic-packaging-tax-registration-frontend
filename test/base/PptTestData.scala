@@ -28,7 +28,7 @@ object PptTestData {
 
   val nrsCredentials = Credentials(providerId = "providerId", providerType = "providerType")
 
-  def newUser(externalId: String, pptEnrolmentId: String): SignedInUser =
+  def newUser(externalId: String = "123", pptEnrolmentId: String = "123"): SignedInUser =
     SignedInUser(
       Enrolments(
         Set(
