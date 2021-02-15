@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class Registration(
   id: String,
@@ -29,6 +30,47 @@ case class Registration(
                  incorpJourneyId = this.incorpJourneyId,
                  liabilityDetails = this.liabilityDetails
     )
+
+  def isRegistrationComplete: Boolean =
+    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete && isCheckAndSubmitComplete
+
+  def isCheckAndSubmitComplete: Boolean = checkAndSubmitStatus == TaskStatus.Completed
+
+  def checkAndSubmitStatus: TaskStatus =
+    if (isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete)
+      TaskStatus.NotStarted
+    else
+      TaskStatus.CannotStartYet
+
+  def numberOfCompletedSections: Int =
+    Array(isCompanyDetailsComplete,
+          isLiabilityDetailsComplete,
+          isPrimaryContactDetailsComplete
+    ).count(p => p)
+
+  def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
+
+  def companyDetailsStatus: TaskStatus =
+    if (incorpJourneyId.isEmpty)
+      TaskStatus.NotStarted
+    else
+      TaskStatus.Completed
+
+  def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
+
+  def liabilityDetailsStatus: TaskStatus =
+    if (incorpJourneyId.isEmpty)
+      TaskStatus.CannotStartYet
+    else
+      this.liabilityDetails.status
+
+  def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
+
+  def primaryContactDetailsStatus: TaskStatus =
+    if (incorpJourneyId.isEmpty)
+      TaskStatus.CannotStartYet
+    else
+      TaskStatus.NotStarted
 
 }
 

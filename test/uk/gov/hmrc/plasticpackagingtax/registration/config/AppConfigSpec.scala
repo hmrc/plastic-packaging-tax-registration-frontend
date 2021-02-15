@@ -54,5 +54,17 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     "have 'pptRegistrationUrl' defined" in {
       validAppConfig.pptRegistrationUrl must be("http://localhost:8502/registrations")
     }
+
+    "have 'incorpDetailsUrl' defined" in {
+      validAppConfig.incorpDetailsUrl("someId") must be(
+        "http://localhost:9718/incorporated-entity-identification/api/journey/someId"
+      )
+    }
+
+    "have 'pptRegistrationUrl(...)' defined" in {
+      validAppConfig.pptRegistrationUrl("someId") must be(
+        "http://localhost:8502/registrations/someId"
+      )
+    }
   }
 }
