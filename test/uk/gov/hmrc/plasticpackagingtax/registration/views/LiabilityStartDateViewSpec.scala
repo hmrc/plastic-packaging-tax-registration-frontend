@@ -50,6 +50,12 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
     }
 
+    "display sign out link" in {
+
+      displaySignOutLink(view)
+
+    }
+
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())

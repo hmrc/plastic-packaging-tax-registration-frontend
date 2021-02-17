@@ -17,9 +17,14 @@
 package base.unit
 
 import org.jsoup.nodes.Element
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import spec.ViewMatchers
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
+
 import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
 
-trait ViewAssertions {
+trait ViewAssertions extends ViewMatchers {
 
   def containTimeoutDialogFunction(view: Element) =
     view.getElementById("timeout-dialog") != null &&
@@ -29,5 +34,12 @@ trait ViewAssertions {
             s.getElementsByAttributeValueContaining("src", "/assets/javascripts/timeoutDialog.js")
         )
         .nonEmpty
+
+  def displaySignOutLink(view: Element) = {
+    view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")
+    view.getElementsByClass("hmrc-sign-out-nav__link").first() must haveHref(
+      routes.SignOutController.signOut(SignOutReason.UserAction)
+    )
+  }
 
 }

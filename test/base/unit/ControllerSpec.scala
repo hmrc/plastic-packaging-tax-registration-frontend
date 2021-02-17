@@ -51,7 +51,7 @@ trait ControllerSpec
 
   protected def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
-  def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withCSRFToken
+  def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "").withSession(session).withCSRFToken
 
 }

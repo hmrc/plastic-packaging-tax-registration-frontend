@@ -19,3 +19,6 @@ POST       /liability-weight    uk.gov.hmrc.plasticpackagingtax.registration.con
 
 GET        /check-liability-details-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.displayPage()
 POST       /check-liability-details-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.submit()
+
+GET       /sign-out            uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
+GET       /we-sign-you-out     uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
