@@ -73,9 +73,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
 
-  lazy val exitSurveyBaseUrl = servicesConfig.baseUrl("feedback-frontend")
-
-  lazy val exitSurveyUrl = s"$exitSurveyBaseUrl/feedback/plastic-packaging-tax-registration"
+  lazy val exitSurveyUrl = config.get[String]("urls.exitSurvey")
 
   lazy val govUkUrl = config.get[String]("urls.govUk")
 }
