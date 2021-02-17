@@ -29,5 +29,6 @@
     data-timeout="@{timeout.toSeconds}"
     data-countdown="@{countdown.toSeconds}"
     data-keep-alive-url="@{keepAliveUrl}"
-    data-sign-out-url="@pptRoutes.StartController.displayStartPage().url">
+    data-sign-out-url="@pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction).url"
+    data-timeout-url="@pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.SessionTimeout).url">
 </div>

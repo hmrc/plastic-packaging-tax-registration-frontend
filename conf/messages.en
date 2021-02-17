@@ -10,11 +10,12 @@ site.back = Back
 site.button.continue = Save and Continue
 site.error.summary.title = There is a problem
 site.link.change = Change
+site.backToGovUk = Back to GOV.UK
 
 timeoutDialog.title = Your session will timeout soon
 timeoutDialog.message = For your security, we will sign you out in
 timeoutDialog.keepAlive.text = Stay signed in
-timeoutDialog.signout.text= Sign out
+timeoutDialog.signout.text = Sign out
 
 date.day = Day
 date.month = Month
@@ -78,3 +79,7 @@ liabilityWeight.empty.error = Weight cannot be empty
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
+
+sessionTimout.title = For your security, we signed you out
+sessionTimout.paragraph.saved = We saved your answers.
+sessionTimout.signin.button = Sign in

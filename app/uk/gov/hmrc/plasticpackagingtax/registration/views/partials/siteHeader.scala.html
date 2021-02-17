@@ -14,11 +14,14 @@
  * limitations under the License.
  *@
 
-@import play.api.mvc.Security.AuthenticatedRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.Header
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language
-@import uk.gov.hmrc.plasticpackagingtax.registration._
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+
 
 @this(hmrcHeader: HmrcHeader)
 
@@ -26,8 +29,8 @@
 @()(implicit request: Request[_], messages: Messages)
 
 @signOutHref = @{
-    if (request.isInstanceOf[AuthenticatedRequest[_,_]])
-        None
+    if (request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]])
+        Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction).url)
     else
         None
 }
@@ -35,7 +38,7 @@
 @hmrcHeader(Header(
     homepageUrl = "https://www.gov.uk",
     serviceName = Some(messages("service.name")),
-    serviceUrl = controllers.routes.StartController.displayStartPage.url,
+    serviceUrl = pptRoutes.StartController.displayStartPage.url,
     language = language.En,
     containerClasses = "govuk-width-container",
     signOutHref = signOutHref

@@ -65,6 +65,12 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
     }
 
+    "display sign out link" in {
+
+      displaySignOutLink(view)
+
+    }
+
     "display title" in {
 
       view.select("title").text() must include(messages("registrationPage.title"))

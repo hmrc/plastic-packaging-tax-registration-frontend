@@ -20,7 +20,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 
@@ -29,7 +28,6 @@ import scala.concurrent.{ExecutionContext, Future}
 trait MockJourneyAction
     extends MockRegistrationConnector with BeforeAndAfterEach with MockitoSugar {
   self: MockitoSugar with Suite =>
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
   val mockJourneyAction: JourneyAction = new JourneyAction(mockRegistrationConnector)(
     ExecutionContext.global
