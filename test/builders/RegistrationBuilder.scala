@@ -21,6 +21,7 @@ import java.util.UUID
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
+  PrimaryContactDetails,
   Registration
 }
 
@@ -51,5 +52,13 @@ trait RegistrationBuilder {
 
   def withNoLiabilityDetails(): RegistrationModifier =
     _.copy(liabilityDetails = LiabilityDetails())
+
+  def withPrimaryContactDetails(
+    primaryContactDetails: PrimaryContactDetails
+  ): RegistrationModifier =
+    _.copy(primaryContactDetails = primaryContactDetails)
+
+  def withNoPrimaryContactDetails(): RegistrationModifier =
+    _.copy(primaryContactDetails = PrimaryContactDetails())
 
 }

@@ -136,7 +136,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(prepareApplicationElem, 1) mustBe messages("task.status.notStarted")
           sectionLink(prepareApplicationElem, 1) must haveHref(
-            routes.RegistrationController.displayPage()
+            routes.ContactDetailsFullNameController.displayPage()
           )
 
           sectionName(prepareApplicationElem, 2) mustBe messages(
@@ -195,7 +195,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(prepareApplicationElem, 1) mustBe messages("task.status.notStarted")
           sectionLink(prepareApplicationElem, 1) must haveHref(
-            routes.RegistrationController.displayPage()
+            routes.ContactDetailsFullNameController.displayPage()
           )
 
           sectionName(prepareApplicationElem, 2) mustBe messages(
@@ -260,7 +260,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(prepareApplicationElem, 1) mustBe messages("task.status.completed")
           sectionLink(prepareApplicationElem, 1) must haveHref(
-            routes.RegistrationController.displayPage()
+            routes.ContactDetailsFullNameController.displayPage()
           )
 
           sectionName(prepareApplicationElem, 2) mustBe messages(
