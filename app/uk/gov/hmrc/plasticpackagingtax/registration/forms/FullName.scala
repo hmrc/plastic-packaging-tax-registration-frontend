@@ -18,12 +18,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class FullName(firstName: String, lastName: String)
 
-object FullName {
-  implicit val format = Json.format[FullName]
+object FullName extends CommonFormValidators {
+  implicit val format: OFormat[FullName] = Json.format[FullName]
+
+  val allowedChars: Option[String] = Some(".-'")
 
   private val firstName = "firstName"
 
@@ -32,14 +34,18 @@ object FullName {
   private val mapping = Forms.mapping(
     firstName ->
       text()
-        .verifying(emptyError(firstName), _.trim.nonEmpty)
-        .verifying(lengthError(firstName), name => name.isEmpty || name.length <= 20)
-        .verifying(nonAlphabeticError(firstName), name => name.isEmpty || name.forall(_.isLetter)),
+        .verifying(emptyError(firstName), isNonEmpty)
+        .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 20))
+        .verifying(nonAlphabeticError(firstName),
+                   containsOnlyAlphaAndWhitespacesAnd(_, allowedChars)
+        ),
     lastName ->
       text()
-        .verifying(emptyError(lastName), _.trim.nonEmpty)
-        .verifying(lengthError(lastName), name => name.isEmpty || name.length <= 20)
-        .verifying(nonAlphabeticError(lastName), name => name.isEmpty || name.forall(_.isLetter))
+        .verifying(emptyError(lastName), isNonEmpty)
+        .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 20))
+        .verifying(nonAlphabeticError(lastName),
+                   containsOnlyAlphaAndWhitespacesAnd(_, allowedChars)
+        )
   )(FullName.apply)(FullName.unapply)
 
   def form(): Form[FullName] = Form(mapping)

@@ -22,6 +22,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName.allowedChars
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.full_name_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -116,6 +117,17 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view.getElementById("firstName").attr("value") mustBe "FirstName"
       view.getElementById("lastName").attr("value") mustBe "LastName"
+    }
+
+    "allow whitespace and special chars" in {
+
+      val form = FullName
+        .form()
+        .fill(FullName("First Name " + allowedChars.get, "Last Name " + allowedChars.get))
+      val view = createView(form)
+
+      view.getElementById("firstName").attr("value") mustBe "First Name .-'"
+      view.getElementById("lastName").attr("value") mustBe "Last Name .-'"
     }
   }
 

@@ -98,3 +98,8 @@ primaryContactDetails.fullNamePage.lastName.error.specialCharacters = Enter a la
 sessionTimout.title = For your security, we signed you out
 sessionTimout.paragraph.saved = We saved your answers.
 sessionTimout.signin.button = Sign in
+
+primaryContactDetails.jobTitlePage.title = What is the primary contact's job title?
+primaryContactDetails.jobTitle.empty.error = Enter a job title
+primaryContactDetails.jobTitle.tooLong.error = Job title must be no longer than 155 characters
+primaryContactDetails.jobTitle.nonAlphaChar.error = Enter a job title in the correct format
