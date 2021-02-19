@@ -20,9 +20,9 @@ import base.unit.ControllerSpec
 import controllers.Assets.{BAD_REQUEST, OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
@@ -79,113 +79,124 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       }
     }
 
-    "return 303 (OK)" when {
-      "user submits the contact full name" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
-        val result =
-          controller.submit()(postRequest(Json.toJson(FullName("FirstName", "LastName"))))
-
-        status(result) mustBe SEE_OTHER
-
-        modifiedRegistration.primaryContactDetails.fullName mustBe Some(
-          FullName("FirstName", "LastName")
-        )
-
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-      }
-    }
-
-    "return 400 (BAD_REQUEST)" when {
-      "user does not enter" when {
-        "first name" in {
+    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+      "return 303 (OK) for " + formAction._1 when {
+        "user submits or saves the contact full name" in {
           authorizedUser()
-          val result = controller.submit()(postRequest(Json.toJson(FullName("", "LastName"))))
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate(aRegistration())
 
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "last name" in {
-          authorizedUser()
-          val result = controller.submit()(postRequest(Json.toJson(FullName("FirstName", ""))))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "both first name and last name" in {
-          authorizedUser()
-          val result = controller.submit()(postRequest(Json.toJson(FullName("", ""))))
-
-          status(result) mustBe BAD_REQUEST
-        }
-      }
-
-      "user enters a long" when {
-        "first name" in {
-          authorizedUser()
-          val result = controller.submit()(
-            postRequest(Json.toJson(FullName("averyveryveryveryverylongname", "LastName")))
-          )
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "last name" in {
-          authorizedUser()
-          val result = controller.submit()(
-            postRequest(Json.toJson(FullName("FirstName", "averyveryveryveryverylongname")))
-          )
-
-          status(result) mustBe BAD_REQUEST
-        }
-      }
-
-      "user enters non-alphabetic characters" when {
-        "first name" in {
-          authorizedUser()
-          val result = controller.submit()(
-            postRequest(Json.toJson(FullName("FirstNam807980234£$", "LastName")))
-          )
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "last name" in {
-          authorizedUser()
           val result =
-            controller.submit()(postRequest(Json.toJson(FullName("FirstName", "F!!!m807980234£$"))))
+            controller.submit()(postRequestEncoded(FullName("FirstName", "LastName"), formAction))
 
-          status(result) mustBe BAD_REQUEST
+          status(result) mustBe SEE_OTHER
+
+          modifiedRegistration.primaryContactDetails.fullName mustBe Some(
+            FullName("FirstName", "LastName")
+          )
+
+          formAction match {
+            case _ =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
         }
       }
-    }
 
-    "return an error" when {
+      "return 400 (BAD_REQUEST) for " + formAction._1 when {
+        "user does not enter" when {
+          "first name" in {
+            authorizedUser()
+            val result =
+              controller.submit()(postRequestEncoded(FullName("", "LastName"), formAction))
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
+            status(result) mustBe BAD_REQUEST
+          }
 
-        intercept[RuntimeException](status(result))
+          "last name" in {
+            authorizedUser()
+            val result =
+              controller.submit()(postRequestEncoded(FullName("FirstName", ""), formAction))
+
+            status(result) mustBe BAD_REQUEST
+          }
+
+          "both first name and last name" in {
+            authorizedUser()
+            val result = controller.submit()(postRequestEncoded(FullName("", ""), formAction))
+
+            status(result) mustBe BAD_REQUEST
+          }
+        }
+
+        "user enters a long" when {
+          "first name" in {
+            authorizedUser()
+            val result = controller.submit()(
+              postRequestEncoded(FullName("averyveryveryveryverylongname", "LastName"), formAction)
+            )
+
+            status(result) mustBe BAD_REQUEST
+          }
+
+          "last name" in {
+            authorizedUser()
+            val result = controller.submit()(
+              postRequestEncoded(FullName("FirstName", "averyveryveryveryverylongname"), formAction)
+            )
+
+            status(result) mustBe BAD_REQUEST
+          }
+        }
+
+        "user enters non-alphabetic characters" when {
+          "first name" in {
+            authorizedUser()
+            val result =
+              controller.submit()(
+                postRequestEncoded(FullName("FirstNam807980234£$", "LastName"), formAction)
+              )
+
+            status(result) mustBe BAD_REQUEST
+          }
+
+          "last name" in {
+            authorizedUser()
+            val result =
+              controller.submit()(
+                postRequestEncoded(FullName("FirstName", "F!!!m807980234£$"), formAction)
+              )
+
+            status(result) mustBe BAD_REQUEST
+          }
+        }
       }
 
-      "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationFailure()
-        val result =
-          controller.submit()(postRequest(Json.toJson(FullName("FirstName", "LastName"))))
+      "return an error for " + formAction._1 when {
 
-        intercept[DownstreamServiceError](status(result))
-      }
+        "user is not authorised" in {
+          unAuthorizedUser()
+          val result = controller.displayPage()(getRequest())
 
-      "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
-        mockRegistrationException()
-        val result =
-          controller.submit()(postRequest(Json.toJson(FullName("FirstName", "LastName"))))
+          intercept[RuntimeException](status(result))
+        }
 
-        intercept[RuntimeException](status(result))
+        "user submits form and the registration update fails" in {
+          authorizedUser()
+          mockRegistrationFailure()
+          val result =
+            controller.submit()(postRequestEncoded(FullName("FirstName", "LastName"), formAction))
+
+          intercept[DownstreamServiceError](status(result))
+        }
+
+        "user submits form and a registration update runtime exception occurs" in {
+          authorizedUser()
+          mockRegistrationException()
+          val result =
+            controller.submit()(postRequestEncoded(FullName("FirstName", "LastName"), formAction))
+
+          intercept[RuntimeException](status(result))
+        }
       }
     }
   }

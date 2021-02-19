@@ -21,7 +21,12 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndComeBackLater,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -56,7 +61,11 @@ class ContactDetailsFullNameController @Inject() (
           (formWithErrors: Form[FullName]) => Future.successful(BadRequest(page(formWithErrors))),
           fullName =>
             updateRegistration(fullName).map {
-              case Right(_)    => Redirect(routes.RegistrationController.displayPage())
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue      => Redirect(routes.RegistrationController.displayPage())
+                  case SaveAndComeBackLater => Redirect(routes.RegistrationController.displayPage())
+                }
               case Left(error) => throw error
             }
         )

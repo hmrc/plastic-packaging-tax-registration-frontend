@@ -7,10 +7,11 @@ title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
 site.back = Back
+site.backToGovUk = Back to GOV.UK
 site.button.continue = Save and Continue
+site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 site.link.change = Change
-site.backToGovUk = Back to GOV.UK
 
 timeoutDialog.title = Your session will timeout soon
 timeoutDialog.message = For your security, we will sign you out in

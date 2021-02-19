@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
 
@@ -31,6 +32,7 @@
   govukFieldset: GovukFieldset,
   govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
+  saveButtons: saveButtons,
   errorSummary: errorSummary
 )
 
@@ -49,6 +51,7 @@
         id    = firstNameField.name,
         name  = firstNameField.name,
         value = firstNameField.value,
+        classes = "govuk-!-width-two-thirds",
         errorMessage = firstNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
         label = Label(
             content = Text(messages("primaryContactDetails.fullNamePage.firstName")),
@@ -59,6 +62,7 @@
         id    = lastNameField.name,
         name  = lastNameField.name,
         value = lastNameField.value,
+        classes = "govuk-!-width-two-thirds",
         errorMessage = lastNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
         label = Label(
             content = Text(messages("primaryContactDetails.fullNamePage.lastName")),
@@ -85,6 +89,6 @@
             html = fieldSetBody
         ))
 
-        @govukButton(Button(content = Text(messages("site.button.continue")), attributes = Map("id" -> "submit")))
+        @saveButtons()
     }
 }
