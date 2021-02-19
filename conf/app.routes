@@ -14,11 +14,14 @@ GET        /incorp-id-callback      uk.gov.hmrc.plasticpackagingtax.registration
 GET        /liability-start-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.displayPage()
 POST       /liability-start-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.submit()
 
-GET        /liability-weight    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.displayPage()
-POST       /liability-weight    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.submit()
+GET        /liability-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.displayPage()
+POST       /liability-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.submit()
 
 GET        /check-liability-details-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.displayPage()
 POST       /check-liability-details-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.submit()
 
-GET       /sign-out            uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
-GET       /we-sign-you-out     uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
+GET        /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.displayPage()
+POST       /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.submit()
+
+GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
+GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()

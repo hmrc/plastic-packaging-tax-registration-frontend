@@ -22,6 +22,7 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
@@ -76,7 +77,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       "user proceed" in {
         authorizedUser()
 
-        val result = controller.submit()(postRequest)
+        val result = controller.submit()(postRequest(JsObject.empty))
 
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
       }

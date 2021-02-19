@@ -7,10 +7,11 @@ title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
 site.back = Back
+site.backToGovUk = Back to GOV.UK
 site.button.continue = Save and Continue
+site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 site.link.change = Change
-site.backToGovUk = Back to GOV.UK
 
 timeoutDialog.title = Your session will timeout soon
 timeoutDialog.message = For your security, we will sign you out in
@@ -79,6 +80,20 @@ liabilityWeight.empty.error = Weight cannot be empty
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
+
+primaryContactDetails.sectionHeader = Primary contact details
+
+primaryContactDetails.fullNamePage.title = Who is the primary contact?
+primaryContactDetails.fullNamePage.hint = This is the name of the person who will manage the Plastic Packaging Tax account and submit returns.
+primaryContactDetails.fullNamePage.firstName = First name
+primaryContactDetails.fullNamePage.firstName.error.empty = Enter a first name
+primaryContactDetails.fullNamePage.firstName.error.length = First name cannot be more than 20 characters long
+primaryContactDetails.fullNamePage.firstName.error.specialCharacters = Enter a first name in the correct format
+primaryContactDetails.fullNamePage.lastName = Last name
+primaryContactDetails.fullNamePage.lastName.error.empty = Enter a last name
+primaryContactDetails.fullNamePage.lastName.error.length = Last name cannot be more than 20 characters long
+primaryContactDetails.fullNamePage.lastName.error.specialCharacters = Enter a last name in the correct format
+
 
 sessionTimout.title = For your security, we signed you out
 sessionTimout.paragraph.saved = We saved your answers.

@@ -22,13 +22,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 case class Registration(
   id: String,
   incorpJourneyId: Option[String] = None,
-  liabilityDetails: LiabilityDetails = LiabilityDetails()
+  liabilityDetails: LiabilityDetails = LiabilityDetails(),
+  primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails()
 ) {
 
   def toRegistration: Registration =
     Registration(id = this.id,
                  incorpJourneyId = this.incorpJourneyId,
-                 liabilityDetails = this.liabilityDetails
+                 liabilityDetails = this.liabilityDetails,
+                 primaryContactDetails = this.primaryContactDetails
     )
 
   def isRegistrationComplete: Boolean =
@@ -70,7 +72,7 @@ case class Registration(
     if (incorpJourneyId.isEmpty)
       TaskStatus.CannotStartYet
     else
-      TaskStatus.NotStarted
+      this.primaryContactDetails.status
 
 }
 
