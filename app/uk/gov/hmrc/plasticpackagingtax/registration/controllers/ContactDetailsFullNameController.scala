@@ -65,7 +65,7 @@ class ContactDetailsFullNameController @Inject() (
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     Redirect(routes.ContactDetailsJobTitleController.displayPage())
-                  case SaveAndComeBackLater => Redirect(routes.RegistrationController.displayPage())
+                  case _ => Redirect(routes.RegistrationController.displayPage())
                 }
               case Left(error) => throw error
             }

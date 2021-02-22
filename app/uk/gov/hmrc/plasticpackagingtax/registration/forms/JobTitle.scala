@@ -16,20 +16,19 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
+import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
-import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
 
 case class JobTitle(value: String)
 
 object JobTitle extends CommonFormValidators {
   implicit val format: OFormat[JobTitle] = Json.format[JobTitle]
-
-  val maxLength                      = 155
-  val jobTitle                       = "value"
-  lazy val jobTitleEmptyError        = "primaryContactDetails.jobTitle.empty.error"
-  lazy val jobTitleTooLongError      = "primaryContactDetails.jobTitle.tooLong.error"
-  lazy val jobTitleNonAlphaCharError = "primaryContactDetails.jobTitle.nonAlphaChar.error"
+  lazy val jobTitleEmptyError            = "primaryContactDetails.jobTitle.empty.error"
+  lazy val jobTitleTooLongError          = "primaryContactDetails.jobTitle.tooLong.error"
+  lazy val jobTitleNonAlphaCharError     = "primaryContactDetails.jobTitle.nonAlphaChar.error"
+  val maxLength                          = 155
+  val jobTitle                           = "value"
 
   def form(): Form[JobTitle] =
     Form(
