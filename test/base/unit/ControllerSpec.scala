@@ -17,11 +17,15 @@
 package base.unit
 
 import base.MockAuthAction
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.verify
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.Helpers.contentAsString
@@ -33,6 +37,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 
+import java.lang.reflect.Field
+import scala.Option
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
@@ -76,7 +82,11 @@ trait ControllerSpec
   protected def getTuples(cc: AnyRef): Seq[(String, String)] =
     cc.getClass.getDeclaredFields.foldLeft(Map.empty[String, String]) { (a, f) =>
       f.setAccessible(true)
-      a + (f.getName -> f.get(cc).toString)
+      a + (f.getName -> getValue(f, cc))
     }.toList
+
+  private def getValue(field: Field, cc: AnyRef): String =
+    if (field.getType == classOf[Option[String]]) field.get(cc).asInstanceOf[Some[String]].get
+    else field.get(cc).toString
 
 }

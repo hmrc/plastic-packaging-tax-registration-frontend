@@ -23,5 +23,8 @@ POST       /check-liability-details-answers    uk.gov.hmrc.plasticpackagingtax.r
 GET        /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.displayPage()
 POST       /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.submit()
 
+GET        /primary-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.displayPage()
+POST       /primary-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.submit()
+
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
 GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()

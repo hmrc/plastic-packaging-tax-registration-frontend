@@ -95,8 +95,12 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
             FullName("FirstName", "LastName")
           )
 
-          formAction match {
-            case _ =>
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.ContactDetailsJobTitleController.displayPage().url
+              )
+            case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
         }

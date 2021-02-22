@@ -20,7 +20,10 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
-case class PrimaryContactDetails(fullName: Option[FullName] = None) {
+case class PrimaryContactDetails(
+  fullName: Option[FullName] = None,
+  jobTitle: Option[String] = None
+) {
 
   def status: TaskStatus =
     if (isCompleted) TaskStatus.Completed
