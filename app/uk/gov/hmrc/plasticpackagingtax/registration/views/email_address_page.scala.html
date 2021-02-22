@@ -46,10 +46,6 @@
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
-@insetText = @{ govukInsetText(InsetText(
-    content = Text(messages("primaryContactDetails.emailAddress.hint"))
-))}
-
 @hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.privacyNotice.link")</a>}
 
 @govukLayout(
@@ -66,7 +62,7 @@
             id = s"${emailAddressField.name}",
             name = emailAddressField.name,
             value = emailAddressField.value,
-            hint = Some(Hint(content = HtmlContent(insetText))),
+            hint = Some(Hint(content = Text(messages("primaryContactDetails.emailAddress.hint")))),
             label = Label(
                 isPageHeading = true,
                 classes = s"govuk-label--l",

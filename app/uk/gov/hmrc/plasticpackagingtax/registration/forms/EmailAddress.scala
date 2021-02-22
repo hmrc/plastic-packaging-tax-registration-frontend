@@ -22,8 +22,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName.isNonEmpty
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle.{
   isNotExceedingMaxLength,
-  isValidEmail,
-  maxLength
+  isValidEmail
 }
 
 case class EmailAddress(value: String)

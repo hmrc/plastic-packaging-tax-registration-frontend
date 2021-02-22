@@ -79,7 +79,7 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display hint" in {
 
-      view.getElementsByClass("govuk-inset-text").get(0).text() must include(
+      view.getElementById("value-hint").text() must include(
         messages("primaryContactDetails.emailAddress.hint")
       )
     }
