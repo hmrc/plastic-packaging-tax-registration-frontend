@@ -18,9 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
 import play.api.mvc.{AnyContent, Request}
 
-sealed trait FormAction {
-  def label: String = this.getClass.getSimpleName.replace("$", "")
-}
+sealed trait FormAction
 
 object FormAction {
   private val saveAndContinueLabel      = "SaveAndContinue"

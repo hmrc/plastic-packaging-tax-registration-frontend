@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,48 +27,46 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndComeBackLater,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ContactDetailsJobTitleController @Inject() (
+class ContactDetailsEmailAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: job_title_page
+  page: email_address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.primaryContactDetails.jobTitle match {
+      request.registration.primaryContactDetails.email match {
         case Some(data) =>
-          Ok(page(JobTitle.form().fill(JobTitle(data))))
-        case _ => Ok(page(JobTitle.form()))
+          Ok(page(EmailAddress.form().fill(EmailAddress(data))))
+        case _ => Ok(page(EmailAddress.form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      JobTitle.form()
+      EmailAddress.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[JobTitle]) => {
+        .fold((formWithErrors: Form[EmailAddress]) => {
                 println(formWithErrors.errors)
                 Future.successful(BadRequest(page(formWithErrors)))
               },
-              jobTitle =>
-                updateRegistration(jobTitle).map {
+              emailAddress =>
+                updateRegistration(emailAddress).map {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        Redirect(routes.ContactDetailsEmailAddressController.displayPage())
+                      case SaveAndContinue => Redirect(routes.RegistrationController.displayPage())
                       case SaveAndComeBackLater =>
                         Redirect(routes.RegistrationController.displayPage())
                     }
@@ -77,12 +76,12 @@ class ContactDetailsJobTitleController @Inject() (
     }
 
   private def updateRegistration(
-    formData: JobTitle
+    formData: EmailAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedJobTitle =
-        registration.primaryContactDetails.copy(jobTitle = Some(formData.value))
-      registration.copy(primaryContactDetails = updatedJobTitle)
+      val updatedEmailAddress =
+        registration.primaryContactDetails.copy(email = Some(formData.value))
+      registration.copy(primaryContactDetails = updatedEmailAddress)
     }
 
 }
