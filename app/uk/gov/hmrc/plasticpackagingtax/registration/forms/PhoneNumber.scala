@@ -32,7 +32,7 @@ object PhoneNumber extends CommonFormValidators {
   lazy val phoneNumberTooLongError     = "primaryContactDetails.phoneNumber.tooLong.error"
   lazy val phoneNumberInvalidFormat    = "primaryContactDetails.phoneNumber.invalidFormat.error"
   val phoneNumberRegexPattern: Pattern = Pattern.compile("^[A-Z0-9 )/(\\-*#+]+$")
-  val maxLength                        = 30
+  val maxLength                        = 24
   val phoneNumber                      = "value"
 
   def form(): Form[PhoneNumber] =
