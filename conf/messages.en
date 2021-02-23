@@ -103,3 +103,9 @@ primaryContactDetails.jobTitlePage.title = What is the primary contact's job tit
 primaryContactDetails.jobTitle.empty.error = Enter a job title
 primaryContactDetails.jobTitle.tooLong.error = Job title must be no longer than 155 characters
 primaryContactDetails.jobTitle.nonAlphaChar.error = Enter a job title in the correct format
+
+primaryContactDetails.phoneNumber.title = What is the primary contact's telephone number?
+primaryContactDetails.phoneNumber.hint = This must be 11 numbers. For example 01234 567890.
+primaryContactDetails.phoneNumber.empty.error = Enter a phone number
+primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 11 digits
+primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format

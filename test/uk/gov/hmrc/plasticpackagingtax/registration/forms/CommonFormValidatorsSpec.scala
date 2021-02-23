@@ -20,6 +20,8 @@ import base.unit.CommonTestUtils
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import java.util.regex.Pattern
+
 class CommonFormValidatorsSpec
     extends AnyWordSpec with Matchers with CommonFormValidators with CommonTestUtils {
 
@@ -47,6 +49,11 @@ class CommonFormValidatorsSpec
 
         containsOnlyAlphaAndWhitespacesAnd("te$t*", allowedChars) mustBe true
       }
+
+      "is matching pattern" in {
+
+        isMatchingPattern("VAL(ID)123", Pattern.compile("^[A-Z0-9()]+$")) mustBe true
+      }
     }
 
     "return false" when {
@@ -69,6 +76,11 @@ class CommonFormValidatorsSpec
       "string includes none alphabetic chars" in {
 
         containsOnlyAlphaAndWhitespacesAnd(randomAlphabetString(5) + "&", None) mustBe false
+      }
+
+      "is not matching pattern" in {
+
+        isMatchingPattern("invalid£", Pattern.compile("^[A-Z0-9&]+$")) mustBe false
       }
     }
   }

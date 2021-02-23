@@ -17,15 +17,11 @@
 package base.unit
 
 import base.MockAuthAction
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.data.Form
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.Helpers.contentAsString
@@ -38,7 +34,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 }
 
 import java.lang.reflect.Field
-import scala.Option
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec

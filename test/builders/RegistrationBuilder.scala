@@ -39,8 +39,7 @@ trait RegistrationBuilder {
                  liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
                                                      startDate =
                                                        Some(Date(Some(1), Some(4), Some(2022)))
-                 ),
-                 primaryContactDetails = PrimaryContactDetails(jobTitle = Some("scala dev"))
+                 )
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)

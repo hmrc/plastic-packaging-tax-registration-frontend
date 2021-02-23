@@ -171,6 +171,14 @@ const liabilityCheckYourAnswers = () => {
     }
 }
 
+const primaryContactTelephoneNumber = () => {
+     if (currentPageIs('/plastic-packaging-tax/primary-contact-phone-number')) {
+
+         document.getElementById('value').value = '07712345678'
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+ }
+
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
 
@@ -192,4 +200,6 @@ const completeJourney = () => {
     liabilityStartDate()
     liabilityWeight()
     liabilityCheckYourAnswers()
+
+    primaryContactTelephoneNumber()
 }
