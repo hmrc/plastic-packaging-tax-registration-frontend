@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      2.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -87,10 +87,21 @@ const startPage = () => {
 const registrationPage = () => {
     if (currentPageIs('/plastic-packaging-tax/registration')) {
 
-        if (document.querySelector('li:nth-child(1) .govuk-tag').textContent.trim().toUpperCase() !== 'COMPLETED') {
-            document.querySelector('li:nth-child(1) .govuk-link').click()
-        } else if (document.querySelector('li:nth-child(2) .govuk-tag').textContent.trim().toUpperCase() !== 'COMPLETED') {
-            document.querySelector('li:nth-child(2) .govuk-link').click()
+        let BUSINESS_DETAILS_STATUS = 'li:nth-child(1) .govuk-tag';
+        let BUSINESS_DETAILS_LINK = 'li:nth-child(1) .govuk-link';
+
+        let PRIMARY_CONTACT_DETAILS_STATUS = 'li:nth-child(2) .govuk-tag';
+        let PRIMARY_CONTACT_DETAILS_LINK = 'li:nth-child(2) .govuk-link';
+
+        let LIABILITY_DETAILS_STATUS = 'li:nth-child(3) .govuk-tag';
+        let LIABILITY_DETAILS_LINK = 'li:nth-child(3) .govuk-link';
+
+        if (document.querySelector(BUSINESS_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
+            document.querySelector(BUSINESS_DETAILS_LINK).click()
+        } else if (document.querySelector(PRIMARY_CONTACT_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
+            document.querySelector(PRIMARY_CONTACT_DETAILS_LINK).click()
+        } else if (document.querySelector(LIABILITY_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
+            document.querySelector(LIABILITY_DETAILS_LINK).click()
         }
     }
 }
@@ -171,6 +182,31 @@ const liabilityCheckYourAnswers = () => {
     }
 }
 
+const primaryContactFullName = () => {
+    if (currentPageIs('/plastic-packaging-tax/primary-contact-name')) {
+        document.getElementById('firstName').value = 'Jack'
+        document.getElementById('lastName').value = 'Gatsby'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const primaryContactJobTitle = () => {
+    if (currentPageIs('/plastic-packaging-tax/primary-contact-job-title')) {
+
+        document.getElementById('value').value = 'Chief Financial Officer'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const primaryContactEmailAddress = () => {
+    if (currentPageIs('/plastic-packaging-tax/primary-contact-email')) {
+
+        document.getElementById('value').value = 'ppt@mail.com'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
 
@@ -192,4 +228,9 @@ const completeJourney = () => {
     liabilityStartDate()
     liabilityWeight()
     liabilityCheckYourAnswers()
+
+    // Primary Contact Details
+    primaryContactFullName()
+    primaryContactJobTitle()
+    primaryContactEmailAddress()
 }
