@@ -30,7 +30,8 @@ class RegistrationSpec
   "Registration status" should {
     "be 'Cannot Start Yet' " when {
       "Primary Contact details are incomplete" in {
-        val incompleteRegistration = aRegistration()
+        val incompleteRegistration =
+          aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("job"))))
 
         incompleteRegistration.isRegistrationComplete mustBe false
         incompleteRegistration.numberOfCompletedSections mustBe 2

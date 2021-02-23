@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      3.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -207,6 +207,14 @@ const primaryContactEmailAddress = () => {
     }
 }
 
+const primaryContactTelephoneNumber = () => {
+     if (currentPageIs('/plastic-packaging-tax/primary-contact-phone-number')) {
+
+         document.getElementById('value').value = '07712345678'
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+ }
+
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
 
@@ -233,4 +241,5 @@ const completeJourney = () => {
     primaryContactFullName()
     primaryContactJobTitle()
     primaryContactEmailAddress()
+    primaryContactTelephoneNumber()
 }

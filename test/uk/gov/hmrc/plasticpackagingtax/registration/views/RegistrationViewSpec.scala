@@ -141,7 +141,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "registrationPage.primaryContactDetails"
           )
           sectionStatus(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "task.status.inProgress"
+            "task.status.notStarted"
           )
           sectionLink(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) must haveHref(
             routes.ContactDetailsFullNameController.displayPage()
@@ -208,7 +208,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "registrationPage.primaryContactDetails"
           )
           sectionStatus(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "task.status.inProgress"
+            "task.status.notStarted"
           )
           sectionLink(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) must haveHref(
             routes.ContactDetailsFullNameController.displayPage()

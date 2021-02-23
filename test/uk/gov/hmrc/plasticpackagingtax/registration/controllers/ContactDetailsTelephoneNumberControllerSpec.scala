@@ -29,22 +29,22 @@ import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PhoneNumber
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
+class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[email_address_page]
+  private val page = mock[phone_number_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsEmailAddressController(authenticate = mockAuthAction,
-                                             journeyAction = mockJourneyAction,
-                                             registrationConnector = mockRegistrationConnector,
-                                             mcc = mcc,
-                                             page = page
+    new ContactDetailsTelephoneNumberController(authenticate = mockAuthAction,
+                                                journeyAction = mockJourneyAction,
+                                                registrationConnector = mockRegistrationConnector,
+                                                mcc = mcc,
+                                                page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -57,7 +57,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     super.afterEach()
   }
 
-  "ContactDetailsEmailAddressController" should {
+  "ContactDetailsTelephoneNumberController" should {
 
     "return 200" when {
 
@@ -79,22 +79,18 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits an email address" in {
+        "user submits the phone number" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
 
           val result =
-            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+            controller.submit()(postRequestEncoded(PhoneNumber("077123"), formAction))
 
           status(result) mustBe SEE_OTHER
-          modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsTelephoneNumberController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
+          modifiedRegistration.primaryContactDetails.phoneNumber mustBe Some("077123")
+          formAction match {
+            case _ =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
           reset(mockRegistrationConnector)
@@ -104,8 +100,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     "return prepopulated form" when {
 
-      def pageForm: Form[EmailAddress] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
+      def pageForm: Form[PhoneNumber] = {
+        val captor = ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
         verify(page).apply(captor.capture())(any(), any())
         captor.getValue
       }
@@ -114,22 +110,21 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         authorizedUser()
         mockRegistrationFind(
           aRegistration(
-            withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com")))
+            withPrimaryContactDetails(PrimaryContactDetails(phoneNumber = Some("077123")))
           )
         )
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.value mustBe "test@test.com"
+        pageForm.get.value mustBe "077123"
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid email address" in {
+      "user submits invalid phone number" in {
         authorizedUser()
-        val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@"))))
+        val result = controller.submit()(postRequest(Json.toJson(PhoneNumber("$%^"))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -148,7 +143,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         authorizedUser()
         mockRegistrationFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit()(postRequest(Json.toJson(PhoneNumber("077123"))))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -157,7 +152,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         authorizedUser()
         mockRegistrationException()
         val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit()(postRequest(Json.toJson(PhoneNumber("077123"))))
 
         intercept[RuntimeException](status(result))
       }

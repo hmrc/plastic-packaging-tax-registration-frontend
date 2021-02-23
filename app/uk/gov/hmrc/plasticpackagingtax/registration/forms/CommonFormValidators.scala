@@ -17,11 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import com.google.common.base.Strings
+
 import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
-  val isNonEmpty: String => Boolean = title => !Strings.isNullOrEmpty(title) && title.trim.nonEmpty
+  val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
 
   val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
     value.isEmpty || value.length <= maxLength
@@ -35,8 +36,17 @@ trait CommonFormValidators {
           )
       )
 
-  val isValidEmail: String => Boolean = (email: String) =>
-    email.isEmpty || emailPattern.matcher(email).matches()
+  val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
+    pattern.matcher(value).matches()
 
-  private val emailPattern = Pattern.compile("""^\S+@\S+$""")
+  val emailPattern = Pattern.compile("""^\S+@\S+$""")
+
+  val isValidEmail: String => Boolean = (email: String) =>
+    email.isEmpty || isMatchingPattern(email, emailPattern)
+
+  val phoneNumberRegexPattern: Pattern = Pattern.compile("^[A-Z0-9 )/(\\-*#+]+$")
+
+  val isValidTelephoneNumber: String => Boolean = (value: String) =>
+    value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
+
 }

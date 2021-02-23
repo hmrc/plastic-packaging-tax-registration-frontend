@@ -23,7 +23,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 case class PrimaryContactDetails(
   fullName: Option[FullName] = None,
   jobTitle: Option[String] = None,
-  email: Option[String] = None
+  email: Option[String] = None,
+  phoneNumber: Option[String] = None
 ) {
 
   def status: TaskStatus =
@@ -31,9 +32,11 @@ case class PrimaryContactDetails(
     else if (isInProgress) TaskStatus.InProgress
     else TaskStatus.NotStarted
 
-  def isCompleted: Boolean = fullName.isDefined && jobTitle.isDefined && email.isDefined
+  def isCompleted: Boolean =
+    fullName.isDefined && jobTitle.isDefined && email.isDefined && phoneNumber.isDefined
 
-  def isInProgress: Boolean = fullName.isDefined || jobTitle.isDefined || email.isDefined
+  def isInProgress: Boolean =
+    fullName.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined
 
 }
 
