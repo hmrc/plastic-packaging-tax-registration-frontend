@@ -13,6 +13,10 @@ site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 site.link.change = Change
 
+sessionTimout.title = For your security, we signed you out
+sessionTimout.paragraph.saved = We saved your answers.
+sessionTimout.signin.button = Sign in
+
 timeoutDialog.title = Your session will timeout soon
 timeoutDialog.message = For your security, we will sign you out in
 timeoutDialog.keepAlive.text = Stay signed in
@@ -94,12 +98,14 @@ primaryContactDetails.fullNamePage.lastName.error.empty = Enter a last name
 primaryContactDetails.fullNamePage.lastName.error.length = Last name cannot be more than 20 characters long
 primaryContactDetails.fullNamePage.lastName.error.specialCharacters = Enter a last name in the correct format
 
-
-sessionTimout.title = For your security, we signed you out
-sessionTimout.paragraph.saved = We saved your answers.
-sessionTimout.signin.button = Sign in
-
 primaryContactDetails.jobTitlePage.title = What is the primary contact's job title?
 primaryContactDetails.jobTitle.empty.error = Enter a job title
 primaryContactDetails.jobTitle.tooLong.error = Job title must be no longer than 155 characters
 primaryContactDetails.jobTitle.nonAlphaChar.error = Enter a job title in the correct format
+
+primaryContactDetails.emailAddress.title = What is the primary contact’s email address?
+primaryContactDetails.emailAddress.hint = We’ll only use this to send you notifications about the registration, account and returns.
+primaryContactDetails.emailAddress.empty.error = Enter an email address
+primaryContactDetails.emailAddress.format.error = Enter an email address in the correct format
+primaryContactDetails.emailAddress.privacyNotice = Full details of how we use your information are in the {0}.
+primaryContactDetails.emailAddress.privacyNotice.link = HMRC Privacy Notice (opens in a new tab)

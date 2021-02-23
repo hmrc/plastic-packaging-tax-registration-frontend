@@ -17,13 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import com.google.common.base.Strings
+import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
   val isNonEmpty: String => Boolean = title => !Strings.isNullOrEmpty(title) && title.trim.nonEmpty
 
-  val isNotExceedingMaxLength: (String, Int) => Boolean = (title, maxLength) =>
-    title.isEmpty || title.length <= maxLength
+  val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
+    value.isEmpty || value.length <= maxLength
 
   val containsOnlyAlphaAndWhitespacesAnd: (String, Option[String]) => Boolean =
     (value, allowedChars) =>
@@ -34,4 +35,8 @@ trait CommonFormValidators {
           )
       )
 
+  val isValidEmail: String => Boolean = (email: String) =>
+    email.isEmpty || emailPattern.matcher(email).matches()
+
+  private val emailPattern = Pattern.compile("""^\S+@\S+$""")
 }

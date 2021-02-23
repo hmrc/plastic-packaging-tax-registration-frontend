@@ -66,8 +66,9 @@ class ContactDetailsJobTitleController @Inject() (
                 updateRegistration(jobTitle).map {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
-                      case SaveAndContinue => Redirect(routes.RegistrationController.displayPage())
-                      case SaveAndComeBackLater =>
+                      case SaveAndContinue =>
+                        Redirect(routes.ContactDetailsEmailAddressController.displayPage())
+                      case _ =>
                         Redirect(routes.RegistrationController.displayPage())
                     }
                   case Left(error) => throw error

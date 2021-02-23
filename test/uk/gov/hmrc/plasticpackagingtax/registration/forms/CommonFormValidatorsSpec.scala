@@ -47,6 +47,13 @@ class CommonFormValidatorsSpec
 
         containsOnlyAlphaAndWhitespacesAnd("te$t*", allowedChars) mustBe true
       }
+
+      "is valid Email" in {
+
+        isValidEmail("test@test") must be(true)
+        isValidEmail("test@test.com") must be(true)
+        isValidEmail("#!$%&'*+-/=?^_{}|~@domain.org") must be(true)
+      }
     }
 
     "return false" when {
@@ -69,6 +76,12 @@ class CommonFormValidatorsSpec
       "string includes none alphabetic chars" in {
 
         containsOnlyAlphaAndWhitespacesAnd(randomAlphabetString(5) + "&", None) mustBe false
+      }
+
+      "is not valid email" in {
+
+        isValidEmail("@test") must be(false)
+        isValidEmail("test@") must be(false)
       }
     }
   }

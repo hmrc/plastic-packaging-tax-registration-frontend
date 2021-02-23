@@ -75,5 +75,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val exitSurveyUrl = config.get[String]("urls.exitSurvey")
 
+  lazy val hmrcPrivacyUrl = config.get[String]("urls.hmrcPrivacy")
+
   lazy val govUkUrl = config.get[String]("urls.govUk")
 }

@@ -32,10 +32,29 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
       }
     }
 
+    "be IN_PROGRESS " when {
+      "primary contact details when only 'FullName' is complete" in {
+        val contactDetails =
+          PrimaryContactDetails(fullName = Some(FullName("firstName", "lastName")))
+        contactDetails.status mustBe TaskStatus.InProgress
+      }
+
+      "primary contact details when only 'FullName' and 'JobTitle' are complete" in {
+        val contactDetails = PrimaryContactDetails(fullName =
+                                                     Some(FullName("firstName", "lastName")),
+                                                   jobTitle = Some("Dev")
+        )
+        contactDetails.status mustBe TaskStatus.InProgress
+      }
+    }
+
     "be COMPLETED " when {
       "primary contact  details are all filled in" in {
         val contactDetails =
-          PrimaryContactDetails(fullName = Some(FullName("FirstName", "LastName")))
+          PrimaryContactDetails(fullName = Some(FullName("FirstName", "LastName")),
+                                jobTitle = Some("Developer"),
+                                email = Some("test@test.com")
+          )
         contactDetails.status mustBe TaskStatus.Completed
       }
     }

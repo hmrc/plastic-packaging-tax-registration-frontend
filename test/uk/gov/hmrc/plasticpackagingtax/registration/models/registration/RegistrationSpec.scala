@@ -42,7 +42,7 @@ class RegistrationSpec
         incompleteRegistration.liabilityDetailsStatus mustBe TaskStatus.Completed
 
         incompleteRegistration.isPrimaryContactDetailsComplete mustBe false
-        incompleteRegistration.primaryContactDetailsStatus mustBe TaskStatus.NotStarted
+        incompleteRegistration.primaryContactDetailsStatus mustBe TaskStatus.InProgress
 
         incompleteRegistration.isCheckAndSubmitComplete mustBe false
         incompleteRegistration.checkAndSubmitStatus mustBe TaskStatus.CannotStartYet

@@ -29,22 +29,22 @@ import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
+class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[job_title_page]
+  private val page = mock[email_address_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsJobTitleController(authenticate = mockAuthAction,
-                                         journeyAction = mockJourneyAction,
-                                         registrationConnector = mockRegistrationConnector,
-                                         mcc = mcc,
-                                         page = page
+    new ContactDetailsEmailAddressController(authenticate = mockAuthAction,
+                                             journeyAction = mockJourneyAction,
+                                             registrationConnector = mockRegistrationConnector,
+                                             mcc = mcc,
+                                             page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -57,7 +57,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     super.afterEach()
   }
 
-  "ContactDetailsJobTitleController" should {
+  "ContactDetailsEmailAddressController" should {
 
     "return 200" when {
 
@@ -79,21 +79,17 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits the job title" in {
+        "user submits an email address" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
 
           val result =
-            controller.submit()(postRequestEncoded(JobTitle("tester"), formAction))
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
 
           status(result) mustBe SEE_OTHER
-          modifiedRegistration.primaryContactDetails.jobTitle mustBe Some("tester")
+          modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
           formAction match {
-            case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsEmailAddressController.displayPage().url
-              )
             case _ =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
@@ -104,8 +100,8 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
     "return prepopulated form" when {
 
-      def pageForm: Form[JobTitle] = {
-        val captor = ArgumentCaptor.forClass(classOf[Form[JobTitle]])
+      def pageForm: Form[EmailAddress] = {
+        val captor = ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
         verify(page).apply(captor.capture())(any(), any())
         captor.getValue
       }
@@ -113,21 +109,23 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       "data exist" in {
         authorizedUser()
         mockRegistrationFind(
-          aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("tester"))))
+          aRegistration(
+            withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com")))
+          )
         )
 
         await(controller.displayPage()(getRequest()))
 
-        pageForm.get.value mustBe "tester"
+        pageForm.get.value mustBe "test@test.com"
       }
     }
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid job title" in {
+      "user submits invalid email address" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("$%^"))))
+          controller.submit()(postRequest(Json.toJson(EmailAddress("test@"))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -146,7 +144,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
         authorizedUser()
         mockRegistrationFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
+          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -155,7 +153,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
         authorizedUser()
         mockRegistrationException()
         val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
+          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
         intercept[RuntimeException](status(result))
       }

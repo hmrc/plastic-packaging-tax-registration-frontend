@@ -53,23 +53,23 @@ govukButton: GovukButton
 
     <div id="contents">
         @dashList(
-        title = Some(messages("startPage.contents.header")),
-        elements = Seq(
-        link(text = messages("startPage.overview.header"), call = Call("GET", "#overview")),
-        link(text = messages("startPage.informationYouNeed.header"), call = Call("GET", "#information-you-need")),
-        link(text = messages("startPage.makeDeclaration.header"), call = Call("GET", "#make-declaration"))
-        )
+            title = Some(messages("startPage.contents.header")),
+            elements = Seq(
+                link(text = messages("startPage.overview.header"), call = Call("GET", "#overview")),
+                link(text = messages("startPage.informationYouNeed.header"), call = Call("GET", "#information-you-need")),
+                link(text = messages("startPage.makeDeclaration.header"), call = Call("GET", "#make-declaration"))
+            )
         )
     </div>
 
     @bulletList(
-    title = Some(messages("startPage.useThisServiceTo.header")),
-    elements = Seq(
-    Html(messages("startPage.useThisServiceTo.listItem.1")),
-    Html(messages("startPage.useThisServiceTo.listItem.2")),
-    Html(messages("startPage.useThisServiceTo.listItem.3")),
-    Html(messages("startPage.useThisServiceTo.listItem.4"))
-    )
+        title = Some(messages("startPage.useThisServiceTo.header")),
+        elements = Seq(
+            Html(messages("startPage.useThisServiceTo.listItem.1")),
+            Html(messages("startPage.useThisServiceTo.listItem.2")),
+            Html(messages("startPage.useThisServiceTo.listItem.3")),
+            Html(messages("startPage.useThisServiceTo.listItem.4"))
+        )
     )
 
     <div>
@@ -88,23 +88,23 @@ govukButton: GovukButton
     <div class="govuk-!-margin-bottom-9">
         <h2 id="information-you-need" class="govuk-heading-m">@messages("startPage.informationYouNeed.header")</h2>
         @bulletList(
-        title = Some(messages("startPage.informationYouNeed.line.1")),
-        elements = Seq(
-        Html(messages("startPage.informationYouNeed.listItem.1")),
-        Html(messages("startPage.informationYouNeed.listItem.2")),
-        Html(messages("startPage.informationYouNeed.listItem.3"))
-        )
+            title = Some(messages("startPage.informationYouNeed.line.1")),
+            elements = Seq(
+                Html(messages("startPage.informationYouNeed.listItem.1")),
+                Html(messages("startPage.informationYouNeed.listItem.2")),
+                Html(messages("startPage.informationYouNeed.listItem.3"))
+            )
         )
     </div>
 
     <h2 id="make-declaration" class="govuk-heading-m">@messages("startPage.makeDeclaration.header")</h2>
 
     @govukButton(
-    Button(
-    href = Some(RegistrationController.displayPage().url),
-    isStartButton = true,
-    content = Text(messages("startPage.buttonName"))
-    )
+        Button(
+            href = Some(RegistrationController.displayPage().url),
+            isStartButton = true,
+            content = Text(messages("startPage.buttonName"))
+            )
     )
 
     <div class="govuk-!-margin-top-9" id="back-to-top">

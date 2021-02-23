@@ -16,48 +16,61 @@
 
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.govukfrontend.views.html.components.govukFieldset
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 
 @this(
   govukLayout: main_template,
   saveButtons: saveButtons,
   govukInput: GovukInput,
+  govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
+  paragraphBody: paragraphBody,
+  appConfig: AppConfig,
   formHelper: FormWithCSRF
 )
-@(form: Form[JobTitle])(implicit request: Request[_], messages: Messages)
+@(form: Form[EmailAddress])(implicit request: Request[_], messages: Messages)
 
-@jobTitleField = @{form("value")}
+@emailAddressField = @{form("value")}
+
+@errorMessages = @{
+    val errors = (form.errors).map(err => messages(err.message, err.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.privacyNotice.link")</a>}
 
 @govukLayout(
-  title = Title("primaryContactDetails.jobTitlePage.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsFullNameController.displayPage()))) {
+  title = Title("primaryContactDetails.emailAddress.title"),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsJobTitleController.displayPage()))) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-  @formHelper(action = pptRoutes.ContactDetailsJobTitleController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = pptRoutes.ContactDetailsEmailAddressController.submit(), 'autoComplete -> "off") {
 
     @govukInput(
         Input(
-            id = s"${jobTitleField.name}",
-            name = jobTitleField.name,
-            value = jobTitleField.value,
-            errorMessage = jobTitleField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            id = s"${emailAddressField.name}",
+            name = emailAddressField.name,
+            value = emailAddressField.value,
+            hint = Some(Hint(content = Text(messages("primaryContactDetails.emailAddress.hint")))),
             label = Label(
                 isPageHeading = true,
                 classes = s"govuk-label--l",
-                content = Text(messages("primaryContactDetails.jobTitlePage.title"))))
+                content = Text(messages("primaryContactDetails.emailAddress.title"))),
+                errorMessage = errorMessages)
             )
-        @saveButtons()
-    }
- }
+
+    @paragraphBody(message = messages("primaryContactDetails.emailAddress.privacyNotice", hmrcPrivacyLink))
+    @saveButtons()
+  }
+}
