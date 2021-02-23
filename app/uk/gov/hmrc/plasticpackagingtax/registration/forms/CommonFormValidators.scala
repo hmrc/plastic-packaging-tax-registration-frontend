@@ -37,10 +37,16 @@ trait CommonFormValidators {
       )
 
   val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
-    value.isEmpty || pattern.matcher(value).matches()
+    pattern.matcher(value).matches()
+
+  val emailPattern = Pattern.compile("""^\S+@\S+$""")
 
   val isValidEmail: String => Boolean = (email: String) =>
-    email.isEmpty || emailPattern.matcher(email).matches()
+    email.isEmpty || isMatchingPattern(email, emailPattern)
 
-  private val emailPattern = Pattern.compile("""^\S+@\S+$""")
+  val phoneNumberRegexPattern: Pattern = Pattern.compile("^[A-Z0-9 )/(\\-*#+]+$")
+
+  val isValidTelephoneNumber: String => Boolean = (value: String) =>
+    value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
+
 }

@@ -23,7 +23,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConn
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
-  SaveAndComeBackLater,
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle
@@ -58,19 +57,19 @@ class ContactDetailsJobTitleController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       JobTitle.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[JobTitle]) =>
-                Future.successful(BadRequest(page(formWithErrors))),
-              jobTitle =>
-                updateRegistration(jobTitle).map {
-                  case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        Redirect(routes.ContactDetailsEmailAddressController.displayPage())
-                      case _ =>
-                        Redirect(routes.RegistrationController.displayPage())
-                    }
-                  case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(page(formWithErrors))),
+          jobTitle =>
+            updateRegistration(jobTitle).map {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    Redirect(routes.ContactDetailsEmailAddressController.displayPage())
+                  case _ =>
+                    Redirect(routes.RegistrationController.displayPage())
                 }
+              case Left(error) => throw error
+            }
         )
     }
 

@@ -32,9 +32,11 @@ case class PrimaryContactDetails(
     else if (isInProgress) TaskStatus.InProgress
     else TaskStatus.NotStarted
 
-  def isCompleted: Boolean = fullName.isDefined && jobTitle.isDefined && email.isDefined && phoneNumber.isDefined
+  def isCompleted: Boolean =
+    fullName.isDefined && jobTitle.isDefined && email.isDefined && phoneNumber.isDefined
 
-  def isInProgress: Boolean = fullName.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined
+  def isInProgress: Boolean =
+    fullName.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined
 
 }
 

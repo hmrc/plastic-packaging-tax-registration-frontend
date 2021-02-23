@@ -65,7 +65,8 @@ class ContactDetailsEmailAddressController @Inject() (
                 updateRegistration(emailAddress).map {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
-                      case SaveAndContinue => Redirect(routes.RegistrationController.displayPage())
+                      case SaveAndContinue =>
+                        Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
                       case _ =>
                         Redirect(routes.RegistrationController.displayPage())
                     }

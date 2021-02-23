@@ -28,12 +28,11 @@ object PhoneNumber extends CommonFormValidators {
 
   implicit val format: OFormat[PhoneNumber] = Json.format[PhoneNumber]
 
-  lazy val phoneNumberEmptyError       = "primaryContactDetails.phoneNumber.empty.error"
-  lazy val phoneNumberTooLongError     = "primaryContactDetails.phoneNumber.tooLong.error"
-  lazy val phoneNumberInvalidFormat    = "primaryContactDetails.phoneNumber.invalidFormat.error"
-  val phoneNumberRegexPattern: Pattern = Pattern.compile("^[A-Z0-9 )/(\\-*#+]+$")
-  val maxLength                        = 24
-  val phoneNumber                      = "value"
+  lazy val phoneNumberEmptyError    = "primaryContactDetails.phoneNumber.empty.error"
+  lazy val phoneNumberTooLongError  = "primaryContactDetails.phoneNumber.tooLong.error"
+  lazy val phoneNumberInvalidFormat = "primaryContactDetails.phoneNumber.invalidFormat.error"
+  val maxLength                     = 24
+  val phoneNumber                   = "value"
 
   def form(): Form[PhoneNumber] =
     Form(
@@ -41,7 +40,7 @@ object PhoneNumber extends CommonFormValidators {
         phoneNumber -> text()
           .verifying(phoneNumberEmptyError, isNonEmpty)
           .verifying(phoneNumberTooLongError, isNotExceedingMaxLength(_, maxLength))
-          .verifying(phoneNumberInvalidFormat, isMatchingPattern(_, phoneNumberRegexPattern))
+          .verifying(phoneNumberInvalidFormat, isValidTelephoneNumber)
       )(PhoneNumber.apply)(PhoneNumber.unapply)
     )
 

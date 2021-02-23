@@ -21,9 +21,11 @@ import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName.isNonEmpty
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle.{
-  isNotExceedingMaxLength,
-  isValidEmail
+  isMatchingPattern,
+  isNotExceedingMaxLength
 }
+
+import java.util.regex.Pattern
 
 case class EmailAddress(value: String)
 
@@ -32,6 +34,7 @@ object EmailAddress {
   implicit val format: OFormat[EmailAddress] = Json.format[EmailAddress]
   lazy val emailAddressEmptyError            = "primaryContactDetails.emailAddress.empty.error"
   lazy val emailAddressFormatError           = "primaryContactDetails.emailAddress.format.error"
+  val emailPattern                           = Pattern.compile("""^\S+@\S+$""")
   val maxLength                              = 241
   val emailAddress                           = "value"
 
@@ -39,8 +42,10 @@ object EmailAddress {
     emailAddress ->
       text()
         .verifying(emailAddressEmptyError, isNonEmpty)
-        .verifying(emailAddressFormatError,
-                   email => isNotExceedingMaxLength(email, maxLength) && isValidEmail(email)
+        .verifying(
+          emailAddressFormatError,
+          email =>
+            isNotExceedingMaxLength(email, maxLength) && isMatchingPattern(email, emailPattern)
         )
   )(EmailAddress.apply)(EmailAddress.unapply)
 

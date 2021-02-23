@@ -89,8 +89,12 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
-          formAction match {
-            case _ =>
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.ContactDetailsTelephoneNumberController.displayPage().url
+              )
+            case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
           reset(mockRegistrationConnector)
