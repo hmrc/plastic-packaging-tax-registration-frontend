@@ -26,7 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.job_title_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class JobTitleViewSpec extends UnitViewSpec with Matchers {
+class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[job_title_page]
 

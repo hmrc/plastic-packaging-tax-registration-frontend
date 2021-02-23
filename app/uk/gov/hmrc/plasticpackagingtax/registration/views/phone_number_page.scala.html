@@ -38,7 +38,7 @@
 
 @govukLayout(
   title = Title("primaryContactDetails.phoneNumber.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsJobTitleController.displayPage()))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressController.displayPage()))) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
@@ -54,7 +54,7 @@
             errorMessage = phoneNumberField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             label = Label(
                 isPageHeading = true,
-                classes = s"govuk-label--xl",
+                classes = s"govuk-label--l",
                 content = Text(messages("primaryContactDetails.phoneNumber.title"))))
             )
         @saveButtons()

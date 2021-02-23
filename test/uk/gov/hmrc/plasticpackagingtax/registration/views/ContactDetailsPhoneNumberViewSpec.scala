@@ -61,7 +61,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        routes.ContactDetailsJobTitleController.displayPage()
+        routes.ContactDetailsEmailAddressController.displayPage()
       )
     }
 
