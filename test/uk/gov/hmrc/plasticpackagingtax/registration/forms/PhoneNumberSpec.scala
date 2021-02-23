@@ -44,7 +44,7 @@ class PhoneNumberSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "phone number is exactly max allowed amount" in {
 
-        val input = Map(phoneNumber -> randomAlphabetString(maxLength))
+        val input = Map(phoneNumber -> randomNumericString(maxLength))
 
         val form = PhoneNumber.form().bind(input)
         form.errors.size mustBe 0
@@ -52,7 +52,7 @@ class PhoneNumberSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "phone number contains allowed characters" in {
 
-        val input = Map(phoneNumber -> "A(0)23/23-*#+")
+        val input = Map(phoneNumber -> "077 23 23 23")
 
         val form = PhoneNumber.form().bind(input)
         form.errors.size mustBe 0
@@ -87,7 +87,7 @@ class PhoneNumberSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "exceeds max allowed length" in {
 
-        val input          = Map(phoneNumber -> randomAlphabetString(maxLength + 1))
+        val input          = Map(phoneNumber -> randomNumericString(maxLength + 1))
         val expectedErrors = Seq(FormError(phoneNumber, phoneNumberTooLongError))
 
         testFailedValidationErrors(input, expectedErrors)

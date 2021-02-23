@@ -27,6 +27,12 @@ trait CommonFormValidators {
   val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
     value.isEmpty || value.length <= maxLength
 
+  val isNotExceedingMaxLengthExcludingWhitespaces: (String, Int) => Boolean = (value, maxLength) =>
+    {
+      val cleaned = value.filter(c => !Character.isWhitespace(c)).mkString
+      cleaned.isEmpty || cleaned.length <= maxLength
+    }
+
   val containsOnlyAlphaAndWhitespacesAnd: (String, Option[String]) => Boolean =
     (value, allowedChars) =>
       value.isEmpty || value.chars().allMatch(
@@ -44,7 +50,7 @@ trait CommonFormValidators {
   val isValidEmail: String => Boolean = (email: String) =>
     email.isEmpty || isMatchingPattern(email, emailPattern)
 
-  val phoneNumberRegexPattern: Pattern = Pattern.compile("^[A-Z0-9 )/(\\-*#+]+$")
+  val phoneNumberRegexPattern: Pattern = Pattern.compile("^[\\d ]*$")
 
   val isValidTelephoneNumber: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)

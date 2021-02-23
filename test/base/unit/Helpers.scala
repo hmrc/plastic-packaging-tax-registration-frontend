@@ -27,4 +27,7 @@ trait CommonTestUtils {
       alphabetAndWhitespaceChars.charAt(Random.nextInt(alphabetAndWhitespaceChars.length))
     ) take length mkString
 
+  def randomNumericString(length: Int): String =
+    (1 to length).map(_ => Random.nextInt(9)).mkString("")
+
 }

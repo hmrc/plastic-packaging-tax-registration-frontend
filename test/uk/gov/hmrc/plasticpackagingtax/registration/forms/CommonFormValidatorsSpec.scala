@@ -61,6 +61,12 @@ class CommonFormValidatorsSpec
         isValidEmail("test@test.com") must be(true)
         isValidEmail("#!$%&'*+-/=?^_{}|~@domain.org") must be(true)
       }
+
+      "is valid Phone number" in {
+
+        isValidTelephoneNumber("07723456765") must be(true)
+        isValidTelephoneNumber("077 234 567 65") must be(true)
+      }
     }
 
     "return false" when {
@@ -94,6 +100,12 @@ class CommonFormValidatorsSpec
 
         isValidEmail("@test") must be(false)
         isValidEmail("test@") must be(false)
+      }
+
+      "is not valid phone number" in {
+
+        isValidTelephoneNumber("@%^&*") must be(false)
+        isValidTelephoneNumber("test01") must be(false)
       }
     }
   }
