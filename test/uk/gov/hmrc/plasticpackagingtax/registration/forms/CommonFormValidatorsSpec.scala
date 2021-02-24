@@ -67,6 +67,19 @@ class CommonFormValidatorsSpec
         isValidTelephoneNumber("07723456765") must be(true)
         isValidTelephoneNumber("077 234 567 65") must be(true)
       }
+
+      "is valid address Input" in {
+
+        isValidAddressInput("Scala Street") must be(true)
+        isValidAddressInput("Scala's Street") must be(true)
+        isValidAddressInput("Scala's Street 9 -,.&") must be(true)
+      }
+
+      "is valid postcode" in {
+
+        isValidPostcode("LS5 7TH") must be(true)
+        isValidPostcode("LS57TH") must be(true)
+      }
     }
 
     "return false" when {
@@ -106,6 +119,17 @@ class CommonFormValidatorsSpec
 
         isValidTelephoneNumber("@%^&*") must be(false)
         isValidTelephoneNumber("test01") must be(false)
+      }
+
+      "is not valid address Input" in {
+
+        isValidAddressInput("#####Scala Street%%") must be(false)
+        isValidAddressInput("Street with very long long long name really long name") must be(false)
+      }
+
+      "is not valid postcode" in {
+
+        isValidPostcode("LS5 7THHHHH") must be(false)
       }
     }
   }

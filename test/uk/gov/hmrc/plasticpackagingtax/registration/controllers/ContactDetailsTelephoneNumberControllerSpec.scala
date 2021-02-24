@@ -89,8 +89,12 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.primaryContactDetails.phoneNumber mustBe Some("077123")
-          formAction match {
-            case _ =>
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.ContactDetailsAddressController.displayPage().url
+              )
+            case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
           reset(mockRegistrationConnector)

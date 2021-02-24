@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
-import com.google.common.base.Strings
-
 import java.util.regex.Pattern
+
+import com.google.common.base.Strings
 
 trait CommonFormValidators {
 
@@ -54,5 +54,16 @@ trait CommonFormValidators {
 
   val isValidTelephoneNumber: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
+
+  val addressInputRegexPattern: Pattern = Pattern.compile("^[A-Za-z0-9 \\-,.&']{1,35}$")
+
+  val isValidAddressInput: String => Boolean = (value: String) =>
+    value.isEmpty || isMatchingPattern(value, addressInputRegexPattern)
+
+  val postcodeRegexPattern: Pattern =
+    Pattern.compile("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$")
+
+  val isValidPostcode: String => Boolean = (value: String) =>
+    value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
 
 }
