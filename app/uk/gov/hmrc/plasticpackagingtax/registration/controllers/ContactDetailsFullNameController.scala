@@ -24,7 +24,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConn
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
-  SaveAndComeBackLater,
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName

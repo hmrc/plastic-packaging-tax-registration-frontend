@@ -24,7 +24,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConn
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
-  SaveAndComeBackLater,
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PhoneNumber
@@ -68,7 +67,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
                         Redirect(routes.ContactDetailsAddressController.displayPage())
-                      case SaveAndComeBackLater =>
+                      case _ =>
                         Redirect(routes.RegistrationController.displayPage())
                     }
                   case Left(error) => throw error
