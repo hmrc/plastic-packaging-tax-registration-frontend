@@ -99,7 +99,11 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
           modifiedRegistration.primaryContactDetails.address mustBe Some(anAddress)
 
           formAction._1 match {
-            case _ =>
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.ContactDetailsCheckAnswersController.displayPage().url
+              )
+            case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
         }
