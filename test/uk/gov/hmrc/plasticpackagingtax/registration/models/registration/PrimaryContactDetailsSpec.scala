@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
@@ -47,11 +47,21 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
         contactDetails.status mustBe TaskStatus.InProgress
       }
 
-      "primary contact details when only 'FullName' and 'JobTitle' and 'Email' are complete" in {
+      "primary contact details when only 'FullName', 'JobTitle' and 'Email' are complete" in {
         val contactDetails = PrimaryContactDetails(fullName =
                                                      Some(FullName("firstName", "lastName")),
                                                    jobTitle = Some("Dev"),
                                                    email = Some("test@test.com")
+        )
+        contactDetails.status mustBe TaskStatus.InProgress
+      }
+
+      "primary contact details when only 'FullName', 'JobTitle', 'Email' and 'phoneNumber' are complete" in {
+        val contactDetails = PrimaryContactDetails(fullName =
+                                                     Some(FullName("firstName", "lastName")),
+                                                   jobTitle = Some("Dev"),
+                                                   email = Some("test@test.com"),
+                                                   phoneNumber = Some("0203 12345 678")
         )
         contactDetails.status mustBe TaskStatus.InProgress
       }
@@ -63,7 +73,13 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
           PrimaryContactDetails(fullName = Some(FullName("FirstName", "LastName")),
                                 jobTitle = Some("Developer"),
                                 email = Some("test@test.com"),
-                                phoneNumber = Some("07712345678")
+                                phoneNumber = Some("07712345678"),
+                                address = Some(
+                                  Address(addressLine1 = "first line",
+                                          townOrCity = "Leeds",
+                                          postCode = "LS1 8TY"
+                                  )
+                                )
           )
         contactDetails.status mustBe TaskStatus.Completed
       }

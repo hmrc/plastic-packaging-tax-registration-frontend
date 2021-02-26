@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -23,7 +24,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConn
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
-  SaveAndComeBackLater,
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PhoneNumber
@@ -32,7 +32,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyActio
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.phone_number_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -66,8 +65,9 @@ class ContactDetailsTelephoneNumberController @Inject() (
                 updateRegistration(phoneNumber).map {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
-                      case SaveAndContinue => Redirect(routes.RegistrationController.displayPage())
-                      case SaveAndComeBackLater =>
+                      case SaveAndContinue =>
+                        Redirect(routes.ContactDetailsAddressController.displayPage())
+                      case _ =>
                         Redirect(routes.RegistrationController.displayPage())
                     }
                   case Left(error) => throw error

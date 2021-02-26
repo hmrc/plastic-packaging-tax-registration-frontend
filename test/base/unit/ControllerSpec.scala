@@ -82,7 +82,10 @@ trait ControllerSpec
     }.toList
 
   private def getValue(field: Field, cc: AnyRef): String =
-    if (field.getType == classOf[Option[String]]) field.get(cc).asInstanceOf[Some[String]].get
-    else field.get(cc).toString
+    field.get(cc) match {
+      case c: Option[String] if c.isDefined => c.get
+      case c: String                        => c
+      case _                                => ""
+    }
 
 }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      3.0
+// @version      4.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -215,6 +215,16 @@ const primaryContactTelephoneNumber = () => {
      }
  }
 
+const primaryContactAddress = () => {
+     if (currentPageIs('/plastic-packaging-tax/primary-contact-business-address')) {
+
+         document.getElementById('addressLine1').value = '2-3 Scala Street'
+         document.getElementById('townOrCity').value = 'London'
+         document.getElementById('postCode').value = 'W1T 2HN'
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+ }
+
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
 
@@ -242,4 +252,5 @@ const completeJourney = () => {
     primaryContactJobTitle()
     primaryContactEmailAddress()
     primaryContactTelephoneNumber()
+    primaryContactAddress()
 }
