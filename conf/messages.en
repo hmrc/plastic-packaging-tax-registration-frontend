@@ -116,6 +116,7 @@ primaryContactDetails.phoneNumber.empty.error = Enter a phone number
 primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 11 digits
 primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
 
+
 primaryContactDetails.address.title = What is the primary contact’s business address
 primaryContactDetails.address.hint = We’ll only use this to send you information about your account and returns.
 primaryContactDetails.address.businessName = Business name
@@ -136,3 +137,12 @@ primaryContactDetails.address.county.format.error = Enter a county in the correc
 primaryContactDetails.address.postCode = Postcode
 primaryContactDetails.address.postCode.empty.error = Enter a postcode
 primaryContactDetails.address.postCode.format.error = Enter a postcode in the correct format. For example, AB1 2CD
+
+primaryContactDetails.check.meta.title = Check the primary contact‘s details
+primaryContactDetails.check.title = Check your answers
+primaryContactDetails.check.label = Primary contact details
+primaryContactDetails.check.fullName = Name
+primaryContactDetails.check.jobTitle = Job
+primaryContactDetails.check.address = Address
+primaryContactDetails.check.phoneNumber = Phone Number
+primaryContactDetails.check.email = Email Address
