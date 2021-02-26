@@ -45,7 +45,7 @@ class RegistrationSpec
         incompleteRegistration.isPrimaryContactDetailsComplete mustBe false
         incompleteRegistration.primaryContactDetailsStatus mustBe TaskStatus.InProgress
 
-        incompleteRegistration.isCheckAndSubmitComplete mustBe false
+        incompleteRegistration.isCheckAndSubmitReady mustBe false
         incompleteRegistration.checkAndSubmitStatus mustBe TaskStatus.CannotStartYet
       }
 
@@ -65,7 +65,7 @@ class RegistrationSpec
         notStartedRegistration.isPrimaryContactDetailsComplete mustBe false
         notStartedRegistration.primaryContactDetailsStatus mustBe TaskStatus.CannotStartYet
 
-        notStartedRegistration.isCheckAndSubmitComplete mustBe false
+        notStartedRegistration.isCheckAndSubmitReady mustBe false
         notStartedRegistration.checkAndSubmitStatus mustBe TaskStatus.CannotStartYet
       }
     }
@@ -73,9 +73,7 @@ class RegistrationSpec
     "be 'Completed' " when {
       "All sections are complete" in {
         val spyCompleteRegistration = Mockito.spy(aRegistration())
-        when(spyCompleteRegistration.isPrimaryContactDetailsComplete).thenReturn(true)
-        when(spyCompleteRegistration.primaryContactDetailsStatus).thenReturn(TaskStatus.Completed)
-        when(spyCompleteRegistration.isCheckAndSubmitComplete).thenReturn(true)
+        when(spyCompleteRegistration.isRegistrationComplete).thenReturn(true)
         when(spyCompleteRegistration.checkAndSubmitStatus).thenReturn(TaskStatus.Completed)
 
         spyCompleteRegistration.isRegistrationComplete mustBe true
@@ -90,7 +88,7 @@ class RegistrationSpec
         spyCompleteRegistration.isPrimaryContactDetailsComplete mustBe true
         spyCompleteRegistration.primaryContactDetailsStatus mustBe TaskStatus.Completed
 
-        spyCompleteRegistration.isCheckAndSubmitComplete mustBe true
+        spyCompleteRegistration.isCheckAndSubmitReady mustBe true
         spyCompleteRegistration.checkAndSubmitStatus mustBe TaskStatus.Completed
 
       }

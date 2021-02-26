@@ -100,8 +100,8 @@
             @task(2, "registrationPage.apply", Set(
                 TaskSection(
                     title  = "registrationPage.checkAndSubmit",
-                    link   = pptRoutes.RegistrationController.displayPage(),
-                    showLink = registration.isCheckAndSubmitComplete,
+                    link   = pptRoutes.ReviewRegistrationController.displayPage(),
+                    showLink = registration.isCheckAndSubmitReady,
                     status = registration.checkAndSubmitStatus
                 )
             ))
