@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      5.0
+// @version      6.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -102,6 +102,8 @@ const registrationPage = () => {
             document.querySelector(PRIMARY_CONTACT_DETAILS_LINK).click()
         } else if (document.querySelector(LIABILITY_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
             document.querySelector(LIABILITY_DETAILS_LINK).click()
+        } else {
+            document.querySelectorAll('li')[5].getElementsByClassName('govuk-link')[0].click()
         }
     }
 }
@@ -232,6 +234,13 @@ const primaryContactCheckYourAnswers = () => {
      }
  }
 
+const reviewRegistration = () => {
+     if (currentPageIs('/plastic-packaging-tax/review-registration')) {
+
+         document.getElementsByClassName('govuk-button')[0].click()
+     }
+ }
+
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
 
@@ -261,4 +270,7 @@ const completeJourney = () => {
     primaryContactTelephoneNumber()
     primaryContactAddress()
     primaryContactCheckYourAnswers()
+
+    //review registration
+    reviewRegistration()
 }
