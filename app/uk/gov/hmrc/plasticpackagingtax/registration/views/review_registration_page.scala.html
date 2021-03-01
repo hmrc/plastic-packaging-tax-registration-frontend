@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import java.time.format.DateTimeFormatter
@@ -35,8 +36,7 @@
   paragraphBody: paragraphBody
 )
 
-
-@(registration: Registration)(implicit request: Request[_], messages: Messages)
+@(registration: Registration, incorporationDetails: IncorporationDetails)(implicit request: Request[_], messages: Messages)
 
 @extractAddress(address: Address) = @{
     Seq(address.businessName.getOrElse(""),
@@ -79,11 +79,11 @@
         @govukSummaryList(
             SummaryList(
                 rows = Seq(
-                    row("reviewRegistration.organisationDetails.businessName", registration.primaryContactDetails.fullName.map(n => s"${n.firstName} ${n.lastName}")),
-                    row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.primaryContactDetails.jobTitle),
-                    row("reviewRegistration.organisationDetails.organisationType", registration.primaryContactDetails.address.map(extractAddress)),
-                    row("reviewRegistration.organisationDetails.businessRegistrationNumber", registration.primaryContactDetails.phoneNumber),
-                    row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", registration.primaryContactDetails.email)
+                    row("reviewRegistration.organisationDetails.businessName", Some(incorporationDetails.companyName)),
+                    row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.primaryContactDetails.address.map(extractAddress)),
+                    row("reviewRegistration.organisationDetails.organisationType", Some("UK Company")),
+                    row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.companyNumber)),
+                    row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.ctutr))
                 ).filterNot(_.value.content == Empty)
             )
         )

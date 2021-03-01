@@ -20,30 +20,42 @@ import base.unit.ControllerSpec
 import controllers.Assets.{OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.IncorpIdConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import scala.concurrent.Future
+
 class ReviewRegistrationControllerSpec extends ControllerSpec {
-  private val page = mock[review_registration_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page                  = mock[review_registration_page]
+  private val mcc                   = stubMessagesControllerComponents()
+  private val mockIncorpIdConnector = mock[IncorpIdConnector]
+
+  private val incorporationDetails =
+    IncorporationDetails("123456789", "Example Limited", "0123456789")
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,
                                      mockJourneyAction,
                                      mcc = mcc,
+                                     incorpIdConnector = mockIncorpIdConnector,
                                      page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     val registration = aRegistration()
+
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(refEq(registration), refEq(incorporationDetails))(any(), any())).willReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -57,6 +69,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
+        when(mockIncorpIdConnector.getDetails(any())(any()))
+          .thenReturn(Future(incorporationDetails))
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -64,6 +78,20 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     }
 
     "return 303" when {
+
+      "Journey ID is invalid or does not exist" in {
+        authorizedUser()
+
+        val registration = aRegistration(withIncorpJourneyId(None))
+        mockRegistrationFind(registration)
+        given(
+          page.apply(refEq(registration), refEq(incorporationDetails))(any(), any())
+        ).willReturn(HtmlFormat.empty)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe SEE_OTHER
+      }
 
       "when form is submitted" in {
         authorizedUser()

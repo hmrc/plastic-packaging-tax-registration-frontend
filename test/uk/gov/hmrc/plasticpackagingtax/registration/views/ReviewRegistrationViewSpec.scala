@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -30,6 +31,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[review_registration_page]
 
   private val registration = aRegistration()
+
+  private val incorporationDetails =
+    IncorporationDetails("123456789", "Example Limited", "0123456789")
 
   private val organisationSection    = 0
   private val organisationNameKey    = 0
@@ -49,7 +53,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val liabilityDateKey   = 0
   private val liabilityWeightKey = 1
 
-  private def createView(reg: Registration = registration): Document = page(reg)(request, messages)
+  private def createView(reg: Registration = registration): Document =
+    page(reg, incorporationDetails)(request, messages)
 
   "Review registration View" should {
 
@@ -152,6 +157,18 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getKeyFor(organisationSection, organisationUtrKey) must containMessage(
           "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
         )
+
+        getValueFor(organisationSection,
+                    organisationNameKey
+        ) mustBe incorporationDetails.companyName
+        getValueFor(organisationSection,
+                    organisationAddressKey
+        ) mustBe "2 Scala Street Soho London W1T 2HN"
+        getValueFor(organisationSection, organisationTypeKey) mustBe "UK Company"
+        getValueFor(organisationSection,
+                    organisationCnrKey
+        ) mustBe incorporationDetails.companyNumber
+        getValueFor(organisationSection, organisationUtrKey) mustBe incorporationDetails.ctutr
 
       }
 

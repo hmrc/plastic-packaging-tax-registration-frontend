@@ -19,22 +19,33 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.IncorpIdConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReviewRegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
+  incorpIdConnector: IncorpIdConnector,
   page: review_registration_page
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration))
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.incorpJourneyId match {
+        case Some(journeyId) =>
+          incorpIdConnector.getDetails(journeyId).map(
+            details => Ok(page(request.registration, details))
+          )
+        case _ => Future(Redirect(routes.RegistrationController.displayPage()))
+      }
     }
 
   def submit(): Action[AnyContent] =
