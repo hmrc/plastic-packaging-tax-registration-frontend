@@ -32,10 +32,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesConfig) {
@@ -65,17 +64,13 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
 
-  lazy val incorpJourneyUrl = s"$incorpIdHost/incorporated-entity-identification/api/journey"
-
+  lazy val incorpJourneyUrl           = s"$incorpIdHost/incorporated-entity-identification/api/journey"
   lazy val pptRegistrationUrl: String = s"$pptServiceHost/registrations"
+  lazy val exitSurveyUrl              = config.get[String]("urls.exitSurvey")
+  lazy val hmrcPrivacyUrl             = config.get[String]("urls.hmrcPrivacy")
+  lazy val govUkUrl                   = config.get[String]("urls.govUk")
 
   def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
-
-  lazy val exitSurveyUrl = config.get[String]("urls.exitSurvey")
-
-  lazy val hmrcPrivacyUrl = config.get[String]("urls.hmrcPrivacy")
-
-  lazy val govUkUrl = config.get[String]("urls.govUk")
 }

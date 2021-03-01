@@ -18,7 +18,7 @@ package builders
 
 import java.util.UUID
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   PrimaryContactDetails,
@@ -39,6 +39,19 @@ trait RegistrationBuilder {
                  liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
                                                      startDate =
                                                        Some(Date(Some(1), Some(4), Some(2022)))
+                 ),
+                 primaryContactDetails = PrimaryContactDetails(
+                   fullName = Some(FullName(firstName = "Jack", lastName = "Gatsby")),
+                   jobTitle = Some("Developer"),
+                   email = Some("test@test.com"),
+                   phoneNumber = Some("0203 4567 890"),
+                   address = Some(
+                     Address(addressLine1 = "2 Scala Street",
+                             addressLine2 = Some("Soho"),
+                             townOrCity = "London",
+                             postCode = "W1T 2HN"
+                     )
+                   )
                  )
     )
 

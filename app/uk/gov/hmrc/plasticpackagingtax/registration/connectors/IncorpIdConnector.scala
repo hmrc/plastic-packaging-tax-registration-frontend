@@ -16,13 +16,17 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
+import javax.inject.{Inject, Singleton}
 import play.api.http.Status.CREATED
+import play.api.libs.json.{JsError, JsSuccess, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorpIdCreateRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorpIdCreateRequest,
+  IncorporationDetails
+}
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,5 +43,17 @@ class IncorpIdConnector @Inject() (httpClient: HttpClient, config: AppConfig)(im
           s"Invalid response from incorporated entity identification: Status: ${response.status} Body: ${response.body}"
         )
     }
+
+  def getDetails(journeyId: String)(implicit hc: HeaderCarrier): Future[IncorporationDetails] =
+    httpClient.GET[JsValue](config.incorpDetailsUrl(journeyId))
+      .map { json =>
+        IncorporationDetails.apiFormat.reads(json) match {
+          case JsSuccess(value, _) => value
+          case JsError(errors) =>
+            throw new Exception(
+              s"Incorporated entity identification returned invalid JSON ${errors.map(_._1).mkString(", ")}"
+            )
+        }
+      }
 
 }

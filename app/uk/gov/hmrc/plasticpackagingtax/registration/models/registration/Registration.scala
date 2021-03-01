@@ -34,12 +34,15 @@ case class Registration(
     )
 
   def isRegistrationComplete: Boolean =
-    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete && isCheckAndSubmitComplete
+    isCheckAndSubmitReady && false
 
-  def isCheckAndSubmitComplete: Boolean = checkAndSubmitStatus == TaskStatus.Completed
+  def isCheckAndSubmitReady: Boolean =
+    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete
 
   def checkAndSubmitStatus: TaskStatus =
-    if (isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete)
+    if (isRegistrationComplete)
+      TaskStatus.Completed
+    else if (isCheckAndSubmitReady)
       TaskStatus.NotStarted
     else
       TaskStatus.CannotStartYet

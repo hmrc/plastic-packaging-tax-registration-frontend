@@ -19,12 +19,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.api.test.Helpers._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorpIdCreateRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorpIdCreateRequest,
+  IncorporationDetails
+}
 
 class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
@@ -91,4 +95,62 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
     }
   }
 
+  "getDetails" when {
+    val testCompanyName   = "Example Limited"
+    val testCompanyNumber = "123456789"
+    val testUtr           = "0123456789"
+    val testJourneyId     = "testJourneyId"
+
+    "incorp ID returns valid incorporation details" in {
+      val validResponse = IncorporationDetails(testCompanyNumber, testCompanyName, testUtr)
+      stubFor(
+        get(urlMatching(s"/incorporated-entity-identification/api/journey/$testJourneyId"))
+          .willReturn(
+            aResponse().withStatus(OK)
+              withBody (toJson(validResponse)(IncorporationDetails.apiFormat).toString)
+          )
+      )
+
+      val res = await(connector.getDetails(testJourneyId))
+
+      res mustBe validResponse
+    }
+
+    "incorp ID returns invalid incorporation details" in {
+      val invalidResponse = Map("invalidKey1" -> "invalidValue1", "invalidKey2" -> "invalidValue2")
+      stubFor(
+        get(urlMatching(s"/incorporated-entity-identification/api/journey/$testJourneyId"))
+          .willReturn(
+            aResponse().withStatus(OK)
+              withBody (toJson(invalidResponse).toString)
+          )
+      )
+
+      intercept[Exception] {
+        await(connector.getDetails(testJourneyId))
+      }
+    }
+
+    "incorp ID cannot found incorporation details" in {
+      stubFor(
+        get(urlMatching(s"/incorporated-entity-identification/api/journey/$testJourneyId"))
+          .willReturn(aResponse().withStatus(NOT_FOUND))
+      )
+
+      intercept[Exception] {
+        await(connector.getDetails(testJourneyId))
+      }
+    }
+
+    "throws an exception" in {
+      stubFor(
+        get(urlMatching(s"/incorporated-entity-identification/api/journey/$testJourneyId"))
+          .willReturn(aResponse().withStatus(Status.INTERNAL_SERVER_ERROR))
+      )
+
+      intercept[Exception] {
+        await(connector.getDetails(testJourneyId))
+      }
+    }
+  }
 }
