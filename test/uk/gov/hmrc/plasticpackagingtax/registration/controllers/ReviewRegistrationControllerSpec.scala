@@ -45,6 +45,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
                                      mockJourneyAction,
                                      mcc = mcc,
                                      incorpIdConnector = mockIncorpIdConnector,
+                                     registrationConnector = mockRegistrationConnector,
                                      page = page
     )
 
@@ -69,6 +70,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
+        mockRegistrationUpdate(aRegistration())
         when(mockIncorpIdConnector.getDetails(any())(any()))
           .thenReturn(Future(incorporationDetails))
         val result = controller.displayPage()(getRequest())
