@@ -19,9 +19,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.IncorpIdConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  IncorpIdConnector,
+  RegistrationConnector,
+  ServiceError
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -33,24 +38,38 @@ class ReviewRegistrationController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   incorpIdConnector: IncorpIdConnector,
+  override val registrationConnector: RegistrationConnector,
   page: review_registration_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.incorpJourneyId match {
-        case Some(journeyId) =>
-          incorpIdConnector.getDetails(journeyId).map(
-            details => Ok(page(request.registration, details))
-          )
-        case _ => Future(Redirect(routes.RegistrationController.displayPage()))
-      }
+      if (request.registration.isCheckAndSubmitReady)
+        request.registration.incorpJourneyId match {
+          case Some(journeyId) =>
+            for {
+              incorporationDetails <- incorpIdConnector.getDetails(journeyId)
+              _                    <- updateRegistration(hasReviewedRegistration = true)
+            } yield Ok(page(request.registration, incorporationDetails))
+          case _ => Future(Redirect(routes.RegistrationController.displayPage()))
+        }
+      else
+        Future(Redirect(routes.RegistrationController.displayPage()))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction) { _ =>
       Redirect(routes.RegistrationController.displayPage())
+    }
+
+  private def updateRegistration(
+    hasReviewedRegistration: Boolean
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      val updatedMetaData =
+        registration.metaData.copy(hasReviewedRegistration = hasReviewedRegistration)
+      registration.copy(metaData = updatedMetaData)
     }
 
 }

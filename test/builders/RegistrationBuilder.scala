@@ -21,6 +21,7 @@ import java.util.UUID
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
+  MetaData,
   PrimaryContactDetails,
   Registration
 }
@@ -52,7 +53,8 @@ trait RegistrationBuilder {
                              postCode = "W1T 2HN"
                      )
                    )
-                 )
+                 ),
+                 metaData = MetaData()
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)
@@ -73,5 +75,8 @@ trait RegistrationBuilder {
 
   def withNoPrimaryContactDetails(): RegistrationModifier =
     _.copy(primaryContactDetails = PrimaryContactDetails())
+
+  def withMetaData(metaData: MetaData): RegistrationModifier =
+    _.copy(metaData = metaData)
 
 }

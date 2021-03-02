@@ -70,6 +70,29 @@ class RegistrationSpec
       }
     }
 
+    "be 'In Progress' " when {
+      "All sections are complete and the user is reviewing the registration" in {
+        val reviewedRegistration =
+          aRegistration(withMetaData(MetaData(hasReviewedRegistration = true)))
+
+        reviewedRegistration.isRegistrationComplete mustBe false
+        reviewedRegistration.numberOfCompletedSections mustBe 3
+
+        reviewedRegistration.isCompanyDetailsComplete mustBe true
+        reviewedRegistration.companyDetailsStatus mustBe TaskStatus.Completed
+
+        reviewedRegistration.isLiabilityDetailsComplete mustBe true
+        reviewedRegistration.liabilityDetailsStatus mustBe TaskStatus.Completed
+
+        reviewedRegistration.isPrimaryContactDetailsComplete mustBe true
+        reviewedRegistration.primaryContactDetailsStatus mustBe TaskStatus.Completed
+
+        reviewedRegistration.isCheckAndSubmitReady mustBe true
+        reviewedRegistration.checkAndSubmitStatus mustBe TaskStatus.InProgress
+
+      }
+    }
+
     "be 'Completed' " when {
       "All sections are complete" in {
         val spyCompleteRegistration = Mockito.spy(aRegistration())

@@ -23,14 +23,16 @@ case class Registration(
   id: String,
   incorpJourneyId: Option[String] = None,
   liabilityDetails: LiabilityDetails = LiabilityDetails(),
-  primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails()
+  primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
+  metaData: MetaData = MetaData()
 ) {
 
   def toRegistration: Registration =
     Registration(id = this.id,
                  incorpJourneyId = this.incorpJourneyId,
                  liabilityDetails = this.liabilityDetails,
-                 primaryContactDetails = this.primaryContactDetails
+                 primaryContactDetails = this.primaryContactDetails,
+                 metaData = this.metaData
     )
 
   def isRegistrationComplete: Boolean =
@@ -42,6 +44,8 @@ case class Registration(
   def checkAndSubmitStatus: TaskStatus =
     if (isRegistrationComplete)
       TaskStatus.Completed
+    else if (metaData.hasReviewedRegistration)
+      TaskStatus.InProgress
     else if (isCheckAndSubmitReady)
       TaskStatus.NotStarted
     else
