@@ -1,0 +1,68 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.bulletList
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.link
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+
+@this(
+    govukLayout: main_template,
+    govukPanel : GovukPanel,
+    paragraphBody: paragraphBody,
+    bulletList: bulletList,
+    link: link,
+    appConfig: AppConfig
+)
+
+@(registration: Registration)(implicit request: Request[_], messages: Messages, flash: Flash)
+
+
+@govukLayout(title = Title("confirmationPage.title")) {
+
+    @govukPanel(Panel(
+        title = Text(messages("confirmationPage.title")),
+        content = HtmlContent(
+            flash.get(FlashKeys.referenceId)
+                    .map(referenceId => messages("confirmationPage.panel.body", referenceId))
+                    .getOrElse(messages("confirmationPage.panel.body.default")))
+    ))
+
+    @paragraphBody(message = messages("confirmationPage.body", registration.numberOfCompletedSections))
+
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("confirmationPage.whatHappensNext.title")</h2>
+    <br>
+
+    @paragraphBody(message = messages("confirmationPage.whatHappensNext.paragraph1", registration.numberOfCompletedSections))
+
+    @bulletList(
+        title = Some(messages("confirmationPage.whatHappensNext.liable.title")),
+        elements = Seq(
+            Html(messages("confirmationPage.whatHappensNext.liable.bulletPoint.1")),
+            Html(messages("confirmationPage.whatHappensNext.liable.bulletPoint.2"))
+        )
+    )
+
+    <br>
+    @paragraphBody(message = messages("confirmationPage.exitSurvey.text",
+        link(text = messages("confirmationPage.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl))))
+
+
+
+}

@@ -23,9 +23,12 @@ import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.JsObject
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.IncorpIdConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  DownstreamServiceError,
+  IncorpIdConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -97,10 +100,13 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "when form is submitted" in {
         authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate(aRegistration())
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
       }
     }
 
@@ -112,6 +118,16 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
         intercept[RuntimeException](status(result))
       }
+
+      "user submits form and the registration update fails" in {
+        authorizedUser()
+        mockRegistrationFailure()
+        val result =
+          controller.submit()(postRequest(JsObject.empty))
+
+        intercept[DownstreamServiceError](status(result))
+      }
+
     }
   }
 

@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
   RegistrationConnector,
@@ -27,10 +27,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Random
 
 @Singleton
 class ReviewRegistrationController @Inject() (
@@ -50,7 +52,7 @@ class ReviewRegistrationController @Inject() (
           case Some(journeyId) =>
             for {
               incorporationDetails <- incorpIdConnector.getDetails(journeyId)
-              _                    <- updateRegistration(hasReviewedRegistration = true)
+              _                    <- markRegistrationAsReviewed()
             } yield Ok(page(request.registration, incorporationDetails))
           case _ => Future(Redirect(routes.RegistrationController.displayPage()))
         }
@@ -58,17 +60,39 @@ class ReviewRegistrationController @Inject() (
         Future(Redirect(routes.RegistrationController.displayPage()))
     }
 
-  def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { _ =>
-      Redirect(routes.RegistrationController.displayPage())
-    }
-
-  private def updateRegistration(
-    hasReviewedRegistration: Boolean
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def markRegistrationAsReviewed()(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedMetaData =
-        registration.metaData.copy(hasReviewedRegistration = hasReviewedRegistration)
+        registration.metaData.copy(registrationReviewed = true)
+      registration.copy(metaData = updatedMetaData)
+    }
+
+  /*
+  TODO: This will need to be refactored once:
+  1. The PPT EIS/IF Stub has been implemented
+  2. The EIS/IF and ETMP 'Create Registration/Subscription' request/response schemas are made available to us
+  3. If a submission has been successful we will need to remove the registration/submission document.
+  4. Once we have a lot more clarity. KISS.
+   */
+  def submit(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      val referenceId = s"PPT12345678${Random.nextInt(1000000)}"
+      markRegistrationAsCompleted().map {
+        case Right(_) =>
+          Redirect(routes.ConfirmationController.displayPage())
+            .flashing(Flash(Map(FlashKeys.referenceId -> referenceId)))
+        case Left(error) => throw error
+      }
+    }
+
+  private def markRegistrationAsCompleted()(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      val updatedMetaData =
+        registration.metaData.copy(registrationCompleted = true)
       registration.copy(metaData = updatedMetaData)
     }
 

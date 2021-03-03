@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
+package uk.gov.hmrc.plasticpackagingtax.registration.models.response
 
-import play.api.libs.json.{Json, OFormat}
-
-case class MetaData(registrationReviewed: Boolean = false, registrationCompleted: Boolean = false)
-
-object MetaData {
-  implicit val format: OFormat[MetaData] = Json.format[MetaData]
+object FlashKeys {
+  val referenceId: String = "referenceId"
 }

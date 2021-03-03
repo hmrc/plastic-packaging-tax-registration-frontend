@@ -158,3 +158,15 @@ reviewRegistration.organisationDetails.businessRegistrationNumber = Business Reg
 reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique Taxpayer Reference
 reviewRegistration.sendYourApplication.title = Now send your application
 reviewRegistration.sendYourApplication.body = By submitting this registration you are confirming that, to the best of your knowledge, the details you are providing are correct.
+
+confirmationPage.title = Registration complete
+confirmationPage.panel.body = Your reference number {0}
+confirmationPage.panel.body.default = Your registration has already been submitted
+confirmationPage.body = We have sent an email to confirm this registration.
+confirmationPage.whatHappensNext.title = What happens next
+confirmationPage.whatHappensNext.paragraph1 = The Plastic Packaging Tax starts from April 1 2022.
+confirmationPage.whatHappensNext.liable.title = If you are liable for the tax:
+confirmationPage.whatHappensNext.liable.bulletPoint.1 = The first return will be due by July 31 2022
+confirmationPage.whatHappensNext.liable.bulletPoint.2 = The first payment will be due by August 31 2022
+confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
+confirmationPage.exitSurvey.text.link = What did you think of this service?

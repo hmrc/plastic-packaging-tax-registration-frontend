@@ -41,5 +41,7 @@ POST       /check-primary-contact-details    uk.gov.hmrc.plasticpackagingtax.reg
 GET        /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.displayPage()
 POST       /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.submit()
 
+GET        /registration-complete   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ConfirmationController.displayPage()
+
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
 GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
