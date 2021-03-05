@@ -73,7 +73,7 @@
 
     @pageTitle(text = messages("reviewRegistration.organisationDetails.title"), classes = "govuk-label--l")
 
-    @formHelper(action = pptRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
         <h2 id="primary-contact-details" class="govuk-heading-m">@messages("reviewRegistration.organisationDetails.check.label")</h2>
         @govukSummaryList(

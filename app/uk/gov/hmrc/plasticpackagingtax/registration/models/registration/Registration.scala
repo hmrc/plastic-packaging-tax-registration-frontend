@@ -36,7 +36,7 @@ case class Registration(
     )
 
   def isRegistrationComplete: Boolean =
-    isCheckAndSubmitReady && false
+    isCheckAndSubmitReady && metaData.registrationCompleted
 
   def isCheckAndSubmitReady: Boolean =
     isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete
@@ -44,7 +44,7 @@ case class Registration(
   def checkAndSubmitStatus: TaskStatus =
     if (isRegistrationComplete)
       TaskStatus.Completed
-    else if (metaData.hasReviewedRegistration)
+    else if (metaData.registrationReviewed)
       TaskStatus.InProgress
     else if (isCheckAndSubmitReady)
       TaskStatus.NotStarted

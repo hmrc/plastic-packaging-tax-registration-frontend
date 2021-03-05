@@ -17,8 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import builders.RegistrationBuilder
-import org.mockito.Mockito
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
@@ -73,7 +71,7 @@ class RegistrationSpec
     "be 'In Progress' " when {
       "All sections are complete and the user is reviewing the registration" in {
         val reviewedRegistration =
-          aRegistration(withMetaData(MetaData(hasReviewedRegistration = true)))
+          aRegistration(withMetaData(MetaData(registrationReviewed = true)))
 
         reviewedRegistration.isRegistrationComplete mustBe false
         reviewedRegistration.numberOfCompletedSections mustBe 3
@@ -95,24 +93,24 @@ class RegistrationSpec
 
     "be 'Completed' " when {
       "All sections are complete" in {
-        val spyCompleteRegistration = Mockito.spy(aRegistration())
-        when(spyCompleteRegistration.isRegistrationComplete).thenReturn(true)
-        when(spyCompleteRegistration.checkAndSubmitStatus).thenReturn(TaskStatus.Completed)
+        val completeRegistration = aRegistration(
+          withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
+        )
 
-        spyCompleteRegistration.isRegistrationComplete mustBe true
-        spyCompleteRegistration.numberOfCompletedSections mustBe 3
+        completeRegistration.isRegistrationComplete mustBe true
+        completeRegistration.numberOfCompletedSections mustBe 3
 
-        spyCompleteRegistration.isCompanyDetailsComplete mustBe true
-        spyCompleteRegistration.companyDetailsStatus mustBe TaskStatus.Completed
+        completeRegistration.isCompanyDetailsComplete mustBe true
+        completeRegistration.companyDetailsStatus mustBe TaskStatus.Completed
 
-        spyCompleteRegistration.isLiabilityDetailsComplete mustBe true
-        spyCompleteRegistration.liabilityDetailsStatus mustBe TaskStatus.Completed
+        completeRegistration.isLiabilityDetailsComplete mustBe true
+        completeRegistration.liabilityDetailsStatus mustBe TaskStatus.Completed
 
-        spyCompleteRegistration.isPrimaryContactDetailsComplete mustBe true
-        spyCompleteRegistration.primaryContactDetailsStatus mustBe TaskStatus.Completed
+        completeRegistration.isPrimaryContactDetailsComplete mustBe true
+        completeRegistration.primaryContactDetailsStatus mustBe TaskStatus.Completed
 
-        spyCompleteRegistration.isCheckAndSubmitReady mustBe true
-        spyCompleteRegistration.checkAndSubmitStatus mustBe TaskStatus.Completed
+        completeRegistration.isCheckAndSubmitReady mustBe true
+        completeRegistration.checkAndSubmitStatus mustBe TaskStatus.Completed
 
       }
     }

@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
@@ -27,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
+  MetaData,
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
@@ -244,12 +244,13 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
       "All Sections completed" when {
 
-        val spyCompleteRegistration = Mockito.spy(aRegistration())
-        when(spyCompleteRegistration.checkAndSubmitStatus).thenReturn(TaskStatus.Completed)
-        when(spyCompleteRegistration.isRegistrationComplete).thenReturn(true)
+        val completeRegistration =
+          aRegistration(
+            withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
+          )
 
         val view: Html =
-          createView(spyCompleteRegistration)
+          createView(completeRegistration)
 
         "application status should reflect the completed sections" in {
 
@@ -259,7 +260,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   spyCompleteRegistration.numberOfCompletedSections
+                                   completeRegistration.numberOfCompletedSections
           )
         }
 
@@ -302,7 +303,6 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
         }
 
         "'Apply'" in {
-          when(spyCompleteRegistration.checkAndSubmitStatus).thenReturn(TaskStatus.InProgress)
 
           val applyElem = view.getElementsByTag("li").get(4)
 
@@ -319,9 +319,10 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
       }
 
       "Check and Submit is 'In Progress'" in {
-        val spyInProgressRegistration = Mockito.spy(aRegistration())
-        when(spyInProgressRegistration.checkAndSubmitStatus).thenReturn(TaskStatus.InProgress)
-        val view: Html = createView(spyInProgressRegistration)
+        val inProgressRegistration = aRegistration(
+          withMetaData(MetaData(registrationReviewed = true, registrationCompleted = false))
+        )
+        val view: Html = createView(inProgressRegistration)
 
         val applyElem = view.getElementsByTag("li").get(4)
 
@@ -329,6 +330,23 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
         sectionName(applyElem, CHECK_AND_SUBMIT) mustBe messages("registrationPage.checkAndSubmit")
         sectionStatus(applyElem, CHECK_AND_SUBMIT) mustBe messages("task.status.inProgress")
+        sectionLink(applyElem, CHECK_AND_SUBMIT) must haveHref(
+          routes.ReviewRegistrationController.displayPage()
+        )
+      }
+
+      "Check and Submit is 'Completed'" in {
+        val completedRegistration = aRegistration(
+          withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
+        )
+        val view: Html = createView(completedRegistration)
+
+        val applyElem = view.getElementsByTag("li").get(4)
+
+        header(applyElem) must include(messages("registrationPage.apply"))
+
+        sectionName(applyElem, CHECK_AND_SUBMIT) mustBe messages("registrationPage.checkAndSubmit")
+        sectionStatus(applyElem, CHECK_AND_SUBMIT) mustBe messages("task.status.completed")
         sectionLink(applyElem, CHECK_AND_SUBMIT) must haveHref(
           routes.ReviewRegistrationController.displayPage()
         )
