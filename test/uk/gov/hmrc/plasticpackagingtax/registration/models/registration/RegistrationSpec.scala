@@ -98,7 +98,7 @@ class RegistrationSpec
         )
 
         completeRegistration.isRegistrationComplete mustBe true
-        completeRegistration.numberOfCompletedSections mustBe 3
+        completeRegistration.numberOfCompletedSections mustBe 4
 
         completeRegistration.isCompanyDetailsComplete mustBe true
         completeRegistration.companyDetailsStatus mustBe TaskStatus.Completed
