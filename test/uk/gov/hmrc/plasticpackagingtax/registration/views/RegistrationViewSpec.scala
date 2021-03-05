@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
@@ -30,7 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
