@@ -62,6 +62,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
 
+  lazy val contactFrontendHost: String =
+    servicesConfig.baseUrl("contact-frontend")
+
   lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
 
   lazy val incorpJourneyUrl           = s"$incorpIdHost/incorporated-entity-identification/api/journey"
@@ -73,4 +76,11 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
+
+  def authenticatedFeedbackUrl(): String =
+    s"$contactFrontendHost/beta-feedback?service=${serviceIdentifier}"
+
+  def unauthenticatedFeedbackUrl(): String =
+    s"$contactFrontendHost/beta-feedback-unauthenticated?service=${serviceIdentifier}"
+
 }
