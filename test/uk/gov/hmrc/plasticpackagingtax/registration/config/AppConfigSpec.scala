@@ -71,13 +71,13 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "have 'authenticatedFeedbackUrl' defined" in {
       validAppConfig.authenticatedFeedbackUrl() must be(
-        "http://localhost:9250/beta-feedback?service=plastic-packaging-tax"
+        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax"
       )
     }
 
     "have 'unauthenticatedFeedbackUrl' defined" in {
       validAppConfig.unauthenticatedFeedbackUrl() must be(
-        "http://localhost:9250/beta-feedback-unauthenticated?service=plastic-packaging-tax"
+        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax"
       )
     }
   }

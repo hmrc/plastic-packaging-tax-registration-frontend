@@ -78,9 +78,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
 
   def authenticatedFeedbackUrl(): String =
-    s"$contactFrontendHost/beta-feedback?service=${serviceIdentifier}"
+    s"$contactFrontendHost/contact/beta-feedback?service=${serviceIdentifier}"
 
   def unauthenticatedFeedbackUrl(): String =
-    s"$contactFrontendHost/beta-feedback-unauthenticated?service=${serviceIdentifier}"
+    s"$contactFrontendHost/contact/beta-feedback-unauthenticated?service=${serviceIdentifier}"
 
 }

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views.partials
 
+import base.PptTestData
 import base.unit.UnitViewSpec
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers
@@ -23,6 +24,7 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBanner
 
 class PhaseBannerSpec extends UnitViewSpec with Matchers {
@@ -34,10 +36,14 @@ class PhaseBannerSpec extends UnitViewSpec with Matchers {
   private implicit val fakeRequest = FakeRequest("GET", requestPath)
 
   private val authenticatedLink =
-    "http://localhost:9250/beta-feedback?service=plastic-packaging-tax"
+    "http://localhost:9250/contact/beta-feedback?" +
+      "service=plastic-packaging-tax&" +
+      "backUrl=localhost/plastic-packaging-tax/some-page"
 
   private val unauthenticatedLink =
-    "http://localhost:9250/beta-feedback-unauthenticated?service=plastic-packaging-tax"
+    "http://localhost:9250/contact/beta-feedback-unauthenticated?" +
+      "service=plastic-packaging-tax&" +
+      "backUrl=localhost/plastic-packaging-tax/some-page"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -54,6 +60,12 @@ class PhaseBannerSpec extends UnitViewSpec with Matchers {
     "display feedback link with correct href" when {
 
       "when user authenticated" in {
+        import utils.FakeRequestCSRFSupport._
+
+        val request = new AuthenticatedRequest(FakeRequest("GET", requestPath).withCSRFToken,
+                                               PptTestData.newUser(),
+                                               Some("123")
+        )
         createBanner(request)
           .getElementsByClass("govuk-phase-banner__text").first()
           .getElementsByTag("a").first() must haveHref(s"$authenticatedLink")

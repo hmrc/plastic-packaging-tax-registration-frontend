@@ -26,9 +26,9 @@
 @isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
 @feedbackUrl = @{
   if (isAuthenticated) {
-    appConfig.authenticatedFeedbackUrl()
+    s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${request.host}${request.uri}"
   } else {
-   appConfig.unauthenticatedFeedbackUrl()
+    s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${request.host}${request.uri}"
   }
 }
 
