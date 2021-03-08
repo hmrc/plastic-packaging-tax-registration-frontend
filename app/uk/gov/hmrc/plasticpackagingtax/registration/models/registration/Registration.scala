@@ -54,7 +54,8 @@ case class Registration(
   def numberOfCompletedSections: Int =
     Array(isCompanyDetailsComplete,
           isLiabilityDetailsComplete,
-          isPrimaryContactDetailsComplete
+          isPrimaryContactDetailsComplete,
+          isRegistrationComplete
     ).count(p => p)
 
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
