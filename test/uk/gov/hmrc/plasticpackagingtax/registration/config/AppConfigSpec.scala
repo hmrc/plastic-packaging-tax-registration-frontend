@@ -34,6 +34,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |microservice.services.plastic-packaging-tax-registration.port=8502
         |microservice.services.contact-frontend.host=localhost
         |microservice.services.contact-frontend.port=9250
+        |urls.feedback.authenticatedLink="http://localhost:9250/contact/beta-feedback"
+        |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
       """.stripMargin
     )
 

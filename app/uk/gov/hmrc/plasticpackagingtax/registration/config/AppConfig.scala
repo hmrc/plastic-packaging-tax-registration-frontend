@@ -45,6 +45,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val serviceIdentifier = "plastic-packaging-tax"
 
+  lazy val selfBaseUrl: String = config
+    .getOptional[String]("platform.frontend.host")
+    .getOrElse("http://localhost:9250")
+
   lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
 
   lazy val reportAProblemPartialUrl: String =
@@ -62,25 +66,28 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
 
-  lazy val contactFrontendHost: String =
-    servicesConfig.baseUrl("contact-frontend")
-
   lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
+
+  lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
+
+  lazy val feedbackUnauthenticatedLink: String =
+    config.get[String]("urls.feedback.unauthenticatedLink")
+
+  lazy val exitSurveyUrl  = config.get[String]("urls.exitSurvey")
+  lazy val hmrcPrivacyUrl = config.get[String]("urls.hmrcPrivacy")
+  lazy val govUkUrl       = config.get[String]("urls.govUk")
 
   lazy val incorpJourneyUrl           = s"$incorpIdHost/incorporated-entity-identification/api/journey"
   lazy val pptRegistrationUrl: String = s"$pptServiceHost/registrations"
-  lazy val exitSurveyUrl              = config.get[String]("urls.exitSurvey")
-  lazy val hmrcPrivacyUrl             = config.get[String]("urls.hmrcPrivacy")
-  lazy val govUkUrl                   = config.get[String]("urls.govUk")
 
   def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
 
   def authenticatedFeedbackUrl(): String =
-    s"$contactFrontendHost/contact/beta-feedback?service=${serviceIdentifier}"
+    s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"
 
   def unauthenticatedFeedbackUrl(): String =
-    s"$contactFrontendHost/contact/beta-feedback-unauthenticated?service=${serviceIdentifier}"
+    s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
 }
