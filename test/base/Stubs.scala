@@ -53,7 +53,7 @@ import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{
   HmrcFooterItems,
   HmrcTrackingConsentSnippet
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.config.TimeoutDialogConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, TimeoutDialogConfig}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.{phaseBanner, siteHeader}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -105,12 +105,15 @@ trait Stubs {
     new TrackingConsentConfig(Configuration(minimalConfig))
   )
 
-  val hmrcReportTechnicalIssue = new HmrcReportTechnicalIssue()
+  val appConfig =
+    new AppConfig(Configuration(minimalConfig), servicesConfig(Configuration(minimalConfig)))
 
-  val govukHeader = new GovukHeader()
-  val sHeader     = new siteHeader(new HmrcHeader(new HmrcBanner()))
-  val govPBanner  = new GovukPhaseBanner(new govukTag())
-  val pBanner     = new phaseBanner(govPBanner)
+  val hmrcReportTechnicalIssue = new HmrcReportTechnicalIssue()
+  val govukHeader              = new GovukHeader()
+  val sHeader                  = new siteHeader(new HmrcHeader(new HmrcBanner()))
+  val govPBanner               = new GovukPhaseBanner(new govukTag())
+
+  val pBanner = new phaseBanner(govPBanner, appConfig)
 
   val timeoutDialogConfig = new TimeoutDialogConfig(servicesConfig(Configuration(minimalConfig)))
 

@@ -32,6 +32,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |microservice.services.incorporated-entity-identification-frontend.port=9718
         |microservice.services.plastic-packaging-tax-registration.host=localhost
         |microservice.services.plastic-packaging-tax-registration.port=8502
+        |microservice.services.contact-frontend.host=localhost
+        |microservice.services.contact-frontend.port=9250
       """.stripMargin
     )
 
@@ -64,6 +66,18 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     "have 'pptRegistrationUrl(...)' defined" in {
       validAppConfig.pptRegistrationUrl("someId") must be(
         "http://localhost:8502/registrations/someId"
+      )
+    }
+
+    "have 'authenticatedFeedbackUrl' defined" in {
+      validAppConfig.authenticatedFeedbackUrl() must be(
+        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax"
+      )
+    }
+
+    "have 'unauthenticatedFeedbackUrl' defined" in {
+      validAppConfig.unauthenticatedFeedbackUrl() must be(
+        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax"
       )
     }
   }
