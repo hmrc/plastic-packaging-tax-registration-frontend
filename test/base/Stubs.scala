@@ -124,7 +124,8 @@ trait Stubs {
                                           timeoutDialogConfig = timeoutDialogConfig,
                                           govukPhaseBanner = govPBanner,
                                           hmrcFooter = hmrcFooter,
-                                          phaseBanner = pBanner
+                                          phaseBanner = pBanner,
+                                          hmrcTrackingConsentSnippet = hmrcTrackingConsentSnippet
   )
 
 }
