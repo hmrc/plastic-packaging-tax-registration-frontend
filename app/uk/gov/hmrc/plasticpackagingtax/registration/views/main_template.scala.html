@@ -18,10 +18,11 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.siteHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBanner
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.timeoutDialog
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.TimeoutDialogConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.timeoutDialog
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
 
 @this(
         govukHeader: GovukHeader,
@@ -29,6 +30,7 @@
         govukPhaseBanner: GovukPhaseBanner,
         timeoutDialogConfig: TimeoutDialogConfig,
         govukBackLink: GovukBackLink,
+        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
         siteHeader: siteHeader,
         phaseBanner: phaseBanner,
         hmrcFooter: hmrcStandardFooter
@@ -41,6 +43,8 @@
 @useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]]}
 
 @head = {
+    @hmrcTrackingConsentSnippet()
+
     <link rel="stylesheet" href='@routes.Assets.versioned("stylesheets/application.css")' rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href='@routes.Assets.versioned("/lib/govuk-frontend/govuk/assets/images/favicon.ico")' type="image/x-icon" />
     <meta name="format-detection" content="telephone=no" />
