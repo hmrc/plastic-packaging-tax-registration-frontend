@@ -82,9 +82,11 @@ trait Stubs {
 
   def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
 
-  private val minimalConfig: Config = ConfigFactory.parseString("""
+  private val minimalConfig: Config =
+    ConfigFactory.parseString("""
                                                                   |timeoutDialog.timeout=13min
-                                                                  |timeoutDialog.countdown=2min
+                                                                  |timeoutDialog.countdown=
+                                                                  |tracking-consent-frontend.gtm.container=b
     """.stripMargin)
 
   val gdsGovukLayout = new GovukLayout(new components.GovukTemplate(govukHeader = new GovukHeader(),
