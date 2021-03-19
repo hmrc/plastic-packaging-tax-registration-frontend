@@ -21,9 +21,6 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.RegistrationController
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.LiabilityStartDateController
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.LiabilityWeightController
 @import java.time.format.DateTimeFormatter
 
 @this(
@@ -53,7 +50,7 @@
                     actions = Some(Actions(
                         items = Seq(
                             ActionItem(
-                                href = LiabilityStartDateController.displayPage().url,
+                                href = pptRoutes.LiabilityStartDateController.displayPage().url,
                                 content = Text(messages("site.link.change"))
                             )
                         )
@@ -69,7 +66,7 @@
                     actions = Some(Actions(
                         items = Seq(
                             ActionItem(
-                                href = LiabilityWeightController.displayPage().url,
+                                href = pptRoutes.LiabilityWeightController.displayPage().url,
                                 content = Text(messages("site.link.change"))
                                 )
                             )
@@ -82,7 +79,7 @@
 
     @govukButton(
         Button(
-            href = Some(RegistrationController.displayPage().url),
+            href = Some(pptRoutes.RegistrationController.displayPage().url),
             isStartButton = false,
             content = Text(messages("site.button.continue"))
         )
