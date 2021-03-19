@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 import javax.inject.{Inject, Singleton}
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
@@ -35,7 +35,7 @@ class IncorpIdConnector @Inject() (httpClient: HttpClient, config: AppConfig)(im
 ) {
 
   def createJourney(payload: IncorpIdCreateRequest)(implicit hc: HeaderCarrier): Future[String] =
-    httpClient.POST(config.incorpJourneyUrl, payload).map {
+    httpClient.POST[IncorpIdCreateRequest, HttpResponse](config.incorpJourneyUrl, payload).map {
       case response @ HttpResponse(CREATED, _, _) =>
         (response.json \ "journeyStartUrl").as[String]
       case response =>

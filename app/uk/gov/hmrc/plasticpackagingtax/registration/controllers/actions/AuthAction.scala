@@ -98,7 +98,7 @@ class AuthActionImpl @Inject() (
 }
 
 object AuthAction {
-  val pptEnrolmentKey            = "HMRC-CUS-ORG"
+  val pptEnrolmentKey            = "HMRC-PPT-ORG"
   val pptEnrolmentIdentifierName = "UTR"
 }
 

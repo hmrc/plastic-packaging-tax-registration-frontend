@@ -16,7 +16,7 @@
 
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
-    document.getElementsByName("enrolment[0].name")[0].value = "HMRC-CUS-ORG";
+    document.getElementsByName("enrolment[0].name")[0].value = "HMRC-PPT-ORG";
     document.getElementById("input-0-0-name").value = "UTR";
     document.getElementById("input-0-0-value").value = "1234567890";
 
