@@ -32,7 +32,7 @@ select the appropriate stubbing behaviour _(select all)_.
 * Choose affinity group as `Organisation`
 * Single enrolment required:
 ```
-    EnrolmentKey: HMRC-CUS-ORG
+    EnrolmentKey: HMRC-PPT-ORG
     IdentifierName: UTR
     Value: any String/Int (if you pass same it'll pull out existing registration, otherwise create new one)
 ```
