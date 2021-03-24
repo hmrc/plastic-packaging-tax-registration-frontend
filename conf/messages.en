@@ -119,7 +119,7 @@ primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer
 primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
 
 
-primaryContactDetails.address.title = What is the primary contact’s business address
+primaryContactDetails.address.title = What is the primary contact’s business address?
 primaryContactDetails.address.hint = We’ll only use this to send you information about your account and returns.
 primaryContactDetails.address.businessName = Business name
 primaryContactDetails.address.businessName.format.error = Enter a business name in the correct format
