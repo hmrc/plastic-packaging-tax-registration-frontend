@@ -127,7 +127,8 @@ trait Stubs {
                                           govukPhaseBanner = govPBanner,
                                           hmrcFooter = hmrcFooter,
                                           phaseBanner = pBanner,
-                                          hmrcTrackingConsentSnippet = hmrcTrackingConsentSnippet
+                                          hmrcTrackingConsentSnippet = hmrcTrackingConsentSnippet,
+                                          hmrcReportTechnicalIssue = hmrcReportTechnicalIssue
   )
 
 }
