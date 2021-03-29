@@ -31,6 +31,7 @@
         timeoutDialogConfig: TimeoutDialogConfig,
         govukBackLink: GovukBackLink,
         hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+        hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
         siteHeader: siteHeader,
         phaseBanner: phaseBanner,
         hmrcFooter: hmrcStandardFooter
@@ -83,6 +84,13 @@
         )
     </div>
     @contentBlock
+    @hmrcReportTechnicalIssue(
+        ReportTechnicalIssue(
+            serviceCode = "plastic-packaging-tax",
+            language = if(messages.lang.code == "en") En else Cy,
+            referrerUrl = Some(s"${request.uri}"),
+        )
+    )
 }
 
 @govukLayout(
