@@ -1,5 +1,3 @@
-@import '_ppt';
-
 $govuk-assets-path: '/plastic-packaging-tax/assets/';
 $govuk-images-path: "/plastic-packaging-tax/assets/lib/govuk-frontend/govuk/assets/images/";
 $govuk-fonts-path: "/plastic-packaging-tax/assets/lib/govuk-frontend/govuk/assets/fonts/";
@@ -7,3 +5,6 @@ $hmrc-assets-path: "/plastic-packaging-tax/assets/lib/hmrc-frontend/hmrc/assets/
 
 @import 'lib/govuk-frontend/govuk/all';
 @import "lib/hmrc-frontend/hmrc/all";
+
+@import '_ppt';
+@import '_cards';
