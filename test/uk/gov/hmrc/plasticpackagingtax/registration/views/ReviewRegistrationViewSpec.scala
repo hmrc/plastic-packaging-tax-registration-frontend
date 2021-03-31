@@ -211,7 +211,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
           routes.ContactDetailsJobTitleController.displayPage()
         )
         getChangeLinkFor(contactDetailsSection, contactDetailsAddressKey) must haveHref(
-          routes.ContactDetailsAddressController.displayPage()
+          routes.ContactDetailsConfirmAddressController.displayPage()
         )
         getChangeLinkFor(contactDetailsSection, contactDetailsPhoneNumberKey) must haveHref(
           routes.ContactDetailsTelephoneNumberController.displayPage()

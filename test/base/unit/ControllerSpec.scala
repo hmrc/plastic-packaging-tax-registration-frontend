@@ -73,6 +73,13 @@ trait ControllerSpec
       .withCSRFToken
   }
 
+  protected def postJsonRequestEncoded(
+    body: (String, String)*
+  ): Request[AnyContentAsFormUrlEncoded] =
+    postRequest
+      .withFormUrlEncodedBody(body: _*)
+      .withCSRFToken
+
   private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
   protected def getTuples(cc: AnyRef): Seq[(String, String)] =

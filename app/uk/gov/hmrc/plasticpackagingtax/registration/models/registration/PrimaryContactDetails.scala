@@ -25,6 +25,7 @@ case class PrimaryContactDetails(
   jobTitle: Option[String] = None,
   email: Option[String] = None,
   phoneNumber: Option[String] = None,
+  useRegisteredAddress: Boolean = false,
   address: Option[Address] = None
 ) {
 

@@ -26,62 +26,66 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PhoneNumber
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.phone_number_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirm_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ContactDetailsTelephoneNumberController @Inject() (
+class ContactDetailsConfirmAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: phone_number_page
+  page: confirm_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.primaryContactDetails.phoneNumber match {
-        case Some(data) =>
-          Ok(page(PhoneNumber.form().fill(PhoneNumber(data))))
-        case _ => Ok(page(PhoneNumber.form()))
-      }
+      Ok(
+        page(
+          ConfirmAddress.form().fill(
+            ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
+          )
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      PhoneNumber.form()
+      ConfirmAddress.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[PhoneNumber]) => {
-                println(formWithErrors)
-                Future.successful(BadRequest(page(formWithErrors)))
-              },
-              phoneNumber =>
-                updateRegistration(phoneNumber).map {
-                  case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
-                      case _ =>
-                        Redirect(routes.RegistrationController.displayPage())
-                    }
-                  case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[ConfirmAddress]) =>
+            Future.successful(BadRequest(page(formWithErrors))),
+          confirmAddress =>
+            updateRegistration(confirmAddress).map {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    if (confirmAddress.useRegisteredAddress)
+                      Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+                    else Redirect(routes.ContactDetailsAddressController.displayPage())
+                  case _ => Redirect(routes.RegistrationController.displayPage())
                 }
+              case Left(error) => throw error
+            }
         )
     }
 
   private def updateRegistration(
-    formData: PhoneNumber
+    formData: ConfirmAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val withUpdatedPhoneNumber =
-        registration.primaryContactDetails.copy(phoneNumber = Some(formData.value))
-      registration.copy(primaryContactDetails = withUpdatedPhoneNumber)
+      val updatedPrimaryContactDetails =
+        registration.primaryContactDetails.copy(useRegisteredAddress =
+          formData.useRegisteredAddress
+        )
+      registration.copy(primaryContactDetails = updatedPrimaryContactDetails)
     }
 
 }
