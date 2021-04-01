@@ -60,7 +60,8 @@
             items = Seq(
                 ActionItem(
                     href = c.url,
-                    content = Text(messages("site.link.change"))
+                    content = Text(messages("site.link.change")),
+                    visuallyHiddenText = Some(messages(key))
                 )
             )
         )))
