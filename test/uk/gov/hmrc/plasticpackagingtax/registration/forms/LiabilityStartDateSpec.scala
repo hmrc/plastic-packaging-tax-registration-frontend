@@ -26,8 +26,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityStartDate.{
   dateOutOfRangeError
 }
 
-import java.time.LocalDate
-
 class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
   "Date mapping validation rules" should {
