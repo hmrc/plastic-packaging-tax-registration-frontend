@@ -51,7 +51,8 @@
                         items = Seq(
                             ActionItem(
                                 href = pptRoutes.LiabilityStartDateController.displayPage().url,
-                                content = Text(messages("site.link.change"))
+                                content = Text(messages("site.link.change")),
+                                visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.date"))
                             )
                         )
                     ))
@@ -67,7 +68,8 @@
                         items = Seq(
                             ActionItem(
                                 href = pptRoutes.LiabilityWeightController.displayPage().url,
-                                content = Text(messages("site.link.change"))
+                                content = Text(messages("site.link.change")),
+                                visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.weight"))
                                 )
                             )
                         ))

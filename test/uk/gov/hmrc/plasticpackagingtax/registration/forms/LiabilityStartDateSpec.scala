@@ -22,6 +22,7 @@ import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{dateEmptyError, day, month, year}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityStartDate.{
   dateFormattingError,
+  dateLowerLimit,
   dateOutOfRangeError
 }
 
@@ -35,14 +36,13 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
       "is exactly one year after tax liability starts (01-04-2022)" in {
 
-        val date = LocalDate.of(2022, 4, 1).plusYears(1)
+        val date = dateLowerLimit.plusYears(1)
         val input = Map("year" -> date.getYear.toString,
                         "month" -> date.getMonthValue.toString,
                         "day"   -> date.getDayOfMonth.toString
         )
 
         val form = LiabilityStartDate.form().bind(input)
-        println(form.errors)
         form.errors.size mustBe 0
       }
     }
@@ -195,7 +195,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
       "is more than one year after tax liability starts (01-04-2022)" in {
 
-        val date = LocalDate.now().plusYears(1).plusDays(1)
+        val date = dateLowerLimit.plusYears(1).plusDays(1)
         val input = Map("year" -> date.getYear.toString,
                         "month" -> date.getMonthValue.toString,
                         "day"   -> date.getDayOfMonth.toString
