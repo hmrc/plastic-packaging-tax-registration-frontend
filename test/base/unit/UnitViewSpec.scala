@@ -25,12 +25,12 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import spec.ViewMatchers
+import spec.{PptTestData, ViewMatchers}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 class UnitViewSpec
     extends AnyWordSpec with MockRegistrationConnector with ViewMatchers with ViewAssertions
-    with Injector with GuiceOneAppPerSuite {
+    with Injector with GuiceOneAppPerSuite with PptTestData {
 
   import utils.FakeRequestCSRFSupport._
 

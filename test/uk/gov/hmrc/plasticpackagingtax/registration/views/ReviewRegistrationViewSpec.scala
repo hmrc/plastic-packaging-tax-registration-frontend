@@ -20,7 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -31,9 +30,6 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[review_registration_page]
 
   private val registration = aRegistration()
-
-  private val incorporationDetails =
-    IncorporationDetails("123456789", "Example Limited", "0123456789")
 
   private val organisationSection    = 0
   private val organisationNameKey    = 0

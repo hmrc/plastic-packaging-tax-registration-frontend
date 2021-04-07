@@ -29,7 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   IncorpIdConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -39,9 +38,6 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
   private val page                  = mock[review_registration_page]
   private val mcc                   = stubMessagesControllerComponents()
   private val mockIncorpIdConnector = mock[IncorpIdConnector]
-
-  private val incorporationDetails =
-    IncorporationDetails("123456789", "Example Limited", "0123456789")
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,

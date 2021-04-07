@@ -70,6 +70,15 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+    "validate other rendering  methods" in {
+      page.f(Address.form())(request, messages).select("title").text() must include(
+        messages("primaryContactDetails.address.title")
+      )
+      page.render(Address.form(), request, messages).select("title").text() must include(
+        messages("primaryContactDetails.address.title")
+      )
+    }
+
     "display title" in {
 
       view.select("title").text() must include(messages("primaryContactDetails.address.title"))

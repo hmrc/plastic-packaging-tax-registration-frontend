@@ -22,6 +22,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirm_address
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -30,8 +31,20 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[confirm_address]
 
+  private val incorporationAddressDetails = IncorporationAddressDetails(
+    address_line_1 = "testLine1",
+    address_line_2 = "testLine2",
+    locality = "test town",
+    care_of = "test name",
+    po_box = "123",
+    postal_code = "AA11AA",
+    premises = "1",
+    region = "test region",
+    country = "United Kingdom"
+  )
+
   private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form()): Document =
-    page(form)(request, messages)
+    page(form, incorporationAddressDetails)(request, messages)
 
   "Confirm Address View" should {
 
@@ -47,12 +60,12 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(ConfirmAddress.form())(request, messages).select("title").text() must include(
-        messages("primaryContactDetails.confirmAddress.title")
-      )
-      page.render(ConfirmAddress.form(), request, messages).select("title").text() must include(
-        messages("primaryContactDetails.confirmAddress.title")
-      )
+      page.f(ConfirmAddress.form(), incorporationAddressDetails)(request, messages).select(
+        "title"
+      ).text() must include(messages("primaryContactDetails.confirmAddress.title"))
+      page.render(ConfirmAddress.form(), incorporationAddressDetails, request, messages).select(
+        "title"
+      ).text() must include(messages("primaryContactDetails.confirmAddress.title"))
     }
 
     "contain timeout dialog function" in {
@@ -134,31 +147,5 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("useRegisteredAddress") must haveAttribute("checked")
       view.getElementById("useRegisteredAddress-2") must not(haveAttribute("checked"))
     }
-  }
-  "display error" when {
-
-//    "mandatory address fields have not been submitted" in {
-//
-//      val anInvalidAddress =
-//        Address(businessName = Some("Business Name"),
-//                addressLine1 = "",
-//                addressLine2 = Some("Address Line 2"),
-//                addressLine3 = Some("Address Line 3"),
-//                townOrCity = "",
-//                county = Some("county"),
-//                postCode = ""
-//        )
-//
-//      val form = ConfirmAddress
-//        .form()
-//        .fillAndValidate(anInvalidAddress)
-//      val view = createView(form)
-//
-//      view must haveGovukGlobalErrorSummary
-//
-//      view must haveGovukFieldError("addressLine1", "Enter an address")
-//      view must haveGovukFieldError("townOrCity", "Enter a town or city")
-//      view must haveGovukFieldError("postCode", "Enter a postcode")
-//    }
   }
 }

@@ -19,7 +19,7 @@ package base.unit
 import java.lang.reflect.Field
 
 import base.MockAuthAction
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{BeforeAndAfterEach}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,6 +29,7 @@ import play.api.mvc._
 import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
+import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndComeBackLater,
@@ -40,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpec
     extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
     with GuiceOneAppPerSuite with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout
-    with MockJourneyAction {
+    with MockJourneyAction with PptTestData {
 
   import utils.FakeRequestCSRFSupport._
 

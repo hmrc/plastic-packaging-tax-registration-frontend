@@ -18,16 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
-import play.api.libs.json.{Format, JsBoolean, Reads, Writes}
 
 case class ConfirmAddress(useRegisteredAddress: Boolean)
 
 object ConfirmAddress extends CommonFormValidators {
-
-  implicit val format: Format[ConfirmAddress] =
-    Format[ConfirmAddress](Reads.StringReads.map(ConfirmAddress.apply),
-                           Writes[ConfirmAddress](obj => JsBoolean(obj.useRegisteredAddress))
-    )
 
   lazy val emptyError = "primaryContactDetails.jobTitle.empty.error"
   val yes             = "yes"

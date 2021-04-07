@@ -19,20 +19,27 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
 
-case class IncorporationDetails(companyNumber: String, companyName: String, ctutr: String)
+case class IncorporationDetails(
+  companyNumber: String,
+  companyName: String,
+  ctutr: String,
+  companyAddress: IncorporationAddressDetails
+)
 
 object IncorporationDetails {
 
   val apiReads: Reads[IncorporationDetails] = (
     (__ \ "companyProfile" \ "companyNumber").read[String] and
       (__ \ "companyProfile" \ "companyName").read[String] and
-      (__ \ "ctutr").read[String]
+      (__ \ "ctutr").read[String] and
+      (__ \ "companyProfile" \ "unsanitisedCHROAddress").read[IncorporationAddressDetails]
   )(IncorporationDetails.apply _)
 
   val apiWrites: Writes[IncorporationDetails] = (
     (__ \ "companyProfile" \ "companyNumber").write[String] and
       (__ \ "companyProfile" \ "companyName").write[String] and
-      (__ \ "ctutr").write[String]
+      (__ \ "ctutr").write[String] and
+      (__ \ "companyProfile" \ "unsanitisedCHROAddress").write[IncorporationAddressDetails]
   )(unlift(IncorporationDetails.unapply))
 
   val apiFormat: Format[IncorporationDetails] = Format[IncorporationDetails](apiReads, apiWrites)

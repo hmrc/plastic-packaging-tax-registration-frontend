@@ -123,6 +123,7 @@ primaryContactDetails.confirmAddress.title = What is the primary contact’s bus
 primaryContactDetails.confirmAddress.description = This is the registered business address we hold.
 primaryContactDetails.confirmAddress.registeredBusinessAddress = Registered business address
 primaryContactDetails.confirmAddress.radio.title = Do you want to use this as your primary contact address?
+primaryContactDetails.confirmAddress.empty.error = Choose an option
 
 primaryContactDetails.address.title = What is the primary contact’s business address?
 primaryContactDetails.address.hint = We’ll only use this to send you information about your account and returns.

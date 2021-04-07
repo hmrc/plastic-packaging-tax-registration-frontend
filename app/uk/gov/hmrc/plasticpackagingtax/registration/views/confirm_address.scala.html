@@ -27,6 +27,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.yes
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.no
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 
 @this(
   formHelper: FormWithCSRF,
@@ -40,7 +41,7 @@
   errorSummary: errorSummary
 )
 
-@(form: Form[ConfirmAddress])(implicit request: Request[_], messages: Messages)
+@(form: Form[ConfirmAddress], incorporationAddressDetails: IncorporationAddressDetails)(implicit request: Request[_], messages: Messages)
 
 
 @govukLayout(
@@ -60,7 +61,7 @@
                     content = Text(messages("primaryContactDetails.confirmAddress.registeredBusinessAddress"))
                 ),
                 value = Value(
-                    content = Text("Sarah Philips")
+                    content = HtmlContent(incorporationAddressDetails.toHtml)
                 )
             )
         )
