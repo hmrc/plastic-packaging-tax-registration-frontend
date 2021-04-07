@@ -46,7 +46,7 @@
 
 @govukLayout(
   title = Title("liabilityStartDatePage.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage()))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liabilityStartDatePage.sectionHeader"))

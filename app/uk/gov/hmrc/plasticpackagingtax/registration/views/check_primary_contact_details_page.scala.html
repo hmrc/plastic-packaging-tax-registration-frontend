@@ -68,7 +68,7 @@
 
 @govukLayout(
   title = Title("primaryContactDetails.check.meta.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsAddressController.displayPage()))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsAddressController.displayPage(), messages("site.back.hiddenText")))) {
 
     @pageTitle(text = messages("primaryContactDetails.check.title"), classes = "govuk-label--l")
 

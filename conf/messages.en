@@ -7,6 +7,7 @@ title.format={0} - {1} - GOV.UK
 title.withSection.format={0} - {1} - {2} - GOV.UK
 
 site.back = Back
+site.back.hiddenText = to previous page
 site.backToGovUk = Back to GOV.UK
 site.button.continue = Save and Continue
 site.button.acceptAndSend = Accept and send

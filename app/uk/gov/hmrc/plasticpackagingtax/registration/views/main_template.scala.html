@@ -76,7 +76,7 @@
     <div class="govuk-back-link-div">
         @backButton.map(back =>
             govukBackLink(BackLink(
-                content = Text(back.title),
+                content = HtmlContent(Html(s"""${back.title}<span class="govuk-visually-hidden">${back.hiddenText}</span>""")),
                 attributes = Map("id" -> "back-link"),
                 classes = "govuk-!-display-none-print",
                 href = back.call.url

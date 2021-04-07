@@ -40,7 +40,7 @@
 
 @govukLayout(
   title = Title("primaryContactDetails.jobTitlePage.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsFullNameController.displayPage()))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsFullNameController.displayPage(), messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
