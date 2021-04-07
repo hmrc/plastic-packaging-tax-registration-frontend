@@ -18,4 +18,4 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
 import play.api.mvc.Call
 
-case class BackButton(title: String, call: Call)
+case class BackButton(title: String, call: Call, hiddenText: String)

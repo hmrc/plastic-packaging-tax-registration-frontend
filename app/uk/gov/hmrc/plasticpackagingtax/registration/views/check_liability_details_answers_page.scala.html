@@ -33,7 +33,7 @@
 
 @govukLayout(
   title = Title("checkLiabilityDetailsAnswers.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage()))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage(), messages("site.back.hiddenText")))) {
 
     @pageTitle(text = messages("checkLiabilityDetailsAnswers.title"))
 
