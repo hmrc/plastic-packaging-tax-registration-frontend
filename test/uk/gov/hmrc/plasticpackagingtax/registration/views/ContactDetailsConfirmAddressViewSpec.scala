@@ -137,7 +137,7 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
     "display data" in {
 
       val confirmAddress =
-        ConfirmAddress(true)
+        ConfirmAddress(Some(true))
 
       val form = ConfirmAddress
         .form()

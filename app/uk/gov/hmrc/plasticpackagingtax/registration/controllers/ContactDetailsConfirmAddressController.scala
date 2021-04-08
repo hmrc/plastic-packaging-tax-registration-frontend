@@ -83,7 +83,7 @@ class ContactDetailsConfirmAddressController @Inject() (
                     case Right(_) =>
                       FormAction.bindFromRequest match {
                         case SaveAndContinue =>
-                          if (confirmAddress.useRegisteredAddress)
+                          if (confirmAddress.useRegisteredAddress.getOrElse(false))
                             Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
                           else Redirect(routes.ContactDetailsAddressController.displayPage())
                         case _ => Redirect(routes.RegistrationController.displayPage())
@@ -102,7 +102,7 @@ class ContactDetailsConfirmAddressController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedPrimaryContactDetails = {
-        if (formData.useRegisteredAddress)
+        if (formData.useRegisteredAddress.getOrElse(false))
           registration.primaryContactDetails.copy(useRegisteredAddress =
                                                     formData.useRegisteredAddress,
                                                   address =

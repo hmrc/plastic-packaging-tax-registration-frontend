@@ -104,7 +104,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         mockRegistrationFind(
           aRegistration(
             withPrimaryContactDetails(
-              PrimaryContactDetails(useRegisteredAddress = true, address = Some(anAddress))
+              PrimaryContactDetails(useRegisteredAddress = Some(true), address = Some(anAddress))
             )
           )
         )
@@ -133,7 +133,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe "test town"
           modifiedRegistration.primaryContactDetails.address.get.county mustBe Some("test region")
           modifiedRegistration.primaryContactDetails.address.get.postCode mustBe "AA11AA"
-          modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe true
+          modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -156,7 +156,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           status(result) mustBe SEE_OTHER
 
           modifiedRegistration.primaryContactDetails.address mustBe None
-          modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe false
+          modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(false)
 
           formAction._1 match {
             case "SaveAndContinue" =>
