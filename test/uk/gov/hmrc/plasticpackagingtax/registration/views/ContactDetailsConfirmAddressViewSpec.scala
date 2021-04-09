@@ -32,15 +32,15 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[confirm_address]
 
   private val incorporationAddressDetails = IncorporationAddressDetails(
-    address_line_1 = "testLine1",
-    address_line_2 = "testLine2",
-    locality = "test town",
-    care_of = "test name",
-    po_box = "123",
-    postal_code = "AA11AA",
-    premises = "1",
-    region = "test region",
-    country = "United Kingdom"
+    address_line_1 = Some("testLine1"),
+    address_line_2 = Some("testLine2"),
+    locality = Some("test town"),
+    care_of = Some("test name"),
+    po_box = Some("123"),
+    postal_code = Some("AA11AA"),
+    premises = Some("1"),
+    region = Some("test region"),
+    country = Some("United Kingdom")
   )
 
   private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form()): Document =
