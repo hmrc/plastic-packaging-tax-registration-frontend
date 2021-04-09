@@ -32,6 +32,9 @@ POST       /primary-contact-email   uk.gov.hmrc.plasticpackagingtax.registration
 GET        /primary-contact-phone-number    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.displayPage()
 POST       /primary-contact-phone-number    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.submit()
 
+GET        /confirm-primary-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.displayPage()
+POST       /confirm-primary-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.submit()
+
 GET        /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.displayPage()
 POST       /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.submit()
 

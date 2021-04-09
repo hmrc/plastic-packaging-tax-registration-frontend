@@ -92,7 +92,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
           formAction._1 match {
             case "SaveAndContinue" =>
               redirectLocation(result) mustBe Some(
-                routes.ContactDetailsAddressController.displayPage().url
+                routes.ContactDetailsConfirmAddressController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)

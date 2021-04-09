@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
@@ -95,7 +96,7 @@
                 rows = Seq(
                     row("primaryContactDetails.check.fullName", registration.primaryContactDetails.fullName.map(n => s"${n.firstName} ${n.lastName}"), Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
                     row("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
-                    row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsAddressController.displayPage())),
+                    row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage())),
                     row("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),
                     row("primaryContactDetails.check.email", registration.primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage()))
                 ).filterNot(_.value.content == Empty)

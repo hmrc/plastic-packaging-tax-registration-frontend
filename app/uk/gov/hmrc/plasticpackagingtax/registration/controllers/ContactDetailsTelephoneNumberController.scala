@@ -66,7 +66,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
                   case Right(_) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        Redirect(routes.ContactDetailsAddressController.displayPage())
+                        Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
                       case _ =>
                         Redirect(routes.RegistrationController.displayPage())
                     }

@@ -96,13 +96,10 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
   }
 
   "getDetails" when {
-    val testCompanyName   = "Example Limited"
-    val testCompanyNumber = "123456789"
-    val testUtr           = "0123456789"
-    val testJourneyId     = "testJourneyId"
+    val testJourneyId = "testJourneyId"
 
     "incorp ID returns valid incorporation details" in {
-      val validResponse = IncorporationDetails(testCompanyNumber, testCompanyName, testUtr)
+      val validResponse = incorporationDetails
       stubFor(
         get(urlMatching(s"/incorporated-entity-identification/api/journey/$testJourneyId"))
           .willReturn(

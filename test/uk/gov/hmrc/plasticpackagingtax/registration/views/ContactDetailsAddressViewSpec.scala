@@ -33,7 +33,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
   private def createView(form: Form[Address] = Address.form()): Document =
     page(form)(request, messages)
 
-  "Email Address View" should {
+  "Address View" should {
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("primaryContactDetails.sectionHeader")
@@ -66,7 +66,16 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        routes.ContactDetailsTelephoneNumberController.displayPage()
+        routes.ContactDetailsConfirmAddressController.displayPage()
+      )
+    }
+
+    "validate other rendering  methods" in {
+      page.f(Address.form())(request, messages).select("title").text() must include(
+        messages("primaryContactDetails.address.title")
+      )
+      page.render(Address.form(), request, messages).select("title").text() must include(
+        messages("primaryContactDetails.address.title")
       )
     }
 

@@ -22,12 +22,14 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.DefaultAwaitTimeout
+import spec.PptTestData
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.ExecutionContext
 
-class ConnectorISpec extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout {
+class ConnectorISpec
+    extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData {
 
   def overrideConfig: Map[String, Any] =
     Map("microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,
