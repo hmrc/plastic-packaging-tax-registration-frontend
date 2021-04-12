@@ -17,11 +17,17 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
+import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction.{
+  pptEnrolmentIdentifierName,
+  pptEnrolmentKey
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest,
@@ -33,11 +39,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
+  utrWhitelist: UtrWhitelist,
   mcc: MessagesControllerComponents
 ) extends AuthAction with AuthorisedFunctions {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
+  private val logger                                       = Logger(this.getClass)
 
   private val authData =
     credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
@@ -77,12 +85,30 @@ class AuthActionImpl @Inject() (
                                           Some(loginTimes)
           )
 
-          val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-          block(
-            new AuthenticatedRequest(request, pptLoggedInUser, getPptEnrolmentId(allEnrolments))
-          )
+          getPptEnrolmentId(allEnrolments) match {
+            case None =>
+              throw InsufficientEnrolments(
+                s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
+              )
+            case Some(id) => executeRequest(request, block, identityData, id, allEnrolments)
+          }
       }
   }
+
+  private def executeRequest[A](
+    request: Request[A],
+    block: AuthenticatedRequest[A] => Future[Result],
+    identityData: IdentityData,
+    id: String,
+    allEnrolments: Enrolments
+  ) =
+    if (utrWhitelist.isAllowed(id)) {
+      val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
+      block(new AuthenticatedRequest(request, pptLoggedInUser, Some(id)))
+    } else {
+      logger.warn("User id is not whitelisted, access denied")
+      Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
+    }
 
   private def getPptEnrolmentId(enrolments: Enrolments): Option[String] =
     getPptEnrolment(enrolments) match {

@@ -18,10 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import javax.inject.Inject
 import play.api.Logger
-import play.api.mvc.{ActionRefiner, Result, Results}
+import play.api.mvc.{ActionRefiner, Result}
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -38,7 +38,6 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector)(imp
   ): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-    // TODO up for discussion later on what to do on various errors
     request.enrolmentId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
         loadOrCreateRegistration(id).map {
@@ -46,8 +45,8 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector)(imp
           case Left(error) => throw error
         }
       case None =>
-        logger.warn(s"Enrolment not present, redirecting to Start")
-        Future.successful(Left(Results.Redirect(routes.StartController.displayStartPage())))
+        logger.warn(s"Enrolment not present, throwing")
+        throw InsufficientEnrolments()
     }
   }
 

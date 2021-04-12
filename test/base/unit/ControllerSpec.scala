@@ -17,9 +17,8 @@
 package base.unit
 
 import java.lang.reflect.Field
-
-import base.MockAuthAction
-import org.scalatest.{BeforeAndAfterEach}
+import base.{MockAuthAction, PptTestData}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,9 +31,12 @@ import play.twirl.api.Html
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
   SaveAndComeBackLater,
   SaveAndContinue
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -63,6 +65,18 @@ trait ControllerSpec
     postRequest
       .withJsonBody(body)
       .withCSRFToken
+
+  def authRequest(
+    headers: Headers = Headers(),
+    user: SignedInUser = PptTestData.newUser("123", Some("333"))
+  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
+    new AuthenticatedRequest(
+      FakeRequest().withHeaders(headers),
+      user,
+      user.enrolments.getEnrolment(AuthAction.pptEnrolmentKey).flatMap(
+        e => e.getIdentifier(AuthAction.pptEnrolmentIdentifierName).map(i => i.value)
+      )
+    )
 
   protected def postRequestEncoded(
     form: AnyRef,

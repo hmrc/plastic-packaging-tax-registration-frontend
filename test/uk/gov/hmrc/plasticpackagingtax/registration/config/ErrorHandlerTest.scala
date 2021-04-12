@@ -17,17 +17,19 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import base.unit.UnitViewSpec
+import controllers.Assets.SEE_OTHER
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
-import play.api.http.Status
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
-import uk.gov.hmrc.auth.core.NoActiveSession
+import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
 
 import scala.concurrent.Future
 
-class ErrorHandlerTest extends UnitViewSpec with Matchers with DefaultAwaitTimeout {
+class ErrorHandlerTest
+    extends UnitViewSpec with Matchers with DefaultAwaitTimeout with OptionValues {
 
   private val errorPage    = instanceOf[error_template]
   private val appConfig    = app.injector.instanceOf[AppConfig]
@@ -52,8 +54,16 @@ class ErrorHandlerTest extends UnitViewSpec with Matchers with DefaultAwaitTimeo
       val expectedLocation =
         s"http://localhost:9949/auth-login-stub/gg-sign-in?continue=$encodedTargetUrl"
 
-      status(result) mustBe Status.SEE_OTHER
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(expectedLocation)
+    }
+    "handle insufficient enrolments authorisation exception" in {
+
+      val error  = InsufficientEnrolments("HMRC-PPT-ORG")
+      val result = Future.successful(errorHandler.resolveError(request, error))
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value must endWith("/unauthorised")
     }
   }
 }
