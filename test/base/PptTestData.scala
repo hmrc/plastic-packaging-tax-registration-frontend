@@ -18,26 +18,33 @@ package base
 
 import org.joda.time.{DateTime, LocalDate}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
 
 object PptTestData {
 
-  val nrsCredentials = Credentials(providerId = "providerId", providerType = "providerType")
+  val nrsCredentials: Credentials =
+    Credentials(providerId = "providerId", providerType = "providerType")
 
-  def newUser(externalId: String = "123", pptEnrolmentId: String = "123"): SignedInUser =
+  def newUser(
+    externalId: String = "123",
+    pptEnrolmentId: Option[String] = Some("123")
+  ): SignedInUser =
     SignedInUser(
-      Enrolments(
-        Set(
-          Enrolment(AuthAction.pptEnrolmentKey).withIdentifier(
-            AuthAction.pptEnrolmentIdentifierName,
-            pptEnrolmentId
+      pptEnrolmentId.map(
+        id =>
+          Enrolments(
+            Set(
+              Enrolment(AuthAction.pptEnrolmentKey).withIdentifier(
+                AuthAction.pptEnrolmentIdentifierName,
+                id
+              )
+            )
           )
-        )
-      ),
+      ).getOrElse(Enrolments(Set.empty)),
       IdentityData(Some("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b"),
                    Some(externalId),
                    None,

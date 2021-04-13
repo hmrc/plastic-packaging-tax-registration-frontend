@@ -16,53 +16,33 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
+import base.PptTestData
+import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.{AnyContentAsEmpty, Headers, Result, Results}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.mvc.{Headers, Result, Results}
 import play.api.test.Helpers.await
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
-import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.logging.RequestId
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  RegistrationConnector
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyActionSpec
-    extends AnyWordSpec with Matchers with MockitoSugar with DefaultAwaitTimeout
-    with BeforeAndAfterEach {
+class JourneyActionSpec extends ControllerSpec {
 
-  private val mockRegistrationConnector = mock[RegistrationConnector]
-  private val responseGenerator         = mock[JourneyRequest[_] => Future[Result]]
-  private val actionRefiner             = new JourneyAction(mockRegistrationConnector)
+  private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
+  private val actionRefiner     = new JourneyAction(mockRegistrationConnector)(ExecutionContext.global)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockRegistrationConnector, responseGenerator)
     given(responseGenerator.apply(any())).willReturn(Future.successful(Results.Ok))
   }
-
-  private def request(
-    enrolmentIdentifier: Option[String] = None,
-    headers: Headers = Headers()
-  ): AuthenticatedRequest[AnyContentAsEmpty.type] =
-    new AuthenticatedRequest(FakeRequest().withHeaders(headers),
-                             SignedInUser(Enrolments(Set.empty), IdentityData()),
-                             enrolmentIdentifier
-    )
 
   "action refine" should {
     "permit request" when {
@@ -71,7 +51,11 @@ class JourneyActionSpec
           Future.successful(Right(Option(Registration("123"))))
         )
 
-        await(actionRefiner.invokeBlock(request(Some("123")), responseGenerator)) mustBe Results.Ok
+        await(
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", Some("123"))),
+                                    responseGenerator
+          )
+        ) mustBe Results.Ok
       }
     }
 
@@ -83,7 +67,10 @@ class JourneyActionSpec
         )
 
         await(
-          actionRefiner.invokeBlock(request(Some("123"), headers), responseGenerator)
+          actionRefiner.invokeBlock(
+            authRequest(headers, user = PptTestData.newUser("123", Some("123"))),
+            responseGenerator
+          )
         ) mustBe Results.Ok
 
         getHeaders.requestId mustBe Some(RequestId("req1"))
@@ -99,7 +86,11 @@ class JourneyActionSpec
           mockRegistrationConnector.create(refEq(Registration("999")))(any[HeaderCarrier])
         ).willReturn(Future.successful(Right(Registration("999"))))
 
-        await(actionRefiner.invokeBlock(request(Some("999")), responseGenerator)) mustBe Results.Ok
+        await(
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", Some("999"))),
+                                    responseGenerator
+          )
+        ) mustBe Results.Ok
       }
     }
   }
@@ -110,21 +101,27 @@ class JourneyActionSpec
     captor.getValue
   }
 
-  "redirect to StartController" when {
+  "throw exception" when {
     "enrolmentId not found" in {
-      await(actionRefiner.invokeBlock(request(), responseGenerator)) mustBe Results.Redirect(
-        routes.StartController.displayStartPage()
-      )
+      intercept[InsufficientEnrolments] {
+        await(
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", None)),
+                                    responseGenerator
+          )
+        )
+      }
     }
 
     "enrolmentId is empty" in {
-      await(
-        actionRefiner.invokeBlock(request(Some("")), responseGenerator)
-      ) mustBe Results.Redirect(routes.StartController.displayStartPage())
+      intercept[InsufficientEnrolments] {
+        await(
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", Some(""))),
+                                    responseGenerator
+          )
+        )
+      }
     }
-  }
 
-  "throw exception" when {
     "cannot load user registration" in {
       given(mockRegistrationConnector.find(refEq("123"))(any[HeaderCarrier])).willReturn(
         Future.successful(
@@ -133,7 +130,11 @@ class JourneyActionSpec
       )
 
       intercept[DownstreamServiceError] {
-        await(actionRefiner.invokeBlock(request(Some("123")), responseGenerator))
+        await(
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", Some("123"))),
+                                    responseGenerator
+          )
+        )
       }
     }
   }
