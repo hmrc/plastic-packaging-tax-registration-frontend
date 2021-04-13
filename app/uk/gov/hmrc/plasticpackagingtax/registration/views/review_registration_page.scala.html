@@ -82,7 +82,7 @@
             SummaryList(
                 rows = Seq(
                     row("reviewRegistration.organisationDetails.businessName", Some(incorporationDetails.companyName)),
-                    row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.primaryContactDetails.address.map(extractAddress)),
+                    row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.businessRegisteredAddress.map(extractAddress)),
                     row("reviewRegistration.organisationDetails.organisationType", Some("UK Company")),
                     row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.companyNumber)),
                     row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.ctutr))

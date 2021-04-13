@@ -24,6 +24,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+@import play.twirl.api.HtmlFormat
 
 @this(
   formHelper: FormWithCSRF,
@@ -37,13 +38,17 @@
 @(registration: Registration)(implicit request: Request[_], messages: Messages)
 
 @extractAddress(address: Address) = @{
-    Seq(address.businessName.getOrElse(""),
-        address.addressLine1,
-        address.addressLine2.getOrElse(""),
-        address.addressLine3.getOrElse(""),
-        address.townOrCity,
-        address.county.getOrElse(""),
-        address.postCode).filter(_.nonEmpty).mkString("<br>")
+    Seq(
+        address.businessName,
+        Some(address.addressLine1),
+        address.addressLine2,
+        address.addressLine3,
+        Some(address.townOrCity),
+        address.county,
+        Some(address.postCode)
+    ).flatten
+    .map(HtmlFormat.escape(_))
+    .mkString("<br>")
 }
 
 @row(key: String, value: Option[String] , call: Call) = @{

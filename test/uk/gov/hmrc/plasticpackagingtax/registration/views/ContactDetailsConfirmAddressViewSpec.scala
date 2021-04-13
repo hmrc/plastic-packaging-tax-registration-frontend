@@ -44,7 +44,7 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form()): Document =
-    page(form, incorporationAddressDetails)(request, messages)
+    page(form, incorporationAddressDetails.toPptAddress)(request, messages)
 
   "Confirm Address View" should {
 
@@ -60,12 +60,14 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(ConfirmAddress.form(), incorporationAddressDetails)(request, messages).select(
-        "title"
-      ).text() must include(messages("primaryContactDetails.confirmAddress.title"))
-      page.render(ConfirmAddress.form(), incorporationAddressDetails, request, messages).select(
-        "title"
-      ).text() must include(messages("primaryContactDetails.confirmAddress.title"))
+      page.f(ConfirmAddress.form(), incorporationAddressDetails.toPptAddress)(request,
+                                                                              messages
+      ).select("title").text() must include(messages("primaryContactDetails.confirmAddress.title"))
+      page.render(ConfirmAddress.form(),
+                  incorporationAddressDetails.toPptAddress,
+                  request,
+                  messages
+      ).select("title").text() must include(messages("primaryContactDetails.confirmAddress.title"))
     }
 
     "contain timeout dialog function" in {
