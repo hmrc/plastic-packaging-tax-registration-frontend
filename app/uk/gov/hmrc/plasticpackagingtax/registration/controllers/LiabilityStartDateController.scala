@@ -21,7 +21,11 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -55,7 +59,13 @@ class LiabilityStartDateController @Inject() (
         .fold((formWithErrors: Form[Date]) => Future.successful(BadRequest(page(formWithErrors))),
               liabilityStartDate =>
                 updateRegistration(liabilityStartDate).map {
-                  case Right(_)    => Redirect(routes.LiabilityWeightController.displayPage())
+                  case Right(_) =>
+                    FormAction.bindFromRequest match {
+                      case SaveAndContinue =>
+                        Redirect(routes.LiabilityWeightController.displayPage())
+                      case _ =>
+                        Redirect(routes.RegistrationController.displayPage())
+                    }
                   case Left(error) => throw error
                 }
         )

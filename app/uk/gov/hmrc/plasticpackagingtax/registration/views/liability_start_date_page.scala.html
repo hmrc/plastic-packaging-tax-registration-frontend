@@ -15,22 +15,23 @@
  *@
 
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 
 @this(
   formHelper: FormWithCSRF,
   govukLayout: main_template,
-  govukButton: GovukButton,
+  saveAndContinue: saveAndContinue,
   govukDateInput : GovukDateInput,
   sectionHeader: sectionHeader,
-  errorSummary: errorSummary
+  errorSummary: errorSummary,
+  saveButtons: saveButtons,
 )
 
 @(form: Form[Date])(implicit request: Request[_], messages: Messages)
@@ -86,6 +87,6 @@
                         classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
                     )))
                 )
-        @govukButton(Button(content = Text(messages("site.button.continue")), attributes = Map("id" -> "submit")))
+        @saveButtons()
         }
 }

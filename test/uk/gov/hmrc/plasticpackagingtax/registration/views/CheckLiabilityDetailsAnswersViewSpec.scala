@@ -128,12 +128,10 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     }
 
-    "display 'Continue' button" in {
+    "display 'Save And Continue' button" in {
 
-      view.getElementsByClass("govuk-button").text() must include("Save and Continue")
-      view.getElementsByClass("govuk-button").first() must haveHref(
-        routes.RegistrationController.displayPage()
-      )
+      view must containElementWithID("submit")
+      view.getElementById("submit").text() mustBe "Save and Continue"
     }
   }
 }
