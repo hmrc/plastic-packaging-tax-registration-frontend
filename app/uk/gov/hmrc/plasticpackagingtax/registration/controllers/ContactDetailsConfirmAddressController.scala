@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,14 +29,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.form
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirm_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -57,63 +56,82 @@ class ContactDetailsConfirmAddressController @Inject() (
         case Some(journeyId) =>
           for {
             incorporationDetails <- incorpIdConnector.getDetails(journeyId)
+            updatedAddress <- updateBusinessAddress(
+              incorporationDetails.companyAddress.toPptAddress
+            )
           } yield Ok(
             page(form().fill(
                    ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
                  ),
-                 incorporationDetails.companyAddress
+                 updatedAddress
             )
           )
         case _ => Future(Redirect(routes.RegistrationController.displayPage()))
       }
     }
 
+  private def updateBusinessAddress(
+    address: Address
+  )(implicit req: JourneyRequest[AnyContent]): Future[Address] =
+    update { registration =>
+      registration.copy(businessRegisteredAddress = Some(address))
+    }.map {
+      case Right(_)    => address
+      case Left(error) => throw error
+    }
+
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.incorpJourneyId match {
-        case Some(journeyId) =>
-          incorpIdConnector.getDetails(journeyId).flatMap { incorporationDetails =>
-            form()
-              .bindFromRequest()
-              .fold(
-                (formWithErrors: Form[ConfirmAddress]) =>
-                  Future(BadRequest(page(formWithErrors, incorporationDetails.companyAddress))),
-                confirmAddress =>
-                  updateRegistration(confirmAddress, incorporationDetails.companyAddress).map {
-                    case Right(_) =>
-                      FormAction.bindFromRequest match {
-                        case SaveAndContinue =>
-                          if (confirmAddress.useRegisteredAddress.getOrElse(false))
-                            Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
-                          else Redirect(routes.ContactDetailsAddressController.displayPage())
-                        case _ => Redirect(routes.RegistrationController.displayPage())
-                      }
-                    case Left(error) => throw error
-                  }
-              )
-          }
+        case Some(_) =>
+          form()
+            .bindFromRequest()
+            .fold(
+              (formWithErrors: Form[ConfirmAddress]) =>
+                Future(
+                  BadRequest(
+                    page(formWithErrors, request.registration.businessRegisteredAddress.get)
+                  )
+                ),
+              confirmAddress =>
+                updateRegistration(confirmAddress,
+                                   request.registration.businessRegisteredAddress
+                ).map {
+                  case Right(_) =>
+                    FormAction.bindFromRequest match {
+                      case SaveAndContinue =>
+                        if (confirmAddress.useRegisteredAddress.getOrElse(false))
+                          Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+                        else Redirect(routes.ContactDetailsAddressController.displayPage())
+                      case _ => Redirect(routes.RegistrationController.displayPage())
+                    }
+                  case Left(error) => throw error
+                }
+            )
+
         case _ => Future(Redirect(routes.RegistrationController.displayPage()))
       }
     }
 
-  private def updateRegistration(
-    formData: ConfirmAddress,
-    incorporationAddressDetails: IncorporationAddressDetails
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(formData: ConfirmAddress, businessAddress: Option[Address])(
+    implicit req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedPrimaryContactDetails = {
         if (formData.useRegisteredAddress.getOrElse(false))
           registration.primaryContactDetails.copy(useRegisteredAddress =
                                                     formData.useRegisteredAddress,
-                                                  address =
-                                                    Some(incorporationAddressDetails.toPptAddress)
+                                                  address = businessAddress
           )
         else
           registration.primaryContactDetails.copy(useRegisteredAddress =
-            formData.useRegisteredAddress
+                                                    formData.useRegisteredAddress,
+                                                  address = None
           )
       }
-      registration.copy(primaryContactDetails = updatedPrimaryContactDetails)
+      registration.copy(primaryContactDetails = updatedPrimaryContactDetails,
+                        businessRegisteredAddress = businessAddress
+      )
     }
 
 }

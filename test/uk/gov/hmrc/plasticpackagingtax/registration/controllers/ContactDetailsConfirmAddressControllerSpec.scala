@@ -20,6 +20,7 @@ import base.unit.ControllerSpec
 import controllers.Assets.{BAD_REQUEST, OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -31,8 +32,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress, FullName}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorporationAddressDetails,
+  IncorporationDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{PrimaryContactDetails}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirm_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -52,7 +56,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
                                                page = page
     )
 
-  private val registrationWithoutAddress = aRegistration(
+  private val registrationWithoutPrimaryContactAddress = aRegistration(
     withPrimaryContactDetails(
       PrimaryContactDetails(fullName = Some(FullName(firstName = "Jack", lastName = "Gatsby")),
                             jobTitle = Some("Developer"),
@@ -60,17 +64,25 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
                             phoneNumber = Some("0203 4567 890"),
                             address = None
       )
-    )
+    ),
+    withBusinessAddress(testCompanyAddress.toPptAddress)
   )
 
   private val anAddress =
     Address(addressLine1 = "Address Line 1", townOrCity = "townOrCity", postCode = "LS3 3UJ")
 
+  private def mockIncorpIdDetailsFind(
+    dataToReturn: IncorporationDetails
+  ): OngoingStubbing[Future[IncorporationDetails]] =
+    when(mockIncorpIdConnector.getDetails(any[String])(any())).thenReturn(
+      Future.successful(dataToReturn)
+    )
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(
-      page.apply(any[Form[ConfirmAddress]], any[IncorporationAddressDetails])(any(), any())
-    ).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[ConfirmAddress]], any[Address])(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
     when(mockIncorpIdConnector.getDetails(any())(any()))
       .thenReturn(Future(incorporationDetails))
   }
@@ -87,6 +99,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -100,40 +113,54 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withPrimaryContactDetails(
-              PrimaryContactDetails(useRegisteredAddress = Some(true), address = Some(anAddress))
-            )
+        val registration = aRegistration(
+          withPrimaryContactDetails(
+            PrimaryContactDetails(useRegisteredAddress = Some(true), address = Some(anAddress))
           )
         )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
     }
 
+    def primaryContactAddressPopulatedSameAs(expected: IncorporationAddressDetails) {
+      modifiedRegistration.primaryContactDetails.address.get.addressLine1 mustBe expected.premises.get
+      modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
+      modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
+      modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
+      modifiedRegistration.primaryContactDetails.address.get.county mustBe expected.region
+      modifiedRegistration.primaryContactDetails.address.get.postCode mustBe expected.postal_code.get
+      modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
+    }
+
+    def businessRegisteredAddressPopulatedSameAs(expected: IncorporationAddressDetails) {
+      modifiedRegistration.businessRegisteredAddress.get.addressLine1 mustBe expected.premises.get
+      modifiedRegistration.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
+      modifiedRegistration.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
+      modifiedRegistration.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
+      modifiedRegistration.businessRegisteredAddress.get.county mustBe expected.region
+      modifiedRegistration.businessRegisteredAddress.get.postCode mustBe expected.postal_code.get
+    }
+
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user accepts the registered address" in {
           authorizedUser()
-          mockRegistrationFind(registrationWithoutAddress)
-          mockRegistrationUpdate(registrationWithoutAddress)
+          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+          mockRegistrationUpdate(registrationWithoutPrimaryContactAddress)
 
           val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
 
-          modifiedRegistration.primaryContactDetails.address.get.addressLine1 mustBe "testLine1"
-          modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe Some(
-            "testLine2"
-          )
-          modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe "test town"
-          modifiedRegistration.primaryContactDetails.address.get.county mustBe Some("test region")
-          modifiedRegistration.primaryContactDetails.address.get.postCode mustBe "AA11AA"
-          modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
+          primaryContactAddressPopulatedSameAs(testCompanyAddress)
+          businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -147,8 +174,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         "user does not accept the registered address" in {
           authorizedUser()
-          mockRegistrationFind(registrationWithoutAddress)
-          mockRegistrationUpdate(registrationWithoutAddress)
+          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+          mockRegistrationUpdate(registrationWithoutPrimaryContactAddress)
 
           val correctForm = Seq("useRegisteredAddress" -> "no", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -157,6 +184,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           modifiedRegistration.primaryContactDetails.address mustBe None
           modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(false)
+
+          businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -172,7 +201,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       "return 400 (BAD_REQUEST) for " + formAction._1 when {
         "user does not enter mandatory fields" in {
           authorizedUser()
-          mockRegistrationFind(registrationWithoutAddress)
+          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty, formAction))
 
@@ -181,7 +210,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         "user enters invalid data" in {
           authorizedUser()
-          mockRegistrationFind(registrationWithoutAddress)
+          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           val incorrectForm = Seq("useRegisteredAddress" -> "maybe", formAction)
           val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
 
@@ -198,9 +227,20 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           intercept[RuntimeException](status(result))
         }
 
+        "user display page and update to business address fails" in {
+          authorizedUser()
+          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+          mockIncorpIdDetailsFind(incorporationDetails)
+          mockRegistrationFailure()
+
+          val result = controller.displayPage()(getRequest())
+
+          intercept[DownstreamServiceError](status(result))
+        }
+
         "user submits form and the registration update fails" in {
           authorizedUser()
-          mockRegistrationFind(registrationWithoutAddress)
+          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           mockRegistrationFailure()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
@@ -211,7 +251,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         "user submits form and a registration update runtime exception occurs" in {
           authorizedUser()
-          mockRegistrationFind(registrationWithoutAddress)
+          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           mockRegistrationException()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)

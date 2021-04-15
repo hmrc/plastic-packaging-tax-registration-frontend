@@ -23,7 +23,7 @@ import play.api.libs.json.JsObject
 class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
   "IncorporationAddressDetails" should {
     "convert to Address" when {
-      "address_line_1 is provided" in {
+      "premises is provided" in {
         val incorporationAddressDetails = IncorporationAddressDetails(address_line_1 =
                                                                         Some("test line 1"),
                                                                       address_line_2 =
@@ -31,48 +31,42 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
                                                                       locality =
                                                                         Some("test town  "),
                                                                       care_of = Some("  test user"),
-                                                                      po_box = Some(""),
                                                                       postal_code = Some("AC1 23C"),
                                                                       premises =
                                                                         Some("Warehouse 1"),
                                                                       region = Some("test county"),
                                                                       country = Some("GB")
         )
-        incorporationAddressDetails.toPptAddress.addressLine1 mustBe incorporationAddressDetails.address_line_1.get
-      }
-
-      "PO Box is provided" in {
-        val incorporationAddressDetails = IncorporationAddressDetails(address_line_1 = Some(""),
-                                                                      address_line_2 =
-                                                                        Some("test line 2   "),
-                                                                      locality =
-                                                                        Some("test town  "),
-                                                                      care_of = Some("  test user"),
-                                                                      po_box = Some("PO 123"),
-                                                                      postal_code = Some("AC1 23C"),
-                                                                      premises =
-                                                                        Some("Warehouse 1"),
-                                                                      region = Some("test county"),
-                                                                      country = Some("GB")
-        )
-        incorporationAddressDetails.toPptAddress.addressLine1 mustBe incorporationAddressDetails.po_box.get
-      }
-
-      "premises is provided" in {
-        val incorporationAddressDetails = IncorporationAddressDetails(address_line_1 = Some(""),
-                                                                      address_line_2 =
-                                                                        Some("test line 2   "),
-                                                                      locality =
-                                                                        Some("test town  "),
-                                                                      care_of = Some("  test user"),
-                                                                      po_box = Some(""),
-                                                                      postal_code = Some("AC1 23C"),
-                                                                      premises =
-                                                                        Some("Warehouse 1"),
-                                                                      region = Some("test county"),
-                                                                      country = Some("GB")
-        )
+        incorporationAddressDetails.toPptAddress.businessName mustBe None
         incorporationAddressDetails.toPptAddress.addressLine1 mustBe incorporationAddressDetails.premises.get
+        incorporationAddressDetails.toPptAddress.addressLine2 mustBe incorporationAddressDetails.address_line_1
+        incorporationAddressDetails.toPptAddress.addressLine3.get mustBe incorporationAddressDetails.address_line_2.get.trim
+        incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code.get
+        incorporationAddressDetails.toPptAddress.county mustBe incorporationAddressDetails.region
+        incorporationAddressDetails.toPptAddress.townOrCity mustBe incorporationAddressDetails.locality.get.trim
+      }
+
+      "premises not provided" in {
+        val incorporationAddressDetails = IncorporationAddressDetails(address_line_1 =
+                                                                        Some("test line 1"),
+                                                                      address_line_2 =
+                                                                        Some("test line 2   "),
+                                                                      locality =
+                                                                        Some("test town  "),
+                                                                      care_of = Some("  test user"),
+                                                                      postal_code = Some("AC1 23C"),
+                                                                      premises =
+                                                                        Some(""),
+                                                                      region = Some("test county"),
+                                                                      country = Some("GB")
+        )
+        incorporationAddressDetails.toPptAddress.businessName mustBe None
+        incorporationAddressDetails.toPptAddress.addressLine1 mustBe incorporationAddressDetails.address_line_1.get
+        incorporationAddressDetails.toPptAddress.addressLine2.get mustBe incorporationAddressDetails.address_line_2.get.trim
+        incorporationAddressDetails.toPptAddress.addressLine3 mustBe None
+        incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code.get
+        incorporationAddressDetails.toPptAddress.county mustBe incorporationAddressDetails.region
+        incorporationAddressDetails.toPptAddress.townOrCity mustBe incorporationAddressDetails.locality.get.trim
       }
 
       "apply json payload" when {

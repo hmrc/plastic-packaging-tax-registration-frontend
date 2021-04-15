@@ -46,18 +46,26 @@ case class IncorporationAddressDetails(
       .filter(_.nonEmpty).mkString("<br>")
 
   def toPptAddress = {
-    val addressLineOne = {
-      if (this.address_line_1.getOrElse("").nonEmpty) this.address_line_1
-      else if (this.po_box.getOrElse("").nonEmpty) this.po_box
-      else this.premises
-    }
 
-    Address(addressLine1 = addressLineOne.getOrElse("").trim,
-            addressLine2 = Some(this.address_line_2.getOrElse("").trim),
-            townOrCity = this.locality.getOrElse("").trim,
-            postCode = this.postal_code.getOrElse("").trim,
-            county = Some(region.getOrElse("").trim)
-    )
+    val premises = if (this.premises.getOrElse("").nonEmpty) this.premises else None
+
+    premises match {
+      case Some(value) =>
+        Address(addressLine1 = value.trim,
+                addressLine2 = Some(this.address_line_1.getOrElse("").trim),
+                addressLine3 = Some(this.address_line_2.getOrElse("").trim),
+                townOrCity = this.locality.getOrElse("").trim,
+                postCode = this.postal_code.getOrElse("").trim,
+                county = Some(region.getOrElse("").trim)
+        )
+      case None =>
+        Address(addressLine1 = this.address_line_1.getOrElse("").trim,
+                addressLine2 = Some(this.address_line_2.getOrElse("").trim),
+                townOrCity = this.locality.getOrElse("").trim,
+                postCode = this.postal_code.getOrElse("").trim,
+                county = Some(region.getOrElse("").trim)
+        )
+    }
   }
 
 }

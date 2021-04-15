@@ -27,7 +27,8 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.yes
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.no
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+@import play.twirl.api.HtmlFormat
 
 @this(
   formHelper: FormWithCSRF,
@@ -41,8 +42,23 @@
   errorSummary: errorSummary
 )
 
-@(form: Form[ConfirmAddress], incorporationAddressDetails: IncorporationAddressDetails)(implicit request: Request[_], messages: Messages)
+@(form: Form[ConfirmAddress], businessAddress: Address)(implicit request: Request[_], messages: Messages)
 
+@extractAddress(address: Address) = @{
+    HtmlContent(
+        Seq(
+            address.businessName,
+            Some(address.addressLine1),
+            address.addressLine2,
+            address.addressLine3,
+            Some(address.townOrCity),
+            address.county,
+            Some(address.postCode)
+        ).flatten
+        .map(HtmlFormat.escape(_))
+        .mkString("<br>")
+    )
+}
 
 @govukLayout(
   title = Title("primaryContactDetails.confirmAddress.title"),
@@ -61,7 +77,7 @@
                     content = Text(messages("primaryContactDetails.confirmAddress.registeredBusinessAddress"))
                 ),
                 value = Value(
-                    content = HtmlContent(incorporationAddressDetails.toHtml)
+                    content = extractAddress(businessAddress)
                 )
             )
         )
