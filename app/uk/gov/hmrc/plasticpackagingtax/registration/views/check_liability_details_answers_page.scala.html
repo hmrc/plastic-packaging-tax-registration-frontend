@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
@@ -22,12 +23,15 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import java.time.format.DateTimeFormatter
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 
 @this(
+  formHelper: FormWithCSRF,
   govukLayout: main_template,
   govukButton: GovukButton,
   govukSummaryList: GovukSummaryList,
   pageTitle: pageTitle,
+  saveAndContinue: saveAndContinue
 )
 @(registration: Registration)(implicit request: Request[_], messages: Messages)
 
@@ -37,53 +41,48 @@
 
     @pageTitle(text = messages("checkLiabilityDetailsAnswers.title"))
 
-    @govukSummaryList(
-        SummaryList(
-            rows = Seq(
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("checkLiabilityDetailsAnswers.date"))
-                        ),
-                    value = Value(
-                    content = Text(registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
-                        ),
-                    actions = Some(Actions(
-                        items = Seq(
-                            ActionItem(
-                                href = pptRoutes.LiabilityStartDateController.displayPage().url,
-                                content = Text(messages("site.link.change")),
-                                visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.date"))
-                            )
-                        )
-                    ))
-                ),
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("checkLiabilityDetailsAnswers.weight"))
-                        ),
-                    value = Value(
-                        content = Text(registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse(""))
-                        ),
-                    actions = Some(Actions(
-                        items = Seq(
-                            ActionItem(
-                                href = pptRoutes.LiabilityWeightController.displayPage().url,
-                                content = Text(messages("site.link.change")),
-                                visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.weight"))
+    @formHelper(action = pptRoutes.CheckLiabilityDetailsAnswersController.submit(), 'autoComplete -> "off") {
+        @govukSummaryList(
+            SummaryList(
+                rows = Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("checkLiabilityDetailsAnswers.date"))
+                            ),
+                        value = Value(
+                        content = Text(registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
+                            ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = pptRoutes.LiabilityStartDateController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.date"))
                                 )
                             )
                         ))
-                    )
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("checkLiabilityDetailsAnswers.weight"))
+                            ),
+                        value = Value(
+                            content = Text(registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse(""))
+                            ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = pptRoutes.LiabilityWeightController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.weight"))
+                                    )
+                                )
+                            ))
+                        )
 
-            ).filterNot(_.value.content == Empty)
+                ).filterNot(_.value.content == Empty)
+            )
         )
-    )
-
-    @govukButton(
-        Button(
-            href = Some(pptRoutes.RegistrationController.displayPage().url),
-            isStartButton = false,
-            content = Text(messages("site.button.continue"))
-        )
-    )
+        @saveAndContinue()
+    }
 }

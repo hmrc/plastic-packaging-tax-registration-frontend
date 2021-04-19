@@ -20,13 +20,14 @@ import base.unit.ControllerSpec
 import controllers.Assets.{BAD_REQUEST, OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -73,23 +74,28 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       }
     }
 
-    "return 303 (OK)" when {
-      "user submits the liability total weight" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
-        val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(2000)))))
+    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+      "return 303 (OK) for " + formAction._1 when {
+        "user submits the liability total weight" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate(aRegistration())
+          val result =
+            controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
 
-        status(result) mustBe SEE_OTHER
+          status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
-        modifiedRegistration.liabilityDetails.startDate mustBe Some(
-          Date(Some(1), Some(4), Some(2022))
-        )
+          modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
 
-        redirectLocation(result) mustBe Some(
-          routes.CheckLiabilityDetailsAnswersController.displayPage().url
-        )
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.CheckLiabilityDetailsAnswersController.displayPage().url
+              )
+            case _ =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+        }
       }
     }
 

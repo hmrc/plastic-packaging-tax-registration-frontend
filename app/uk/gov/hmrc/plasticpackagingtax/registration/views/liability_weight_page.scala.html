@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
-
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 
 @this(
   govukLayout: main_template,
@@ -35,7 +35,8 @@
   sectionHeader: sectionHeader,
   govukFieldset: govukFieldset,
   errorSummary: errorSummary,
-  formHelper: FormWithCSRF
+  formHelper: FormWithCSRF,
+  saveButtons: saveButtons,
 )
 @(form: Form[LiabilityWeight])(implicit request: Request[_], messages: Messages)
 
@@ -66,6 +67,6 @@
             content = Text(messages("liabilityWeightPage.question"))),
             errorMessage = errorMessages)
         )
-    @govukButton(Button(content = Text(messages("site.button.continue")), attributes = Map("id" -> "submit")))
+    @saveButtons()
     }
   }

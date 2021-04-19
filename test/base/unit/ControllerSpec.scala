@@ -105,9 +105,9 @@ trait ControllerSpec
 
   private def getValue(field: Field, cc: AnyRef): String =
     field.get(cc) match {
-      case c: Option[String] if c.isDefined => c.get
-      case c: String                        => c
-      case _                                => ""
+      case c: Option[_] if c.isDefined => c.get.toString
+      case c: String                   => c
+      case _                           => ""
     }
 
 }

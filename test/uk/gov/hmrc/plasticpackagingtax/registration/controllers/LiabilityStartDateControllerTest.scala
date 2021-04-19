@@ -20,13 +20,14 @@ import base.unit.ControllerSpec
 import controllers.Assets.{BAD_REQUEST, OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -81,22 +82,29 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
       }
     }
 
-    "return 303 (OK)" when {
-      "user submits the liability start date" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
-        val result =
-          controller.submit()(postRequest(Json.toJson(Date(Some(1), Some(6), Some(2022)))))
+    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+      "return 303 (OK) for " + formAction._1 when {
+        "user submits the liability start date" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate(aRegistration())
+          val result =
+            controller.submit()(postRequestEncoded(Date(Some(1), Some(6), Some(2022)), formAction))
 
-        status(result) mustBe SEE_OTHER
+          status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(1000)))
-        modifiedRegistration.liabilityDetails.startDate mustBe Some(
-          Date(Some(1), Some(6), Some(2022))
-        )
-
-        redirectLocation(result) mustBe Some(routes.LiabilityWeightController.displayPage().url)
+          modifiedRegistration.liabilityDetails.startDate mustBe Some(
+            Date(Some(1), Some(6), Some(2022))
+          )
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.LiabilityWeightController.displayPage().url
+              )
+            case _ =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+        }
       }
     }
 
