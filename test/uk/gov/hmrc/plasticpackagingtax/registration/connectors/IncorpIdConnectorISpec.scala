@@ -72,6 +72,7 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
       val res = await(connector.createJourney(testJourneyConfig))
 
       res mustBe testJourneyStartUrl
+      getTimer("ppt.incorpId.create.journey.timer").getCount mustBe 1
     }
 
     "throw exception if http status is not 'CREATED'" in {
@@ -111,6 +112,7 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
       val res = await(connector.getDetails(testJourneyId))
 
       res mustBe validResponse
+      getTimer("ppt.incorpId.get.details.timer").getCount mustBe 1
     }
 
     "incorp ID returns invalid incorporation details" in {

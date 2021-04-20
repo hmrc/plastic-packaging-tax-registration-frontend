@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
-import base.PptTestData
+import base.{MetricsMocks, PptTestData}
 import base.unit.ControllerSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
@@ -27,12 +27,16 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.Authenticated
 
 import scala.concurrent.Future
 
-class AuthActionSpec extends ControllerSpec {
+class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
   private def createAuthAction(
     utrWhitelist: UtrWhitelist = new UtrWhitelist(Seq.empty)
   ): AuthAction =
-    new AuthActionImpl(mockAuthConnector, utrWhitelist, stubMessagesControllerComponents())
+    new AuthActionImpl(mockAuthConnector,
+                       utrWhitelist,
+                       metricsMock,
+                       stubMessagesControllerComponents()
+    )
 
   private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
 
@@ -54,7 +58,16 @@ class AuthActionSpec extends ControllerSpec {
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
       ) mustBe Results.Ok
+    }
 
+    "time calls to authorisation" in {
+      val user = PptTestData.newUser("123", Some("555"))
+      authorizedUser(user)
+
+      await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
+      metricsMock.defaultRegistry.timer(
+        "ppt.registration.upstream.auth.timer"
+      ).getCount should be > 1L
     }
 
     "process request when UTR number is present and whitelisted" in {

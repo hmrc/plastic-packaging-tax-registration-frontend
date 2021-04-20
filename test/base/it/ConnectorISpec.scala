@@ -16,7 +16,7 @@
 
 package base.it
 
-import com.codahale.metrics.SharedMetricRegistries
+import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
 import com.kenshoo.play.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -47,4 +47,11 @@ class ConnectorISpec
   protected implicit val hc: HeaderCarrier    = HeaderCarrier()
   protected val httpClient: DefaultHttpClient = app.injector.instanceOf[DefaultHttpClient]
   protected val metrics: Metrics              = app.injector.instanceOf[Metrics]
+
+  def getTimer(name: String): Timer =
+    SharedMetricRegistries
+      .getOrCreate("plastic-packaging-tax-registration-frontend")
+      .getTimers(MetricFilter.startsWith(name))
+      .get(name)
+
 }

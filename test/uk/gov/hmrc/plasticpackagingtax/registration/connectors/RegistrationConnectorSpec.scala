@@ -56,6 +56,7 @@ class RegistrationConnectorSpec
         val res = await(connector.create(Registration("123")))
 
         res.right.value.id mustBe "123"
+        getTimer("ppt.registration.create.timer").getCount mustBe 1
       }
 
       "registration already exists" in {
@@ -116,6 +117,7 @@ class RegistrationConnectorSpec
 
         res.right.value.get.id mustBe "123"
         res.right.value.get.incorpJourneyId mustBe Some("incorpJourneyId")
+        getTimer("ppt.registration.find.timer").getCount mustBe 1
 
       }
     }
@@ -172,6 +174,7 @@ class RegistrationConnectorSpec
 
         res.right.value.id mustBe "123"
         res.right.value.incorpJourneyId mustBe Some("incorpId")
+        getTimer("ppt.registration.update.timer").getCount mustBe 1
 
       }
 

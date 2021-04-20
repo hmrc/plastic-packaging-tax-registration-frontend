@@ -45,7 +45,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
                                      mcc = mcc,
                                      incorpIdConnector = mockIncorpIdConnector,
                                      registrationConnector = mockRegistrationConnector,
-                                     page = page
+                                     page = page,
+                                     metrics = metricsMock
     )
 
   override protected def beforeEach(): Unit = {
@@ -103,6 +104,9 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+        metricsMock.defaultRegistry.counter(
+          "ppt.registration.success.submission.counter"
+        ).getCount mustBe 1
       }
     }
 
@@ -122,6 +126,9 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
           controller.submit()(postRequest(JsObject.empty))
 
         intercept[DownstreamServiceError](status(result))
+        metricsMock.defaultRegistry.counter(
+          "ppt.registration.failed.submission.counter"
+        ).getCount mustBe 1
       }
 
     }

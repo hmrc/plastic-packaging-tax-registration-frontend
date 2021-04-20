@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
+import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
@@ -40,12 +41,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
   utrWhitelist: UtrWhitelist,
+  metrics: Metrics,
   mcc: MessagesControllerComponents
 ) extends AuthAction with AuthorisedFunctions {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
   private val logger                                       = Logger(this.getClass)
+  private val authTimer                                    = metrics.defaultRegistry.timer("ppt.registration.upstream.auth.timer")
 
   private val authData =
     credentials and name and email and externalId and internalId and affinityGroup and allEnrolments and
@@ -58,11 +61,13 @@ class AuthActionImpl @Inject() (
   ): Future[Result] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    val authorisation = authTimer.time()
     authorised()
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
             credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
+          authorisation.stop()
           val identityData = IdentityData(internalId,
                                           externalId,
                                           agentCode,
