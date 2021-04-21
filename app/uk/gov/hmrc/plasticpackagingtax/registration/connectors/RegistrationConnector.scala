@@ -35,7 +35,7 @@ class RegistrationConnector @Inject() (
   def find(
     id: String
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[Registration]]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.find.registration.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.registration.find.timer").time()
     httpClient.GET[Option[Registration]](appConfig.pptRegistrationUrl(id))
       .andThen { case _ => timer.stop() }
       .map(resp => Right(resp.map(_.toRegistration)))
@@ -50,7 +50,7 @@ class RegistrationConnector @Inject() (
   def create(
     payload: Registration
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.create.registration.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.registration.create.timer").time()
     httpClient.POST[Registration, Registration](appConfig.pptRegistrationUrl, payload)
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toRegistration))
@@ -65,7 +65,7 @@ class RegistrationConnector @Inject() (
   def update(
     payload: Registration
   )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Registration]] = {
-    val timer = metrics.defaultRegistry.timer("ppt.update.registration.timer").time()
+    val timer = metrics.defaultRegistry.timer("ppt.registration.update.timer").time()
     httpClient.PUT[Registration, Registration](appConfig.pptRegistrationUrl(payload.id), payload)
       .andThen { case _ => timer.stop() }
       .map(response => Right(response.toRegistration))

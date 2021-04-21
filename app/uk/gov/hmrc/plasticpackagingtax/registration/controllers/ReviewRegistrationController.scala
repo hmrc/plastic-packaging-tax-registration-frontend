@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import com.kenshoo.play.metrics.Metrics
+
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
@@ -40,10 +42,17 @@ class ReviewRegistrationController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   incorpIdConnector: IncorpIdConnector,
+  metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
   page: review_registration_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
+
+  private val successSubmissionCounter =
+    metrics.defaultRegistry.counter("ppt.registration.success.submission.counter")
+
+  private val failedSubmissionCounter =
+    metrics.defaultRegistry.counter("ppt.registration.failed.submission.counter")
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
@@ -81,9 +90,12 @@ class ReviewRegistrationController @Inject() (
       val referenceId = s"PPT12345678${Random.nextInt(1000000)}"
       markRegistrationAsCompleted().map {
         case Right(_) =>
+          successSubmissionCounter.inc()
           Redirect(routes.ConfirmationController.displayPage())
             .flashing(Flash(Map(FlashKeys.referenceId -> referenceId)))
-        case Left(error) => throw error
+        case Left(error) =>
+          failedSubmissionCounter.inc()
+          throw error
       }
     }
 
