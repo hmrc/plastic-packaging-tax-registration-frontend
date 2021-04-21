@@ -20,23 +20,23 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
-class UtrWhitelistSpec extends AnyWordSpec with Matchers with MockitoSugar {
+class UtrAllowedListSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-  "utr allow whitelist" when {
+  "utr allow list" when {
     "is empty" should {
       "allow everyone" in {
-        val utrWhiteList = new UtrWhitelist(Seq.empty)
-        utrWhiteList.isAllowed("12345") mustBe true
-        utrWhiteList.isAllowed("0987") mustBe true
+        val utrAllowedList = new UtrAllowedList(Seq.empty)
+        utrAllowedList.isAllowed("12345") mustBe true
+        utrAllowedList.isAllowed("0987") mustBe true
       }
     }
     "has elements" should {
-      val utrWhiteList = new UtrWhitelist(Seq("12345"))
+      val utrAllowedList = new UtrAllowedList(Seq("12345"))
       "allow listed utr" in {
-        utrWhiteList.isAllowed("12345") mustBe true
+        utrAllowedList.isAllowed("12345") mustBe true
       }
       "disallow not listed utr" in {
-        utrWhiteList.isAllowed("0987") mustBe false
+        utrAllowedList.isAllowed("0987") mustBe false
       }
     }
   }

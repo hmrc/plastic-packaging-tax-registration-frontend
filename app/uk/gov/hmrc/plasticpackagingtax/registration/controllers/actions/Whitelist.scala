@@ -21,14 +21,15 @@ import play.api.Configuration
 
 import javax.inject.Provider
 
-@ProvidedBy(classOf[UtrWhitelistProvider])
-class UtrWhitelist(values: Seq[String]) {
+@ProvidedBy(classOf[UtrAllowedListProvider])
+class UtrAllowedList(values: Seq[String]) {
   def isAllowed(utr: String): Boolean = values.isEmpty || values.contains(utr)
 }
 
-class UtrWhitelistProvider @Inject() (configuration: Configuration) extends Provider[UtrWhitelist] {
+class UtrAllowedListProvider @Inject() (configuration: Configuration)
+    extends Provider[UtrAllowedList] {
 
-  override def get(): UtrWhitelist =
-    new UtrWhitelist(configuration.get[Seq[String]]("whitelist.utr").map(_.trim))
+  override def get(): UtrAllowedList =
+    new UtrAllowedList(configuration.get[Seq[String]]("allowedList.utr").map(_.trim))
 
 }
