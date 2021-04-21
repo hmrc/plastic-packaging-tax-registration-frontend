@@ -21,34 +21,34 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 
-class UtrWhitelistProviderSpec extends AnyWordSpec with Matchers with MockitoSugar {
+class UtrAllowedListProviderSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-  "UtrWhitelistProvider" should {
+  "UtrAllowedListProvider" should {
 
     "load correctly from configuration" in {
 
-      val config   = Configuration("whitelist.utr.0" -> "1234")
-      val provider = new UtrWhitelistProvider(config)
-      provider.get() mustBe a[UtrWhitelist]
+      val config   = Configuration("allowedList.utr.0" -> "1234")
+      val provider = new UtrAllowedListProvider(config)
+      provider.get() mustBe a[UtrAllowedList]
     }
 
     "trim spaces during loading" in {
 
-      val config   = Configuration("whitelist.utr.0" -> " 1234 ")
-      val provider = new UtrWhitelistProvider(config)
+      val config   = Configuration("allowedList.utr.0" -> " 1234 ")
+      val provider = new UtrAllowedListProvider(config)
       provider.get().isAllowed("1234") mustBe true
     }
 
     "allow empty list" in {
 
-      val config   = Configuration("whitelist.utr.0" -> "")
-      val provider = new UtrWhitelistProvider(config)
-      provider.get() mustBe a[UtrWhitelist]
+      val config   = Configuration("allowedList.utr.0" -> "")
+      val provider = new UtrAllowedListProvider(config)
+      provider.get() mustBe a[UtrAllowedList]
     }
 
     "throw exception when there is not configuration key" in {
 
-      val provider = new UtrWhitelistProvider(Configuration.empty)
+      val provider = new UtrAllowedListProvider(Configuration.empty)
       an[Exception] mustBe thrownBy {
         provider.get()
       }

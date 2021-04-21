@@ -30,9 +30,9 @@ import scala.concurrent.Future
 class AuthActionSpec extends ControllerSpec {
 
   private def createAuthAction(
-    utrWhitelist: UtrWhitelist = new UtrWhitelist(Seq.empty)
+    utrAllowedList: UtrAllowedList = new UtrAllowedList(Seq.empty)
   ): AuthAction =
-    new AuthActionImpl(mockAuthConnector, utrWhitelist, stubMessagesControllerComponents())
+    new AuthActionImpl(mockAuthConnector, utrAllowedList, stubMessagesControllerComponents())
 
   private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
 
@@ -57,24 +57,24 @@ class AuthActionSpec extends ControllerSpec {
 
     }
 
-    "process request when UTR number is present and whitelisted" in {
+    "process request when UTR number is present and allowed" in {
       val utr  = "555"
       val user = PptTestData.newUser("123", Some(utr))
       authorizedUser(user)
 
       await(
-        createAuthAction(new UtrWhitelist(Seq(utr))).invokeBlock(authRequest(Headers(), user),
-                                                                 okResponseGenerator
+        createAuthAction(new UtrAllowedList(Seq(utr))).invokeBlock(authRequest(Headers(), user),
+                                                                   okResponseGenerator
         )
       ) mustBe Results.Ok
     }
 
-    "redirect to home when UTR number is present but not whitelisted" in {
+    "redirect to home when UTR number is present but not allowed" in {
       val user = PptTestData.newUser("123", Some("555"))
       authorizedUser(user)
 
       val result =
-        createAuthAction(new UtrWhitelist(Seq("someOtherUtr"))).invokeBlock(
+        createAuthAction(new UtrAllowedList(Seq("someOtherUtr"))).invokeBlock(
           authRequest(Headers(), user),
           okResponseGenerator
         )
