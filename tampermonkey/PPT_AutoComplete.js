@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      7.0
+// @version      8.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -78,14 +78,14 @@ const currentPageIs = (path) => {
 
 /*########################     PPT REGISTRATION PAGES     ########################## */
 const startPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/start')) {
+    if (currentPageIs('/plastic-packaging-tax/start-plastic-packaging-tax-registration')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
 
 const registrationPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/registration')) {
+    if (currentPageIs('/plastic-packaging-tax/register-plastic-packaging-tax')) {
 
         let BUSINESS_DETAILS_STATUS = 'li:nth-child(1) .govuk-tag';
         let BUSINESS_DETAILS_LINK = 'li:nth-child(1) .govuk-link';
@@ -160,7 +160,7 @@ const grsCheckYourAnswers = () => {
 }
 
 const liabilityStartDate = () => {
-    if (currentPageIs('/plastic-packaging-tax/liability-start-date')) {
+    if (currentPageIs('/plastic-packaging-tax/liable-date')) {
 
         document.getElementById('day').value = '01'
         document.getElementById('month').value = '06'
@@ -170,7 +170,7 @@ const liabilityStartDate = () => {
 }
 
 const liabilityWeight = () => {
-    if (currentPageIs('/plastic-packaging-tax/liability-weight')) {
+    if (currentPageIs('/plastic-packaging-tax/total-packaging-weight')) {
 
         document.getElementById('totalKg').value = '12000'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -178,7 +178,7 @@ const liabilityWeight = () => {
 }
 
 const liabilityCheckYourAnswers = () => {
-    if (currentPageIs('/plastic-packaging-tax/check-liability-details-answers')) {
+    if (currentPageIs('/plastic-packaging-tax/check-plastic-packaging-answers')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }

@@ -2,23 +2,23 @@
 
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /start                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
+GET        /start-plastic-packaging-tax-registration        uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
 
-GET        /registration            uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationController.displayPage()
+GET        /register-plastic-packaging-tax                  uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationController.displayPage()
 
 GET        /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.displayPage()
 POST       /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.submit()
 
 GET        /incorp-id-callback      uk.gov.hmrc.plasticpackagingtax.registration.controllers.IncorpIdController.incorpIdCallback(journeyId)
 
-GET        /liability-start-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.displayPage()
-POST       /liability-start-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.submit()
+GET        /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.displayPage()
+POST       /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.submit()
 
-GET        /liability-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.displayPage()
-POST       /liability-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.submit()
+GET        /total-packaging-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.displayPage()
+POST       /total-packaging-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.submit()
 
-GET        /check-liability-details-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.displayPage()
-POST       /check-liability-details-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.submit()
+GET        /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.displayPage()
+POST       /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.submit()
 
 GET        /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.displayPage()
 POST       /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.submit()
@@ -44,7 +44,7 @@ POST       /check-primary-contact-details    uk.gov.hmrc.plasticpackagingtax.reg
 GET        /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.displayPage()
 POST       /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.submit()
 
-GET        /registration-complete   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ConfirmationController.displayPage()
+GET        /registration-submitted  uk.gov.hmrc.plasticpackagingtax.registration.controllers.ConfirmationController.displayPage()
 
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
 GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
