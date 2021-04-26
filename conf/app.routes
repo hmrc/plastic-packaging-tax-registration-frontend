@@ -9,6 +9,9 @@ GET        /register-plastic-packaging-tax                  uk.gov.hmrc.plasticp
 GET        /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.displayPage()
 POST       /honesty-declaration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.HonestyDeclarationController.submit()
 
+GET        /organisation-type     uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationTypeController.displayPage()
+POST       /organisation-type     uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationTypeController.submit()
+
 GET        /incorp-id-callback      uk.gov.hmrc.plasticpackagingtax.registration.controllers.IncorpIdController.incorpIdCallback(journeyId)
 
 GET        /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.displayPage()

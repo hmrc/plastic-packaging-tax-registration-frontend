@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class Registration(
@@ -26,6 +27,7 @@ case class Registration(
   liabilityDetails: LiabilityDetails = LiabilityDetails(),
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   businessRegisteredAddress: Option[Address] = None,
+  orgType: Option[OrgType] = None,
   metaData: MetaData = MetaData()
 ) {
 
