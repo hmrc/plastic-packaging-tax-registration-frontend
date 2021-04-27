@@ -16,13 +16,9 @@
 
 package builders
 
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  MetaData,
-  PrimaryContactDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 
 import java.util.UUID
 
@@ -54,12 +50,16 @@ trait RegistrationBuilder {
                      )
                    )
                  ),
-                 businessRegisteredAddress = Some(
-                   Address(addressLine1 = "2 Scala Street",
-                           addressLine2 = Some("Soho"),
-                           townOrCity = "London",
-                           postCode = "W1T 2HN"
-                   )
+                 organisationDetails = OrganisationDetails(
+                   businessRegisteredAddress =
+                     Some(
+                       Address(addressLine1 = "2 Scala Street",
+                               addressLine2 = Some("Soho"),
+                               townOrCity = "London",
+                               postCode = "W1T 2HN"
+                       )
+                     ),
+                   organisationType = Some(UK_COMPANY)
                  ),
                  metaData = MetaData()
     )
@@ -86,7 +86,7 @@ trait RegistrationBuilder {
   def withMetaData(metaData: MetaData): RegistrationModifier =
     _.copy(metaData = metaData)
 
-  def withBusinessAddress(address: Address): RegistrationModifier =
-    _.copy(businessRegisteredAddress = Some(address))
+  def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier =
+    _.copy(organisationDetails = organisationDetails)
 
 }

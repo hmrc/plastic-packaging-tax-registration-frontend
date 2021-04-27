@@ -74,7 +74,9 @@ class ContactDetailsConfirmAddressController @Inject() (
     address: Address
   )(implicit req: JourneyRequest[AnyContent]): Future[Address] =
     update { registration =>
-      registration.copy(businessRegisteredAddress = Some(address))
+      val updatedOrgDetails =
+        registration.organisationDetails.copy(businessRegisteredAddress = Some(address))
+      registration.copy(organisationDetails = updatedOrgDetails)
     }.map {
       case Right(_)    => address
       case Left(error) => throw error
@@ -90,12 +92,15 @@ class ContactDetailsConfirmAddressController @Inject() (
               (formWithErrors: Form[ConfirmAddress]) =>
                 Future(
                   BadRequest(
-                    page(formWithErrors, request.registration.businessRegisteredAddress.get)
+                    page(formWithErrors,
+                         request.registration.organisationDetails.businessRegisteredAddress.get
+                    )
                   )
                 ),
               confirmAddress =>
-                updateRegistration(confirmAddress,
-                                   request.registration.businessRegisteredAddress
+                updateRegistration(
+                  confirmAddress,
+                  request.registration.organisationDetails.businessRegisteredAddress
                 ).map {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
@@ -129,8 +134,10 @@ class ContactDetailsConfirmAddressController @Inject() (
                                                   address = None
           )
       }
+      val updatedOrgDetails =
+        registration.organisationDetails.copy(businessRegisteredAddress = businessAddress)
       registration.copy(primaryContactDetails = updatedPrimaryContactDetails,
-                        businessRegisteredAddress = businessAddress
+                        organisationDetails = updatedOrgDetails
       )
     }
 

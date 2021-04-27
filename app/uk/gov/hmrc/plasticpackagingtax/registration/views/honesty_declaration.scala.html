@@ -21,22 +21,22 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 
 @this(
-  govukLayout: main_template,
-  pageTitle: pageTitle,
-  paragraphBody: paragraphBody,
-  govukButton: GovukButton,
-  formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+    govukLayout: main_template,
+    pageTitle: pageTitle,
+    paragraphBody: paragraphBody,
+    govukButton: GovukButton,
+    formHelper: uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-  title = Title("honestyDeclaration.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
+    title = Title("honestyDeclaration.title"),
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.OrganisationDetailsTypeController.displayPage(), messages("site.back.hiddenText")))) {
 
-  @formHelper(action = pptRoutes.HonestyDeclarationController.submit(), 'autoComplete -> "off") {
-      @pageTitle(messages("honestyDeclaration.title"))
-      @paragraphBody(message = messages("honestyDeclaration.description"))
-      @govukButton(Button(content = Text(messages("site.button.continue")), attributes = Map("id" -> "submit")))
-  }
+    @formHelper(action = pptRoutes.HonestyDeclarationController.submit(), 'autoComplete -> "off") {
+        @pageTitle(messages("honestyDeclaration.title"))
+        @paragraphBody(message = messages("honestyDeclaration.description"))
+        @govukButton(Button(content = Text(messages("site.button.continue")), attributes = Map("id" -> "submit")))
+    }
 }
