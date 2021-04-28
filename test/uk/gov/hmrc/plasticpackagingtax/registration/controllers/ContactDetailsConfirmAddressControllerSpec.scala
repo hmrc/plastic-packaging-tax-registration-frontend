@@ -36,7 +36,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
   IncorporationDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{PrimaryContactDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  PrimaryContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirm_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -65,7 +68,9 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
                             address = None
       )
     ),
-    withBusinessAddress(testCompanyAddress.toPptAddress)
+    withOrganisationDetails(
+      OrganisationDetails(businessRegisteredAddress = Some(testCompanyAddress.toPptAddress))
+    )
   )
 
   private val anAddress =
@@ -139,12 +144,12 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     }
 
     def businessRegisteredAddressPopulatedSameAs(expected: IncorporationAddressDetails) {
-      modifiedRegistration.businessRegisteredAddress.get.addressLine1 mustBe expected.premises.get
-      modifiedRegistration.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
-      modifiedRegistration.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
-      modifiedRegistration.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.businessRegisteredAddress.get.county mustBe expected.region
-      modifiedRegistration.businessRegisteredAddress.get.postCode mustBe expected.postal_code.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine1 mustBe expected.premises.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.county mustBe expected.region
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.postCode mustBe expected.postal_code.get
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>

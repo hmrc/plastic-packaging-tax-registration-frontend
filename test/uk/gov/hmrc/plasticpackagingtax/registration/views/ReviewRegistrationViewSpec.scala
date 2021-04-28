@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -160,7 +161,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getValueFor(organisationSection,
                     organisationAddressKey
         ) mustBe "2 Scala Street Soho London W1T 2HN"
-        getValueFor(organisationSection, organisationTypeKey) mustBe "UK Company"
+        getValueFor(organisationSection, organisationTypeKey) mustBe UK_COMPANY.toString
         getValueFor(organisationSection,
                     organisationCnrKey
         ) mustBe incorporationDetails.companyNumber

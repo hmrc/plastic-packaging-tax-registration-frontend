@@ -29,24 +29,24 @@
 @import java.time.format.DateTimeFormatter
 
 @this(
-  formHelper: FormWithCSRF,
-  govukLayout: main_template,
-  govukSummaryList: GovukSummaryList,
-  pageTitle: pageTitle,
-  saveAndContinue: saveAndContinue,
-  paragraphBody: paragraphBody
+    formHelper: FormWithCSRF,
+    govukLayout: main_template,
+    govukSummaryList: GovukSummaryList,
+    pageTitle: pageTitle,
+    saveAndContinue: saveAndContinue,
+    paragraphBody: paragraphBody
 )
 
 @(registration: Registration, incorporationDetails: IncorporationDetails)(implicit request: Request[_], messages: Messages)
 
 @extractAddress(address: Address) = @{
     Seq(address.businessName.getOrElse(""),
-        address.addressLine1,
-        address.addressLine2.getOrElse(""),
-        address.addressLine3.getOrElse(""),
-        address.townOrCity,
-        address.county.getOrElse(""),
-        address.postCode).filter(_.nonEmpty).mkString("<br>")
+    address.addressLine1,
+    address.addressLine2.getOrElse(""),
+    address.addressLine3.getOrElse(""),
+    address.townOrCity,
+    address.county.getOrElse(""),
+    address.postCode).filter(_.nonEmpty).mkString("<br>")
 }
 
 @row(key: String, value: Option[String] , call: Option[Call] = None) = @{
@@ -56,44 +56,45 @@
             ),
         value = Value(
             content = HtmlContent(value.getOrElse(""))
-            ),
+        ),
         actions = call.flatMap(c => Some(Actions(
-            items = Seq(
-                ActionItem(
-                    href = c.url,
-                    content = Text(messages("site.link.change")),
-                    visuallyHiddenText = Some(messages(key))
+        items = Seq(
+            ActionItem(
+                href = c.url,
+                content = Text(messages("site.link.change")),
+                visuallyHiddenText = Some(messages(key))
                 )
             )
-        )))
+    )))
     )
 }
 
 @govukLayout(
-  title = Title("reviewRegistration.organisationDetails.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
+    title = Title("reviewRegistration.organisationDetails.title"),
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
 
     @pageTitle(text = messages("reviewRegistration.organisationDetails.title"), classes = "govuk-label--l")
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
-        <h2 id="primary-contact-details" class="govuk-heading-m">@messages("reviewRegistration.organisationDetails.check.label")</h2>
-        @govukSummaryList(
-            SummaryList(
-                rows = Seq(
-                    row("reviewRegistration.organisationDetails.businessName", Some(incorporationDetails.companyName)),
-                    row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.businessRegisteredAddress.map(extractAddress)),
-                    row("reviewRegistration.organisationDetails.organisationType", Some("UK Company")),
-                    row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.companyNumber)),
-                    row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.ctutr))
-                ).filterNot(_.value.content == Empty)
-            )
+    <h2 id="primary-contact-details" class="govuk-heading-m">
+        @messages("reviewRegistration.organisationDetails.check.label")</h2>
+    @govukSummaryList(
+        SummaryList(
+            rows = Seq(
+                row("reviewRegistration.organisationDetails.businessName", Some(incorporationDetails.companyName)),
+                row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
+                row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
+                row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.companyNumber)),
+                row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.ctutr))
+            ).filterNot(_.value.content == Empty)
         )
+    )
 
-        <h2 id="primary-contact-details" class="govuk-heading-m">@messages("primaryContactDetails.check.label")</h2>
-        @govukSummaryList(
-            SummaryList(
-                rows = Seq(
+    <h2 id="primary-contact-details" class="govuk-heading-m">@messages("primaryContactDetails.check.label")</h2>
+    @govukSummaryList(
+        SummaryList(
+            rows = Seq(
                     row("primaryContactDetails.check.fullName", registration.primaryContactDetails.fullName.map(n => s"${n.firstName} ${n.lastName}"), Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
                     row("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
                     row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage())),
@@ -103,19 +104,19 @@
             )
         )
 
-        <h2 id="liability-details" class="govuk-heading-m">@messages("checkLiabilityDetailsAnswers.check.label")</h2>
-        @govukSummaryList(
-            SummaryList(
-                rows = Seq(
+    <h2 id="liability-details" class="govuk-heading-m">@messages("checkLiabilityDetailsAnswers.check.label")</h2>
+    @govukSummaryList(
+        SummaryList(
+            rows = Seq(
                     row("checkLiabilityDetailsAnswers.date", registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))), Some(pptRoutes.LiabilityStartDateController.displayPage())),
                     row("checkLiabilityDetailsAnswers.weight", registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg"), Some(pptRoutes.LiabilityWeightController.displayPage()))
                 ).filterNot(_.value.content == Empty)
             )
         )
 
-        <h2 id="send-your-application" class="govuk-heading-m">@messages("reviewRegistration.sendYourApplication.title")</h2>
-        @paragraphBody(messages("reviewRegistration.sendYourApplication.body"))
+    <h2 id="send-your-application" class="govuk-heading-m">@messages("reviewRegistration.sendYourApplication.title")</h2>
+    @paragraphBody(messages("reviewRegistration.sendYourApplication.body"))
 
-        @saveAndContinue(messages("site.button.acceptAndSend"))
+    @saveAndContinue(messages("site.button.acceptAndSend"))
     }
-  }
+}

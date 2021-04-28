@@ -133,7 +133,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, BUSINESS_DETAILS) must haveHref(
-            routes.HonestyDeclarationController.displayPage()
+            routes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage()
           )
 
           sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
@@ -203,7 +203,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, BUSINESS_DETAILS) must haveHref(
-            routes.HonestyDeclarationController.displayPage()
+            routes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage()
           )
 
           sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
@@ -276,7 +276,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, BUSINESS_DETAILS) must haveHref(
-            routes.HonestyDeclarationController.displayPage()
+            routes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage()
           )
 
           sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
