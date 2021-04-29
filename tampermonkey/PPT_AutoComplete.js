@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      8.0
+// @version      9.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -115,6 +115,21 @@ const honestyDeclaration = () => {
     }
 }
 
+const organisationBasedInUk = () => {
+    if (currentPageIs('/plastic-packaging-tax/organisation-uk-based')) {
+
+		document.getElementById('answer').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const organisationType = () => {
+    if (currentPageIs('/plastic-packaging-tax/organisation-type')) {
+
+		document.getElementById('answer').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
 /*########################     GRS FUNCTIONS     ########################## */
 const grsFeatureFlags = () => {
@@ -264,6 +279,8 @@ const completeJourney = () => {
     grsCheckYourAnswers()
 
     // Business Details
+    organisationBasedInUk()
+    organisationType()
     honestyDeclaration()
 
     // Liability Details
