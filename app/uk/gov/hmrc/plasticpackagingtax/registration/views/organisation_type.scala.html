@@ -50,8 +50,9 @@
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                    classes = "govuk-fieldset__legend--s",
-                    isPageHeading = false
+                        content = Text(messages("organisationDetails.type.title")),
+                        classes = "govuk-visually-hidden",
+                        isPageHeading = false
                     ))
                 )),
                 hint = None,
