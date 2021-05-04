@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpec
     extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
     with GuiceOneAppPerSuite with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout
-    with MockJourneyAction with PptTestData {
+    with MockJourneyAction with MockConnectors with PptTestData {
 
   import utils.FakeRequestCSRFSupport._
 

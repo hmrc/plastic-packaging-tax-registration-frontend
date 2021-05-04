@@ -20,8 +20,15 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorporationDetails,
+  SoleTraderIncorporationDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -50,8 +57,12 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val liabilityDateKey   = 0
   private val liabilityWeightKey = 1
 
-  private def createView(reg: Registration = registration): Document =
-    page(reg, incorporationDetails)(request, messages)
+  private def createView(
+    reg: Registration = registration,
+    ukCompanyDetails: Option[IncorporationDetails] = None,
+    soleTraderDetails: Option[SoleTraderIncorporationDetails] = None
+  ): Document =
+    page(reg, ukCompanyDetails, soleTraderDetails)(request, messages)
 
   "Review registration View" should {
 
@@ -89,7 +100,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("site.link.change")
     }
 
-    val view: Document = createView()
+    val view: Document = createView(ukCompanyDetails = Some(incorporationDetails))
 
     "contain timeout dialog function" in {
 
@@ -124,48 +135,114 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
 
     "display labels, values and change links" when {
 
-      def getKeyFor(section: Int, index: Int) =
+      def getKeyFor(section: Int, index: Int, view: Document = view) =
         view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
           "govuk-summary-list__key"
         ).get(index)
-      def getValueFor(section: Int, index: Int) =
+      def getValueFor(section: Int, index: Int, view: Document = view) =
         view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
           "govuk-summary-list__value"
         ).get(index).text()
-      def getChangeLinkFor(section: Int, index: Int) =
+      def getChangeLinkFor(section: Int, index: Int, view: Document = view) =
         view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
           "govuk-link"
         ).get(index)
 
-      "displaying organisation details section" in {
+      "displaying organisation details section for uk company" in {
 
-        getKeyFor(organisationSection, organisationNameKey) must containMessage(
+        val ukCompanyView: Document = createView(ukCompanyDetails = Some(incorporationDetails))
+
+        getKeyFor(organisationSection, organisationNameKey, ukCompanyView) must containMessage(
           "reviewRegistration.organisationDetails.businessName"
         )
-        getKeyFor(organisationSection, organisationAddressKey) must containMessage(
+        getKeyFor(organisationSection, organisationAddressKey, ukCompanyView) must containMessage(
           "reviewRegistration.organisationDetails.registeredBusinessAddress"
         )
-        getKeyFor(organisationSection, organisationTypeKey) must containMessage(
+        getKeyFor(organisationSection, organisationTypeKey, ukCompanyView) must containMessage(
           "reviewRegistration.organisationDetails.organisationType"
         )
-        getKeyFor(organisationSection, organisationCnrKey) must containMessage(
+        getKeyFor(organisationSection, organisationCnrKey, ukCompanyView) must containMessage(
           "reviewRegistration.organisationDetails.businessRegistrationNumber"
         )
-        getKeyFor(organisationSection, organisationUtrKey) must containMessage(
+        getKeyFor(organisationSection, organisationUtrKey, ukCompanyView) must containMessage(
           "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
         )
 
         getValueFor(organisationSection,
-                    organisationNameKey
+                    organisationNameKey,
+                    ukCompanyView
         ) mustBe incorporationDetails.companyName
         getValueFor(organisationSection,
-                    organisationAddressKey
+                    organisationAddressKey,
+                    ukCompanyView
         ) mustBe "2 Scala Street Soho London W1T 2HN"
         getValueFor(organisationSection, organisationTypeKey) mustBe UK_COMPANY.toString
         getValueFor(organisationSection,
-                    organisationCnrKey
+                    organisationCnrKey,
+                    ukCompanyView
         ) mustBe incorporationDetails.companyNumber
-        getValueFor(organisationSection, organisationUtrKey) mustBe incorporationDetails.ctutr
+        getValueFor(organisationSection,
+                    organisationUtrKey,
+                    ukCompanyView
+        ) mustBe incorporationDetails.ctutr
+
+      }
+
+      "displaying organisation details section for sole trader" in {
+
+        val soleTraderView = createView(
+          reg = aRegistration(
+            withOrganisationDetails(
+              OrganisationDetails(organisationType = Some(SOLE_TRADER),
+                                  businessRegisteredAddress = Some(testBusinessAddress)
+              )
+            )
+          ),
+          soleTraderDetails = Some(soleTraderIncorporationDetails)
+        )
+
+        getKeyFor(organisationSection, 0, soleTraderView) must containMessage(
+          "reviewRegistration.organisationDetails.soleTrader.firstName"
+        )
+
+        getKeyFor(organisationSection, 1, soleTraderView) must containMessage(
+          "reviewRegistration.organisationDetails.soleTrader.lastName"
+        )
+
+        getKeyFor(organisationSection, 2, soleTraderView) must containMessage(
+          "reviewRegistration.organisationDetails.registeredBusinessAddress"
+        )
+        getKeyFor(organisationSection, 3, soleTraderView) must containMessage(
+          "reviewRegistration.organisationDetails.organisationType"
+        )
+        getKeyFor(organisationSection, 4, soleTraderView) must containMessage(
+          "reviewRegistration.organisationDetails.soleTrader.dob"
+        )
+        getKeyFor(organisationSection, 5, soleTraderView) must containMessage(
+          "reviewRegistration.organisationDetails.soleTrader.nino"
+        )
+
+        getValueFor(organisationSection,
+                    0,
+                    soleTraderView
+        ) mustBe soleTraderIncorporationDetails.firstName
+        getValueFor(organisationSection,
+                    1,
+                    soleTraderView
+        ) mustBe soleTraderIncorporationDetails.lastName
+        getValueFor(organisationSection,
+                    2,
+                    soleTraderView
+        ) mustBe "2 Scala Street Soho London W1T 2HN"
+        getValueFor(organisationSection, 3, soleTraderView) mustBe SOLE_TRADER.toString
+        getValueFor(organisationSection,
+                    4,
+                    soleTraderView
+        ) mustBe soleTraderIncorporationDetails.dateOfBirth
+        getValueFor(organisationSection,
+                    5,
+                    soleTraderView
+        ) mustBe soleTraderIncorporationDetails.nino
 
       }
 

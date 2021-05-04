@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      9.0
+// @version      12.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
 // @include      http*://*/identify-your-incorporated-business*
+// @include      http*://*/identify-your-sole-trader-business*
 // @grant GM_setValue
 // @grant GM_getValue
 // @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-frontend/master/tampermonkey/PPT_AutoComplete.js
@@ -23,6 +24,7 @@ function setup() {
 
     panel.appendChild(createQuickButton())
     panel.appendChild(createGRSFeatureFlagsLink())
+    panel.appendChild(createSoleTraderGRSFeatureFlagsLink())
 
     return panel
 }
@@ -63,6 +65,27 @@ function createGRSFeatureFlagsLink() {
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
     a.style.top = "100px"
+
+    return a
+}
+
+function createSoleTraderGRSFeatureFlagsLink() {
+
+    let a = document.createElement('a')
+    a.id='grsFlags'
+
+    a.target = '_blank'
+    a.href = '/identify-your-sole-trader-business/test-only/feature-switches'
+    if (window.location.hostname === 'localhost') {
+        a.href = 'http://localhost:9718/identify-your-sole-trader-business/test-only/feature-switches'
+    } else {
+        a.href = '/identify-your-sole-trader-business/test-only/feature-switches'
+    }
+    a.innerText = 'Sole Trader GRS Flags Config'
+
+    a.classList.add('govuk-link','govuk-link--no-visited-state')
+    a.style.position = "absolute"
+    a.style.top = "150px"
 
     return a
 }
@@ -108,13 +131,6 @@ const registrationPage = () => {
     }
 }
 
-const honestyDeclaration = () => {
-    if (currentPageIs('/plastic-packaging-tax/honesty-declaration')) {
-
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
 const organisationBasedInUk = () => {
     if (currentPageIs('/plastic-packaging-tax/organisation-uk-based')) {
 
@@ -145,6 +161,7 @@ const grsFeatureFlags = () => {
     }
 }
 
+/* ####################### GRS UK COMPANY */
 const grsCompanyNumber = () => {
     if (currentPageIs('/identify-your-incorporated-business/.*/company-number')) {
         document.getElementById('companyNumber').value = '01234567'
@@ -169,6 +186,42 @@ const grsEnterUtr = () => {
 
 const grsCheckYourAnswers = () => {
     if (currentPageIs('/identify-your-incorporated-business/.*/check-your-answers-business')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+/* ####################### GRS SOLE TRADER */
+
+const grsStFirstLastName = () => {
+    if (currentPageIs('/identify-your-sole-trader-business/.*/full-name')) {
+        document.getElementById('first-name').value = 'James'
+		document.getElementById('last-name').value = 'Bond'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const grsStDob = () => {
+    if (currentPageIs('/identify-your-sole-trader-business/.*/date-of-birth')) {
+         document.getElementById('date-of-birth').value = '01'
+         document.getElementById('date-of-birth-month').value = '06'
+         document.getElementById('date-of-birth-year').value = '1977'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const grsStNino = () => {
+    if (currentPageIs('/identify-your-sole-trader-business/.*/national-insurance-number')) {
+         document.getElementById('nino').value = 'SE123456C'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const grsStCheckYourAnswers = () => {
+    if (currentPageIs('/identify-your-sole-trader-business/.*/check-your-answers-business')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -271,17 +324,22 @@ const completeJourney = () => {
     startPage()
     registrationPage()
 
-    // grs pages
+    // grs uk company pages
     grsFeatureFlags()
     grsCompanyNumber()
     grsConfirmCompany()
     grsEnterUtr()
     grsCheckYourAnswers()
 
+	// grs sole trader pages
+	grsStFirstLastName()
+	grsStDob()
+	grsStNino()
+	grsStCheckYourAnswers()
+
     // Business Details
     organisationBasedInUk()
     organisationType()
-    honestyDeclaration()
 
     // Liability Details
     liabilityStartDate()
