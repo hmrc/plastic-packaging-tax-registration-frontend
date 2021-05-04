@@ -20,22 +20,16 @@ import base.unit.ControllerSpec
 import controllers.Assets.{BAD_REQUEST, OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  IncorpIdConnector
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress, FullName}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationAddressDetails,
-  IncorporationDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   PrimaryContactDetails
@@ -43,12 +37,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirm_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import scala.concurrent.Future
-
 class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
-  private val page                  = mock[confirm_address]
-  private val mcc                   = stubMessagesControllerComponents()
-  private val mockIncorpIdConnector = mock[IncorpIdConnector]
+  private val page = mock[confirm_address]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
     new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
@@ -69,27 +60,18 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       )
     ),
     withOrganisationDetails(
-      OrganisationDetails(businessRegisteredAddress = Some(testCompanyAddress.toPptAddress))
+      OrganisationDetails(businessRegisteredAddress = Some(testCompanyAddress.toPptAddress),
+                          organisationType = Some(UK_COMPANY)
+      )
     )
   )
-
-  private val anAddress =
-    Address(addressLine1 = "Address Line 1", townOrCity = "townOrCity", postCode = "LS3 3UJ")
-
-  private def mockIncorpIdDetailsFind(
-    dataToReturn: IncorporationDetails
-  ): OngoingStubbing[Future[IncorporationDetails]] =
-    when(mockIncorpIdConnector.getDetails(any[String])(any())).thenReturn(
-      Future.successful(dataToReturn)
-    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[ConfirmAddress]], any[Address])(any(), any())).thenReturn(
       HtmlFormat.empty
     )
-    when(mockIncorpIdConnector.getDetails(any())(any()))
-      .thenReturn(Future(incorporationDetails))
+    mockGetUkCompanyDetails(incorporationDetails)
   }
 
   override protected def afterEach(): Unit = {
@@ -116,13 +98,15 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
       }
+    }
 
-      "user is authorised, a registration already exists and display page method is invoked" in {
+    "update business address" when {
+
+      "display page method is invoked for sole trader" in {
         val registration = aRegistration(
-          withPrimaryContactDetails(
-            PrimaryContactDetails(useRegisteredAddress = Some(true), address = Some(anAddress))
-          )
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
         )
+        mockGetSoleTraderDetails(soleTraderIncorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
@@ -130,6 +114,28 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+        businessRegisteredAddressPopulatedSameAs(
+          IncorporationAddressDetails(premises = Option("2 Scala Street"),
+                                      address_line_1 = Some("Soho"),
+                                      locality = Option("London"),
+                                      postal_code = Option("W1T 2HN")
+          )
+        )
+      }
+
+      "display page method is invoked for uk company" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
+        )
+        mockGetUkCompanyDetails(incorporationDetails)
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        businessRegisteredAddressPopulatedSameAs(incorporationDetails.companyAddress)
       }
     }
 
@@ -235,12 +241,38 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user display page and update to business address fails" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockIncorpIdDetailsFind(incorporationDetails)
+          mockGetUkCompanyDetails(incorporationDetails)
           mockRegistrationFailure()
 
           val result = controller.displayPage()(getRequest())
 
           intercept[DownstreamServiceError](status(result))
+        }
+
+        "user display page and get uk company details fails" in {
+          val registration = aRegistration(
+            withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
+          )
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
+
+          val result = controller.displayPage()(getRequest())
+
+          intercept[RuntimeException](status(result))
+        }
+
+        "user display page and get sole trader details fails" in {
+          val registration = aRegistration(
+            withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
+          )
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockGetSoleTraderDetailsFailure(new RuntimeException("error"))
+
+          val result = controller.displayPage()(getRequest())
+
+          intercept[RuntimeException](status(result))
         }
 
         "user submits form and the registration update fails" in {

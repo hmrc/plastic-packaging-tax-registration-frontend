@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
   RegistrationConnector,
@@ -30,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -54,21 +56,49 @@ class ContactDetailsConfirmAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.incorpJourneyId match {
         case Some(journeyId) =>
-          for {
-            incorporationDetails <- incorpIdConnector.getDetails(journeyId)
-            updatedAddress <- updateBusinessAddress(
-              incorporationDetails.companyAddress.toPptAddress
-            )
-          } yield Ok(
-            page(form().fill(
-                   ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
-                 ),
-                 updatedAddress
-            )
-          )
+          request.registration.organisationDetails.organisationType match {
+            case Some(UK_COMPANY) =>
+              executeAddressUpdate(
+                journeyId,
+                journeyId =>
+                  incorpIdConnector.getDetails(journeyId)
+                    .flatMap(
+                      response =>
+                        updateBusinessAddress(response.companyAddress.toPptAddress)(request)
+                    )
+              )
+            case Some(SOLE_TRADER) =>
+              executeAddressUpdate(journeyId,
+                                   _ =>
+                                     updateBusinessAddress(
+                                       //TODO - temporary while we're working out where to get it from
+                                       Address(addressLine1 = "2 Scala Street",
+                                               addressLine2 = Some("Soho"),
+                                               townOrCity = "London",
+                                               postCode = "W1T 2HN"
+                                       )
+                                     )
+              )
+            case _ => throw new InternalServerException(s"Company type not supported")
+          }
+
         case _ => Future(Redirect(routes.RegistrationController.displayPage()))
       }
     }
+
+  private def executeAddressUpdate(
+    journeyId: String,
+    getAddressFunction: String => Future[Address]
+  )(implicit request: JourneyRequest[AnyContent]) =
+    for {
+      updatedAddress <- getAddressFunction(journeyId)
+    } yield Ok(
+      page(form().fill(
+             ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
+           ),
+           updatedAddress
+      )
+    )
 
   private def updateBusinessAddress(
     address: Address

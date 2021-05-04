@@ -27,7 +27,13 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  CHARITY_OR_NOT_FOR_PROFIT,
+  OrgType,
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
@@ -39,11 +45,18 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
   private val controller =
     new OrganisationDetailsTypeController(authenticate = mockAuthAction,
-                                          mockJourneyAction,
-                                          mockRegistrationConnector,
+                                          journeyAction = mockJourneyAction,
+                                          registrationConnector = mockRegistrationConnector,
                                           mcc = mcc,
-                                          page = page
+                                          page = page,
+                                          incorpIdConnector = mockIncorpIdConnector,
+                                          soleTraderIdConnector = mockSoleTraderConnector,
+                                          appConfig = config
     )
+
+  private val soleTraderRegistration = aRegistration(
+    withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -51,7 +64,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   }
 
   override protected def afterEach(): Unit = {
-    reset(page)
+    reset(page, mockSoleTraderConnector, mockIncorpIdConnector)
     super.afterEach()
   }
 
@@ -83,52 +96,43 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits the answer" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
 
-          val correctForm = Seq("answer" -> UK_COMPANY.toString, formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.organisationDetails.organisationType mustBe Some(UK_COMPANY)
-
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.HonestyDeclarationController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-          }
+        "user submits organisation type: " + UK_COMPANY in {
+          mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
+          assertRedirectForOrgType(UK_COMPANY, "http://test/redirect/uk-company")
         }
+        "user submits organisation type: " + SOLE_TRADER in {
+          mockSoleTraderCreateIncorpJourneyId("http://test/redirect/sole-trader")
+          assertRedirectForOrgType(SOLE_TRADER, "http://test/redirect/sole-trader")
+        }
+        "user submits organisation type: " + PARTNERSHIP in {
+          assertRedirectForOrgType(PARTNERSHIP,
+                                   routes.OrganisationTypeNotSupportedController.onPageLoad().url
+          )
+        }
+        "user submits organisation type: " + CHARITY_OR_NOT_FOR_PROFIT in {
+          assertRedirectForOrgType(CHARITY_OR_NOT_FOR_PROFIT,
+                                   routes.OrganisationTypeNotSupportedController.onPageLoad().url
+          )
+        }
+      }
 
-        forAll(OrgType.values.tail) { orgType =>
-          "user does not accept the registered address" + orgType in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
+      def assertRedirectForOrgType(orgType: OrgType, redirectUrl: String): Unit = {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate(aRegistration())
 
-            println("XXX" + orgType.toString)
-            val correctForm = Seq("answer" -> orgType.toString, formAction)
-            val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val correctForm = Seq("answer" -> orgType.toString, formAction)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-            status(result) mustBe SEE_OTHER
-            modifiedRegistration.organisationDetails.organisationType mustBe Some(orgType)
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.organisationDetails.organisationType mustBe Some(orgType)
 
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe Some(
-                  routes.OrganisationTypeNotSupportedController.onPageLoad().url
-                )
-              case "SaveAndComeBackLater" =>
-                redirectLocation(result) mustBe Some(
-                  routes.RegistrationController.displayPage().url
-                )
-            }
-
-          }
+        formAction._1 match {
+          case "SaveAndContinue" =>
+            redirectLocation(result) mustBe Some(redirectUrl)
+          case "SaveAndComeBackLater" =>
+            redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
         }
       }
 
@@ -182,6 +186,33 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
           intercept[RuntimeException](status(result))
         }
+      }
+    }
+
+    "should return error when create journey" when {
+
+      "user submits form for sole trader" in {
+        authorizedUser()
+        mockRegistrationFind(soleTraderRegistration)
+        mockRegistrationUpdate(soleTraderRegistration)
+        mockSoleTraderCreateIncorpJourneyIdException()
+
+        val correctForm = Seq("answer" -> SOLE_TRADER.toString, saveAndContinueFormAction)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user submits form for uk company" in {
+        authorizedUser()
+        mockRegistrationFind(soleTraderRegistration)
+        mockRegistrationUpdate(soleTraderRegistration)
+        mockUkCompanyCreateIncorpJourneyIdException()
+
+        val correctForm = Seq("answer" -> UK_COMPANY.toString, saveAndContinueFormAction)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        intercept[RuntimeException](status(result))
       }
     }
   }
