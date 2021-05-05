@@ -26,8 +26,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Result, Results}
 import play.api.test.Helpers.await
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import uk.gov.hmrc.http.logging.RequestId
-import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException, RequestId}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
