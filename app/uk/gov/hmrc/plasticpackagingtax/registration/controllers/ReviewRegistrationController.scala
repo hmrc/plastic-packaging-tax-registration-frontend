@@ -17,22 +17,24 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import com.kenshoo.play.metrics.Metrics
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
   RegistrationConnector,
-  ServiceError
+  ServiceError,
+  SoleTraderInorpIdConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
@@ -42,6 +44,7 @@ class ReviewRegistrationController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   incorpIdConnector: IncorpIdConnector,
+  soleTraderInorpIdConnector: SoleTraderInorpIdConnector,
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
   page: review_registration_page
@@ -59,15 +62,34 @@ class ReviewRegistrationController @Inject() (
       if (request.registration.isCheckAndSubmitReady)
         request.registration.incorpJourneyId match {
           case Some(journeyId) =>
-            for {
-              incorporationDetails <- incorpIdConnector.getDetails(journeyId)
-              _                    <- markRegistrationAsReviewed()
-            } yield Ok(page(request.registration, incorporationDetails))
+            request.registration.organisationDetails.organisationType match {
+              case Some(UK_COMPANY)  => ukCompanyReview(journeyId)
+              case Some(SOLE_TRADER) => soleTraderReview(journeyId)
+              case _ =>
+                throw new InternalServerException(s"Company type not supported")
+            }
+
           case _ => Future(Redirect(routes.RegistrationController.displayPage()))
         }
       else
         Future(Redirect(routes.RegistrationController.displayPage()))
     }
+
+  private def soleTraderReview(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+    for {
+      soleTraderDetails <- soleTraderInorpIdConnector.getDetails(journeyId)
+      _                 <- markRegistrationAsReviewed()
+    } yield Ok(
+      page(registration = request.registration, soleTraderDetails = Some(soleTraderDetails))
+    )
+
+  private def ukCompanyReview(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+    for {
+      incorporationDetails <- incorpIdConnector.getDetails(journeyId)
+      _                    <- markRegistrationAsReviewed()
+    } yield Ok(
+      page(registration = request.registration, incorporationDetails = Some(incorporationDetails))
+    )
 
   private def markRegistrationAsReviewed()(implicit
     req: JourneyRequest[AnyContent]

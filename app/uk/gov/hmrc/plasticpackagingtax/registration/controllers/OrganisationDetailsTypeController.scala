@@ -19,13 +19,23 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  IncorpIdConnector,
+  RegistrationConnector,
+  ServiceError,
+  SoleTraderInorpIdConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorpIdCreateRequest,
+  SoleTraderIncorpIdCreateRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
@@ -38,6 +48,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class OrganisationDetailsTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
+  appConfig: AppConfig,
+  soleTraderIdConnector: SoleTraderInorpIdConnector,
+  incorpIdConnector: IncorpIdConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: organisation_type
@@ -59,20 +72,51 @@ class OrganisationDetailsTypeController @Inject() (
         .bindFromRequest()
         .fold((formWithErrors: Form[OrganisationType]) => Future(BadRequest(page(formWithErrors))),
               organisationType =>
-                updateRegistration(organisationType).map {
+                updateRegistration(organisationType).flatMap {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        if (organisationType.answer.contains(OrgType.UK_COMPANY))
-                          Redirect(routes.HonestyDeclarationController.displayPage())
-                        else Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
-                      case _ => Redirect(routes.RegistrationController.displayPage())
+                        organisationType.answer match {
+                          case Some(OrgType.UK_COMPANY) =>
+                            getUkCompanyRedirectUr()
+                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          case Some(OrgType.SOLE_TRADER) =>
+                            getSoleTraderRedirectUr()
+                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          case _ =>
+                            Future(
+                              Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
+                            )
+                        }
+                      case _ => Future(Redirect(routes.RegistrationController.displayPage()))
                     }
                   case Left(error) => throw error
                 }
         )
 
     }
+
+  private def getSoleTraderRedirectUr()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[String] =
+    soleTraderIdConnector.createJourney(
+      SoleTraderIncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+                                      Some(request2Messages(request)("service.name")),
+                                      appConfig.serviceIdentifier,
+                                      appConfig.exitSurveyUrl
+      )
+    )
+
+  private def getUkCompanyRedirectUr()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[String] =
+    incorpIdConnector.createJourney(
+      IncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+                            Some(request2Messages(request)("service.name")),
+                            appConfig.serviceIdentifier,
+                            appConfig.exitSurveyUrl
+      )
+    )
 
   private def updateRegistration(
     formData: OrganisationType

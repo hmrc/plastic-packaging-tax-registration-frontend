@@ -35,7 +35,9 @@ class ConnectorISpec
     Map("microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,
         "microservice.services.incorporated-entity-identification-frontend.port" -> wirePort,
         "microservice.services.plastic-packaging-tax-registration.host"          -> wireHost,
-        "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort
+        "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort,
+        "microservice.services.sole-trader-identification-frontend.host"         -> wireHost,
+        "microservice.services.sole-trader-identification-frontend.port"         -> wirePort
     )
 
   override def fakeApplication(): Application = {

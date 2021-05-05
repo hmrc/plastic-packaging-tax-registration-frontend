@@ -24,6 +24,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.SoleTraderIncorporationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import java.time.format.DateTimeFormatter
@@ -37,7 +38,7 @@
     paragraphBody: paragraphBody
 )
 
-@(registration: Registration, incorporationDetails: IncorporationDetails)(implicit request: Request[_], messages: Messages)
+@(registration: Registration, incorporationDetails: Option[IncorporationDetails] = None, soleTraderDetails: Option[SoleTraderIncorporationDetails] = None)(implicit request: Request[_], messages: Messages)
 
 @extractAddress(address: Address) = @{
     Seq(address.businessName.getOrElse(""),
@@ -69,6 +70,31 @@
     )
 }
 
+@ukCompanySummary() = @{
+    SummaryList(
+        rows = Seq(
+            row("reviewRegistration.organisationDetails.businessName", Some(incorporationDetails.get.companyName)),
+            row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
+            row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
+            row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.get.companyNumber)),
+            row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.get.ctutr))
+            ).filterNot(_.value.content == Empty)
+    )
+}
+
+@soleTraderSummary() = @{
+    SummaryList(
+        rows = Seq(
+            row("reviewRegistration.organisationDetails.soleTrader.firstName", Some(soleTraderDetails.get.firstName)),
+            row("reviewRegistration.organisationDetails.soleTrader.lastName", Some(soleTraderDetails.get.lastName)),
+            row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
+            row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
+            row("reviewRegistration.organisationDetails.soleTrader.dob", Some(soleTraderDetails.get.dateOfBirth)),
+            row("reviewRegistration.organisationDetails.soleTrader.nino", Some(soleTraderDetails.get.nino))
+        ).filterNot(_.value.content == Empty)
+    )
+}
+
 @govukLayout(
     title = Title("reviewRegistration.organisationDetails.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
@@ -80,15 +106,7 @@
     <h2 id="primary-contact-details" class="govuk-heading-m">
         @messages("reviewRegistration.organisationDetails.check.label")</h2>
     @govukSummaryList(
-        SummaryList(
-            rows = Seq(
-                row("reviewRegistration.organisationDetails.businessName", Some(incorporationDetails.companyName)),
-                row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
-                row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
-                row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.companyNumber)),
-                row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.ctutr))
-            ).filterNot(_.value.content == Empty)
-        )
+        {if (incorporationDetails.isEmpty)  soleTraderSummary() else ukCompanySummary() }
     )
 
     <h2 id="primary-contact-details" class="govuk-heading-m">@messages("primaryContactDetails.check.label")</h2>

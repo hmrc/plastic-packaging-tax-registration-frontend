@@ -29,9 +29,6 @@ date.month = Month
 date.year = Year
 date.empty.error = Error: {0} cannot be empty
 
-honestyDeclaration.title = Declaration
-honestyDeclaration.description = By submitting this application to register for Plastic Packaging Tax, you are making a legal declaration that the information is correct and complete to the best of your knowledge and belief. A false declaration can result in prosecution.
-
 startPage.title.sectionHeader = Guidance
 startPage.meta.title = Start a Plastic Packaging Tax registration
 startPage.title = Plastic Packaging Tax Service
@@ -165,6 +162,11 @@ reviewRegistration.organisationDetails.businessRegistrationNumber = Business Reg
 reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique Taxpayer Reference
 reviewRegistration.sendYourApplication.title = Now send your application
 reviewRegistration.sendYourApplication.body = By submitting this registration you are confirming that, to the best of your knowledge, the details you are providing are correct.
+
+reviewRegistration.organisationDetails.soleTrader.firstName = First name
+reviewRegistration.organisationDetails.soleTrader.lastName = Last name
+reviewRegistration.organisationDetails.soleTrader.dob = Date of birth
+reviewRegistration.organisationDetails.soleTrader.nino = National insurance number
 
 confirmationPage.title = Registration submitted
 confirmationPage.panel.body = Your reference number {0}

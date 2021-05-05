@@ -82,6 +82,13 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 
+  lazy val soleTraderHost: String =
+    servicesConfig.baseUrl("sole-trader-identification-frontend")
+
+  lazy val soleTraderJourneyUrl = s"$soleTraderHost/sole-trader-identification/api/journey"
+
+  def soleTraderDetailsUrl(journeyId: String): String = s"$soleTraderJourneyUrl/$journeyId"
+
   def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"

@@ -20,24 +20,20 @@ import base.unit.ControllerSpec
 import controllers.Assets.{OK, SEE_OTHER}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  IncorpIdConnector
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import scala.concurrent.Future
-
 class ReviewRegistrationControllerSpec extends ControllerSpec {
-  private val page                  = mock[review_registration_page]
-  private val mcc                   = stubMessagesControllerComponents()
-  private val mockIncorpIdConnector = mock[IncorpIdConnector]
+  private val page = mock[review_registration_page]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,
@@ -45,6 +41,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
                                      mcc = mcc,
                                      incorpIdConnector = mockIncorpIdConnector,
                                      registrationConnector = mockRegistrationConnector,
+                                     soleTraderInorpIdConnector = mockSoleTraderConnector,
                                      page = page,
                                      metrics = metricsMock
     )
@@ -54,9 +51,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     val registration = aRegistration()
 
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration), refEq(incorporationDetails))(any(), any())).willReturn(
-      HtmlFormat.empty
-    )
+    given(page.apply(any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -68,15 +63,34 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
     "return 200" when {
 
-      "user is authorised and display page method is invoked" in {
+      "user is authorised and display page method is invoked with uk company" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
+        )
         authorizedUser()
-        mockRegistrationUpdate(aRegistration())
-        when(mockIncorpIdConnector.getDetails(any())(any()))
-          .thenReturn(Future(incorporationDetails))
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+        mockGetUkCompanyDetails(incorporationDetails)
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
+
+      "user is authorised and display page method is invoked with sole trader" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+        mockGetSoleTraderDetails(soleTraderIncorporationDetails)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
     }
 
     "return 303" when {
@@ -87,12 +101,41 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         val registration = aRegistration(withIncorpJourneyId(None))
         mockRegistrationFind(registration)
         given(
-          page.apply(refEq(registration), refEq(incorporationDetails))(any(), any())
+          page.apply(refEq(registration),
+                     refEq(Some(incorporationDetails)),
+                     refEq(Some(soleTraderIncorporationDetails))
+          )(any(), any())
         ).willReturn(HtmlFormat.empty)
 
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe SEE_OTHER
+      }
+
+      "get details fails for uk company" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "get details fails for sole trader" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockGetSoleTraderDetailsFailure(new RuntimeException("error"))
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
       }
 
       "when form is submitted" in {
