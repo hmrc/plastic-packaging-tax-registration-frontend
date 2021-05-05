@@ -46,7 +46,8 @@ import uk.gov.hmrc.hmrcfrontend.views.html.components.{
   HmrcBanner,
   HmrcFooter,
   HmrcHeader,
-  HmrcReportTechnicalIssue
+  HmrcReportTechnicalIssue,
+  HmrcUserResearchBanner
 }
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{
   hmrcStandardFooter,
@@ -112,7 +113,7 @@ trait Stubs {
 
   val hmrcReportTechnicalIssue = new HmrcReportTechnicalIssue()
   val govukHeader              = new GovukHeader()
-  val sHeader                  = new siteHeader(new HmrcHeader(new HmrcBanner()))
+  val sHeader                  = new siteHeader(HmrcHeader)
   val govPBanner               = new GovukPhaseBanner(new govukTag())
 
   val pBanner = new phaseBanner(govPBanner, appConfig)
