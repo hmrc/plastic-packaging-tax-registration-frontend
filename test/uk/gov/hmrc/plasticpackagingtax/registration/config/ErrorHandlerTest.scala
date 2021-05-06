@@ -17,9 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import base.unit.UnitViewSpec
-import controllers.Assets.SEE_OTHER
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
+import play.api.http.Status.SEE_OTHER
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}

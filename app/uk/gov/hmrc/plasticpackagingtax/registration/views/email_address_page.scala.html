@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
@@ -35,7 +35,7 @@
   errorSummary: errorSummary,
   paragraphBody: paragraphBody,
   appConfig: AppConfig,
-  formHelper: FormWithCSRF
+  formHelper: formWithCSRF
 )
 @(form: Form[EmailAddress])(implicit request: Request[_], messages: Messages)
 
