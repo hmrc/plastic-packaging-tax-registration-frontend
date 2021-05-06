@@ -90,7 +90,7 @@ class AuthActionImpl @Inject() (
                                           Some(loginTimes)
           )
 
-          getPptEnrolmentId(allEnrolments) match {
+          getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
             case None =>
               throw InsufficientEnrolments(
                 s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
@@ -115,16 +115,20 @@ class AuthActionImpl @Inject() (
       Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
     }
 
-  private def getPptEnrolmentId(enrolments: Enrolments): Option[String] =
-    getPptEnrolment(enrolments) match {
+  private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] =
+    getPptEnrolment(enrolments, identifier) match {
       case Some(enrolmentId) => Option(enrolmentId).filter(_.value.trim.nonEmpty).map(_.value)
       case None              => Option.empty
     }
 
-  private def getPptEnrolment(enrolments: Enrolments): Option[EnrolmentIdentifier] =
-    enrolments
-      .getEnrolment(AuthAction.pptEnrolmentKey)
-      .flatMap(_.getIdentifier(AuthAction.pptEnrolmentIdentifierName))
+  private def getPptEnrolment(
+    enrolmentsList: Enrolments,
+    identifier: String
+  ): Option[EnrolmentIdentifier] =
+    enrolmentsList.enrolments
+      .filter(_.key == pptEnrolmentKey)
+      .flatMap(_.identifiers)
+      .find(_.key == identifier)
 
 }
 
