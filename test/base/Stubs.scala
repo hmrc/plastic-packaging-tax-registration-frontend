@@ -32,22 +32,20 @@ package base
  * limitations under the License.
  */
 
+import akka.stream.testkit.NoMaterializer
 import com.typesafe.config.{Config, ConfigFactory}
 import play.api.Configuration
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypes, FileMimeTypesConfiguration}
 import play.api.i18n.{Langs, MessagesApi}
 import play.api.mvc._
 import play.api.test.Helpers._
-import play.api.test.NoMaterializer
 import uk.gov.hmrc.govukfrontend.views.html.components
 import uk.gov.hmrc.govukfrontend.views.html.components.{GovukHeader, Footer => _, _}
 import uk.gov.hmrc.hmrcfrontend.config.{AccessibilityStatementConfig, TrackingConsentConfig}
 import uk.gov.hmrc.hmrcfrontend.views.html.components.{
-  HmrcBanner,
   HmrcFooter,
   HmrcHeader,
-  HmrcReportTechnicalIssue,
-  HmrcUserResearchBanner
+  HmrcReportTechnicalIssue
 }
 import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{
   hmrcStandardFooter,
@@ -62,33 +60,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.ExecutionContext
 
 trait Stubs {
-
-  def stubMessagesControllerComponents(
-    bodyParser: BodyParser[AnyContent] = stubBodyParser(AnyContentAsEmpty),
-    playBodyParsers: PlayBodyParsers = stubPlayBodyParsers(NoMaterializer),
-    messagesApi: MessagesApi = stubMessagesApi(),
-    langs: Langs = stubLangs(),
-    fileMimeTypes: FileMimeTypes = new DefaultFileMimeTypes(FileMimeTypesConfiguration()),
-    executionContext: ExecutionContext = ExecutionContext.global
-  ): MessagesControllerComponents =
-    DefaultMessagesControllerComponents(
-      new DefaultMessagesActionBuilderImpl(bodyParser, messagesApi)(executionContext),
-      DefaultActionBuilder(bodyParser)(executionContext),
-      playBodyParsers,
-      messagesApi,
-      langs,
-      fileMimeTypes,
-      executionContext
-    )
-
-  def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
-
-  private val minimalConfig: Config =
-    ConfigFactory.parseString("""
-                                                                  |timeoutDialog.timeout=13min
-                                                                  |timeoutDialog.countdown=
-                                                                  |tracking-consent-frontend.gtm.container=b
-    """.stripMargin)
 
   val gdsGovukLayout = new GovukLayout(new components.GovukTemplate(govukHeader = new GovukHeader(),
                                                                     govukFooter = new GovukFooter(),
@@ -115,10 +86,8 @@ trait Stubs {
   val govukHeader              = new GovukHeader()
   val sHeader                  = new siteHeader(HmrcHeader)
   val govPBanner               = new GovukPhaseBanner(new govukTag())
-
-  val pBanner = new phaseBanner(govPBanner, appConfig)
-
-  val timeoutDialogConfig = new TimeoutDialogConfig(servicesConfig(Configuration(minimalConfig)))
+  val pBanner                  = new phaseBanner(govPBanner, appConfig)
+  val timeoutDialogConfig      = new TimeoutDialogConfig(servicesConfig(Configuration(minimalConfig)))
 
   val gdsMainTemplate = new main_template(govukHeader = govukHeader,
                                           govukLayout = gdsGovukLayout,
@@ -131,5 +100,32 @@ trait Stubs {
                                           hmrcTrackingConsentSnippet = hmrcTrackingConsentSnippet,
                                           hmrcReportTechnicalIssue = hmrcReportTechnicalIssue
   )
+
+  private val minimalConfig: Config =
+    ConfigFactory.parseString("""
+                                                                  |timeoutDialog.timeout=13min
+                                                                  |timeoutDialog.countdown=
+                                                                  |tracking-consent-frontend.gtm.container=b
+    """.stripMargin)
+
+  def stubMessagesControllerComponents(
+    bodyParser: BodyParser[AnyContent] = stubBodyParser(AnyContentAsEmpty),
+    playBodyParsers: PlayBodyParsers = stubPlayBodyParsers(NoMaterializer),
+    messagesApi: MessagesApi = stubMessagesApi(),
+    langs: Langs = stubLangs(),
+    fileMimeTypes: FileMimeTypes = new DefaultFileMimeTypes(FileMimeTypesConfiguration()),
+    executionContext: ExecutionContext = ExecutionContext.global
+  ): MessagesControllerComponents =
+    DefaultMessagesControllerComponents(
+      new DefaultMessagesActionBuilderImpl(bodyParser, messagesApi)(executionContext),
+      DefaultActionBuilder(bodyParser)(executionContext),
+      playBodyParsers,
+      messagesApi,
+      langs,
+      fileMimeTypes,
+      executionContext
+    )
+
+  def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
 
 }

@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import controllers.Assets.OK
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status.OK
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
