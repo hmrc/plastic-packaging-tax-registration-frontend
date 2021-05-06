@@ -24,6 +24,7 @@ function setup() {
 
     panel.appendChild(createQuickButton())
     panel.appendChild(createGRSFeatureFlagsLink())
+    panel.appendChild(createSoleTraderGRSFeatureFlagsLink())
 
     return panel
 }
@@ -64,6 +65,27 @@ function createGRSFeatureFlagsLink() {
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
     a.style.top = "100px"
+
+    return a
+}
+
+function createSoleTraderGRSFeatureFlagsLink() {
+
+    let a = document.createElement('a')
+    a.id='grsFlags'
+
+    a.target = '_blank'
+    a.href = '/identify-your-sole-trader-business/test-only/feature-switches'
+    if (window.location.hostname === 'localhost') {
+        a.href = 'http://localhost:9718/identify-your-sole-trader-business/test-only/feature-switches'
+    } else {
+        a.href = '/identify-your-sole-trader-business/test-only/feature-switches'
+    }
+    a.innerText = 'Sole Trader GRS Flags Config'
+
+    a.classList.add('govuk-link','govuk-link--no-visited-state')
+    a.style.position = "absolute"
+    a.style.top = "150px"
 
     return a
 }
