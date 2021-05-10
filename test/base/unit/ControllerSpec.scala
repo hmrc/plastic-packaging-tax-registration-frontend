@@ -16,6 +16,8 @@
 
 package base.unit
 
+import base.PptTestData.pptEnrolment
+
 import java.lang.reflect.Field
 import base.{MockAuthAction, PptTestData}
 import org.scalatest.BeforeAndAfterEach
@@ -68,7 +70,7 @@ trait ControllerSpec
 
   def authRequest(
     headers: Headers = Headers(),
-    user: SignedInUser = PptTestData.newUser("123", Some("333"))
+    user: SignedInUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
   ): AuthenticatedRequest[AnyContentAsEmpty.type] =
     new AuthenticatedRequest(
       FakeRequest().withHeaders(headers),

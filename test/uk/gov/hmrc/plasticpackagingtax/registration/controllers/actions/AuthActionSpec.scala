@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
+import base.PptTestData.{newEnrolment, newEnrolments, pptEnrolment}
 import base.{MetricsMocks, PptTestData}
 import base.unit.ControllerSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -43,7 +44,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
   "Auth Action" should {
 
     "return InsufficientEnrolments when UTR number is missing" in {
-      val user = PptTestData.newUser("123", Some(""))
+      val user = PptTestData.newUser("123", Some(pptEnrolment("")))
       authorizedUser(user)
 
       intercept[InsufficientEnrolments] {
@@ -52,7 +53,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     }
 
     "process request when UTR number is present" in {
-      val user = PptTestData.newUser("123", Some("555"))
+      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
       authorizedUser(user)
 
       await(
@@ -60,8 +61,62 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       ) mustBe Results.Ok
     }
 
+    "process request when utr is present and multiple identifier exist for same key" in {
+      val user = PptTestData.newUser("123",
+                                     Some(
+                                       newEnrolments(
+                                         newEnrolment(AuthAction.pptEnrolmentKey,
+                                                      AuthAction.pptEnrolmentIdentifierName,
+                                                      "555"
+                                         ),
+                                         newEnrolment(AuthAction.pptEnrolmentKey, "ABC-Name", "999")
+                                       )
+                                     )
+      )
+      authorizedUser(user)
+
+      await(
+        createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+      ) mustBe Results.Ok
+    }
+
+    "return InsufficientEnrolments when utr is not present and multiple identifier exist for same key" in {
+      val user = PptTestData.newUser(
+        "123",
+        Some(
+          newEnrolments(newEnrolment(AuthAction.pptEnrolmentKey, "DEF-NAME", "555"),
+                        newEnrolment(AuthAction.pptEnrolmentKey, "ABC-Name", "999")
+          )
+        )
+      )
+      authorizedUser(user)
+
+      intercept[InsufficientEnrolments] {
+        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
+      }
+    }
+
+    "return InsufficientEnrolments when utr is present but no ppt enrolment key found" in {
+      val user = PptTestData.newUser("123",
+                                     Some(
+                                       newEnrolments(
+                                         newEnrolment("SOME-OTHER-KEY",
+                                                      AuthAction.pptEnrolmentIdentifierName,
+                                                      "555"
+                                         ),
+                                         newEnrolment(AuthAction.pptEnrolmentKey, "ABC-Name", "999")
+                                       )
+                                     )
+      )
+      authorizedUser(user)
+
+      intercept[InsufficientEnrolments] {
+        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
+      }
+    }
+
     "time calls to authorisation" in {
-      val user = PptTestData.newUser("123", Some("555"))
+      val user = PptTestData.newUser("123", Some(pptEnrolment("123")))
       authorizedUser(user)
 
       await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
@@ -72,7 +127,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
     "process request when UTR number is present and allowed" in {
       val utr  = "555"
-      val user = PptTestData.newUser("123", Some(utr))
+      val user = PptTestData.newUser("123", Some(pptEnrolment(utr)))
       authorizedUser(user)
 
       await(
@@ -83,7 +138,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     }
 
     "redirect to home when UTR number is present but not allowed" in {
-      val user = PptTestData.newUser("123", Some("555"))
+      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
       authorizedUser(user)
 
       val result =

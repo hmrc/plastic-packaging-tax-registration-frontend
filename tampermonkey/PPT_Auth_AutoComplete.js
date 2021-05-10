@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax (PPT) Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   2.0
+// @version   3.0
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
 // @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax*
@@ -19,6 +19,9 @@
     document.getElementsByName("enrolment[0].name")[0].value = "HMRC-PPT-ORG";
     document.getElementById("input-0-0-name").value = "UTR";
     document.getElementById("input-0-0-value").value = "1234567890";
+    document.getElementsByName("enrolment[1].name")[0].value = "HMRC-PPT-ORG";
+    document.getElementById("input-1-0-name").value = "PPTReference";
+    document.getElementById("input-1-0-value").value = "XMPPT0000000001";
 
     document.getElementById('global-header').appendChild(createQuickButton())
 

@@ -31,43 +31,49 @@ object PptTestData {
 
   def newUser(
     externalId: String = "123",
-    pptEnrolmentId: Option[String] = Some("123")
+    enrolments: Option[Enrolments] = Some(pptEnrolment("123"))
   ): SignedInUser =
-    SignedInUser(
-      pptEnrolmentId.map(
-        id =>
-          Enrolments(
-            Set(
-              Enrolment(AuthAction.pptEnrolmentKey).withIdentifier(
-                AuthAction.pptEnrolmentIdentifierName,
-                id
-              )
-            )
-          )
-      ).getOrElse(Enrolments(Set.empty)),
-      IdentityData(Some("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b"),
-                   Some(externalId),
-                   None,
-                   Some(nrsCredentials),
-                   Some(L50),
-                   None,
-                   None,
-                   Some(Name(Some("Aldo"), Some("Rain"))),
-                   Some(LocalDate.now().minusYears(25)),
-                   Some("amina@hmrc.co.uk"),
-                   Some(
-                     AgentInformation(Some("agentId"), Some("agentCode"), Some("agentFriendlyName"))
-                   ),
-                   None,
-                   None,
-                   None,
-                   None,
-                   None,
-                   None,
-                   None,
-                   Some("crdentialStrength 50"),
-                   Some(LoginTimes(DateTime.now, None))
+    SignedInUser(enrolments.getOrElse(Enrolments(Set())),
+                 IdentityData(Some("Int-ba17b467-90f3-42b6-9570-73be7b78eb2b"),
+                              Some(externalId),
+                              None,
+                              Some(nrsCredentials),
+                              Some(L50),
+                              None,
+                              None,
+                              Some(Name(Some("Aldo"), Some("Rain"))),
+                              Some(LocalDate.now().minusYears(25)),
+                              Some("amina@hmrc.co.uk"),
+                              Some(
+                                AgentInformation(Some("agentId"),
+                                                 Some("agentCode"),
+                                                 Some("agentFriendlyName")
+                                )
+                              ),
+                              None,
+                              None,
+                              None,
+                              None,
+                              None,
+                              None,
+                              None,
+                              Some("crdentialStrength 50"),
+                              Some(LoginTimes(DateTime.now, None))
+                 )
+    )
+
+  def pptEnrolment(pptEnrolmentId: String) =
+    newEnrolments(
+      newEnrolment(AuthAction.pptEnrolmentKey,
+                   AuthAction.pptEnrolmentIdentifierName,
+                   pptEnrolmentId
       )
     )
+
+  def newEnrolments(enrolment: Enrolment*): Enrolments =
+    Enrolments(enrolment.toSet)
+
+  def newEnrolment(key: String, identifierName: String, identifierValue: String): Enrolment =
+    Enrolment(key).withIdentifier(identifierName, identifierValue)
 
 }
