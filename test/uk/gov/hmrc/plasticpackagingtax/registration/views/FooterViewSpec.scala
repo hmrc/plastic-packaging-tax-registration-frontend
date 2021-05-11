@@ -34,7 +34,7 @@ class FooterViewSpec extends UnitViewSpec with Matchers {
 
     "display footer items" in {
 
-      view.getElementsByClass("govuk-footer__inline-list-item").size() must be(6)
+      view.getElementsByClass("govuk-footer__inline-list-item").size() must be(7)
     }
   }
 }
