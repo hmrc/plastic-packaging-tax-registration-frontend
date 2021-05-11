@@ -21,12 +21,7 @@ import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address.isValidEmail
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName.isNonEmpty
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle.{
-  isMatchingPattern,
-  isNotExceedingMaxLength
-}
-
-import java.util.regex.Pattern
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle.isNotExceedingMaxLength
 
 case class EmailAddress(value: String)
 
