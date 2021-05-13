@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
-import play.api.libs.json.{Json, OFormat}
+import org.joda.time.DateTime
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import play.api.libs.json.{Format, JodaReads, JodaWrites, JsResult, JsValue, Json, OFormat}
 
 case class Registration(
   id: String,
@@ -25,7 +26,8 @@ case class Registration(
   liabilityDetails: LiabilityDetails = LiabilityDetails(),
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   organisationDetails: OrganisationDetails = OrganisationDetails(),
-  metaData: MetaData = MetaData()
+  metaData: MetaData = MetaData(),
+  lastModifiedDateTime: Option[DateTime] = None
 ) {
 
   def toRegistration: Registration =
@@ -34,7 +36,8 @@ case class Registration(
                  liabilityDetails = this.liabilityDetails,
                  primaryContactDetails = this.primaryContactDetails,
                  organisationDetails = this.organisationDetails,
-                 metaData = this.metaData
+                 metaData = this.metaData,
+                 lastModifiedDateTime = this.lastModifiedDateTime
     )
 
   def isRegistrationComplete: Boolean =
@@ -87,6 +90,14 @@ case class Registration(
 }
 
 object Registration {
-  implicit val format: OFormat[Registration] = Json.format[Registration]
 
+  implicit val dateFormatDefault: Format[DateTime] = new Format[DateTime] {
+
+    override def reads(json: JsValue): JsResult[DateTime] =
+      JodaReads.DefaultJodaDateTimeReads.reads(json)
+
+    override def writes(o: DateTime): JsValue = JodaWrites.JodaDateTimeNumberWrites.writes(o)
+  }
+
+  implicit val format: OFormat[Registration] = Json.format[Registration]
 }

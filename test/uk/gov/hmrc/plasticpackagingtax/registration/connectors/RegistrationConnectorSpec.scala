@@ -20,6 +20,7 @@ import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put}
+import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
@@ -67,6 +68,20 @@ class RegistrationConnectorSpec
 
         res.right.value.id mustBe "123"
 
+      }
+    }
+
+    "parse response lastModifiedDateTime field correctly" when {
+      "valid request send" in {
+        val now = DateTime.now(DateTimeZone.UTC)
+        givenPostToRegistrationReturns(
+          Status.CREATED,
+          Json.toJsObject(Registration(id = "123", lastModifiedDateTime = Some(now))).toString
+        )
+
+        val res = await(connector.create(Registration("123")))
+
+        res.right.value.lastModifiedDateTime.get.isEqual(now) mustBe true
       }
     }
 
