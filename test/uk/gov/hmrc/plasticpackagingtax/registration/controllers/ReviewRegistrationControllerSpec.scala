@@ -19,11 +19,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{reset, verify}
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
@@ -42,6 +43,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
                                      incorpIdConnector = mockIncorpIdConnector,
                                      registrationConnector = mockRegistrationConnector,
                                      soleTraderInorpIdConnector = mockSoleTraderConnector,
+                                     auditor = mockAuditor,
                                      page = page,
                                      metrics = metricsMock
     )
@@ -150,6 +152,21 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         metricsMock.defaultRegistry.counter(
           "ppt.registration.success.submission.counter"
         ).getCount mustBe 1
+      }
+    }
+
+    "send audit event" when {
+      "submission of audit event" in {
+        authorizedUser()
+        val registration = aRegistration()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+
+        await(controller.submit()(postRequest(JsObject.empty)))
+
+        verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
+          ArgumentMatchers.eq(registration)
+        )(any(), any())
       }
     }
 

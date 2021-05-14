@@ -20,6 +20,7 @@ import com.kenshoo.play.metrics.Metrics
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
 import uk.gov.hmrc.http.InternalServerException
+import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
   RegistrationConnector,
@@ -47,6 +48,7 @@ class ReviewRegistrationController @Inject() (
   soleTraderInorpIdConnector: SoleTraderInorpIdConnector,
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
+  auditor: Auditor,
   page: review_registration_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -101,7 +103,7 @@ class ReviewRegistrationController @Inject() (
     }
 
   /*
-  TODO: This will need to be refactored once:
+  TODO: This will need to be refactored once: (remember to make sure correct sequence of events occur: complete, audit, redirect etc for pass and fail)
   1. The PPT EIS/IF Stub has been implemented
   2. The EIS/IF and ETMP 'Create Registration/Subscription' request/response schemas are made available to us
   3. If a submission has been successful we will need to remove the registration/submission document.
@@ -110,9 +112,10 @@ class ReviewRegistrationController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val referenceId = s"PPT12345678${Random.nextInt(1000000)}"
+      auditor.registrationSubmitted(request.registration)
+      successSubmissionCounter.inc()
       markRegistrationAsCompleted().map {
         case Right(_) =>
-          successSubmissionCounter.inc()
           Redirect(routes.ConfirmationController.displayPage())
             .flashing(Flash(Map(FlashKeys.referenceId -> referenceId)))
         case Left(error) =>
