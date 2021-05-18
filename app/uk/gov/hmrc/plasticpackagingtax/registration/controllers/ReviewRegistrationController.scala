@@ -112,13 +112,14 @@ class ReviewRegistrationController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val referenceId = s"PPT12345678${Random.nextInt(1000000)}"
-      auditor.registrationSubmitted(request.registration)
       successSubmissionCounter.inc()
       markRegistrationAsCompleted().map {
-        case Right(_) =>
+        case Right(reg) =>
+          auditor.registrationSubmitted(reg)
           Redirect(routes.ConfirmationController.displayPage())
             .flashing(Flash(Map(FlashKeys.referenceId -> referenceId)))
         case Left(error) =>
+          auditor.registrationSubmitted(request.registration)
           failedSubmissionCounter.inc()
           throw error
       }
