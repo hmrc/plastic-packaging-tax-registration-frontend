@@ -14,13 +14,14 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.SaveAndComeBackLater
 
-@this()
+@this(govukButton: GovukButton)
 
 @(messageKey: String = "site.button.saveAndComeBackLater")(implicit messages: Messages)
 
-<button
-    id="save_and_come_back_later"
-    class="button-link govuk-link govuk-link--no-visited-state focus"
-    name="@SaveAndComeBackLater.toString">@messages(messageKey)</button>
+@govukButton(Button(
+    content = Text(messages(messageKey)),
+    classes = "govuk-button--secondary",
+    attributes = Map("id" -> "save_and_come_back_later", "name" -> SaveAndComeBackLater.toString)))
