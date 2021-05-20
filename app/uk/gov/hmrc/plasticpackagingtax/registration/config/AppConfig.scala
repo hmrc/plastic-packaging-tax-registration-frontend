@@ -66,6 +66,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
 
+  lazy val emailVerificationHost: String =
+    servicesConfig.baseUrl("email-verification")
+
   lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
@@ -79,6 +82,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val incorpJourneyUrl           = s"$incorpIdHost/incorporated-entity-identification/api/journey"
   lazy val pptRegistrationUrl: String = s"$pptServiceHost/registrations"
+  lazy val emailVerificationUrl       = s"$emailVerificationHost/verify-email"
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 
@@ -92,6 +96,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
+
+  def getEmailVerificationStatusUrl(credId: String): String =
+    s"$emailVerificationHost/verification-status/$credId"
 
   def authenticatedFeedbackUrl(): String =
     s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"

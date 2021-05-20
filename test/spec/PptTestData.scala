@@ -17,6 +17,10 @@
 package spec
 
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  EmailStatus,
+  VerificationStatus
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
   IncorporationDetails,
@@ -57,5 +61,9 @@ trait PptTestData {
 
   protected val soleTraderIncorporationDetails =
     SoleTraderIncorporationDetails(testFirstName, testLastName, testDob, testNin)
+
+  protected val emailVerification = VerificationStatus(
+    Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
+  )
 
 }

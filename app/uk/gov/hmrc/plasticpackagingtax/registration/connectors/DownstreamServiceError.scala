@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
-class ServiceError(private val message: String, private val cause: Exception)
+class ServiceError(private val message: String, private var cause: Exception)
     extends Exception(message, cause) {}
 
-case class DownstreamServiceError(private val message: String, private val cause: Exception)
+case class DownstreamServiceError(private val message: String, private var cause: Exception = null)
     extends ServiceError(message, cause) {}
