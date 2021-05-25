@@ -17,8 +17,6 @@
 package base.unit
 
 import base.PptTestData.pptEnrolment
-
-import java.lang.reflect.Field
 import base.{MockAuthAction, PptTestData}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
@@ -31,7 +29,6 @@ import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -41,6 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
+import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
@@ -53,8 +51,6 @@ trait ControllerSpec
   implicit val ec: ExecutionContext = ExecutionContext.global
 
   implicit val config: AppConfig = mock[AppConfig]
-
-  protected val mockAuditor = mock[Auditor]
 
   protected val saveAndContinueFormAction: (String, String) = (SaveAndContinue.toString, "")
 

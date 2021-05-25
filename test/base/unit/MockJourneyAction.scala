@@ -26,10 +26,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockJourneyAction
-    extends MockRegistrationConnector with BeforeAndAfterEach with MockitoSugar {
+    extends MockRegistrationConnector with MockAuditorConnector with BeforeAndAfterEach
+    with MockitoSugar {
   self: MockitoSugar with Suite =>
 
-  val mockJourneyAction: JourneyAction = new JourneyAction(mockRegistrationConnector)(
+  val mockJourneyAction: JourneyAction = new JourneyAction(mockRegistrationConnector, mockAuditor)(
     ExecutionContext.global
   )
 

@@ -18,9 +18,9 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.stubbing.OngoingStubbing
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{

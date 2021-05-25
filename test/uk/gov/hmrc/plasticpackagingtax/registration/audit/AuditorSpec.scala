@@ -26,7 +26,6 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration.format
 
 class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with RegistrationBuilder {
 
@@ -49,7 +48,7 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
 
   "Auditor" should {
     "post registration event" when {
-      "submit Registration invoked" in {
+      "registrationSubmitted invoked" in {
         givenAuditReturns(Status.NO_CONTENT)
         val registration = aRegistration()
 
@@ -73,6 +72,54 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
         }
       }
     }
+
+    "post start new registration event" when {
+      "newRegistrationStarted invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.newRegistrationStarted()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "newRegistrationStarted audit event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.newRegistrationStarted()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
+        }
+      }
+    }
+
+    "post start new registration event" when {
+      "existingRegistrationLoaded invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.existingRegistrationLoaded()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.RETURNING)) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "existingRegistrationLoaded audit event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.existingRegistrationLoaded()
+
+        eventually(timeout(Span(5, Seconds))) {
+          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.RETURNING)) mustBe true
+        }
+      }
+    }
   }
 
   private def givenAuditReturns(statusCode: Int): Unit =
@@ -85,14 +132,27 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
     )
 
   private def eventSendToAudit(url: String, registration: Registration): Boolean =
+    eventSendToAudit(url,
+                     CreateRegistrationEvent.eventType,
+                     Registration.format.writes(registration).toString()
+    )
+
+  private def eventSendToAudit(
+    url: String,
+    startRegistrationEvent: StartRegistrationEvent
+  ): Boolean =
+    eventSendToAudit(url,
+                     StartRegistrationEvent.eventType,
+                     StartRegistrationEvent.format.writes(startRegistrationEvent).toString()
+    )
+
+  private def eventSendToAudit(url: String, eventType: String, body: String): Boolean =
     try {
       verify(
         postRequestedFor(urlEqualTo(url))
-          .withRequestBody(
-            equalToJson(
-              """{
+          .withRequestBody(equalToJson("""{
                   "auditSource": "plastic-packaging-tax-registration-frontend",
-                  "auditType": """" + CreateRegistrationEvent.eventType + """",
+                  "auditType": """" + eventType + """",
                   "eventId": "${json-unit.any-string}",
                   "tags": {
                     "clientIP": "-",
@@ -103,18 +163,14 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
                     "deviceID": "-",
                     "clientPort": "-"
                   },
-                  "detail": """ + format.writes(registration).toString() + """,
+                  "detail": """ + body + """,
                   "generatedAt": "${json-unit.any-string}",
                   "metadata": {
                     "sendAttemptAt": "${json-unit.any-string}",
                     "instanceID": "${json-unit.any-string}",
                     "sequence": "${json-unit.any-number}"
                   }
-                }""".stripMargin,
-              true,
-              true
-            )
-          )
+                }""".stripMargin, true, true))
       )
       true
     } catch {
