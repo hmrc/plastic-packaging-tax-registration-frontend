@@ -21,14 +21,15 @@ import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyAction @Inject() (registrationConnector: RegistrationConnector)(implicit
-  val exec: ExecutionContext
+class JourneyAction @Inject() (registrationConnector: RegistrationConnector, auditor: Auditor)(
+  implicit val exec: ExecutionContext
 ) extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
   private val logger = Logger(this.getClass)
@@ -54,8 +55,14 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector)(imp
     registrationConnector.find(id).flatMap {
       case Right(reg) =>
         reg
-          .map(r => Future.successful(Right(r)))
-          .getOrElse(registrationConnector.create(Registration(id)))
+          .map { r =>
+            auditor.existingRegistrationLoaded()
+            Future.successful(Right(r))
+          }
+          .getOrElse {
+            auditor.newRegistrationStarted()
+            registrationConnector.create(Registration(id))
+          }
       case Left(error) => Future.successful(Left(error))
     }
 

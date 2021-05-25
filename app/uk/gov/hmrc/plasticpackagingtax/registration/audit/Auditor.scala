@@ -33,4 +33,14 @@ class Auditor @Inject() (auditConnector: AuditConnector) {
                                      CreateRegistrationEvent(registration)
     )
 
+  def newRegistrationStarted()(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendExplicitAudit(StartRegistrationEvent.eventType,
+                                     StartRegistrationEvent(UserType.NEW)
+    )
+
+  def existingRegistrationLoaded()(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendExplicitAudit(StartRegistrationEvent.eventType,
+                                     StartRegistrationEvent(UserType.RETURNING)
+    )
+
 }

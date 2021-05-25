@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 import base.PptTestData
 import base.PptTestData.pptEnrolment
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
@@ -36,7 +36,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class JourneyActionSpec extends ControllerSpec {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
-  private val actionRefiner     = new JourneyAction(mockRegistrationConnector)(ExecutionContext.global)
+
+  private val actionRefiner = new JourneyAction(mockRegistrationConnector, mockAuditor)(
+    ExecutionContext.global
+  )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -45,7 +48,7 @@ class JourneyActionSpec extends ControllerSpec {
   }
 
   "action refine" should {
-    "permit request" when {
+    "permit request and send audit event" when {
       "enrolmentId found" in {
         given(mockRegistrationConnector.find(refEq("123"))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(Registration("123"))))
@@ -57,6 +60,7 @@ class JourneyActionSpec extends ControllerSpec {
             responseGenerator
           )
         ) mustBe Results.Ok
+        verify(mockAuditor, Mockito.atLeast(1)).existingRegistrationLoaded()(any(), any())
       }
     }
 
@@ -78,7 +82,7 @@ class JourneyActionSpec extends ControllerSpec {
       }
     }
 
-    "create registration" when {
+    "create registration and send audit event" when {
       "registration details not found" in {
         given(mockRegistrationConnector.find(refEq("999"))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(None))
@@ -93,6 +97,7 @@ class JourneyActionSpec extends ControllerSpec {
             responseGenerator
           )
         ) mustBe Results.Ok
+        verify(mockAuditor, Mockito.atLeast(1)).newRegistrationStarted()(any(), any())
       }
     }
   }
