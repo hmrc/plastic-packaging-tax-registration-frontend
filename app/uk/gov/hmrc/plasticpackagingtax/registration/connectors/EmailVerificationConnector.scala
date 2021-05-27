@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
 import play.api.http.Status.CREATED
-import play.api.libs.json.{JsError, JsSuccess, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -39,20 +38,19 @@ class EmailVerificationConnector @Inject() (
 
   def getStatus(
     id: String
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, VerificationStatus]] = {
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.getStatus.timer").time()
-    httpClient.GET[JsValue](appConfig.getEmailVerificationStatusUrl(id))
+    httpClient.GET[Option[VerificationStatus]](appConfig.getEmailVerificationStatusUrl(id))
       .andThen { case _ => timer.stop() }
-      .map { json =>
-        VerificationStatus.apiReads.reads(json) match {
-          case JsSuccess(value, _) => Right(value)
-          case JsError(errors) =>
-            Left(
-              DownstreamServiceError(
-                s"Failed to retrieve email verification status, error: ${errors.map(_._1).mkString(", ")}"
-              )
+      .map(resp => Right(resp.map(_.toVerificationStatus)))
+      .recover {
+        case ex: Exception =>
+          Left(
+            DownstreamServiceError(
+              s"Failed to retrieve email verification status, error: ${ex.getMessage}",
+              ex
             )
-        }
+          )
       }
   }
 
@@ -73,6 +71,9 @@ class EmailVerificationConnector @Inject() (
               s"Failed to create email verification, status: ${response.status}, error: ${response.body}"
             )
           )
+      }.recover {
+        case ex: Exception =>
+          Left(DownstreamServiceError(s"Error while verifying email, error: ${ex.getMessage}", ex))
       }
   }
 
