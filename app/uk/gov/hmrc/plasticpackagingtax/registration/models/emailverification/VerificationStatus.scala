@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 case class VerificationStatus(emails: Seq[EmailStatus]) {
   def toVerificationStatus: VerificationStatus = VerificationStatus(emails = this.emails)
@@ -35,14 +34,14 @@ object EmailStatus {
       (__ \ "locked").read[Boolean]
   )(EmailStatus.apply _)
 
-//  val apiWrites: Writes[EmailStatus] = (
-//    (__ \ "emailAddress").write[String] and
-//      (__ \ "verified").write[Boolean] and
-//      (__ \ "locked").write[Boolean]
-//  )(unlift(EmailStatus.unapply))
-//
-//  val apiFormat: Format[EmailStatus] =
-//    Format[EmailStatus](apiReads, apiWrites)
+  val apiWrites: Writes[EmailStatus] = (
+    (__ \ "emailAddress").write[String] and
+      (__ \ "verified").write[Boolean] and
+      (__ \ "locked").write[Boolean]
+  )(unlift(EmailStatus.unapply))
+
+  val apiFormat: Format[EmailStatus] =
+    Format[EmailStatus](apiReads, apiWrites)
 
   implicit val format: Format[EmailStatus] =
     Json.format[EmailStatus]
@@ -50,8 +49,6 @@ object EmailStatus {
 }
 
 object VerificationStatus {
-
-//  implicit val es: Reads[Seq[EmailStatus]] = Reads.seq(EmailStatus.apiReads)
 
   implicit val format: Format[VerificationStatus] = Json.format[VerificationStatus]
 
