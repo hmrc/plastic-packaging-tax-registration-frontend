@@ -96,30 +96,6 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
         }
       }
     }
-
-    "post start new registration event" when {
-      "existingRegistrationLoaded invoked" in {
-        givenAuditReturns(Status.NO_CONTENT)
-
-        auditor.existingRegistrationLoaded()
-
-        eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.RETURNING)) mustBe true
-        }
-      }
-    }
-
-    "not throw exception" when {
-      "existingRegistrationLoaded audit event fails" in {
-        givenAuditReturns(Status.BAD_REQUEST)
-
-        auditor.existingRegistrationLoaded()
-
-        eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.RETURNING)) mustBe true
-        }
-      }
-    }
   }
 
   private def givenAuditReturns(statusCode: Int): Unit =

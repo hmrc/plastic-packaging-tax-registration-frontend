@@ -56,7 +56,6 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector, aud
       case Right(reg) =>
         reg
           .map { r =>
-            auditor.existingRegistrationLoaded()
             Future.successful(Right(r))
           }
           .getOrElse {

@@ -21,7 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.audit.UserType.UserType
 
 object UserType extends Enumeration {
   type UserType = Value
-  val NEW, RETURNING = Value
+  val NEW = Value
 
   implicit val format: Format[UserType] =
     Format(Reads.enumNameReads(UserType), Writes.enumNameWrites)
