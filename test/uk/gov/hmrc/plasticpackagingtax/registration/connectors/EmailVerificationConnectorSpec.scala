@@ -82,6 +82,57 @@ class EmailVerificationConnectorSpec
         getTimer("ppt.email.verification.create.timer").getCount mustBe 1
       }
     }
+
+    "return error" when {
+
+      "service returns non success status code" in {
+
+        givenPostToEmailVerificationReturns(Status.BAD_REQUEST,
+                                            Json.obj("redirectUri" -> testJourneyStartUrl).toString
+        )
+
+        val res = await(
+          connector.create(
+            CreateEmailVerificationRequest(credId = "credId",
+                                           continueUrl = "http://continue",
+                                           origin = "origin",
+                                           accessibilityStatementUrl = "http://accessibility",
+                                           email = Email(address = "test@hmrc.com",
+                                                         enterUrl = "hhtp://enterUrl"
+                                           ),
+                                           backUrl = "http://back",
+                                           pageTitle = "PPT Title",
+                                           deskproServiceName = "ppt"
+            )
+          )
+        )
+
+        res.left.value.getMessage must include("Failed to create email verification")
+      }
+
+      "service returns invalid response" in {
+
+        givenPostToEmailVerificationReturns(Status.CREATED, "someRubbish")
+
+        val res = await(
+          connector.create(
+            CreateEmailVerificationRequest(credId = "credId",
+                                           continueUrl = "http://continue",
+                                           origin = "origin",
+                                           accessibilityStatementUrl = "http://accessibility",
+                                           email = Email(address = "test@hmrc.com",
+                                                         enterUrl = "hhtp://enterUrl"
+                                           ),
+                                           backUrl = "http://back",
+                                           pageTitle = "PPT Title",
+                                           deskproServiceName = "ppt"
+            )
+          )
+        )
+
+        res.left.value.getMessage must include("Error while verifying email")
+      }
+    }
   }
 
   "getStatus" when {
@@ -97,8 +148,37 @@ class EmailVerificationConnectorSpec
 
       val res = await(connector.getStatus(credId))
 
-      res.value mustBe validResponse
+      res.value.get mustBe validResponse
       getTimer("ppt.email.verification.getStatus.timer").getCount mustBe 1
+    }
+
+    "service returns non success status code" in {
+      val validResponse = emailVerification
+      giveGetEmailVerificationDetailsReturns(
+        Status.BAD_REQUEST,
+        credId,
+        toJson(validResponse)(VerificationStatus.format).toString
+      )
+
+      val res = await(connector.getStatus(credId))
+
+      res.left.value.getMessage must include("Failed to retrieve email verification status")
+    }
+
+    "service returns not found status code" in {
+      giveGetEmailVerificationDetailsReturns(Status.NOT_FOUND, credId)
+
+      val res = await(connector.getStatus(credId))
+
+      res.value mustBe None
+    }
+
+    "service returns invalid response" in {
+      giveGetEmailVerificationDetailsReturns(Status.OK, credId, "someRubbish")
+
+      val res = await(connector.getStatus(credId))
+
+      res.left.value.getMessage must include("Failed to retrieve email verification status")
     }
   }
 

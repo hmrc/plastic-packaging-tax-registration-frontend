@@ -19,8 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.Reads._
 import play.api.libs.json._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
-case class VerificationStatus(emails: Seq[EmailStatus])
+case class VerificationStatus(emails: Seq[EmailStatus]) {
+  def toVerificationStatus: VerificationStatus = VerificationStatus(emails = this.emails)
+}
 
 case class EmailStatus(emailAddress: String, verified: Boolean, locked: Boolean)
 
