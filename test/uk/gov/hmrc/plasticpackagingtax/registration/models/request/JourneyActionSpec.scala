@@ -60,7 +60,6 @@ class JourneyActionSpec extends ControllerSpec {
             responseGenerator
           )
         ) mustBe Results.Ok
-        verify(mockAuditor, Mockito.atLeast(1)).existingRegistrationLoaded()(any(), any())
       }
     }
 
