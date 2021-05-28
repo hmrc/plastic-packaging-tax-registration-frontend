@@ -29,11 +29,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registra
 
 class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with RegistrationBuilder {
 
-  override def overrideConfig: Map[String, Any] =
-    Map("auditing.enabled" -> true, "auditing.consumer.baseUri.port" -> wirePort)
-
   val auditor: Auditor = app.injector.instanceOf[Auditor]
   val auditUrl         = "/write/audit"
+
+  override def overrideConfig: Map[String, Any] =
+    Map("auditing.enabled" -> true, "auditing.consumer.baseUri.port" -> wirePort)
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -137,6 +137,37 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
                      Registration.format.writes(registration).toString()
     )
 
+  private def eventSendToAudit(url: String, eventType: String, body: String): Boolean =
+    try {
+      verify(
+        postRequestedFor(urlEqualTo(url))
+          .withRequestBody(equalToJson(s"""{
+               |                  "auditSource": "plastic-packaging-tax-registration-frontend",
+               |                  "auditType": "$eventType",
+               |                  "eventId": "$${json-unit.any-string}",
+               |                  "tags": {
+               |                    "clientIP": "-",
+               |                    "path": "-",
+               |                    "X-Session-ID": "-",
+               |                    "Akamai-Reputation": "-",
+               |                    "X-Request-ID": "-",
+               |                    "deviceID": "-",
+               |                    "clientPort": "-"
+               |                  },
+               |                  "detail": $body,
+               |                  "generatedAt": "$${json-unit.any-string}",
+               |                  "metadata": {
+               |                    "sendAttemptAt": "$${json-unit.any-string}",
+               |                    "instanceID": "$${json-unit.any-string}",
+               |                    "sequence": "$${json-unit.any-number}"
+               |                  }
+               |                }""".stripMargin, true, true))
+      )
+      true
+    } catch {
+      case _: VerificationException => false
+    }
+
   private def eventSendToAudit(
     url: String,
     startRegistrationEvent: StartRegistrationEvent
@@ -145,36 +176,5 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
                      StartRegistrationEvent.eventType,
                      StartRegistrationEvent.format.writes(startRegistrationEvent).toString()
     )
-
-  private def eventSendToAudit(url: String, eventType: String, body: String): Boolean =
-    try {
-      verify(
-        postRequestedFor(urlEqualTo(url))
-          .withRequestBody(equalToJson("""{
-                  "auditSource": "plastic-packaging-tax-registration-frontend",
-                  "auditType": """" + eventType + """",
-                  "eventId": "${json-unit.any-string}",
-                  "tags": {
-                    "clientIP": "-",
-                    "path": "-",
-                    "X-Session-ID": "-",
-                    "Akamai-Reputation": "-",
-                    "X-Request-ID": "-",
-                    "deviceID": "-",
-                    "clientPort": "-"
-                  },
-                  "detail": """ + body + """,
-                  "generatedAt": "${json-unit.any-string}",
-                  "metadata": {
-                    "sendAttemptAt": "${json-unit.any-string}",
-                    "instanceID": "${json-unit.any-string}",
-                    "sequence": "${json-unit.any-number}"
-                  }
-                }""".stripMargin, true, true))
-      )
-      true
-    } catch {
-      case _: VerificationException => false
-    }
 
 }

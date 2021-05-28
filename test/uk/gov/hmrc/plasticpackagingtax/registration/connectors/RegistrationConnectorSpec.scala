@@ -55,7 +55,7 @@ class RegistrationConnectorSpec
 
         val res = await(connector.create(Registration("123")))
 
-        res.right.value.id mustBe "123"
+        res.value.id mustBe "123"
         getTimer("ppt.registration.create.timer").getCount mustBe 1
       }
 
@@ -65,7 +65,7 @@ class RegistrationConnectorSpec
 
         val res = await(connector.create(Registration("123")))
 
-        res.right.value.id mustBe "123"
+        res.value.id mustBe "123"
 
       }
     }
@@ -115,8 +115,8 @@ class RegistrationConnectorSpec
 
         val res = await(connector.find("123"))
 
-        res.right.value.get.id mustBe "123"
-        res.right.value.get.incorpJourneyId mustBe Some("incorpJourneyId")
+        res.value.get.id mustBe "123"
+        res.value.get.incorpJourneyId mustBe Some("incorpJourneyId")
         getTimer("ppt.registration.find.timer").getCount mustBe 1
 
       }
@@ -131,7 +131,7 @@ class RegistrationConnectorSpec
         val res = await(connector.find("123"))
 
         res.isRight mustBe true
-        res.right.value.isEmpty mustBe true
+        res.value.isEmpty mustBe true
       }
     }
 
@@ -172,8 +172,8 @@ class RegistrationConnectorSpec
 
         val res = await(connector.update(Registration("123", Some("incorpId"))))
 
-        res.right.value.id mustBe "123"
-        res.right.value.incorpJourneyId mustBe Some("incorpId")
+        res.value.id mustBe "123"
+        res.value.incorpJourneyId mustBe Some("incorpId")
         getTimer("ppt.registration.update.timer").getCount mustBe 1
 
       }
@@ -187,7 +187,7 @@ class RegistrationConnectorSpec
 
         val res = await(connector.update(Registration("123")))
 
-        res.right.value.id mustBe "123"
+        res.value.id mustBe "123"
 
       }
     }
