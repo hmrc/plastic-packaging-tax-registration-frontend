@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -27,17 +27,23 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  EmailStatus,
+  EmailVerificationService
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsEmailAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
+  emailService: EmailVerificationService,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: email_address_page
@@ -49,6 +55,7 @@ class ContactDetailsEmailAddressController @Inject() (
       request.registration.primaryContactDetails.email match {
         case Some(data) =>
           Ok(page(EmailAddress.form().fill(EmailAddress(data))))
+
         case _ => Ok(page(EmailAddress.form()))
       }
     }
@@ -62,18 +69,31 @@ class ContactDetailsEmailAddressController @Inject() (
                 Future.successful(BadRequest(page(formWithErrors)))
               },
               emailAddress =>
-                updateRegistration(emailAddress).map {
-                  case Right(_) =>
+                updateRegistration(emailAddress).flatMap {
+                  case Right(registration) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
+                        saveAndContinue(emailAddress, registration.metaData.verifiedEmails)
                       case _ =>
-                        Redirect(routes.RegistrationController.displayPage())
+                        Future(Redirect(routes.RegistrationController.displayPage()))
                     }
                   case Left(error) => throw error
                 }
         )
     }
+
+  private def saveAndContinue(emailAddress: EmailAddress, verifiedEmails: Seq[EmailStatus])(implicit
+    hc: HeaderCarrier,
+    request: Request[AnyContent]
+  ): Future[Result] =
+    if (emailService.isVerified(emailAddress.value, verifiedEmails))
+      Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
+    else
+      emailService.createEmailVerification().flatMap {
+        case Right(verificationJourneyStartUrl) =>
+          Future(Redirect(verificationJourneyStartUrl).addingToSession())
+        case Left(error) => throw error
+      }
 
   private def updateRegistration(
     formData: EmailAddress
