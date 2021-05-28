@@ -17,8 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
-
-import javax.inject.{Inject, Singleton}
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -29,6 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   SoleTraderIncorporationDetails
 }
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -51,7 +50,7 @@ class SoleTraderInorpIdConnector @Inject() (
           (response.json \ "journeyStartUrl").as[String]
         case response =>
           throw new InternalServerException(
-            s"Invalid response from incorporated entity identification: Status: ${response.status} Body: ${response.body}"
+            s"Invalid response from sole trader entity identification: Status: ${response.status} Body: ${response.body}"
           )
       }
   }
@@ -67,7 +66,7 @@ class SoleTraderInorpIdConnector @Inject() (
           case JsSuccess(value, _) => value
           case JsError(errors) =>
             throw new Exception(
-              s"Incorporated entity identification returned invalid JSON ${errors.map(_._1).mkString(", ")}"
+              s"Sole trader entity identification returned invalid JSON ${errors.map(_._1).mkString(", ")}"
             )
         }
       }
