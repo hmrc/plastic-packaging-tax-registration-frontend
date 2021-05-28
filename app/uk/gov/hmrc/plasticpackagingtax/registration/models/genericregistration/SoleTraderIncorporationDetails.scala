@@ -29,15 +29,15 @@ case class SoleTraderIncorporationDetails(
 object SoleTraderIncorporationDetails {
 
   val apiReads: Reads[SoleTraderIncorporationDetails] = (
-    (__ \ "firstName").read[String] and
-      (__ \ "lastName").read[String] and
+    (__ \ "fullName" \ "firstName").read[String] and
+      (__ \ "fullName" \ "lastName").read[String] and
       (__ \ "dateOfBirth").read[String] and
       (__ \ "nino").read[String]
   )(SoleTraderIncorporationDetails.apply _)
 
   val apiWrites: Writes[SoleTraderIncorporationDetails] = (
-    (__ \ "firstName").write[String] and
-      (__ \ "lastName").write[String] and
+    (__ \ "fullName" \ "firstName").write[String] and
+      (__ \ "fullName" \ "lastName").write[String] and
       (__ \ "dateOfBirth").write[String] and
       (__ \ "nino").write[String]
   )(unlift(SoleTraderIncorporationDetails.unapply))
