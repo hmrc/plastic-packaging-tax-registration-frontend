@@ -23,8 +23,9 @@ case class SoleTraderIncorporationDetails(
   firstName: String,
   lastName: String,
   dateOfBirth: String,
-  nino: String
-)
+  nino: String,
+  override val registration: IncorporationRegistrationDetails
+) extends RegistrationDetails
 
 object SoleTraderIncorporationDetails {
 
@@ -32,14 +33,16 @@ object SoleTraderIncorporationDetails {
     (__ \ "fullName" \ "firstName").read[String] and
       (__ \ "fullName" \ "lastName").read[String] and
       (__ \ "dateOfBirth").read[String] and
-      (__ \ "nino").read[String]
+      (__ \ "nino").read[String] and
+      (__ \ "registration").read[IncorporationRegistrationDetails]
   )(SoleTraderIncorporationDetails.apply _)
 
   val apiWrites: Writes[SoleTraderIncorporationDetails] = (
     (__ \ "fullName" \ "firstName").write[String] and
       (__ \ "fullName" \ "lastName").write[String] and
       (__ \ "dateOfBirth").write[String] and
-      (__ \ "nino").write[String]
+      (__ \ "nino").write[String] and
+      (__ \ "registration").write[IncorporationRegistrationDetails]
   )(unlift(SoleTraderIncorporationDetails.unapply))
 
   val apiFormat: Format[SoleTraderIncorporationDetails] =

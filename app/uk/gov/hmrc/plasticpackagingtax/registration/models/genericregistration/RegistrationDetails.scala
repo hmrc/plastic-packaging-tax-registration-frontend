@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
+package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
-
-case class OrganisationDetails(
-  isBasedInUk: Option[Boolean] = None,
-  organisationType: Option[OrgType] = None,
-  businessRegisteredAddress: Option[Address] = None,
-  safeNumber: Option[String] = None
-)
-
-object OrganisationDetails {
-  implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
+trait RegistrationDetails {
+  val registration: IncorporationRegistrationDetails
 }

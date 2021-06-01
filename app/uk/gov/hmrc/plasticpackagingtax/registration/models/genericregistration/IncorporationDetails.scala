@@ -24,8 +24,8 @@ case class IncorporationDetails(
   companyName: String,
   ctutr: String,
   companyAddress: IncorporationAddressDetails,
-  registration: IncorporationRegistrationDetails
-)
+  override val registration: IncorporationRegistrationDetails
+) extends RegistrationDetails
 
 object IncorporationDetails {
 

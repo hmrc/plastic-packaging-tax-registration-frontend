@@ -23,8 +23,13 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class IncorpIdControllerSpec extends ControllerSpec {
@@ -36,36 +41,79 @@ class IncorpIdControllerSpec extends ControllerSpec {
     new IncorpIdController(authenticate = mockAuthAction,
                            mockJourneyAction,
                            mockRegistrationConnector,
+                           mockIncorpIdConnector,
+                           mockSoleTraderConnector,
                            mcc
     )(ec)
 
   "incorpIdCallback" should {
 
-    "redirect to the registration page" in {
-      authorizedUser()
-      mockRegistrationUpdate(registration)
+    "redirect to the registration page" when {
+      "registering an Uk Limited company" in {
+        authorizedUser()
+        mockGetUkCompanyDetails(incorporationDetails)
+        mockRegistrationFind(
+          aRegistration(withOrganisationDetails(unregisteredUkOrgDetails(OrgType.UK_COMPANY)))
+        )
+        mockRegistrationUpdate(
+          aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)))
+        )
 
-      val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+        val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+      }
+
+      "registering an Uk Sole Trader" in {
+        authorizedUser()
+        mockGetSoleTraderDetails(soleTraderIncorporationDetails)
+        mockRegistrationFind(
+          aRegistration(withOrganisationDetails(unregisteredUkOrgDetails(OrgType.SOLE_TRADER)))
+        )
+        mockRegistrationUpdate(
+          aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.SOLE_TRADER)))
+        )
+
+        val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+      }
     }
 
-    "update registration with journey id" in {
-      authorizedUser()
-      mockRegistrationUpdate(registration)
+    "throw exception" when {
+      "organisation type is invalid" in {
+        authorizedUser()
+        mockRegistrationFind(
+          aRegistration(withOrganisationDetails(OrganisationDetails(isBasedInUk = Some(true))))
+        )
 
-      await(controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest()))
+        intercept[InternalServerException] {
+          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+        }
+      }
 
-      getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
-    }
+      "DB registration update fails" in {
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockGetUkCompanyDetails(incorporationDetails)
+        mockRegistrationFailure()
 
-    "throw exception when journey id update fails" in {
-      authorizedUser()
-      mockRegistrationFailure()
+        intercept[DownstreamServiceError] {
+          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+        }
+      }
 
-      intercept[DownstreamServiceError] {
-        await(controller.incorpIdCallback("uuid-id")(getRequest()))
+      "GRS call fails" in {
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
+
+        intercept[RuntimeException] {
+          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+        }
       }
     }
   }

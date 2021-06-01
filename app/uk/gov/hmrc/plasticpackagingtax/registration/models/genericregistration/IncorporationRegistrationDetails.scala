@@ -21,19 +21,21 @@ import play.api.libs.json._
 
 case class IncorporationRegistrationDetails(
   registrationStatus: String,
-  registeredBusinessPartnerId: String
+  registeredBusinessPartnerId: Option[String]
 )
 
 object IncorporationRegistrationDetails {
 
   val apiReads: Reads[IncorporationRegistrationDetails] = (
     (__ \ "registration" \ "registrationStatus").read[String] and
-      (__ \ "registration" \ "registeredBusinessPartnerId").read[String]
+      (__ \ "registration" \ "registeredBusinessPartnerId").readNullable[String].orElse(
+        Reads.pure(None)
+      )
   )(IncorporationRegistrationDetails.apply _)
 
   val apiWrites: Writes[IncorporationRegistrationDetails] = (
     (__ \ "registration" \ "registrationStatus").write[String] and
-      (__ \ "registration" \ "registeredBusinessPartnerId").write[String]
+      (__ \ "registration" \ "registeredBusinessPartnerId").writeNullable[String]
   )(unlift(IncorporationRegistrationDetails.unapply))
 
   val apiFormat: Format[IncorporationRegistrationDetails] =

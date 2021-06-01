@@ -23,6 +23,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   ETMPSubscriptionStatus,
   SubscriptionStatus
@@ -40,7 +41,6 @@ class RegistrationControllerSpec extends ControllerSpec {
                                mockJourneyAction,
                                mcc = mcc,
                                registration_page = registrationPage,
-                               incorpIdConnector = mockIncorpIdConnector,
                                subscriptionsConnector = mockSubscriptionsConnector
     )
 
@@ -50,11 +50,7 @@ class RegistrationControllerSpec extends ControllerSpec {
   }
 
   override protected def afterEach(): Unit = {
-    reset(registrationPage,
-          mockRegistrationConnector,
-          mockIncorpIdConnector,
-          mockSubscriptionsConnector
-    )
+    reset(registrationPage, mockRegistrationConnector, mockSubscriptionsConnector)
     super.afterEach()
   }
 
@@ -63,10 +59,15 @@ class RegistrationControllerSpec extends ControllerSpec {
     "return 200" when {
       "display page method is invoked" when {
 
-        "a GRS journeyID exists" in {
+        "a 'SafeNumber' exists" in {
           authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockGetUkCompanyDetails(incorporationDetails)
+          mockRegistrationFind(
+            aRegistration(
+              withOrganisationDetails(organisationDetails =
+                registeredUkOrgDetails(OrgType.UK_COMPANY)
+              )
+            )
+          )
           mockGetSubscriptionStatus(
             SubscriptionStatus(subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
                                idType = "ZPPT",
@@ -77,16 +78,14 @@ class RegistrationControllerSpec extends ControllerSpec {
 
           status(result) mustBe OK
 
-          verify(mockIncorpIdConnector).getDetails(any())(any())
           verify(mockSubscriptionsConnector).getSubscriptionStatus(any())(any())
         }
 
-        "a GRS journeyID does not exist" in {
+        "a 'SafeNumber' does not exist" in {
           authorizedUser()
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
-          verifyNoInteractions(mockIncorpIdConnector)
           verifyNoInteractions(mockSubscriptionsConnector)
         }
       }
