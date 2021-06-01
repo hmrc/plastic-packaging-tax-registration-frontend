@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      11.0
+// @version      12.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -77,7 +77,7 @@ function createSoleTraderGRSFeatureFlagsLink() {
     a.target = '_blank'
     a.href = '/identify-your-sole-trader-business/test-only/feature-switches'
     if (window.location.hostname === 'localhost') {
-        a.href = 'http://localhost:9718/identify-your-sole-trader-business/test-only/feature-switches'
+        a.href = 'http://localhost:9717/identify-your-sole-trader-business/test-only/feature-switches'
     } else {
         a.href = '/identify-your-sole-trader-business/test-only/feature-switches'
     }
@@ -148,13 +148,24 @@ const organisationType = () => {
 }
 
 /*########################     GRS FUNCTIONS     ########################## */
-const grsFeatureFlags = () => {
+const grsUkLimitedFeatureFlags = () => {
     if (currentPageIs('/identify-your-incorporated-business/test-only/feature-switches')) {
         document.getElementById('feature-switch.companies-house-stub').checked=true
         document.getElementById('feature-switch.business-verification-stub').checked=true
         document.getElementById('feature-switch.enable-unmatched-ctutr-journey').checked=true
         document.getElementById('feature-switch.enable-IRCT-enrolment-journey').checked=true
         document.getElementById('feature-switch.ct-reference-stub').checked=true
+        document.getElementById('feature-switch.des-stub').checked=true
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const grsSoleTraderFeatureFlags = () => {
+    if (currentPageIs('/identify-your-sole-trader-business/test-only/feature-switches')) {
+        document.getElementById('feature-switch.authenticator-stub').checked=true
+        document.getElementById('feature-switch.business-verification-stub').checked=true
+        document.getElementById('feature-switch.sa-reference-stub').checked=true
         document.getElementById('feature-switch.des-stub').checked=true
 
         document.getElementsByClassName('govuk-button')[0].click()
@@ -325,7 +336,8 @@ const completeJourney = () => {
     registrationPage()
 
     // grs uk company pages
-    grsFeatureFlags()
+    grsUkLimitedFeatureFlags()
+    grsSoleTraderFeatureFlags()
     grsCompanyNumber()
     grsConfirmCompany()
     grsEnterUtr()
