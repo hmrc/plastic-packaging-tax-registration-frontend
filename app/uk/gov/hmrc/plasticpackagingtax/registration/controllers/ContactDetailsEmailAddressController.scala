@@ -89,11 +89,12 @@ class ContactDetailsEmailAddressController @Inject() (
     if (emailService.isVerified(emailAddress.value, verifiedEmails))
       Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
     else
-      emailService.createEmailVerification().flatMap {
-        case Right(verificationJourneyStartUrl) =>
-          Future(Redirect(verificationJourneyStartUrl).addingToSession())
-        case Left(error) => throw error
-      }
+      emailService.createEmailVerification()
+        .flatMap {
+          case Right(verificationJourneyStartUrl) =>
+            Future(Redirect(verificationJourneyStartUrl).addingToSession())
+          case Left(error) => throw error
+        }
 
   private def updateRegistration(
     formData: EmailAddress
