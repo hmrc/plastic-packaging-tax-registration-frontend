@@ -20,7 +20,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
   IncorporationDetails,
+  IncorporationRegistrationDetails,
   SoleTraderIncorporationDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  ETMPSubscriptionStatus,
+  SubscriptionStatus
 }
 
 trait PptTestData {
@@ -52,10 +57,27 @@ trait PptTestData {
 
   protected val testUtr = "0123456789"
 
+  protected val incorporationRegistrationDetails: IncorporationRegistrationDetails =
+    IncorporationRegistrationDetails(registeredBusinessPartnerId =
+                                       "XXPPTP123456789",
+                                     registrationStatus = "REGISTERED"
+    )
+
   protected val incorporationDetails =
-    IncorporationDetails(testCompanyNumber, testCompanyName, testUtr, testCompanyAddress)
+    IncorporationDetails(testCompanyNumber,
+                         testCompanyName,
+                         testUtr,
+                         testCompanyAddress,
+                         incorporationRegistrationDetails
+    )
 
   protected val soleTraderIncorporationDetails =
     SoleTraderIncorporationDetails(testFirstName, testLastName, testDob, testNin)
+
+  protected val subscriptionStatus = SubscriptionStatus(
+    subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
+    idValue = "XXPPTP123456789",
+    idType = "ZPPT"
+  )
 
 }

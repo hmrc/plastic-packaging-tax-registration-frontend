@@ -24,13 +24,15 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
-  SoleTraderInorpIdConnector
+  SoleTraderInorpIdConnector,
+  SubscriptionsConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
   SoleTraderIncorpIdCreateRequest,
   SoleTraderIncorporationDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -38,13 +40,9 @@ import scala.concurrent.Future
 trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockIncorpIdConnector                               = mock[IncorpIdConnector]
+  val mockIncorpIdConnector: IncorpIdConnector            = mock[IncorpIdConnector]
   val mockSoleTraderConnector: SoleTraderInorpIdConnector = mock[SoleTraderInorpIdConnector]
-
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    reset(mockIncorpIdConnector, mockSoleTraderConnector)
-  }
+  val mockSubscriptionsConnector: SubscriptionsConnector  = mock[SubscriptionsConnector]
 
   def mockGetUkCompanyDetails(
     incorporationDetails: IncorporationDetails
@@ -84,5 +82,23 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   def mockUkCompanyCreateIncorpJourneyIdException(): OngoingStubbing[Future[String]] =
     when(mockIncorpIdConnector.createJourney(any())(any())).thenThrow(new RuntimeException("error"))
+
+  protected def mockGetSubscriptionStatusFailure(
+    ex: Exception
+  ): OngoingStubbing[Future[SubscriptionStatus]] =
+    when(mockSubscriptionsConnector.getSubscriptionStatus(any())(any()))
+      .thenThrow(ex)
+
+  protected def mockGetSubscriptionStatus(
+    subscription: SubscriptionStatus
+  ): OngoingStubbing[Future[SubscriptionStatus]] =
+    when(mockSubscriptionsConnector.getSubscriptionStatus(any())(any())).thenReturn(
+      Future.successful(subscription)
+    )
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockIncorpIdConnector, mockSoleTraderConnector)
+  }
 
 }

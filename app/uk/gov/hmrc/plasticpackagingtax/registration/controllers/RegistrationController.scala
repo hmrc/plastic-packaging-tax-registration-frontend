@@ -16,26 +16,45 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  IncorpIdConnector,
+  SubscriptionsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  registration_page: registration_page
-) extends FrontendController(mcc) with I18nSupport {
+  registration_page: registration_page,
+  incorpIdConnector: IncorpIdConnector,
+  subscriptionsConnector: SubscriptionsConnector
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok(registration_page(request.registration))
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.incorpJourneyId match {
+        case Some(journeyID) =>
+          for {
+            grsDetails <- incorpIdConnector.getDetails(journeyID)
+            subscriptionStatus <- subscriptionsConnector.getSubscriptionStatus(
+              grsDetails.registration.registeredBusinessPartnerId
+            )
+          } yield subscriptionStatus.subscriptionStatus match {
+            case _ => Ok(registration_page(request.registration))
+          }
+        case None => Future.successful(Ok(registration_page(request.registration)))
+      }
     }
 
 }

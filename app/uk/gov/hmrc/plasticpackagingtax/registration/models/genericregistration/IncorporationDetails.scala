@@ -23,7 +23,8 @@ case class IncorporationDetails(
   companyNumber: String,
   companyName: String,
   ctutr: String,
-  companyAddress: IncorporationAddressDetails
+  companyAddress: IncorporationAddressDetails,
+  registration: IncorporationRegistrationDetails
 )
 
 object IncorporationDetails {
@@ -32,14 +33,16 @@ object IncorporationDetails {
     (__ \ "companyProfile" \ "companyNumber").read[String] and
       (__ \ "companyProfile" \ "companyName").read[String] and
       (__ \ "ctutr").read[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress").read[IncorporationAddressDetails]
+      (__ \ "companyProfile" \ "unsanitisedCHROAddress").read[IncorporationAddressDetails] and
+      (__ \ "registration").read[IncorporationRegistrationDetails]
   )(IncorporationDetails.apply _)
 
   val apiWrites: Writes[IncorporationDetails] = (
     (__ \ "companyProfile" \ "companyNumber").write[String] and
       (__ \ "companyProfile" \ "companyName").write[String] and
       (__ \ "ctutr").write[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress").write[IncorporationAddressDetails]
+      (__ \ "companyProfile" \ "unsanitisedCHROAddress").write[IncorporationAddressDetails] and
+      (__ \ "registration").write[IncorporationRegistrationDetails]
   )(unlift(IncorporationDetails.unapply))
 
   val apiFormat: Format[IncorporationDetails] = Format[IncorporationDetails](apiReads, apiWrites)

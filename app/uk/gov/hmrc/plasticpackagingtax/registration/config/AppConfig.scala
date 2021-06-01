@@ -77,8 +77,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val hmrcPrivacyUrl = config.get[String]("urls.hmrcPrivacy")
   lazy val govUkUrl       = config.get[String]("urls.govUk")
 
-  lazy val incorpJourneyUrl           = s"$incorpIdHost/incorporated-entity-identification/api/journey"
-  lazy val pptRegistrationUrl: String = s"$pptServiceHost/registrations"
+  lazy val incorpJourneyUrl            = s"$incorpIdHost/incorporated-entity-identification/api/journey"
+  lazy val pptRegistrationUrl: String  = s"$pptServiceHost/registrations"
+  lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 
@@ -92,6 +93,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
+
+  def pptSubscriptionStatusUrl(safeNumber: String): String =
+    s"$pptSubscriptionsUrl/status/$safeNumber"
 
   def authenticatedFeedbackUrl(): String =
     s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"
