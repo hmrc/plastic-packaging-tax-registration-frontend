@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.EmailVerificationStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class Registration(
@@ -83,6 +84,9 @@ case class Registration(
       TaskStatus.CannotStartYet
     else
       this.primaryContactDetails.status
+
+  def getPrimaryContactEmailStatus: Option[EmailVerificationStatus] =
+    this.primaryContactDetails.email.flatMap(this.metaData.getEmailStatus)
 
 }
 

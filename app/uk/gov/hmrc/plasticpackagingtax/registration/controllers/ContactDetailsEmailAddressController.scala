@@ -19,18 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, OptionalRetrieval, Retrieval}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{EmailVerificationConnector, RegistrationConnector, ServiceError}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  EmailStatus,
-  EmailVerificationService
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.{LOCKED_OUT, NOT_VERIFIED, VERIFIED}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{CreateEmailVerificationRequest, Email}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
@@ -43,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ContactDetailsEmailAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  emailService: EmailVerificationService,
+  emailVerificationConnector: EmailVerificationConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: email_address_page
@@ -73,7 +68,7 @@ class ContactDetailsEmailAddressController @Inject() (
                   case Right(registration) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        saveAndContinue(emailAddress, registration.metaData.verifiedEmails)
+                        saveAndContinue(registration)
                       case _ =>
                         Future(Redirect(routes.RegistrationController.displayPage()))
                     }
@@ -81,20 +76,6 @@ class ContactDetailsEmailAddressController @Inject() (
                 }
         )
     }
-
-  private def saveAndContinue(emailAddress: EmailAddress, verifiedEmails: Seq[EmailStatus])(implicit
-    hc: HeaderCarrier,
-    request: Request[AnyContent]
-  ): Future[Result] =
-    if (emailService.isVerified(emailAddress.value, verifiedEmails))
-      Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
-    else
-      emailService.createEmailVerification()
-        .flatMap {
-          case Right(verificationJourneyStartUrl) =>
-            Future(Redirect(verificationJourneyStartUrl).addingToSession())
-          case Left(error) => throw error
-        }
 
   private def updateRegistration(
     formData: EmailAddress
@@ -104,5 +85,40 @@ class ContactDetailsEmailAddressController @Inject() (
         registration.primaryContactDetails.copy(email = Some(formData.value))
       registration.copy(primaryContactDetails = updatedEmailAddress)
     }
+
+  private def saveAndContinue(
+    registration: Registration
+  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] =
+    registration.getPrimaryContactEmailStatus match {
+      case VERIFIED =>
+        Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
+      case NOT_VERIFIED =>
+        request.user.identityData.credentials.map { creds =>
+          createEmailVerification(creds.providerId).flatMap {
+            case Right(verificationJourneyStartUrl) =>
+              Future(Redirect(verificationJourneyStartUrl).addingToSession())
+            case Left(error) => throw error
+          }
+        }.getOrElse(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
+      case LOCKED_OUT =>
+        Future(Redirect(routes.RegistrationController.displayPage()))
+    }
+
+  private def createEmailVerification(
+    credId: String
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] =
+    emailVerificationConnector.create(
+      CreateEmailVerificationRequest(credId = credId,
+                                     continueUrl = "http://continue",
+                                     origin = "origin",
+                                     accessibilityStatementUrl = "http://accessibility",
+                                     email = Email(address = "test@hmrc.com",
+                                                   enterUrl = "hhtp://enterUrl"
+                                     ),
+                                     backUrl = "http://back",
+                                     pageTitle = "PPT Title",
+                                     deskproServiceName = "ppt"
+      )
+    )
 
 }
