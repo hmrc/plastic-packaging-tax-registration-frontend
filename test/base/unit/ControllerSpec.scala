@@ -33,11 +33,8 @@ import play.twirl.api.Html
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  SaveAndComeBackLater,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.EmailVerificationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, SaveAndComeBackLater, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -55,6 +52,8 @@ trait ControllerSpec
   implicit val config: AppConfig = mock[AppConfig]
 
   protected val mockAuditor = mock[Auditor]
+
+  protected val mockEmailVerificationConnector = mock[EmailVerificationConnector]
 
   protected val saveAndContinueFormAction: (String, String) = (SaveAndContinue.toString, "")
 
