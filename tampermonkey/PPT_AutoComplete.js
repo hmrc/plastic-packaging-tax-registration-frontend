@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         PPT AutoComplete
+// @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
 // @version      12.0
 // @description
