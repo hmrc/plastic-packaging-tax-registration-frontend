@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{EmailStatus, EmailVerificationStatus, EmailVerificationStatusMapper}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.EmailVerificationStatus
 
 case class MetaData(
@@ -24,7 +25,14 @@ case class MetaData(
   registrationCompleted: Boolean = false,
   emailsMetadata: Map[String, EmailVerificationStatus] = Map()
 ) {
-  def getEmailStatus(email: String): Option[EmailVerificationStatus] = emailsMetadata.get(email)
+
+  def getEmailStatus(email: String): EmailVerificationStatus =
+    emailsMetadata.getOrElse(email, EmailVerificationStatus.NOT_VERIFIED)
+
+  def add(emails: Seq[EmailStatus]): MetaData =
+    this.copy(emailsMetadata =
+      this.emailsMetadata ++ EmailVerificationStatusMapper.toMap(emails)
+    )
 }
 
 object MetaData {

@@ -19,13 +19,25 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, OptionalRetrieval, Retrieval}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{EmailVerificationConnector, RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  DownstreamServiceError,
+  EmailVerificationConnector,
+  RegistrationConnector,
+  ServiceError
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.{LOCKED_OUT, NOT_VERIFIED, VERIFIED}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{CreateEmailVerificationRequest, Email}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.{
+  LOCKED_OUT,
+  NOT_VERIFIED,
+  VERIFIED
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
@@ -50,7 +62,6 @@ class ContactDetailsEmailAddressController @Inject() (
       request.registration.primaryContactDetails.email match {
         case Some(data) =>
           Ok(page(EmailAddress.form().fill(EmailAddress(data))))
-
         case _ => Ok(page(EmailAddress.form()))
       }
     }
@@ -68,7 +79,7 @@ class ContactDetailsEmailAddressController @Inject() (
                   case Right(registration) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        saveAndContinue(registration)
+                        saveAndContinue(registration, emailAddress.value)
                       case _ =>
                         Future(Redirect(routes.RegistrationController.displayPage()))
                     }
@@ -79,42 +90,60 @@ class ContactDetailsEmailAddressController @Inject() (
 
   private def updateRegistration(
     formData: EmailAddress
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    update { registration =>
-      val updatedEmailAddress =
-        registration.primaryContactDetails.copy(email = Some(formData.value))
-      registration.copy(primaryContactDetails = updatedEmailAddress)
-    }
+  )(implicit request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    request.user.identityData.credentials.map { creds =>
+      emailVerificationConnector.getStatus(creds.providerId).flatMap {
+        case Right(emailStatusResponse) =>
+          emailStatusResponse match {
+            case Some(response) =>
+              update { registration =>
+                registration.copy(primaryContactDetails =
+                                    updatedPrimaryContactDetails(formData, registration),
+                                  metaData = registration.metaData.add(response.emails)
+                )
+              }
+            case None =>
+              update { registration =>
+                registration.copy(primaryContactDetails =
+                  updatedPrimaryContactDetails(formData, registration)
+                )
+              }
+          }
+        case Left(error) => throw error
+      }
+    }.getOrElse(Future(Left(DownstreamServiceError("Cannot find user credentials id"))))
 
-  private def saveAndContinue(
-    registration: Registration
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] =
-    registration.getPrimaryContactEmailStatus match {
+  private def updatedPrimaryContactDetails(formData: EmailAddress, registration: Registration) =
+    registration.primaryContactDetails.copy(email = Some(formData.value))
+
+  private def saveAndContinue(registration: Registration, email: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Result] =
+    EmailVerificationService.getPrimaryEmailStatus(registration) match {
       case VERIFIED =>
         Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
       case NOT_VERIFIED =>
         request.user.identityData.credentials.map { creds =>
-          createEmailVerification(creds.providerId).flatMap {
+          createEmailVerification(creds.providerId, email).flatMap {
             case Right(verificationJourneyStartUrl) =>
               Future(Redirect(verificationJourneyStartUrl).addingToSession())
             case Left(error) => throw error
           }
-        }.getOrElse(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
+        }.getOrElse(Future(Results.Redirect(routes.UnauthorisedController.onPageLoad())))
       case LOCKED_OUT =>
         Future(Redirect(routes.RegistrationController.displayPage()))
     }
 
-  private def createEmailVerification(
-    credId: String
-  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] =
+  private def createEmailVerification(credId: String, email: String)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[ServiceError, String]] =
     emailVerificationConnector.create(
       CreateEmailVerificationRequest(credId = credId,
                                      continueUrl = "http://continue",
                                      origin = "origin",
                                      accessibilityStatementUrl = "http://accessibility",
-                                     email = Email(address = "test@hmrc.com",
-                                                   enterUrl = "hhtp://enterUrl"
-                                     ),
+                                     email = Email(address = email, enterUrl = "hhtp://enterUrl"),
                                      backUrl = "http://back",
                                      pageTitle = "PPT Title",
                                      deskproServiceName = "ppt"

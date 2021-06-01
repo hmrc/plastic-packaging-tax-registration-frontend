@@ -42,6 +42,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   private val controller =
     new ContactDetailsEmailAddressController(authenticate = mockAuthAction,
                                              journeyAction = mockJourneyAction,
+                                             emailVerificationConnector =
+                                               mockEmailVerificationConnector,
                                              registrationConnector = mockRegistrationConnector,
                                              mcc = mcc,
                                              page = page

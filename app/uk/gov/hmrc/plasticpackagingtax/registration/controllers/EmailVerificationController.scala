@@ -32,8 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
-  EmailVerificationStatus,
-  EmailVerificationStatusMapper
+  EmailVerificationService
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -59,18 +58,21 @@ class EmailVerificationController @Inject() (
           case Right(emailStatusResponse) =>
             emailStatusResponse match {
               case Some(response) => handleResponse(response.emails)
-              case None           => throw DownstreamServiceError("error email verification")
+              case None =>
+                throw DownstreamServiceError(
+                  "Error while getting email verification status. No data returned for user."
+                )
             }
           case Left(error) => throw error
         }
     }
 
   private def handleResponse(
-    emails: Seq[EmailStatus]
+    emailStatuses: Seq[EmailStatus]
   )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]) =
-    updateMetadata(emails).map {
+    updateMetadata(emailStatuses).map {
       case Right(registration) =>
-        registration.getPrimaryContactEmailStatus match {
+        EmailVerificationService.getPrimaryEmailStatus(registration) match {
           case VERIFIED =>
             Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
           case LOCKED_OUT =>
@@ -85,11 +87,7 @@ class EmailVerificationController @Inject() (
     emails: Seq[EmailStatus]
   )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]) =
     update { registration =>
-      val metadata =
-        registration.metaData.copy(emailsMetadata =
-          registration.metaData.emailsMetadata ++ EmailVerificationStatusMapper.toMap(emails)
-        )
-      registration.copy(metaData = metadata)
+      registration.copy(metaData = registration.metaData.add(emails))
     }
 
 }
