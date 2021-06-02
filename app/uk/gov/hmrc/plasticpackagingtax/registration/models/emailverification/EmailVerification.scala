@@ -31,24 +31,6 @@ object EmailVerificationStatusMapper {
 
 }
 
-//class EmailVerificationService(emailVerificationConnector: EmailVerificationConnector) {
-//  def getStatus(f: VerificationStatus => Unit)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Unit = {
-//    request.user.identityData.credentials.g { creds =>
-//      emailVerificationConnector.getStatus(creds.providerId).flatMap {
-//        case Right(emailStatusResponse) =>
-//          emailStatusResponse match {
-//            case Some(response) => f(response)
-//            case None =>
-//              throw DownstreamServiceError(
-//                "Error while getting email verification status. No data returned for user."
-//              )
-//          }
-//        case Left(error) => throw error
-//      }
-//    }
-//  }
-//}
-
 object EmailVerificationService {
 
   def getPrimaryEmailStatus(registration: Registration): EmailVerificationStatus =

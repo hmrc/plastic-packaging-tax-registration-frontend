@@ -88,11 +88,6 @@ case class Registration(
     else
       this.primaryContactDetails.status
 
-  def addToMetadata(emails: Seq[EmailStatus]): MetaData =
-    this.metaData.copy(emailsMetadata =
-      this.metaData.emailsMetadata ++ EmailVerificationStatusMapper.toMap(emails)
-    )
-
 }
 
 object Registration {
