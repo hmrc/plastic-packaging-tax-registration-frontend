@@ -43,7 +43,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
 
     "redirect to the registration page" in {
       authorizedUser()
-      mockRegistrationUpdate(registration)
+      mockRegistrationUpdate()
 
       val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
 
@@ -53,7 +53,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
 
     "update registration with journey id" in {
       authorizedUser()
-      mockRegistrationUpdate(registration)
+      mockRegistrationUpdate()
 
       await(controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest()))
 

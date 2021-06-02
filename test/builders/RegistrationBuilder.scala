@@ -18,6 +18,7 @@ package builders
 
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.VERIFIED
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 
 import java.util.UUID
@@ -61,7 +62,7 @@ trait RegistrationBuilder {
                      ),
                    organisationType = Some(UK_COMPANY)
                  ),
-                 metaData = MetaData()
+                 metaData = MetaData(emailsMetadata = Map("test@test.com" -> VERIFIED))
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)

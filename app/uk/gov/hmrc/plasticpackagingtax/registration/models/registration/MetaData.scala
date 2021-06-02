@@ -17,7 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{EmailStatus, EmailVerificationStatus, EmailVerificationStatusMapper}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  EmailStatus,
+  EmailVerificationStatus,
+  EmailVerificationStatusMapper
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.EmailVerificationStatus
 
 case class MetaData(
@@ -33,6 +37,7 @@ case class MetaData(
     this.copy(emailsMetadata =
       this.emailsMetadata ++ EmailVerificationStatusMapper.toMap(emails)
     )
+
 }
 
 object MetaData {

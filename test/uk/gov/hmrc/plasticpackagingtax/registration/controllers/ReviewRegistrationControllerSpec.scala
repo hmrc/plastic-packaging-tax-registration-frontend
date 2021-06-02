@@ -71,7 +71,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
         mockGetUkCompanyDetails(incorporationDetails)
 
         val result = controller.displayPage()(getRequest())
@@ -85,7 +85,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
         mockGetSoleTraderDetails(soleTraderIncorporationDetails)
 
         val result = controller.displayPage()(getRequest())
@@ -143,7 +143,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "when form is submitted" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
@@ -160,12 +160,14 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         val registration = aRegistration()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
         verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
-          ArgumentMatchers.eq(registration)
+          ArgumentMatchers.eq(
+            registration.copy(metaData = registration.metaData.copy(registrationCompleted = true))
+          )
         )(any(), any())
       }
     }

@@ -58,7 +58,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK

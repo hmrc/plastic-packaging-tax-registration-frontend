@@ -86,7 +86,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -109,7 +109,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         mockGetSoleTraderDetails(soleTraderIncorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
 
@@ -130,7 +130,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         mockGetUkCompanyDetails(incorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
 
@@ -163,7 +163,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user accepts the registered address" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockRegistrationUpdate(registrationWithoutPrimaryContactAddress)
+          mockRegistrationUpdate()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -186,7 +186,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user does not accept the registered address" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockRegistrationUpdate(registrationWithoutPrimaryContactAddress)
+          mockRegistrationUpdate()
 
           val correctForm = Seq("useRegisteredAddress" -> "no", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

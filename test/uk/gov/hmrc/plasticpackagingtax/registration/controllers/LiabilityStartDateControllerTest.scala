@@ -75,7 +75,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
 
       "display page method is invoked and registration model contains data" in {
         authorizedUser()
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -87,7 +87,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
         "user submits the liability start date" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
           val result =
             controller.submit()(postRequestEncoded(Date(Some(1), Some(6), Some(2022)), formAction))
 

@@ -18,9 +18,9 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentCaptor, Mockito}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.stubbing.OngoingStubbing
+import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
@@ -38,11 +38,14 @@ trait MockRegistrationConnector
 
   protected val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
-  def mockRegistrationUpdate(
-    dataToReturn: Registration
-  ): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationUpdate(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
-      .thenReturn(Future.successful(Right(dataToReturn)))
+      .thenAnswer(
+        invocation =>
+          Future(Right(invocation.getArguments()(0)))(
+            scala.concurrent.ExecutionContext.Implicits.global
+          )
+      )
 
   def mockRegistrationFind(
     dataToReturn: Registration

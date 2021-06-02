@@ -34,7 +34,11 @@ import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.EmailVerificationConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, SaveAndComeBackLater, SaveAndContinue}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  SaveAndComeBackLater,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
