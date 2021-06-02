@@ -20,6 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -28,11 +29,20 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  DownstreamServiceError,
+  ServiceError
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  EmailStatus,
+  VerificationStatus
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import scala.concurrent.Future
 
 class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -59,6 +69,12 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     super.afterEach()
   }
 
+  def mockEmailVerificationGetStatus(
+    dataToReturn: VerificationStatus
+  ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+    when(mockEmailVerificationConnector.getStatus(any[String])(any()))
+      .thenReturn(Future.successful(Right(Some(dataToReturn))))
+
   "ContactDetailsEmailAddressController" should {
 
     "return 200" when {
@@ -82,9 +98,13 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits an email address" in {
+          val reg = aRegistration()
           authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate()
+          mockEmailVerificationGetStatus(
+            VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false)))
+          )
 
           val result =
             controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
