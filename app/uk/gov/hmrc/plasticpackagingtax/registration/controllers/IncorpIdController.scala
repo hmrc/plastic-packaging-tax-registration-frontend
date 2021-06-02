@@ -19,19 +19,28 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  IncorpIdConnector,
+  RegistrationConnector,
+  SoleTraderInorpIdConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.RegistrationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncorpIdController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
+  ukLimitedConnector: IncorpIdConnector,
+  soleTraderConnector: SoleTraderInorpIdConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -39,11 +48,30 @@ class IncorpIdController @Inject() (
   def incorpIdCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        update(model => model.copy(incorpJourneyId = Some(journeyId)))
+        val result = for {
+          details <- getRegistrationDetails(journeyId, request)
+          result = update { model =>
+            val updatedOrgDetails = model.organisationDetails.copy(safeNumber =
+              details.registration.registeredBusinessPartnerId
+            )
+            model.copy(incorpJourneyId = Some(journeyId), organisationDetails = updatedOrgDetails)
+          }
+        } yield result
+
+        result.flatMap(res => res)
           .map {
             case Right(_)    => Redirect(routes.RegistrationController.displayPage())
             case Left(error) => throw error
           }
+    }
+
+  private def getRegistrationDetails(journeyId: String, request: JourneyRequest[AnyContent])(
+    implicit hc: HeaderCarrier
+  ): Future[RegistrationDetails] =
+    request.registration.organisationDetails.organisationType match {
+      case Some(OrgType.UK_COMPANY)  => ukLimitedConnector.getDetails(journeyId)
+      case Some(OrgType.SOLE_TRADER) => soleTraderConnector.getDetails(journeyId)
+      case _                         => throw new InternalServerException(s"Invalid organisation type")
     }
 
 }

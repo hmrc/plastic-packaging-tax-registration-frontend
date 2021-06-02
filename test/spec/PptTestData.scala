@@ -16,13 +16,14 @@
 
 package spec
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
   IncorporationDetails,
   IncorporationRegistrationDetails,
   SoleTraderIncorporationDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   ETMPSubscriptionStatus,
   SubscriptionStatus
@@ -37,6 +38,7 @@ trait PptTestData {
   protected val testDob           = "12/09/1967"
   protected val testNin           = "SE12345678"
   protected val testSatur         = "9999"
+  protected val safeNumber        = "XXPPTP123456789"
 
   protected val testCompanyAddress = IncorporationAddressDetails(address_line_1 = Some("testLine1"),
                                                                  address_line_2 = Some("testLine2"),
@@ -59,11 +61,11 @@ trait PptTestData {
 
   protected val incorporationRegistrationDetails: IncorporationRegistrationDetails =
     IncorporationRegistrationDetails(registeredBusinessPartnerId =
-                                       "XXPPTP123456789",
+                                       Some(safeNumber),
                                      registrationStatus = "REGISTERED"
     )
 
-  protected val incorporationDetails =
+  protected val incorporationDetails: IncorporationDetails =
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
                          testUtr,
@@ -71,13 +73,28 @@ trait PptTestData {
                          incorporationRegistrationDetails
     )
 
-  protected val soleTraderIncorporationDetails =
-    SoleTraderIncorporationDetails(testFirstName, testLastName, testDob, testNin)
+  protected val soleTraderIncorporationDetails: SoleTraderIncorporationDetails =
+    SoleTraderIncorporationDetails(testFirstName,
+                                   testLastName,
+                                   testDob,
+                                   testNin,
+                                   incorporationRegistrationDetails
+    )
 
   protected val subscriptionStatus = SubscriptionStatus(
     subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
     idValue = "XXPPTP123456789",
     idType = "ZPPT"
   )
+
+  protected def registeredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(orgType),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        safeNumber = Some(safeNumber)
+    )
+
+  protected def unregisteredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true), organisationType = Some(orgType))
 
 }
