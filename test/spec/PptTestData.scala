@@ -47,7 +47,6 @@ trait PptTestData {
                                                                  po_box = Some("123"),
                                                                  postal_code = Some("AA11AA"),
                                                                  premises = Some("1"),
-                                                                 region = Some("test region"),
                                                                  country = Some("United Kingdom")
   )
 
@@ -66,8 +65,7 @@ trait PptTestData {
     )
 
   protected val incorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyNumber,
-                         testCompanyName,
+    IncorporationDetails(testCompanyName,
                          testUtr,
                          testCompanyAddress,
                          incorporationRegistrationDetails

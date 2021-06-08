@@ -34,15 +34,12 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
                                                                       postal_code = Some("AC1 23C"),
                                                                       premises =
                                                                         Some("Warehouse 1"),
-                                                                      region = Some("test county"),
                                                                       country = Some("GB")
         )
-        incorporationAddressDetails.toPptAddress.businessName mustBe None
         incorporationAddressDetails.toPptAddress.addressLine1 mustBe incorporationAddressDetails.premises.get
         incorporationAddressDetails.toPptAddress.addressLine2 mustBe incorporationAddressDetails.address_line_1
         incorporationAddressDetails.toPptAddress.addressLine3.get mustBe incorporationAddressDetails.address_line_2.get.trim
         incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code.get
-        incorporationAddressDetails.toPptAddress.county mustBe incorporationAddressDetails.region
         incorporationAddressDetails.toPptAddress.townOrCity mustBe incorporationAddressDetails.locality.get.trim
       }
 
@@ -57,15 +54,12 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
                                                                       postal_code = Some("AC1 23C"),
                                                                       premises =
                                                                         Some(""),
-                                                                      region = Some("test county"),
                                                                       country = Some("GB")
         )
-        incorporationAddressDetails.toPptAddress.businessName mustBe None
         incorporationAddressDetails.toPptAddress.addressLine1 mustBe incorporationAddressDetails.address_line_1.get
         incorporationAddressDetails.toPptAddress.addressLine2.get mustBe incorporationAddressDetails.address_line_2.get.trim
         incorporationAddressDetails.toPptAddress.addressLine3 mustBe None
         incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code.get
-        incorporationAddressDetails.toPptAddress.county mustBe incorporationAddressDetails.region
         incorporationAddressDetails.toPptAddress.townOrCity mustBe incorporationAddressDetails.locality.get.trim
       }
 
@@ -80,7 +74,6 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
           incorporationAddressDetails.po_box mustBe None
           incorporationAddressDetails.premises mustBe None
           incorporationAddressDetails.postal_code mustBe None
-          incorporationAddressDetails.region mustBe None
           incorporationAddressDetails.country mustBe None
         }
       }

@@ -47,12 +47,10 @@
 @extractAddress(address: Address) = @{
     HtmlContent(
         Seq(
-            address.businessName,
             Some(address.addressLine1),
             address.addressLine2,
             address.addressLine3,
             Some(address.townOrCity),
-            address.county,
             Some(address.postCode)
         ).flatten
         .map(HtmlFormat.escape(_))

@@ -39,13 +39,11 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("primaryContactDetails.sectionHeader")
       messages must haveTranslationFor("primaryContactDetails.address.title")
       messages must haveTranslationFor("primaryContactDetails.address.hint")
-      messages must haveTranslationFor("primaryContactDetails.address.businessName")
       messages must haveTranslationFor("primaryContactDetails.address.addressLine1")
       messages must haveTranslationFor("primaryContactDetails.address.addressLine1.hidden")
       messages must haveTranslationFor("primaryContactDetails.address.addressLine2.hidden")
       messages must haveTranslationFor("primaryContactDetails.address.addressLine3.hidden")
       messages must haveTranslationFor("primaryContactDetails.address.townOrCity")
-      messages must haveTranslationFor("primaryContactDetails.address.county")
       messages must haveTranslationFor("primaryContactDetails.address.postCode")
     }
 
@@ -116,12 +114,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display input boxes" in {
 
-      view must containElementWithID("businessName")
       view must containElementWithID("addressLine1")
       view must containElementWithID("addressLine2")
       view must containElementWithID("addressLine3")
       view must containElementWithID("townOrCity")
-      view must containElementWithID("county")
       view must containElementWithID("postCode")
     }
 
@@ -141,12 +137,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     "display data" in {
 
       val anAddress =
-        Address(businessName = Some("Business Name"),
-                addressLine1 = "Address Line 1",
+        Address(addressLine1 = "Address Line 1",
                 addressLine2 = Some("Address Line 2"),
                 addressLine3 = Some("Address Line 3"),
                 townOrCity = "townOrCity",
-                county = Some("county"),
                 postCode = "LS3 3UJ"
         )
 
@@ -155,12 +149,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
         .fill(anAddress)
       val view = createView(form)
 
-      view.getElementById("businessName").attr("value") mustBe "Business Name"
       view.getElementById("addressLine1").attr("value") mustBe "Address Line 1"
       view.getElementById("addressLine2").attr("value") mustBe "Address Line 2"
       view.getElementById("addressLine3").attr("value") mustBe "Address Line 3"
       view.getElementById("townOrCity").attr("value") mustBe "townOrCity"
-      view.getElementById("county").attr("value") mustBe "county"
       view.getElementById("postCode").attr("value") mustBe "LS3 3UJ"
     }
   }
@@ -169,12 +161,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     "mandatory address fields have not been submitted" in {
 
       val anInvalidAddress =
-        Address(businessName = Some("Business Name"),
-                addressLine1 = "",
+        Address(addressLine1 = "",
                 addressLine2 = Some("Address Line 2"),
                 addressLine3 = Some("Address Line 3"),
                 townOrCity = "",
-                county = Some("county"),
                 postCode = ""
         )
 
@@ -193,12 +183,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     "address fields are not valid" in {
 
       val anInvalidAddress =
-        Address(businessName = Some("Business Name ******"),
-                addressLine1 = "*&%^",
+        Address(addressLine1 = "*&%^",
                 addressLine2 = Some("Address Line 2*&%^"),
                 addressLine3 = Some("Address Line 3*&%^"),
                 townOrCity = "*&%^",
-                county = Some("county*&%^"),
                 postCode = "*&%^"
         )
 
@@ -209,12 +197,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("businessName", "Enter a business name in the correct format")
       view must haveGovukFieldError("addressLine1", "Enter an address in the correct format")
       view must haveGovukFieldError("addressLine2", "Enter an address in the correct format")
       view must haveGovukFieldError("addressLine3", "Enter an address in the correct format")
       view must haveGovukFieldError("townOrCity", "Enter a town or city in the correct format")
-      view must haveGovukFieldError("county", "Enter a county in the correct format")
       view must haveGovukFieldError("postCode", "Enter a postcode in the correct format")
 
     }

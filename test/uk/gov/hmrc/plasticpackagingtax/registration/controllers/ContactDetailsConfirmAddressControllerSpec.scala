@@ -144,7 +144,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.primaryContactDetails.address.get.county mustBe expected.region
       modifiedRegistration.primaryContactDetails.address.get.postCode mustBe expected.postal_code.get
       modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
     }
@@ -154,7 +153,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.county mustBe expected.region
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.postCode mustBe expected.postal_code.get
     }
 
