@@ -125,8 +125,6 @@ primaryContactDetails.confirmAddress.empty.error = Choose an option
 
 primaryContactDetails.address.title = What is the primary contact’s business address?
 primaryContactDetails.address.hint = We’ll only use this to send you information about your account and returns.
-primaryContactDetails.address.businessName = Business name
-primaryContactDetails.address.businessName.format.error = Enter a business name in the correct format
 primaryContactDetails.address.addressLine1 = Building and street
 primaryContactDetails.address.addressLine1.hidden = line 1 of 3
 primaryContactDetails.address.addressLine1.empty.error = Enter an address
@@ -138,8 +136,6 @@ primaryContactDetails.address.addressLine3.format.error = Enter an address in th
 primaryContactDetails.address.townOrCity = Town or City
 primaryContactDetails.address.townOrCity.empty.error = Enter a town or city
 primaryContactDetails.address.townOrCity.format.error = Enter a town or city in the correct format
-primaryContactDetails.address.county = County
-primaryContactDetails.address.county.format.error = Enter a county in the correct format
 primaryContactDetails.address.postCode = Postcode
 primaryContactDetails.address.postCode.empty.error = Enter a postcode
 primaryContactDetails.address.postCode.format.error = Enter a postcode in the correct format. For example, AB1 2CD
@@ -155,7 +151,6 @@ primaryContactDetails.check.email = Email Address
 
 reviewRegistration.organisationDetails.title = Review and send your registration
 reviewRegistration.organisationDetails.check.label = Registered organisation details
-reviewRegistration.organisationDetails.businessName = Business name
 reviewRegistration.organisationDetails.registeredBusinessAddress = Registered Business Address
 reviewRegistration.organisationDetails.organisationType = Organisation Type
 reviewRegistration.organisationDetails.businessRegistrationNumber = Business Registration Number

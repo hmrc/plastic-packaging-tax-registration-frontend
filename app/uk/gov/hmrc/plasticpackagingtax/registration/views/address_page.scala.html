@@ -47,11 +47,6 @@
     @paragraphBody(messages("primaryContactDetails.address.hint"))
 
     @inputText(
-        field    = form("businessName"),
-        labelKey  = "primaryContactDetails.address.businessName"
-    )
-
-    @inputText(
         field    = form("addressLine1"),
         labelKey  = "primaryContactDetails.address.addressLine1",
         labelHiddenKey  = Some("primaryContactDetails.address.addressLine1.hidden")
@@ -72,11 +67,6 @@
     @inputText(
         field    = form("townOrCity"),
         labelKey  = "primaryContactDetails.address.townOrCity"
-    )
-
-    @inputText(
-        field    = form("county"),
-        labelKey  = "primaryContactDetails.address.county"
     )
 
     @inputText(

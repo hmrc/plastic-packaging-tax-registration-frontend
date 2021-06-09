@@ -24,8 +24,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address.{
   addressLine1,
   addressLine2,
   addressLine3,
-  businessName,
-  county,
   postCode,
   townOrCity
 }
@@ -37,12 +35,10 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "all address fields are valid" in {
 
-        val input = Map(businessName -> "Some Company",
-                        addressLine1 -> "Address Line 1",
+        val input = Map(addressLine1 -> "Address Line 1",
                         addressLine2 -> "Address Line 2",
                         addressLine3 -> "Address Line 3",
                         townOrCity   -> "Town or City",
-                        county       -> "County",
                         postCode     -> "LS4 1RH"
         )
 
@@ -78,21 +74,17 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "contains incorrect data" in {
 
-        val input = Map(businessName -> "Some Company!!!!^^%",
-                        addressLine1 -> "Address Line 1888888888888888888888888888888888888",
+        val input = Map(addressLine1 -> "Address Line 1888888888888888888888888888888888888",
                         addressLine2 -> "Address Line 2%%$%$%$%",
                         addressLine3 -> "Address Line 3**********",
                         townOrCity   -> "Town or City££$£$£$+",
-                        county       -> "County£$£$+",
                         postCode     -> "LS4 1RH £$£$£$++---"
         )
         val expectedErrors =
-          Seq(FormError(businessName, "primaryContactDetails.address.businessName.format.error"),
-              FormError(addressLine1, "primaryContactDetails.address.addressLine1.format.error"),
+          Seq(FormError(addressLine1, "primaryContactDetails.address.addressLine1.format.error"),
               FormError(addressLine2, "primaryContactDetails.address.addressLine2.format.error"),
               FormError(addressLine3, "primaryContactDetails.address.addressLine3.format.error"),
               FormError(townOrCity, "primaryContactDetails.address.townOrCity.format.error"),
-              FormError(county, "primaryContactDetails.address.county.format.error"),
               FormError(postCode, "primaryContactDetails.address.postCode.format.error")
           )
 

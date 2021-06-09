@@ -28,7 +28,6 @@ case class IncorporationAddressDetails(
   po_box: Option[String] = None,
   postal_code: Option[String] = None,
   premises: Option[String] = None,
-  region: Option[String] = None,
   country: Option[String] = None
 ) {
 
@@ -39,7 +38,6 @@ case class IncorporationAddressDetails(
         this.address_line_2.getOrElse("").trim,
         this.premises.getOrElse("").trim,
         this.locality.getOrElse("").trim,
-        this.region.getOrElse("").trim,
         this.postal_code.getOrElse("").trim,
         this.country.getOrElse("").trim
     )
@@ -55,15 +53,13 @@ case class IncorporationAddressDetails(
                 addressLine2 = Some(this.address_line_1.getOrElse("").trim),
                 addressLine3 = Some(this.address_line_2.getOrElse("").trim),
                 townOrCity = this.locality.getOrElse("").trim,
-                postCode = this.postal_code.getOrElse("").trim,
-                county = Some(region.getOrElse("").trim)
+                postCode = this.postal_code.getOrElse("").trim
         )
       case None =>
         Address(addressLine1 = this.address_line_1.getOrElse("").trim,
                 addressLine2 = Some(this.address_line_2.getOrElse("").trim),
                 townOrCity = this.locality.getOrElse("").trim,
-                postCode = this.postal_code.getOrElse("").trim,
-                county = Some(region.getOrElse("").trim)
+                postCode = this.postal_code.getOrElse("").trim
         )
     }
   }
@@ -94,9 +90,6 @@ object IncorporationAddressDetails {
       (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "premises").readNullable[String].orElse(
         Reads.pure(None)
       ) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "region").readNullable[String].orElse(
-        Reads.pure(None)
-      ) and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "country").readNullable[String].orElse(
         Reads.pure(None)
       )
@@ -112,7 +105,6 @@ object IncorporationAddressDetails {
       (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "po_box").writeNullable[String] and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "postal_code").writeNullable[String] and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "premises").writeNullable[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "region").writeNullable[String] and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "country").writeNullable[String]
   )(unlift(IncorporationAddressDetails.unapply))
 

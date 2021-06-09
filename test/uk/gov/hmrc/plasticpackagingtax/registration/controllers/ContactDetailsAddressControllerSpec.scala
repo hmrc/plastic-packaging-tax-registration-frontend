@@ -124,7 +124,6 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
           val invalidAddress = Address(addressLine1 = "Address Line 1",
                                        addressLine2 = Some("Address Line ****"),
                                        townOrCity = "townOrCity",
-                                       county = Some("######@@@ ****"),
                                        postCode = "LS3 3UJ"
           )
           val result = controller.submit()(postRequestEncoded(invalidAddress, formAction))

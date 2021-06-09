@@ -40,11 +40,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val registration = aRegistration()
 
   private val organisationSection    = 0
-  private val organisationNameKey    = 0
-  private val organisationAddressKey = 1
-  private val organisationTypeKey    = 2
-  private val organisationCnrKey     = 3
-  private val organisationUtrKey     = 4
+  private val organisationAddressKey = 0
+  private val organisationTypeKey    = 1
+  private val organisationCnrKey     = 2
+  private val organisationUtrKey     = 3
 
   private val contactDetailsSection        = 1
   private val contactDetailsFullNameKey    = 0
@@ -70,7 +69,6 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("reviewRegistration.organisationDetails.title")
 
       messages must haveTranslationFor("reviewRegistration.organisationDetails.check.label")
-      messages must haveTranslationFor("reviewRegistration.organisationDetails.businessName")
       messages must haveTranslationFor(
         "reviewRegistration.organisationDetails.registeredBusinessAddress"
       )
@@ -152,9 +150,6 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
 
         val ukCompanyView: Document = createView(ukCompanyDetails = Some(incorporationDetails))
 
-        getKeyFor(organisationSection, organisationNameKey, ukCompanyView) must containMessage(
-          "reviewRegistration.organisationDetails.businessName"
-        )
         getKeyFor(organisationSection, organisationAddressKey, ukCompanyView) must containMessage(
           "reviewRegistration.organisationDetails.registeredBusinessAddress"
         )
@@ -168,10 +163,6 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
           "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
         )
 
-        getValueFor(organisationSection,
-                    organisationNameKey,
-                    ukCompanyView
-        ) mustBe incorporationDetails.companyName
         getValueFor(organisationSection,
                     organisationAddressKey,
                     ukCompanyView

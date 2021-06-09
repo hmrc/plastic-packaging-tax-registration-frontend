@@ -21,7 +21,6 @@ import play.api.libs.json._
 
 case class IncorporationDetails(
   companyNumber: String,
-  companyName: String,
   ctutr: String,
   companyAddress: IncorporationAddressDetails,
   override val registration: IncorporationRegistrationDetails
@@ -31,7 +30,6 @@ object IncorporationDetails {
 
   val apiReads: Reads[IncorporationDetails] = (
     (__ \ "companyProfile" \ "companyNumber").read[String] and
-      (__ \ "companyProfile" \ "companyName").read[String] and
       (__ \ "ctutr").read[String] and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress").read[IncorporationAddressDetails] and
       (__ \ "registration").read[IncorporationRegistrationDetails]
@@ -39,7 +37,6 @@ object IncorporationDetails {
 
   val apiWrites: Writes[IncorporationDetails] = (
     (__ \ "companyProfile" \ "companyNumber").write[String] and
-      (__ \ "companyProfile" \ "companyName").write[String] and
       (__ \ "ctutr").write[String] and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress").write[IncorporationAddressDetails] and
       (__ \ "registration").write[IncorporationRegistrationDetails]

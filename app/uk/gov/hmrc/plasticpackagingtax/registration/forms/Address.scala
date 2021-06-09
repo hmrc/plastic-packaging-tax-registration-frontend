@@ -21,12 +21,10 @@ import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json.{Json, OFormat}
 
 case class Address(
-  businessName: Option[String] = None,
   addressLine1: String,
   addressLine2: Option[String] = None,
   addressLine3: Option[String] = None,
   townOrCity: String,
-  county: Option[String] = None,
   postCode: String
 )
 
@@ -43,19 +41,13 @@ object Address extends CommonFormValidators {
 
   private val addressFieldMaxSize = 35
 
-  val businessName = "businessName"
   val addressLine1 = "addressLine1"
   val addressLine2 = "addressLine2"
   val addressLine3 = "addressLine3"
   val townOrCity   = "townOrCity"
-  val county       = "county"
   val postCode     = "postCode"
 
   val mapping: Mapping[Address] = Forms.mapping(
-    businessName -> optional(
-      text()
-        .verifying(notValidError(businessName), validateAddressField(addressFieldMaxSize))
-    ),
     addressLine1 -> text()
       .verifying(emptyError(addressLine1), isNonEmpty)
       .verifying(notValidError(addressLine1), validateAddressField(addressFieldMaxSize)),
@@ -70,10 +62,6 @@ object Address extends CommonFormValidators {
     townOrCity -> text()
       .verifying(emptyError(townOrCity), isNonEmpty)
       .verifying(notValidError(townOrCity), validateAddressField(addressFieldMaxSize)),
-    county -> optional(
-      text()
-        .verifying(notValidError(county), validateAddressField(addressFieldMaxSize))
-    ),
     postCode -> text()
       .verifying(emptyError(postCode), isNonEmpty)
       .verifying(notValidError(postCode), validatePostcode(10))

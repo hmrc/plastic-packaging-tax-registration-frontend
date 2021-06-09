@@ -41,12 +41,10 @@
 @(registration: Registration, incorporationDetails: Option[IncorporationDetails] = None, soleTraderDetails: Option[SoleTraderIncorporationDetails] = None)(implicit request: Request[_], messages: Messages)
 
 @extractAddress(address: Address) = @{
-    Seq(address.businessName.getOrElse(""),
-    address.addressLine1,
+    Seq(address.addressLine1,
     address.addressLine2.getOrElse(""),
     address.addressLine3.getOrElse(""),
     address.townOrCity,
-    address.county.getOrElse(""),
     address.postCode).filter(_.nonEmpty).mkString("<br>")
 }
 
@@ -73,7 +71,6 @@
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
-            row("reviewRegistration.organisationDetails.businessName", Some(incorporationDetails.get.companyName)),
             row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
             row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
             row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.get.companyNumber)),
