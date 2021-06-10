@@ -97,6 +97,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptSubscriptionStatusUrl(safeNumber: String): String =
     s"$pptSubscriptionsUrl/status/$safeNumber"
 
+  def pptSubscriptionCreateUrl(safeNumber: String): String =
+    s"$pptSubscriptionsUrl/$safeNumber"
+
   def authenticatedFeedbackUrl(): String =
     s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"
 

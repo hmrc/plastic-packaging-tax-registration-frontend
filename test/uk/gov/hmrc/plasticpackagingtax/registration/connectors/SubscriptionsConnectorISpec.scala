@@ -19,12 +19,15 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlMatching}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  SubscriptionCreateResponse,
+  SubscriptionStatus
+}
 
 class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
@@ -86,6 +89,52 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
 
         intercept[Exception] {
           await(connector.getSubscriptionStatus(safeNumber))
+        }
+      }
+    }
+    "calling 'submitSubscription'" should {
+      val safeNumber = "123456789"
+
+      "handle a 200 response" in {
+        val validResponse = subscriptionCreate
+        stubFor(
+          post(urlMatching(s"/subscriptions/$safeNumber"))
+            .willReturn(
+              aResponse().withStatus(OK)
+                withBody toJson(validResponse)(SubscriptionCreateResponse.format).toString
+            )
+        )
+
+        val res = await(connector.submitSubscription(safeNumber, aRegistration()))
+
+        res mustBe validResponse
+        getTimer("ppt.subscription.submit.timer").getCount mustBe 1
+      }
+
+      "handle an invalid payload" in {
+        val invalidResponse =
+          Map("invalidKey1" -> "invalidValue1", "invalidKey2" -> "invalidValue2")
+        stubFor(
+          post(urlMatching(s"/subscriptions/$safeNumber"))
+            .willReturn(
+              aResponse().withStatus(OK)
+                withBody (toJson(invalidResponse).toString)
+            )
+        )
+
+        intercept[Exception] {
+          await(connector.submitSubscription(safeNumber, aRegistration()))
+        }
+      }
+
+      "handle when an exception is thrown" in {
+        stubFor(
+          post(urlMatching(s"/subscriptions/$safeNumber"))
+            .willReturn(aResponse().withStatus(Status.INTERNAL_SERVER_ERROR))
+        )
+
+        intercept[Exception] {
+          await(connector.submitSubscription(safeNumber, aRegistration()))
         }
       }
     }
