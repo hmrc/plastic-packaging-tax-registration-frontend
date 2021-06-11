@@ -71,9 +71,15 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       )
     }
 
-    "have 'pptSubscriptionsUrl(...)' defined" in {
+    "have 'pptSubscriptionsStatusUrl(...)' defined" in {
       validAppConfig.pptSubscriptionStatusUrl("someId") must be(
         "http://localhost:8502/subscriptions/status/someId"
+      )
+    }
+
+    "have 'pptSubscriptionsCreateUrl(...)' defined" in {
+      validAppConfig.pptSubscriptionCreateUrl("someId") must be(
+        "http://localhost:8502/subscriptions/someId"
       )
     }
 

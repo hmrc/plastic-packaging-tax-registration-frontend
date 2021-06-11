@@ -21,13 +21,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  IncorpIdConnector,
-  RegistrationConnector,
-  ServiceError,
-  SoleTraderInorpIdConnector
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -37,7 +33,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Random
 
 @Singleton
 class ReviewRegistrationController @Inject() (
@@ -46,6 +41,7 @@ class ReviewRegistrationController @Inject() (
   mcc: MessagesControllerComponents,
   incorpIdConnector: IncorpIdConnector,
   soleTraderInorpIdConnector: SoleTraderInorpIdConnector,
+  subscriptionsConnector: SubscriptionsConnector,
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
   auditor: Auditor,
@@ -111,13 +107,16 @@ class ReviewRegistrationController @Inject() (
    */
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      val referenceId = s"PPT12345678${Random.nextInt(1000000)}"
-      successSubmissionCounter.inc()
-      markRegistrationAsCompleted().map {
-        case Right(reg) =>
-          auditor.registrationSubmitted(reg)
-          Redirect(routes.ConfirmationController.displayPage())
-            .flashing(Flash(Map(FlashKeys.referenceId -> referenceId)))
+      markRegistrationAsCompleted().flatMap {
+        case Right(updatedRegistration) =>
+          subscriptionsConnector.submitSubscription(getSafeId(updatedRegistration),
+                                                    updatedRegistration
+          ).map { response =>
+            successSubmissionCounter.inc()
+            auditor.registrationSubmitted(updatedRegistration)
+            Redirect(routes.ConfirmationController.displayPage())
+              .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
+          }
         case Left(error) =>
           auditor.registrationSubmitted(request.registration)
           failedSubmissionCounter.inc()
@@ -133,5 +132,17 @@ class ReviewRegistrationController @Inject() (
         registration.metaData.copy(registrationCompleted = true)
       registration.copy(metaData = updatedMetaData)
     }
+
+  private def getSafeId(registration: Registration): String =
+    registration.organisationDetails.organisationType.flatMap {
+      case OrgType.SOLE_TRADER =>
+        registration.organisationDetails.soleTraderDetails.flatMap(
+          details => details.registration.registeredBusinessPartnerId
+        )
+      case _ =>
+        registration.organisationDetails.incorporationDetails.flatMap(
+          details => details.registration.registeredBusinessPartnerId
+        )
+    }.getOrElse(throw new Exception("Safe Id is required for a Subscription create"))
 
 }

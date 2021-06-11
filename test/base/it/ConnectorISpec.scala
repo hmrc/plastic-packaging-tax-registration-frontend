@@ -16,6 +16,7 @@
 
 package base.it
 
+import builders.RegistrationBuilder
 import com.codahale.metrics.{MetricFilter, SharedMetricRegistries, Timer}
 import com.kenshoo.play.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -29,7 +30,8 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import scala.concurrent.ExecutionContext
 
 class ConnectorISpec
-    extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData {
+    extends WiremockTestServer with GuiceOneAppPerSuite with DefaultAwaitTimeout with PptTestData
+    with RegistrationBuilder {
 
   def overrideConfig: Map[String, Any] =
     Map("microservice.services.incorporated-entity-identification-frontend.host" -> wireHost,

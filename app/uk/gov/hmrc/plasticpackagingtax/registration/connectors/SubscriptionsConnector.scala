@@ -17,12 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  SubscriptionCreateResponse,
+  SubscriptionStatus
+}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
@@ -44,6 +48,25 @@ class SubscriptionsConnector @Inject() (
         case Failure(exception) =>
           throw new Exception(
             s"Subscription Status with Safe ID [${safeNumber}] is currently unavailable due to [${exception.getMessage}]",
+            exception
+          )
+      }
+  }
+
+  def submitSubscription(safeNumber: String, payload: Registration)(implicit
+    hc: HeaderCarrier
+  ): Future[SubscriptionCreateResponse] = {
+    val timer = metrics.defaultRegistry.timer("ppt.subscription.submit.timer").time()
+    httpClient.POST[Registration, SubscriptionCreateResponse](
+      config.pptSubscriptionCreateUrl(safeNumber),
+      payload
+    )
+      .andThen { case _ => timer.stop() }
+      .andThen {
+        case Success(response) => response
+        case Failure(exception) =>
+          throw new Exception(
+            s"Subscription Submission with Safe ID [${safeNumber}] is currently unavailable due to [${exception.getMessage}]",
             exception
           )
       }

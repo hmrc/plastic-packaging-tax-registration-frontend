@@ -26,8 +26,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   ETMPSubscriptionStatus,
+  SubscriptionCreateResponse,
   SubscriptionStatus
 }
+
+import java.time.{ZoneOffset, ZonedDateTime}
 
 trait PptTestData {
 
@@ -79,17 +82,25 @@ trait PptTestData {
                                    incorporationRegistrationDetails
     )
 
-  protected val subscriptionStatus = SubscriptionStatus(
+  protected val subscriptionStatus: SubscriptionStatus = SubscriptionStatus(
     subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
     idValue = "XXPPTP123456789",
     idType = "ZPPT"
+  )
+
+  protected val subscriptionCreate: SubscriptionCreateResponse = SubscriptionCreateResponse(
+    pptReference = "XXPPTP123456789",
+    processingDate =
+      ZonedDateTime.now(ZoneOffset.UTC),
+    formBundleNumber = "123456789"
   )
 
   protected def registeredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true),
                         organisationType = Some(orgType),
                         businessRegisteredAddress = Some(testBusinessAddress),
-                        safeNumber = Some(safeNumber)
+                        safeNumber = Some(safeNumber),
+                        incorporationDetails = Some(incorporationDetails)
     )
 
   protected def unregisteredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =

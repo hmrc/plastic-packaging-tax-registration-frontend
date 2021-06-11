@@ -28,7 +28,18 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Address,
+  FullName,
+  LiabilityWeight,
+  OrgType
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  LiabilityDetails,
+  MetaData,
+  OrganisationDetails,
+  PrimaryContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -43,6 +54,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
                                      incorpIdConnector = mockIncorpIdConnector,
                                      registrationConnector = mockRegistrationConnector,
                                      soleTraderInorpIdConnector = mockSoleTraderConnector,
+                                     subscriptionsConnector = mockSubscriptionsConnector,
                                      auditor = mockAuditor,
                                      page = page,
                                      metrics = metricsMock
@@ -142,8 +154,13 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "when form is submitted" in {
         authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationFind(aCompleteRegistration)
+        mockRegistrationUpdate(
+          aCompleteRegistration.copy(metaData =
+            MetaData(registrationReviewed = true, registrationCompleted = true)
+          )
+        )
+        mockSubscriptionSubmit(subscriptionCreate)
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
@@ -158,14 +175,17 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     "send audit event" when {
       "submission of audit event" in {
         authorizedUser()
-        val registration = aRegistration()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationFind(aCompleteRegistration)
+        val aReviewedRegistration = aCompleteRegistration.copy(metaData =
+          MetaData(registrationReviewed = true, registrationCompleted = true)
+        )
+        mockRegistrationUpdate(aReviewedRegistration)
+        mockSubscriptionSubmit(subscriptionCreate)
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
         verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
-          ArgumentMatchers.eq(registration)
+          ArgumentMatchers.eq(aReviewedRegistration)
         )(any(), any())
       }
     }
@@ -193,5 +213,27 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
     }
   }
+
+  private def aCompleteRegistration =
+    aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)),
+                  withLiabilityDetails(
+                    LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+                  ),
+                  withPrimaryContactDetails(
+                    PrimaryContactDetails(fullName = Some(FullName("Jack", "Gatsby")),
+                                          jobTitle = Some("Developer"),
+                                          phoneNumber = Some("0203 4567 890"),
+                                          email = Some("test@test.com"),
+                                          address = Some(
+                                            Address(addressLine1 = "2 Scala Street",
+                                                    addressLine2 = Some("Soho"),
+                                                    townOrCity = "London",
+                                                    postCode = "W1T 2HN"
+                                            )
+                                          )
+                    )
+                  ),
+                  withMetaData(MetaData(registrationCompleted = true))
+    )
 
 }
