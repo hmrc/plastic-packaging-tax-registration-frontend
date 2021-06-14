@@ -39,8 +39,8 @@ trait PptTestData {
   protected val testFirstName     = "John"
   protected val testLastName      = "Rambo"
   protected val testDob           = "12/09/1967"
-  protected val testNin           = "SE12345678"
-  protected val testSatur         = "9999"
+  protected val testNino          = "SE12345678"
+  protected val testSatur         = "123456789"
   protected val safeNumber        = "XXPPTP123456789"
 
   protected val testCompanyAddress = IncorporationAddressDetails(address_line_1 = Some("testLine1"),
@@ -68,7 +68,8 @@ trait PptTestData {
     )
 
   protected val incorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyName,
+    IncorporationDetails(testCompanyNumber,
+                         testCompanyName,
                          testUtr,
                          testCompanyAddress,
                          incorporationRegistrationDetails
@@ -78,7 +79,8 @@ trait PptTestData {
     SoleTraderIncorporationDetails(testFirstName,
                                    testLastName,
                                    testDob,
-                                   testNin,
+                                   testNino,
+                                   Some(testSatur),
                                    incorporationRegistrationDetails
     )
 

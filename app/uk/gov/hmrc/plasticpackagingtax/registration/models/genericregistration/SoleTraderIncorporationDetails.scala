@@ -24,6 +24,7 @@ case class SoleTraderIncorporationDetails(
   lastName: String,
   dateOfBirth: String,
   nino: String,
+  sautr: Option[String],
   override val registration: IncorporationRegistrationDetails
 ) extends RegistrationDetails
 
@@ -34,6 +35,7 @@ object SoleTraderIncorporationDetails {
       (__ \ "fullName" \ "lastName").read[String] and
       (__ \ "dateOfBirth").read[String] and
       (__ \ "nino").read[String] and
+      (__ \ "sautr").readNullable[String] and
       (__ \ "registration").read[IncorporationRegistrationDetails]
   )(SoleTraderIncorporationDetails.apply _)
 
@@ -42,6 +44,7 @@ object SoleTraderIncorporationDetails {
       (__ \ "fullName" \ "lastName").write[String] and
       (__ \ "dateOfBirth").write[String] and
       (__ \ "nino").write[String] and
+      (__ \ "sautr").writeNullable[String] and
       (__ \ "registration").write[IncorporationRegistrationDetails]
   )(unlift(SoleTraderIncorporationDetails.unapply))
 
