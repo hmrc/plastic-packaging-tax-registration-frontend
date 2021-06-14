@@ -23,7 +23,7 @@ case class SoleTraderIncorpIdCreateRequest(
   optServiceName: Option[String] = None,
   deskProServiceId: String,
   signOutUrl: String,
-  enableSautrCheck: Boolean = false
+  enableSautrCheck: Boolean = true
 )
 
 object SoleTraderIncorpIdCreateRequest {

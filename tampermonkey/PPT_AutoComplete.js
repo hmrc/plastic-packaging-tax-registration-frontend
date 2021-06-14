@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      12.0
+// @version      13.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -231,6 +231,14 @@ const grsStNino = () => {
     }
 }
 
+const grsStSaUtr = () => {
+    if (currentPageIs('/identify-your-sole-trader-business/.*/sa-utr')) {
+         document.getElementById('sa-utr').value = '1234567890'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const grsStCheckYourAnswers = () => {
     if (currentPageIs('/identify-your-sole-trader-business/.*/check-your-answers-business')) {
 
@@ -347,6 +355,7 @@ const completeJourney = () => {
 	grsStFirstLastName()
 	grsStDob()
 	grsStNino()
+    grsStSaUtr()
 	grsStCheckYourAnswers()
 
     // Business Details
