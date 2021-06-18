@@ -33,8 +33,8 @@ class ConfirmationController @Inject() (
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration))
+    authenticate { implicit request =>
+      Ok(page())
     }
 
 }

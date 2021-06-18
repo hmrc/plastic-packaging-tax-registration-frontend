@@ -44,7 +44,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
     super.beforeEach()
 
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration))(any(), any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply()(any(), any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {

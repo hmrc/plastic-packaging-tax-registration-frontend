@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.bulletList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
@@ -31,7 +30,7 @@
     appConfig: AppConfig
 )
 
-@(registration: Registration)(implicit request: Request[_], messages: Messages, flash: Flash)
+@()(implicit request: Request[_], messages: Messages, flash: Flash)
 
 
 @govukLayout(title = Title("confirmationPage.title")) {
@@ -44,12 +43,12 @@
                     .getOrElse(messages("confirmationPage.panel.body.default")))
     ))
 
-    @paragraphBody(message = messages("confirmationPage.body", registration.numberOfCompletedSections))
+    @paragraphBody(message = messages("confirmationPage.body"))
 
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("confirmationPage.whatHappensNext.title")</h2>
     <br>
 
-    @paragraphBody(message = messages("confirmationPage.whatHappensNext.paragraph1", registration.numberOfCompletedSections))
+    @paragraphBody(message = messages("confirmationPage.whatHappensNext.paragraph1"))
 
     @bulletList(
         title = Some(messages("confirmationPage.whatHappensNext.liable.title")),
