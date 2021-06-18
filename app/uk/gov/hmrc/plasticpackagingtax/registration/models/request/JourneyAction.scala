@@ -16,16 +16,17 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
-import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyAction @Inject() (registrationConnector: RegistrationConnector, auditor: Auditor)(
@@ -34,6 +35,8 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector, aud
 
   private val logger = Logger(this.getClass)
 
+  private val excludedUris = List(routes.ConfirmationController.displayPage().url)
+
   override protected def refine[A](
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, JourneyRequest[A]]] = {
@@ -41,10 +44,13 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector, aud
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.enrolmentId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
-        loadOrCreateRegistration(id).map {
-          case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(id)))
-          case Left(error) => throw error
-        }
+        if (excludedUris.contains(request.uri))
+          Future(Right(new JourneyRequest[A](request, Some(id))))
+        else
+          loadOrCreateRegistration(id).map {
+            case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(id)))
+            case Left(error) => throw error
+          }
       case None =>
         logger.warn(s"Enrolment not present, throwing")
         throw InsufficientEnrolments()

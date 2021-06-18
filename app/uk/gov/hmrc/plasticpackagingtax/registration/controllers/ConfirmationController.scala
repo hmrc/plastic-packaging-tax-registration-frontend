@@ -34,7 +34,7 @@ class ConfirmationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration))
+      Ok(page())
     }
 
 }
