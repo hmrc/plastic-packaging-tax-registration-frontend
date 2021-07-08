@@ -25,7 +25,8 @@ case class Registration(
   liabilityDetails: LiabilityDetails = LiabilityDetails(),
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   organisationDetails: OrganisationDetails = OrganisationDetails(),
-  metaData: MetaData = MetaData()
+  metaData: MetaData = MetaData(),
+  userHeaders: Map[String, String] = Map.empty
 ) {
 
   def toRegistration: Registration =
