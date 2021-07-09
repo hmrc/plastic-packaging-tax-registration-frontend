@@ -26,25 +26,28 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_primary_contact_details_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  check_primary_contact_details_page,
+  email_address_passcode_confirmation_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
-  private val page = mock[check_primary_contact_details_page]
+class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends ControllerSpec {
+  private val page = mock[email_address_passcode_confirmation_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsCheckAnswersController(authenticate = mockAuthAction,
-                                             mockJourneyAction,
-                                             mcc = mcc,
-                                             page = page
+    new ContactDetailsEmailAddressPasscodeConfirmationController(authenticate = mockAuthAction,
+                                                                 mockJourneyAction,
+                                                                 mcc = mcc,
+                                                                 page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -52,7 +55,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
     super.afterEach()
   }
 
-  "Check contact details answers controller" should {
+  "Email passcode confirmation" should {
 
     "return 200" when {
 
@@ -85,7 +88,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
       }
     }
 
-    "redirects to registration page" when {
+    "redirects to phone numbers page" when {
       "user submits answers" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
@@ -95,7 +98,9 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
           controller.submit()(FakeRequest("POST", ""))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          routes.ContactDetailsTelephoneNumberController.displayPage().url
+        )
       }
     }
   }

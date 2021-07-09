@@ -82,7 +82,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
         "user submits the phone number" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+          mockRegistrationUpdate(aRegistration())
 
           val result =
             controller.submit()(postRequestEncoded(PhoneNumber("077123"), formAction))

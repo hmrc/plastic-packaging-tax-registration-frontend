@@ -79,7 +79,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
         "user submits the liability total weight" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+          mockRegistrationUpdate(aRegistration())
           val result =
             controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
 

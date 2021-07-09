@@ -38,14 +38,11 @@ trait MockRegistrationConnector
 
   protected val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
-  def mockRegistrationUpdate(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationUpdate(
+    dataToReturn: Registration
+  ): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
-      .thenAnswer(
-        invocation =>
-          Future(Right(invocation.getArguments()(0)))(
-            scala.concurrent.ExecutionContext.Implicits.global
-          )
-      )
+      .thenReturn(Future.successful(Right(dataToReturn)))
 
   def mockRegistrationFind(
     dataToReturn: Registration

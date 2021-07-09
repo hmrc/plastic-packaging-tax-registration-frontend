@@ -116,6 +116,14 @@ class ContactDetailsEmailAddressController @Inject() (
   private def updatedPrimaryContactDetails(formData: EmailAddress, registration: Registration) =
     registration.primaryContactDetails.copy(email = Some(formData.value))
 
+  private def updatedJourneyId(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+    update {
+      registration =>
+        registration.copy(primaryContactDetails =
+          registration.primaryContactDetails.copy(journeyId = Some(journeyId))
+        )
+    }
+
   private def saveAndContinue(registration: Registration, email: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
@@ -127,7 +135,8 @@ class ContactDetailsEmailAddressController @Inject() (
         request.user.identityData.credentials.map { creds =>
           createEmailVerification(creds.providerId, email).flatMap {
             case Right(verificationJourneyStartUrl) =>
-              Future(Redirect(verificationJourneyStartUrl).addingToSession())
+              updatedJourneyId(verificationJourneyStartUrl.split("\\/").slice(0, 4).last)
+              Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
             case Left(error) => throw error
           }
         }.getOrElse(Future(Results.Redirect(routes.UnauthorisedController.onPageLoad())))
@@ -140,13 +149,13 @@ class ContactDetailsEmailAddressController @Inject() (
   ): Future[Either[ServiceError, String]] =
     emailVerificationConnector.create(
       CreateEmailVerificationRequest(credId = credId,
-                                     continueUrl = "http://continue",
-                                     origin = "origin",
-                                     accessibilityStatementUrl = "http://accessibility",
-                                     email = Email(address = email, enterUrl = "hhtp://enterUrl"),
-                                     backUrl = "http://back",
+                                     continueUrl = "/plastic-packaging-tax/primary-contact-details",
+                                     origin = "ppt",
+                                     accessibilityStatementUrl = "/accessibility",
+                                     email = Email(address = email, enterUrl = "/start"),
+                                     backUrl = "/back",
                                      pageTitle = "PPT Title",
-                                     deskproServiceName = "ppt"
+                                     deskproServiceName = "plastic-packaging-tax"
       )
     )
 

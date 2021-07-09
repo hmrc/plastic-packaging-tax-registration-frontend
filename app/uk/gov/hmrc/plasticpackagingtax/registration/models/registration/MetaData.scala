@@ -27,15 +27,18 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 case class MetaData(
   registrationReviewed: Boolean = false,
   registrationCompleted: Boolean = false,
-  emailsMetadata: Map[String, EmailVerificationStatus] = Map()
+  verifiedEmails: Seq[EmailStatus] = Seq()
 ) {
 
   def getEmailStatus(email: String): EmailVerificationStatus =
-    emailsMetadata.getOrElse(email, EmailVerificationStatus.NOT_VERIFIED)
+    EmailVerificationStatusMapper.toMap(verifiedEmails).getOrElse(
+      email,
+      EmailVerificationStatus.NOT_VERIFIED
+    )
 
   def add(emails: Seq[EmailStatus]): MetaData =
-    this.copy(emailsMetadata =
-      this.emailsMetadata ++ EmailVerificationStatusMapper.toMap(emails)
+    this.copy(verifiedEmails =
+      this.verifiedEmails ++ emails
     )
 
 }

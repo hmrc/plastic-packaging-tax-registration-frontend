@@ -23,13 +23,16 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, ur
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   CreateEmailVerificationRequest,
   Email,
-  VerificationStatus
+  EmailStatus,
+  VerificationStatus,
+  VerifyPasscodeRequest
 }
 
 class EmailVerificationConnectorSpec
@@ -139,7 +142,7 @@ class EmailVerificationConnectorSpec
     val credId = "credId"
 
     "returns valid email details" in {
-      val validResponse = emailVerification
+      val validResponse = VerificationStatus(Seq(EmailStatus("mail@mail.com", true, false)))
       giveGetEmailVerificationDetailsReturns(
         OK,
         credId,
@@ -153,11 +156,10 @@ class EmailVerificationConnectorSpec
     }
 
     "service returns non success status code" in {
-      val validResponse = emailVerification
-      giveGetEmailVerificationDetailsReturns(
-        Status.BAD_REQUEST,
-        credId,
-        toJson(validResponse)(VerificationStatus.format).toString
+      val validResponse = Seq(EmailStatus("mail@mail.com", true, false))
+      giveGetEmailVerificationDetailsReturns(Status.BAD_REQUEST,
+                                             credId,
+                                             toJson(validResponse).toString
       )
 
       val res = await(connector.getStatus(credId))
@@ -182,13 +184,63 @@ class EmailVerificationConnectorSpec
     }
   }
 
+  "submitPasscode" when {
+    val journeyId             = "credId"
+    val verifyPasscodeRequest = VerifyPasscodeRequest("passcode", "email")
+
+    "returns complete" in {
+      val validResponse = "{\"status\":\"complete\"}"
+      givenPostToSubmitPascode(OK, journeyId, validResponse)
+
+      val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
+
+      res.value mustBe "complete"
+      getTimer("ppt.email.verification.verify.passcode.timer").getCount mustBe 1
+    }
+
+    "returns bad request" in {
+      val validResponse = "{\"status\":\"incorrectPasscode\"}"
+      givenPostToSubmitPascode(BAD_REQUEST, journeyId, validResponse)
+
+      val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
+
+      res.value mustBe "incorrectPasscode"
+    }
+
+    "returns forbidden" in {
+      val validResponse = "{\"status\":\"tooManyAttempts\"}"
+      givenPostToSubmitPascode(FORBIDDEN, journeyId, validResponse)
+
+      val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
+
+      res.value mustBe "tooManyAttempts"
+    }
+
+    "returns not found" in {
+      val validResponse = "{\"status\":\"passcodeNotFound\"}"
+      givenPostToSubmitPascode(FORBIDDEN, journeyId, validResponse)
+
+      val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
+
+      res.value mustBe "passcodeNotFound"
+    }
+
+    "returns internal server error" in {
+      givenPostToSubmitPascode(INTERNAL_SERVER_ERROR, journeyId)
+
+      val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
+
+      res.left.value.getMessage must include("Failed to verify passcode, status: 500, error: ")
+    }
+  }
+
   private def giveGetEmailVerificationDetailsReturns(
     status: Int,
     credId: String,
     body: String = ""
   ) =
     stubFor(
-      get(urlMatching(s"/verification-status/$credId"))
+      get(urlMatching(s"/email-verification/verification-status/$credId"))
         .willReturn(
           aResponse()
             .withStatus(status)
@@ -198,7 +250,17 @@ class EmailVerificationConnectorSpec
 
   private def givenPostToEmailVerificationReturns(status: Int, body: String = "") =
     stubFor(
-      post("/verify-email")
+      post("/email-verification/verify-email")
+        .willReturn(
+          aResponse()
+            .withStatus(status)
+            .withBody(body)
+        )
+    )
+
+  private def givenPostToSubmitPascode(status: Int, journeyId: String, body: String = "") =
+    stubFor(
+      post(s"/email-verification/journey/$journeyId/passcode")
         .willReturn(
           aResponse()
             .withStatus(status)

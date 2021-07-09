@@ -35,10 +35,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  CreateEmailVerificationRequest,
   EmailStatus,
   VerificationStatus
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  MetaData,
+  PrimaryContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -75,6 +79,13 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     when(mockEmailVerificationConnector.getStatus(any[String])(any()))
       .thenReturn(Future.successful(Right(Some(dataToReturn))))
 
+  def mockEmailVerificationCreate(
+    dataToReturn: String
+  ): OngoingStubbing[Future[Either[ServiceError, String]]] =
+    when(
+      mockEmailVerificationConnector.create(any[CreateEmailVerificationRequest])(any())
+    ).thenReturn(Future.successful(Right(dataToReturn)))
+
   "ContactDetailsEmailAddressController" should {
 
     "return 200" when {
@@ -101,7 +112,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate()
+          mockRegistrationUpdate(reg)
           mockEmailVerificationGetStatus(
             VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false)))
           )
@@ -116,6 +127,67 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
               redirectLocation(result) mustBe Some(
                 routes.ContactDetailsTelephoneNumberController.displayPage().url
               )
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "return 303 (OK) for not verified email address" + formAction._1 when {
+        "user submits an email address" in {
+          val reg = aRegistration(
+            withMetaData(metaData =
+              MetaData(verifiedEmails = Seq(EmailStatus("test@test.com", false, false)))
+            )
+          )
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate(reg)
+          mockEmailVerificationGetStatus(
+            VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))
+          )
+          mockEmailVerificationCreate("/email-verification/journey/234234234-23423/passcode")
+
+          val result =
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+
+          status(result) mustBe SEE_OTHER
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.ContactDetailsEmailAddressPasscodeController.displayPage().url
+              )
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "return 303 (OK) for locked out" + formAction._1 when {
+        "user submits an email address" in {
+          val reg = aRegistration(
+            withMetaData(metaData =
+              MetaData(verifiedEmails = Seq(EmailStatus("test@test.com", false, true)))
+            )
+          )
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate(reg)
+          mockEmailVerificationGetStatus(
+            VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))
+          )
+
+          val result =
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+
+          status(result) mustBe SEE_OTHER
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
             case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }

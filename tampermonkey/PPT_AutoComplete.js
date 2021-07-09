@@ -296,6 +296,13 @@ const primaryContactEmailAddress = () => {
     }
 }
 
+const primaryContactEmailAddressPasscode = () => {
+    if (currentPageIs('/plastic-packaging-tax/primary-contact-email-passcode')) {
+
+        document.getElementById('value').value = 'DNCLRK'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 const primaryContactTelephoneNumber = () => {
      if (currentPageIs('/plastic-packaging-tax/primary-contact-phone-number')) {
 
@@ -371,6 +378,7 @@ const completeJourney = () => {
     primaryContactFullName()
     primaryContactJobTitle()
     primaryContactEmailAddress()
+    primaryContactEmailAddressPasscode()
     primaryContactTelephoneNumber()
     primaryContactConfirmAddress()
     primaryContactAddress()

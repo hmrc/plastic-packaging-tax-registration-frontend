@@ -32,6 +32,7 @@ import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
+  Continue,
   SaveAndComeBackLater,
   SaveAndContinue
 }
@@ -56,6 +57,8 @@ trait ControllerSpec
 
   protected val saveAndComeBackLaterFormAction: (String, String) =
     (SaveAndComeBackLater.toString, "")
+
+  protected val continueFormAction: (String, String) = (Continue.toString, "")
 
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session).withCSRFToken

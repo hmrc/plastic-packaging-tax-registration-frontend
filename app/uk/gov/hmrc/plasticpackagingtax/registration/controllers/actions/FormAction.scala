@@ -23,12 +23,14 @@ sealed trait FormAction
 object FormAction {
   private val saveAndContinueLabel      = "SaveAndContinue"
   private val saveAndComeBackLaterLabel = "SaveAndComeBackLater"
+  private val continueLabel             = "Continue"
 
   def bindFromRequest()(implicit request: Request[AnyContent]): FormAction =
     request.body.asFormUrlEncoded.flatMap { body =>
       body.flatMap {
         case (`saveAndContinueLabel`, _)      => Some(SaveAndContinue)
         case (`saveAndComeBackLaterLabel`, _) => Some(SaveAndComeBackLater)
+        case (`continueLabel`, _)             => Some(Continue)
         case _                                => None
       }.headOption
     }.getOrElse(Unknown)
@@ -38,3 +40,4 @@ object FormAction {
 case object Unknown              extends FormAction
 case object SaveAndContinue      extends FormAction
 case object SaveAndComeBackLater extends FormAction
+case object Continue             extends FormAction

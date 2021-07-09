@@ -17,13 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
-import play.api.http.Status.CREATED
+import play.api.http.Status.{BAD_REQUEST, CREATED, FORBIDDEN, NOT_FOUND, OK}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   CreateEmailVerificationRequest,
-  VerificationStatus
+  VerificationStatus,
+  VerifyPasscodeRequest
 }
 
 import javax.inject.{Inject, Singleton}
@@ -74,6 +75,38 @@ class EmailVerificationConnector @Inject() (
       }.recover {
         case ex: Exception =>
           Left(DownstreamServiceError(s"Error while verifying email, error: ${ex.getMessage}", ex))
+      }
+  }
+
+  def verifyPasscode(journeyId: String, payload: VerifyPasscodeRequest)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[ServiceError, String]] = {
+    val timer = metrics.defaultRegistry.timer("ppt.email.verification.verify.passcode.timer").time()
+    httpClient.POST[VerifyPasscodeRequest, HttpResponse](
+      appConfig.getSubmitPassscodeUrl(journeyId = journeyId),
+      payload
+    )
+      .andThen { case _ => timer.stop() }
+      .map {
+        case response @ HttpResponse(OK, _, _) =>
+          Right((response.json \ "status").as[String])
+        case response @ HttpResponse(BAD_REQUEST, _, _) =>
+          Right((response.json \ "status").as[String])
+        case response @ HttpResponse(FORBIDDEN, _, _) =>
+          Right((response.json \ "status").as[String])
+        case response @ HttpResponse(NOT_FOUND, _, _) =>
+          Right((response.json \ "status").as[String])
+        case response =>
+          Left(
+            DownstreamServiceError(
+              s"Failed to verify passcode, status: ${response.status}, error: ${response.body}"
+            )
+          )
+      }.recover {
+        case ex: Exception =>
+          Left(
+            DownstreamServiceError(s"Error while verifying passcode, error: ${ex.getMessage}", ex)
+          )
       }
   }
 
