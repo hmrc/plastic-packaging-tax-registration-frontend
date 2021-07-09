@@ -17,34 +17,18 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{await, redirectLocation, status}
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  ServiceError
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
+import play.api.test.Helpers.redirectLocation
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.ServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  CreateEmailVerificationRequest,
   EmailStatus,
   VerificationStatus
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  MetaData,
-  PrimaryContactDetails,
-  Registration
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{MetaData, Registration}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future

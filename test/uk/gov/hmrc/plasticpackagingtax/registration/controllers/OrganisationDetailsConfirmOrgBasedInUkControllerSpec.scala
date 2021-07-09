@@ -86,7 +86,7 @@ class OrganisationDetailsConfirmOrgBasedInUkControllerSpec extends ControllerSpe
         "user submits positive answer" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+          mockRegistrationUpdate(aRegistration())
 
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -107,7 +107,7 @@ class OrganisationDetailsConfirmOrgBasedInUkControllerSpec extends ControllerSpe
         "user submits negative answer" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+          mockRegistrationUpdate(aRegistration())
 
           val correctForm = Seq("answer" -> "no", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -58,7 +58,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
-        mockRegistrationUpdate()
+        mockRegistrationUpdate(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK

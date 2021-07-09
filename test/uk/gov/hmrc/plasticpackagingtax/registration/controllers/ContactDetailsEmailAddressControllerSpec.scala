@@ -148,7 +148,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
-          mockRegistrationUpdate(reg)
           mockEmailVerificationGetStatus(
             VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))
           )
@@ -179,7 +178,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
           mockRegistrationUpdate(reg)
           mockEmailVerificationGetStatus(
             VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))

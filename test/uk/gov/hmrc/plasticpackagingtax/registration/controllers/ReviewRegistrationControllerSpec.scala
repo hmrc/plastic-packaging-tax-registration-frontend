@@ -83,7 +83,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate()
+        mockRegistrationUpdate(registration)
         mockGetUkCompanyDetails(incorporationDetails)
 
         val result = controller.displayPage()(getRequest())
@@ -97,7 +97,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate()
+        mockRegistrationUpdate(registration)
         mockGetSoleTraderDetails(soleTraderIncorporationDetails)
 
         val result = controller.displayPage()(getRequest())
@@ -154,8 +154,13 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "when form is submitted" in {
         authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate()
+        mockRegistrationFind(aCompleteRegistration)
+        mockRegistrationUpdate(
+          aCompleteRegistration.copy(metaData =
+            MetaData(registrationReviewed = true, registrationCompleted = true)
+          )
+        )
+        mockSubscriptionSubmit(subscriptionCreate)
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
@@ -170,16 +175,17 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     "send audit event" when {
       "submission of audit event" in {
         authorizedUser()
-        val registration = aRegistration()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
+        mockRegistrationFind(aCompleteRegistration)
+        val aReviewedRegistration = aCompleteRegistration.copy(metaData =
+          MetaData(registrationReviewed = true, registrationCompleted = true)
+        )
+        mockRegistrationUpdate(aReviewedRegistration)
+        mockSubscriptionSubmit(subscriptionCreate)
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
         verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
-          ArgumentMatchers.eq(
-            registration.copy(metaData = registration.metaData.copy(registrationCompleted = true))
-          )
+          ArgumentMatchers.eq(aReviewedRegistration)
         )(any(), any())
       }
     }

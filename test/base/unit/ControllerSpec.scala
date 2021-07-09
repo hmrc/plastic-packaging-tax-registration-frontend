@@ -56,10 +56,6 @@ trait ControllerSpec
 
   implicit val config: AppConfig = mock[AppConfig]
 
-  protected val mockAuditor = mock[Auditor]
-
-  protected val mockEmailVerificationConnector = mock[EmailVerificationConnector]
-
   protected val saveAndContinueFormAction: (String, String) = (SaveAndContinue.toString, "")
 
   protected val saveAndComeBackLaterFormAction: (String, String) =

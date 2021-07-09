@@ -86,7 +86,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate()
+        mockRegistrationUpdate(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -109,7 +109,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         mockGetSoleTraderDetails(soleTraderIncorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate()
+        mockRegistrationUpdate(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -130,7 +130,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         mockGetUkCompanyDetails(incorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate()
+        mockRegistrationUpdate(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -144,7 +144,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.primaryContactDetails.address.get.county mustBe expected.region
       modifiedRegistration.primaryContactDetails.address.get.postCode mustBe expected.postal_code.get
       modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
     }
@@ -154,7 +153,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.county mustBe expected.region
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.postCode mustBe expected.postal_code.get
     }
 
@@ -163,7 +161,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user accepts the registered address" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockRegistrationUpdate()
+          mockRegistrationUpdate(registrationWithoutPrimaryContactAddress)
 
           val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -186,7 +184,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user does not accept the registered address" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockRegistrationUpdate()
+          mockRegistrationUpdate(registrationWithoutPrimaryContactAddress)
 
           val correctForm = Seq("useRegisteredAddress" -> "no", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
