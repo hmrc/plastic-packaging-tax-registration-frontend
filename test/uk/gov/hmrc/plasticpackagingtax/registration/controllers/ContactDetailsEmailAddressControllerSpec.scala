@@ -35,6 +35,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  EmailStatus,
+  VerificationStatus
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   CreateEmailVerificationRequest,
   EmailStatus,
   VerificationStatus

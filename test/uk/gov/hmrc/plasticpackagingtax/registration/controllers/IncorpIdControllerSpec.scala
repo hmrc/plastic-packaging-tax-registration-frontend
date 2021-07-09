@@ -48,16 +48,9 @@ class IncorpIdControllerSpec extends ControllerSpec {
 
   "incorpIdCallback" should {
 
-    "redirect to the registration page" when {
-      "registering an Uk Limited company" in {
-        authorizedUser()
-        mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationFind(
-          aRegistration(withOrganisationDetails(unregisteredUkOrgDetails(OrgType.UK_COMPANY)))
-        )
-        mockRegistrationUpdate(
-          aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)))
-        )
+    "redirect to the registration page" in {
+      authorizedUser()
+      mockRegistrationUpdate()
 
         val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
 
@@ -65,15 +58,9 @@ class IncorpIdControllerSpec extends ControllerSpec {
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
       }
 
-      "registering an Uk Sole Trader" in {
-        authorizedUser()
-        mockGetSoleTraderDetails(soleTraderIncorporationDetails)
-        mockRegistrationFind(
-          aRegistration(withOrganisationDetails(unregisteredUkOrgDetails(OrgType.SOLE_TRADER)))
-        )
-        mockRegistrationUpdate(
-          aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.SOLE_TRADER)))
-        )
+    "update registration with journey id" in {
+      authorizedUser()
+      mockRegistrationUpdate()
 
         val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
 

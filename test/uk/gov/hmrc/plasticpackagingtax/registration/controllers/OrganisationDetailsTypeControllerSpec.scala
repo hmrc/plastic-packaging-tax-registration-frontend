@@ -75,7 +75,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -120,7 +120,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       def assertRedirectForOrgType(orgType: OrgType, redirectUrl: String): Unit = {
         authorizedUser()
         mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> orgType.toString, formAction)
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -194,7 +194,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "user submits form for sole trader" in {
         authorizedUser()
         mockRegistrationFind(soleTraderRegistration)
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
         mockSoleTraderCreateIncorpJourneyIdException()
 
         val correctForm = Seq("answer" -> SOLE_TRADER.toString, saveAndContinueFormAction)
@@ -206,7 +206,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "user submits form for uk company" in {
         authorizedUser()
         mockRegistrationFind(soleTraderRegistration)
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
         mockUkCompanyCreateIncorpJourneyIdException()
 
         val correctForm = Seq("answer" -> UK_COMPANY.toString, saveAndContinueFormAction)

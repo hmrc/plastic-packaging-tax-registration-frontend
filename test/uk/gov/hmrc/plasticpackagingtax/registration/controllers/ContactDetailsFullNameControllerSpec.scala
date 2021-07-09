@@ -84,7 +84,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         "user submits or saves the contact full name" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
 
           val result =
             controller.submit()(postRequestEncoded(FullName("FirstName", "LastName"), formAction))

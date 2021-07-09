@@ -84,7 +84,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptRegistrationUrl: String  = s"$pptServiceHost/registrations"
   lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
   lazy val emailVerificationUrl        = s"$emailVerificationHost/email-verification/verify-email"
-  lazy val verifyPasscodeUrl           = s"$emailVerificationHost/email-verification/journey/{"
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 

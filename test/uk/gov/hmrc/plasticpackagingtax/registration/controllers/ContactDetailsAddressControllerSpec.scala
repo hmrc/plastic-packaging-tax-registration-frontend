@@ -89,7 +89,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
         "user submits or saves the contact address" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
 
           val result =
             controller.submit()(postRequestEncoded(anAddress, formAction))
