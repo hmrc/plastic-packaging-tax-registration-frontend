@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   EmailVerificationConnector,
@@ -53,6 +54,7 @@ class ContactDetailsEmailAddressController @Inject() (
   emailVerificationConnector: EmailVerificationConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
+  appConfig: AppConfig,
   page: email_address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -128,21 +130,24 @@ class ContactDetailsEmailAddressController @Inject() (
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Result] =
-    EmailVerificationService.getPrimaryEmailStatus(registration) match {
-      case VERIFIED =>
-        Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
-      case NOT_VERIFIED =>
-        request.user.identityData.credentials.map { creds =>
-          createEmailVerification(creds.providerId, email).flatMap {
-            case Right(verificationJourneyStartUrl) =>
-              updatedJourneyId(verificationJourneyStartUrl.split("\\/").slice(0, 4).last)
-              Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
-            case Left(error) => throw error
-          }
-        }.getOrElse(Future(Results.Redirect(routes.UnauthorisedController.onPageLoad())))
-      case LOCKED_OUT =>
-        Future(Redirect(routes.RegistrationController.displayPage()))
-    }
+    if (appConfig.emailVerificationEnabled)
+      EmailVerificationService.getPrimaryEmailStatus(registration) match {
+        case VERIFIED =>
+          Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
+        case NOT_VERIFIED =>
+          request.user.identityData.credentials.map { creds =>
+            createEmailVerification(creds.providerId, email).flatMap {
+              case Right(verificationJourneyStartUrl) =>
+                updatedJourneyId(verificationJourneyStartUrl.split("\\/").slice(0, 4).last)
+                Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
+              case Left(error) => throw error
+            }
+          }.getOrElse(Future(Results.Redirect(routes.UnauthorisedController.onPageLoad())))
+        case LOCKED_OUT =>
+          Future(Redirect(routes.RegistrationController.displayPage()))
+      }
+    else
+      Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
 
   private def createEmailVerification(credId: String, email: String)(implicit
     hc: HeaderCarrier

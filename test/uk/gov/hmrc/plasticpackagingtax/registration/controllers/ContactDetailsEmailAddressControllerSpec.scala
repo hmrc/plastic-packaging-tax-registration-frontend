@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   ServiceError
@@ -64,6 +65,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
                                                mockEmailVerificationConnector,
                                              registrationConnector = mockRegistrationConnector,
                                              mcc = mcc,
+                                             config,
                                              page = page
     )
 
@@ -82,6 +84,10 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
     when(mockEmailVerificationConnector.getStatus(any[String])(any()))
       .thenReturn(Future.successful(Right(Some(dataToReturn))))
+
+  def mockAppConfigEmailVerificationEnabled(enabled: Boolean): OngoingStubbing[Boolean] =
+    when(config.emailVerificationEnabled)
+      .thenReturn(enabled)
 
   def mockEmailVerificationCreate(
     dataToReturn: String
@@ -117,6 +123,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false)))
           )
@@ -138,7 +145,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         }
       }
 
-      "return 303 (OK) for not verified email address" + formAction._1 when {
+      "return 303 (OK) for not verified email address " + formAction._1 when {
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
@@ -148,6 +155,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))
           )
@@ -169,7 +177,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         }
       }
 
-      "return 303 (OK) for locked out" + formAction._1 when {
+      "return 303 (OK) for locked out " + formAction._1 when {
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
@@ -179,6 +187,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))
           )
@@ -190,6 +199,28 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           formAction._1 match {
             case "SaveAndContinue" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "return 303 (OK)  " + formAction._1 when {
+        "user submits an email address with email-verification disabled " in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate(aRegistration())
+          mockAppConfigEmailVerificationEnabled(false)
+
+          val result =
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+          status(result) mustBe SEE_OTHER
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.ContactDetailsTelephoneNumberController.displayPage().url
+              )
             case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
