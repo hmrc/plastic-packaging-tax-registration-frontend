@@ -17,12 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

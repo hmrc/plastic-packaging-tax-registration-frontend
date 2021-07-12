@@ -26,7 +26,7 @@ case class Registration(
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   organisationDetails: OrganisationDetails = OrganisationDetails(),
   metaData: MetaData = MetaData(),
-  userHeaders: Map[String, String] = Map.empty
+  userHeaders: Option[Map[String, String]] = None
 ) {
 
   def toRegistration: Registration =
@@ -37,12 +37,6 @@ case class Registration(
                  organisationDetails = this.organisationDetails,
                  metaData = this.metaData
     )
-
-  def isRegistrationComplete: Boolean =
-    isCheckAndSubmitReady && metaData.registrationCompleted
-
-  def isCheckAndSubmitReady: Boolean =
-    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete
 
   def checkAndSubmitStatus: TaskStatus =
     if (isRegistrationComplete)
@@ -60,6 +54,12 @@ case class Registration(
           isPrimaryContactDetailsComplete,
           isRegistrationComplete
     ).count(p => p)
+
+  def isRegistrationComplete: Boolean =
+    isCheckAndSubmitReady && metaData.registrationCompleted
+
+  def isCheckAndSubmitReady: Boolean =
+    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete
 
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
 
