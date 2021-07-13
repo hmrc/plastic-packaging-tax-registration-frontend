@@ -60,13 +60,6 @@ trait ControllerSpec
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session).withCSRFToken
 
-  protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
-
-  protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
-    postRequest
-      .withJsonBody(body)
-      .withCSRFToken
-
   def authRequest(
     headers: Headers = Headers(),
     user: SignedInUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
@@ -79,6 +72,14 @@ trait ControllerSpec
       )
     )
 
+  protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
+
+  protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
+    postRequest
+      .withJsonBody(body)
+      .withHeaders(testUserHeaders.toSeq: _*)
+      .withCSRFToken
+
   protected def postRequestEncoded(
     form: AnyRef,
     formAction: (String, String) = saveAndContinueFormAction
@@ -88,13 +89,6 @@ trait ControllerSpec
       .withFormUrlEncodedBody(bodyForm: _*)
       .withCSRFToken
   }
-
-  protected def postJsonRequestEncoded(
-    body: (String, String)*
-  ): Request[AnyContentAsFormUrlEncoded] =
-    postRequest
-      .withFormUrlEncodedBody(body: _*)
-      .withCSRFToken
 
   private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
@@ -110,5 +104,12 @@ trait ControllerSpec
       case c: String                   => c
       case _                           => ""
     }
+
+  protected def postJsonRequestEncoded(
+    body: (String, String)*
+  ): Request[AnyContentAsFormUrlEncoded] =
+    postRequest
+      .withFormUrlEncodedBody(body: _*)
+      .withCSRFToken
 
 }

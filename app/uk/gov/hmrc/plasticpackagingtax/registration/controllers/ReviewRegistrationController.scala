@@ -98,13 +98,6 @@ class ReviewRegistrationController @Inject() (
       registration.copy(metaData = updatedMetaData)
     }
 
-  /*
-  TODO: This will need to be refactored once: (remember to make sure correct sequence of events occur: complete, audit, redirect etc for pass and fail)
-  1. The PPT EIS/IF Stub has been implemented
-  2. The EIS/IF and ETMP 'Create Registration/Subscription' request/response schemas are made available to us
-  3. If a submission has been successful we will need to remove the registration/submission document.
-  4. Once we have a lot more clarity. KISS.
-   */
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       markRegistrationAsCompleted().flatMap {
@@ -112,7 +105,7 @@ class ReviewRegistrationController @Inject() (
           val updatedRegistrationWithUserHeaders =
             updatedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
           subscriptionsConnector.submitSubscription(getSafeId(updatedRegistrationWithUserHeaders),
-                                                    updatedRegistration
+                                                    updatedRegistrationWithUserHeaders
           ).map { response =>
             successSubmissionCounter.inc()
             auditor.registrationSubmitted(updatedRegistration)

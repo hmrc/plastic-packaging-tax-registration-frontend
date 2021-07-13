@@ -26,6 +26,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
@@ -34,14 +35,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   LiabilityWeight,
   OrgType
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  MetaData,
-  OrganisationDetails,
-  PrimaryContactDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import java.util.UUID
 
 class ReviewRegistrationControllerSpec extends ControllerSpec {
   private val page = mock[review_registration_page]
@@ -154,18 +152,22 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "when form is submitted" in {
         authorizedUser()
-        mockRegistrationFind(aCompleteRegistration)
-        mockRegistrationUpdate(
-          aCompleteRegistration.copy(metaData =
-            MetaData(registrationReviewed = true, registrationCompleted = true)
-          )
-        )
+        val completeRegistrations =
+          aCompleteRegistration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+        mockRegistrationFind(completeRegistrations)
+        val aReviewedRegistration = reviewedRegistration(completeRegistrations)
+        mockRegistrationUpdate(aReviewedRegistration)
         mockSubscriptionSubmit(subscriptionCreate)
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+        verify(mockSubscriptionsConnector).submitSubscription(
+          ArgumentMatchers.eq(safeNumber),
+          ArgumentMatchers.eq(aReviewedRegistration.copy(userHeaders = Some(testUserHeaders)))
+        )(any[HeaderCarrier])
+
         metricsMock.defaultRegistry.counter(
           "ppt.registration.success.submission.counter"
         ).getCount mustBe 1
@@ -213,6 +215,11 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
     }
   }
+
+  private def reviewedRegistration(aCompleteRegistration: Registration) =
+    aCompleteRegistration.copy(metaData =
+      MetaData(registrationReviewed = true, registrationCompleted = true)
+    )
 
   private def aCompleteRegistration =
     aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)),
