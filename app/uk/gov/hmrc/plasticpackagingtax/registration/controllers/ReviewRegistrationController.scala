@@ -110,7 +110,7 @@ class ReviewRegistrationController @Inject() (
       markRegistrationAsCompleted().flatMap {
         case Right(updatedRegistration) =>
           val updatedRegistrationWithUserHeaders =
-            updatedRegistration.copy(userHeaders = request.headers.toSimpleMap)
+            updatedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
           subscriptionsConnector.submitSubscription(getSafeId(updatedRegistrationWithUserHeaders),
                                                     updatedRegistration
           ).map { response =>

@@ -62,7 +62,7 @@ trait RegistrationBuilder {
                    organisationType = Some(UK_COMPANY)
                  ),
                  metaData = MetaData(),
-                 userHeaders = Map.empty
+                 userHeaders = None
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)
@@ -88,7 +88,7 @@ trait RegistrationBuilder {
     _.copy(metaData = metaData)
 
   def withUserHeaders(headers: Map[String, String]): RegistrationModifier =
-    _.copy(userHeaders = headers)
+    _.copy(userHeaders = Some(headers))
 
   def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier =
     _.copy(organisationDetails = organisationDetails)
