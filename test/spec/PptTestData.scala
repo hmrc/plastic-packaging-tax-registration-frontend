@@ -42,6 +42,7 @@ trait PptTestData {
   protected val testNino          = "SE12345678"
   protected val testSatur         = "123456789"
   protected val safeNumber        = "XXPPTP123456789"
+  protected val testUserHeaders   = Map("Host" -> "localhost", "headerKey" -> "headerValue")
 
   protected val testCompanyAddress = IncorporationAddressDetails(address_line_1 = Some("testLine1"),
                                                                  address_line_2 = Some("testLine2"),
