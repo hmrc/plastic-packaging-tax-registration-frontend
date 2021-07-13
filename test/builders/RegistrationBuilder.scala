@@ -90,6 +90,9 @@ trait RegistrationBuilder {
   def withMetaData(metaData: MetaData): RegistrationModifier =
     _.copy(metaData = metaData)
 
+  def withUserHeaders(headers: Map[String, String]): RegistrationModifier =
+    _.copy(userHeaders = Some(headers))
+
   def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier =
     _.copy(organisationDetails = organisationDetails)
 

@@ -109,7 +109,9 @@ class ReviewRegistrationController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       markRegistrationAsCompleted().flatMap {
         case Right(updatedRegistration) =>
-          subscriptionsConnector.submitSubscription(getSafeId(updatedRegistration),
+          val updatedRegistrationWithUserHeaders =
+            updatedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
+          subscriptionsConnector.submitSubscription(getSafeId(updatedRegistrationWithUserHeaders),
                                                     updatedRegistration
           ).map { response =>
             successSubmissionCounter.inc()
