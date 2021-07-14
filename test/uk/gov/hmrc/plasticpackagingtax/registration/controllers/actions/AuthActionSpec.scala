@@ -16,19 +16,19 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
-import base.PptTestData.{newEnrolment, newEnrolments, pptEnrolment}
-import base.{MetricsMocks, PptTestData}
 import base.unit.ControllerSpec
+import base.{MetricsMocks, PptTestData}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 import scala.concurrent.Future
 
 class AuthActionSpec extends ControllerSpec with MetricsMocks {
+
+  private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
 
   private def createAuthAction(
     utrAllowedList: UtrAllowedList = new UtrAllowedList(Seq.empty)
@@ -39,84 +39,19 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
                        stubMessagesControllerComponents()
     )
 
-  private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
-
   "Auth Action" should {
 
-    "return InsufficientEnrolments when UTR number is missing" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("")))
-      authorizedUser(user)
-
-      intercept[InsufficientEnrolments] {
-        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
-      }
-    }
-
-    "process request when UTR number is present" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
+    "process request successfully is User Identity Data is available" in {
+      val user = PptTestData.newUser("123")
       authorizedUser(user)
 
       await(
         createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
       ) mustBe Results.Ok
-    }
-
-    "process request when utr is present and multiple identifier exist for same key" in {
-      val user = PptTestData.newUser("123",
-                                     Some(
-                                       newEnrolments(
-                                         newEnrolment(AuthAction.pptEnrolmentKey,
-                                                      AuthAction.pptEnrolmentIdentifierName,
-                                                      "555"
-                                         ),
-                                         newEnrolment(AuthAction.pptEnrolmentKey, "ABC-Name", "999")
-                                       )
-                                     )
-      )
-      authorizedUser(user)
-
-      await(
-        createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
-      ) mustBe Results.Ok
-    }
-
-    "return InsufficientEnrolments when utr is not present and multiple identifier exist for same key" in {
-      val user = PptTestData.newUser(
-        "123",
-        Some(
-          newEnrolments(newEnrolment(AuthAction.pptEnrolmentKey, "DEF-NAME", "555"),
-                        newEnrolment(AuthAction.pptEnrolmentKey, "ABC-Name", "999")
-          )
-        )
-      )
-      authorizedUser(user)
-
-      intercept[InsufficientEnrolments] {
-        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
-      }
-    }
-
-    "return InsufficientEnrolments when utr is present but no ppt enrolment key found" in {
-      val user = PptTestData.newUser("123",
-                                     Some(
-                                       newEnrolments(
-                                         newEnrolment("SOME-OTHER-KEY",
-                                                      AuthAction.pptEnrolmentIdentifierName,
-                                                      "555"
-                                         ),
-                                         newEnrolment(AuthAction.pptEnrolmentKey, "ABC-Name", "999")
-                                       )
-                                     )
-      )
-      authorizedUser(user)
-
-      intercept[InsufficientEnrolments] {
-        await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
-      }
     }
 
     "time calls to authorisation" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("123")))
+      val user = PptTestData.newUser("123")
       authorizedUser(user)
 
       await(createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator))
@@ -125,24 +60,25 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       ).getCount should be > 1L
     }
 
-    "process request when UTR number is present and allowed" in {
-      val utr  = "555"
-      val user = PptTestData.newUser("123", Some(pptEnrolment(utr)))
+    "process request when use email number is allowed" in {
+      val allowedEmail = "amina@hmrc.co.uk"
+      val user         = PptTestData.newUser("123")
       authorizedUser(user)
 
       await(
-        createAuthAction(new UtrAllowedList(Seq(utr))).invokeBlock(authRequest(Headers(), user),
-                                                                   okResponseGenerator
+        createAuthAction(new UtrAllowedList(Seq(allowedEmail))).invokeBlock(
+          authRequest(Headers(), user),
+          okResponseGenerator
         )
       ) mustBe Results.Ok
     }
 
-    "redirect to home when UTR number is present but not allowed" in {
-      val user = PptTestData.newUser("123", Some(pptEnrolment("555")))
+    "redirect to unauthorised page when user email is not allowed" in {
+      val user = PptTestData.newUser("123")
       authorizedUser(user)
 
       val result =
-        createAuthAction(new UtrAllowedList(Seq("someOtherUtr"))).invokeBlock(
+        createAuthAction(new UtrAllowedList(Seq("not.allowed@hmrc.co.uk"))).invokeBlock(
           authRequest(Headers(), user),
           okResponseGenerator
         )
