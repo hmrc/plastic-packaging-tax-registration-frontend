@@ -16,7 +16,7 @@
 
 package base
 
-import base.PptTestData.{newUser, pptEnrolment}
+import base.PptTestData.newUser
 import org.joda.time.DateTimeZone.UTC
 import org.joda.time.{DateTime, LocalDate}
 import org.mockito.ArgumentMatchers
@@ -46,7 +46,6 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
                                           stubMessagesControllerComponents()
   )
 
-  private val exampleUser     = newUser("external1", Some(pptEnrolment("123")))
   val nrsGroupIdentifierValue = Some("groupIdentifierValue")
   val nrsCredentialRole       = Some(User)
   val nrsMdtpInformation      = MdtpInformation("deviceId", "sessionId")
@@ -69,6 +68,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val currentLoginTime: DateTime  = new DateTime(1530442800000L, UTC)
   val previousLoginTime: DateTime = new DateTime(1530464400000L, UTC)
   val nrsLoginTimes               = LoginTimes(currentLoginTime, Some(previousLoginTime))
+  private val exampleUser         = newUser()
 
   // format: off
   def authorizedUser(user: SignedInUser = exampleUser): Unit =
