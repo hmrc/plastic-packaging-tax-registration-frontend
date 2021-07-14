@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  userEmailAllowedList: UtrAllowedList,
+  userEmailAllowedList: EmailAllowedList,
   metrics: Metrics,
   mcc: MessagesControllerComponents
 ) extends AuthAction with AuthorisedFunctions {
