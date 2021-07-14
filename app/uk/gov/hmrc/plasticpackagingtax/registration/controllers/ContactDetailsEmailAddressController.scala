@@ -39,7 +39,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   VERIFIED
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Cacheable,
+  PrimaryContactDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -118,13 +122,14 @@ class ContactDetailsEmailAddressController @Inject() (
   private def updatedPrimaryContactDetails(formData: EmailAddress, registration: Registration) =
     registration.primaryContactDetails.copy(email = Some(formData.value))
 
-  private def updatedJourneyId(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+  private def updatedJourneyId(registration: Registration, journeyId: String)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] = {
+    val primaryContact = registration.primaryContactDetails.copy(journeyId = Some(journeyId))
     update {
-      registration =>
-        registration.copy(primaryContactDetails =
-          registration.primaryContactDetails.copy(journeyId = Some(journeyId))
-        )
+      registration => registration.copy(primaryContactDetails = primaryContact)
     }
+  }
 
   private def saveAndContinue(registration: Registration, email: String)(implicit
     hc: HeaderCarrier,
@@ -136,10 +141,20 @@ class ContactDetailsEmailAddressController @Inject() (
           Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
         case NOT_VERIFIED =>
           request.user.identityData.credentials.map { creds =>
-            createEmailVerification(creds.providerId, email).flatMap {
+            createEmailVerification(creds.providerId,
+                                    registration.primaryContactDetails.email.get
+            ).flatMap {
               case Right(verificationJourneyStartUrl) =>
-                updatedJourneyId(verificationJourneyStartUrl.split("\\/").slice(0, 4).last)
-                Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
+                updatedJourneyId(registration,
+                                 verificationJourneyStartUrl.split("/").slice(0, 4).last
+                ).flatMap {
+                  case Left(error) => throw error
+                  case Right(registration) =>
+                    Future(
+                      Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage())
+                    )
+                }
+
               case Left(error) => throw error
             }
           }.getOrElse(Future(Results.Redirect(routes.UnauthorisedController.onPageLoad())))

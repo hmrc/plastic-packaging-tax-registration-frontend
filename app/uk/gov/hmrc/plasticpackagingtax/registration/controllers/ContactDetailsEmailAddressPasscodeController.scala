@@ -72,9 +72,10 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Result] =
-    createPassCodeVerficationRequest(passcode,
-                                     email.get,
-                                     request.registration.primaryContactDetails.journeyId.get
+    createPassCodeVerficationRequest(
+      passcode,
+      email.get,
+      request.registration.primaryContactDetails.journeyId.getOrElse("")
     ).flatMap {
       case Right("complete") =>
         Future(
