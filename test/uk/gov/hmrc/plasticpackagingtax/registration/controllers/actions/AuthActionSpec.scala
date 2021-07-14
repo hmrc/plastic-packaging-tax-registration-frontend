@@ -31,10 +31,10 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
   private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
 
   private def createAuthAction(
-    utrAllowedList: UtrAllowedList = new UtrAllowedList(Seq.empty)
+    emailAllowedList: EmailAllowedList = new EmailAllowedList(Seq.empty)
   ): AuthAction =
     new AuthActionImpl(mockAuthConnector,
-                       utrAllowedList,
+                       emailAllowedList,
                        metricsMock,
                        stubMessagesControllerComponents()
     )
@@ -66,7 +66,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       await(
-        createAuthAction(new UtrAllowedList(Seq(allowedEmail))).invokeBlock(
+        createAuthAction(new EmailAllowedList(Seq(allowedEmail))).invokeBlock(
           authRequest(Headers(), user),
           okResponseGenerator
         )
@@ -78,7 +78,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       val result =
-        createAuthAction(new UtrAllowedList(Seq("not.allowed@hmrc.co.uk"))).invokeBlock(
+        createAuthAction(new EmailAllowedList(Seq("not.allowed@hmrc.co.uk"))).invokeBlock(
           authRequest(Headers(), user),
           okResponseGenerator
         )
