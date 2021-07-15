@@ -19,7 +19,6 @@ package builders
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.VERIFIED
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 
 import java.util.UUID
