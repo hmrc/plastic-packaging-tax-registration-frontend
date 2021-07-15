@@ -23,23 +23,37 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, ur
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
-import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  CreateEmailVerificationRequest,
-  Email,
-  EmailStatus,
-  VerificationStatus,
-  VerifyPasscodeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
+  COMPLETE,
+  INCORRECT_PASSCODE,
+  JOURNEY_NOT_FOUND,
+  TOO_MANY_ATTEMPTS
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
 
 class EmailVerificationConnectorSpec
     extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
 
   lazy val connector: EmailVerificationConnector =
     app.injector.instanceOf[EmailVerificationConnector]
+
+  val emailVerificationRequest = CreateEmailVerificationRequest(credId = "credId",
+                                                                continueUrl = "http://continue",
+                                                                origin = "origin",
+                                                                accessibilityStatementUrl =
+                                                                  "http://accessibility",
+                                                                email =
+                                                                  Email(address = "test@hmrc.com",
+                                                                        enterUrl = "hhtp://enterUrl"
+                                                                  ),
+                                                                backUrl = "http://back",
+                                                                pageTitle = "PPT Title",
+                                                                deskproServiceName = "ppt"
+  )
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -65,21 +79,7 @@ class EmailVerificationConnectorSpec
                                             Json.obj("redirectUri" -> testJourneyStartUrl).toString
         )
 
-        val res = await(
-          connector.create(
-            CreateEmailVerificationRequest(credId = "credId",
-                                           continueUrl = "http://continue",
-                                           origin = "origin",
-                                           accessibilityStatementUrl = "http://accessibility",
-                                           email = Email(address = "test@hmrc.com",
-                                                         enterUrl = "hhtp://enterUrl"
-                                           ),
-                                           backUrl = "http://back",
-                                           pageTitle = "PPT Title",
-                                           deskproServiceName = "ppt"
-            )
-          )
-        )
+        val res = await(connector.create(emailVerificationRequest))
 
         res.right.get mustBe testJourneyStartUrl
         getTimer("ppt.email.verification.create.timer").getCount mustBe 1
@@ -94,21 +94,7 @@ class EmailVerificationConnectorSpec
                                             Json.obj("redirectUri" -> testJourneyStartUrl).toString
         )
 
-        val res = await(
-          connector.create(
-            CreateEmailVerificationRequest(credId = "credId",
-                                           continueUrl = "http://continue",
-                                           origin = "origin",
-                                           accessibilityStatementUrl = "http://accessibility",
-                                           email = Email(address = "test@hmrc.com",
-                                                         enterUrl = "hhtp://enterUrl"
-                                           ),
-                                           backUrl = "http://back",
-                                           pageTitle = "PPT Title",
-                                           deskproServiceName = "ppt"
-            )
-          )
-        )
+        val res = await(connector.create(emailVerificationRequest))
 
         res.left.value.getMessage must include("Failed to create email verification")
       }
@@ -117,21 +103,7 @@ class EmailVerificationConnectorSpec
 
         givenPostToEmailVerificationReturns(Status.CREATED, "someRubbish")
 
-        val res = await(
-          connector.create(
-            CreateEmailVerificationRequest(credId = "credId",
-                                           continueUrl = "http://continue",
-                                           origin = "origin",
-                                           accessibilityStatementUrl = "http://accessibility",
-                                           email = Email(address = "test@hmrc.com",
-                                                         enterUrl = "hhtp://enterUrl"
-                                           ),
-                                           backUrl = "http://back",
-                                           pageTitle = "PPT Title",
-                                           deskproServiceName = "ppt"
-            )
-          )
-        )
+        val res = await(connector.create(emailVerificationRequest))
 
         res.left.value.getMessage must include("Error while verifying email")
       }
@@ -143,7 +115,7 @@ class EmailVerificationConnectorSpec
 
     "returns valid email details" in {
       val validResponse = VerificationStatus(Seq(EmailStatus("mail@mail.com", true, false)))
-      giveGetEmailVerificationDetailsReturns(
+      givenGetEmailVerificationDetailsReturns(
         OK,
         credId,
         toJson(validResponse)(VerificationStatus.format).toString
@@ -157,9 +129,9 @@ class EmailVerificationConnectorSpec
 
     "service returns non success status code" in {
       val validResponse = Seq(EmailStatus("mail@mail.com", true, false))
-      giveGetEmailVerificationDetailsReturns(Status.BAD_REQUEST,
-                                             credId,
-                                             toJson(validResponse).toString
+      givenGetEmailVerificationDetailsReturns(Status.BAD_REQUEST,
+                                              credId,
+                                              toJson(validResponse).toString
       )
 
       val res = await(connector.getStatus(credId))
@@ -168,7 +140,7 @@ class EmailVerificationConnectorSpec
     }
 
     "service returns not found status code" in {
-      giveGetEmailVerificationDetailsReturns(Status.NOT_FOUND, credId)
+      givenGetEmailVerificationDetailsReturns(Status.NOT_FOUND, credId, "")
 
       val res = await(connector.getStatus(credId))
 
@@ -176,7 +148,7 @@ class EmailVerificationConnectorSpec
     }
 
     "service returns invalid response" in {
-      giveGetEmailVerificationDetailsReturns(Status.OK, credId, "someRubbish")
+      givenGetEmailVerificationDetailsReturns(Status.OK, credId, "someRubbish")
 
       val res = await(connector.getStatus(credId))
 
@@ -194,7 +166,7 @@ class EmailVerificationConnectorSpec
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
-      res.value mustBe "complete"
+      res.value mustBe COMPLETE
       getTimer("ppt.email.verification.verify.passcode.timer").getCount mustBe 1
     }
 
@@ -204,7 +176,7 @@ class EmailVerificationConnectorSpec
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
-      res.value mustBe "incorrectPasscode"
+      res.value mustBe INCORRECT_PASSCODE
     }
 
     "returns forbidden" in {
@@ -213,20 +185,20 @@ class EmailVerificationConnectorSpec
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
-      res.value mustBe "tooManyAttempts"
+      res.value mustBe TOO_MANY_ATTEMPTS
     }
 
     "returns not found" in {
       val validResponse = "{\"status\":\"passcodeNotFound\"}"
-      givenPostToSubmitPascode(FORBIDDEN, journeyId, validResponse)
+      givenPostToSubmitPascode(NOT_FOUND, journeyId, validResponse)
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
-      res.value mustBe "passcodeNotFound"
+      res.value mustBe JOURNEY_NOT_FOUND
     }
 
     "returns internal server error" in {
-      givenPostToSubmitPascode(INTERNAL_SERVER_ERROR, journeyId)
+      givenPostToSubmitPascode(INTERNAL_SERVER_ERROR, journeyId, "")
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
@@ -234,11 +206,7 @@ class EmailVerificationConnectorSpec
     }
   }
 
-  private def giveGetEmailVerificationDetailsReturns(
-    status: Int,
-    credId: String,
-    body: String = ""
-  ) =
+  private def givenGetEmailVerificationDetailsReturns(status: Int, credId: String, body: String) =
     stubFor(
       get(urlMatching(s"/email-verification/verification-status/$credId"))
         .willReturn(
@@ -248,7 +216,7 @@ class EmailVerificationConnectorSpec
         )
     )
 
-  private def givenPostToEmailVerificationReturns(status: Int, body: String = "") =
+  private def givenPostToEmailVerificationReturns(status: Int, body: String) =
     stubFor(
       post("/email-verification/verify-email")
         .willReturn(
@@ -258,7 +226,7 @@ class EmailVerificationConnectorSpec
         )
     )
 
-  private def givenPostToSubmitPascode(status: Int, journeyId: String, body: String = "") =
+  private def givenPostToSubmitPascode(status: Int, journeyId: String, body: String) =
     stubFor(
       post(s"/email-verification/journey/$journeyId/passcode")
         .willReturn(

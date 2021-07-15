@@ -17,33 +17,27 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{await, redirectLocation, status}
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  ServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.ServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddressPasscode
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
+  COMPLETE,
+  INCORRECT_PASSCODE,
+  JOURNEY_NOT_FOUND,
+  JourneyStatus,
+  TOO_MANY_ATTEMPTS
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{EmailAddress, EmailAddressPasscode}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  EmailStatus,
-  VerificationStatus,
-  VerifyPasscodeRequest
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  email_address_page,
-  email_address_passcode_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
@@ -74,8 +68,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
   }
 
   def mockEmailVerificationVerifyPasscode(
-    dataToReturn: String
-  ): OngoingStubbing[Future[Either[ServiceError, String]]] =
+    dataToReturn: JourneyStatus
+  ): OngoingStubbing[Future[Either[ServiceError, JourneyStatus]]] =
     when(
       mockEmailVerificationConnector.verifyPasscode(any[String], any[VerifyPasscodeRequest])(any())
     )
@@ -108,7 +102,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
-          mockEmailVerificationVerifyPasscode("complete")
+          mockEmailVerificationVerifyPasscode(COMPLETE)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
           status(result) mustBe SEE_OTHER
@@ -130,7 +124,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
-          mockEmailVerificationVerifyPasscode("incorrectPasscode")
+          mockEmailVerificationVerifyPasscode(INCORRECT_PASSCODE)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
@@ -144,7 +138,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
-          mockEmailVerificationVerifyPasscode("tooManyAttempts")
+          mockEmailVerificationVerifyPasscode(TOO_MANY_ATTEMPTS)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
@@ -158,7 +152,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
-          mockEmailVerificationVerifyPasscode("journeyNotFound")
+          mockEmailVerificationVerifyPasscode(JOURNEY_NOT_FOUND)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 

@@ -17,10 +17,17 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
-import play.api.http.Status.{BAD_REQUEST, CREATED, FORBIDDEN, NOT_FOUND, OK}
+import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
+  COMPLETE,
+  INCORRECT_PASSCODE,
+  JOURNEY_NOT_FOUND,
+  JourneyStatus,
+  TOO_MANY_ATTEMPTS
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   CreateEmailVerificationRequest,
   VerificationStatus,
@@ -69,7 +76,8 @@ class EmailVerificationConnector @Inject() (
         case response =>
           Left(
             DownstreamServiceError(
-              s"Failed to create email verification, status: ${response.status}, error: ${response.body}"
+              s"Failed to create email verification, status: ${response.status}, error: ${response.body}",
+              CreateEmailVerificationException("Failed to create email verification")
             )
           )
       }.recover {
@@ -80,7 +88,7 @@ class EmailVerificationConnector @Inject() (
 
   def verifyPasscode(journeyId: String, payload: VerifyPasscodeRequest)(implicit
     hc: HeaderCarrier
-  ): Future[Either[ServiceError, String]] = {
+  ): Future[Either[ServiceError, JourneyStatus]] = {
     val timer = metrics.defaultRegistry.timer("ppt.email.verification.verify.passcode.timer").time()
     httpClient.POST[VerifyPasscodeRequest, HttpResponse](
       appConfig.getSubmitPassscodeUrl(journeyId = journeyId),
@@ -88,18 +96,19 @@ class EmailVerificationConnector @Inject() (
     )
       .andThen { case _ => timer.stop() }
       .map {
-        case response @ HttpResponse(OK, _, _) =>
-          Right((response.json \ "status").as[String])
-        case response @ HttpResponse(BAD_REQUEST, _, _) =>
-          Right((response.json \ "status").as[String])
-        case response @ HttpResponse(FORBIDDEN, _, _) =>
-          Right((response.json \ "status").as[String])
-        case response @ HttpResponse(NOT_FOUND, _, _) =>
-          Right((response.json \ "status").as[String])
+        case _ @HttpResponse(OK, _, _) =>
+          Right(COMPLETE)
+        case _ @HttpResponse(BAD_REQUEST, _, _) =>
+          Right(INCORRECT_PASSCODE)
+        case _ @HttpResponse(FORBIDDEN, _, _) =>
+          Right(TOO_MANY_ATTEMPTS)
+        case _ @HttpResponse(NOT_FOUND, _, _) =>
+          Right(JOURNEY_NOT_FOUND)
         case response =>
           Left(
             DownstreamServiceError(
-              s"Failed to verify passcode, status: ${response.status}, error: ${response.body}"
+              s"Failed to verify passcode, status: ${response.status}, error: ${response.body}",
+              VerifyPasscodeException("Failed to verify passcode")
             )
           )
       }.recover {
@@ -111,3 +120,6 @@ class EmailVerificationConnector @Inject() (
   }
 
 }
+
+case class CreateEmailVerificationException(message: String) extends Exception
+case class VerifyPasscodeException(message: String)          extends Exception

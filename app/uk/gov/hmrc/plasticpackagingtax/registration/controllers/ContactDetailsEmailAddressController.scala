@@ -39,11 +39,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   VERIFIED
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Cacheable,
-  PrimaryContactDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -117,7 +113,15 @@ class ContactDetailsEmailAddressController @Inject() (
           }
         case Left(error) => throw error
       }
-    }.getOrElse(Future(Left(DownstreamServiceError("Cannot find user credentials id"))))
+    }.getOrElse(
+      Future(
+        Left(
+          DownstreamServiceError("Cannot find user credentials id",
+                                 RegistrationException("Cannot find user credentials id")
+          )
+        )
+      )
+    )
 
   private def updatedPrimaryContactDetails(formData: EmailAddress, registration: Registration) =
     registration.primaryContactDetails.copy(email = Some(formData.value))
@@ -180,3 +184,5 @@ class ContactDetailsEmailAddressController @Inject() (
     )
 
 }
+
+case class RegistrationException(message: String) extends Exception

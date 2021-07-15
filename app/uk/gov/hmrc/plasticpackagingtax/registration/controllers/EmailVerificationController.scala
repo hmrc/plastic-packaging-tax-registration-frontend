@@ -60,7 +60,8 @@ class EmailVerificationController @Inject() (
               case Some(response) => handleResponse(response.emails)
               case None =>
                 throw DownstreamServiceError(
-                  "Error while getting email verification status. No data returned for user."
+                  "Error while getting email verification status. No data returned for user.",
+                  EmailVerificationStatusException("Failed to get email verification status.")
                 )
             }
           case Left(error) => throw error
@@ -91,3 +92,5 @@ class EmailVerificationController @Inject() (
     }
 
 }
+
+case class EmailVerificationStatusException(message: String) extends Exception

@@ -29,16 +29,11 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   ServiceError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  EmailStatus,
-  VerificationStatus
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   CreateEmailVerificationRequest,
   EmailStatus,

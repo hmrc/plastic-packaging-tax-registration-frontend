@@ -65,7 +65,11 @@ trait RegistrationBuilder {
                    organisationType = Some(UK_COMPANY)
                  ),
                  metaData =
-                   MetaData(verifiedEmails = Seq(EmailStatus("test@test.com", true, false)))
+                   MetaData(verifiedEmails =
+                     Seq(
+                       EmailStatus(emailAddress = "test@test.com", verified = true, locked = false)
+                     )
+                   )
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)

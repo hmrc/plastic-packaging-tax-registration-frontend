@@ -26,6 +26,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddressPasscode
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
+  COMPLETE,
+  INCORRECT_PASSCODE,
+  JourneyStatus,
+  TOO_MANY_ATTEMPTS
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
@@ -72,16 +78,15 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Result] =
-    createPassCodeVerficationRequest(
-      passcode,
-      email.get,
-      request.registration.primaryContactDetails.journeyId.getOrElse("")
+    verifyEmailPasscode(passcode,
+                        email.get,
+                        request.registration.primaryContactDetails.journeyId.getOrElse("")
     ).flatMap {
-      case Right("complete") =>
+      case Right(COMPLETE) =>
         Future(
           Redirect(routes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage())
         )
-      case Right("incorrectPasscode") =>
+      case Right(INCORRECT_PASSCODE) =>
         Future.successful(
           BadRequest(
             page(EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
@@ -89,7 +94,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
             )
           )
         )
-      case Right("tooManyAttempts") =>
+      case Right(TOO_MANY_ATTEMPTS) =>
         Future.successful(
           BadRequest(
             page(EmailAddressPasscode.form().withError("tooManyAttempts", "Too Many Attempts"),
@@ -97,7 +102,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
             )
           )
         )
-      case Right("journeyNotFound") =>
+      case Right(_) =>
         Future.successful(
           BadRequest(
             page(EmailAddressPasscode.form().withError("journeyNotFound",
@@ -110,9 +115,9 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
       case Left(error) => throw error
     }
 
-  private def createPassCodeVerficationRequest(passcode: String, email: String, journeyId: String)(
-    implicit hc: HeaderCarrier
-  ): Future[Either[ServiceError, String]] =
+  private def verifyEmailPasscode(passcode: String, email: String, journeyId: String)(implicit
+    hc: HeaderCarrier
+  ): Future[Either[ServiceError, JourneyStatus]] =
     emailVerificationConnector.verifyPasscode(
       journeyId = journeyId,
       VerifyPasscodeRequest(passcode = passcode, email = email)
