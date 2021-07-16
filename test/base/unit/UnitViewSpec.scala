@@ -35,7 +35,7 @@ class UnitViewSpec
   import utils.FakeRequestCSRFSupport._
 
   implicit val request: Request[AnyContent] =
-    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser(), Some("123"))
+    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser())
 
   protected implicit def messages(implicit request: Request[_]): Messages =
     realMessagesApi.preferred(request)

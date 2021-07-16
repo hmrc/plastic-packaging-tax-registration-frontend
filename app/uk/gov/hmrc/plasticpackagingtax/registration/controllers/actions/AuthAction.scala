@@ -97,10 +97,9 @@ class AuthActionImpl @Inject() (
     email: String,
     allEnrolments: Enrolments
   ) =
-    if (userEmailAllowedList.isAllowed(email)) {
-      val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-      block(new AuthenticatedRequest(request, pptLoggedInUser, identityData.internalId))
-    } else {
+    if (userEmailAllowedList.isAllowed(email))
+      block(new AuthenticatedRequest(request, SignedInUser(allEnrolments, identityData)))
+    else {
       logger.warn("User is not allowed, access denied")
       Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
     }

@@ -68,7 +68,7 @@ trait ControllerSpec
     headers: Headers = Headers(),
     user: SignedInUser = PptTestData.newUser("123")
   ): AuthenticatedRequest[AnyContentAsEmpty.type] =
-    new AuthenticatedRequest(FakeRequest().withHeaders(headers), user, user.identityData.internalId)
+    new AuthenticatedRequest(FakeRequest().withHeaders(headers), user)
 
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
