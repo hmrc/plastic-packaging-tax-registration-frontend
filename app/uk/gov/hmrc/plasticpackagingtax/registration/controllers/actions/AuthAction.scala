@@ -24,10 +24,6 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction.{
-  pptEnrolmentIdentifierName,
-  pptEnrolmentKey
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
@@ -40,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  utrAllowedList: UtrAllowedList,
+  userEmailAllowedList: EmailAllowedList,
   metrics: Metrics,
   mcc: MessagesControllerComponents
 ) extends AuthAction with AuthorisedFunctions {
@@ -90,13 +86,7 @@ class AuthActionImpl @Inject() (
                                           Some(loginTimes)
           )
 
-          getPptEnrolmentId(allEnrolments, pptEnrolmentIdentifierName) match {
-            case None =>
-              throw InsufficientEnrolments(
-                s"key: $pptEnrolmentKey and identifier: $pptEnrolmentIdentifierName is not found"
-              )
-            case Some(id) => executeRequest(request, block, identityData, id, allEnrolments)
-          }
+          executeRequest(request, block, identityData, email.getOrElse(""), allEnrolments)
       }
   }
 
@@ -104,37 +94,16 @@ class AuthActionImpl @Inject() (
     request: Request[A],
     block: AuthenticatedRequest[A] => Future[Result],
     identityData: IdentityData,
-    id: String,
+    email: String,
     allEnrolments: Enrolments
   ) =
-    if (utrAllowedList.isAllowed(id)) {
-      val pptLoggedInUser = SignedInUser(allEnrolments, identityData)
-      block(new AuthenticatedRequest(request, pptLoggedInUser, Some(id)))
-    } else {
-      logger.warn("User id is not allowed, access denied")
+    if (userEmailAllowedList.isAllowed(email))
+      block(new AuthenticatedRequest(request, SignedInUser(allEnrolments, identityData)))
+    else {
+      logger.warn("User is not allowed, access denied")
       Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
     }
 
-  private def getPptEnrolmentId(enrolments: Enrolments, identifier: String): Option[String] =
-    getPptEnrolment(enrolments, identifier) match {
-      case Some(enrolmentId) => Option(enrolmentId).filter(_.value.trim.nonEmpty).map(_.value)
-      case None              => Option.empty
-    }
-
-  private def getPptEnrolment(
-    enrolmentsList: Enrolments,
-    identifier: String
-  ): Option[EnrolmentIdentifier] =
-    enrolmentsList.enrolments
-      .filter(_.key == pptEnrolmentKey)
-      .flatMap(_.identifiers)
-      .find(_.key == identifier)
-
-}
-
-object AuthAction {
-  val pptEnrolmentKey            = "HMRC-PPT-ORG"
-  val pptEnrolmentIdentifierName = "UTR"
 }
 
 @ImplementedBy(classOf[AuthActionImpl])

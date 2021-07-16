@@ -20,6 +20,5 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registra
 
 class JourneyRequest[+A](
   val authenticatedRequest: AuthenticatedRequest[A],
-  val registration: Registration,
-  override val enrolmentId: Option[String]
-) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user, enrolmentId) {}
+  val registration: Registration
+) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user) {}

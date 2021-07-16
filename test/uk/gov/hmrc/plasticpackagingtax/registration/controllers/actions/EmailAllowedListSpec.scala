@@ -20,23 +20,25 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 
-class UtrAllowedListSpec extends AnyWordSpec with Matchers with MockitoSugar {
+class EmailAllowedListSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-  "utr allow list" when {
+  "email allow list" when {
+    val testEmail1 = "email1@test.com"
+    val testEmail2 = "email2@test.com"
     "is empty" should {
       "allow everyone" in {
-        val utrAllowedList = new UtrAllowedList(Seq.empty)
-        utrAllowedList.isAllowed("12345") mustBe true
-        utrAllowedList.isAllowed("0987") mustBe true
+        val emailAllowedList = new EmailAllowedList(Seq.empty)
+        emailAllowedList.isAllowed(testEmail1) mustBe true
+        emailAllowedList.isAllowed(testEmail2) mustBe true
       }
     }
     "has elements" should {
-      val utrAllowedList = new UtrAllowedList(Seq("12345"))
-      "allow listed utr" in {
-        utrAllowedList.isAllowed("12345") mustBe true
+      val emailAllowedList = new EmailAllowedList(Seq(testEmail1))
+      "allow listed email" in {
+        emailAllowedList.isAllowed(testEmail1) mustBe true
       }
-      "disallow not listed utr" in {
-        utrAllowedList.isAllowed("0987") mustBe false
+      "disallow not listed email" in {
+        emailAllowedList.isAllowed(testEmail2) mustBe false
       }
     }
   }

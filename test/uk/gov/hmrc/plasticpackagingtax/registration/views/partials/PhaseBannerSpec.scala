@@ -63,8 +63,7 @@ class PhaseBannerSpec extends UnitViewSpec with Matchers {
         import utils.FakeRequestCSRFSupport._
 
         val request = new AuthenticatedRequest(FakeRequest("GET", requestPath).withCSRFToken,
-                                               PptTestData.newUser(),
-                                               Some("123")
+                                               PptTestData.newUser()
         )
         createBanner(request)
           .getElementsByClass("govuk-phase-banner__text").first()
