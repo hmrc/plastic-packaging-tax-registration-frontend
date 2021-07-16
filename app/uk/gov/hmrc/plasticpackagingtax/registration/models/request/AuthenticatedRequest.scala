@@ -19,8 +19,5 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 
-class AuthenticatedRequest[+A](
-  request: Request[A],
-  val user: SignedInUser,
-  val enrolmentId: Option[String]
-) extends WrappedRequest[A](request) {}
+class AuthenticatedRequest[+A](request: Request[A], val user: SignedInUser)
+    extends WrappedRequest[A](request) {}
