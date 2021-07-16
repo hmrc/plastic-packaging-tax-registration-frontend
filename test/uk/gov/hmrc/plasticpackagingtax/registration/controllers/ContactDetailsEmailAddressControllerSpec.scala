@@ -75,10 +75,18 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   }
 
   def mockEmailVerificationGetStatus(
-    dataToReturn: VerificationStatus
+    dataToReturn: Option[VerificationStatus]
   ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
-    when(mockEmailVerificationConnector.getStatus(any[String])(any()))
-      .thenReturn(Future.successful(Right(Some(dataToReturn))))
+    when(mockEmailVerificationConnector.getStatus(any[String])(any())).thenReturn(
+      Future(Right(dataToReturn))
+    )
+
+  def mockEmailVerificationGetStatusWithException(
+    error: ServiceError
+  ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
+    when(mockEmailVerificationConnector.getStatus(any[String])(any())).thenReturn(
+      Future(Left(error))
+    )
 
   def mockAppConfigEmailVerificationEnabled(enabled: Boolean): OngoingStubbing[Boolean] =
     when(config.emailVerificationEnabled)
@@ -90,6 +98,13 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     when(
       mockEmailVerificationConnector.create(any[CreateEmailVerificationRequest])(any())
     ).thenReturn(Future.successful(Right(dataToReturn)))
+
+  def mockEmailVerificationCreateWithException(
+    error: ServiceError
+  ): OngoingStubbing[Future[Either[ServiceError, String]]] =
+    when(
+      mockEmailVerificationConnector.create(any[CreateEmailVerificationRequest])(any())
+    ).thenReturn(Future(Left(error)))
 
   "ContactDetailsEmailAddressController" should {
 
@@ -120,7 +135,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           mockRegistrationUpdate(reg)
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
-            VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false)))
+            Some(
+              VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false)))
+            )
           )
 
           val result =
@@ -140,6 +157,53 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         }
       }
 
+      "return 303 (OK) for no status response" + formAction._1 when {
+        "user submits an email address" in {
+          val reg = aRegistration()
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
+          mockEmailVerificationGetStatus(None)
+
+          val result =
+            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+
+          status(result) mustBe SEE_OTHER
+          modifiedRegistration.primaryContactDetails.email mustBe Some("test@test.com")
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.ContactDetailsTelephoneNumberController.displayPage().url
+              )
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "return 303 (OK) for get status throw error" + formAction._1 when {
+        "user submits an email address" in {
+          val reg = aRegistration()
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
+          mockEmailVerificationGetStatusWithException(
+            DownstreamServiceError("Failed to get status", new Exception())
+          )
+
+          intercept[DownstreamServiceError] {
+            await(
+              controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+            )
+          }
+          reset(mockRegistrationConnector)
+          reset(mockEmailVerificationConnector)
+        }
+      }
+
       "return 303 (OK) for not verified email address " + formAction._1 when {
         "user submits an email address" in {
           val reg = aRegistration(
@@ -152,7 +216,11 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           mockRegistrationUpdate(reg)
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
-            VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))
+            Some(
+              VerificationStatus(
+                Seq(EmailStatus("test1@test.com", verified = false, locked = false))
+              )
+            )
           )
           mockEmailVerificationCreate("/email-verification/journey/234234234-23423/passcode")
 
@@ -176,7 +244,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         "user submits an email address" in {
           val reg = aRegistration(
             withMetaData(metaData =
-              MetaData(verifiedEmails = Seq(EmailStatus("test@test.com", false, true)))
+              MetaData(verifiedEmails =
+                Seq(EmailStatus(emailAddress = "test@test.com", false, true))
+              )
             )
           )
           authorizedUser()
@@ -184,7 +254,11 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           mockRegistrationUpdate(reg)
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
-            VerificationStatus(Seq(EmailStatus("test1@test.com", verified = false, locked = false)))
+            Some(
+              VerificationStatus(
+                Seq(EmailStatus(emailAddress = "test1@test.com", verified = false, locked = false))
+              )
+            )
           )
 
           val result =
@@ -217,6 +291,48 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
                 routes.ContactDetailsTelephoneNumberController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "return 303 (OK) for create verification email throw error " + formAction._1 when {
+        "user submits an email address" in {
+          val reg = aRegistration(
+            withMetaData(metaData =
+              MetaData(verifiedEmails =
+                Seq(EmailStatus(emailAddress = "test@test.com", verified = false, locked = false))
+              )
+            )
+          )
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
+          mockEmailVerificationGetStatus(
+            Some(
+              VerificationStatus(
+                Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false))
+              )
+            )
+          )
+          mockEmailVerificationCreateWithException(
+            DownstreamServiceError("Failed to get status", new Exception())
+          )
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              intercept[DownstreamServiceError] {
+                await(
+                  controller.submit()(
+                    postRequestEncoded(EmailAddress("test2@test.com"), formAction)
+                  )
+                )
+              }
+            case "SaveAndComeBackLater" =>
+              val result =
+                controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
           reset(mockRegistrationConnector)
