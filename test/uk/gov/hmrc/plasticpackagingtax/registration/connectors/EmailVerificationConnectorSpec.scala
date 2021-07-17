@@ -105,7 +105,7 @@ class EmailVerificationConnectorSpec
 
         val res = await(connector.create(emailVerificationRequest))
 
-        res.left.value.getMessage must include("Error while verifying email")
+        res.left.value.isInstanceOf[DownstreamServiceError]
       }
     }
   }
@@ -133,10 +133,9 @@ class EmailVerificationConnectorSpec
                                               credId,
                                               toJson(validResponse).toString
       )
-
       val res = await(connector.getStatus(credId))
 
-      res.left.value.getMessage must include("Failed to retrieve email verification status")
+      res.left.value.isInstanceOf[DownstreamServiceError]
     }
 
     "service returns not found status code" in {
@@ -152,7 +151,7 @@ class EmailVerificationConnectorSpec
 
       val res = await(connector.getStatus(credId))
 
-      res.left.value.getMessage must include("Failed to retrieve email verification status")
+      res.left.value.isInstanceOf[DownstreamServiceError]
     }
   }
 
@@ -162,7 +161,7 @@ class EmailVerificationConnectorSpec
 
     "returns complete" in {
       val validResponse = "{\"status\":\"complete\"}"
-      givenPostToSubmitPascode(OK, journeyId, validResponse)
+      givenPostToSubmitPasscode(OK, journeyId, validResponse)
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
@@ -172,7 +171,7 @@ class EmailVerificationConnectorSpec
 
     "returns bad request" in {
       val validResponse = "{\"status\":\"incorrectPasscode\"}"
-      givenPostToSubmitPascode(BAD_REQUEST, journeyId, validResponse)
+      givenPostToSubmitPasscode(BAD_REQUEST, journeyId, validResponse)
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
@@ -181,7 +180,7 @@ class EmailVerificationConnectorSpec
 
     "returns forbidden" in {
       val validResponse = "{\"status\":\"tooManyAttempts\"}"
-      givenPostToSubmitPascode(FORBIDDEN, journeyId, validResponse)
+      givenPostToSubmitPasscode(FORBIDDEN, journeyId, validResponse)
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
@@ -190,7 +189,7 @@ class EmailVerificationConnectorSpec
 
     "returns not found" in {
       val validResponse = "{\"status\":\"passcodeNotFound\"}"
-      givenPostToSubmitPascode(NOT_FOUND, journeyId, validResponse)
+      givenPostToSubmitPasscode(NOT_FOUND, journeyId, validResponse)
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
@@ -198,11 +197,11 @@ class EmailVerificationConnectorSpec
     }
 
     "returns internal server error" in {
-      givenPostToSubmitPascode(INTERNAL_SERVER_ERROR, journeyId, "")
+      givenPostToSubmitPasscode(INTERNAL_SERVER_ERROR, journeyId, "")
 
       val res = await(connector.verifyPasscode(journeyId, verifyPasscodeRequest))
 
-      res.left.value.getMessage must include("Failed to verify passcode, status: 500, error: ")
+      res.left.value.isInstanceOf[DownstreamServiceError]
     }
   }
 
@@ -226,7 +225,7 @@ class EmailVerificationConnectorSpec
         )
     )
 
-  private def givenPostToSubmitPascode(status: Int, journeyId: String, body: String) =
+  private def givenPostToSubmitPasscode(status: Int, journeyId: String, body: String) =
     stubFor(
       post(s"/email-verification/journey/$journeyId/passcode")
         .willReturn(

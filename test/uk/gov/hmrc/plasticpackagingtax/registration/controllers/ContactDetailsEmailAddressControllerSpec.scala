@@ -33,7 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   ServiceError
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, EmailAddress, FullName}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   CreateEmailVerificationRequest,
   EmailStatus,
@@ -338,6 +338,89 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           reset(mockRegistrationConnector)
         }
       }
+
+      "throw exception when cache registration with no email " + formAction._1 when {
+        "user submits an email address" in {
+          val reg = aRegistration(
+            withMetaData(metaData =
+              MetaData(verifiedEmails =
+                Seq(EmailStatus(emailAddress = "test@test.com", verified = false, locked = false))
+              )
+            ),
+            withPrimaryContactDetails(primaryContactDetails =
+              PrimaryContactDetails(fullName =
+                                      Some(FullName(firstName = "Jack", lastName = "Gatsby")),
+                                    jobTitle = Some("Developer"),
+                                    phoneNumber = Some("0203 4567 890"),
+                                    address = Some(
+                                      Address(addressLine1 = "2 Scala Street",
+                                              addressLine2 = Some("Soho"),
+                                              townOrCity = "London",
+                                              postCode = "W1T 2HN"
+                                      )
+                                    ),
+                                    journeyId = Some("journey-id")
+              )
+            )
+          )
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
+          mockEmailVerificationGetStatus(
+            Some(
+              VerificationStatus(
+                Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false))
+              )
+            )
+          )
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              intercept[RegistrationException] {
+                await(
+                  controller.submit()(
+                    postRequestEncoded(EmailAddress("test2@test.com"), formAction)
+                  )
+                )
+              }
+            case "SaveAndComeBackLater" =>
+              val result =
+                controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "return to Registration page when no credentials " + formAction._1 when {
+        "user submits an email address" in {
+          val reg = aRegistration(
+            withMetaData(metaData =
+              MetaData(verifiedEmails =
+                Seq(EmailStatus(emailAddress = "test@test.com", verified = false, locked = false))
+              )
+            )
+          )
+          authorizedUserWithNoCredentials()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockAppConfigEmailVerificationEnabled(true)
+          mockEmailVerificationGetStatus(
+            Some(
+              VerificationStatus(
+                Seq(EmailStatus(emailAddress = "test2@test.com", verified = false, locked = false))
+              )
+            )
+          )
+          intercept[DownstreamServiceError] {
+            await(
+              controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
+            )
+          }
+          reset(mockRegistrationConnector)
+        }
+      }
     }
 
     "return prepopulated form" when {
@@ -401,4 +484,5 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       }
     }
   }
+
 }

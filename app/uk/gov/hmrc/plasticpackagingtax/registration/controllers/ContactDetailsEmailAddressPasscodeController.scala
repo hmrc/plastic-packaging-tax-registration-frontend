@@ -24,7 +24,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   EmailVerificationConnector,
   ServiceError
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  Continue => ContinueAction
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
   COMPLETE,
@@ -64,22 +68,24 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
               },
               emailAddressPasscode =>
                 FormAction.bindFromRequest match {
-                  case uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.Continue =>
-                    continue(emailAddressPasscode.value,
-                             request.registration.primaryContactDetails.email
-                    )
+                  case ContinueAction =>
+                    request.registration.primaryContactDetails.email match {
+                      case Some(email) => continue(emailAddressPasscode.value, email)
+                      case None        => throw RegistrationException("Failed to get email from the cache")
+                    }
+
                   case _ =>
                     Future(Redirect(routes.RegistrationController.displayPage()))
                 }
         )
     }
 
-  private def continue(passcode: String, email: Option[String])(implicit
+  private def continue(passcode: String, email: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Result] =
     verifyEmailPasscode(passcode,
-                        email.get,
+                        email,
                         request.registration.primaryContactDetails.journeyId.getOrElse("")
     ).flatMap {
       case Right(COMPLETE) =>

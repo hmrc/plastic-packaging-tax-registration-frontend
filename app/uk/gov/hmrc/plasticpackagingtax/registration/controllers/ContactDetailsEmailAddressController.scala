@@ -77,51 +77,48 @@ class ContactDetailsEmailAddressController @Inject() (
                 Future.successful(BadRequest(page(formWithErrors)))
               },
               emailAddress =>
-                updateRegistration(emailAddress).flatMap {
-                  case Right(registration) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        saveAndContinue(registration, emailAddress.value)
-                      case _ =>
-                        Future(Redirect(routes.RegistrationController.displayPage()))
-                    }
-                  case Left(error) => throw error
-                }
+                request.user.identityData.credentials.map { creds =>
+                  updateRegistration(formData = emailAddress, credId = creds.providerId).flatMap {
+                    case Right(registration) =>
+                      FormAction.bindFromRequest match {
+                        case SaveAndContinue =>
+                          saveAndContinue(registration, creds.providerId)
+                        case _ =>
+                          Future(Redirect(routes.RegistrationController.displayPage()))
+                      }
+                    case Left(error) => throw error
+                  }
+                }.getOrElse(
+                  throw DownstreamServiceError(
+                    "Cannot find user credentials id",
+                    RegistrationException("Cannot find user credentials id")
+                  )
+                )
         )
     }
 
-  private def updateRegistration(
-    formData: EmailAddress
-  )(implicit request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    request.user.identityData.credentials.map { creds =>
-      emailVerificationConnector.getStatus(creds.providerId).flatMap {
-        case Right(emailStatusResponse) =>
-          emailStatusResponse match {
-            case Some(response) =>
-              update { registration =>
-                registration.copy(primaryContactDetails =
-                                    updatedPrimaryContactDetails(formData, registration),
-                                  metaData = registration.metaData.add(response.emails)
-                )
-              }
-            case None =>
-              update { registration =>
-                registration.copy(primaryContactDetails =
-                  updatedPrimaryContactDetails(formData, registration)
-                )
-              }
-          }
-        case Left(error) => throw error
-      }
-    }.getOrElse(
-      Future(
-        Left(
-          DownstreamServiceError("Cannot find user credentials id",
-                                 RegistrationException("Cannot find user credentials id")
-          )
-        )
-      )
-    )
+  private def updateRegistration(formData: EmailAddress, credId: String)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    emailVerificationConnector.getStatus(credId).flatMap {
+      case Right(emailStatusResponse) =>
+        emailStatusResponse match {
+          case Some(response) =>
+            update { registration =>
+              registration.copy(primaryContactDetails =
+                                  updatedPrimaryContactDetails(formData, registration),
+                                metaData = registration.metaData.add(response.emails)
+              )
+            }
+          case None =>
+            update { registration =>
+              registration.copy(primaryContactDetails =
+                updatedPrimaryContactDetails(formData, registration)
+              )
+            }
+        }
+      case Left(error) => throw error
+    }
 
   private def updatedPrimaryContactDetails(formData: EmailAddress, registration: Registration) =
     registration.primaryContactDetails.copy(email = Some(formData.value))
@@ -135,7 +132,7 @@ class ContactDetailsEmailAddressController @Inject() (
     }
   }
 
-  private def saveAndContinue(registration: Registration, email: String)(implicit
+  private def saveAndContinue(registration: Registration, credId: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Result] =
@@ -144,24 +141,7 @@ class ContactDetailsEmailAddressController @Inject() (
         case VERIFIED =>
           Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
         case NOT_VERIFIED =>
-          request.user.identityData.credentials.map { creds =>
-            createEmailVerification(creds.providerId,
-                                    registration.primaryContactDetails.email.get
-            ).flatMap {
-              case Right(verificationJourneyStartUrl) =>
-                updatedJourneyId(registration,
-                                 verificationJourneyStartUrl.split("/").slice(0, 4).last
-                ).flatMap {
-                  case Left(error) => throw error
-                  case Right(registration) =>
-                    Future(
-                      Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage())
-                    )
-                }
-
-              case Left(error) => throw error
-            }
-          }.getOrElse(Future(Results.Redirect(routes.UnauthorisedController.onPageLoad())))
+          handleNotVerifiedEmail(registration, credId)
         case LOCKED_OUT =>
           Future(Redirect(routes.RegistrationController.displayPage()))
       }
@@ -182,6 +162,27 @@ class ContactDetailsEmailAddressController @Inject() (
                                      deskproServiceName = "plastic-packaging-tax"
       )
     )
+
+  private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Result] =
+    registration.primaryContactDetails.email match {
+      case Some(emailAddress) =>
+        createEmailVerification(credId, emailAddress).flatMap {
+          case Right(verificationJourneyStartUrl) =>
+            updatedJourneyId(registration,
+                             verificationJourneyStartUrl.split("/").slice(0, 4).last
+            ).flatMap {
+              case Left(error) => throw error
+              case Right(registration) =>
+                Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
+            }
+
+          case Left(error) => throw error
+        }
+      case None => throw RegistrationException("Failed to get email from the cache")
+    }
 
 }
 

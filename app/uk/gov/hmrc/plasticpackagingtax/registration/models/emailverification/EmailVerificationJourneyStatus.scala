@@ -20,11 +20,10 @@ import play.api.libs.json._
 
 object JourneyStatus extends Enumeration {
   type JourneyStatus = Value
-  val COMPLETE: Value                          = Value("complete")
-  val INCORRECT_PASSCODE: Value                = Value("incorrectPasscode")
-  val TOO_MANY_ATTEMPTS: Value                 = Value("tooManyAttempts")
-  val JOURNEY_NOT_FOUND: Value                 = Value("journeyNotFound")
-  def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
+  val COMPLETE: Value           = Value("complete")
+  val INCORRECT_PASSCODE: Value = Value("incorrectPasscode")
+  val TOO_MANY_ATTEMPTS: Value  = Value("tooManyAttempts")
+  val JOURNEY_NOT_FOUND: Value  = Value("journeyNotFound")
 
   implicit val format: Format[JourneyStatus] =
     Format(Reads.enumNameReads(JourneyStatus), Writes.enumNameWrites)

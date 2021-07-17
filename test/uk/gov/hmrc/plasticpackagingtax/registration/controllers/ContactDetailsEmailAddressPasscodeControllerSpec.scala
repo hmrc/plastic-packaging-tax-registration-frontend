@@ -17,18 +17,23 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.ServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddressPasscode
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  DownstreamServiceError,
+  ServiceError
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, EmailAddressPasscode, FullName}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
   COMPLETE,
   INCORRECT_PASSCODE,
@@ -37,6 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Jou
   TOO_MANY_ATTEMPTS
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -75,6 +81,14 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     )
       .thenReturn(Future.successful(Right(dataToReturn)))
 
+  def mockEmailVerificationVerifyPasscodeWithException(
+    error: ServiceError
+  ): OngoingStubbing[Future[Either[ServiceError, JourneyStatus]]] =
+    when(
+      mockEmailVerificationConnector.verifyPasscode(any[String], any[VerifyPasscodeRequest])(any())
+    )
+      .thenReturn(Future(Left(error)))
+
   "ContactDetailsEmailAddressPasscodeController" should {
 
     "return 200" when {
@@ -95,7 +109,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       }
     }
 
-    forAll(Seq(continueFormAction)) { formAction =>
+    forAll(Seq(continueFormAction, unKnownFormAction)) { formAction =>
       "return 200 (OK) for " + formAction._1 when {
         "user submits passcode returns complete" in {
           val reg = aRegistration()
@@ -128,8 +142,12 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
-          status(result) mustBe BAD_REQUEST
-
+          formAction._1 match {
+            case "Continue" =>
+              status(result) mustBe BAD_REQUEST
+            case "Unknown" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
           reset(mockRegistrationConnector)
         }
 
@@ -142,8 +160,12 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
-          status(result) mustBe BAD_REQUEST
-
+          formAction._1 match {
+            case "Continue" =>
+              status(result) mustBe BAD_REQUEST
+            case "Unknown" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
           reset(mockRegistrationConnector)
         }
 
@@ -155,8 +177,71 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockEmailVerificationVerifyPasscode(JOURNEY_NOT_FOUND)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+          formAction._1 match {
+            case "Continue" =>
+              status(result) mustBe BAD_REQUEST
+            case "Unknown" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
 
-          status(result) mustBe BAD_REQUEST
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "throw Exception when cache fails to return email " + formAction._1 when {
+        "user submits passcode" in {
+          val reg = aRegistration(
+            withPrimaryContactDetails(primaryContactDetails =
+              PrimaryContactDetails(fullName =
+                                      Some(FullName(firstName = "Jack", lastName = "Gatsby")),
+                                    jobTitle = Some("Developer"),
+                                    phoneNumber = Some("0203 4567 890"),
+                                    address = Some(
+                                      Address(addressLine1 = "2 Scala Street",
+                                              addressLine2 = Some("Soho"),
+                                              townOrCity = "London",
+                                              postCode = "W1T 2HN"
+                                      )
+                                    ),
+                                    journeyId = Some("journey-id")
+              )
+            )
+          )
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          val result =
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+
+          formAction._1 match {
+            case "Continue" =>
+              intercept[RegistrationException](status(result))
+            case "Unknown" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+
+          reset(mockRegistrationConnector)
+        }
+      }
+
+      "return error when verifyPasscode throws error " + formAction._1 when {
+        "user submits passcode" in {
+          val reg = aRegistration()
+          authorizedUser()
+          mockRegistrationFind(reg)
+          mockRegistrationUpdate(reg)
+          mockEmailVerificationVerifyPasscodeWithException(
+            DownstreamServiceError("Error", RegistrationException("Error"))
+          )
+          val result =
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+
+          formAction._1 match {
+            case "Continue" =>
+              intercept[DownstreamServiceError](status(result))
+            case "Unknown" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
 
           reset(mockRegistrationConnector)
         }
@@ -181,6 +266,31 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
+      }
+    }
+
+    "return prepopulated form" when {
+
+      def pageForm: Form[EmailAddressPasscode] = {
+        val form = EmailAddressPasscode.form()
+        verify(page).apply(ArgumentMatchers.eq(form), ArgumentMatchers.eq(Some("test@test.com")))(
+          any(),
+          any()
+        )
+        form.fill(EmailAddressPasscode("DNCLRK"))
+      }
+
+      "data exist" in {
+        authorizedUser()
+        mockRegistrationFind(
+          aRegistration(
+            withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com")))
+          )
+        )
+
+        await(controller.displayPage()(getRequest()))
+
+        pageForm.get.value mustBe "DNCLRK"
       }
     }
   }

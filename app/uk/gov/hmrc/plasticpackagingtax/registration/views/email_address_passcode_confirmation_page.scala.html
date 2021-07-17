@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, paragraphBody, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.Continue
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 
 @this(
   govukLayout: main_template,
@@ -51,7 +52,7 @@
 
   @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(), 'autoComplete -> "off") {
 
-      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation"))
+      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation"), id = Some("email-address-passcode-confirmation-id"))
 
       @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice", hmrcPrivacyLink))
     @govukButton(Button(
