@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification
 
 import play.api.libs.json._
 
-object JourneyStatus extends Enumeration {
+object EmailVerificationJourneyStatus extends Enumeration {
   type JourneyStatus = Value
   val COMPLETE: Value           = Value("complete")
   val INCORRECT_PASSCODE: Value = Value("incorrectPasscode")
@@ -26,6 +26,6 @@ object JourneyStatus extends Enumeration {
   val JOURNEY_NOT_FOUND: Value  = Value("journeyNotFound")
 
   implicit val format: Format[JourneyStatus] =
-    Format(Reads.enumNameReads(JourneyStatus), Writes.enumNameWrites)
+    Format(Reads.enumNameReads(EmailVerificationJourneyStatus), Writes.enumNameWrites)
 
 }

@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   Continue => ContinueAction
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddressPasscode
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
   COMPLETE,
   INCORRECT_PASSCODE,
   JourneyStatus,

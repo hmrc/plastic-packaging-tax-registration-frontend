@@ -34,7 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   ServiceError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, EmailAddressPasscode, FullName}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
   COMPLETE,
   INCORRECT_PASSCODE,
   JOURNEY_NOT_FOUND,

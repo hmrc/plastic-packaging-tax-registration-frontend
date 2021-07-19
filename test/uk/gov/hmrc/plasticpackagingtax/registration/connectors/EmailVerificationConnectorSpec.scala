@@ -27,7 +27,7 @@ import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.JourneyStatus.{
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
   COMPLETE,
   INCORRECT_PASSCODE,
   JOURNEY_NOT_FOUND,
