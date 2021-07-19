@@ -14,10 +14,7 @@ This service integrates with the HMRC Strategic Generic Registration service, na
  
 ```
 # Start the plastic packaging services and dependencies 
-sm --start PLASTIC_PACKAGING_TAX_ALL -f
-
-# start the incorporated Entity Identification Frontend and dependencies
-sm --start INCORPORATED_ENTITY_IDENTIFICATION_ALL -f
+sm --start INCORPORATED_ENTITY_IDENTIFICATION_ALL PLASTIC_PACKAGING_TAX_ALL EMAIL_VERIFICATION_ALL -r
 
 # confirm all services are running
 sm -s 
