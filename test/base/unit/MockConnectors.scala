@@ -23,6 +23,7 @@ import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  EmailVerificationConnector,
   IncorpIdConnector,
   SoleTraderInorpIdConnector,
   SubscriptionsConnector
@@ -43,9 +44,10 @@ import scala.concurrent.Future
 trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockIncorpIdConnector: IncorpIdConnector            = mock[IncorpIdConnector]
-  val mockSoleTraderConnector: SoleTraderInorpIdConnector = mock[SoleTraderInorpIdConnector]
-  val mockSubscriptionsConnector: SubscriptionsConnector  = mock[SubscriptionsConnector]
+  val mockIncorpIdConnector: IncorpIdConnector                   = mock[IncorpIdConnector]
+  val mockSoleTraderConnector: SoleTraderInorpIdConnector        = mock[SoleTraderInorpIdConnector]
+  val mockSubscriptionsConnector: SubscriptionsConnector         = mock[SubscriptionsConnector]
+  val mockEmailVerificationConnector: EmailVerificationConnector = mock[EmailVerificationConnector]
 
   def mockGetUkCompanyDetails(
     incorporationDetails: IncorporationDetails

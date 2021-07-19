@@ -26,6 +26,12 @@ POST       /primary-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registr
 GET        /primary-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.displayPage()
 POST       /primary-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.submit()
 
+GET        /primary-contact-email-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeController.displayPage()
+POST       /primary-contact-email-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeController.submit()
+
+GET        /primary-contact-email-passcode-confirmation   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage()
+POST       /primary-contact-email-passcode-confirmation   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.submit()
+
 GET        /primary-contact-phone-number    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.displayPage()
 POST       /primary-contact-phone-number    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.submit()
 
