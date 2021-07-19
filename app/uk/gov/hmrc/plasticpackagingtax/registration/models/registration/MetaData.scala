@@ -17,8 +17,31 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  EmailStatus,
+  EmailVerificationStatus,
+  EmailVerificationStatusMapper
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.EmailVerificationStatus
 
-case class MetaData(registrationReviewed: Boolean = false, registrationCompleted: Boolean = false)
+case class MetaData(
+  registrationReviewed: Boolean = false,
+  registrationCompleted: Boolean = false,
+  verifiedEmails: Seq[EmailStatus] = Seq()
+) {
+
+  def getEmailStatus(email: String): EmailVerificationStatus =
+    EmailVerificationStatusMapper.toMap(verifiedEmails).getOrElse(
+      email,
+      EmailVerificationStatus.NOT_VERIFIED
+    )
+
+  def add(emails: Seq[EmailStatus]): MetaData =
+    this.copy(verifiedEmails =
+      this.verifiedEmails ++ emails
+    )
+
+}
 
 object MetaData {
   implicit val format: OFormat[MetaData] = Json.format[MetaData]

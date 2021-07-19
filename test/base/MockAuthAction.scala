@@ -146,6 +146,82 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
         )
       )
     )
+
+  def authorizedUserWithNoCredentials(user: SignedInUser = exampleUser): Unit =
+    when(
+      mockAuthConnector.authorise(
+        any(),
+        ArgumentMatchers.eq(
+          credentials and name and email and externalId and internalId and affinityGroup and allEnrolments
+            and agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
+            credentialRole and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes
+        )
+      )(any(), any())
+    ).thenReturn(
+      Future.successful(
+        new ~(
+          new ~(
+            new ~(
+              new ~(
+                new ~(
+                  new ~(
+                    new ~(
+                      new ~(
+                        new ~(
+                          new ~(
+                            new ~(
+                              new ~(
+                                new ~(
+                                  new ~(
+                                    new ~(
+                                      new ~(
+                                        new ~(
+                                          new ~(
+                                            new ~(
+                                              new ~(
+                                                None,
+                                                user.identityData.name
+                                              ),
+                                              user.identityData.email
+                                            ),
+                                            user.identityData.externalId
+                                          ),
+                                          user.identityData.internalId
+                                        ),
+                                        user.identityData.affinityGroup
+                                      ),
+                                      user.enrolments
+                                    ),
+                                    user.identityData.agentCode
+                                  ),
+                                  user.identityData.confidenceLevel.get
+                                ),
+                                user.identityData.nino
+                              ),
+                              user.identityData.saUtr
+                            ),
+                            user.identityData.dateOfBirth
+                          ),
+                          user.identityData.agentInformation.get
+                        ),
+                        nrsGroupIdentifierValue
+                      ),
+                      nrsCredentialRole
+                    ),
+                    Some(nrsMdtpInformation)
+                  ),
+                  Some(nrsItmpName)
+                ),
+                nrsDateOfBirth
+              ),
+              Some(nrsItmpAddress)
+            ),
+            nrsCredentialStrength
+          ),
+          nrsLoginTimes
+        )
+      )
+    )
   // format: on
 
   def unAuthorizedUser(): Unit =

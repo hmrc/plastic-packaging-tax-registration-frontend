@@ -194,7 +194,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "user submits form for sole trader" in {
         authorizedUser()
         mockRegistrationFind(soleTraderRegistration)
-        mockRegistrationUpdate(soleTraderRegistration)
+        mockRegistrationUpdate(aRegistration())
         mockSoleTraderCreateIncorpJourneyIdException()
 
         val correctForm = Seq("answer" -> SOLE_TRADER.toString, saveAndContinueFormAction)
@@ -206,7 +206,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "user submits form for uk company" in {
         authorizedUser()
         mockRegistrationFind(soleTraderRegistration)
-        mockRegistrationUpdate(soleTraderRegistration)
+        mockRegistrationUpdate(aRegistration())
         mockUkCompanyCreateIncorpJourneyIdException()
 
         val correctForm = Seq("answer" -> UK_COMPANY.toString, saveAndContinueFormAction)

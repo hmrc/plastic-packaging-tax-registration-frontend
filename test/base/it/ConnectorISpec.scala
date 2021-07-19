@@ -39,7 +39,9 @@ class ConnectorISpec
         "microservice.services.plastic-packaging-tax-registration.host"          -> wireHost,
         "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort,
         "microservice.services.sole-trader-identification-frontend.host"         -> wireHost,
-        "microservice.services.sole-trader-identification-frontend.port"         -> wirePort
+        "microservice.services.sole-trader-identification-frontend.port"         -> wirePort,
+        "microservice.services.email-verification.host"                          -> wireHost,
+        "microservice.services.email-verification.port"                          -> wirePort
     )
 
   override def fakeApplication(): Application = {

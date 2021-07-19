@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndComeBackLater
+package uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification
 
-@this(saveAndContinue: saveAndContinue, saveAndComeBackLater: saveAndComeBackLater)
+import play.api.libs.json._
 
-@(saveAndContinueKey: String = "site.button.saveAndContinue",
-  saveAndComeBackLaterKey: String = "site.button.saveAndComeBackLater")(implicit messages: Messages)
+case class VerificationStatus(emails: Seq[EmailStatus]) {
+  def toVerificationStatus: VerificationStatus = VerificationStatus(emails = this.emails)
+}
 
-<div class="govuk-button-group">
- @saveAndContinue(saveAndContinueKey)
- @saveAndComeBackLater(saveAndComeBackLaterKey)
-</div>
+case class EmailStatus(emailAddress: String, verified: Boolean, locked: Boolean)
+
+object EmailStatus {
+
+  implicit val format: Format[EmailStatus] =
+    Json.format[EmailStatus]
+
+}
+
+object VerificationStatus {
+  implicit val format: Format[VerificationStatus] = Json.format[VerificationStatus]
+}

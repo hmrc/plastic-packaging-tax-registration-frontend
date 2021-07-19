@@ -1,0 +1,78 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
+@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddressPasscode
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, paragraphBody, saveButtons, sectionHeader}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.Continue
+
+@this(
+  govukLayout: main_template,
+  govukButton: GovukButton,
+  govukInput: GovukInput,
+  govukInsetText: GovukInsetText,
+  sectionHeader: sectionHeader,
+  errorSummary: errorSummary,
+  paragraphBody: paragraphBody,
+  appConfig: AppConfig,
+  formHelper: formWithCSRF
+)
+
+
+@(form: Form[EmailAddressPasscode], emailAddress: Option[String])(implicit request: Request[_], messages: Messages)
+
+@emailAddressPasscodeField = @{form("value")}
+
+@errorMessages = @{
+    val errors = (form.errors).map(err => messages(err.message, err.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.passcode.privacyNotice.link")</a>}
+
+@govukLayout(
+  title = Title("primaryContactDetails.emailAddress.passcode.title"),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressController.displayPage(), messages("site.back.hiddenText")))) {
+  @errorSummary(form.errors)
+
+  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+
+  @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeController.submit(), 'autoComplete -> "off") {
+
+    @govukInput(
+        Input(
+            id = s"${emailAddressPasscodeField.name}",
+            name = emailAddressPasscodeField.name,
+            value = emailAddressPasscodeField.value,
+            hint = Some(Hint(content = Text(messages("primaryContactDetails.emailAddress.passcode.hint")))),
+            label = Label(
+                isPageHeading = true,
+                classes = s"govuk-label--l",
+                content = Text(messages("primaryContactDetails.emailAddress.passcode.title"))),
+                errorMessage = errorMessages)
+            )
+
+    @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.privacyNotice", hmrcPrivacyLink))
+  @govukButton(Button(
+      content = Text(messages("site.button.continue")),
+      classes = "govuk-!-margin-right-1",
+      attributes = Map("id" -> "submit", "name" -> Continue.toString)))
+  }
+}

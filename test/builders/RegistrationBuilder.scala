@@ -18,6 +18,7 @@ package builders
 
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 
 import java.util.UUID
@@ -48,7 +49,8 @@ trait RegistrationBuilder {
                              townOrCity = "London",
                              postCode = "W1T 2HN"
                      )
-                   )
+                   ),
+                   journeyId = Some("journey-id")
                  ),
                  organisationDetails = OrganisationDetails(
                    businessRegisteredAddress =
@@ -61,8 +63,12 @@ trait RegistrationBuilder {
                      ),
                    organisationType = Some(UK_COMPANY)
                  ),
-                 metaData = MetaData(),
-                 userHeaders = None
+                 metaData =
+                   MetaData(verifiedEmails =
+                     Seq(
+                       EmailStatus(emailAddress = "test@test.com", verified = true, locked = false)
+                     )
+                   )
     )
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)

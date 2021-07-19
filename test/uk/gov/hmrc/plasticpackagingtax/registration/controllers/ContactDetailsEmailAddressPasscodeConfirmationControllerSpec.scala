@@ -21,30 +21,30 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.OK
-import play.api.test.Helpers.status
+import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.libs.json.JsObject
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_confirmation_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class ConfirmationControllerSpec extends ControllerSpec {
-  private val page = mock[confirmation_page]
+class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends ControllerSpec {
+  private val page = mock[email_address_passcode_confirmation_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ConfirmationController(authenticate = mockAuthAction,
-                               mockJourneyAction,
-                               mcc = mcc,
-                               page = page
+    new ContactDetailsEmailAddressPasscodeConfirmationController(authenticate = mockAuthAction,
+                                                                 mockJourneyAction,
+                                                                 mcc = mcc,
+                                                                 page = page
     )
-
-  private val registration = aRegistration()
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-
+    val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply()(any(), any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -52,16 +52,26 @@ class ConfirmationControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "Confirmation controller" should {
+  "Email passcode confirmation" should {
 
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
-        mockRegistrationUpdate(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+      }
+    }
+
+    "return 303" when {
+
+      "when form is submitted" in {
+        authorizedUser()
+
+        val result = controller.submit()(postRequest(JsObject.empty))
+
+        status(result) mustBe SEE_OTHER
       }
     }
 
@@ -72,6 +82,22 @@ class ConfirmationControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
+      }
+    }
+
+    "redirects to phone numbers page" when {
+      "user submits answers" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate(aRegistration())
+
+        val result =
+          controller.submit()(FakeRequest("POST", ""))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.ContactDetailsTelephoneNumberController.displayPage().url
+        )
       }
     }
   }

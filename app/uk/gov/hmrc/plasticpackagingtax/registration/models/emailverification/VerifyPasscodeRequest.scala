@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndComeBackLater
+package uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification
 
-@this(saveAndContinue: saveAndContinue, saveAndComeBackLater: saveAndComeBackLater)
+import play.api.libs.json.{Json, OFormat}
 
-@(saveAndContinueKey: String = "site.button.saveAndContinue",
-  saveAndComeBackLaterKey: String = "site.button.saveAndComeBackLater")(implicit messages: Messages)
+case class VerifyPasscodeRequest(passcode: String, email: String)
 
-<div class="govuk-button-group">
- @saveAndContinue(saveAndContinueKey)
- @saveAndComeBackLater(saveAndComeBackLaterKey)
-</div>
+object VerifyPasscodeRequest {
+
+  implicit val format: OFormat[VerifyPasscodeRequest] =
+    Json.format[VerifyPasscodeRequest]
+
+}

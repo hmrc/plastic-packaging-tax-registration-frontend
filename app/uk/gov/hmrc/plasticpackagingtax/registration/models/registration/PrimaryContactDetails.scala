@@ -26,6 +26,7 @@ case class PrimaryContactDetails(
   email: Option[String] = None,
   phoneNumber: Option[String] = None,
   useRegisteredAddress: Option[Boolean] = None,
+  journeyId: Option[String] = None,
   address: Option[Address] = None
 ) {
 

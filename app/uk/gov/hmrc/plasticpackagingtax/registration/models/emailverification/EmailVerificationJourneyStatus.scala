@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndComeBackLater
+package uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification
 
-@this(saveAndContinue: saveAndContinue, saveAndComeBackLater: saveAndComeBackLater)
+import play.api.libs.json._
 
-@(saveAndContinueKey: String = "site.button.saveAndContinue",
-  saveAndComeBackLaterKey: String = "site.button.saveAndComeBackLater")(implicit messages: Messages)
+object EmailVerificationJourneyStatus extends Enumeration {
+  type JourneyStatus = Value
+  val COMPLETE: Value           = Value("complete")
+  val INCORRECT_PASSCODE: Value = Value("incorrectPasscode")
+  val TOO_MANY_ATTEMPTS: Value  = Value("tooManyAttempts")
+  val JOURNEY_NOT_FOUND: Value  = Value("journeyNotFound")
 
-<div class="govuk-button-group">
- @saveAndContinue(saveAndContinueKey)
- @saveAndComeBackLater(saveAndComeBackLaterKey)
-</div>
+  implicit val format: Format[JourneyStatus] =
+    Format(Reads.enumNameReads(EmailVerificationJourneyStatus), Writes.enumNameWrites)
+
+}

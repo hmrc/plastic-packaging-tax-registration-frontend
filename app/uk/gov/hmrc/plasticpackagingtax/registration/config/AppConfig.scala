@@ -66,6 +66,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
 
+  lazy val emailVerificationHost: String =
+    servicesConfig.baseUrl("email-verification")
+
   lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
@@ -80,6 +83,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val incorpJourneyUrl            = s"$incorpIdHost/incorporated-entity-identification/api/journey"
   lazy val pptRegistrationUrl: String  = s"$pptServiceHost/registrations"
   lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
+  lazy val emailVerificationUrl        = s"$emailVerificationHost/email-verification/verify-email"
+
+  lazy val emailVerificationEnabled: Boolean =
+    config.get[Boolean]("microservice.services.email-verification.enabled")
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 
@@ -99,6 +106,12 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def pptSubscriptionCreateUrl(safeNumber: String): String =
     s"$pptSubscriptionsUrl/$safeNumber"
+
+  def getEmailVerificationStatusUrl(credId: String): String =
+    s"$emailVerificationHost/email-verification/verification-status/$credId"
+
+  def getSubmitPassscodeUrl(journeyId: String): String =
+    s"$emailVerificationHost/email-verification/journey/$journeyId/passcode"
 
   def authenticatedFeedbackUrl(): String =
     s"$feedbackAuthenticatedLink?service=${serviceIdentifier}"
