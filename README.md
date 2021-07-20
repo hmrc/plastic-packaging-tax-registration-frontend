@@ -27,12 +27,6 @@ select the appropriate stubbing behaviour _(select all)_.
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
 * Enter the redirect url: http://localhost:8503/plastic-packaging-tax/start and press **Submit**.
 * Choose affinity group as `Organisation`
-* Single enrolment required:
-```
-    EnrolmentKey: HMRC-PPT-ORG
-    IdentifierName: UTR
-    Value: any String/Int (if you pass same it'll pull out existing registration, otherwise create new one)
-```
 * Enter `Submit`
 
 ### User Journey autocompletion scripts
