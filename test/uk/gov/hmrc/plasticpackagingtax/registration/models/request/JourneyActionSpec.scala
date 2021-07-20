@@ -17,16 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import base.PptTestData
-import base.PptTestData.pptEnrolment
 import base.unit.ControllerSpec
-import org.mockito.{ArgumentCaptor, Mockito}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Result, Results}
 import play.api.test.Helpers.await
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException, RequestId}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -49,31 +47,29 @@ class JourneyActionSpec extends ControllerSpec {
 
   "action refine" should {
     "permit request and send audit event" when {
-      "enrolmentId found" in {
+      "internalId found" in {
         given(mockRegistrationConnector.find(refEq("123"))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(Registration("123"))))
         )
 
         await(
-          actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment("123")))),
-            responseGenerator
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123")),
+                                    responseGenerator
           )
         ) mustBe Results.Ok
       }
     }
 
     "pass through headers" when {
-      "enrolmentId found" in {
+      "internalId found" in {
         val headers = Headers().add(HeaderNames.xRequestId -> "req1")
         given(mockRegistrationConnector.find(refEq("123"))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(Registration("123"))))
         )
 
         await(
-          actionRefiner.invokeBlock(
-            authRequest(headers, user = PptTestData.newUser("123", Some(pptEnrolment("123")))),
-            responseGenerator
+          actionRefiner.invokeBlock(authRequest(headers, user = PptTestData.newUser("123")),
+                                    responseGenerator
           )
         ) mustBe Results.Ok
 
@@ -91,12 +87,11 @@ class JourneyActionSpec extends ControllerSpec {
         ).willReturn(Future.successful(Right(Registration("999"))))
 
         await(
-          actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment("999")))),
-            responseGenerator
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("999")),
+                                    responseGenerator
           )
         ) mustBe Results.Ok
-        verify(mockAuditor, Mockito.atLeast(1)).newRegistrationStarted()(any(), any())
+        verify(mockAuditor).newRegistrationStarted()(any(), any())
       }
     }
   }
@@ -108,26 +103,6 @@ class JourneyActionSpec extends ControllerSpec {
   }
 
   "throw exception" when {
-    "enrolmentId not found" in {
-      intercept[InsufficientEnrolments] {
-        await(
-          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123", None)),
-                                    responseGenerator
-          )
-        )
-      }
-    }
-
-    "enrolmentId is empty" in {
-      intercept[InsufficientEnrolments] {
-        await(
-          actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment("")))),
-            responseGenerator
-          )
-        )
-      }
-    }
 
     "cannot load user registration" in {
       given(mockRegistrationConnector.find(refEq("123"))(any[HeaderCarrier])).willReturn(
@@ -138,9 +113,8 @@ class JourneyActionSpec extends ControllerSpec {
 
       intercept[DownstreamServiceError] {
         await(
-          actionRefiner.invokeBlock(
-            authRequest(user = PptTestData.newUser("123", Some(pptEnrolment("123")))),
-            responseGenerator
+          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123")),
+                                    responseGenerator
           )
         )
       }

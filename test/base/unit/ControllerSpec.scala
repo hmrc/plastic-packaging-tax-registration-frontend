@@ -16,7 +16,6 @@
 
 package base.unit
 
-import base.PptTestData.pptEnrolment
 import base.{MockAuthAction, PptTestData}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
@@ -31,7 +30,6 @@ import play.twirl.api.Html
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
   Continue,
   SaveAndComeBackLater,
   SaveAndContinue,
@@ -68,15 +66,9 @@ trait ControllerSpec
 
   def authRequest(
     headers: Headers = Headers(),
-    user: SignedInUser = PptTestData.newUser("123", Some(pptEnrolment("333")))
+    user: SignedInUser = PptTestData.newUser("123")
   ): AuthenticatedRequest[AnyContentAsEmpty.type] =
-    new AuthenticatedRequest(
-      FakeRequest().withHeaders(headers),
-      user,
-      user.enrolments.getEnrolment(AuthAction.pptEnrolmentKey).flatMap(
-        e => e.getIdentifier(AuthAction.pptEnrolmentIdentifierName).map(i => i.value)
-      )
-    )
+    new AuthenticatedRequest(FakeRequest().withHeaders(headers), user)
 
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
@@ -95,8 +87,6 @@ trait ControllerSpec
       .withFormUrlEncodedBody(bodyForm: _*)
       .withCSRFToken
   }
-
-  private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
   protected def getTuples(cc: AnyRef): Seq[(String, String)] =
     cc.getClass.getDeclaredFields.foldLeft(Map.empty[String, String]) { (a, f) =>
@@ -117,5 +107,7 @@ trait ControllerSpec
     postRequest
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
+
+  private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
 }

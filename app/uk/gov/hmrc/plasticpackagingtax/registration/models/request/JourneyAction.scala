@@ -39,10 +39,10 @@ class JourneyAction @Inject() (registrationConnector: RegistrationConnector, aud
   ): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    request.enrolmentId.filter(_.trim.nonEmpty) match {
+    request.user.identityData.internalId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
         loadOrCreateRegistration(id).map {
-          case Right(reg)  => Right(new JourneyRequest[A](request, reg, Some(id)))
+          case Right(reg)  => Right(new JourneyRequest[A](request, reg))
           case Left(error) => throw error
         }
       case None =>

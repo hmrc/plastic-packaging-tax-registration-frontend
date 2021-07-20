@@ -17,11 +17,8 @@
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
     document.getElementsByName("enrolment[0].name")[0].value = "HMRC-PPT-ORG";
-    document.getElementById("input-0-0-name").value = "UTR";
-    document.getElementById("input-0-0-value").value = "1234567890";
-    document.getElementsByName("enrolment[1].name")[0].value = "HMRC-PPT-ORG";
-    document.getElementById("input-1-0-name").value = "PPTReference";
-    document.getElementById("input-1-0-value").value = "XMPPT0000000001";
+    document.getElementById("input-0-0-name").value = "PPTReference";
+    document.getElementById("input-0-0-value").value = "XMPPT0000000001";
 
     document.getElementById('global-header').appendChild(createQuickButton())
 
