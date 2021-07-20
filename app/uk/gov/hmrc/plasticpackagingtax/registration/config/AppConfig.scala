@@ -63,13 +63,30 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
 
+  lazy val incorpJourneyUrl                       = s"$incorpIdHost/incorporated-entity-identification/api/journey"
+  def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
+
+  lazy val soleTraderHost: String =
+    servicesConfig.baseUrl("sole-trader-identification-frontend")
+
+  lazy val soleTraderJourneyUrl                       = s"$soleTraderHost/sole-trader-identification/api/journey"
+  def soleTraderDetailsUrl(journeyId: String): String = s"$soleTraderJourneyUrl/$journeyId"
+
+  lazy val partnershipHost: String =
+    servicesConfig.baseUrl("partnership-identification-frontend")
+
+  lazy val partnershipBaseUrl           = s"$partnershipHost/partnership-identification/api"
+  lazy val generalPartnershipJourneyUrl = s"$partnershipBaseUrl/general-partnership/journey"
+  // Define other partnership URLs here?
+  def partnershipDetailsUrl(journeyId: String): String = s"$partnershipBaseUrl/journey/$journeyId"
+
+  lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
+
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
 
   lazy val emailVerificationHost: String =
     servicesConfig.baseUrl("email-verification")
-
-  lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
@@ -80,7 +97,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val hmrcPrivacyUrl = config.get[String]("urls.hmrcPrivacy")
   lazy val govUkUrl       = config.get[String]("urls.govUk")
 
-  lazy val incorpJourneyUrl            = s"$incorpIdHost/incorporated-entity-identification/api/journey"
   lazy val pptRegistrationUrl: String  = s"$pptServiceHost/registrations"
   lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
   lazy val emailVerificationUrl        = s"$emailVerificationHost/email-verification/verify-email"
@@ -89,15 +105,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     config.get[Boolean]("microservice.services.email-verification.enabled")
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
-
-  lazy val soleTraderHost: String =
-    servicesConfig.baseUrl("sole-trader-identification-frontend")
-
-  lazy val soleTraderJourneyUrl = s"$soleTraderHost/sole-trader-identification/api/journey"
-
-  def soleTraderDetailsUrl(journeyId: String): String = s"$soleTraderJourneyUrl/$journeyId"
-
-  def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
 

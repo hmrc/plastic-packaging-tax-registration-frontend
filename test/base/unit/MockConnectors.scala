@@ -25,11 +25,14 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   EmailVerificationConnector,
   IncorpIdConnector,
+  PartnershipConnector,
   SoleTraderInorpIdConnector,
   SubscriptionsConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
+  PartnershipCreateJourneyRequest,
+  PartnershipDetails,
   SoleTraderIncorpIdCreateRequest,
   SoleTraderIncorporationDetails
 }
@@ -46,6 +49,7 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   val mockIncorpIdConnector: IncorpIdConnector                   = mock[IncorpIdConnector]
   val mockSoleTraderConnector: SoleTraderInorpIdConnector        = mock[SoleTraderInorpIdConnector]
+  val mockPartnershipConnector: PartnershipConnector             = mock[PartnershipConnector]
   val mockSubscriptionsConnector: SubscriptionsConnector         = mock[SubscriptionsConnector]
   val mockEmailVerificationConnector: EmailVerificationConnector = mock[EmailVerificationConnector]
 
@@ -61,6 +65,12 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     when(mockSoleTraderConnector.getDetails(any())(any()))
       .thenReturn(Future(soleTraderDetails))
 
+  def mockGetPartnershipDetails(
+    partnershipDetails: PartnershipDetails
+  ): OngoingStubbing[Future[PartnershipDetails]] =
+    when(mockPartnershipConnector.getDetails(any())(any()))
+      .thenReturn(Future(partnershipDetails))
+
   def mockGetSoleTraderDetailsFailure(
     ex: Exception
   ): OngoingStubbing[Future[SoleTraderIncorporationDetails]] =
@@ -74,6 +84,13 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
   def mockSoleTraderCreateIncorpJourneyId(redirectUrl: String): OngoingStubbing[Future[String]] =
     when(
       mockSoleTraderConnector.createJourney(any[SoleTraderIncorpIdCreateRequest])(any())
+    ).thenReturn(Future.successful(redirectUrl))
+
+  def mockCreatePartnershipGrsJourneyCreation(
+    redirectUrl: String
+  ): OngoingStubbing[Future[String]] =
+    when(
+      mockPartnershipConnector.createJourney(any[PartnershipCreateJourneyRequest])(any())
     ).thenReturn(Future.successful(redirectUrl))
 
   def mockSoleTraderCreateIncorpJourneyIdException(): OngoingStubbing[Future[String]] =

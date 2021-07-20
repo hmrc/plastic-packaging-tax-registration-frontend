@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import base.Injector
 import base.it.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
@@ -36,17 +35,6 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
     app.injector.instanceOf[SoleTraderInorpIdConnector]
 
   val incorpId = "uuid-id"
-
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    WireMock.configureFor(wireHost, wirePort)
-    wireMockServer.start()
-  }
-
-  override protected def afterAll(): Unit = {
-    wireMockServer.stop()
-    super.afterAll()
-  }
 
   "sole trader createJourney" should {
     "call the test only route to stub the journey" in {

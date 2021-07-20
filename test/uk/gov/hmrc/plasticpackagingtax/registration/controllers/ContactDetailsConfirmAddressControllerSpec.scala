@@ -27,7 +27,11 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress, FullName}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -46,6 +50,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
                                                mockJourneyAction,
                                                mockRegistrationConnector,
                                                incorpIdConnector = mockIncorpIdConnector,
+                                               partnershipConnector = mockPartnershipConnector,
                                                mcc = mcc,
                                                page = page
     )
@@ -119,6 +124,27 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
                                       address_line_1 = Some("Soho"),
                                       locality = Option("London"),
                                       postal_code = Option("W1T 2HN")
+          )
+        )
+      }
+
+      "display page method is invoked for partnership" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
+        )
+        mockGetPartnershipDetails(partnershipDetails)
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        businessRegisteredAddressPopulatedSameAs(
+          IncorporationAddressDetails(premises = Option("3 Scala Street"),
+                                      address_line_1 = Some("Soho"),
+                                      locality = Option("London"),
+                                      postal_code = Option(testPostcode)
           )
         )
       }

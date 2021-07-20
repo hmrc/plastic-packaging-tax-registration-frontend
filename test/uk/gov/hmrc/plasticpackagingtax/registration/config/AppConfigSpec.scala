@@ -30,6 +30,10 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       """
         |microservice.services.incorporated-entity-identification-frontend.host=localhost
         |microservice.services.incorporated-entity-identification-frontend.port=9718
+        |microservice.services.sole-trader-identification-frontend.host=localhost
+        |microservice.services.sole-trader-identification-frontend.port=9717
+        |microservice.services.partnership-identification-frontend.host=localhost
+        |microservice.services.partnership-identification-frontend.port=9722
         |microservice.services.plastic-packaging-tax-registration.host=localhost
         |microservice.services.plastic-packaging-tax-registration.port=8502
         |microservice.services.contact-frontend.host=localhost
@@ -55,6 +59,18 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       )
     }
 
+    "have 'soleTraderJourneyUrl' defined" in {
+      validAppConfig.soleTraderJourneyUrl must be(
+        "http://localhost:9717/sole-trader-identification/api/journey"
+      )
+    }
+
+    "have 'generalPartnershipJourneyUrl' defined" in {
+      validAppConfig.generalPartnershipJourneyUrl must be(
+        "http://localhost:9722/partnership-identification/api/general-partnership/journey"
+      )
+    }
+
     "have 'pptRegistrationUrl' defined" in {
       validAppConfig.pptRegistrationUrl must be("http://localhost:8502/registrations")
     }
@@ -62,6 +78,18 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     "have 'incorpDetailsUrl' defined" in {
       validAppConfig.incorpDetailsUrl("someId") must be(
         "http://localhost:9718/incorporated-entity-identification/api/journey/someId"
+      )
+    }
+
+    "have 'soleTraderDetailsUrl' defined" in {
+      validAppConfig.soleTraderDetailsUrl("someId") must be(
+        "http://localhost:9717/sole-trader-identification/api/journey/someId"
+      )
+    }
+
+    "have 'generalPartnershipDetailsUrl' defined" in {
+      validAppConfig.partnershipDetailsUrl("someId") must be(
+        "http://localhost:9722/partnership-identification/api/journey/someId"
       )
     }
 

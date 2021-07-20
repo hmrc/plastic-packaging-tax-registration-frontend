@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import base.Injector
 import base.it.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
@@ -31,17 +30,6 @@ class RegistrationConnectorSpec
     extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
 
   lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
-
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    WireMock.configureFor(wireHost, wirePort)
-    wireMockServer.start()
-  }
-
-  override protected def afterAll(): Unit = {
-    wireMockServer.stop()
-    super.afterAll()
-  }
 
   "create registration" should {
 

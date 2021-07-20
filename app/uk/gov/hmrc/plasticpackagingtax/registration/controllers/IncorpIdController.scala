@@ -21,6 +21,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
+  PartnershipConnector,
   RegistrationConnector,
   ServiceError,
   SoleTraderInorpIdConnector
@@ -41,6 +42,7 @@ class IncorpIdController @Inject() (
   override val registrationConnector: RegistrationConnector,
   ukLimitedConnector: IncorpIdConnector,
   soleTraderConnector: SoleTraderInorpIdConnector,
+  partnershipConnector: PartnershipConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -61,7 +63,8 @@ class IncorpIdController @Inject() (
   ): Future[Future[Either[ServiceError, Registration]]] =
     request.registration.organisationDetails.organisationType match {
       case Some(OrgType.UK_COMPANY)  => updateIncorporationDetails(journeyId)
-      case Some(OrgType.SOLE_TRADER) => updatedSoleTraderDetails(journeyId)
+      case Some(OrgType.SOLE_TRADER) => updateSoleTraderDetails(journeyId)
+      case Some(OrgType.PARTNERSHIP) => updatePartnershipDetails(journeyId)
       case _                         => throw new InternalServerException(s"Invalid organisation type")
     }
 
@@ -73,13 +76,14 @@ class IncorpIdController @Inject() (
       details <- ukLimitedConnector.getDetails(journeyId)
       result = update { model =>
         val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = Some(details),
-                                                               soleTraderDetails = None
+                                                               soleTraderDetails = None,
+                                                               partnershipDetails = None
         )
         model.copy(incorpJourneyId = Some(journeyId), organisationDetails = updatedOrgDetails)
       }
     } yield result
 
-  private def updatedSoleTraderDetails(journeyId: String)(implicit
+  private def updateSoleTraderDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Future[Either[ServiceError, Registration]]] =
@@ -87,7 +91,24 @@ class IncorpIdController @Inject() (
       details <- soleTraderConnector.getDetails(journeyId)
       result = update { model =>
         val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = None,
+                                                               partnershipDetails = None,
                                                                soleTraderDetails = Some(details)
+        )
+        model.copy(incorpJourneyId = Some(journeyId), organisationDetails = updatedOrgDetails)
+      }
+    } yield result
+
+  private def updatePartnershipDetails(journeyId: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Future[Either[ServiceError, Registration]]] =
+    for {
+      partnershipDetails <- partnershipConnector.getDetails(journeyId)
+      result = update { model =>
+        val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = None,
+                                                               soleTraderDetails = None,
+                                                               partnershipDetails =
+                                                                 Some(partnershipDetails)
         )
         model.copy(incorpJourneyId = Some(journeyId), organisationDetails = updatedOrgDetails)
       }

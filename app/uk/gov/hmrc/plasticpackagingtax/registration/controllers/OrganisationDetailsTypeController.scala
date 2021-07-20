@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
+  PartnershipConnector,
   RegistrationConnector,
   ServiceError,
   SoleTraderInorpIdConnector
@@ -34,6 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorpIdCreateRequest,
+  PartnershipCreateJourneyRequest,
   SoleTraderIncorpIdCreateRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
@@ -51,6 +53,7 @@ class OrganisationDetailsTypeController @Inject() (
   appConfig: AppConfig,
   soleTraderIdConnector: SoleTraderInorpIdConnector,
   incorpIdConnector: IncorpIdConnector,
+  partnershipConnector: PartnershipConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: organisation_type
@@ -82,6 +85,9 @@ class OrganisationDetailsTypeController @Inject() (
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(OrgType.SOLE_TRADER) =>
                             getSoleTraderRedirectUr()
+                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          case Some(OrgType.PARTNERSHIP) =>
+                            getPartnershipRedirectUr()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case _ =>
                             Future(
@@ -115,6 +121,17 @@ class OrganisationDetailsTypeController @Inject() (
                             Some(request2Messages(request)("service.name")),
                             appConfig.serviceIdentifier,
                             appConfig.exitSurveyUrl
+      )
+    )
+
+  private def getPartnershipRedirectUr()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[String] =
+    partnershipConnector.createJourney(
+      PartnershipCreateJourneyRequest(appConfig.incorpIdJourneyCallbackUrl,
+                                      Some(request2Messages(request)("service.name")),
+                                      appConfig.serviceIdentifier,
+                                      appConfig.exitSurveyUrl
       )
     )
 

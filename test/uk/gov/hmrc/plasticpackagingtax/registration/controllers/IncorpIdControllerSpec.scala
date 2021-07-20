@@ -23,7 +23,7 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
-import uk.gov.hmrc.http.InternalServerException
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -43,43 +43,101 @@ class IncorpIdControllerSpec extends ControllerSpec {
                            mockRegistrationConnector,
                            mockIncorpIdConnector,
                            mockSoleTraderConnector,
+                           mockPartnershipConnector,
                            mcc
     )(ec)
+
+  private val unregisteredLimitedCompany = aRegistration(
+    withOrganisationDetails(unregisteredUkOrgDetails(OrgType.UK_COMPANY))
+  )
+
+  private val registeredLimitedCompany = aRegistration(
+    withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY))
+  )
+
+  private val unregisteredSoleTrader = aRegistration(
+    withOrganisationDetails(unregisteredUkOrgDetails(OrgType.SOLE_TRADER))
+  )
+
+  private val registeredSoleTrader = aRegistration(
+    withOrganisationDetails(registeredUkOrgDetails(OrgType.SOLE_TRADER))
+  )
+
+  private val unregisteredPartnership = aRegistration(
+    withOrganisationDetails(unregisteredUkOrgDetails(OrgType.PARTNERSHIP))
+  )
+
+  private val registeredPartnership = aRegistration(
+    withOrganisationDetails(registeredUkOrgDetails(OrgType.PARTNERSHIP))
+  )
 
   "incorpIdCallback" should {
 
     "redirect to the registration page" when {
-      "registering an Uk Limited company" in {
-        authorizedUser()
-        mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationFind(
-          aRegistration(withOrganisationDetails(unregisteredUkOrgDetails(OrgType.UK_COMPANY)))
-        )
-        mockRegistrationUpdate(
-          aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)))
-        )
-
-        val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+      "registering a UK Limited Company" in {
+        val result = simulateLimitedCompanyCallback()
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
       }
 
-      "registering an Uk Sole Trader" in {
-        authorizedUser()
-        mockGetSoleTraderDetails(soleTraderIncorporationDetails)
-        mockRegistrationFind(
-          aRegistration(withOrganisationDetails(unregisteredUkOrgDetails(OrgType.SOLE_TRADER)))
-        )
-        mockRegistrationUpdate(
-          aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.SOLE_TRADER)))
-        )
-
-        val result = controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+      "registering a Sole Trader" in {
+        val result = simulateSoleTraderCallback()
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
         getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+      }
+
+      "registering a Partnership" in {
+        val result = simulatePartnershipCallback()
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+      }
+    }
+
+    "store the returned business entity information" when {
+      "registering a UK Limited Company" in {
+        await(simulateLimitedCompanyCallback())
+
+        val registrationCaptor: ArgumentCaptor[Registration] =
+          ArgumentCaptor.forClass(classOf[Registration])
+        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
+
+        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe Some(
+          incorporationDetails
+        )
+        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe None
+        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe None
+      }
+
+      "registering a Sole Trader" in {
+        await(simulateSoleTraderCallback())
+
+        val registrationCaptor: ArgumentCaptor[Registration] =
+          ArgumentCaptor.forClass(classOf[Registration])
+        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
+
+        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe Some(
+          soleTraderIncorporationDetails
+        )
+        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe None
+        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe None
+      }
+
+      "registering a Partnership" in {
+        await(simulatePartnershipCallback())
+
+        val registrationCaptor: ArgumentCaptor[Registration] =
+          ArgumentCaptor.forClass(classOf[Registration])
+        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
+        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe Some(
+          partnershipDetails
+        )
+        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe None
+        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe None
       }
     }
 
@@ -118,7 +176,34 @@ class IncorpIdControllerSpec extends ControllerSpec {
     }
   }
 
-  def getRegistration: Registration = {
+  private def simulateLimitedCompanyCallback() = {
+    authorizedUser()
+    mockGetUkCompanyDetails(incorporationDetails)
+    mockRegistrationFind(unregisteredLimitedCompany)
+    mockRegistrationUpdate(registeredLimitedCompany)
+
+    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def simulateSoleTraderCallback() = {
+    authorizedUser()
+    mockGetSoleTraderDetails(soleTraderIncorporationDetails)
+    mockRegistrationFind(unregisteredSoleTrader)
+    mockRegistrationUpdate(registeredSoleTrader)
+
+    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def simulatePartnershipCallback() = {
+    authorizedUser()
+    mockGetPartnershipDetails(partnershipDetails)
+    mockRegistrationFind(unregisteredPartnership)
+    mockRegistrationUpdate(registeredPartnership)
+
+    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def getRegistration: Registration = {
     val captor = ArgumentCaptor.forClass(classOf[Registration])
     verify(mockRegistrationConnector, Mockito.atLeastOnce()).update(captor.capture())(any())
     captor.getValue
