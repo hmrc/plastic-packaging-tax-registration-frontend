@@ -1,7 +1,7 @@
 
 # Plastic Packaging Tax Registration (PPT) Frontend
 
-This is the Scala microservice responsible for the PPT registration UI user journey, which is part of the PPT tax regime, as discussed in this [GovUk Guindance](https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax)
+This is the Scala microservice responsible for the PPT registration UI user journey, which is part of the PPT tax regime, as discussed in this [GovUk Guidance](https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax)
  
 This service integrates with the HMRC Strategic Generic Registration service, namely: 
  * [Incorporated Entity Identification Frontend](https://github.com/hmrc/incorporated-entity-identification-frontend)
