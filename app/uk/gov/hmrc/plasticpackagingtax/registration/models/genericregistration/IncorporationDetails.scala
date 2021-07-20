@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.GrsEntityDetails
 
 case class IncorporationDetails(
   companyNumber: String,
@@ -25,7 +26,7 @@ case class IncorporationDetails(
   ctutr: String,
   companyAddress: IncorporationAddressDetails,
   override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails
+) extends RegistrationDetails with GrsEntityDetails
 
 object IncorporationDetails {
 

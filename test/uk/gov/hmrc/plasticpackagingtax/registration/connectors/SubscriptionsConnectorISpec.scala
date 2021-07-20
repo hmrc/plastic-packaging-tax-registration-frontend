@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import base.Injector
 import base.it.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
@@ -33,17 +32,6 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
 
   lazy val connector: SubscriptionsConnector = app.injector.instanceOf[SubscriptionsConnector]
   val incorpId                               = "uuid-id"
-
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    WireMock.configureFor(wireHost, wirePort)
-    wireMockServer.start()
-  }
-
-  override protected def afterAll(): Unit = {
-    wireMockServer.stop()
-    super.afterAll()
-  }
 
   "SubscriptionConnector" when {
     "calling 'getSubscriptionStatus'" should {

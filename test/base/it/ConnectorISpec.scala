@@ -40,6 +40,8 @@ class ConnectorISpec
         "microservice.services.plastic-packaging-tax-registration.port"          -> wirePort,
         "microservice.services.sole-trader-identification-frontend.host"         -> wireHost,
         "microservice.services.sole-trader-identification-frontend.port"         -> wirePort,
+        "microservice.services.partnership-identification-frontend.host"         -> wireHost,
+        "microservice.services.partnership-identification-frontend.port"         -> wirePort,
         "microservice.services.email-verification.host"                          -> wireHost,
         "microservice.services.email-verification.port"                          -> wirePort
     )

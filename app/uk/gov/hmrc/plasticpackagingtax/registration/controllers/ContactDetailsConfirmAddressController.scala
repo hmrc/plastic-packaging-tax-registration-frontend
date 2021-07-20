@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   IncorpIdConnector,
+  PartnershipConnector,
   RegistrationConnector,
   ServiceError
 }
@@ -31,7 +32,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.form
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -47,6 +52,7 @@ class ContactDetailsConfirmAddressController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   incorpIdConnector: IncorpIdConnector,
+  partnershipConnector: PartnershipConnector,
   mcc: MessagesControllerComponents,
   page: confirm_address
 )(implicit ec: ExecutionContext)
@@ -78,6 +84,22 @@ class ContactDetailsConfirmAddressController @Inject() (
                                                postCode = "W1T 2HN"
                                        )
                                      )
+              )
+            case Some(PARTNERSHIP) =>
+              executeAddressUpdate(journeyId,
+                                   journeyId =>
+                                     partnershipConnector.getDetails(journeyId)
+                                       .flatMap(
+                                         response =>
+                                           updateBusinessAddress(
+                                             // TODO - how do we get/lookup the rest of the address?
+                                             Address(addressLine1 = "3 Scala Street",
+                                                     addressLine2 = Some("Soho"),
+                                                     townOrCity = "London",
+                                                     postCode = response.postcode
+                                             )
+                                           )(request)
+                                       )
               )
             case _ => throw new InternalServerException(s"Company type not supported")
           }

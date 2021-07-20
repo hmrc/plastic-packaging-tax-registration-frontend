@@ -16,7 +16,7 @@
 
 package spec
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
   IncorporationDetails,
   IncorporationRegistrationDetails,
+  PartnershipDetails,
   SoleTraderIncorporationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
@@ -46,6 +47,7 @@ trait PptTestData {
   protected val testDob           = "12/09/1967"
   protected val testNino          = "SE12345678"
   protected val testSatur         = "123456789"
+  protected val testPostcode      = "AA1 1AA"
   protected val safeNumber        = "XXPPTP123456789"
   protected val testUserHeaders   = Map("Host" -> "localhost", "headerKey" -> "headerValue")
 
@@ -89,6 +91,9 @@ trait PptTestData {
                                    Some(testSatur),
                                    incorporationRegistrationDetails
     )
+
+  protected val partnershipDetails: PartnershipDetails =
+    PartnershipDetails(testSatur, testPostcode)
 
   protected val subscriptionStatus: SubscriptionStatus = SubscriptionStatus(
     subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,

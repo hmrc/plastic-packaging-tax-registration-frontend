@@ -51,6 +51,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                           page = page,
                                           incorpIdConnector = mockIncorpIdConnector,
                                           soleTraderIdConnector = mockSoleTraderConnector,
+                                          partnershipConnector = mockPartnershipConnector,
                                           appConfig = config
     )
 
@@ -106,9 +107,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           assertRedirectForOrgType(SOLE_TRADER, "http://test/redirect/sole-trader")
         }
         "user submits organisation type: " + PARTNERSHIP in {
-          assertRedirectForOrgType(PARTNERSHIP,
-                                   routes.OrganisationTypeNotSupportedController.onPageLoad().url
-          )
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          assertRedirectForOrgType(PARTNERSHIP, "http://test/redirect/partnership")
         }
         "user submits organisation type: " + CHARITY_OR_NOT_FOR_PROFIT in {
           assertRedirectForOrgType(CHARITY_OR_NOT_FOR_PROFIT,

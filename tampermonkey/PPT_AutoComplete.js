@@ -7,6 +7,7 @@
 // @match        http*://*/plastic-packaging-tax*
 // @include      http*://*/identify-your-incorporated-business*
 // @include      http*://*/identify-your-sole-trader-business*
+// @include      http*://*/identify-your-partnership*
 // @grant GM_setValue
 // @grant GM_getValue
 // @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-frontend/master/tampermonkey/PPT_AutoComplete.js
@@ -25,6 +26,7 @@ function setup() {
     panel.appendChild(createQuickButton())
     panel.appendChild(createGRSFeatureFlagsLink())
     panel.appendChild(createSoleTraderGRSFeatureFlagsLink())
+    panel.appendChild(createPartnershipGRSFeatureFlagsLink())
 
     return panel
 }
@@ -86,6 +88,27 @@ function createSoleTraderGRSFeatureFlagsLink() {
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
     a.style.top = "150px"
+
+    return a
+}
+
+function createPartnershipGRSFeatureFlagsLink() {
+
+    let a = document.createElement('a')
+    a.id='grsFlags'
+
+    a.target = '_blank'
+    a.href = '/identify-your-partnership/test-only/feature-switches'
+    if (window.location.hostname === 'localhost') {
+        a.href = 'http://localhost:9722/identify-your-partnership/test-only/feature-switches'
+    } else {
+        a.href = '/identify-your-partnership/test-only/feature-switches'
+    }
+    a.innerText = 'Partnership GRS Flags Config'
+
+    a.classList.add('govuk-link','govuk-link--no-visited-state')
+    a.style.position = "absolute"
+    a.style.top = "200px"
 
     return a
 }
@@ -172,6 +195,16 @@ const grsSoleTraderFeatureFlags = () => {
     }
 }
 
+const grsPartnershipFeatureFlags = () => {
+    if (currentPageIs('/identify-your-partnership/test-only/feature-switches')) {
+        document.getElementById('feature-switch.business-verification-stub').checked=true
+        document.getElementById('feature-switch.partnership-known-facts-stub').checked=true
+        document.getElementById('feature-switch.register-with-identifiers-stub').checked=true
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 /* ####################### GRS UK COMPANY */
 const grsCompanyNumber = () => {
     if (currentPageIs('/identify-your-incorporated-business/.*/company-number')) {
@@ -245,6 +278,34 @@ const grsStCheckYourAnswers = () => {
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
+
+/* ####################### GRS PARTNERSHIP */
+
+const grsPartnershipUtr = () => {
+    if (currentPageIs('/identify-your-partnership/.*/sa-utr')) {
+        console.log('SA-UTR')
+        document.getElementById('sa-utr').value = '1234567890'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const grsPartnershipPostcode = () => {
+    if (currentPageIs('/identify-your-partnership/.*/self-assessment-postcode')) {
+        document.getElementById('postcode').value = 'AA1 1AA'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const grsPartnershipCheckYourAnswers = () => {
+    if (currentPageIs('/identify-your-partnership/.*/check-your-answers-business')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+/* ####################### PPT */
 
 const liabilityStartDate = () => {
     if (currentPageIs('/plastic-packaging-tax/liable-date')) {
@@ -353,6 +414,7 @@ const completeJourney = () => {
     // grs uk company pages
     grsUkLimitedFeatureFlags()
     grsSoleTraderFeatureFlags()
+    grsPartnershipFeatureFlags()
     grsCompanyNumber()
     grsConfirmCompany()
     grsEnterUtr()
@@ -364,6 +426,11 @@ const completeJourney = () => {
 	grsStNino()
     grsStSaUtr()
 	grsStCheckYourAnswers()
+
+    // grs partnership pages
+    grsPartnershipUtr()
+    grsPartnershipPostcode()
+    grsPartnershipCheckYourAnswers()
 
     // Business Details
     organisationBasedInUk()
