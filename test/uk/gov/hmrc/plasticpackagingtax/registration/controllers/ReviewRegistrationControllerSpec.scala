@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions}
+import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -103,7 +103,6 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        verifyNoInteractions(mockIncorpIdConnector)
       }
 
       "user is authorised and display page method is invoked with sole trader" in {

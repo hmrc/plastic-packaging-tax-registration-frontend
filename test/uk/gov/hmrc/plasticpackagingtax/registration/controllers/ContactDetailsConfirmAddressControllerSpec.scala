@@ -28,10 +28,17 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{CHARITY_OR_NOT_FOR_PROFIT, SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  CHARITY_OR_NOT_FOR_PROFIT,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress, FullName}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, PrimaryContactDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  PrimaryContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirm_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

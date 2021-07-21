@@ -69,7 +69,7 @@ class ReviewRegistrationController @Inject() (
   private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =
     for {
       soleTraderDetails <- request.registration.organisationDetails.soleTraderDetails.fold(
-        throw new Exception("Unable to fetch incorporation details from cache")
+        throw new Exception("Unable to fetch sole trader details from cache")
       )(details => Future.successful(details))
       _ <- markRegistrationAsReviewed()
     } yield Ok(
