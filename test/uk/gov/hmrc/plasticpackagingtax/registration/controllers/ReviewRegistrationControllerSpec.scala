@@ -234,7 +234,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         intercept[Exception](status(result))
       }
 
-      "user is not showed confirmation page if registration for not supported company type" in {
+      "user is not shown confirmation page if registration for not supported company type" in {
         authorizedUser()
         mockRegistrationFind(
           aRegistration(
