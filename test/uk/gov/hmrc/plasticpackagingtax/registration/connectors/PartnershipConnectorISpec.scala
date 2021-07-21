@@ -25,6 +25,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorporationRegistrationDetails,
   PartnershipCreateJourneyRequest,
   PartnershipDetails
 }
@@ -68,8 +69,16 @@ class PartnershipConnectorISpec extends ConnectorISpec with Injector with ScalaF
   }
 
   "get details" should {
-    val journeyId                  = UUID.randomUUID().toString
-    val expectedPartnershipDetails = PartnershipDetails(sautr = "1234567890", postcode = "AA1 1AA")
+    val journeyId = UUID.randomUUID().toString
+    val expectedPartnershipDetails = PartnershipDetails(sautr = "1234567890",
+                                                        postcode = "AA1 1AA",
+                                                        registration =
+                                                          IncorporationRegistrationDetails(
+                                                            registrationStatus = "REGISTERED",
+                                                            registeredBusinessPartnerId =
+                                                              Some("123")
+                                                          )
+    )
 
     "obtain partnership details from the partnership identification service" in {
       expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId,

@@ -177,6 +177,8 @@ reviewRegistration.organisationDetails.soleTrader.lastName = Last name
 reviewRegistration.organisationDetails.soleTrader.dob = Date of birth
 reviewRegistration.organisationDetails.soleTrader.nino = National insurance number
 
+reviewRegistration.organisationDetails.partnership.name = Partnership name
+
 confirmationPage.title = Registration submitted
 confirmationPage.panel.body = Your reference number {0}
 confirmationPage.panel.body.default = Your registration has already been submitted

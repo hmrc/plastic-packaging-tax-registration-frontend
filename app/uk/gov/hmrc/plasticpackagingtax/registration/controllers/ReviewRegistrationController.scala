@@ -24,7 +24,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
@@ -41,6 +45,7 @@ class ReviewRegistrationController @Inject() (
   mcc: MessagesControllerComponents,
   incorpIdConnector: IncorpIdConnector,
   soleTraderInorpIdConnector: SoleTraderInorpIdConnector,
+  partnershipConnector: PartnershipConnector,
   subscriptionsConnector: SubscriptionsConnector,
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
@@ -63,6 +68,7 @@ class ReviewRegistrationController @Inject() (
             request.registration.organisationDetails.organisationType match {
               case Some(UK_COMPANY)  => ukCompanyReview(journeyId)
               case Some(SOLE_TRADER) => soleTraderReview(journeyId)
+              case Some(PARTNERSHIP) => partnershipReview(journeyId)
               case _ =>
                 throw new InternalServerException(s"Company type not supported")
             }
@@ -79,6 +85,14 @@ class ReviewRegistrationController @Inject() (
       _                 <- markRegistrationAsReviewed()
     } yield Ok(
       page(registration = request.registration, soleTraderDetails = Some(soleTraderDetails))
+    )
+
+  private def partnershipReview(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+    for {
+      partnershipDetails <- partnershipConnector.getDetails(journeyId)
+      _                  <- markRegistrationAsReviewed()
+    } yield Ok(
+      page(registration = request.registration, partnershipDetails = Some(partnershipDetails))
     )
 
   private def ukCompanyReview(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
@@ -132,6 +146,10 @@ class ReviewRegistrationController @Inject() (
     registration.organisationDetails.organisationType.flatMap {
       case OrgType.SOLE_TRADER =>
         registration.organisationDetails.soleTraderDetails.flatMap(
+          details => details.registration.registeredBusinessPartnerId
+        )
+      case OrgType.PARTNERSHIP =>
+        registration.organisationDetails.partnershipDetails.flatMap(
           details => details.registration.registeredBusinessPartnerId
         )
       case _ =>

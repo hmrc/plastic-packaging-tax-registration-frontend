@@ -93,7 +93,7 @@ trait PptTestData {
     )
 
   protected val partnershipDetails: PartnershipDetails =
-    PartnershipDetails(testSatur, testPostcode)
+    PartnershipDetails(testSatur, testPostcode, incorporationRegistrationDetails)
 
   protected val subscriptionStatus: SubscriptionStatus = SubscriptionStatus(
     subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,

@@ -28,7 +28,11 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   Address,
   FullName,
@@ -52,6 +56,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
                                      incorpIdConnector = mockIncorpIdConnector,
                                      registrationConnector = mockRegistrationConnector,
                                      soleTraderInorpIdConnector = mockSoleTraderConnector,
+                                     partnershipConnector = mockPartnershipConnector,
                                      subscriptionsConnector = mockSubscriptionsConnector,
                                      auditor = mockAuditor,
                                      page = page,
@@ -63,7 +68,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     val registration = aRegistration()
 
     mockRegistrationFind(registration)
-    given(page.apply(any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(any(), any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -103,6 +108,19 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         status(result) mustBe OK
       }
 
+      "user is authorised and display page method is invoked with partnership" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+        mockGetPartnershipDetails(partnershipDetails)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
     }
 
     "return 303" when {
@@ -115,7 +133,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         given(
           page.apply(refEq(registration),
                      refEq(Some(incorporationDetails)),
-                     refEq(Some(soleTraderIncorporationDetails))
+                     refEq(Some(soleTraderIncorporationDetails)),
+                     refEq(Some(partnershipDetails))
           )(any(), any())
         ).willReturn(HtmlFormat.empty)
 
@@ -144,6 +163,19 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockGetSoleTraderDetailsFailure(new RuntimeException("error"))
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "get details fails for partnership" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockGetPartnershipDetailsFailure(new RuntimeException("error"))
 
         val result = controller.displayPage()(getRequest())
 

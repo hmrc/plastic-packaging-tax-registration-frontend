@@ -77,6 +77,10 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     when(mockSoleTraderConnector.getDetails(any())(any()))
       .thenThrow(ex)
 
+  def mockGetPartnershipDetailsFailure(ex: Exception): OngoingStubbing[Future[PartnershipDetails]] =
+    when(mockPartnershipConnector.getDetails(any())(any()))
+      .thenThrow(ex)
+
   def mockGetUkCompanyDetailsFailure(ex: Exception): OngoingStubbing[Future[IncorporationDetails]] =
     when(mockIncorpIdConnector.getDetails(any())(any()))
       .thenThrow(ex)
