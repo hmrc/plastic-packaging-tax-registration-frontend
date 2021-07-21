@@ -39,8 +39,6 @@ class ReviewRegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  incorpIdConnector: IncorpIdConnector,
-  soleTraderInorpIdConnector: SoleTraderInorpIdConnector,
   subscriptionsConnector: SubscriptionsConnector,
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
@@ -58,33 +56,32 @@ class ReviewRegistrationController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       if (request.registration.isCheckAndSubmitReady)
-        request.registration.incorpJourneyId match {
-          case Some(journeyId) =>
-            request.registration.organisationDetails.organisationType match {
-              case Some(UK_COMPANY)  => ukCompanyReview(journeyId)
-              case Some(SOLE_TRADER) => soleTraderReview(journeyId)
-              case _ =>
-                throw new InternalServerException(s"Company type not supported")
-            }
-
-          case _ => Future(Redirect(routes.RegistrationController.displayPage()))
+        request.registration.organisationDetails.organisationType match {
+          case Some(UK_COMPANY)  => ukCompanyReview()
+          case Some(SOLE_TRADER) => soleTraderReview()
+          case _ =>
+            throw new InternalServerException(s"Company type not supported")
         }
       else
         Future(Redirect(routes.RegistrationController.displayPage()))
     }
 
-  private def soleTraderReview(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+  private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =
     for {
-      soleTraderDetails <- soleTraderInorpIdConnector.getDetails(journeyId)
-      _                 <- markRegistrationAsReviewed()
+      soleTraderDetails <- request.registration.organisationDetails.soleTraderDetails.fold(
+        throw new Exception("Unable to fetch incorporation details from cache")
+      )(details => Future.successful(details))
+      _ <- markRegistrationAsReviewed()
     } yield Ok(
       page(registration = request.registration, soleTraderDetails = Some(soleTraderDetails))
     )
 
-  private def ukCompanyReview(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+  private def ukCompanyReview()(implicit request: JourneyRequest[AnyContent]) =
     for {
-      incorporationDetails <- incorpIdConnector.getDetails(journeyId)
-      _                    <- markRegistrationAsReviewed()
+      incorporationDetails <- request.registration.organisationDetails.incorporationDetails.fold(
+        throw new Exception("Unable to fetch incorporation details from cache")
+      )(details => Future.successful(details))
+      _ <- markRegistrationAsReviewed()
     } yield Ok(
       page(registration = request.registration, incorporationDetails = Some(incorporationDetails))
     )

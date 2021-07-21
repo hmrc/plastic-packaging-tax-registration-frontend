@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  IncorpIdConnector,
+  DownstreamServiceError,
   RegistrationConnector,
   ServiceError
 }
@@ -46,7 +46,6 @@ class ContactDetailsConfirmAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
-  incorpIdConnector: IncorpIdConnector,
   mcc: MessagesControllerComponents,
   page: confirm_address
 )(implicit ec: ExecutionContext)
@@ -58,14 +57,19 @@ class ContactDetailsConfirmAddressController @Inject() (
         case Some(journeyId) =>
           request.registration.organisationDetails.organisationType match {
             case Some(UK_COMPANY) =>
-              executeAddressUpdate(
-                journeyId,
-                journeyId =>
-                  incorpIdConnector.getDetails(journeyId)
-                    .flatMap(
-                      response =>
-                        updateBusinessAddress(response.companyAddress.toPptAddress)(request)
-                    )
+              executeAddressUpdate(journeyId,
+                                   _ =>
+                                     request.registration.organisationDetails.incorporationDetails match {
+                                       case Some(details) =>
+                                         updateBusinessAddress(details.companyAddress.toPptAddress)
+                                       case None =>
+                                         throw DownstreamServiceError(
+                                           "Failed to fetch incorporated details from cache",
+                                           RegistrationException(
+                                             "Failed to fetch incorporated details from cache"
+                                           )
+                                         )
+                                     }
               )
             case Some(SOLE_TRADER) =>
               executeAddressUpdate(journeyId,
