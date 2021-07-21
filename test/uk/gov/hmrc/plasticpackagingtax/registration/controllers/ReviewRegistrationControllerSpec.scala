@@ -206,7 +206,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         ).getCount mustBe 1
       }
 
-      "user is not showed confirmation page if registration has no incorporation details for limited company" in {
+      "user is not shown confirmation page if registration has no incorporation details for limited company" in {
         authorizedUser()
         mockRegistrationFind(
           aRegistration(
@@ -220,7 +220,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         intercept[Exception](status(result))
       }
 
-      "user is not showed confirmation page if registration has no incorporation details for sole trader" in {
+      "user is not shown confirmation page if registration has no incorporation details for sole trader" in {
         authorizedUser()
         mockRegistrationFind(
           aRegistration(
