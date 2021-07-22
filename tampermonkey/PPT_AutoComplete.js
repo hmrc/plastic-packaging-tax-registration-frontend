@@ -292,7 +292,7 @@ const grsPartnershipUtr = () => {
 
 const grsPartnershipPostcode = () => {
     if (currentPageIs('/identify-your-partnership/.*/self-assessment-postcode')) {
-        document.getElementById('postcode').value = 'AA1 1AA'
+        document.getElementById('postcode').value = 'AA11AA'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
