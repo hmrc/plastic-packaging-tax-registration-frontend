@@ -40,6 +40,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   OrgType
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -171,7 +172,10 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(aCompleteRegistration)
         val aReviewedRegistration = aCompleteRegistration.copy(metaData =
-          MetaData(registrationReviewed = true, registrationCompleted = true)
+          MetaData(registrationReviewed = true,
+                   registrationCompleted = true,
+                   nrsDetails = NrsDetails(Some(nrsSubmissionId))
+          )
         )
         mockRegistrationUpdate(aReviewedRegistration)
         mockSubscriptionSubmit(subscriptionCreate)

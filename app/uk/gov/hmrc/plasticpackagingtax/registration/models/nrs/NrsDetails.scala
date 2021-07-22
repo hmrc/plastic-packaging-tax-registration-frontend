@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions
+package uk.gov.hmrc.plasticpackagingtax.registration.models.nrs
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.ZonedDateTime
+case class NrsDetails(nrSubsmissionId: Option[String] = None, failureReason: Option[String] = None)
 
-case class SubscriptionCreateResponse(
-  pptReference: String,
-  processingDate: ZonedDateTime,
-  formBundleNumber: String,
-  nrSubmissionId: Option[String] = None,
-  nrsFailureReason: Option[String] = None
-)
-
-object SubscriptionCreateResponse {
-
-  implicit val format: OFormat[SubscriptionCreateResponse] =
-    Json.format[SubscriptionCreateResponse]
-
+object NrsDetails {
+  implicit val format: OFormat[NrsDetails] = Json.format[NrsDetails]
 }

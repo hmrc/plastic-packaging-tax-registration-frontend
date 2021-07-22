@@ -96,11 +96,14 @@ trait PptTestData {
     idType = "ZPPT"
   )
 
+  protected val nrsSubmissionId = "nrs-id-999"
+
   protected val subscriptionCreate: SubscriptionCreateResponse = SubscriptionCreateResponse(
     pptReference = "XXPPTP123456789",
     processingDate =
       ZonedDateTime.now(ZoneOffset.UTC),
-    formBundleNumber = "123456789"
+    formBundleNumber = "123456789",
+    nrSubmissionId = Some(nrsSubmissionId)
   )
 
   protected def registeredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
@@ -114,7 +117,7 @@ trait PptTestData {
   protected def unregisteredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true), organisationType = Some(orgType))
 
-  protected val emailVerification = VerificationStatus(
+  protected val emailVerification: VerificationStatus = VerificationStatus(
     Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
   )
 
