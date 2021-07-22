@@ -102,13 +102,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
       }
-
-      "user is authorised and but does not have the JourneyKey" in {
-        authorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe SEE_OTHER
-      }
     }
 
     "update business address" when {
@@ -117,7 +110,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
         )
-        mockGetSoleTraderDetails(soleTraderIncorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
@@ -321,16 +313,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           intercept[RuntimeException](status(result))
         }
 
-        "user submits form and incorpJourneyId is not present" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration(withIncorpJourneyId(incorpJourneyId = None)))
-          mockRegistrationException()
-
-          val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-        }
       }
     }
   }

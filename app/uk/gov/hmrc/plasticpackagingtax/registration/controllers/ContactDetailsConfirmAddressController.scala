@@ -53,49 +53,29 @@ class ContactDetailsConfirmAddressController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.incorpJourneyId match {
-        case Some(journeyId) =>
-          request.registration.organisationDetails.organisationType match {
-            case Some(UK_COMPANY) =>
-              executeAddressUpdate(journeyId,
-                                   _ =>
-                                     request.registration.organisationDetails.incorporationDetails match {
-                                       case Some(details) =>
-                                         updateBusinessAddress(details.companyAddress.toPptAddress)
-                                       case None =>
-                                         throw DownstreamServiceError(
-                                           "Failed to fetch incorporated details from cache",
-                                           RegistrationException(
-                                             "Failed to fetch incorporated details from cache"
-                                           )
-                                         )
-                                     }
+      request.registration.organisationDetails.organisationType match {
+        case Some(UK_COMPANY) =>
+          executeAddressUpdate(getIncorporationDetails())
+        case Some(SOLE_TRADER) =>
+          executeAddressUpdate(
+            updateBusinessAddress(
+              //TODO - temporary while we're working out where to get it from
+              Address(addressLine1 = "2 Scala Street",
+                      addressLine2 = Some("Soho"),
+                      townOrCity = "London",
+                      postCode = "W1T 2HN"
               )
-            case Some(SOLE_TRADER) =>
-              executeAddressUpdate(journeyId,
-                                   _ =>
-                                     updateBusinessAddress(
-                                       //TODO - temporary while we're working out where to get it from
-                                       Address(addressLine1 = "2 Scala Street",
-                                               addressLine2 = Some("Soho"),
-                                               townOrCity = "London",
-                                               postCode = "W1T 2HN"
-                                       )
-                                     )
-              )
-            case _ => throw new InternalServerException(s"Company type not supported")
-          }
-
-        case _ => Future(Redirect(routes.RegistrationController.displayPage()))
+            )
+          )
+        case _ => throw new InternalServerException(s"Company type not supported")
       }
     }
 
   private def executeAddressUpdate(
-    journeyId: String,
-    getAddressFunction: String => Future[Address]
+    address: Future[Address]
   )(implicit request: JourneyRequest[AnyContent]) =
     for {
-      updatedAddress <- getAddressFunction(journeyId)
+      updatedAddress <- address
     } yield Ok(
       page(form().fill(
              ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
@@ -103,6 +83,16 @@ class ContactDetailsConfirmAddressController @Inject() (
            updatedAddress
       )
     )
+
+  private def getIncorporationDetails()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Address] =
+    request.registration.organisationDetails.incorporationDetails.fold(
+      throw DownstreamServiceError(
+        "Failed to fetch incorporated details from cache",
+        RegistrationException("Failed to fetch incorporated details from cache")
+      )
+    )(details => updateBusinessAddress(details.companyAddress.toPptAddress))
 
   private def updateBusinessAddress(
     address: Address

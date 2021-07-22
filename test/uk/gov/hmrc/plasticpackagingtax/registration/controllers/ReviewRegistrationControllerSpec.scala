@@ -98,7 +98,6 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
-        mockGetUkCompanyDetails(incorporationDetails)
 
         val result = controller.displayPage()(getRequest())
 
