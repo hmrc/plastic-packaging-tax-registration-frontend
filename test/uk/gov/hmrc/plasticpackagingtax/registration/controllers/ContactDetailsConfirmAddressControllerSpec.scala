@@ -26,8 +26,13 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  CHARITY_OR_NOT_FOR_PROFIT,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress, FullName}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -45,7 +50,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
                                                mockJourneyAction,
                                                mockRegistrationConnector,
-                                               incorpIdConnector = mockIncorpIdConnector,
                                                mcc = mcc,
                                                page = page
     )
@@ -71,7 +75,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     when(page.apply(any[Form[ConfirmAddress]], any[Address])(any(), any())).thenReturn(
       HtmlFormat.empty
     )
-    mockGetUkCompanyDetails(incorporationDetails)
   }
 
   override protected def afterEach(): Unit = {
@@ -85,18 +88,19 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
-        mockRegistrationFind(aRegistration())
+        mockRegistrationFind(
+          aRegistration(
+            withOrganisationDetails(
+              OrganisationDetails(organisationType = Some(UK_COMPANY),
+                                  incorporationDetails = Some(incorporationDetails)
+              )
+            )
+          )
+        )
         mockRegistrationUpdate(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-      }
-
-      "user is authorised and but does not have the JourneyKey" in {
-        authorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe SEE_OTHER
       }
     }
 
@@ -106,7 +110,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
         )
-        mockGetSoleTraderDetails(soleTraderIncorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
@@ -125,9 +128,12 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "display page method is invoked for uk company" in {
         val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(UK_COMPANY),
+                                incorporationDetails = Some(incorporationDetails)
+            )
+          )
         )
-        mockGetUkCompanyDetails(incorporationDetails)
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
@@ -136,6 +142,21 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
         businessRegisteredAddressPopulatedSameAs(incorporationDetails.companyAddress)
+      }
+
+      "throw internal server exception when organisation type does not match" in {
+        val registration = aRegistration(
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(CHARITY_OR_NOT_FOR_PROFIT))
+          )
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[InternalServerException](status(result))
       }
     }
 
@@ -239,7 +260,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user display page and update to business address fails" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockGetUkCompanyDetails(incorporationDetails)
           mockRegistrationFailure()
 
           val result = controller.displayPage()(getRequest())
@@ -253,11 +273,10 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           )
           authorizedUser()
           mockRegistrationFind(registration)
-          mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
           val result = controller.displayPage()(getRequest())
 
-          intercept[RuntimeException](status(result))
+          intercept[DownstreamServiceError](status(result))
         }
 
         "user display page and get sole trader details fails" in {
@@ -266,7 +285,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           )
           authorizedUser()
           mockRegistrationFind(registration)
-          mockGetSoleTraderDetailsFailure(new RuntimeException("error"))
 
           val result = controller.displayPage()(getRequest())
 
@@ -294,6 +312,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           intercept[RuntimeException](status(result))
         }
+
       }
     }
   }
