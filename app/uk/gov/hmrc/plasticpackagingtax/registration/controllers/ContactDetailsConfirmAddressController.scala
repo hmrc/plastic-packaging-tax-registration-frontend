@@ -20,8 +20,16 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{DownstreamServiceError, RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  DownstreamServiceError,
+  RegistrationConnector,
+  ServiceError
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.form
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress}
