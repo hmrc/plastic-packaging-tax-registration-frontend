@@ -23,11 +23,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailVerificationStatusMapper
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.EmailVerificationStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 
 case class MetaData(
   registrationReviewed: Boolean = false,
   registrationCompleted: Boolean = false,
-  verifiedEmails: Seq[EmailStatus] = Seq()
+  verifiedEmails: Seq[EmailStatus] = Seq(),
+  nrsDetails: NrsDetails = NrsDetails()
 ) {
 
   def getEmailStatus(email: String): EmailVerificationStatus =

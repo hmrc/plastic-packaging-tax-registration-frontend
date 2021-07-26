@@ -29,6 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
   SoleTraderIncorporationDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
@@ -105,7 +106,10 @@ class ReviewRegistrationController @Inject() (
                                                     updatedRegistrationWithUserHeaders
           ).map { response =>
             successSubmissionCounter.inc()
-            auditor.registrationSubmitted(updatedRegistration)
+            val updatedMetadata = updatedRegistration.metaData.copy(nrsDetails =
+              NrsDetails(response.nrSubmissionId, response.nrsFailureReason)
+            )
+            auditor.registrationSubmitted(updatedRegistration.copy(metaData = updatedMetadata))
             Redirect(routes.ConfirmationController.displayPage())
               .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
           }
