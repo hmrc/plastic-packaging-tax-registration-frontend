@@ -21,6 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
+  PartnershipDetails,
   SoleTraderIncorporationDetails
 }
 
@@ -30,7 +31,8 @@ case class OrganisationDetails(
   businessRegisteredAddress: Option[Address] = None,
   safeNumber: Option[String] = None,
   soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
-  incorporationDetails: Option[IncorporationDetails] = None
+  incorporationDetails: Option[IncorporationDetails] = None,
+  partnershipDetails: Option[PartnershipDetails] = None
 )
 
 object OrganisationDetails {

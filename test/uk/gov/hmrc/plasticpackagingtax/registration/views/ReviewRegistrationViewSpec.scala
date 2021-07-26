@@ -20,9 +20,14 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
+  PartnershipDetails,
   SoleTraderIncorporationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -59,7 +64,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private def createView(
     reg: Registration = registration,
     ukCompanyDetails: Option[IncorporationDetails] = None,
-    soleTraderDetails: Option[SoleTraderIncorporationDetails] = None
+    soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
+    partnershipDetails: Option[PartnershipDetails] = None
   ): Document =
     page(reg, ukCompanyDetails, soleTraderDetails)(request, messages)
 
@@ -96,6 +102,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
 
       messages must haveTranslationFor("site.button.acceptAndSend")
       messages must haveTranslationFor("site.link.change")
+
+      messages must haveTranslationFor("reviewRegistration.organisationDetails.partnership.name")
     }
 
     val view: Document = createView(ukCompanyDetails = Some(incorporationDetails))
@@ -235,6 +243,37 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
                     soleTraderView
         ) mustBe soleTraderIncorporationDetails.nino
 
+      }
+
+      "displaying organisation details section for partnership" in {
+
+        val partnershipView = createView(
+          reg = aRegistration(
+            withOrganisationDetails(
+              OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                                  businessRegisteredAddress = Some(testBusinessAddress)
+              )
+            )
+          ),
+          partnershipDetails = Some(partnershipDetails)
+        )
+
+        getKeyFor(organisationSection, 0, partnershipView) must containMessage(
+          "reviewRegistration.organisationDetails.partnership.name"
+        )
+        getKeyFor(organisationSection, 1, partnershipView) must containMessage(
+          "reviewRegistration.organisationDetails.registeredBusinessAddress"
+        )
+        getKeyFor(organisationSection, 2, partnershipView) must containMessage(
+          "reviewRegistration.organisationDetails.organisationType"
+        )
+
+        getValueFor(organisationSection, 0, partnershipView) mustBe "TODO"
+        getValueFor(organisationSection,
+                    1,
+                    partnershipView
+        ) mustBe "2 Scala Street Soho London W1T 2HN"
+        getValueFor(organisationSection, 2, partnershipView) mustBe PARTNERSHIP.toString
       }
 
       "displaying primary contact details section" in {

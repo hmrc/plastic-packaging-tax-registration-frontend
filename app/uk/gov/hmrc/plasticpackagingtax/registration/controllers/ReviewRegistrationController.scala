@@ -24,9 +24,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
+  PartnershipDetails,
   SoleTraderIncorporationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
@@ -64,8 +69,8 @@ class ReviewRegistrationController @Inject() (
         request.registration.organisationDetails.organisationType match {
           case Some(UK_COMPANY)  => ukCompanyReview()
           case Some(SOLE_TRADER) => soleTraderReview()
-          case _ =>
-            throw new InternalServerException(s"Company type not supported")
+          case Some(PARTNERSHIP) => partnershipReview()
+          case _                 => throw new InternalServerException(s"Company type not supported")
         }
       else
         Future(Redirect(routes.RegistrationController.displayPage()))
@@ -77,6 +82,14 @@ class ReviewRegistrationController @Inject() (
       _                 <- markRegistrationAsReviewed()
     } yield Ok(
       page(registration = request.registration, soleTraderDetails = Some(soleTraderDetails))
+    )
+
+  private def partnershipReview()(implicit request: JourneyRequest[AnyContent]) =
+    for {
+      partnershipDetails <- getPartnershipDetails()
+      _                  <- markRegistrationAsReviewed()
+    } yield Ok(
+      page(registration = request.registration, partnershipDetails = Some(partnershipDetails))
     )
 
   private def ukCompanyReview()(implicit request: JourneyRequest[AnyContent]) =
@@ -135,6 +148,10 @@ class ReviewRegistrationController @Inject() (
         registration.organisationDetails.soleTraderDetails.flatMap(
           details => details.registration.registeredBusinessPartnerId
         )
+      case OrgType.PARTNERSHIP =>
+        registration.organisationDetails.partnershipDetails.flatMap(
+          details => details.registration.registeredBusinessPartnerId
+        )
       case _ =>
         registration.organisationDetails.incorporationDetails.flatMap(
           details => details.registration.registeredBusinessPartnerId
@@ -146,6 +163,13 @@ class ReviewRegistrationController @Inject() (
   ): Future[SoleTraderIncorporationDetails] =
     request.registration.organisationDetails.soleTraderDetails.fold(
       throw new Exception("Unable to fetch sole trader details from cache")
+    )(details => Future.successful(details))
+
+  private def getPartnershipDetails()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[PartnershipDetails] =
+    request.registration.organisationDetails.partnershipDetails.fold(
+      throw new Exception("Unable to fetch partnership details from cache")
     )(details => Future.successful(details))
 
   private def getIncorporationDetails()(implicit

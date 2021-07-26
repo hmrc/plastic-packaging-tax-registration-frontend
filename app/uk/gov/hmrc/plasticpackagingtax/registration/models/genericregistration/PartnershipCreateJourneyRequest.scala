@@ -17,15 +17,19 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.GrsCreateJourneyRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{GrsCreateJourneyRequest}
 
-case class IncorpIdCreateRequest(
+case class PartnershipCreateJourneyRequest(
   continueUrl: String,
   optServiceName: Option[String] = None,
   deskProServiceId: String,
-  signOutUrl: String
+  signOutUrl: String,
+  enableSautrCheck: Boolean = true
 ) extends GrsCreateJourneyRequest
 
-object IncorpIdCreateRequest {
-  implicit val format: OFormat[IncorpIdCreateRequest] = Json.format[IncorpIdCreateRequest]
+object PartnershipCreateJourneyRequest {
+
+  implicit val format: OFormat[PartnershipCreateJourneyRequest] =
+    Json.format[PartnershipCreateJourneyRequest]
+
 }

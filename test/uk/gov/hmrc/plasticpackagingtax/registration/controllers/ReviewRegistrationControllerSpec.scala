@@ -30,6 +30,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   CHARITY_OR_NOT_FOR_PROFIT,
+  PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
 }
@@ -67,7 +68,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     val registration = aRegistration()
 
     mockRegistrationFind(registration)
-    given(page.apply(any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(any(), any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -122,6 +123,23 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         status(result) mustBe OK
       }
 
+      "user is authorised and display page method is invoked with partnership" in {
+        val registration = aRegistration(
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                                partnershipDetails = Some(partnershipDetails)
+            )
+          )
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+        mockGetPartnershipDetails(partnershipDetails)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
     }
 
     "return 303" when {
@@ -134,13 +152,50 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         given(
           page.apply(refEq(registration),
                      refEq(Some(incorporationDetails)),
-                     refEq(Some(soleTraderIncorporationDetails))
+                     refEq(Some(soleTraderIncorporationDetails)),
+                     refEq(Some(partnershipDetails))
           )(any(), any())
         ).willReturn(HtmlFormat.empty)
 
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe SEE_OTHER
+      }
+
+      "get details fails for uk company" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[Exception](status(result))
+      }
+
+      "get details fails for sole trader" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[Exception](status(result))
+      }
+
+      "get details fails for partnership" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[Exception](status(result))
       }
 
       "when form is submitted" in {

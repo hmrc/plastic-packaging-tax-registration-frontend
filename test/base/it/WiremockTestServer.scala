@@ -17,7 +17,7 @@
 package base.it
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.MappingBuilder
+import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.must.Matchers
@@ -34,5 +34,16 @@ trait WiremockTestServer
 
   protected def stubFor(mappingBuilder: MappingBuilder): StubMapping =
     wireMockServer.stubFor(mappingBuilder)
+
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    WireMock.configureFor(wireHost, wirePort)
+    wireMockServer.start()
+  }
+
+  override protected def afterAll(): Unit = {
+    wireMockServer.stop()
+    super.afterAll()
+  }
 
 }

@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import base.Injector
 import base.it.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
@@ -35,7 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
 
-class EmailVerificationConnectorSpec
+class EmailVerificationConnectorISpec
     extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
 
   lazy val connector: EmailVerificationConnector =
@@ -54,17 +53,6 @@ class EmailVerificationConnectorSpec
                                                                 pageTitle = "PPT Title",
                                                                 deskproServiceName = "ppt"
   )
-
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    WireMock.configureFor(wireHost, wirePort)
-    wireMockServer.start()
-  }
-
-  override protected def afterAll(): Unit = {
-    wireMockServer.stop()
-    super.afterAll()
-  }
 
   val testJourneyStartUrl  = "/verify-email/uuid-id"
   val testDeskProServiceId = "plastic-packaging-tax"

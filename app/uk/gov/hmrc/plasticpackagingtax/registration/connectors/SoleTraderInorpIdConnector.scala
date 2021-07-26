@@ -35,9 +35,10 @@ class SoleTraderInorpIdConnector @Inject() (
   httpClient: HttpClient,
   config: AppConfig,
   metrics: Metrics
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext)
+    extends GrsIntegration[SoleTraderIncorpIdCreateRequest, SoleTraderIncorporationDetails] {
 
-  def createJourney(
+  override def createJourney(
     payload: SoleTraderIncorpIdCreateRequest
   )(implicit hc: HeaderCarrier): Future[String] = {
     val timer = metrics.defaultRegistry.timer("ppt.soleTrader.incorpId.create.journey.timer").time()
@@ -55,7 +56,7 @@ class SoleTraderInorpIdConnector @Inject() (
       }
   }
 
-  def getDetails(
+  override def getDetails(
     journeyId: String
   )(implicit hc: HeaderCarrier): Future[SoleTraderIncorporationDetails] = {
     val timer = metrics.defaultRegistry.timer("ppt.soleTrader.incorpId.get.details.timer").time()
