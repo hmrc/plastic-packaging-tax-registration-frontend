@@ -29,6 +29,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  CHARITY_OR_NOT_FOR_PROFIT,
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
@@ -50,7 +51,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
                                                mockJourneyAction,
                                                mockRegistrationConnector,
-                                               partnershipConnector = mockPartnershipConnector,
                                                mcc = mcc,
                                                page = page
     )
@@ -109,7 +109,11 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "display page method is invoked for sole trader" in {
         val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(SOLE_TRADER),
+                                soleTraderDetails = Some(soleTraderIncorporationDetails)
+            )
+          )
         )
         authorizedUser()
         mockRegistrationFind(registration)
@@ -129,9 +133,12 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "display page method is invoked for partnership" in {
         val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                                partnershipDetails = Some(partnershipDetails)
+            )
+          )
         )
-        mockGetPartnershipDetails(partnershipDetails)
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
@@ -310,7 +317,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           val result = controller.displayPage()(getRequest())
 
-          intercept[RuntimeException](status(result))
+          intercept[DownstreamServiceError](status(result))
         }
 
         "user submits form and the registration update fails" in {

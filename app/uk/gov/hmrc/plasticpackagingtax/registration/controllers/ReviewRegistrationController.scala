@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
+  PartnershipDetails,
   SoleTraderIncorporationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
@@ -47,7 +48,6 @@ class ReviewRegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  partnershipConnector: PartnershipConnector,
   subscriptionsConnector: SubscriptionsConnector,
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
@@ -69,8 +69,7 @@ class ReviewRegistrationController @Inject() (
           case Some(UK_COMPANY)  => ukCompanyReview()
           case Some(SOLE_TRADER) => soleTraderReview()
           case Some(PARTNERSHIP) => partnershipReview()
-              case _ =>
-            throw new InternalServerException(s"Company type not supported")
+          case _                 => throw new InternalServerException(s"Company type not supported")
         }
       else
         Future(Redirect(routes.RegistrationController.displayPage()))
@@ -84,9 +83,9 @@ class ReviewRegistrationController @Inject() (
       page(registration = request.registration, soleTraderDetails = Some(soleTraderDetails))
     )
 
-  private def partnershipReview(journeyId: String)(implicit request: JourneyRequest[AnyContent]) =
+  private def partnershipReview()(implicit request: JourneyRequest[AnyContent]) =
     for {
-      partnershipDetails <- partnershipConnector.getDetails(journeyId)
+      partnershipDetails <- getPartnershipDetails()
       _                  <- markRegistrationAsReviewed()
     } yield Ok(
       page(registration = request.registration, partnershipDetails = Some(partnershipDetails))
@@ -160,6 +159,13 @@ class ReviewRegistrationController @Inject() (
   ): Future[SoleTraderIncorporationDetails] =
     request.registration.organisationDetails.soleTraderDetails.fold(
       throw new Exception("Unable to fetch sole trader details from cache")
+    )(details => Future.successful(details))
+
+  private def getPartnershipDetails()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[PartnershipDetails] =
+    request.registration.organisationDetails.partnershipDetails.fold(
+      throw new Exception("Unable to fetch partnership details from cache")
     )(details => Future.successful(details))
 
   private def getIncorporationDetails()(implicit

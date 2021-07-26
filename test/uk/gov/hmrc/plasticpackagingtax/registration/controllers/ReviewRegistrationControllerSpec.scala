@@ -28,8 +28,18 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{CHARITY_OR_NOT_FOR_PROFIT, PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName, LiabilityWeight, OrgType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  CHARITY_OR_NOT_FOR_PROFIT,
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Address,
+  FullName,
+  LiabilityWeight,
+  OrgType
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
@@ -46,7 +56,6 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
                                      mockJourneyAction,
                                      mcc = mcc,
                                      registrationConnector = mockRegistrationConnector,
-                                     partnershipConnector = mockPartnershipConnector,
                                      subscriptionsConnector = mockSubscriptionsConnector,
                                      auditor = mockAuditor,
                                      page = page,
@@ -115,7 +124,11 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked with partnership" in {
         val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                                partnershipDetails = Some(partnershipDetails)
+            )
+          )
         )
         authorizedUser()
         mockRegistrationFind(registration)
@@ -154,11 +167,10 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
         val result = controller.displayPage()(getRequest())
 
-        intercept[RuntimeException](status(result))
+        intercept[Exception](status(result))
       }
 
       "get details fails for sole trader" in {
@@ -167,11 +179,10 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockGetSoleTraderDetailsFailure(new RuntimeException("error"))
 
         val result = controller.displayPage()(getRequest())
 
-        intercept[RuntimeException](status(result))
+        intercept[Exception](status(result))
       }
 
       "get details fails for partnership" in {
@@ -180,11 +191,10 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockGetPartnershipDetailsFailure(new RuntimeException("error"))
 
         val result = controller.displayPage()(getRequest())
 
-        intercept[RuntimeException](status(result))
+        intercept[Exception](status(result))
       }
 
       "when form is submitted" in {

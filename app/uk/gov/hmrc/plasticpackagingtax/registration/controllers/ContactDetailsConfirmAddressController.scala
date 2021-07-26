@@ -22,7 +22,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
-  PartnershipConnector,
   RegistrationConnector,
   ServiceError
 }
@@ -52,82 +51,23 @@ class ContactDetailsConfirmAddressController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  partnershipConnector: PartnershipConnector,
   page: confirm_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.organisationDetails.organisationType match {
-        case Some(UK_COMPANY) =>
-          executeAddressUpdate(updateIncorporationAddressDetails)
-        case Some(SOLE_TRADER) =>
-          executeAddressUpdate(updateSoleTraderAddressDetails)
-        case Some(PARTNERSHIP) =>
-              executeAddressUpdate(() =>
-                                     partnershipConnector.getDetails()
-                                       .flatMap(
-                                         response =>
-                                           updateBusinessAddress(
-                                             // TODO - how do we get/lookup the rest of the address?
-                                             Address(addressLine1 = "3 Scala Street",
-                                                     addressLine2 = Some("Soho"),
-                                                     townOrCity = "London",
-                                                     postCode = response.postcode
-                                             )
-                                           )(request)
-                                       )
-              )
-            case _ => throw new InternalServerException(s"Company type not supported")
-      }
-    }
-
-  private def executeAddressUpdate(
-    address: Future[Address]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    for {
-      updatedAddress <- address
-    } yield Ok(
-      page(form().fill(
-             ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
-           ),
-           updatedAddress
+      val businessAddress = getBusinessAddress(request)
+      updateRegistration(businessAddress)
+      Future(
+        Ok(
+          page(form().fill(
+                 ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
+               ),
+               businessAddress
+          )
+        )
       )
-    )
-
-  private def updateIncorporationAddressDetails()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[Address] =
-    request.registration.organisationDetails.incorporationDetails.fold(
-      throw DownstreamServiceError(
-        "Failed to fetch incorporated details from cache",
-        RegistrationException("Failed to fetch incorporated details from cache")
-      )
-    )(details => updateBusinessAddress(details.companyAddress.toPptAddress))
-
-  private def updateSoleTraderAddressDetails()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[Address] =
-    updateBusinessAddress(
-      //TODO - temporary while we're working out where to get it from
-      Address(addressLine1 = "2 Scala Street",
-              addressLine2 = Some("Soho"),
-              townOrCity = "London",
-              postCode = "W1T 2HN"
-      )
-    )
-
-  private def updateBusinessAddress(
-    address: Address
-  )(implicit req: JourneyRequest[AnyContent]): Future[Address] =
-    update { registration =>
-      val updatedOrgDetails =
-        registration.organisationDetails.copy(businessRegisteredAddress = Some(address))
-      registration.copy(organisationDetails = updatedOrgDetails)
-    }.map {
-      case Right(_)    => address
-      case Left(error) => throw error
     }
 
   def submit(): Action[AnyContent] =
@@ -164,6 +104,55 @@ class ContactDetailsConfirmAddressController @Inject() (
 
         case _ => Future(Redirect(routes.RegistrationController.displayPage()))
       }
+    }
+
+  private def getBusinessAddress(implicit request: JourneyRequest[AnyContent]): Address =
+    request.registration.organisationDetails.organisationType match {
+      case Some(UK_COMPANY) =>
+        request.registration.organisationDetails.incorporationDetails.fold(
+          throw DownstreamServiceError(
+            "Failed to fetch incorporated details from cache",
+            RegistrationException("Failed to fetch incorporated details from cache")
+          )
+        )(incorporationDetails => incorporationDetails.companyAddress.toPptAddress)
+      case Some(SOLE_TRADER) =>
+        request.registration.organisationDetails.soleTraderDetails.fold(
+          throw DownstreamServiceError(
+            "Failed to fetch sole trader details from cache",
+            RegistrationException("Failed to fetch sole trader details from cache")
+          )
+        )(
+          _ =>
+            //TODO - temporary while we're working out where to get it from
+            Address(addressLine1 = "2 Scala Street",
+                    addressLine2 = Some("Soho"),
+                    townOrCity = "London",
+                    postCode = "W1T 2HN"
+            )
+        )
+      case Some(PARTNERSHIP) =>
+        request.registration.organisationDetails.partnershipDetails.fold(
+          throw DownstreamServiceError(
+            "Failed to fetch partnership details from cache",
+            RegistrationException("Failed to fetch partnership details from cache")
+          )
+        )(
+          partnershipDetails =>
+            //TODO - temporary while we're working out where to get it from
+            Address(addressLine1 = "3 Scala Street",
+                    addressLine2 = Some("Soho"),
+                    townOrCity = "London",
+                    postCode = partnershipDetails.postcode
+            )
+        )
+      case _ => throw new InternalServerException(s"Company type not supported")
+    }
+
+  private def updateRegistration(address: Address)(implicit req: JourneyRequest[AnyContent]) =
+    update { registration =>
+      val updatedOrgDetails =
+        registration.organisationDetails.copy(businessRegisteredAddress = Some(address))
+      registration.copy(organisationDetails = updatedOrgDetails)
     }
 
   private def updateRegistration(formData: ConfirmAddress, businessAddress: Option[Address])(
