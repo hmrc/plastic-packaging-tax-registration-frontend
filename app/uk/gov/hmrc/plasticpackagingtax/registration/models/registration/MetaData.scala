@@ -29,7 +29,7 @@ case class MetaData(
   registrationReviewed: Boolean = false,
   registrationCompleted: Boolean = false,
   verifiedEmails: Seq[EmailStatus] = Seq(),
-  nrsDetails: NrsDetails = NrsDetails()
+  nrsDetails: Option[NrsDetails] = None
 ) {
 
   def getEmailStatus(email: String): EmailVerificationStatus =
