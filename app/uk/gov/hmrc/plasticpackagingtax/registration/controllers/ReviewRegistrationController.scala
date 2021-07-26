@@ -107,7 +107,7 @@ class ReviewRegistrationController @Inject() (
           ).map { response =>
             successSubmissionCounter.inc()
             val updatedMetadata = updatedRegistration.metaData.copy(nrsDetails =
-              NrsDetails(response.nrSubmissionId, response.nrsFailureReason)
+              Some(NrsDetails(response.nrSubmissionId, response.nrsFailureReason))
             )
             auditor.registrationSubmitted(updatedRegistration.copy(metaData = updatedMetadata))
             Redirect(routes.ConfirmationController.displayPage())

@@ -174,7 +174,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         val aReviewedRegistration = aCompleteRegistration.copy(metaData =
           MetaData(registrationReviewed = true,
                    registrationCompleted = true,
-                   nrsDetails = NrsDetails(Some(nrsSubmissionId))
+                   nrsDetails = Some(NrsDetails(Some(nrsSubmissionId)))
           )
         )
         mockRegistrationUpdate(aReviewedRegistration)
