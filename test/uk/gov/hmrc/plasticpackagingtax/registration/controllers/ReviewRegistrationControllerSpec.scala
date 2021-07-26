@@ -238,7 +238,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         await(controller.submit()(postRequest(JsObject.empty)))
 
         verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
-          ArgumentMatchers.eq(aReviewedRegistration)
+          ArgumentMatchers.eq(aReviewedRegistration),
+          ArgumentMatchers.eq(Some("XXPPTP123456789"))
         )(any(), any())
       }
     }

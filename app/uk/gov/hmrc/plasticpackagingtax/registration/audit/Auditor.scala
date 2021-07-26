@@ -27,10 +27,11 @@ import scala.concurrent.ExecutionContext
 class Auditor @Inject() (auditConnector: AuditConnector) {
 
   def registrationSubmitted(
-    registration: Registration
+    registration: Registration,
+    pptReference: Option[String] = None
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
     auditConnector.sendExplicitAudit(CreateRegistrationEvent.eventType,
-                                     CreateRegistrationEvent(registration)
+                                     CreateRegistrationEvent(registration, pptReference)
     )
 
   def newRegistrationStarted()(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =

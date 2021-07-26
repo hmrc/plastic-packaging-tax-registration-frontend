@@ -21,6 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 
 case class CreateRegistrationEvent(
   id: String,
+  pptReference: Option[String],
   incorpJourneyId: Option[String] = None,
   liabilityDetails: LiabilityDetails = LiabilityDetails(),
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
@@ -33,8 +34,9 @@ object CreateRegistrationEvent {
   implicit val format: OFormat[CreateRegistrationEvent] = Json.format[CreateRegistrationEvent]
   val eventType: String                                 = "CREATE_PPT_REGISTRATION"
 
-  def apply(registration: Registration): CreateRegistrationEvent =
+  def apply(registration: Registration, pptReference: Option[String]): CreateRegistrationEvent =
     CreateRegistrationEvent(id = registration.id,
+                            pptReference = pptReference,
                             incorpJourneyId = registration.incorpJourneyId,
                             liabilityDetails = registration.liabilityDetails,
                             primaryContactDetails = registration.primaryContactDetails,
