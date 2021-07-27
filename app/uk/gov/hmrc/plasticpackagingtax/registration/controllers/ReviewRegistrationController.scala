@@ -29,6 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.GENERAL_PARTNERSHIP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
   PartnershipDetails,
@@ -152,7 +153,14 @@ class ReviewRegistrationController @Inject() (
         )
       case OrgType.PARTNERSHIP =>
         registration.organisationDetails.partnershipDetails.flatMap(
-          details => details.registration.registeredBusinessPartnerId
+          partnershipDetails =>
+            partnershipDetails.partnershipType match {
+              case GENERAL_PARTNERSHIP =>
+                partnershipDetails.generalPartnershipDetails.fold(
+                  throw new IllegalStateException("Missing general partnership details")
+                )(_.registration.registeredBusinessPartnerId)
+              case _ => throw new IllegalStateException("Illegal partnership type")
+            }
         )
       case _ =>
         registration.organisationDetails.incorporationDetails.flatMap(

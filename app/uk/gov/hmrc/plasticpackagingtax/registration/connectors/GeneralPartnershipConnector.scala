@@ -21,19 +21,22 @@ import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.PartnershipConnector.CreateJourneyTimer
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.GeneralPartnershipConnector.CreateJourneyTimer
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  PartnershipCreateJourneyRequest,
-  PartnershipDetails
+  GeneralPartnershipDetails,
+  PartnershipCreateJourneyRequest
 }
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnershipConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(
-  implicit ec: ExecutionContext
-) extends GrsIntegration[PartnershipCreateJourneyRequest, PartnershipDetails] {
+class GeneralPartnershipConnector @Inject() (
+  httpClient: HttpClient,
+  config: AppConfig,
+  metrics: Metrics
+)(implicit ec: ExecutionContext)
+    extends GrsIntegration[PartnershipCreateJourneyRequest, GeneralPartnershipDetails] {
 
   override def createJourney(
     payload: PartnershipCreateJourneyRequest
@@ -56,11 +59,11 @@ class PartnershipConnector @Inject() (httpClient: HttpClient, config: AppConfig,
 
   override def getDetails(
     journeyId: GrsJourneyId
-  )(implicit hc: HeaderCarrier): Future[PartnershipDetails] =
-    httpClient.GET[PartnershipDetails](config.partnershipDetailsUrl(journeyId))
+  )(implicit hc: HeaderCarrier): Future[GeneralPartnershipDetails] =
+    httpClient.GET[GeneralPartnershipDetails](config.partnershipDetailsUrl(journeyId))
 
 }
 
-object PartnershipConnector {
+object GeneralPartnershipConnector {
   val CreateJourneyTimer = "ppt.partnership.create.journey.timer"
 }

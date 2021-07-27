@@ -54,7 +54,7 @@ trait MockRegistrationConnector
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenThrow(new RuntimeException("some error"))
 
-  def mockRegistrationFailure(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
+  def mockRegistrationUpdateFailure(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenReturn(
         Future.successful(Left(DownstreamServiceError("some error", new Exception("some error"))))

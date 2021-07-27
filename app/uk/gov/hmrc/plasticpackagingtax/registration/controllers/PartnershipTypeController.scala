@@ -26,60 +26,63 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.GENERAL_PARTNERSHIP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorpIdCreateRequest,
-  SoleTraderIncorpIdCreateRequest
+  PartnershipCreateJourneyRequest,
+  PartnershipDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnership_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OrganisationDetailsTypeController @Inject() (
+class PartnershipTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   appConfig: AppConfig,
-  soleTraderIdConnector: SoleTraderInorpIdConnector,
-  incorpIdConnector: IncorpIdConnector,
+  partnershipConnector: GeneralPartnershipConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: organisation_type
+  page: partnership_type
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.organisationDetails.organisationType match {
-        case Some(data) =>
-          Future(Ok(page(OrganisationType.form().fill(OrganisationType(Some(data))))))
-        case _ => Future(Ok(page(OrganisationType.form())))
+      request.registration.organisationDetails.partnershipDetails match {
+        case Some(partnershipDetails) =>
+          Future(
+            Ok(
+              page(
+                PartnershipType.form().fill(
+                  PartnershipType(Some(partnershipDetails.partnershipType))
+                )
+              )
+            )
+          )
+        case _ => Future(Ok(page(PartnershipType.form())))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      OrganisationType.form()
+      PartnershipType.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[OrganisationType]) => Future(BadRequest(page(formWithErrors))),
-              organisationType =>
-                updateRegistration(organisationType).flatMap {
+        .fold((formWithErrors: Form[PartnershipType]) => Future(BadRequest(page(formWithErrors))),
+              partnershipType =>
+                updateRegistration(partnershipType).flatMap {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        organisationType.answer match {
-                          case Some(OrgType.UK_COMPANY) =>
-                            getUkCompanyRedirectUr()
+                        partnershipType.answer match {
+                          case Some(GENERAL_PARTNERSHIP) =>
+                            getPartnershipRedirectUr()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.SOLE_TRADER) =>
-                            getSoleTraderRedirectUr()
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.PARTNERSHIP) =>
-                            Future(Redirect(routes.PartnershipTypeController.displayPage()))
                           case _ =>
                             Future(
                               Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
@@ -90,38 +93,45 @@ class OrganisationDetailsTypeController @Inject() (
                   case Left(error) => throw error
                 }
         )
-
     }
 
-  private def getSoleTraderRedirectUr()(implicit
+  private def getPartnershipRedirectUr()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[String] =
-    soleTraderIdConnector.createJourney(
-      SoleTraderIncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+    partnershipConnector.createJourney(
+      PartnershipCreateJourneyRequest(appConfig.incorpIdJourneyCallbackUrl,
                                       Some(request2Messages(request)("service.name")),
                                       appConfig.serviceIdentifier,
                                       appConfig.exitSurveyUrl
       )
     )
 
-  private def getUkCompanyRedirectUr()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    incorpIdConnector.createJourney(
-      IncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
-                            Some(request2Messages(request)("service.name")),
-                            appConfig.serviceIdentifier,
-                            appConfig.exitSurveyUrl
-      )
-    )
-
   private def updateRegistration(
-    formData: OrganisationType
+    formData: PartnershipType
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    update { registration =>
-      val updatedOrganisationDetails =
-        registration.organisationDetails.copy(organisationType = formData.answer)
-      registration.copy(organisationDetails = updatedOrganisationDetails)
+    formData.answer match {
+      case Some(partnershipType) =>
+        update { registration =>
+          registration.organisationDetails.partnershipDetails match {
+            case Some(_) =>
+              registration.copy(organisationDetails =
+                registration.organisationDetails.copy(partnershipDetails =
+                  Some(
+                    registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
+                      partnershipType
+                    )
+                  )
+                )
+              )
+            case _ =>
+              registration.copy(organisationDetails =
+                registration.organisationDetails.copy(partnershipDetails =
+                  Some(PartnershipDetails(partnershipType = partnershipType))
+                )
+              )
+          }
+        }
+      case _ => throw new IllegalStateException("No partnership type selected")
     }
 
 }

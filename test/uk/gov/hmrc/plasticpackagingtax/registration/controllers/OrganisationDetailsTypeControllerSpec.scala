@@ -51,7 +51,6 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                           page = page,
                                           incorpIdConnector = mockIncorpIdConnector,
                                           soleTraderIdConnector = mockSoleTraderConnector,
-                                          partnershipConnector = mockPartnershipConnector,
                                           appConfig = config
     )
 
@@ -108,7 +107,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
         "user submits organisation type: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          assertRedirectForOrgType(PARTNERSHIP, "http://test/redirect/partnership")
+          assertRedirectForOrgType(PARTNERSHIP, routes.PartnershipTypeController.displayPage().url)
         }
         "user submits organisation type: " + CHARITY_OR_NOT_FOR_PROFIT in {
           assertRedirectForOrgType(CHARITY_OR_NOT_FOR_PROFIT,
@@ -168,7 +167,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "user submits form and the registration update fails" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationFailure()
+          mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString, formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

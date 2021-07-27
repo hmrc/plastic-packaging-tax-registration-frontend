@@ -129,7 +129,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
 
       "user submits form and the registration update fails" in {
         authorizedUser()
-        mockRegistrationFailure()
+        mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequest(Json.toJson(Date(Some(1), Some(4), Some(2022)))))
 

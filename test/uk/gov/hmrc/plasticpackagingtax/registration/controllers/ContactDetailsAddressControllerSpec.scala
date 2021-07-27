@@ -143,7 +143,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
 
         "user submits form and the registration update fails" in {
           authorizedUser()
-          mockRegistrationFailure()
+          mockRegistrationUpdateFailure()
           val result =
             controller.submit()(postRequestEncoded(anAddress, formAction))
 

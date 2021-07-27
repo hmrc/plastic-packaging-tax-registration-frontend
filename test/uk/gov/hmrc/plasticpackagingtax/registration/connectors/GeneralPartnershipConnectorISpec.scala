@@ -25,17 +25,17 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  GeneralPartnershipDetails,
   IncorporationRegistrationDetails,
-  PartnershipCreateJourneyRequest,
-  PartnershipDetails
+  PartnershipCreateJourneyRequest
 }
 
 import java.util.UUID
 
-class PartnershipConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class GeneralPartnershipConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
-  val connector: PartnershipConnector = app.injector.instanceOf[PartnershipConnector]
-  val testJourneyStartUrl             = "/identify-your-partnership/uuid-id/sa-utr"
+  val connector: GeneralPartnershipConnector = app.injector.instanceOf[GeneralPartnershipConnector]
+  val testJourneyStartUrl                    = "/identify-your-partnership/uuid-id/sa-utr"
 
   "create journey" should {
     expectPartnershipIdentificationServiceToSuccessfullyCreateNewJourney()
@@ -50,11 +50,11 @@ class PartnershipConnectorISpec extends ConnectorISpec with Injector with ScalaF
     }
 
     "be timed" in {
-      val timerCount = getTimer(PartnershipConnector.CreateJourneyTimer).getCount
+      val timerCount = getTimer(GeneralPartnershipConnector.CreateJourneyTimer).getCount
 
       await(connector.createJourney(createJourneyRequest))
 
-      getTimer(PartnershipConnector.CreateJourneyTimer).getCount mustBe (timerCount + 1)
+      getTimer(GeneralPartnershipConnector.CreateJourneyTimer).getCount mustBe (timerCount + 1)
     }
 
     "throw exception" when {
@@ -70,24 +70,26 @@ class PartnershipConnectorISpec extends ConnectorISpec with Injector with ScalaF
 
   "get details" should {
     val journeyId = UUID.randomUUID().toString
-    val expectedPartnershipDetails = PartnershipDetails(sautr = "1234567890",
-                                                        postcode = "AA1 1AA",
-                                                        registration =
-                                                          IncorporationRegistrationDetails(
-                                                            registrationStatus = "REGISTERED",
-                                                            registeredBusinessPartnerId =
-                                                              Some("123")
-                                                          )
+    val expectedGeneralPartnershipDetails = GeneralPartnershipDetails(sautr = "1234567890",
+                                                                      postcode = "AA1 1AA",
+                                                                      registration =
+                                                                        IncorporationRegistrationDetails(
+                                                                          registrationStatus =
+                                                                            "REGISTERED",
+                                                                          registeredBusinessPartnerId =
+                                                                            Some("123")
+                                                                        )
     )
 
     "obtain partnership details from the partnership identification service" in {
-      expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId,
-                                                                       expectedPartnershipDetails
+      expectPartnershipIdentificationServiceToReturnPartnershipDetails(
+        journeyId,
+        expectedGeneralPartnershipDetails
       )
 
       val actualPartnershipDetails = await(connector.getDetails(journeyId))
 
-      actualPartnershipDetails mustBe expectedPartnershipDetails
+      actualPartnershipDetails mustBe expectedGeneralPartnershipDetails
     }
 
     "throw exception" when {
@@ -122,14 +124,14 @@ class PartnershipConnectorISpec extends ConnectorISpec with Injector with ScalaF
 
   private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
     journeyId: String,
-    details: PartnershipDetails
+    generalPartnershipDetails: GeneralPartnershipDetails
   ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")
         .willReturn(
           aResponse()
             .withStatus(Status.OK)
-            .withBody(Json.toJsObject(details).toString())
+            .withBody(Json.toJsObject(generalPartnershipDetails).toString())
         )
     )
 

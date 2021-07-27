@@ -23,10 +23,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
 
 object OrgType extends Enumeration {
   type OrgType = Value
-  val UK_COMPANY: Value                        = Value("UK company")
+  val UK_COMPANY: Value                        = Value("UK limited or unlimited company")
   val SOLE_TRADER: Value                       = Value("Sole trader")
   val PARTNERSHIP: Value                       = Value("Partnership")
-  val CHARITY_OR_NOT_FOR_PROFIT: Value         = Value("Charity or Not for Profit")
+  val CHARITY_OR_NOT_FOR_PROFIT: Value         = Value("Charity, Not for Profit, Trust or Society")
+  val OVERSEAS_COMPANY: Value                  = Value("Overseas company")
   def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
 
   implicit val format: Format[OrgType] =

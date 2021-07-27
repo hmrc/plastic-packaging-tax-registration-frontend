@@ -134,7 +134,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
-        mockGetPartnershipDetails(partnershipDetails)
+        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
 
         val result = controller.displayPage()(getRequest())
 
@@ -255,7 +255,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "user submits form and the registration update fails" in {
         authorizedUser()
-        mockRegistrationFailure()
+        mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequest(JsObject.empty))
 

@@ -467,7 +467,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       "user submits form and the registration update fails" in {
         authorizedUser()
-        mockRegistrationFailure()
+        mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
