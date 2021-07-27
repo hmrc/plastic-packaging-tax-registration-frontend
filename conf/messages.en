@@ -196,7 +196,10 @@ organisationDetails.basedInUk.title = Is the organisation you want to register b
 organisationDetails.basedInUk.empty.error = Choose an option
 
 organisationDetails.type.title = What is your organisation type?
-organisationDetails.type.empty.error = Choose an option
+organisationDetails.type.empty.error = Value must be selected
+
+partnership.type.title = What type of partnership are you registering?
+partnership.type.empty.error = Value must be selected
 
 unauthorised.heading = You must be registered to use this service
 unauthorised.paragraph.1 = You need to {0} to use this service

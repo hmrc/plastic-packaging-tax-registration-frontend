@@ -16,9 +16,10 @@
 
 package builders
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.UK_COMPANY
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{PARTNERSHIP, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 
 import java.util.UUID
@@ -98,5 +99,13 @@ trait RegistrationBuilder {
 
   def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier =
     _.copy(organisationDetails = organisationDetails)
+
+  def withPartnershipDetails(partnershipDetails: Option[PartnershipDetails]): RegistrationModifier =
+    registration =>
+      registration.copy(organisationDetails =
+        registration.organisationDetails.copy(organisationType = Some(PARTNERSHIP),
+                                              partnershipDetails = partnershipDetails
+        )
+      )
 
 }

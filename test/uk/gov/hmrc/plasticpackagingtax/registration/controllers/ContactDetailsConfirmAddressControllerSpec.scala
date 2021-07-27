@@ -289,7 +289,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user display page and update to business address fails" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockRegistrationFailure()
+          mockRegistrationUpdateFailure()
 
           val result = controller.displayPage()(getRequest())
 
@@ -323,7 +323,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         "user submits form and the registration update fails" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockRegistrationFailure()
+          mockRegistrationUpdateFailure()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

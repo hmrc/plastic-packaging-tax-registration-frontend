@@ -159,7 +159,7 @@ class OrganisationDetailsConfirmOrgBasedInUkControllerSpec extends ControllerSpe
         "user submits form and the registration update fails" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationFailure()
+          mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

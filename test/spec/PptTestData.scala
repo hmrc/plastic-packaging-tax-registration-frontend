@@ -16,13 +16,19 @@
 
 package spec
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.PARTNERSHIP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  PartnershipTypeEnum
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  GeneralPartnershipDetails,
   IncorporationAddressDetails,
   IncorporationDetails,
   IncorporationRegistrationDetails,
@@ -92,8 +98,18 @@ trait PptTestData {
                                    incorporationRegistrationDetails
     )
 
+  protected val generalPartnershipDetails: GeneralPartnershipDetails =
+    GeneralPartnershipDetails(testSatur, testPostcode, incorporationRegistrationDetails)
+
   protected val partnershipDetails: PartnershipDetails =
-    PartnershipDetails(testSatur, testPostcode, incorporationRegistrationDetails)
+    PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
+                       generalPartnershipDetails = Some(
+                         GeneralPartnershipDetails(testSatur,
+                                                   testPostcode,
+                                                   incorporationRegistrationDetails
+                         )
+                       )
+    )
 
   protected val subscriptionStatus: SubscriptionStatus = SubscriptionStatus(
     subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
@@ -116,8 +132,24 @@ trait PptTestData {
                         incorporationDetails = Some(incorporationDetails)
     )
 
+  protected def registeredGeneralPartnershipDetails(): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(PARTNERSHIP),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        safeNumber = Some(safeNumber),
+                        partnershipDetails = Some(partnershipDetails)
+    )
+
   protected def unregisteredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true), organisationType = Some(orgType))
+
+  protected def unregisteredPartnershipDetails(
+    partnershipType: PartnershipTypeEnum
+  ): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(PARTNERSHIP),
+                        partnershipDetails = Some(PartnershipDetails(partnershipType))
+    )
 
   protected val emailVerification = VerificationStatus(
     Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))

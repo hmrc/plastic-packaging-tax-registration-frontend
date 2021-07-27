@@ -144,7 +144,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
       "user submits form and the registration update fails" in {
         authorizedUser()
-        mockRegistrationFailure()
+        mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
 

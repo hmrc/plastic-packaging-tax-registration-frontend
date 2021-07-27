@@ -22,20 +22,8 @@ import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  EmailVerificationConnector,
-  IncorpIdConnector,
-  PartnershipConnector,
-  SoleTraderInorpIdConnector,
-  SubscriptionsConnector
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationDetails,
-  PartnershipCreateJourneyRequest,
-  PartnershipDetails,
-  SoleTraderIncorpIdCreateRequest,
-  SoleTraderIncorporationDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponse,
   SubscriptionStatus
@@ -49,7 +37,7 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   val mockIncorpIdConnector: IncorpIdConnector                   = mock[IncorpIdConnector]
   val mockSoleTraderConnector: SoleTraderInorpIdConnector        = mock[SoleTraderInorpIdConnector]
-  val mockPartnershipConnector: PartnershipConnector             = mock[PartnershipConnector]
+  val mockPartnershipConnector: GeneralPartnershipConnector      = mock[GeneralPartnershipConnector]
   val mockSubscriptionsConnector: SubscriptionsConnector         = mock[SubscriptionsConnector]
   val mockEmailVerificationConnector: EmailVerificationConnector = mock[EmailVerificationConnector]
 
@@ -65,11 +53,11 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     when(mockSoleTraderConnector.getDetails(any())(any()))
       .thenReturn(Future(soleTraderDetails))
 
-  def mockGetPartnershipDetails(
-    partnershipDetails: PartnershipDetails
-  ): OngoingStubbing[Future[PartnershipDetails]] =
+  def mockGetGeneralPartnershipDetails(
+    generalPartnershipDetails: GeneralPartnershipDetails
+  ): OngoingStubbing[Future[GeneralPartnershipDetails]] =
     when(mockPartnershipConnector.getDetails(any())(any()))
-      .thenReturn(Future(partnershipDetails))
+      .thenReturn(Future(generalPartnershipDetails))
 
   def mockGetSoleTraderDetailsFailure(
     ex: Exception
@@ -77,7 +65,9 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     when(mockSoleTraderConnector.getDetails(any())(any()))
       .thenThrow(ex)
 
-  def mockGetPartnershipDetailsFailure(ex: Exception): OngoingStubbing[Future[PartnershipDetails]] =
+  def mockGetPartnershipDetailsFailure(
+    ex: Exception
+  ): OngoingStubbing[Future[GeneralPartnershipDetails]] =
     when(mockPartnershipConnector.getDetails(any())(any()))
       .thenThrow(ex)
 
