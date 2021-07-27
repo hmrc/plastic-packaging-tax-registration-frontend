@@ -122,7 +122,9 @@ class ReviewRegistrationController @Inject() (
             val updatedMetadata = updatedRegistration.metaData.copy(nrsDetails =
               Some(NrsDetails(response.nrSubmissionId, response.nrsFailureReason))
             )
-            auditor.registrationSubmitted(updatedRegistration.copy(metaData = updatedMetadata))
+            auditor.registrationSubmitted(updatedRegistration.copy(metaData = updatedMetadata),
+                                          Some(response.pptReference)
+            )
             Redirect(routes.ConfirmationController.displayPage())
               .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
           }
