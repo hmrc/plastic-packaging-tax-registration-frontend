@@ -23,6 +23,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   CHARITY_OR_NOT_FOR_PROFIT,
+  OVERSEAS_COMPANY,
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
@@ -87,6 +88,8 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-label").get(2).text() mustBe PARTNERSHIP.toString
       view.getElementById("answer-4").attr("value").text() mustBe CHARITY_OR_NOT_FOR_PROFIT.toString
       view.getElementsByClass("govuk-label").get(3).text() mustBe CHARITY_OR_NOT_FOR_PROFIT.toString
+      view.getElementById("answer-5").attr("value").text() mustBe OVERSEAS_COMPANY.toString
+      view.getElementsByClass("govuk-label").get(4).text() mustBe OVERSEAS_COMPANY.toString
     }
 
     "display 'Save And Continue' button" in {

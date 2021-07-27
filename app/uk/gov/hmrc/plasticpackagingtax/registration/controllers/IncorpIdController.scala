@@ -20,15 +20,24 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  GeneralPartnershipConnector,
   IncorpIdConnector,
-  PartnershipConnector,
   RegistrationConnector,
   ServiceError,
   SoleTraderInorpIdConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.GENERAL_PARTNERSHIP
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  GeneralPartnershipDetails,
+  PartnershipDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Cacheable,
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -42,7 +51,7 @@ class IncorpIdController @Inject() (
   override val registrationConnector: RegistrationConnector,
   ukLimitedConnector: IncorpIdConnector,
   soleTraderConnector: SoleTraderInorpIdConnector,
-  partnershipConnector: PartnershipConnector,
+  generalPartnershipConnector: GeneralPartnershipConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -102,16 +111,39 @@ class IncorpIdController @Inject() (
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Future[Either[ServiceError, Registration]]] =
-    for {
-      partnershipDetails <- partnershipConnector.getDetails(journeyId)
-      result = update { model =>
-        val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = None,
-                                                               soleTraderDetails = None,
-                                                               partnershipDetails =
-                                                                 Some(partnershipDetails)
-        )
-        model.copy(incorpJourneyId = Some(journeyId), organisationDetails = updatedOrgDetails)
-      }
-    } yield result
+    request.registration.organisationDetails.partnershipDetails match {
+      case Some(partnershipDetails) =>
+        partnershipDetails.partnershipType match {
+          case GENERAL_PARTNERSHIP =>
+            for {
+              generalPartnershipDetails <- generalPartnershipConnector.getDetails(journeyId)
+              result = update { registration =>
+                val updatedOrgDetails = mergePartnershipDetails(registration.organisationDetails,
+                                                                generalPartnershipDetails
+                )
+                registration.copy(incorpJourneyId = Some(journeyId),
+                                  organisationDetails = updatedOrgDetails
+                )
+              }
+            } yield result
+          case _ => throw new IllegalStateException("Unsupported partnership type")
+        }
+      case _ => throw new IllegalStateException("Missing partnership details")
+    }
+
+  private def mergePartnershipDetails(
+    organisationDetails: OrganisationDetails,
+    generalPartnershipDetails: GeneralPartnershipDetails
+  ): OrganisationDetails = {
+    val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
+      PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
+                         generalPartnershipDetails = Some(generalPartnershipDetails)
+      )
+    )(
+      partnershipDetails =>
+        partnershipDetails.copy(generalPartnershipDetails = Some(generalPartnershipDetails))
+    )
+    organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
+  }
 
 }

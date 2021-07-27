@@ -22,8 +22,8 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{UK_COMPANY, SOLE_TRADER, PARTNERSHIP, CHARITY_OR_NOT_FOR_PROFIT, OVERSEAS_COMPANY}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP}
 
 @this(
     formHelper: formWithCSRF,
@@ -34,22 +34,22 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[OrganisationType])(implicit request: Request[_], messages: Messages)
+@(form: Form[PartnershipType])(implicit request: Request[_], messages: Messages)
 
     @govukLayout(
-        title = Title("organisationDetails.type.title"),
-        backButton = Some(BackButton(messages("site.back"), pptRoutes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage(), messages("site.back.hiddenText")))) {
+        title = Title("partnership.type.title"),
+        backButton = Some(BackButton(messages("site.back"), pptRoutes.OrganisationDetailsTypeController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 
         @sectionHeader(messages("organisationDetails.sectionHeader"))
-        <h1 id="heading" class="govuk-heading-l">@messages("organisationDetails.type.title")</h1>
+        <h1 id="heading" class="govuk-heading-l">@messages("partnership.type.title")</h1>
 
-        @formHelper(action = pptRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = pptRoutes.PartnershipTypeController.submit(), 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(messages("organisationDetails.type.title")),
+                        content = Text(messages("partnership.type.title")),
                         classes = "govuk-visually-hidden",
                         isPageHeading = false
                     ))
@@ -58,11 +58,11 @@
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = Seq(
-                    RadioItem(content = Text(UK_COMPANY.toString), value = Some(UK_COMPANY.toString), checked = form("answer").value.contains(UK_COMPANY.toString)),
-                    RadioItem(content = Text(SOLE_TRADER.toString), value = Some(SOLE_TRADER.toString), checked = form("answer").value.contains(SOLE_TRADER.toString)),
-                    RadioItem(content = Text(PARTNERSHIP.toString), value = Some(PARTNERSHIP.toString), checked = form("answer").value.contains(PARTNERSHIP.toString)),
-                    RadioItem(content = Text(CHARITY_OR_NOT_FOR_PROFIT.toString), value = Some(CHARITY_OR_NOT_FOR_PROFIT.toString), checked = form("answer").value.contains(CHARITY_OR_NOT_FOR_PROFIT.toString)),
-                    RadioItem(content = Text(OVERSEAS_COMPANY.toString), value = Some(OVERSEAS_COMPANY.toString), checked = form("answer").value.contains(OVERSEAS_COMPANY.toString))
+                    RadioItem(content = Text(GENERAL_PARTNERSHIP.toString), value = Some(GENERAL_PARTNERSHIP.toString), checked = form("answer").value.contains(GENERAL_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(LIMITED_LIABILITY_PARTNERSHIP.toString), value = Some(LIMITED_LIABILITY_PARTNERSHIP.toString), checked = form("answer").value.contains(LIMITED_LIABILITY_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(LIMITED_PARTNERSHIP.toString), value = Some(LIMITED_PARTNERSHIP.toString), checked = form("answer").value.contains(LIMITED_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(SCOTTISH_PARTNERSHIP.toString), value = Some(SCOTTISH_PARTNERSHIP.toString), checked = form("answer").value.contains(SCOTTISH_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(SCOTTISH_LIMITED_PARTNERSHIP.toString), value = Some(SCOTTISH_LIMITED_PARTNERSHIP.toString), checked = form("answer").value.contains(SCOTTISH_LIMITED_PARTNERSHIP.toString))
                 ),
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

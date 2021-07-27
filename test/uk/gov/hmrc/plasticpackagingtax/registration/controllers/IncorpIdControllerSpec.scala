@@ -26,6 +26,10 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  SCOTTISH_LIMITED_PARTNERSHIP
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
@@ -63,12 +67,12 @@ class IncorpIdControllerSpec extends ControllerSpec {
     withOrganisationDetails(registeredUkOrgDetails(OrgType.SOLE_TRADER))
   )
 
-  private val unregisteredPartnership = aRegistration(
-    withOrganisationDetails(unregisteredUkOrgDetails(OrgType.PARTNERSHIP))
+  private val unregisteredGeneralPartnership = aRegistration(
+    withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP))
   )
 
-  private val registeredPartnership = aRegistration(
-    withOrganisationDetails(registeredUkOrgDetails(OrgType.PARTNERSHIP))
+  private val registeredGeneralPartnership = aRegistration(
+    withOrganisationDetails(registeredGeneralPartnershipDetails())
   )
 
   "incorpIdCallback" should {
@@ -153,11 +157,47 @@ class IncorpIdControllerSpec extends ControllerSpec {
         }
       }
 
+      "partnership details are missing" in {
+        authorizedUser()
+        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+        mockRegistrationFind(
+          unregisteredGeneralPartnership.copy(organisationDetails =
+            unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails = None)
+          )
+        )
+        mockRegistrationUpdate(registeredGeneralPartnership)
+
+        intercept[IllegalStateException] {
+          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+        }
+      }
+
+      "unsupported partnership type" in {
+        authorizedUser()
+        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+        mockRegistrationFind(
+          unregisteredGeneralPartnership.copy(organisationDetails =
+            unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails =
+              Some(
+                unregisteredGeneralPartnership.organisationDetails.partnershipDetails.get.copy(
+                  partnershipType = SCOTTISH_LIMITED_PARTNERSHIP
+                )
+              )
+            )
+          )
+        )
+        mockRegistrationUpdate(registeredGeneralPartnership)
+
+        intercept[IllegalStateException] {
+          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+        }
+      }
+
       "DB registration update fails" in {
         authorizedUser()
         mockRegistrationFind(registration)
         mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationFailure()
+        mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError] {
           await(controller.incorpIdCallback("uuid-id")(getRequest()))
@@ -196,9 +236,9 @@ class IncorpIdControllerSpec extends ControllerSpec {
 
   private def simulatePartnershipCallback() = {
     authorizedUser()
-    mockGetPartnershipDetails(partnershipDetails)
-    mockRegistrationFind(unregisteredPartnership)
-    mockRegistrationUpdate(registeredPartnership)
+    mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+    mockRegistrationFind(unregisteredGeneralPartnership)
+    mockRegistrationUpdate(registeredGeneralPartnership)
 
     controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
   }

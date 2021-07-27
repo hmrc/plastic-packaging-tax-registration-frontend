@@ -145,7 +145,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
 
       "user submits form and the registration update fails" in {
         authorizedUser()
-        mockRegistrationFailure()
+        mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequest(Json.toJson(PhoneNumber("077123"))))
 

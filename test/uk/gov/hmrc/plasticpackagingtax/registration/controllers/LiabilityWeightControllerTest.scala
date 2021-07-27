@@ -119,7 +119,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
       "user submits form and the registration update fails" in {
         authorizedUser()
-        mockRegistrationFailure()
+        mockRegistrationUpdateFailure()
         val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
 
         intercept[DownstreamServiceError](status(result))
