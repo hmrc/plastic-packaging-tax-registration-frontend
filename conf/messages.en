@@ -58,9 +58,9 @@ registrationPage.title = Register for Plastic Packaging Tax
 registrationPage.completedSections = You have completed {0} of 4 sections.
 registrationPage.prepareApplication = Prepare Application
 registrationPage.apply = Apply
-registrationPage.companyInformation = Company information
+registrationPage.companyInformation = Organisation information
 registrationPage.primaryContactDetails = Primary contact details
-registrationPage.liabilityDetails = Provide weight of plastic processed
+registrationPage.liabilityDetails = Plastic packaging details
 registrationPage.checkAndSubmit = Check and submit
 
 task.status.notStarted = Not Started

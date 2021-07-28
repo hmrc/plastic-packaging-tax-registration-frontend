@@ -34,11 +34,11 @@ class RegistrationSpec
         incompleteRegistration.isRegistrationComplete mustBe false
         incompleteRegistration.numberOfCompletedSections mustBe 2
 
-        incompleteRegistration.isCompanyDetailsComplete mustBe true
-        incompleteRegistration.companyDetailsStatus mustBe TaskStatus.Completed
-
         incompleteRegistration.isLiabilityDetailsComplete mustBe true
         incompleteRegistration.liabilityDetailsStatus mustBe TaskStatus.Completed
+
+        incompleteRegistration.isCompanyDetailsComplete mustBe true
+        incompleteRegistration.companyDetailsStatus mustBe TaskStatus.Completed
 
         incompleteRegistration.isPrimaryContactDetailsComplete mustBe false
         incompleteRegistration.primaryContactDetailsStatus mustBe TaskStatus.InProgress
@@ -54,11 +54,11 @@ class RegistrationSpec
         notStartedRegistration.isRegistrationComplete mustBe false
         notStartedRegistration.numberOfCompletedSections mustBe 0
 
-        notStartedRegistration.isCompanyDetailsComplete mustBe false
-        notStartedRegistration.companyDetailsStatus mustBe TaskStatus.NotStarted
-
         notStartedRegistration.isLiabilityDetailsComplete mustBe false
-        notStartedRegistration.liabilityDetailsStatus mustBe TaskStatus.CannotStartYet
+        notStartedRegistration.liabilityDetailsStatus mustBe TaskStatus.NotStarted
+
+        notStartedRegistration.isCompanyDetailsComplete mustBe false
+        notStartedRegistration.companyDetailsStatus mustBe TaskStatus.CannotStartYet
 
         notStartedRegistration.isPrimaryContactDetailsComplete mustBe false
         notStartedRegistration.primaryContactDetailsStatus mustBe TaskStatus.CannotStartYet
@@ -76,11 +76,11 @@ class RegistrationSpec
         reviewedRegistration.isRegistrationComplete mustBe false
         reviewedRegistration.numberOfCompletedSections mustBe 3
 
-        reviewedRegistration.isCompanyDetailsComplete mustBe true
-        reviewedRegistration.companyDetailsStatus mustBe TaskStatus.Completed
-
         reviewedRegistration.isLiabilityDetailsComplete mustBe true
         reviewedRegistration.liabilityDetailsStatus mustBe TaskStatus.Completed
+
+        reviewedRegistration.isCompanyDetailsComplete mustBe true
+        reviewedRegistration.companyDetailsStatus mustBe TaskStatus.Completed
 
         reviewedRegistration.isPrimaryContactDetailsComplete mustBe true
         reviewedRegistration.primaryContactDetailsStatus mustBe TaskStatus.Completed
@@ -100,11 +100,11 @@ class RegistrationSpec
         completeRegistration.isRegistrationComplete mustBe true
         completeRegistration.numberOfCompletedSections mustBe 4
 
-        completeRegistration.isCompanyDetailsComplete mustBe true
-        completeRegistration.companyDetailsStatus mustBe TaskStatus.Completed
-
         completeRegistration.isLiabilityDetailsComplete mustBe true
         completeRegistration.liabilityDetailsStatus mustBe TaskStatus.Completed
+
+        completeRegistration.isCompanyDetailsComplete mustBe true
+        completeRegistration.companyDetailsStatus mustBe TaskStatus.Completed
 
         completeRegistration.isPrimaryContactDetailsComplete mustBe true
         completeRegistration.primaryContactDetailsStatus mustBe TaskStatus.Completed

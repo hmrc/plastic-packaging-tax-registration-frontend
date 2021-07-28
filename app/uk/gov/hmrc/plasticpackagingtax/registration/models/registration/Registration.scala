@@ -64,7 +64,9 @@ case class Registration(
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
 
   def companyDetailsStatus: TaskStatus =
-    if (incorpJourneyId.isEmpty)
+    if (!isLiabilityDetailsComplete)
+      TaskStatus.CannotStartYet
+    else if (incorpJourneyId.isEmpty)
       TaskStatus.NotStarted
     else
       TaskStatus.Completed
@@ -72,10 +74,7 @@ case class Registration(
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
   def liabilityDetailsStatus: TaskStatus =
-    if (incorpJourneyId.isEmpty)
-      TaskStatus.CannotStartYet
-    else
-      this.liabilityDetails.status
+    this.liabilityDetails.status
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
 
