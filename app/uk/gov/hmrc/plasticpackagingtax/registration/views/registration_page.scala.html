@@ -78,21 +78,21 @@
         <li>
             @task(1, "registrationPage.prepareApplication", Set(
                 TaskSection(
+                    title  = "registrationPage.liabilityDetails",
+                    link   = pptRoutes.LiabilityStartDateController.displayPage(),
+                    status = registration.liabilityDetailsStatus
+                ),
+                TaskSection(
                     title = "registrationPage.companyInformation",
                     link = pptRoutes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage(),
+                    showLink = registration.isLiabilityDetailsComplete,
                     status = registration.companyDetailsStatus
                 ),
                 TaskSection(
                     title  = "registrationPage.primaryContactDetails",
                     link   = pptRoutes.ContactDetailsFullNameController.displayPage(),
-                    showLink = registration.isCompanyDetailsComplete,
+                    showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                     status = registration.primaryContactDetailsStatus
-                ),
-                TaskSection(
-                    title  = "registrationPage.liabilityDetails",
-                    link   = pptRoutes.LiabilityStartDateController.displayPage(),
-                    showLink = registration.isCompanyDetailsComplete,
-                    status = registration.liabilityDetailsStatus
                 )
             ))
         </li>

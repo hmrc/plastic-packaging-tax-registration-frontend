@@ -55,10 +55,10 @@ class RegistrationSpec
         notStartedRegistration.numberOfCompletedSections mustBe 0
 
         notStartedRegistration.isCompanyDetailsComplete mustBe false
-        notStartedRegistration.companyDetailsStatus mustBe TaskStatus.NotStarted
+        notStartedRegistration.companyDetailsStatus mustBe TaskStatus.CannotStartYet
 
         notStartedRegistration.isLiabilityDetailsComplete mustBe false
-        notStartedRegistration.liabilityDetailsStatus mustBe TaskStatus.CannotStartYet
+        notStartedRegistration.liabilityDetailsStatus mustBe TaskStatus.NotStarted
 
         notStartedRegistration.isPrimaryContactDetailsComplete mustBe false
         notStartedRegistration.primaryContactDetailsStatus mustBe TaskStatus.CannotStartYet
