@@ -194,6 +194,16 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             messages("registrationPage.prepareApplication")
           )
 
+          sectionName(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
+            "registrationPage.liabilityDetails"
+          )
+          sectionStatus(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
+            "task.status.completed"
+          )
+          sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
+            routes.LiabilityStartDateController.displayPage()
+          )
+
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
             "registrationPage.companyInformation"
           )
@@ -209,16 +219,6 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
             "task.status.cannotStartYet"
-          )
-
-          sectionName(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "registrationPage.liabilityDetails"
-          )
-          sectionStatus(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "task.status.completed"
-          )
-          sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityStartDateController.displayPage()
           )
         }
 
@@ -264,6 +264,16 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             messages("registrationPage.prepareApplication")
           )
 
+          sectionName(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
+            "registrationPage.liabilityDetails"
+          )
+          sectionStatus(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
+            "task.status.completed"
+          )
+          sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
+            routes.LiabilityStartDateController.displayPage()
+          )
+
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
             "registrationPage.companyInformation"
           )
@@ -282,16 +292,6 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
           sectionLink(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) must haveHref(
             routes.ContactDetailsFullNameController.displayPage()
-          )
-
-          sectionName(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "registrationPage.liabilityDetails"
-          )
-          sectionStatus(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "task.status.completed"
-          )
-          sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityStartDateController.displayPage()
           )
         }
 
