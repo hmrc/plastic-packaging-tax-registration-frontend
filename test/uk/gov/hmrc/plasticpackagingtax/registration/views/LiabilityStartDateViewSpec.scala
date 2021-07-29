@@ -21,6 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import base.unit.UnitViewSpec
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityStartDate.form
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -43,6 +44,15 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
     }
 
     val view = createView()
+
+    "validate other rendering  methods" in {
+      page.f(form())(request, messages).select("title").text() must include(
+        messages("liabilityStartDatePage.title")
+      )
+      page.render(form(), request, messages).select("title").text() must include(
+        messages("liabilityStartDatePage.title")
+      )
+    }
 
     "contain timeout dialog function" in {
 
@@ -124,8 +134,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
     "display data in date inputs" in {
 
-      val form = LiabilityStartDate
-        .form()
+      val form = LiabilityStartDate.form()
         .fill(aRegistration().liabilityDetails.startDate.get)
       val view = createView(form)
 
@@ -139,8 +148,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
     "Start date is not entered" in {
 
-      val form = LiabilityStartDate
-        .form()
+      val form = LiabilityStartDate.form()
         .fillAndValidate(Date(None, None, None))
       val view = createView(form)
 

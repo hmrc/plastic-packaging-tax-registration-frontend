@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
@@ -33,11 +34,16 @@
   pageTitle: pageTitle,
   saveAndContinue: saveAndContinue
 )
-@(registration: Registration)(implicit request: Request[_], messages: Messages)
+@(registration: Registration)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@backLink = @{
+  if(appConfig.isLiabilityPreLaunchEnabled) pptRoutes.LiabilityLiableDateController.displayPage()
+  else pptRoutes.LiabilityStartDateController.displayPage()
+}
 
 @govukLayout(
   title = Title("checkLiabilityDetailsAnswers.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityStartDateController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
 
     @pageTitle(text = messages("checkLiabilityDetailsAnswers.title"))
 

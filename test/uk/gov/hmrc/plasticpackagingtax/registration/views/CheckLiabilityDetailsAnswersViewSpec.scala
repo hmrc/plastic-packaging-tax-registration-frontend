@@ -18,7 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
@@ -29,11 +31,15 @@ import java.time.format.DateTimeFormatter
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val page                                                   = instanceOf[check_liability_details_answers_page]
-  private val registration                                           = aRegistration()
-  private def createView(reg: Registration = registration): Document = page(reg)(request, messages)
+  private val page                 = instanceOf[check_liability_details_answers_page]
+  private val registration         = aRegistration()
+  private val appConfig: AppConfig = mock[AppConfig]
+
+  private def createView(reg: Registration = registration): Document =
+    page(reg)(request, messages, appConfig)
 
   "Chek liability details answers View" should {
+    when(appConfig.isLiabilityPreLaunchEnabled).thenReturn(false)
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("checkLiabilityDetailsAnswers.title")
@@ -44,6 +50,15 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     val view                      = createView()
     val viewWithEmptyRegistration = createView(Registration("id"))
+
+    "validate other rendering  methods" in {
+      page.f(registration)(request, messages, appConfig).select("title").text() must include(
+        messages("checkLiabilityDetailsAnswers.title")
+      )
+      page.render(registration, request, messages, appConfig).select("title").text() must include(
+        messages("checkLiabilityDetailsAnswers.title")
+      )
+    }
 
     "contain timeout dialog function" in {
 
@@ -57,11 +72,23 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     }
 
-    "display 'Back' button" in {
+    "display 'Back' button" when {
 
-      view.getElementById("back-link") must haveHref(
-        routes.LiabilityStartDateController.displayPage()
-      )
+      "and feature flag 'liabilityPreLaunch' is disabled" in {
+
+        view.getElementById("back-link") must haveHref(
+          routes.LiabilityStartDateController.displayPage()
+        )
+      }
+
+      "and feature flag 'liabilityPreLaunch' is enabled" in {
+
+        when(appConfig.isLiabilityPreLaunchEnabled).thenReturn(true)
+
+        createView().getElementById("back-link") must haveHref(
+          routes.LiabilityLiableDateController.displayPage()
+        )
+      }
     }
 
     "display title" in {

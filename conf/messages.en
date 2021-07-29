@@ -75,6 +75,13 @@ liabilityStartDatePage.question = What is the date you first became liable?
 liabilityStartDate.formatting.error = Liability start date - wrong format
 liabilityStartDate.outOfRange.error = Liability start date - out of range
 
+liabilityLiableDatePage.sectionHeader = Liability details
+liabilityLiableDatePage.title = What is your liability date?
+liabilityLiableDatePage.hint = To register for this service, you must expect your business to continue being liable for Plastic Packaging Tax until at least 1 April 2022, when the tax starts.
+liabilityLiableDatePage.question = Will you still be liable for the Plastic Packaging Tax by 1 April 2022?
+liabilityLiableDatePage.question.empty.error = Choose an option
+
+liabilityWeightPage.sectionHeader = Plastic packaging details
 liabilityWeightPage.sectionHeader = Plastic packaging details
 liabilityWeightPage.title = Enter the weight of plastic packaging processed
 liabilityWeightPage.info = This includes all plastic packaging that you''ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.

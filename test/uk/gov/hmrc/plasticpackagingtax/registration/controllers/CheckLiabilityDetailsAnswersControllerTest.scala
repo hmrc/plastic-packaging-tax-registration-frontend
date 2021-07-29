@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.libs.json.JsObject
@@ -43,7 +43,8 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     super.beforeEach()
     val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(refEq(registration))(any(), any(), any())).willReturn(HtmlFormat.empty)
+    when(config.isLiabilityPreLaunchEnabled).thenReturn(false)
   }
 
   override protected def afterEach(): Unit = {

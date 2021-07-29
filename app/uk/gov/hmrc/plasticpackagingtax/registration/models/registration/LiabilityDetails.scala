@@ -22,10 +22,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class LiabilityDetails(
   weight: Option[LiabilityWeight] = None,
-  startDate: Option[Date] = None
+  startDate: Option[Date] = None,
+  isLiable: Option[Boolean] = None
 ) {
-  def isCompleted: Boolean  = weight.isDefined && startDate.isDefined
-  def isInProgress: Boolean = weight.isDefined || startDate.isDefined
+  def isCompleted: Boolean  = weight.isDefined && (startDate.isDefined || isLiable.isDefined)
+  def isInProgress: Boolean = weight.isDefined || startDate.isDefined || isLiable.isDefined
 
   def status: TaskStatus =
     if (isCompleted) TaskStatus.Completed

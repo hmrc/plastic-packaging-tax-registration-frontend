@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
@@ -32,7 +33,8 @@ class CheckLiabilityDetailsAnswersController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: check_liability_details_answers_page
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit appConfig: AppConfig)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
