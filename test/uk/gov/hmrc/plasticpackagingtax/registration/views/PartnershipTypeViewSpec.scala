@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrganisationType, PartnershipType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnership_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
