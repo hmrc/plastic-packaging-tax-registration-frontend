@@ -35,12 +35,16 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
   "Liability Weight View" should {
 
     "have proper messages for labels" in {
-      messages must haveTranslationFor("liabilityWeightPage.title")
-      messages must haveTranslationFor("liabilityWeightPage.question")
-      messages must haveTranslationFor("liabilityWeightPage.hint")
       messages must haveTranslationFor("liabilityWeightPage.sectionHeader")
-      messages must haveTranslationFor("liabilityWeight.empty.error")
+      messages must haveTranslationFor("liabilityWeightPage.title")
+      messages must haveTranslationFor("liabilityWeightPage.info")
+      messages must haveTranslationFor("liabilityWeightPage.info2")
+      messages must haveTranslationFor("liabilityWeightPage.guidance.description")
+      messages must haveTranslationFor("liabilityWeightPage.guidance.href")
+      messages must haveTranslationFor("liabilityWeightPage.question")
+      messages must haveTranslationFor("liabilityWeightPage.label")
       messages must haveTranslationFor("liabilityWeight.outOfRange.error")
+      messages must haveTranslationFor("liabilityWeight.empty.error")
     }
 
     val view = createView()
@@ -76,14 +80,33 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display liability weight question" in {
 
-      view.getElementsByAttributeValueMatching("for", "totalKg").text() must include(
+      view.getElementsByClass("govuk-heading-l").text() must include(
         messages("liabilityWeightPage.question")
       )
     }
 
-    "display question hint" in {
+    "display liability weight information" in {
 
-      view.getElementById("totalKg-hint") must containMessage("liabilityWeightPage.hint")
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("liabilityWeightPage.info",
+                 "liabilityWeightPage.info2",
+                 "liabilityWeightPage.guidance.description"
+        )
+      )
+    }
+
+    "display liability weight information link" in {
+
+      view.getElementById("guidance-link") must haveHref(
+        messages("liabilityWeightPage.guidance.href")
+      )
+    }
+
+    "display total weight label" in {
+
+      view.getElementsByAttributeValue("for", "totalKg").get(0).text() mustBe messages(
+        "liabilityWeightPage.label"
+      )
     }
 
     "display total weight input box" in {
