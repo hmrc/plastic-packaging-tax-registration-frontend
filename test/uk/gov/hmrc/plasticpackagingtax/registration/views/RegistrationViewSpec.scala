@@ -133,7 +133,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.inProgress"
           )
           sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityStartDateController.displayPage()
+            routes.LiabilityWeightController.displayPage()
           )
 
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
@@ -201,7 +201,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityStartDateController.displayPage()
+            routes.LiabilityWeightController.displayPage()
           )
 
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
@@ -271,7 +271,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityStartDateController.displayPage()
+            routes.LiabilityWeightController.displayPage()
           )
 
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
