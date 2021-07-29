@@ -127,4 +127,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def unauthenticatedFeedbackUrl(): String =
     s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
+  lazy val isLiabilityPreLaunchEnabled =
+    config
+      .getOptional[Boolean](s"features.liabilityPreLaunch")
+      .getOrElse(true)
+
 }
