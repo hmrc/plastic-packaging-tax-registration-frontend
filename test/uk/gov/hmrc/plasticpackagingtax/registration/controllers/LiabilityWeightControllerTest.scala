@@ -90,7 +90,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
           formAction._1 match {
             case "SaveAndContinue" =>
               redirectLocation(result) mustBe Some(
-                routes.CheckLiabilityDetailsAnswersController.displayPage().url
+                routes.LiabilityStartDateController.displayPage().url
               )
             case _ =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)

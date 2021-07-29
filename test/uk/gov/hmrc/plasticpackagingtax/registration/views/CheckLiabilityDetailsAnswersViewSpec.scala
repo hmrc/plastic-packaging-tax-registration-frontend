@@ -59,7 +59,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(routes.LiabilityWeightController.displayPage())
+      view.getElementById("back-link") must haveHref(
+        routes.LiabilityStartDateController.displayPage()
+      )
     }
 
     "display title" in {

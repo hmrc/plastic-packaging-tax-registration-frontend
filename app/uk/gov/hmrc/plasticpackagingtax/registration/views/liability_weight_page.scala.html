@@ -47,9 +47,7 @@
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
-@govukLayout(
-  title = Title("liabilityWeightPage.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityStartDateController.displayPage(), messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("liabilityWeightPage.title")) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("liabilityWeightPage.sectionHeader"))

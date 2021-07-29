@@ -62,7 +62,7 @@ class LiabilityStartDateController @Inject() (
                   case Right(_) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        Redirect(routes.LiabilityWeightController.displayPage())
+                        Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
                       case _ =>
                         Redirect(routes.RegistrationController.displayPage())
                     }
