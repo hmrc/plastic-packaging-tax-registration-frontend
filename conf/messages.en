@@ -68,17 +68,21 @@ task.status.inProgress = In Progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot Start Yet
 
-liabilityStartDatePage.sectionHeader = Plastic Packaging Details
+liabilityStartDatePage.sectionHeader = Plastic packaging details
 liabilityStartDatePage.title = What is the date you first became liable?
 liabilityStartDatePage.hint = For example, 12 11 2007
 liabilityStartDatePage.question = What is the date you first became liable?
 liabilityStartDate.formatting.error = Liability start date - wrong format
 liabilityStartDate.outOfRange.error = Liability start date - out of range
 
+liabilityWeightPage.sectionHeader = Plastic packaging details
 liabilityWeightPage.title = Enter the weight of plastic packaging processed
-liabilityWeightPage.question = What was the total weight of plastic packaging processed in the last 12 months?
-liabilityWeightPage.hint = This includes all manufactured, imported and converted plastic packaging except for any external transit packaging that was applied to imported goods before they entered the UK.
-liabilityWeightPage.sectionHeader = Plastic Packaging Details
+liabilityWeightPage.info = This includes all plastic packaging that you''ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
+liabilityWeightPage.info2 = If you''re unsure what to include, you can follow {0}.
+liabilityWeightPage.guidance.description = the current guidance for businesses (opens in a new tab)
+liabilityWeightPage.guidance.href = https://www.gov.uk/government/publications/get-your-business-ready-for-the-plastic-packaging-tax/further-information-for-businesses
+liabilityWeightPage.label = Weight, in kilograms
+liabilityWeightPage.question = How much plastic packaging have you processed in the last 12 months?
 liabilityWeight.outOfRange.error = Weight out of range
 liabilityWeight.empty.error = Weight cannot be empty
 
