@@ -73,10 +73,10 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display liability date" in {
 
-      view.getElementsByClass("govuk-summary-list__key").first() must containMessage(
+      view.getElementsByClass("govuk-summary-list__key").get(1) must containMessage(
         "checkLiabilityDetailsAnswers.date"
       )
-      view.getElementsByClass("govuk-summary-list__value").first() must containText(
+      view.getElementsByClass("govuk-summary-list__value").get(1) must containText(
         registration.liabilityDetails.startDate.get.asLocalDate.format(
           DateTimeFormatter.ofPattern("dd MMM yyyy")
         )
@@ -85,46 +85,46 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display empty value when no date on registration object" in {
 
-      viewWithEmptyRegistration.getElementsByClass(
-        "govuk-summary-list__key"
-      ).first() must containMessage("checkLiabilityDetailsAnswers.date")
-      viewWithEmptyRegistration.getElementsByClass(
-        "govuk-summary-list__value"
-      ).first.text() mustBe ""
+      viewWithEmptyRegistration.getElementsByClass("govuk-summary-list__key").get(
+        1
+      ) must containMessage("checkLiabilityDetailsAnswers.date")
+      viewWithEmptyRegistration.getElementsByClass("govuk-summary-list__value").get(
+        1
+      ).text() mustBe ""
     }
 
     val summaryList = view.getElementsByClass("govuk-summary-list")
 
     "display link to change liability date" in {
 
-      summaryList.first.getElementsByClass("govuk-link").first() must haveHref(
+      summaryList.first.getElementsByClass("govuk-link").get(1) must haveHref(
         routes.LiabilityStartDateController.displayPage()
       )
     }
 
     "display liability weight" in {
 
-      view.getElementsByClass("govuk-summary-list__key").get(1) must containMessage(
+      view.getElementsByClass("govuk-summary-list__key").first() must containMessage(
         "checkLiabilityDetailsAnswers.weight"
       )
-      view.getElementsByClass("govuk-summary-list__value").get(1) must containText(
+      view.getElementsByClass("govuk-summary-list__value").first() must containText(
         registration.liabilityDetails.weight.get.totalKg.get.toString
       )
     }
 
     "display empty value when no weight on registration object" in {
 
-      viewWithEmptyRegistration.getElementsByClass("govuk-summary-list__key").get(
-        1
-      ) must containMessage("checkLiabilityDetailsAnswers.weight")
-      viewWithEmptyRegistration.getElementsByClass("govuk-summary-list__value").get(
-        1
-      ).text() mustBe ""
+      viewWithEmptyRegistration.getElementsByClass(
+        "govuk-summary-list__key"
+      ).first() must containMessage("checkLiabilityDetailsAnswers.weight")
+      viewWithEmptyRegistration.getElementsByClass(
+        "govuk-summary-list__value"
+      ).first().text() mustBe ""
     }
 
     "display link to change liability weight" in {
 
-      summaryList.first.getElementsByClass("govuk-link").get(1) must haveHref(
+      summaryList.first.getElementsByClass("govuk-link").first() must haveHref(
         routes.LiabilityWeightController.displayPage()
       )
 
