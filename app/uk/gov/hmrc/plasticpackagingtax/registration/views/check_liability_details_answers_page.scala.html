@@ -37,7 +37,7 @@
 
 @govukLayout(
   title = Title("checkLiabilityDetailsAnswers.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityStartDateController.displayPage(), messages("site.back.hiddenText")))) {
 
     @pageTitle(text = messages("checkLiabilityDetailsAnswers.title"))
 
@@ -45,6 +45,23 @@
         @govukSummaryList(
             SummaryList(
                 rows = Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("checkLiabilityDetailsAnswers.weight"))
+                        ),
+                        value = Value(
+                            content = Text(registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse(""))
+                        ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = pptRoutes.LiabilityWeightController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.weight"))
+                                )
+                            )
+                        ))
+                    ),
                     SummaryListRow(
                         key = Key(
                             content = Text(messages("checkLiabilityDetailsAnswers.date"))
@@ -61,25 +78,7 @@
                                 )
                             )
                         ))
-                    ),
-                    SummaryListRow(
-                        key = Key(
-                            content = Text(messages("checkLiabilityDetailsAnswers.weight"))
-                            ),
-                        value = Value(
-                            content = Text(registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse(""))
-                            ),
-                        actions = Some(Actions(
-                            items = Seq(
-                                ActionItem(
-                                    href = pptRoutes.LiabilityWeightController.displayPage().url,
-                                    content = Text(messages("site.link.change")),
-                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.weight"))
-                                    )
-                                )
-                            ))
-                        )
-
+                    )
                 ).filterNot(_.value.content == Empty)
             )
         )
