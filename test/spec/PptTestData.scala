@@ -21,7 +21,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.PARTNERSHIP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
-  PartnershipTypeEnum
+  PartnershipTypeEnum,
+  SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
@@ -33,6 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
   IncorporationRegistrationDetails,
   PartnershipDetails,
+  ScottishPartnershipDetails,
   SoleTraderIncorporationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
@@ -101,12 +103,25 @@ trait PptTestData {
   protected val generalPartnershipDetails: GeneralPartnershipDetails =
     GeneralPartnershipDetails(testSatur, testPostcode, incorporationRegistrationDetails)
 
+  protected val scottishPartnershipDetails: ScottishPartnershipDetails =
+    ScottishPartnershipDetails(testSatur, testPostcode, incorporationRegistrationDetails)
+
   protected val partnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
                        generalPartnershipDetails = Some(
                          GeneralPartnershipDetails(testSatur,
                                                    testPostcode,
                                                    incorporationRegistrationDetails
+                         )
+                       )
+    )
+
+  protected val partnershipDetailsWithScottishPartnership: PartnershipDetails =
+    PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
+                       scottishPartnershipDetails = Some(
+                         ScottishPartnershipDetails(testSatur,
+                                                    testPostcode,
+                                                    incorporationRegistrationDetails
                          )
                        )
     )
@@ -141,6 +156,14 @@ trait PptTestData {
                         businessRegisteredAddress = Some(testBusinessAddress),
                         safeNumber = Some(safeNumber),
                         partnershipDetails = Some(partnershipDetails)
+    )
+
+  protected def registeredScottishPartnershipDetails(): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(PARTNERSHIP),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        safeNumber = Some(safeNumber),
+                        partnershipDetails = Some(partnershipDetailsWithScottishPartnership)
     )
 
   protected def unregisteredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =

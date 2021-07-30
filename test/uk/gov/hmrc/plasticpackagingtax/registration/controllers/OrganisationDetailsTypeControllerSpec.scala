@@ -106,7 +106,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           assertRedirectForOrgType(SOLE_TRADER, "http://test/redirect/sole-trader")
         }
         "user submits organisation type: " + PARTNERSHIP in {
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
           assertRedirectForOrgType(PARTNERSHIP, routes.PartnershipTypeController.displayPage().url)
         }
         "user submits organisation type: " + CHARITY_OR_NOT_FOR_PROFIT in {

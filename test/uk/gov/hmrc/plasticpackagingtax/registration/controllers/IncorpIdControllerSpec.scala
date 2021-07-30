@@ -28,7 +28,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP
+  LIMITED_PARTNERSHIP,
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
@@ -47,7 +49,8 @@ class IncorpIdControllerSpec extends ControllerSpec {
                            mockRegistrationConnector,
                            mockIncorpIdConnector,
                            mockSoleTraderConnector,
-                           mockPartnershipConnector,
+                           mockGeneralPartnershipConnector,
+                           mockScottishPartnershipConnector,
                            mcc
     )(ec)
 
@@ -71,8 +74,16 @@ class IncorpIdControllerSpec extends ControllerSpec {
     withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP))
   )
 
+  private val unregisteredScottishPartnership = aRegistration(
+    withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP))
+  )
+
   private val registeredGeneralPartnership = aRegistration(
     withOrganisationDetails(registeredGeneralPartnershipDetails())
+  )
+
+  private val registeredScottishPartnership = aRegistration(
+    withOrganisationDetails(registeredScottishPartnershipDetails())
   )
 
   "incorpIdCallback" should {
@@ -93,8 +104,16 @@ class IncorpIdControllerSpec extends ControllerSpec {
         getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
-      "registering a Partnership" in {
-        val result = simulatePartnershipCallback()
+      "registering a GeneralPartnership" in {
+        val result = simulateGeneralPartnershipCallback()
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+      }
+
+      "registering a ScottishPartnership" in {
+        val result = simulateScottishPartnershipCallback()
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
@@ -131,14 +150,27 @@ class IncorpIdControllerSpec extends ControllerSpec {
         registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe None
       }
 
-      "registering a Partnership" in {
-        await(simulatePartnershipCallback())
+      "registering a GeneralPartnership" in {
+        await(simulateGeneralPartnershipCallback())
 
         val registrationCaptor: ArgumentCaptor[Registration] =
           ArgumentCaptor.forClass(classOf[Registration])
         verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
         registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe Some(
           partnershipDetails
+        )
+        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe None
+        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe None
+      }
+
+      "registering a ScottishPartnership" in {
+        await(simulateScottishPartnershipCallback())
+
+        val registrationCaptor: ArgumentCaptor[Registration] =
+          ArgumentCaptor.forClass(classOf[Registration])
+        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
+        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe Some(
+          partnershipDetailsWithScottishPartnership
         )
         registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe None
         registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe None
@@ -157,7 +189,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         }
       }
 
-      "partnership details are missing" in {
+      "generalPartnership details are missing" in {
         authorizedUser()
         mockGetGeneralPartnershipDetails(generalPartnershipDetails)
         mockRegistrationFind(
@@ -172,7 +204,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         }
       }
 
-      "unsupported partnership type" in {
+      "unsupported generalPartnership type" in {
         authorizedUser()
         mockGetGeneralPartnershipDetails(generalPartnershipDetails)
         mockRegistrationFind(
@@ -187,6 +219,43 @@ class IncorpIdControllerSpec extends ControllerSpec {
           )
         )
         mockRegistrationUpdate(registeredGeneralPartnership)
+
+        intercept[IllegalStateException] {
+          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+        }
+      }
+
+      "scottishPartnership details are missing" in {
+        authorizedUser()
+        mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+
+        mockRegistrationFind(
+          unregisteredScottishPartnership.copy(organisationDetails =
+            unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails = None)
+          )
+        )
+        mockRegistrationUpdate(registeredScottishPartnership)
+
+        intercept[IllegalStateException] {
+          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+        }
+      }
+
+      "unsupported scottishPartnership type" in {
+        authorizedUser()
+        mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+        mockRegistrationFind(
+          unregisteredScottishPartnership.copy(organisationDetails =
+            unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails =
+              Some(
+                unregisteredScottishPartnership.organisationDetails.partnershipDetails.get.copy(
+                  partnershipType = LIMITED_PARTNERSHIP
+                )
+              )
+            )
+          )
+        )
+        mockRegistrationUpdate(registeredScottishPartnership)
 
         intercept[IllegalStateException] {
           await(controller.incorpIdCallback("uuid-id")(getRequest()))
@@ -234,11 +303,20 @@ class IncorpIdControllerSpec extends ControllerSpec {
     controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def simulatePartnershipCallback() = {
+  private def simulateGeneralPartnershipCallback() = {
     authorizedUser()
     mockGetGeneralPartnershipDetails(generalPartnershipDetails)
     mockRegistrationFind(unregisteredGeneralPartnership)
     mockRegistrationUpdate(registeredGeneralPartnership)
+
+    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def simulateScottishPartnershipCallback() = {
+    authorizedUser()
+    mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+    mockRegistrationFind(unregisteredScottishPartnership)
+    mockRegistrationUpdate(registeredScottishPartnership)
 
     controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
   }

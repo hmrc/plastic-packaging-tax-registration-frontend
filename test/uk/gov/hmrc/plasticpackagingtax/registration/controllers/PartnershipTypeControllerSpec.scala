@@ -27,7 +27,8 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnership_type
@@ -43,7 +44,10 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   val controller = new PartnershipTypeController(authenticate = mockAuthAction,
                                                  journeyAction = mockJourneyAction,
                                                  appConfig = config,
-                                                 partnershipConnector = mockPartnershipConnector,
+                                                 generalPartnershipConnector =
+                                                   mockGeneralPartnershipConnector,
+                                                 scottishPartnershipConnector =
+                                                   mockScottishPartnershipConnector,
                                                  registrationConnector = mockRegistrationConnector,
                                                  mcc = mcc,
                                                  page = page
@@ -87,7 +91,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
-        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+        mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
         val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndContinueFormAction)
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -119,7 +123,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate(registration)
-        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+        mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
         val correctForm =
           Seq("answer" -> SCOTTISH_LIMITED_PARTNERSHIP.toString, saveAndContinueFormAction)
@@ -132,7 +136,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "update registration with selected partnership type for " + formAction._1 when {
+      "update registration with general partnership type for " + formAction._1 when {
         "a supported partnership type was selected" in {
 
           val registration = aRegistration(withPartnershipDetails(None))
@@ -152,9 +156,31 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
           verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
         }
       }
+
+      "update registration with scottish partnership type for " + formAction._1 when {
+        "a supported partnership type was selected" in {
+
+          val registration = aRegistration(withPartnershipDetails(None))
+
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate(registration)
+          mockCreateScottishPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+
+          val correctForm = Seq("answer" -> SCOTTISH_PARTNERSHIP.toString, formAction)
+          await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
+
+          val expectedRegistration = registration.copy(organisationDetails =
+            registration.organisationDetails.copy(partnershipDetails =
+              Some(PartnershipDetails(SCOTTISH_PARTNERSHIP))
+            )
+          )
+          verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
+        }
+      }
     }
 
-    "throw errors resulting from failed registration updates" in {
+    "throw errors resulting from failed registration updates for General Partnership" in {
       val registration = aRegistration(withPartnershipDetails(None))
 
       authorizedUser()
