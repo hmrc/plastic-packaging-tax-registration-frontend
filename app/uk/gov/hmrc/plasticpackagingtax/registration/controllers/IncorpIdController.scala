@@ -19,19 +19,18 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  GeneralPartnershipConnector,
-  IncorpIdConnector,
-  RegistrationConnector,
-  ServiceError,
-  SoleTraderInorpIdConnector
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.GENERAL_PARTNERSHIP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  PartnershipTypeEnum,
+  SCOTTISH_PARTNERSHIP
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   GeneralPartnershipDetails,
-  PartnershipDetails
+  PartnershipDetails,
+  ScottishPartnershipDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
@@ -52,6 +51,7 @@ class IncorpIdController @Inject() (
   ukLimitedConnector: IncorpIdConnector,
   soleTraderConnector: SoleTraderInorpIdConnector,
   generalPartnershipConnector: GeneralPartnershipConnector,
+  scottishPartnershipConnector: ScottishPartnershipConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -118,8 +118,28 @@ class IncorpIdController @Inject() (
             for {
               generalPartnershipDetails <- generalPartnershipConnector.getDetails(journeyId)
               result = update { registration =>
-                val updatedOrgDetails = mergePartnershipDetails(registration.organisationDetails,
-                                                                generalPartnershipDetails
+                val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
+                                                                  registration.organisationDetails,
+                                                                generalPartnershipDetails =
+                                                                  Some(generalPartnershipDetails),
+                                                                scottishPartnershipDetails = None,
+                                                                GENERAL_PARTNERSHIP
+                )
+                registration.copy(incorpJourneyId = Some(journeyId),
+                                  organisationDetails = updatedOrgDetails
+                )
+              }
+            } yield result
+          case SCOTTISH_PARTNERSHIP =>
+            for {
+              scottishPartnershipDetails <- scottishPartnershipConnector.getDetails(journeyId)
+              result = update { registration =>
+                val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
+                                                                  registration.organisationDetails,
+                                                                generalPartnershipDetails = None,
+                                                                scottishPartnershipDetails =
+                                                                  Some(scottishPartnershipDetails),
+                                                                SCOTTISH_PARTNERSHIP
                 )
                 registration.copy(incorpJourneyId = Some(journeyId),
                                   organisationDetails = updatedOrgDetails
@@ -133,15 +153,20 @@ class IncorpIdController @Inject() (
 
   private def mergePartnershipDetails(
     organisationDetails: OrganisationDetails,
-    generalPartnershipDetails: GeneralPartnershipDetails
+    generalPartnershipDetails: Option[GeneralPartnershipDetails],
+    scottishPartnershipDetails: Option[ScottishPartnershipDetails],
+    partnershipTypeEnum: PartnershipTypeEnum
   ): OrganisationDetails = {
     val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
-      PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
-                         generalPartnershipDetails = Some(generalPartnershipDetails)
+      PartnershipDetails(partnershipType = partnershipTypeEnum,
+                         generalPartnershipDetails = generalPartnershipDetails,
+                         scottishPartnershipDetails = scottishPartnershipDetails
       )
     )(
       partnershipDetails =>
-        partnershipDetails.copy(generalPartnershipDetails = Some(generalPartnershipDetails))
+        partnershipDetails.copy(generalPartnershipDetails = generalPartnershipDetails,
+                                scottishPartnershipDetails = scottishPartnershipDetails
+        )
     )
     organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
   }

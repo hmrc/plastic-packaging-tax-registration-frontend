@@ -27,7 +27,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.GENERAL_PARTNERSHIP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   PartnershipCreateJourneyRequest,
   PartnershipDetails
@@ -45,7 +48,8 @@ class PartnershipTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   appConfig: AppConfig,
-  partnershipConnector: GeneralPartnershipConnector,
+  generalPartnershipConnector: GeneralPartnershipConnector,
+  scottishPartnershipConnector: ScottishPartnershipConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partnership_type
@@ -81,7 +85,10 @@ class PartnershipTypeController @Inject() (
                       case SaveAndContinue =>
                         partnershipType.answer match {
                           case Some(GENERAL_PARTNERSHIP) =>
-                            getPartnershipRedirectUr()
+                            getGeneralPartnershipRedirectUrl()
+                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          case Some(SCOTTISH_PARTNERSHIP) =>
+                            getScottishPartnershipRedirectUrl()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case _ =>
                             Future(
@@ -95,10 +102,21 @@ class PartnershipTypeController @Inject() (
         )
     }
 
-  private def getPartnershipRedirectUr()(implicit
+  private def getGeneralPartnershipRedirectUrl()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[String] =
-    partnershipConnector.createJourney(
+    generalPartnershipConnector.createJourney(
+      PartnershipCreateJourneyRequest(appConfig.incorpIdJourneyCallbackUrl,
+                                      Some(request2Messages(request)("service.name")),
+                                      appConfig.serviceIdentifier,
+                                      appConfig.exitSurveyUrl
+      )
+    )
+
+  private def getScottishPartnershipRedirectUrl()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[String] =
+    scottishPartnershipConnector.createJourney(
       PartnershipCreateJourneyRequest(appConfig.incorpIdJourneyCallbackUrl,
                                       Some(request2Messages(request)("service.name")),
                                       appConfig.serviceIdentifier,

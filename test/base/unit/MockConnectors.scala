@@ -35,9 +35,15 @@ import scala.concurrent.Future
 trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockIncorpIdConnector: IncorpIdConnector                   = mock[IncorpIdConnector]
-  val mockSoleTraderConnector: SoleTraderInorpIdConnector        = mock[SoleTraderInorpIdConnector]
-  val mockPartnershipConnector: GeneralPartnershipConnector      = mock[GeneralPartnershipConnector]
+  val mockIncorpIdConnector: IncorpIdConnector            = mock[IncorpIdConnector]
+  val mockSoleTraderConnector: SoleTraderInorpIdConnector = mock[SoleTraderInorpIdConnector]
+
+  val mockGeneralPartnershipConnector: GeneralPartnershipConnector =
+    mock[GeneralPartnershipConnector]
+
+  val mockScottishPartnershipConnector: ScottishPartnershipConnector =
+    mock[ScottishPartnershipConnector]
+
   val mockSubscriptionsConnector: SubscriptionsConnector         = mock[SubscriptionsConnector]
   val mockEmailVerificationConnector: EmailVerificationConnector = mock[EmailVerificationConnector]
 
@@ -56,8 +62,14 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
   def mockGetGeneralPartnershipDetails(
     generalPartnershipDetails: GeneralPartnershipDetails
   ): OngoingStubbing[Future[GeneralPartnershipDetails]] =
-    when(mockPartnershipConnector.getDetails(any())(any()))
+    when(mockGeneralPartnershipConnector.getDetails(any())(any()))
       .thenReturn(Future(generalPartnershipDetails))
+
+  def mockGetScottishPartnershipDetails(
+    scottishPartnershipDetails: ScottishPartnershipDetails
+  ): OngoingStubbing[Future[ScottishPartnershipDetails]] =
+    when(mockScottishPartnershipConnector.getDetails(any())(any()))
+      .thenReturn(Future(scottishPartnershipDetails))
 
   def mockGetSoleTraderDetailsFailure(
     ex: Exception
@@ -68,7 +80,7 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
   def mockGetPartnershipDetailsFailure(
     ex: Exception
   ): OngoingStubbing[Future[GeneralPartnershipDetails]] =
-    when(mockPartnershipConnector.getDetails(any())(any()))
+    when(mockGeneralPartnershipConnector.getDetails(any())(any()))
       .thenThrow(ex)
 
   def mockGetUkCompanyDetailsFailure(ex: Exception): OngoingStubbing[Future[IncorporationDetails]] =
@@ -80,11 +92,18 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       mockSoleTraderConnector.createJourney(any[SoleTraderIncorpIdCreateRequest])(any())
     ).thenReturn(Future.successful(redirectUrl))
 
-  def mockCreatePartnershipGrsJourneyCreation(
+  def mockCreateGeneralPartnershipGrsJourneyCreation(
     redirectUrl: String
   ): OngoingStubbing[Future[String]] =
     when(
-      mockPartnershipConnector.createJourney(any[PartnershipCreateJourneyRequest])(any())
+      mockGeneralPartnershipConnector.createJourney(any[PartnershipCreateJourneyRequest])(any())
+    ).thenReturn(Future.successful(redirectUrl))
+
+  def mockCreateScottishPartnershipGrsJourneyCreation(
+    redirectUrl: String
+  ): OngoingStubbing[Future[String]] =
+    when(
+      mockScottishPartnershipConnector.createJourney(any[PartnershipCreateJourneyRequest])(any())
     ).thenReturn(Future.successful(redirectUrl))
 
   def mockSoleTraderCreateIncorpJourneyIdException(): OngoingStubbing[Future[String]] =
