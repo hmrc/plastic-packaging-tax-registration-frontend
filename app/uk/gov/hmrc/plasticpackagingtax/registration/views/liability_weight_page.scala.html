@@ -17,12 +17,14 @@
 @import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, paragraphBody, saveButtons, sectionHeader}
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 
 @this(
         govukLayout: main_template,
-        paragraphBody: paragraphBody,
+        pageHeading: pageHeading,
+        paragraph: paragraph,
+        link: link,
         govukButton: GovukButton,
         govukInput: GovukInput,
         sectionHeader: sectionHeader,
@@ -44,16 +46,30 @@
 }
 
 @pptWeightQuestion = {
-    <h1 class="govuk-heading-l">@messages("liabilityWeightPage.question")</h1>
+    @pageHeading(
+        text = messages("liabilityWeightPage.question")
+    )
 }
 
 @pptGuidanceLink = {
-    <a id="guidance-link" href="@messages("liabilityWeightPage.guidance.href")" target="_blank">@messages("liabilityWeightPage.guidance.description")</a>
+    @link(
+        id = Some("guidance-link"),
+        target = "_blank",
+        text = messages("liabilityWeightPage.guidance.description"),
+        call = Call(
+            method = "GET",
+            url = messages("liabilityWeightPage.guidance.href")
+        )
+    )
 }
 
 @pptWeightHelp = {
-    <p class="govuk-body">@messages("liabilityWeightPage.info")</p>
-    <p class="govuk-body">@Html(messages("liabilityWeightPage.info2", pptGuidanceLink))</p>
+    @paragraph(
+        content = Html(messages("liabilityWeightPage.info"))
+    )
+    @paragraph(
+        content = Html(messages("liabilityWeightPage.info2", pptGuidanceLink))
+    )
 }
 
 @govukLayout(title = Title("liabilityWeightPage.title")) {
