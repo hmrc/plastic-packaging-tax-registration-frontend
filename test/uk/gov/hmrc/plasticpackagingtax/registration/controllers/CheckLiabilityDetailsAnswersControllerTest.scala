@@ -44,7 +44,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     val registration = aRegistration()
     mockRegistrationFind(registration)
     given(page.apply(refEq(registration))(any(), any(), any())).willReturn(HtmlFormat.empty)
-    when(config.isLiabilityPreLaunchEnabled).thenReturn(false)
+    when(config.isPreLaunch).thenReturn(false)
   }
 
   override protected def afterEach(): Unit = {

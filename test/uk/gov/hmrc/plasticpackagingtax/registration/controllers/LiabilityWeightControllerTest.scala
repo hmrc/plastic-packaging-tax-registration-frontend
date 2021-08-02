@@ -104,7 +104,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            when(config.isLiabilityPreLaunchEnabled).thenReturn(true)
+            when(config.isPreLaunch).thenReturn(true)
 
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))

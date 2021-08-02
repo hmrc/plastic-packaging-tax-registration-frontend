@@ -37,7 +37,7 @@
 @(registration: Registration)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @backLink = @{
-  if(appConfig.isLiabilityPreLaunchEnabled) pptRoutes.LiabilityLiableDateController.displayPage()
+  if(appConfig.isPreLaunch) pptRoutes.LiabilityLiableDateController.displayPage()
   else pptRoutes.LiabilityStartDateController.displayPage()
 }
 

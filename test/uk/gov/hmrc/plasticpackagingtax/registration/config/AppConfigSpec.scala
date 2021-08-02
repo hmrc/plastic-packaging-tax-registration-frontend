@@ -38,7 +38,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |microservice.services.plastic-packaging-tax-registration.port=8502
         |microservice.services.contact-frontend.host=localhost
         |microservice.services.contact-frontend.port=9250
-        |features.liabilityPreLaunch=false
+        |features.isPreLaunch=false
         |urls.feedback.authenticatedLink="http://localhost:9250/contact/beta-feedback"
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
       """.stripMargin
@@ -125,8 +125,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       )
     }
     "inspect feature flags" when {
-      "and check that 'liabilityPreLaunch' is true" in {
-        validAppConfig.isLiabilityPreLaunchEnabled mustBe false
+      "and check that 'liabilityPreLaunch' is false" in {
+        validAppConfig.isPreLaunch mustBe false
       }
     }
   }
@@ -137,7 +137,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "inspect feature flags" when {
       "and check that 'liabilityPreLaunch' default value is 'true'" in {
-        emptyAppConfig.isLiabilityPreLaunchEnabled mustBe true
+        emptyAppConfig.isPreLaunch mustBe false
       }
     }
   }

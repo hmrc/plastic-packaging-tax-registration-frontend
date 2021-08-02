@@ -66,7 +66,7 @@ class LiabilityWeightController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    if (appConfig.isLiabilityPreLaunchEnabled)
+                    if (appConfig.isPreLaunch)
                       Redirect(routes.LiabilityLiableDateController.displayPage())
                     else
                       Redirect(routes.LiabilityStartDateController.displayPage())

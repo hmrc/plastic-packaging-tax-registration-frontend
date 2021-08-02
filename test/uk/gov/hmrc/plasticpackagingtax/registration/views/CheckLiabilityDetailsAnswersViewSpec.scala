@@ -39,7 +39,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     page(reg)(request, messages, appConfig)
 
   "Chek liability details answers View" should {
-    when(appConfig.isLiabilityPreLaunchEnabled).thenReturn(false)
+    when(appConfig.isPreLaunch).thenReturn(false)
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("checkLiabilityDetailsAnswers.title")
@@ -83,7 +83,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
       "and feature flag 'liabilityPreLaunch' is enabled" in {
 
-        when(appConfig.isLiabilityPreLaunchEnabled).thenReturn(true)
+        when(appConfig.isPreLaunch).thenReturn(true)
 
         createView().getElementById("back-link") must haveHref(
           routes.LiabilityLiableDateController.displayPage()
