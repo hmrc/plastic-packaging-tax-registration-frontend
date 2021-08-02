@@ -81,7 +81,7 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits positive answer" in {
+        "user submits 'Yes' answer" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
@@ -102,7 +102,7 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
           }
         }
 
-        "user submits negative answer" in {
+        "user submits 'No' answer" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
@@ -116,9 +116,7 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
 
           formAction._1 match {
             case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.CheckLiabilityDetailsAnswersController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
             case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }

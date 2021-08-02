@@ -66,7 +66,7 @@ class LiabilityLiableDateController @Inject() (
                   case SaveAndContinue =>
                     if (liableDate.answer.getOrElse(false))
                       Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
-                    else Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
+                    else Redirect(routes.NotLiableController.displayPage())
                   case _ => Redirect(routes.RegistrationController.displayPage())
                 }
               case Left(error) => throw error
