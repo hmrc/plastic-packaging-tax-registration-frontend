@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -35,8 +36,11 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   private val registration         = aRegistration()
   private val appConfig: AppConfig = mock[AppConfig]
 
-  private def createView(reg: Registration = registration): Document =
-    page(reg)(request, messages, appConfig)
+  private def createView(
+    reg: Registration = registration,
+    backLink: Call = routes.LiabilityStartDateController.displayPage()
+  ): Document =
+    page(reg, backLink)(request, messages)
 
   "Chek liability details answers View" should {
     when(appConfig.isPreLaunch).thenReturn(false)
@@ -52,12 +56,14 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     val viewWithEmptyRegistration = createView(Registration("id"))
 
     "validate other rendering  methods" in {
-      page.f(registration)(request, messages, appConfig).select("title").text() must include(
-        messages("checkLiabilityDetailsAnswers.title")
-      )
-      page.render(registration, request, messages, appConfig).select("title").text() must include(
-        messages("checkLiabilityDetailsAnswers.title")
-      )
+      page.f(registration, routes.LiabilityStartDateController.displayPage())(request,
+                                                                              messages
+      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
+      page.render(registration,
+                  routes.LiabilityStartDateController.displayPage(),
+                  request,
+                  messages
+      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
     }
 
     "contain timeout dialog function" in {
@@ -85,9 +91,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
         when(appConfig.isPreLaunch).thenReturn(true)
 
-        createView().getElementById("back-link") must haveHref(
-          routes.LiabilityLiableDateController.displayPage()
-        )
+        createView(backLink = routes.LiabilityLiableDateController.displayPage()).getElementById(
+          "back-link"
+        ) must haveHref(routes.LiabilityLiableDateController.displayPage())
       }
     }
 
