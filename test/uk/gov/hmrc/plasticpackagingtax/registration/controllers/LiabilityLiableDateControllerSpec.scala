@@ -27,7 +27,7 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityLiableDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_liable_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -91,6 +91,9 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.liabilityDetails.isLiable mustBe Some(true)
+          modifiedRegistration.liabilityDetails.startDate mustBe Some(
+            Date(Some(1), Some(4), Some(2022))
+          )
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -113,6 +116,7 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
           status(result) mustBe SEE_OTHER
 
           modifiedRegistration.liabilityDetails.isLiable mustBe Some(false)
+          modifiedRegistration.liabilityDetails.startDate mustBe None
 
           formAction._1 match {
             case "SaveAndContinue" =>

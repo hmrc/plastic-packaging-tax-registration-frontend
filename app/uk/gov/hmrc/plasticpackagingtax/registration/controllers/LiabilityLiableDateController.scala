@@ -25,7 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityLiableDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_liable_date_page
@@ -80,8 +80,16 @@ class LiabilityLiableDateController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedLiableDetails =
-        registration.liabilityDetails.copy(isLiable = formData.answer)
+        registration.liabilityDetails.copy(isLiable = formData.answer,
+                                           startDate = startDate(formData)
+        )
       registration.copy(liabilityDetails = updatedLiableDetails)
+    }
+
+  private def startDate(formData: LiabilityLiableDate): Option[Date] =
+    formData.answer match {
+      case Some(true)  => Some(Date(Some(1), Some(4), Some(2022)))
+      case Some(false) => None
     }
 
 }
