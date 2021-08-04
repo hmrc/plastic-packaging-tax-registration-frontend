@@ -19,6 +19,7 @@ package base.unit
 import base.{Injector, PptTestData}
 import com.codahale.metrics.SharedMetricRegistries
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
@@ -29,8 +30,8 @@ import spec.{PptTestData, ViewMatchers}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 class UnitViewSpec
-    extends AnyWordSpec with MockRegistrationConnector with ViewMatchers with ViewAssertions
-    with Injector with GuiceOneAppPerSuite with PptTestData {
+    extends AnyWordSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
+    with ViewAssertions with Injector with GuiceOneAppPerSuite with PptTestData {
 
   import utils.FakeRequestCSRFSupport._
 

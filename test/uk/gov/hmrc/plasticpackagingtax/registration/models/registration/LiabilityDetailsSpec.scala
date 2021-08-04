@@ -33,20 +33,55 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
     }
 
     "be IN_PROGRESS " when {
-      "liability details is partially filled" in {
-        val liabilityDetails =
-          LiabilityDetails(startDate = None, weight = Some(LiabilityWeight(Some(4000))))
-        liabilityDetails.status mustBe TaskStatus.InProgress
+      "liability details are partially filled" when {
+        "and 'liabilityPreLaunch' flag is enabled" when {
+          "and only 'isLiable' has been answered" in {
+            val liabilityDetails =
+              LiabilityDetails(isLiable = Some(true), weight = None)
+            liabilityDetails.status mustBe TaskStatus.InProgress
+          }
+
+          "and only liability weight has been answered" in {
+            val liabilityDetails =
+              LiabilityDetails(startDate = None, weight = Some(LiabilityWeight(Some(4000))))
+            liabilityDetails.status mustBe TaskStatus.InProgress
+          }
+        }
+
+        "and 'liabilityPreLaunch' flag is disabled" when {
+          "and only 'startDate' has been answered" in {
+            val liabilityDetails =
+              LiabilityDetails(startDate = Some(Date(Some(1), Some(4), Some(2022))), weight = None)
+            liabilityDetails.status mustBe TaskStatus.InProgress
+          }
+
+          "and only liability weight has been answered" in {
+            val liabilityDetails =
+              LiabilityDetails(startDate = None, weight = Some(LiabilityWeight(Some(4000))))
+            liabilityDetails.status mustBe TaskStatus.InProgress
+          }
+        }
+
       }
     }
 
     "be COMPLETED " when {
-      "liability details are all filled in" in {
-        val liabilityDetails = LiabilityDetails(startDate =
-                                                  Some(Date(Some(1), Some(5), Some(2022))),
-                                                weight = Some(LiabilityWeight(Some(4000)))
-        )
-        liabilityDetails.status mustBe TaskStatus.Completed
+      "and 'liabilityPreLaunch' flag is enabled" when {
+        "and liability details are all filled in" in {
+          val liabilityDetails =
+            LiabilityDetails(isLiable = Some(false), weight = Some(LiabilityWeight(Some(4000))))
+          liabilityDetails.status mustBe TaskStatus.Completed
+        }
+      }
+
+      "and 'liabilityPreLaunch' flag is disabled" when {
+        "and liability details are all filled in" in {
+          val liabilityDetails = LiabilityDetails(startDate =
+                                                    Some(Date(Some(1), Some(5), Some(2022))),
+                                                  weight = Some(LiabilityWeight(Some(4000)))
+          )
+          liabilityDetails.status mustBe TaskStatus.Completed
+        }
       }
     }
   }

@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.libs.json.JsObject
@@ -36,14 +36,16 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
                                                mockJourneyAction,
                                                mcc = mcc,
-                                               page = page
+                                               page = page,
+                                               appConfig = config
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+    when(config.isPreLaunch).thenReturn(false)
   }
 
   override protected def afterEach(): Unit = {
@@ -55,11 +57,22 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
     "return 200" when {
 
-      "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        val result = controller.displayPage()(getRequest())
+      "user is authorised and display page method is invoked" when {
+        "and 'isPreLaunch' is true" in {
+          when(config.isPreLaunch).thenReturn(true)
+          authorizedUser()
+          val result = controller.displayPage()(getRequest())
 
-        status(result) mustBe OK
+          status(result) mustBe OK
+        }
+
+        "and 'isPreLaunch' is false" in {
+          when(config.isPreLaunch).thenReturn(false)
+          authorizedUser()
+          val result = controller.displayPage()(getRequest())
+
+          status(result) mustBe OK
+        }
       }
     }
 

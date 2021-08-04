@@ -32,11 +32,7 @@ class NotLiableControllerTest extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new NotLiableController(authenticate = mockAuthAction,
-                            mockJourneyAction,
-                            mcc = mcc,
-                            page = page
-    )
+    new NotLiableController(authenticate = mockAuthAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

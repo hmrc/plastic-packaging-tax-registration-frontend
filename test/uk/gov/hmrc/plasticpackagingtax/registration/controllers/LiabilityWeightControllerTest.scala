@@ -41,7 +41,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                                   mockJourneyAction,
                                   mockRegistrationConnector,
                                   mcc = mcc,
-                                  page = page
+                                  page = page,
+                                  appConfig = config
     )
 
   override protected def beforeEach(): Unit = {
@@ -76,24 +77,52 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits the liability total weight" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
-          val result =
-            controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
+        "user submits the liability total weight" when {
+          "and feature flag 'liabilityPreLaunch' is disabled" in {
+            authorizedUser()
+            mockRegistrationFind(aRegistration())
+            mockRegistrationUpdate(aRegistration())
+            val result =
+              controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
 
-          status(result) mustBe SEE_OTHER
+            status(result) mustBe SEE_OTHER
 
-          modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
+            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.LiabilityStartDateController.displayPage().url
-              )
-            case _ =>
-              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+            formAction._1 match {
+              case "SaveAndContinue" =>
+                redirectLocation(result) mustBe Some(
+                  routes.LiabilityStartDateController.displayPage().url
+                )
+              case _ =>
+                redirectLocation(result) mustBe Some(
+                  routes.RegistrationController.displayPage().url
+                )
+            }
+          }
+          "and feature flag 'liabilityPreLaunch' is enabled" in {
+            authorizedUser()
+            mockRegistrationFind(aRegistration())
+            mockRegistrationUpdate(aRegistration())
+            when(config.isPreLaunch).thenReturn(true)
+
+            val result =
+              controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
+
+            status(result) mustBe SEE_OTHER
+
+            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
+
+            formAction._1 match {
+              case "SaveAndContinue" =>
+                redirectLocation(result) mustBe Some(
+                  routes.LiabilityLiableDateController.displayPage().url
+                )
+              case _ =>
+                redirectLocation(result) mustBe Some(
+                  routes.RegistrationController.displayPage().url
+                )
+            }
           }
         }
       }

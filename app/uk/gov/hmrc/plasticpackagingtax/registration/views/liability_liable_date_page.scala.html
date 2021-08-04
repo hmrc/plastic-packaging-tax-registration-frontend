@@ -1,0 +1,70 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.yes
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.no
+
+@this(
+    formHelper: formWithCSRF,
+    govukLayout: main_template,
+    govukRadios : GovukRadios,
+    sectionHeader: sectionHeader,
+    saveButtons: saveButtons,
+    errorSummary: errorSummary
+)
+
+@(form: Form[LiabilityLiableDate])(implicit request: Request[_], messages: Messages)
+
+@govukLayout(
+    title = Title("liabilityLiableDatePage.title"),
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage(), messages("site.back.hiddenText")))) {
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("liabilityLiableDatePage.sectionHeader"))
+
+    @formHelper(action = pptRoutes.LiabilityLiableDateController.submit(), 'autoComplete -> "off") {
+
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("liabilityLiableDatePage.question")),
+                classes = "govuk-fieldset__legend--l",
+                isPageHeading = true
+                ))
+            )),
+        hint = Some(Hint(content = Text(messages("liabilityLiableDatePage.hint")))),
+        idPrefix = Some(form("answer").name),
+        name = form("answer").name,
+        items = Seq(
+            RadioItem(content = Text("Yes"), value = Some("yes"), checked = form("answer").value.contains(yes)),
+            RadioItem(content = Text("No"), value = Some("no"), checked = form("answer").value.contains(no))
+        ),
+        classes = "govuk-radios",
+        errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        ))
+
+    @saveButtons()
+    }
+}

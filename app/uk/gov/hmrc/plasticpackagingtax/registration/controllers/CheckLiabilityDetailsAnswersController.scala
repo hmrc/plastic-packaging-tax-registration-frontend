@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
@@ -31,13 +32,22 @@ class CheckLiabilityDetailsAnswersController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  page: check_liability_details_answers_page
+  page: check_liability_details_answers_page,
+  appConfig: AppConfig
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration))
+      Ok(page(request.registration, backLink))
     }
+
+  private def backLink = {
+    val backLink = {
+      if (appConfig.isPreLaunch) routes.LiabilityLiableDateController.displayPage()
+      else routes.LiabilityStartDateController.displayPage()
+    }
+    backLink
+  }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { _ =>

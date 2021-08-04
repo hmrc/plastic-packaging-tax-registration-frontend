@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.not_liable
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -28,7 +27,6 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NotLiableController @Inject() (
   authenticate: AuthAction,
-  journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: not_liable
 ) extends FrontendController(mcc) with I18nSupport {

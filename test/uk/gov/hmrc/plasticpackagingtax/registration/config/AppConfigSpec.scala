@@ -38,13 +38,13 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |microservice.services.plastic-packaging-tax-registration.port=8502
         |microservice.services.contact-frontend.host=localhost
         |microservice.services.contact-frontend.port=9250
+        |features.isPreLaunch=false
         |urls.feedback.authenticatedLink="http://localhost:9250/contact/beta-feedback"
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
       """.stripMargin
     )
 
-  private val validServicesConfiguration = Configuration(validConfig)
-  private val validAppConfig: AppConfig  = appConfig(validServicesConfiguration)
+  private val emptyConfig: Config = ConfigFactory.parseString("")
 
   private def appConfig(conf: Configuration) =
     new AppConfig(conf, servicesConfig(conf))
@@ -52,6 +52,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
   private def servicesConfig(conf: Configuration) = new ServicesConfig(conf)
 
   "The config" should {
+
+    val validAppConfig: AppConfig = appConfig(Configuration(validConfig))
 
     "have 'incorpJourneyUrl' defined" in {
       validAppConfig.incorpJourneyUrl must be(
@@ -121,6 +123,22 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       validAppConfig.unauthenticatedFeedbackUrl() must be(
         "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax"
       )
+    }
+    "inspect feature flags" when {
+      "and check that 'liabilityPreLaunch' is false" in {
+        validAppConfig.isPreLaunch mustBe false
+      }
+    }
+  }
+
+  "with an empty config" should {
+
+    val emptyAppConfig: AppConfig = appConfig(Configuration(emptyConfig))
+
+    "inspect feature flags" when {
+      "and check that 'liabilityPreLaunch' default value is 'true'" in {
+        emptyAppConfig.isPreLaunch mustBe false
+      }
     }
   }
 }
