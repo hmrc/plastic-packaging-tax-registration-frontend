@@ -93,7 +93,7 @@ class LiabilityWeightController @Inject() (
       case Some(weight) =>
         if (weight <= appConfig.minimumWeight)
           Redirect(routes.LiabilityProcessMoreWeightController.displayPage())
-        else Redirect(liabilityLinkHelper.datePageLink)
+        else Redirect(liabilityLinkHelper.nextPage)
       case None => BadRequest
     }
 

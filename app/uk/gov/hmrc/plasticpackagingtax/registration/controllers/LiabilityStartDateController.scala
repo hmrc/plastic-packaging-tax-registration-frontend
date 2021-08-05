@@ -50,13 +50,9 @@ class LiabilityStartDateController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.liabilityDetails.startDate match {
         case Some(data) =>
-          Ok(
-            page(LiabilityStartDate.form().fill(data),
-                 liabilityBacklinkHelper.backLinkForLiabilityDatePages
-            )
-          )
+          Ok(page(LiabilityStartDate.form().fill(data), liabilityBacklinkHelper.backLink))
         case _ =>
-          Ok(page(LiabilityStartDate.form(), liabilityBacklinkHelper.backLinkForLiabilityDatePages))
+          Ok(page(LiabilityStartDate.form(), liabilityBacklinkHelper.backLink))
       }
     }
 
@@ -66,11 +62,7 @@ class LiabilityStartDateController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[Date]) =>
-            Future.successful(
-              BadRequest(
-                page(formWithErrors, liabilityBacklinkHelper.backLinkForLiabilityDatePages)
-              )
-            ),
+            Future.successful(BadRequest(page(formWithErrors, liabilityBacklinkHelper.backLink))),
           liabilityStartDate =>
             updateRegistration(liabilityStartDate).map {
               case Right(_) =>

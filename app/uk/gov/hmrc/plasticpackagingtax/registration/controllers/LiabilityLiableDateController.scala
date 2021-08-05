@@ -53,18 +53,12 @@ class LiabilityLiableDateController @Inject() (
           Future(
             Ok(
               page(LiabilityLiableDate.form().fill(LiabilityLiableDate(Some(data))),
-                   liabilityBacklinkHelper.backLinkForLiabilityDatePages
+                   liabilityBacklinkHelper.backLink
               )
             )
           )
         case _ =>
-          Future(
-            Ok(
-              page(LiabilityLiableDate.form(),
-                   liabilityBacklinkHelper.backLinkForLiabilityDatePages
-              )
-            )
-          )
+          Future(Ok(page(LiabilityLiableDate.form(), liabilityBacklinkHelper.backLink)))
       }
     }
 
@@ -74,11 +68,7 @@ class LiabilityLiableDateController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[LiabilityLiableDate]) =>
-            Future(
-              BadRequest(
-                page(formWithErrors, liabilityBacklinkHelper.backLinkForLiabilityDatePages)
-              )
-            ),
+            Future(BadRequest(page(formWithErrors, liabilityBacklinkHelper.backLink))),
           liableDate =>
             updateRegistration(liableDate).map {
               case Right(_) =>

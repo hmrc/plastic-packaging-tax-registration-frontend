@@ -66,7 +66,7 @@ class LiabilityProcessMoreWeightController @Inject() (
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
                         if (processMoreWeight.answer.getOrElse(false))
-                          Redirect(liabilityLinkHelper.datePageLink())
+                          Redirect(liabilityLinkHelper.nextPage())
                         else Redirect(routes.NotLiableController.displayPage())
                       case _ => Redirect(routes.RegistrationController.displayPage())
                     }

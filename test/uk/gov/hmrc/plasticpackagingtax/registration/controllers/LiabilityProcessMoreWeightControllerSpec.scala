@@ -54,7 +54,7 @@ class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
       .thenReturn(enabled)
 
   def mockLinkHelperToReturn(link: Call): OngoingStubbing[Call] =
-    when(liabilityLinkHelper.datePageLink)
+    when(liabilityLinkHelper.nextPage)
       .thenReturn(link)
 
   override protected def beforeEach(): Unit = {

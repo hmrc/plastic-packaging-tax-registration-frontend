@@ -45,7 +45,7 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
           )
         )
       when(config.minimumWeight).thenReturn(10000)
-      val result = helper.backLinkForLiabilityDatePages()(journeyRequest)
+      val result = helper.backLink()(journeyRequest)
       result mustBe
         routes.LiabilityWeightController.displayPage()
     }
@@ -61,7 +61,7 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
           )
         )
       when(config.minimumWeight).thenReturn(10000)
-      val result = helper.backLinkForLiabilityDatePages()(journeyRequest)
+      val result = helper.backLink()(journeyRequest)
       result mustBe
         routes.LiabilityProcessMoreWeightController.displayPage()
     }
@@ -73,7 +73,7 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
                              authRequest(headers, user = PptTestData.newUser("123")),
                            aRegistration(withLiabilityDetails(LiabilityDetails(weight = None)))
         )
-      val result = helper.backLinkForLiabilityDatePages()(journeyRequest)
+      val result = helper.backLink()(journeyRequest)
       result mustBe
         routes.RegistrationController.displayPage()
     }
@@ -88,7 +88,7 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
             withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(None))))
           )
         )
-      val result = helper.backLinkForLiabilityDatePages()(journeyRequest)
+      val result = helper.backLink()(journeyRequest)
       result mustBe
         routes.RegistrationController.displayPage()
     }
@@ -98,14 +98,14 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
 
     "when preLaunch is enabled" in {
       when(config.isPreLaunch).thenReturn(true)
-      val result = helper.datePageLink()
+      val result = helper.nextPage()
       result mustBe
         routes.LiabilityLiableDateController.displayPage()
     }
 
     "when preLaunch is disabled" in {
       when(config.isPreLaunch).thenReturn(false)
-      val result = helper.datePageLink()
+      val result = helper.nextPage()
       result mustBe
         routes.LiabilityStartDateController.displayPage()
     }
