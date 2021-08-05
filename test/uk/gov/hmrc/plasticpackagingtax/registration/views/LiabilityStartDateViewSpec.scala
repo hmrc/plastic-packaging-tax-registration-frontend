@@ -20,6 +20,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import base.unit.UnitViewSpec
 import play.api.data.Form
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityStartDate.form
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
@@ -31,8 +32,11 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[liability_start_date_page]
 
-  private def createView(form: Form[Date] = LiabilityStartDate.form()): Document =
-    page(form)(request, messages)
+  private def createView(
+    form: Form[Date] = LiabilityStartDate.form(),
+    backLink: Call = routes.LiabilityWeightController.displayPage()
+  ): Document =
+    page(form, backLink)(request, messages)
 
   "Liability Start Date View" should {
 
@@ -46,12 +50,14 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(form())(request, messages).select("title").text() must include(
-        messages("liabilityStartDatePage.title")
-      )
-      page.render(form(), request, messages).select("title").text() must include(
-        messages("liabilityStartDatePage.title")
-      )
+      page.f(form(), routes.LiabilityProcessMoreWeightController.displayPage())(request,
+                                                                                messages
+      ).select("title").text() must include(messages("liabilityStartDatePage.title"))
+      page.render(form(),
+                  routes.LiabilityProcessMoreWeightController.displayPage(),
+                  request,
+                  messages
+      ).select("title").text() must include(messages("liabilityStartDatePage.title"))
     }
 
     "contain timeout dialog function" in {

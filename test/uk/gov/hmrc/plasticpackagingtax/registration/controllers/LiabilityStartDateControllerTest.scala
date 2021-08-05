@@ -24,29 +24,33 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class LiabilityStartDateControllerTest extends ControllerSpec {
 
-  private val page = mock[liability_start_date_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page                    = mock[liability_start_date_page]
+  private val mcc                     = stubMessagesControllerComponents()
+  private val liabilityBacklinkHelper = mock[LiabilityLinkHelper]
 
   private val controller =
     new LiabilityStartDateController(authenticate = mockAuthAction,
                                      mockJourneyAction,
                                      mockRegistrationConnector,
                                      mcc = mcc,
-                                     page = page
+                                     page = page,
+                                     liabilityBacklinkHelper = liabilityBacklinkHelper
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Date]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[Date]], any[Call])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {

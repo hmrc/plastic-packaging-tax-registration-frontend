@@ -22,12 +22,18 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.yes
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.no
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraph
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.link
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageHeading
 
 @this(
     formHelper: formWithCSRF,
+        pageHeading: pageHeading,
+        paragraph: paragraph,
+        link: link,
     govukLayout: main_template,
     govukRadios : GovukRadios,
     sectionHeader: sectionHeader,
@@ -35,26 +41,57 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[LiabilityLiableDate], backLink: Call)(implicit request: Request[_], messages: Messages)
+
+@(form: Form[ProcessMoreWeight])(implicit request: Request[_], messages: Messages)
+
+
+@errorMessages = @{
+    val errors = (form.errors).map(err => messages(err.message, err.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@pptWeightQuestion = {
+@pageHeading(
+    text = messages("liabilityProcessMoreWeightPage.question")
+)
+}
+
+@pptGuidanceLink = {
+@link(
+    id = Some("guidance-link"),
+    target = "_blank",
+    text = messages("liabilityProcessMoreWeightPage.guidance.description"),
+    call = Call(
+        method = "GET",
+        url = messages("liabilityProcessMoreWeightPage.guidance.href")
+    )
+)
+}
+
+@pptWeightHelp = {
+@paragraph(
+    content = Html(messages("liabilityProcessMoreWeightPage.info"))
+)
+@paragraph(
+    content = Html(messages("liabilityProcessMoreWeightPage.info2", pptGuidanceLink))
+)
+}
 
 @govukLayout(
-    title = Title("liabilityLiableDatePage.title"),
-    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+    title = Title("liabilityProcessMoreWeightPage.title"),
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
-    @sectionHeader(messages("liabilityLiableDatePage.sectionHeader"))
+    @sectionHeader(messages("liabilityProcessMoreWeightPage.sectionHeader"))
 
-    @formHelper(action = pptRoutes.LiabilityLiableDateController.submit(), 'autoComplete -> "off") {
+    @pptWeightQuestion
+
+    @pptWeightHelp
+
+    @formHelper(action = pptRoutes.LiabilityProcessMoreWeightController.submit(), 'autoComplete -> "off") {
 
     @govukRadios(Radios(
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("liabilityLiableDatePage.question")),
-                classes = "govuk-fieldset__legend--l",
-                isPageHeading = true
-                ))
-            )),
-        hint = Some(Hint(content = Text(messages("liabilityLiableDatePage.hint")))),
+        hint = None,
         idPrefix = Some(form("answer").name),
         name = form("answer").name,
         items = Seq(

@@ -14,6 +14,9 @@ POST       /liability-date    uk.gov.hmrc.plasticpackagingtax.registration.contr
 GET        /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.displayPage()
 POST       /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityStartDateController.submit()
 
+GET        /forward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityProcessMoreWeightController.displayPage()
+POST       /forward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityProcessMoreWeightController.submit()
+
 GET        /total-packaging-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.displayPage()
 POST       /total-packaging-weight        uk.gov.hmrc.plasticpackagingtax.registration.controllers.LiabilityWeightController.submit()
 
