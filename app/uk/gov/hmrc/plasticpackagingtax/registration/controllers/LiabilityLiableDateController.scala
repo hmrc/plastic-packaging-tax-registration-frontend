@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityLiableDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -40,7 +41,8 @@ class LiabilityLiableDateController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: liability_liable_date_page
+  page: liability_liable_date_page,
+  liabilityBacklinkHelper: LiabilityLinkHelper
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -48,8 +50,21 @@ class LiabilityLiableDateController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.liabilityDetails.isLiable match {
         case Some(data) =>
-          Future(Ok(page(LiabilityLiableDate.form().fill(LiabilityLiableDate(Some(data))))))
-        case _ => Future(Ok(page(LiabilityLiableDate.form())))
+          Future(
+            Ok(
+              page(LiabilityLiableDate.form().fill(LiabilityLiableDate(Some(data))),
+                   liabilityBacklinkHelper.backLinkForLiabilityDatePages
+              )
+            )
+          )
+        case _ =>
+          Future(
+            Ok(
+              page(LiabilityLiableDate.form(),
+                   liabilityBacklinkHelper.backLinkForLiabilityDatePages
+              )
+            )
+          )
       }
     }
 
@@ -58,7 +73,12 @@ class LiabilityLiableDateController @Inject() (
       LiabilityLiableDate.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[LiabilityLiableDate]) => Future(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[LiabilityLiableDate]) =>
+            Future(
+              BadRequest(
+                page(formWithErrors, liabilityBacklinkHelper.backLinkForLiabilityDatePages)
+              )
+            ),
           liableDate =>
             updateRegistration(liableDate).map {
               case Right(_) =>

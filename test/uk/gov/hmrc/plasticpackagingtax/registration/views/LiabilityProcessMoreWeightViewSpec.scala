@@ -20,43 +20,39 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.form
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_liable_date_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight.form
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_process_more_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
+class LiabilityProcessMoreWeightViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[liability_liable_date_page]
+  private val page = instanceOf[liability_process_more_weight_page]
 
-  private def createView(
-    form: Form[LiabilityLiableDate] = LiabilityLiableDate.form(),
-    backLink: Call = routes.LiabilityProcessMoreWeightController.displayPage()
-  ): Document =
-    page(form, backLink = backLink)(request, messages)
+  private def createView(form: Form[ProcessMoreWeight] = ProcessMoreWeight.form()): Document =
+    page(form)(request, messages)
 
-  "Liability section 'Liable Date' view" should {
+  "Liability section expect process more weight view" should {
 
     "have proper messages for labels" in {
-      messages must haveTranslationFor("liabilityLiableDatePage.sectionHeader")
-      messages must haveTranslationFor("liabilityLiableDatePage.title")
-      messages must haveTranslationFor("liabilityLiableDatePage.hint")
-      messages must haveTranslationFor("liabilityLiableDatePage.question")
-      messages must haveTranslationFor("liabilityLiableDatePage.question.empty.error")
+      messages must haveTranslationFor("liabilityProcessMoreWeightPage.sectionHeader")
+      messages must haveTranslationFor("liabilityProcessMoreWeightPage.title")
+      messages must haveTranslationFor("liabilityProcessMoreWeightPage.hint")
+      messages must haveTranslationFor("liabilityProcessMoreWeightPage.question")
+      messages must haveTranslationFor("liabilityProcessMoreWeightPage.question.empty.error")
     }
 
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(form(), routes.LiabilityWeightController.displayPage())(request, messages).select(
-        "title"
-      ).text() must include(messages("liabilityLiableDatePage.title"))
-      page.render(form(), routes.LiabilityWeightController.displayPage(), request, messages).select(
-        "title"
-      ).text() must include(messages("liabilityLiableDatePage.title"))
+      page.f(form())(request, messages).select("title").text() must include(
+        messages("liabilityProcessMoreWeightPage.title")
+      )
+      page.render(form(), request, messages).select("title").text() must include(
+        messages("liabilityProcessMoreWeightPage.title")
+      )
     }
 
     "contain timeout dialog function" in {
@@ -71,20 +67,18 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        routes.LiabilityProcessMoreWeightController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(routes.LiabilityWeightController.displayPage())
     }
 
     "display title" in {
 
-      view.select("title").text() must include(messages("liabilityLiableDatePage.title"))
+      view.select("title").text() must include(messages("liabilityProcessMoreWeightPage.title"))
     }
 
     "display header" in {
 
       view.getElementsByClass("govuk-caption-xl").text() must include(
-        messages("liabilityLiableDatePage.sectionHeader")
+        messages("liabilityProcessMoreWeightPage.sectionHeader")
       )
     }
 
@@ -112,8 +106,8 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
 
     "display radio button checked" in {
 
-      val form = LiabilityLiableDate.form()
-        .fill(LiabilityLiableDate("yes"))
+      val form = ProcessMoreWeight.form()
+        .fill(ProcessMoreWeight("yes"))
       val view = createView(form)
 
       view.getElementById("answer").attr("value") mustBe "yes"
@@ -123,8 +117,8 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
 
       "no radio button checked" in {
 
-        val form = LiabilityLiableDate.form()
-          .fillAndValidate(LiabilityLiableDate(None))
+        val form = ProcessMoreWeight.form()
+          .fillAndValidate(ProcessMoreWeight(None))
         val view = createView(form)
 
         view must haveGovukGlobalErrorSummary

@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -29,30 +30,36 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityLiableDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_liable_date_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_process_more_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class LiabilityLiableDateControllerSpec extends ControllerSpec {
-  private val page                    = mock[liability_liable_date_page]
-  private val mcc                     = stubMessagesControllerComponents()
-  private val liabilityBacklinkHelper = mock[LiabilityLinkHelper]
+class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
+  private val page                = mock[liability_process_more_weight_page]
+  private val mcc                 = stubMessagesControllerComponents()
+  private val liabilityLinkHelper = mock[LiabilityLinkHelper]
 
   private val controller =
-    new LiabilityLiableDateController(authenticate = mockAuthAction,
-                                      mockJourneyAction,
-                                      mockRegistrationConnector,
-                                      mcc = mcc,
-                                      page = page,
-                                      liabilityBacklinkHelper = liabilityBacklinkHelper
+    new LiabilityProcessMoreWeightController(authenticate = mockAuthAction,
+                                             mockJourneyAction,
+                                             mockRegistrationConnector,
+                                             mcc = mcc,
+                                             page = page,
+                                             liabilityLinkHelper = liabilityLinkHelper
     )
+
+  def mockAppConfigIsPreLaunchEnabled(enabled: Boolean): OngoingStubbing[Boolean] =
+    when(config.isPreLaunch)
+      .thenReturn(enabled)
+
+  def mockLinkHelperToReturn(link: Call): OngoingStubbing[Call] =
+    when(liabilityLinkHelper.datePageLink)
+      .thenReturn(link)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[LiabilityLiableDate]], any[Call])(any(), any())).thenReturn(
-      HtmlFormat.empty
-    )
+    when(page.apply(any[Form[ProcessMoreWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -60,7 +67,7 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "Liability Liable Date Controller" should {
+  "Liability Process More Weight Controller" should {
 
     "return 200" when {
 
@@ -75,7 +82,7 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
 
       "user is authorised, a registration already exists and display page method is invoked" in {
         val registration =
-          aRegistration(withLiabilityDetails(LiabilityDetails(isLiable = Some(true))))
+          aRegistration(withLiabilityDetails(LiabilityDetails(willProcessMoreWeight = Some(true))))
         authorizedUser()
         mockRegistrationFind(registration)
 
@@ -87,24 +94,45 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits 'Yes' answer" in {
+        "user submits 'Yes' answer with isPreLaunch enabled" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
+          mockAppConfigIsPreLaunchEnabled(true)
+          mockLinkHelperToReturn(routes.LiabilityLiableDateController.displayPage())
 
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
-          modifiedRegistration.liabilityDetails.isLiable mustBe Some(true)
-          modifiedRegistration.liabilityDetails.startDate mustBe Some(
-            Date(Some(1), Some(4), Some(2022))
-          )
+          modifiedRegistration.liabilityDetails.willProcessMoreWeight mustBe Some(true)
 
           formAction._1 match {
             case "SaveAndContinue" =>
               redirectLocation(result) mustBe Some(
-                routes.CheckLiabilityDetailsAnswersController.displayPage().url
+                routes.LiabilityLiableDateController.displayPage().url
+              )
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+        }
+
+        "user submits 'Yes' answer with isPreLaunch disabled" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate(aRegistration())
+          mockAppConfigIsPreLaunchEnabled(false)
+          mockLinkHelperToReturn(routes.LiabilityStartDateController.displayPage())
+          val correctForm = Seq("answer" -> "yes", formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+          status(result) mustBe SEE_OTHER
+          modifiedRegistration.liabilityDetails.willProcessMoreWeight mustBe Some(true)
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.LiabilityStartDateController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
@@ -121,8 +149,7 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
 
           status(result) mustBe SEE_OTHER
 
-          modifiedRegistration.liabilityDetails.isLiable mustBe Some(false)
-          modifiedRegistration.liabilityDetails.startDate mustBe None
+          modifiedRegistration.liabilityDetails.willProcessMoreWeight mustBe Some(false)
 
           formAction._1 match {
             case "SaveAndContinue" =>

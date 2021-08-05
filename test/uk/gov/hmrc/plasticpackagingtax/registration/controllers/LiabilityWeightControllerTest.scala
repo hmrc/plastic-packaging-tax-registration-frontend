@@ -19,22 +19,26 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class LiabilityWeightControllerTest extends ControllerSpec {
 
-  private val page = mock[liability_weight_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page                = mock[liability_weight_page]
+  private val mcc                 = stubMessagesControllerComponents()
+  private val liabilityLinkHelper = mock[LiabilityLinkHelper]
 
   private val controller =
     new LiabilityWeightController(authenticate = mockAuthAction,
@@ -42,8 +46,17 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                                   mockRegistrationConnector,
                                   mcc = mcc,
                                   page = page,
-                                  appConfig = config
+                                  appConfig = config,
+                                  liabilityLinkHelper = liabilityLinkHelper
     )
+
+  def mockAppConfigMinimumWeight(weight: Long): OngoingStubbing[Long] =
+    when(config.minimumWeight)
+      .thenReturn(weight)
+
+  def mockLinkHelperToReturn(link: Call): OngoingStubbing[Call] =
+    when(liabilityLinkHelper.datePageLink)
+      .thenReturn(link)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -78,16 +91,20 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
         "user submits the liability total weight" when {
-          "and feature flag 'liabilityPreLaunch' is disabled" in {
+
+          "and weight is greater than minimum weight and feature flag 'liabilityPreLaunch' is disabled" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
+            mockAppConfigMinimumWeight(10000)
+            mockLinkHelperToReturn(routes.LiabilityStartDateController.displayPage())
+
             val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
+              controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))
 
             status(result) mustBe SEE_OTHER
 
-            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
+            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
 
             formAction._1 match {
               case "SaveAndContinue" =>
@@ -100,12 +117,11 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                 )
             }
           }
-          "and feature flag 'liabilityPreLaunch' is enabled" in {
+          "and weight is lesser than minimum weight" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            when(config.isPreLaunch).thenReturn(true)
-
+            mockAppConfigMinimumWeight(10000)
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
 
@@ -116,12 +132,59 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             formAction._1 match {
               case "SaveAndContinue" =>
                 redirectLocation(result) mustBe Some(
+                  routes.LiabilityProcessMoreWeightController.displayPage().url
+                )
+              case _ =>
+                redirectLocation(result) mustBe Some(
+                  routes.RegistrationController.displayPage().url
+                )
+            }
+          }
+
+          "and weight is greater than minimum weight and feature flag 'liabilityPreLaunch' is enabled" in {
+            authorizedUser()
+            mockRegistrationFind(aRegistration())
+            mockRegistrationUpdate(aRegistration())
+            when(config.isPreLaunch).thenReturn(true)
+            mockAppConfigMinimumWeight(10000)
+            mockLinkHelperToReturn(routes.LiabilityLiableDateController.displayPage())
+
+            val result =
+              controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))
+
+            status(result) mustBe SEE_OTHER
+
+            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
+
+            formAction._1 match {
+              case "SaveAndContinue" =>
+                redirectLocation(result) mustBe Some(
                   routes.LiabilityLiableDateController.displayPage().url
                 )
               case _ =>
                 redirectLocation(result) mustBe Some(
                   routes.RegistrationController.displayPage().url
                 )
+            }
+          }
+
+          "and weight is not set" in {
+            authorizedUser()
+            mockRegistrationFind(aRegistration())
+            mockRegistrationUpdate(aRegistration())
+            when(config.isPreLaunch).thenReturn(true)
+            mockAppConfigMinimumWeight(10000)
+
+            val result =
+              controller.submit()(postRequestEncoded(LiabilityWeight(None), formAction))
+
+            status(result) mustBe BAD_REQUEST
+
+            formAction._1 match {
+              case "SaveAndContinue" =>
+                redirectLocation(result) mustBe None
+              case _ =>
+                redirectLocation(result) mustBe None
             }
           }
         }

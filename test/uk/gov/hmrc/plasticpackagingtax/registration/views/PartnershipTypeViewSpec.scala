@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
@@ -28,7 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrganisationType, PartnershipType}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnership_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 

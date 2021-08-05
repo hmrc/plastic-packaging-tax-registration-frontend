@@ -26,74 +26,63 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_process_more_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LiabilityStartDateController @Inject() (
+class LiabilityProcessMoreWeightController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: liability_start_date_page,
-  liabilityBacklinkHelper: LiabilityLinkHelper
+  page: liability_process_more_weight_page,
+  liabilityLinkHelper: LiabilityLinkHelper
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      request.registration.liabilityDetails.startDate match {
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.liabilityDetails.willProcessMoreWeight match {
         case Some(data) =>
-          Ok(
-            page(LiabilityStartDate.form().fill(data),
-                 liabilityBacklinkHelper.backLinkForLiabilityDatePages
-            )
-          )
-        case _ =>
-          Ok(page(LiabilityStartDate.form(), liabilityBacklinkHelper.backLinkForLiabilityDatePages))
+          Future(Ok(page(ProcessMoreWeight.form().fill(ProcessMoreWeight(Some(data))))))
+        case _ => Future(Ok(page(ProcessMoreWeight.form())))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      LiabilityStartDate.form()
+      ProcessMoreWeight.form()
         .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[Date]) =>
-            Future.successful(
-              BadRequest(
-                page(formWithErrors, liabilityBacklinkHelper.backLinkForLiabilityDatePages)
-              )
-            ),
-          liabilityStartDate =>
-            updateRegistration(liabilityStartDate).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
-                  case _ =>
-                    Redirect(routes.RegistrationController.displayPage())
+        .fold((formWithErrors: Form[ProcessMoreWeight]) => Future(BadRequest(page(formWithErrors))),
+              processMoreWeight =>
+                updateRegistration(processMoreWeight).map {
+                  case Right(_) =>
+                    FormAction.bindFromRequest match {
+                      case SaveAndContinue =>
+                        if (processMoreWeight.answer.getOrElse(false))
+                          Redirect(liabilityLinkHelper.datePageLink())
+                        else Redirect(routes.NotLiableController.displayPage())
+                      case _ => Redirect(routes.RegistrationController.displayPage())
+                    }
+                  case Left(error) => throw error
                 }
-              case Left(error) => throw error
-            }
         )
+
     }
 
   private def updateRegistration(
-    formData: Date
+    formData: ProcessMoreWeight
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    update { model =>
-      val updatedLiabilityDetails = model.liabilityDetails.copy(startDate = Some(formData),
-                                                                weight =
-                                                                  model.liabilityDetails.weight
-      )
-      model.copy(liabilityDetails = updatedLiabilityDetails)
+    update { registration =>
+      val updatedLiableDetails =
+        registration.liabilityDetails.copy(willProcessMoreWeight = formData.answer)
+      registration.copy(liabilityDetails = updatedLiableDetails)
     }
 
 }
