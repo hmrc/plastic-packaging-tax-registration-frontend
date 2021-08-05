@@ -38,7 +38,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration, liabilityLinkHelper.datePageLink))
+      Ok(page(request.registration, liabilityLinkHelper.nextPage))
     }
 
   def submit(): Action[AnyContent] =

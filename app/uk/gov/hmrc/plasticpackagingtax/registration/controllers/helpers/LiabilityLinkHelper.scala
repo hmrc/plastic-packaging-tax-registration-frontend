@@ -26,7 +26,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 case class LiabilityLinkHelper @Inject() (appConfig: AppConfig) {
 
-  def backLinkForLiabilityDatePages()(implicit request: JourneyRequest[AnyContent]): Call =
+  def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
     request.registration.liabilityDetails.weight match {
       case Some(weight) =>
         weight.totalKg match {
@@ -39,7 +39,7 @@ case class LiabilityLinkHelper @Inject() (appConfig: AppConfig) {
       case None => routes.RegistrationController.displayPage()
     }
 
-  def datePageLink(): Call =
+  def nextPage(): Call =
     if (appConfig.isPreLaunch) routes.LiabilityLiableDateController.displayPage()
     else routes.LiabilityStartDateController.displayPage()
 
