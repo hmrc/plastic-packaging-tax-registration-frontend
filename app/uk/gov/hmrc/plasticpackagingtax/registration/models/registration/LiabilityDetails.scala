@@ -23,7 +23,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 case class LiabilityDetails(
   weight: Option[LiabilityWeight] = None,
   startDate: Option[Date] = None,
-  isLiable: Option[Boolean] = None
+  isLiable: Option[Boolean] = None,
+  expectToExceedThresholdSoon: Option[Boolean] = None // TODO: update with real name (PPTP-1027)
 ) {
   def isCompleted: Boolean  = weight.isDefined && (startDate.isDefined || isLiable.isDefined)
   def isInProgress: Boolean = weight.isDefined || startDate.isDefined || isLiable.isDefined

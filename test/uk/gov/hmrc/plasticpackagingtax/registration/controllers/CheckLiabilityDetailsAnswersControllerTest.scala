@@ -44,7 +44,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     super.beforeEach()
     val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(any(), refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
     when(config.isPreLaunch).thenReturn(false)
   }
 

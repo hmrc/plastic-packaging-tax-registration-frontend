@@ -37,7 +37,9 @@ trait RegistrationBuilder {
                  incorpJourneyId = Some(UUID.randomUUID().toString),
                  liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
                                                      startDate =
-                                                       Some(Date(Some(1), Some(4), Some(2022)))
+                                                       Some(Date(Some(1), Some(4), Some(2022))),
+                                                     isLiable = Some(true),
+                                                     expectToExceedThresholdSoon = Some(true)
                  ),
                  primaryContactDetails = PrimaryContactDetails(
                    fullName = Some(FullName(firstName = "Jack", lastName = "Gatsby")),
