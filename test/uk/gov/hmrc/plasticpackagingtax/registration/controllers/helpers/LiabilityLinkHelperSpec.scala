@@ -33,7 +33,7 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
     LiabilityLinkHelper(appConfig = config)
 
   "The Liability Link Helper " should {
-    "provide back page to the liability weight page " when {
+    "provide a suitable back link " when {
       "weight is more than minimum weight" in {
         val headers = Headers().add(HeaderNames.xRequestId -> "req1")
         val journeyRequest =
@@ -96,7 +96,7 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
   }
 
   "The Liability Link Helper " should {
-    "provide next page link " when {
+    "provide a suitable next page link " when {
       "preLaunch is enabled" in {
         when(config.isPreLaunch).thenReturn(true)
         val result = helper.nextPage()
