@@ -19,30 +19,30 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 
-case class ProcessMoreWeight(answer: Option[Boolean])
+case class ExpectToExceedThresholdWeight(answer: Option[Boolean])
 
-object ProcessMoreWeight extends CommonFormValidators {
+object ExpectToExceedThresholdWeight extends CommonFormValidators {
 
-  lazy val emptyError = "liabilityProcessMoreWeightPage.question.empty.error"
+  lazy val emptyError = "liabilityExpectToExceedThresholdWeightPage.question.empty.error"
   val yes             = "yes"
   val no              = "no"
 
-  def form(): Form[ProcessMoreWeight] =
+  def form(): Form[ExpectToExceedThresholdWeight] =
     Form(
       mapping(
         "answer" -> text()
           .verifying(emptyError, contains(Seq(yes, no)))
-      )(ProcessMoreWeight.apply)(ProcessMoreWeight.unapply)
+      )(ExpectToExceedThresholdWeight.apply)(ExpectToExceedThresholdWeight.unapply)
     )
 
-  def apply(value: String): ProcessMoreWeight =
+  def apply(value: String): ExpectToExceedThresholdWeight =
     if (value == yes)
-      ProcessMoreWeight(Some(true))
+      ExpectToExceedThresholdWeight(Some(true))
     else if (value == no)
-      ProcessMoreWeight(Some(false))
-    else ProcessMoreWeight(None)
+      ExpectToExceedThresholdWeight(Some(false))
+    else ExpectToExceedThresholdWeight(None)
 
-  def unapply(liableDate: ProcessMoreWeight): Option[String] =
+  def unapply(liableDate: ExpectToExceedThresholdWeight): Option[String] =
     liableDate.answer.flatMap { value =>
       if (value) Some(yes)
       else Some(no)

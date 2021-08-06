@@ -32,82 +32,84 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
   private val helper =
     LiabilityLinkHelper(appConfig = config)
 
-  "Backlink for liability weight page" should {
-
-    "when liability weight is more than minimum weight" in {
-      val headers = Headers().add(HeaderNames.xRequestId -> "req1")
-      val journeyRequest =
-        new JourneyRequest(
-          authenticatedRequest =
-            authRequest(headers, user = PptTestData.newUser("123")),
-          aRegistration(
-            withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(10001)))))
+  "The Liability Link Helper " should {
+    "provide back page to the liability weight page " when {
+      "weight is more than minimum weight" in {
+        val headers = Headers().add(HeaderNames.xRequestId -> "req1")
+        val journeyRequest =
+          new JourneyRequest(
+            authenticatedRequest =
+              authRequest(headers, user = PptTestData.newUser("123")),
+            aRegistration(
+              withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(10001)))))
+            )
           )
-        )
-      when(config.minimumWeight).thenReturn(10000)
-      val result = helper.backLink()(journeyRequest)
-      result mustBe
-        routes.LiabilityWeightController.displayPage()
-    }
+        when(config.minimumWeight).thenReturn(10000)
+        val result = helper.backLink()(journeyRequest)
+        result mustBe
+          routes.LiabilityWeightController.displayPage()
+      }
 
-    "when liability weight is less than minimum weight" in {
-      val headers = Headers().add(HeaderNames.xRequestId -> "req1")
-      val journeyRequest =
-        new JourneyRequest(
-          authenticatedRequest =
-            authRequest(headers, user = PptTestData.newUser("123")),
-          aRegistration(
-            withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(9000)))))
+      "weight is less than minimum weight" in {
+        val headers = Headers().add(HeaderNames.xRequestId -> "req1")
+        val journeyRequest =
+          new JourneyRequest(
+            authenticatedRequest =
+              authRequest(headers, user = PptTestData.newUser("123")),
+            aRegistration(
+              withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(9000)))))
+            )
           )
-        )
-      when(config.minimumWeight).thenReturn(10000)
-      val result = helper.backLink()(journeyRequest)
-      result mustBe
-        routes.LiabilityProcessMoreWeightController.displayPage()
-    }
+        when(config.minimumWeight).thenReturn(10000)
+        val result = helper.backLink()(journeyRequest)
+        result mustBe
+          routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+      }
 
-    "when liability weight is None" in {
-      val headers = Headers().add(HeaderNames.xRequestId -> "req1")
-      val journeyRequest =
-        new JourneyRequest(authenticatedRequest =
-                             authRequest(headers, user = PptTestData.newUser("123")),
-                           aRegistration(withLiabilityDetails(LiabilityDetails(weight = None)))
-        )
-      val result = helper.backLink()(journeyRequest)
-      result mustBe
-        routes.RegistrationController.displayPage()
-    }
-
-    "when liability weight has the totalKg as None" in {
-      val headers = Headers().add(HeaderNames.xRequestId -> "req1")
-      val journeyRequest =
-        new JourneyRequest(
-          authenticatedRequest =
-            authRequest(headers, user = PptTestData.newUser("123")),
-          aRegistration(
-            withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(None))))
+      "weight is None" in {
+        val headers = Headers().add(HeaderNames.xRequestId -> "req1")
+        val journeyRequest =
+          new JourneyRequest(authenticatedRequest =
+                               authRequest(headers, user = PptTestData.newUser("123")),
+                             aRegistration(withLiabilityDetails(LiabilityDetails(weight = None)))
           )
-        )
-      val result = helper.backLink()(journeyRequest)
-      result mustBe
-        routes.RegistrationController.displayPage()
+        val result = helper.backLink()(journeyRequest)
+        result mustBe
+          routes.RegistrationController.displayPage()
+      }
+
+      "weight has the totalKg as None" in {
+        val headers = Headers().add(HeaderNames.xRequestId -> "req1")
+        val journeyRequest =
+          new JourneyRequest(
+            authenticatedRequest =
+              authRequest(headers, user = PptTestData.newUser("123")),
+            aRegistration(
+              withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(None))))
+            )
+          )
+        val result = helper.backLink()(journeyRequest)
+        result mustBe
+          routes.RegistrationController.displayPage()
+      }
     }
   }
 
-  "Date page link" should {
+  "The Liability Link Helper " should {
+    "provide next page link " when {
+      "preLaunch is enabled" in {
+        when(config.isPreLaunch).thenReturn(true)
+        val result = helper.nextPage()
+        result mustBe
+          routes.LiabilityLiableDateController.displayPage()
+      }
 
-    "when preLaunch is enabled" in {
-      when(config.isPreLaunch).thenReturn(true)
-      val result = helper.nextPage()
-      result mustBe
-        routes.LiabilityLiableDateController.displayPage()
-    }
-
-    "when preLaunch is disabled" in {
-      when(config.isPreLaunch).thenReturn(false)
-      val result = helper.nextPage()
-      result mustBe
-        routes.LiabilityStartDateController.displayPage()
+      "preLaunch is disabled" in {
+        when(config.isPreLaunch).thenReturn(false)
+        val result = helper.nextPage()
+        result mustBe
+          routes.LiabilityStartDateController.displayPage()
+      }
     }
   }
 }

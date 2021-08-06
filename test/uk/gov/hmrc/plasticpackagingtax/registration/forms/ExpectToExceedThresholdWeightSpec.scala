@@ -19,26 +19,26 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class ProcessMoreWeightSpec extends AnyWordSpec with Matchers {
+class ExpectToExceedThresholdWeightSpec extends AnyWordSpec with Matchers {
   "ProcessMoreWeight" should {
     "correctly apply" when {
       "'yes' is provided" in {
-        val processMoreWeight = ProcessMoreWeight.apply("yes")
+        val processMoreWeight = ExpectToExceedThresholdWeight.apply("yes")
         processMoreWeight.answer mustBe Some(true)
       }
 
       "'no' is provided" in {
-        val processMoreWeight = ProcessMoreWeight.apply("no")
+        val processMoreWeight = ExpectToExceedThresholdWeight.apply("no")
         processMoreWeight.answer mustBe Some(false)
       }
 
       " neither 'yes' or 'no' are provided" in {
-        val processMoreWeight = ProcessMoreWeight.apply("maybe")
+        val processMoreWeight = ExpectToExceedThresholdWeight.apply("maybe")
         processMoreWeight.answer mustBe None
       }
 
       " string is empty" in {
-        val processMoreWeight = ProcessMoreWeight.apply("")
+        val processMoreWeight = ExpectToExceedThresholdWeight.apply("")
         processMoreWeight.answer mustBe None
       }
     }
@@ -46,19 +46,19 @@ class ProcessMoreWeightSpec extends AnyWordSpec with Matchers {
     "correctly unapply" when {
       "answer is 'Some(true)'" in {
         val processMoreWeight =
-          ProcessMoreWeight.unapply(ProcessMoreWeight(Some(true)))
+          ExpectToExceedThresholdWeight.unapply(ExpectToExceedThresholdWeight(Some(true)))
         processMoreWeight mustBe Some("yes")
       }
 
       "answer is 'Some(false)'" in {
         val processMoreWeight =
-          ProcessMoreWeight.unapply(ProcessMoreWeight(Some(false)))
+          ExpectToExceedThresholdWeight.unapply(ExpectToExceedThresholdWeight(Some(false)))
         processMoreWeight mustBe Some("no")
       }
 
       "answer is None" in {
         val processMoreWeight =
-          ProcessMoreWeight.unapply(ProcessMoreWeight(None))
+          ExpectToExceedThresholdWeight.unapply(ExpectToExceedThresholdWeight(None))
         processMoreWeight mustBe None
       }
     }

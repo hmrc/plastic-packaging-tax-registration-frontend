@@ -30,28 +30,24 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_process_more_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
-  private val page                = mock[liability_process_more_weight_page]
+class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
+  private val page                = mock[liability_expect_to_exceed_threshold_weight_page]
   private val mcc                 = stubMessagesControllerComponents()
   private val liabilityLinkHelper = mock[LiabilityLinkHelper]
 
   private val controller =
-    new LiabilityProcessMoreWeightController(authenticate = mockAuthAction,
-                                             mockJourneyAction,
-                                             mockRegistrationConnector,
-                                             mcc = mcc,
-                                             page = page,
-                                             liabilityLinkHelper = liabilityLinkHelper
+    new LiabilityExpectToExceedThresholdWeightController(authenticate = mockAuthAction,
+                                                         mockJourneyAction,
+                                                         mockRegistrationConnector,
+                                                         mcc = mcc,
+                                                         page = page,
+                                                         liabilityLinkHelper = liabilityLinkHelper
     )
-
-  def mockAppConfigIsPreLaunchEnabled(enabled: Boolean): OngoingStubbing[Boolean] =
-    when(config.isPreLaunch)
-      .thenReturn(enabled)
 
   def mockLinkHelperToReturn(link: Call): OngoingStubbing[Call] =
     when(liabilityLinkHelper.nextPage)
@@ -59,7 +55,9 @@ class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ProcessMoreWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[ExpectToExceedThresholdWeight]])(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -82,7 +80,9 @@ class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
 
       "user is authorised, a registration already exists and display page method is invoked" in {
         val registration =
-          aRegistration(withLiabilityDetails(LiabilityDetails(willProcessMoreWeight = Some(true))))
+          aRegistration(
+            withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true)))
+          )
         authorizedUser()
         mockRegistrationFind(registration)
 
@@ -98,14 +98,13 @@ class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
-          mockAppConfigIsPreLaunchEnabled(true)
           mockLinkHelperToReturn(routes.LiabilityLiableDateController.displayPage())
 
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
-          modifiedRegistration.liabilityDetails.willProcessMoreWeight mustBe Some(true)
+          modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -121,13 +120,13 @@ class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
-          mockAppConfigIsPreLaunchEnabled(false)
           mockLinkHelperToReturn(routes.LiabilityStartDateController.displayPage())
+
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
-          modifiedRegistration.liabilityDetails.willProcessMoreWeight mustBe Some(true)
+          modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -149,7 +148,7 @@ class LiabilityProcessMoreWeightControllerSpec extends ControllerSpec {
 
           status(result) mustBe SEE_OTHER
 
-          modifiedRegistration.liabilityDetails.willProcessMoreWeight mustBe Some(false)
+          modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
 
           formAction._1 match {
             case "SaveAndContinue" =>

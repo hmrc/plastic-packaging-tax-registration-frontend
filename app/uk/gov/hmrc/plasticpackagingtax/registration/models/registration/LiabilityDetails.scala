@@ -24,14 +24,14 @@ case class LiabilityDetails(
   weight: Option[LiabilityWeight] = None,
   startDate: Option[Date] = None,
   isLiable: Option[Boolean] = None,
-  willProcessMoreWeight: Option[Boolean] = None
+  expectToExceedThresholdWeight: Option[Boolean] = None
 ) {
 
   def isCompleted: Boolean =
-    weight.isDefined && (startDate.isDefined || isLiable.isDefined || willProcessMoreWeight.isDefined)
+    weight.isDefined && (startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined)
 
   def isInProgress: Boolean =
-    weight.isDefined || startDate.isDefined || isLiable.isDefined || willProcessMoreWeight.isDefined
+    weight.isDefined || startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined
 
   def status: TaskStatus =
     if (isCompleted) TaskStatus.Completed
