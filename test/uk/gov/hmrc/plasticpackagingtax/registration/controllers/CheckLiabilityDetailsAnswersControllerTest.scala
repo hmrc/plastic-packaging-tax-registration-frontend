@@ -25,19 +25,21 @@ import play.api.http.Status.OK
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
-  private val page = mock[check_liability_details_answers_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page                = mock[check_liability_details_answers_page]
+  private val mcc                 = stubMessagesControllerComponents()
+  private val liabilityLinkHelper = mock[LiabilityLinkHelper]
 
   private val controller =
     new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
                                                mockJourneyAction,
                                                mcc = mcc,
                                                page = page,
-                                               appConfig = config
+                                               liabilityLinkHelper = liabilityLinkHelper
     )
 
   override protected def beforeEach(): Unit = {

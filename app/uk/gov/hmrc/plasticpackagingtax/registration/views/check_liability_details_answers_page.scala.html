@@ -69,7 +69,7 @@
                         ),
                         value = Value(
                             content = if (appConfig.isPreLaunch) {
-                              registration.liabilityDetails.expectToExceedThresholdSoon match {
+                              registration.liabilityDetails.expectToExceedThresholdWeight match {
                                   case Some(true) => Text(messages("general.true"))
                                   case Some(false) => Text(messages("general.false"))
                                   case None => Empty

@@ -35,11 +35,11 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[LiabilityLiableDate])(implicit request: Request[_], messages: Messages)
+@(form: Form[LiabilityLiableDate], backLink: Call)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title("liabilityLiableDatePage.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liabilityLiableDatePage.sectionHeader"))

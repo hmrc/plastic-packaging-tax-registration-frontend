@@ -34,20 +34,20 @@
   saveButtons: saveButtons,
 )
 
-@(form: Form[Date])(implicit request: Request[_], messages: Messages)
+@(form: Form[Date], backLink: Call)(implicit request: Request[_], messages: Messages)
 
 @dayField = @{form("day")}
 @monthField = @{form("month")}
 @yearField = @{form("year")}
 
 @errorMessages = @{
-    val errors = (form.errors).map(err => messages(err.message, err.key)).mkString("<br>")
+    val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
 @govukLayout(
   title = Title("liabilityStartDatePage.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liabilityStartDatePage.sectionHeader"))

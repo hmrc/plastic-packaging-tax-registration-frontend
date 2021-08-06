@@ -18,14 +18,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
   SaveAndContinue
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -42,7 +42,7 @@ class LiabilityWeightController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: liability_weight_page,
-  appConfig: AppConfig
+  liabilityLinkHelper: LiabilityLinkHelper
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -66,10 +66,7 @@ class LiabilityWeightController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    if (appConfig.isPreLaunch)
-                      Redirect(routes.LiabilityLiableDateController.displayPage())
-                    else
-                      Redirect(routes.LiabilityStartDateController.displayPage())
+                    handleSaveAndContinue(liabilityWeight)
                   case _ =>
                     Redirect(routes.RegistrationController.displayPage())
                 }
@@ -87,6 +84,15 @@ class LiabilityWeightController @Inject() (
                                            weight = Some(formData)
         )
       registration.copy(liabilityDetails = updatedLiabilityDetails)
+    }
+
+  private def handleSaveAndContinue(formData: LiabilityWeight): Result =
+    formData.totalKg match {
+      case Some(weight) =>
+        if (weight <= 10000)
+          Redirect(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
+        else Redirect(liabilityLinkHelper.nextPage)
+      case None => BadRequest
     }
 
 }
