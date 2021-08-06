@@ -113,13 +113,13 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Back' button" when {
-      "feature flag 'preLaunch' is enabled" in {
+      "feature flag 'isPreLaunch' is enabled" in {
         preLaunchView.getElementById("back-link") must haveHref(
           routes.LiabilityLiableDateController.displayPage()
         )
       }
 
-      "feature flag 'preLaunch' is not enabled" in {
+      "feature flag 'isPreLaunch' is not enabled" in {
         postLaunchView.getElementById("back-link") must haveHref(
           routes.LiabilityStartDateController.displayPage()
         )

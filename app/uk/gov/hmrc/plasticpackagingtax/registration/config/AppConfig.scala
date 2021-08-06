@@ -129,7 +129,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val isPreLaunch: Boolean =
     config
-      .getOptional[Boolean](s"features.liabilityPreLaunch")
+      .getOptional[Boolean](s"features.isPreLaunch")
       .getOrElse(false)
 
 }

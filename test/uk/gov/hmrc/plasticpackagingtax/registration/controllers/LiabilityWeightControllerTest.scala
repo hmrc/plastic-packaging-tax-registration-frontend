@@ -134,7 +134,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             }
           }
 
-          "and weight is greater than minimum weight and feature flag 'liabilityPreLaunch' is enabled" in {
+          "and weight is greater than minimum weight and feature flag 'isPreLaunch' is enabled" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())

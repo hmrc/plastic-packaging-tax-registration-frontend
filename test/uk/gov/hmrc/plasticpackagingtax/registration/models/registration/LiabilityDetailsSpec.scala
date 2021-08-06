@@ -34,7 +34,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
 
     "be IN_PROGRESS " when {
       "liability details are partially filled" when {
-        "and 'liabilityPreLaunch' flag is enabled" when {
+        "and 'isPreLaunch' flag is enabled" when {
           "and only 'isLiable' has been answered" in {
             val liabilityDetails =
               LiabilityDetails(isLiable = Some(true), weight = None)
@@ -48,7 +48,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
           }
         }
 
-        "and 'liabilityPreLaunch' flag is disabled" when {
+        "and 'isPreLaunch' flag is disabled" when {
           "and only 'startDate' has been answered" in {
             val liabilityDetails =
               LiabilityDetails(startDate = Some(Date(Some(1), Some(4), Some(2022))), weight = None)
@@ -66,7 +66,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
     }
 
     "be COMPLETED " when {
-      "and 'liabilityPreLaunch' flag is enabled" when {
+      "and 'isPreLaunch' flag is enabled" when {
         "and liability details are all filled in" in {
           val liabilityDetails =
             LiabilityDetails(isLiable = Some(false), weight = Some(LiabilityWeight(Some(4000))))
@@ -74,7 +74,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         }
       }
 
-      "and 'liabilityPreLaunch' flag is disabled" when {
+      "and 'isPreLaunch' flag is disabled" when {
         "and liability details are all filled in" in {
           val liabilityDetails = LiabilityDetails(startDate =
                                                     Some(Date(Some(1), Some(5), Some(2022))),
