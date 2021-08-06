@@ -146,7 +146,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
         val populatedExceedIn30Row =
           SummaryRowDetail("checkLiabilityDetailsAnswers.future.exceed",
                            messages("general.true"),
-                           routes.LiabilityStartDateController.displayPage()
+                           routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
           )
 
         val populatedIsLiableRow =
