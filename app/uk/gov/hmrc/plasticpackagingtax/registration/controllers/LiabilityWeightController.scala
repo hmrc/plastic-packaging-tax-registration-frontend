@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -43,7 +42,6 @@ class LiabilityWeightController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: liability_weight_page,
-  appConfig: AppConfig,
   liabilityLinkHelper: LiabilityLinkHelper
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -91,7 +89,7 @@ class LiabilityWeightController @Inject() (
   private def handleSaveAndContinue(formData: LiabilityWeight): Result =
     formData.totalKg match {
       case Some(weight) =>
-        if (weight <= appConfig.minimumWeight)
+        if (weight <= 10000)
           Redirect(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
         else Redirect(liabilityLinkHelper.nextPage)
       case None => BadRequest

@@ -46,13 +46,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                                   mockRegistrationConnector,
                                   mcc = mcc,
                                   page = page,
-                                  appConfig = config,
                                   liabilityLinkHelper = liabilityLinkHelper
     )
-
-  def mockAppConfigMinimumWeight(weight: Long): OngoingStubbing[Long] =
-    when(config.minimumWeight)
-      .thenReturn(weight)
 
   def mockLinkHelperToReturn(link: Call): OngoingStubbing[Call] =
     when(liabilityLinkHelper.nextPage)
@@ -96,7 +91,6 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            mockAppConfigMinimumWeight(10000)
             mockLinkHelperToReturn(routes.LiabilityStartDateController.displayPage())
 
             val result =
@@ -121,7 +115,6 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            mockAppConfigMinimumWeight(10000)
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
 
@@ -146,7 +139,6 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
             when(config.isPreLaunch).thenReturn(true)
-            mockAppConfigMinimumWeight(10000)
             mockLinkHelperToReturn(routes.LiabilityLiableDateController.displayPage())
 
             val result =
@@ -173,7 +165,6 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
             when(config.isPreLaunch).thenReturn(true)
-            mockAppConfigMinimumWeight(10000)
 
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(None), formAction))

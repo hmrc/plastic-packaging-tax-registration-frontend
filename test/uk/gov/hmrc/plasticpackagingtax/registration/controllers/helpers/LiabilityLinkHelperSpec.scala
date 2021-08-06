@@ -44,7 +44,6 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
               withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(10001)))))
             )
           )
-        when(config.minimumWeight).thenReturn(10000)
         val result = helper.backLink()(journeyRequest)
         result mustBe
           routes.LiabilityWeightController.displayPage()
@@ -60,7 +59,6 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
               withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(9000)))))
             )
           )
-        when(config.minimumWeight).thenReturn(10000)
         val result = helper.backLink()(journeyRequest)
         result mustBe
           routes.LiabilityExpectToExceedThresholdWeightController.displayPage()

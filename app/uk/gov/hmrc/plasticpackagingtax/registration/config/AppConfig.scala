@@ -132,9 +132,4 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       .getOptional[Boolean](s"features.liabilityPreLaunch")
       .getOrElse(false)
 
-  lazy val minimumWeight: Long =
-    config
-      .getOptional[Long](s"minimum.weight")
-      .getOrElse(10000)
-
 }
