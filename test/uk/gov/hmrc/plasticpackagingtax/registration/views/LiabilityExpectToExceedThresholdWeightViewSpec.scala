@@ -21,37 +21,41 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight.form
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_process_more_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight.form
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class LiabilityProcessMoreWeightViewSpec extends UnitViewSpec with Matchers {
+class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[liability_process_more_weight_page]
+  private val page = instanceOf[liability_expect_to_exceed_threshold_weight_page]
 
-  private def createView(form: Form[ProcessMoreWeight] = ProcessMoreWeight.form()): Document =
+  private def createView(
+    form: Form[ExpectToExceedThresholdWeight] = ExpectToExceedThresholdWeight.form()
+  ): Document =
     page(form)(request, messages)
 
   "Liability section expect process more weight view" should {
 
     "have proper messages for labels" in {
-      messages must haveTranslationFor("liabilityProcessMoreWeightPage.sectionHeader")
-      messages must haveTranslationFor("liabilityProcessMoreWeightPage.title")
-      messages must haveTranslationFor("liabilityProcessMoreWeightPage.hint")
-      messages must haveTranslationFor("liabilityProcessMoreWeightPage.question")
-      messages must haveTranslationFor("liabilityProcessMoreWeightPage.question.empty.error")
+      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.sectionHeader")
+      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.title")
+      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.hint")
+      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.question")
+      messages must haveTranslationFor(
+        "liabilityExpectToExceedThresholdWeightPage.question.empty.error"
+      )
     }
 
     val view = createView()
 
     "validate other rendering  methods" in {
       page.f(form())(request, messages).select("title").text() must include(
-        messages("liabilityProcessMoreWeightPage.title")
+        messages("liabilityExpectToExceedThresholdWeightPage.title")
       )
       page.render(form(), request, messages).select("title").text() must include(
-        messages("liabilityProcessMoreWeightPage.title")
+        messages("liabilityExpectToExceedThresholdWeightPage.title")
       )
     }
 
@@ -72,13 +76,15 @@ class LiabilityProcessMoreWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("liabilityProcessMoreWeightPage.title"))
+      view.select("title").text() must include(
+        messages("liabilityExpectToExceedThresholdWeightPage.title")
+      )
     }
 
     "display header" in {
 
       view.getElementsByClass("govuk-caption-xl").text() must include(
-        messages("liabilityProcessMoreWeightPage.sectionHeader")
+        messages("liabilityExpectToExceedThresholdWeightPage.sectionHeader")
       )
     }
 
@@ -106,8 +112,8 @@ class LiabilityProcessMoreWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display radio button checked" in {
 
-      val form = ProcessMoreWeight.form()
-        .fill(ProcessMoreWeight("yes"))
+      val form = ExpectToExceedThresholdWeight.form()
+        .fill(ExpectToExceedThresholdWeight("yes"))
       val view = createView(form)
 
       view.getElementById("answer").attr("value") mustBe "yes"
@@ -117,8 +123,8 @@ class LiabilityProcessMoreWeightViewSpec extends UnitViewSpec with Matchers {
 
       "no radio button checked" in {
 
-        val form = ProcessMoreWeight.form()
-          .fillAndValidate(ProcessMoreWeight(None))
+        val form = ExpectToExceedThresholdWeight.form()
+          .fillAndValidate(ExpectToExceedThresholdWeight(None))
         val view = createView(form)
 
         view must haveGovukGlobalErrorSummary

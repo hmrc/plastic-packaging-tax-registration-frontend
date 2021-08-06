@@ -50,11 +50,11 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(form(), routes.LiabilityProcessMoreWeightController.displayPage())(request,
-                                                                                messages
+      page.f(form(), routes.LiabilityExpectToExceedThresholdWeightController.displayPage())(request,
+                                                                                            messages
       ).select("title").text() must include(messages("liabilityStartDatePage.title"))
       page.render(form(),
-                  routes.LiabilityProcessMoreWeightController.displayPage(),
+                  routes.LiabilityExpectToExceedThresholdWeightController.displayPage(),
                   request,
                   messages
       ).select("title").text() must include(messages("liabilityStartDatePage.title"))

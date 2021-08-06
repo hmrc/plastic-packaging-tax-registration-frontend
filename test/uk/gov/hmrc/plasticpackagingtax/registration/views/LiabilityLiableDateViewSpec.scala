@@ -34,7 +34,7 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
 
   private def createView(
     form: Form[LiabilityLiableDate] = LiabilityLiableDate.form(),
-    backLink: Call = routes.LiabilityProcessMoreWeightController.displayPage()
+    backLink: Call = routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
   ): Document =
     page(form, backLink = backLink)(request, messages)
 
@@ -72,7 +72,7 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        routes.LiabilityProcessMoreWeightController.displayPage()
+        routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
       )
     }
 

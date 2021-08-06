@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.ProcessMoreWeight
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.yes
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.no
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraph
@@ -42,7 +42,7 @@
 )
 
 
-@(form: Form[ProcessMoreWeight])(implicit request: Request[_], messages: Messages)
+@(form: Form[ExpectToExceedThresholdWeight])(implicit request: Request[_], messages: Messages)
 
 
 @errorMessages = @{
@@ -52,7 +52,7 @@
 
 @pptWeightQuestion = {
 @pageHeading(
-    text = messages("liabilityProcessMoreWeightPage.question")
+    text = messages("liabilityExpectToExceedThresholdWeightPage.question")
 )
 }
 
@@ -60,43 +60,43 @@
 @link(
     id = Some("guidance-link"),
     target = "_blank",
-    text = messages("liabilityProcessMoreWeightPage.guidance.description"),
+    text = messages("liabilityExpectToExceedThresholdWeightPage.guidance.description"),
     call = Call(
         method = "GET",
-        url = messages("liabilityProcessMoreWeightPage.guidance.href")
+        url = messages("liabilityExpectToExceedThresholdWeightPage.guidance.href")
     )
 )
 }
 
 @pptWeightHelp = {
 @paragraph(
-    content = Html(messages("liabilityProcessMoreWeightPage.info"))
+    content = Html(messages("liabilityExpectToExceedThresholdWeightPage.info"))
 )
 @paragraph(
-    content = Html(messages("liabilityProcessMoreWeightPage.info2", pptGuidanceLink))
+    content = Html(messages("liabilityExpectToExceedThresholdWeightPage.info2", pptGuidanceLink))
 )
 }
 
 @govukLayout(
-    title = Title("liabilityProcessMoreWeightPage.title"),
+    title = Title("liabilityExpectToExceedThresholdWeightPage.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityWeightController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
-    @sectionHeader(messages("liabilityProcessMoreWeightPage.sectionHeader"))
+    @sectionHeader(messages("liabilityExpectToExceedThresholdWeightPage.sectionHeader"))
 
     @pptWeightQuestion
 
     @pptWeightHelp
 
-    @formHelper(action = pptRoutes.LiabilityProcessMoreWeightController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.LiabilityExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
 
     @govukRadios(Radios(
         hint = None,
         idPrefix = Some(form("answer").name),
         name = form("answer").name,
         items = Seq(
-            RadioItem(content = Text("Yes"), value = Some("yes"), checked = form("answer").value.contains(yes)),
-            RadioItem(content = Text("No"), value = Some("no"), checked = form("answer").value.contains(no))
+            RadioItem(content = Text(messages("liabilityExpectToExceedThresholdWeightPage.radio.option.yes")), value = Some("yes"), checked = form("answer").value.contains(yes)),
+            RadioItem(content = Text(messages("liabilityExpectToExceedThresholdWeightPage.radio.option.no")), value = Some("no"), checked = form("answer").value.contains(no))
         ),
         classes = "govuk-radios",
         errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

@@ -241,13 +241,15 @@ notLiable.think.info = This is a new service and we want to know what you think 
 notLiable.think.feedback = {0}. Your thoughts and ideas will help us to make improvements.
 notLiable.think.feedback.link.description = Send us your feedback
 
-liabilityProcessMoreWeightPage.sectionHeader = Liability details
-liabilityProcessMoreWeightPage.title = Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
-liabilityProcessMoreWeightPage.hint = This includes all plastic packaging that you manufacture, convert or import into the UK. The packaging could be made with recycled plastic or not.
-liabilityProcessMoreWeightPage.question = Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
-liabilityProcessMoreWeightPage.question.empty.error = Choose an option
-liabilityProcessMoreWeightPage.info = This includes all plastic packaging that you''ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
-liabilityProcessMoreWeightPage.info2 = If you''re unsure what to include, you can follow {0}.
-liabilityProcessMoreWeightPage.guidance.description = the current guidance for businesses (opens in a new tab)
-liabilityProcessMoreWeightPage.guidance.href = https://www.gov.uk/government/publications/get-your-business-ready-for-the-plastic-packaging-tax/further-information-for-businesses
+liabilityExpectToExceedThresholdWeightPage.sectionHeader = Liability details
+liabilityExpectToExceedThresholdWeightPage.title = Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
+liabilityExpectToExceedThresholdWeightPage.hint = This includes all plastic packaging that you manufacture, convert or import into the UK. The packaging could be made with recycled plastic or not.
+liabilityExpectToExceedThresholdWeightPage.question = Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
+liabilityExpectToExceedThresholdWeightPage.question.empty.error = Choose an option
+liabilityExpectToExceedThresholdWeightPage.info = This includes all plastic packaging that you''ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
+liabilityExpectToExceedThresholdWeightPage.info2 = If you''re unsure what to include, you can follow {0}.
+liabilityExpectToExceedThresholdWeightPage.guidance.description = the current guidance for businesses (opens in a new tab)
+liabilityExpectToExceedThresholdWeightPage.guidance.href = https://www.gov.uk/government/publications/get-your-business-ready-for-the-plastic-packaging-tax/further-information-for-businesses
+liabilityExpectToExceedThresholdWeightPage.radio.option.yes= Yes
+liabilityExpectToExceedThresholdWeightPage.radio.option.no= No
 

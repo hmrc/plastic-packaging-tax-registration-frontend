@@ -117,7 +117,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                 )
             }
           }
-          "and weight is lesser than minimum weight" in {
+          "and weight is less than minimum weight" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
@@ -132,7 +132,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             formAction._1 match {
               case "SaveAndContinue" =>
                 redirectLocation(result) mustBe Some(
-                  routes.LiabilityProcessMoreWeightController.displayPage().url
+                  routes.LiabilityExpectToExceedThresholdWeightController.displayPage().url
                 )
               case _ =>
                 redirectLocation(result) mustBe Some(
