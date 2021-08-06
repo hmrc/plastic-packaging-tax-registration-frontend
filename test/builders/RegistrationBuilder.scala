@@ -39,7 +39,7 @@ trait RegistrationBuilder {
                                                      startDate =
                                                        Some(Date(Some(1), Some(4), Some(2022))),
                                                      isLiable = Some(true),
-                                                     expectToExceedThresholdSoon = Some(true)
+                                                     expectToExceedThresholdWeight = Some(true)
                  ),
                  primaryContactDetails = PrimaryContactDetails(
                    fullName = Some(FullName(firstName = "Jack", lastName = "Gatsby")),

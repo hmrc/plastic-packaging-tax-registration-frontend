@@ -65,7 +65,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
     super.afterEach()
   }
 
-  "Liability Process More Weight Controller" should {
+  "Liability Expect To Exceed Threshold Weight Controller" should {
 
     "return 200" when {
 
@@ -82,6 +82,19 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
         val registration =
           aRegistration(
             withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true)))
+          )
+        authorizedUser()
+        mockRegistrationFind(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "user is authorised, a registration already exists and display page method without the expectToExceedThresholdWeight not set" in {
+        val registration =
+          aRegistration(
+            withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = None))
           )
         authorizedUser()
         mockRegistrationFind(registration)

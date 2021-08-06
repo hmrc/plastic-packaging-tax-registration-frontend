@@ -83,6 +83,17 @@ class LiabilityLiableDateControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
       }
+
+      "user is authorised, a registration already exists and display page method is invoked with isLiable not set" in {
+        val registration =
+          aRegistration(withLiabilityDetails(LiabilityDetails(isLiable = None)))
+        authorizedUser()
+        mockRegistrationFind(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
