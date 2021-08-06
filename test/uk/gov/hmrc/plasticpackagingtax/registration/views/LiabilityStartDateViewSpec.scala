@@ -36,7 +36,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
     form: Form[Date] = LiabilityStartDate.form(),
     backLink: Call = routes.LiabilityWeightController.displayPage()
   ): Document =
-    page(form, backLink)(request, messages)
+    page(form, backLink)(journeyRequest, messages)
 
   "Liability Start Date View" should {
 
@@ -50,12 +50,13 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(form(), routes.LiabilityExpectToExceedThresholdWeightController.displayPage())(request,
-                                                                                            messages
+      page.f(form(), routes.LiabilityExpectToExceedThresholdWeightController.displayPage())(
+        journeyRequest,
+        messages
       ).select("title").text() must include(messages("liabilityStartDatePage.title"))
       page.render(form(),
                   routes.LiabilityExpectToExceedThresholdWeightController.displayPage(),
-                  request,
+                  journeyRequest,
                   messages
       ).select("title").text() must include(messages("liabilityStartDatePage.title"))
     }

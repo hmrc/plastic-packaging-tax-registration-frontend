@@ -16,8 +16,12 @@
 
 package spec
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import base.PptTestData
+import base.PptTestData.testUserFeatures
+import builders.RegistrationBuilder
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.FakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.PARTNERSHIP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
@@ -28,25 +32,43 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GeneralPartnershipDetails,
-  IncorporationAddressDetails,
-  IncorporationDetails,
-  IncorporationRegistrationDetails,
-  PartnershipDetails,
-  ScottishPartnershipDetails,
-  SoleTraderIncorporationDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AuthenticatedRequest,
+  JourneyRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   ETMPSubscriptionStatus,
   SubscriptionCreateResponse,
   SubscriptionStatus
 }
+import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 import java.time.{ZoneOffset, ZonedDateTime}
+import scala.language.implicitConversions
 
-trait PptTestData {
+trait PptTestData extends RegistrationBuilder {
+
+  implicit val journeyRequest: JourneyRequest[AnyContent] =
+    new JourneyRequest(
+      authenticatedRequest =
+        new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser()),
+      registration = aRegistration()
+    )
+
+  implicit def generateRequest(
+    userFeatureFlags: Map[String, Boolean] = testUserFeatures
+  ): JourneyRequest[AnyContent] =
+    new JourneyRequest(authenticatedRequest =
+                         new AuthenticatedRequest(
+                           FakeRequest().withCSRFToken,
+                           PptTestData.newUser(featureFlags = userFeatureFlags)
+                         ),
+                       registration = aRegistration()
+    )
+
+  val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   protected val testCompanyName   = "Example Limited"
   protected val testCompanyNumber = "123456789"
@@ -142,6 +164,10 @@ trait PptTestData {
     nrSubmissionId = Some(nrsSubmissionId)
   )
 
+  protected val emailVerification: VerificationStatus = VerificationStatus(
+    Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
+  )
+
   protected def registeredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true),
                         organisationType = Some(orgType),
@@ -176,9 +202,5 @@ trait PptTestData {
                         organisationType = Some(PARTNERSHIP),
                         partnershipDetails = Some(PartnershipDetails(partnershipType))
     )
-
-  protected val emailVerification: VerificationStatus = VerificationStatus(
-    Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
-  )
 
 }

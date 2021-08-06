@@ -37,7 +37,8 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     new AuthActionImpl(mockAuthConnector,
                        emailAllowedList,
                        metricsMock,
-                       stubMessagesControllerComponents()
+                       stubMessagesControllerComponents(),
+                       appConfig
     )
 
   "Auth Action" should {

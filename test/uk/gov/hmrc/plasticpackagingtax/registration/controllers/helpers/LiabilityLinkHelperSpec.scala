@@ -22,6 +22,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
@@ -96,15 +97,13 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
   "The Liability Link Helper " should {
     "provide a suitable next page link " when {
       "preLaunch is enabled" in {
-        when(config.isPreLaunch).thenReturn(true)
-        val result = helper.nextPage()
+        val result = helper.nextPage()(generateRequest(Map(Features.isPreLaunch -> true)))
         result mustBe
           routes.LiabilityLiableDateController.displayPage()
       }
 
       "preLaunch is disabled" in {
-        when(config.isPreLaunch).thenReturn(false)
-        val result = helper.nextPage()
+        val result = helper.nextPage()(generateRequest(Map(Features.isPreLaunch -> false)))
         result mustBe
           routes.LiabilityStartDateController.displayPage()
       }

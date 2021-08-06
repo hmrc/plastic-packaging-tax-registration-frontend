@@ -49,8 +49,8 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
                                                          liabilityLinkHelper = liabilityLinkHelper
     )
 
-  def mockLinkHelperToReturn(link: Call): OngoingStubbing[Call] =
-    when(liabilityLinkHelper.nextPage)
+  def mockLiabilityLinkHelperNextPage(link: Call): OngoingStubbing[Call] =
+    when(liabilityLinkHelper.nextPage()(any()))
       .thenReturn(link)
 
   override protected def beforeEach(): Unit = {
@@ -111,7 +111,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
-          mockLinkHelperToReturn(routes.LiabilityLiableDateController.displayPage())
+          mockLiabilityLinkHelperNextPage(routes.LiabilityLiableDateController.displayPage())
 
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -133,7 +133,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
-          mockLinkHelperToReturn(routes.LiabilityStartDateController.displayPage())
+          mockLiabilityLinkHelperNextPage(routes.LiabilityStartDateController.displayPage())
 
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

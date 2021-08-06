@@ -132,4 +132,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       .getOptional[Boolean](s"features.isPreLaunch")
       .getOrElse(false)
 
+  lazy val defaultFeatures: Map[String, Boolean] =
+    config
+      .getOptional[Map[String, Boolean]](s"features")
+      .getOrElse(Map.empty)
+
 }

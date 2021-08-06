@@ -29,8 +29,6 @@ import utils.FakeRequestCSRFSupport._
 @ViewTest
 class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
-  override implicit val request: Request[AnyContent] = FakeRequest().withCSRFToken
-
   private val page                   = instanceOf[session_timed_out]
   private def createView(): Document = page()(request, messages)
 

@@ -28,6 +28,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AllowedUsers,
   AuthActionImpl
@@ -39,11 +40,13 @@ import scala.concurrent.Future
 trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val appConfig: AppConfig             = mock[AppConfig]
 
   val mockAuthAction = new AuthActionImpl(mockAuthConnector,
                                           new AllowedUsers(Seq.empty),
                                           metricsMock,
-                                          stubMessagesControllerComponents()
+                                          stubMessagesControllerComponents(),
+                                          appConfig
   )
 
   val nrsGroupIdentifierValue = Some("groupIdentifierValue")
@@ -71,7 +74,8 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   private val exampleUser         = newUser()
 
   // format: off
-  def authorizedUser(user: SignedInUser = exampleUser): Unit =
+  def authorizedUser(user: SignedInUser = exampleUser): Unit = {
+    when(appConfig.defaultFeatures).thenReturn(Map(Features.isPreLaunch -> true))
     when(
       mockAuthConnector.authorise(
         any(),
@@ -146,6 +150,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
         )
       )
     )
+  }
 
   def authorizedUserWithNoCredentials(user: SignedInUser = exampleUser): Unit =
     when(

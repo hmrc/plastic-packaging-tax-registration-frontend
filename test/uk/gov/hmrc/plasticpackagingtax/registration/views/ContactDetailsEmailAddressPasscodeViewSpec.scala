@@ -34,7 +34,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
     form: Form[EmailAddressPasscode] = EmailAddressPasscode.form(),
     emailAddress: String = "test@test.com"
   ): Document =
-    page(form, Some(emailAddress))(request, messages)
+    page(form, Some(emailAddress))(journeyRequest, messages)
 
   "Email Address Passcode View" should {
 

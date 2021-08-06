@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models
+package uk.gov.hmrc.plasticpackagingtax.registration.config
 
-import uk.gov.hmrc.auth.core.Enrolments
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
-
-case class SignedInUser(
-  enrolments: Enrolments,
-  identityData: IdentityData,
-  features: Map[String, Boolean]
-)
+object Features {
+  val isPreLaunch: String = "isPreLaunch"
+}

@@ -31,7 +31,7 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[job_title_page]
 
   private def createView(form: Form[JobTitle] = JobTitle.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Job Title View" should {
 

@@ -20,13 +20,14 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.Call
+import play.api.mvc.{AnyContent, Call}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import uk.gov.hmrc.govukfrontend.views.html.components.{GovukButton, GovukSummaryList}
 import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
   pageTitle,
   saveAndContinue
@@ -76,12 +77,13 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     val postLaunchView = createView(preLaunch = false,
                                     reg = populatedRegistration,
                                     backLink = routes.LiabilityStartDateController.displayPage()
-    )
+    )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
+
     val postLaunchViewWithEmptyRegistration =
       createView(preLaunch = false,
                  reg = unpopulatedRegistration,
                  backLink = routes.LiabilityStartDateController.displayPage()
-      )
+      )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("checkLiabilityDetailsAnswers.title")
@@ -199,24 +201,25 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     // TODO: we need a better way of achieving the minimum test code coverage than doing this!
     "validate other rendering methods" in {
-      page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(request,
-                                                                                        messages
+      page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(
+        journeyRequest,
+        messages
       ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
       page.render(registration = populatedRegistration,
                   backLink = routes.LiabilityLiableDateController.displayPage(),
-                  request = request,
+                  request = journeyRequest,
                   messages = messages
       ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
     }
 
   }
 
-  private def createView(preLaunch: Boolean, reg: Registration, backLink: Call): Document = {
+  private def createView(preLaunch: Boolean, reg: Registration, backLink: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Document = {
     when(mockAppConfig.isPreLaunch).thenReturn(preLaunch)
-    page(reg, backLink)(request, messages)
+    page(reg, backLink)(request, messages(request))
   }
-
-  private case class SummaryRowDetail(label: String, value: String, actionLink: Call)
 
   private def assertSummaryRows(view: Document, rows: List[SummaryRowDetail]) = {
     val summaryRowKeys = view.getElementsByClass("govuk-summary-list__key")
@@ -236,5 +239,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       row._2 must haveHref(row._1.actionLink)
     }
   }
+
+  private case class SummaryRowDetail(label: String, value: String, actionLink: Call)
 
 }

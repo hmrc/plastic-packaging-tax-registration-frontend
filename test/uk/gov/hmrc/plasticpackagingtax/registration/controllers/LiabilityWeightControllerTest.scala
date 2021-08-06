@@ -49,8 +49,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                                   liabilityLinkHelper = liabilityLinkHelper
     )
 
-  def mockLinkHelperToReturn(link: Call): OngoingStubbing[Call] =
-    when(liabilityLinkHelper.nextPage)
+  def mockLiabilityLinkHelperNextPage(link: Call): OngoingStubbing[Call] =
+    when(liabilityLinkHelper.nextPage()(any()))
       .thenReturn(link)
 
   override protected def beforeEach(): Unit = {
@@ -91,7 +91,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            mockLinkHelperToReturn(routes.LiabilityStartDateController.displayPage())
+            mockLiabilityLinkHelperNextPage(routes.LiabilityStartDateController.displayPage())
 
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))
@@ -139,7 +139,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
             when(config.isPreLaunch).thenReturn(true)
-            mockLinkHelperToReturn(routes.LiabilityLiableDateController.displayPage())
+            mockLiabilityLinkHelperNextPage(routes.LiabilityLiableDateController.displayPage())
 
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))

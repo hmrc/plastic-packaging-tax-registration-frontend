@@ -31,7 +31,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[phone_number_page]
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Phone Number View" should {
 

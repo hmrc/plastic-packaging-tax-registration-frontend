@@ -39,7 +39,8 @@ class ErrorHandlerTest
 
     "standardErrorTemplate" in {
 
-      val result = errorHandler.standardErrorTemplate("title", "heading", "message")(request).body
+      val result =
+        errorHandler.standardErrorTemplate("title", "heading", "message")(journeyRequest).body
 
       result must include("title")
       result must include("heading")
@@ -49,7 +50,7 @@ class ErrorHandlerTest
     "handle no active session authorisation exception" in {
 
       val error            = new NoActiveSession("A user is not logged in") {}
-      val result           = Future.successful(errorHandler.resolveError(request, error))
+      val result           = Future.successful(errorHandler.resolveError(journeyRequest, error))
       val encodedTargetUrl = urlEncode("http://localhost:8503/plastic-packaging-tax/registration")
       val expectedLocation =
         s"http://localhost:9949/auth-login-stub/gg-sign-in?continue=$encodedTargetUrl"
@@ -60,7 +61,7 @@ class ErrorHandlerTest
     "handle insufficient enrolments authorisation exception" in {
 
       val error  = InsufficientEnrolments("HMRC-PPT-ORG")
-      val result = Future.successful(errorHandler.resolveError(request, error))
+      val result = Future.successful(errorHandler.resolveError(journeyRequest, error))
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value must endWith("/unauthorised")

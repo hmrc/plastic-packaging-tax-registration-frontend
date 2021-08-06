@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import com.typesafe.config.Config
 import play.api.ConfigLoader
-import play.api.libs.json.{Json, OFormat}
 
 import scala.collection.JavaConverters._
 
@@ -41,5 +40,4 @@ object AllowedUser {
         AllowedUser(userEmail, userFeatures)
     })
 
-  implicit val format: OFormat[AllowedUser] = Json.format[AllowedUser]
 }

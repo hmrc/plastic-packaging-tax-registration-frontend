@@ -31,7 +31,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[address_page]
 
   private def createView(form: Form[Address] = Address.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Address View" should {
 
@@ -69,10 +69,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     }
 
     "validate other rendering  methods" in {
-      page.f(Address.form())(request, messages).select("title").text() must include(
+      page.f(Address.form())(journeyRequest, messages).select("title").text() must include(
         messages("primaryContactDetails.address.title")
       )
-      page.render(Address.form(), request, messages).select("title").text() must include(
+      page.render(Address.form(), journeyRequest, messages).select("title").text() must include(
         messages("primaryContactDetails.address.title")
       )
     }

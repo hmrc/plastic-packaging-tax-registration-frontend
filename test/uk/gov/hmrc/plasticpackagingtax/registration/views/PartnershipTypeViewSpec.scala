@@ -38,7 +38,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[partnership_type]
 
   private def createView(form: Form[PartnershipType] = PartnershipType.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Partnership Type View" should {
 

@@ -31,7 +31,7 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
   private val appConfig = instanceOf[AppConfig]
 
   private def createView(): Document =
-    page()(request, messages)
+    page()(journeyRequest, messages)
 
   "Not Liable View" should {
 

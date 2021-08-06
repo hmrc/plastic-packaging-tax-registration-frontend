@@ -67,7 +67,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
     soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
     partnershipDetails: Option[PartnershipDetails] = None
   ): Document =
-    page(reg, ukCompanyDetails, soleTraderDetails)(request, messages)
+    page(reg, ukCompanyDetails, soleTraderDetails)(journeyRequest, messages)
 
   "Review registration View" should {
 
