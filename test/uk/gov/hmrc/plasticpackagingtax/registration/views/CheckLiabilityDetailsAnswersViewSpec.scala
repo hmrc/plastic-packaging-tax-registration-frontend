@@ -18,13 +18,23 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
+import uk.gov.hmrc.govukfrontend.views.html.components.{GovukButton, GovukSummaryList}
+import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityStartDate.form
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
+  pageTitle,
+  saveAndContinue
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  check_liability_details_answers_page,
+  main_template
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 import java.time.format.DateTimeFormatter
@@ -32,7 +42,23 @@ import java.time.format.DateTimeFormatter
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val page                    = instanceOf[check_liability_details_answers_page]
+  private val formHelper       = instanceOf[formWithCSRF]
+  private val govukLayout      = instanceOf[main_template]
+  private val govukButton      = instanceOf[GovukButton]
+  private val govukSummaryList = instanceOf[GovukSummaryList]
+  private val pageTitle        = instanceOf[pageTitle]
+  private val saveAndContinue  = instanceOf[saveAndContinue]
+  private val mockAppConfig    = mock[AppConfig]
+
+  private val page = new check_liability_details_answers_page(formHelper,
+                                                              govukLayout,
+                                                              govukButton,
+                                                              govukSummaryList,
+                                                              pageTitle,
+                                                              saveAndContinue,
+                                                              mockAppConfig
+  )
+
   private val populatedRegistration   = aRegistration()
   private val unpopulatedRegistration = Registration("id")
 
@@ -173,12 +199,10 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     // TODO: we need a better way of achieving the minimum test code coverage than doing this!
     "validate other rendering methods" in {
-      page.f(true, populatedRegistration, routes.LiabilityLiableDateController.displayPage())(
-        request,
-        messages
+      page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(request,
+                                                                                        messages
       ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
-      page.render(preLaunch = true,
-                  registration = populatedRegistration,
+      page.render(registration = populatedRegistration,
                   backLink = routes.LiabilityLiableDateController.displayPage(),
                   request = request,
                   messages = messages
@@ -187,8 +211,10 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   }
 
-  private def createView(preLaunch: Boolean, reg: Registration, backLink: Call): Document =
-    page(preLaunch, reg, backLink)(request, messages)
+  private def createView(preLaunch: Boolean, reg: Registration, backLink: Call): Document = {
+    when(mockAppConfig.isPreLaunch).thenReturn(preLaunch)
+    page(reg, backLink)(request, messages)
+  }
 
   private case class SummaryRowDetail(label: String, value: String, actionLink: Call)
 

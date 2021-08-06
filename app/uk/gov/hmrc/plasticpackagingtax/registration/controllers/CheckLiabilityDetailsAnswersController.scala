@@ -38,7 +38,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(appConfig.isPreLaunch, request.registration, backLink))
+      Ok(page(request.registration, backLink))
     }
 
   private def backLink = {
