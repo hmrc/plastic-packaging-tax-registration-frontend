@@ -16,6 +16,9 @@ site.error.summary.title = There is a problem
 site.link.change = Change
 site.button.continue = Continue
 
+general.true = Yes
+general.false = No
+
 sessionTimout.title = For your security, we signed you out
 sessionTimout.paragraph.saved = We saved your answers.
 sessionTimout.signin.button = Sign in
@@ -97,6 +100,8 @@ checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
 checkLiabilityDetailsAnswers.check.label = Plastic packaging liability details
+checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
+checkLiabilityDetailsAnswers.future.liable = Liable for the Plastic Packaging Tax until at least 1 April 2022
 
 primaryContactDetails.sectionHeader = Primary contact details
 

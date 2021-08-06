@@ -117,4 +117,15 @@ class ConfirmOrganisationBasedInUkViewSpec extends UnitViewSpec with Matchers {
       }
     }
   }
+
+  // TODO: we need a better way of achieving the minimum test code coverage than doing this!
+  "validate other rendering methods" in {
+    page.f(ConfirmOrganisationBasedInUk.form())(request, messages).select(
+      "title"
+    ).text() must include(messages("organisationDetails.basedInUk.title"))
+    page.render(ConfirmOrganisationBasedInUk.form(), request, messages).select(
+      "title"
+    ).text() must include(messages("organisationDetails.basedInUk.title"))
+  }
+
 }

@@ -17,14 +17,24 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
+import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
+import uk.gov.hmrc.govukfrontend.views.html.components.{GovukButton, GovukSummaryList}
+import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
+  pageTitle,
+  saveAndContinue
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  check_liability_details_answers_page,
+  main_template
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 import java.time.format.DateTimeFormatter
@@ -32,141 +42,199 @@ import java.time.format.DateTimeFormatter
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val page                 = instanceOf[check_liability_details_answers_page]
-  private val registration         = aRegistration()
-  private val appConfig: AppConfig = mock[AppConfig]
+  private val formHelper       = instanceOf[formWithCSRF]
+  private val govukLayout      = instanceOf[main_template]
+  private val govukButton      = instanceOf[GovukButton]
+  private val govukSummaryList = instanceOf[GovukSummaryList]
+  private val pageTitle        = instanceOf[pageTitle]
+  private val saveAndContinue  = instanceOf[saveAndContinue]
+  private val mockAppConfig    = mock[AppConfig]
 
-  private def createView(
-    reg: Registration = registration,
-    backLink: Call = routes.LiabilityStartDateController.displayPage()
-  ): Document =
-    page(reg, backLink)(request, messages)
+  private val page = new check_liability_details_answers_page(formHelper,
+                                                              govukLayout,
+                                                              govukButton,
+                                                              govukSummaryList,
+                                                              pageTitle,
+                                                              saveAndContinue,
+                                                              mockAppConfig
+  )
 
-  "Chek liability details answers View" should {
-    when(appConfig.isPreLaunch).thenReturn(false)
+  private val populatedRegistration   = aRegistration()
+  private val unpopulatedRegistration = Registration("id")
+
+  "Check liability details answers View" should {
+    val preLaunchView = createView(preLaunch = true,
+                                   reg = populatedRegistration,
+                                   backLink = routes.LiabilityLiableDateController.displayPage()
+    )
+    val preLaunchViewWithEmptyRegistration =
+      createView(preLaunch = true,
+                 reg = unpopulatedRegistration,
+                 backLink = routes.LiabilityLiableDateController.displayPage()
+      )
+
+    val postLaunchView = createView(preLaunch = false,
+                                    reg = populatedRegistration,
+                                    backLink = routes.LiabilityStartDateController.displayPage()
+    )
+    val postLaunchViewWithEmptyRegistration =
+      createView(preLaunch = false,
+                 reg = unpopulatedRegistration,
+                 backLink = routes.LiabilityStartDateController.displayPage()
+      )
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("checkLiabilityDetailsAnswers.title")
       messages must haveTranslationFor("checkLiabilityDetailsAnswers.date")
       messages must haveTranslationFor("checkLiabilityDetailsAnswers.weight")
       messages must haveTranslationFor("site.link.change")
+      messages must haveTranslationFor("checkLiabilityDetailsAnswers.future.exceed")
+      messages must haveTranslationFor("checkLiabilityDetailsAnswers.future.liable")
+      messages must haveTranslationFor("general.true")
+      messages must haveTranslationFor("general.false")
     }
 
-    val view                      = createView()
-    val viewWithEmptyRegistration = createView(Registration("id"))
-
-    "validate other rendering  methods" in {
-      page.f(registration, routes.LiabilityStartDateController.displayPage())(request,
-                                                                              messages
-      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
-      page.render(registration,
-                  routes.LiabilityStartDateController.displayPage(),
-                  request,
-                  messages
-      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
+    "have the correct title" in {
+      List(preLaunchView, postLaunchView).foreach { view =>
+        view.select("title").first must containMessage("checkLiabilityDetailsAnswers.title")
+      }
     }
 
     "contain timeout dialog function" in {
-
-      containTimeoutDialogFunction(view) mustBe true
-
+      List(preLaunchView, postLaunchView).foreach { view =>
+        containTimeoutDialogFunction(view) mustBe true
+      }
     }
 
     "display sign out link" in {
-
-      displaySignOutLink(view)
-
+      List(preLaunchView, postLaunchView).foreach { view =>
+        displaySignOutLink(view)
+      }
     }
 
     "display 'Back' button" when {
-
-      "and feature flag 'liabilityPreLaunch' is disabled" in {
-
-        view.getElementById("back-link") must haveHref(
-          routes.LiabilityStartDateController.displayPage()
+      "feature flag 'preLaunch' is enabled" in {
+        preLaunchView.getElementById("back-link") must haveHref(
+          routes.LiabilityLiableDateController.displayPage()
         )
       }
 
-      "and feature flag 'liabilityPreLaunch' is enabled" in {
-
-        when(appConfig.isPreLaunch).thenReturn(true)
-
-        createView(backLink = routes.LiabilityLiableDateController.displayPage()).getElementById(
-          "back-link"
-        ) must haveHref(routes.LiabilityLiableDateController.displayPage())
+      "feature flag 'preLaunch' is not enabled" in {
+        postLaunchView.getElementById("back-link") must haveHref(
+          routes.LiabilityStartDateController.displayPage()
+        )
       }
     }
 
     "display title" in {
-
-      view.getElementsByClass("govuk-heading-xl").first() must containMessage(
-        "checkLiabilityDetailsAnswers.title"
-      )
-    }
-
-    "display liability date" in {
-
-      view.getElementsByClass("govuk-summary-list__key").get(1) must containMessage(
-        "checkLiabilityDetailsAnswers.date"
-      )
-      view.getElementsByClass("govuk-summary-list__value").get(1) must containText(
-        registration.liabilityDetails.startDate.get.asLocalDate.format(
-          DateTimeFormatter.ofPattern("dd MMM yyyy")
+      List(preLaunchView, postLaunchView).foreach { view =>
+        view.getElementsByClass("govuk-heading-xl").first() must containMessage(
+          "checkLiabilityDetailsAnswers.title"
         )
-      )
+      }
     }
 
-    "display empty value when no date on registration object" in {
+    "display expected content" when {
+      val populatedWeightRow =
+        SummaryRowDetail("checkLiabilityDetailsAnswers.weight",
+                         populatedRegistration.liabilityDetails.weight.get.totalKg.get.toString,
+                         routes.LiabilityWeightController.displayPage()
+        )
+      val unpopulatedWeightRow = populatedWeightRow.copy(value = "")
 
-      viewWithEmptyRegistration.getElementsByClass("govuk-summary-list__key").get(
-        1
-      ) must containMessage("checkLiabilityDetailsAnswers.date")
-      viewWithEmptyRegistration.getElementsByClass("govuk-summary-list__value").get(
-        1
-      ).text() mustBe ""
-    }
+      "'preLaunch' feature flag enabled" when {
+        val populatedExceedIn30Row =
+          SummaryRowDetail("checkLiabilityDetailsAnswers.future.exceed",
+                           messages("general.true"),
+                           routes.LiabilityStartDateController.displayPage()
+          )
 
-    val summaryList = view.getElementsByClass("govuk-summary-list")
+        val populatedIsLiableRow =
+          SummaryRowDetail("checkLiabilityDetailsAnswers.future.liable",
+                           messages("general.true"),
+                           routes.LiabilityStartDateController.displayPage()
+          )
 
-    "display link to change liability date" in {
+        "registration populated" in {
+          assertSummaryRows(preLaunchView,
+                            List(populatedWeightRow, populatedExceedIn30Row, populatedIsLiableRow)
+          )
+        }
 
-      summaryList.first.getElementsByClass("govuk-link").get(1) must haveHref(
-        routes.LiabilityStartDateController.displayPage()
-      )
-    }
+        "registration unpopulated" in {
+          val unpopulatedIsLiableRow = populatedIsLiableRow.copy(value = "")
 
-    "display liability weight" in {
+          assertSummaryRows(preLaunchViewWithEmptyRegistration,
+                            List(unpopulatedWeightRow, unpopulatedIsLiableRow)
+          )
+        }
+      }
 
-      view.getElementsByClass("govuk-summary-list__key").first() must containMessage(
-        "checkLiabilityDetailsAnswers.weight"
-      )
-      view.getElementsByClass("govuk-summary-list__value").first() must containText(
-        registration.liabilityDetails.weight.get.totalKg.get.toString
-      )
-    }
+      "'preLaunch' feature flag not enabled" when {
+        val populatedLiableDateRow = SummaryRowDetail("checkLiabilityDetailsAnswers.date",
+                                                      populatedRegistration.liabilityDetails.startDate.get.asLocalDate.format(
+                                                        DateTimeFormatter.ofPattern("dd MMM yyyy")
+                                                      ),
+                                                      routes.LiabilityStartDateController.displayPage()
+        )
 
-    "display empty value when no weight on registration object" in {
+        "registration populated" in {
+          assertSummaryRows(postLaunchView, List(populatedWeightRow, populatedLiableDateRow))
+        }
 
-      viewWithEmptyRegistration.getElementsByClass(
-        "govuk-summary-list__key"
-      ).first() must containMessage("checkLiabilityDetailsAnswers.weight")
-      viewWithEmptyRegistration.getElementsByClass(
-        "govuk-summary-list__value"
-      ).first().text() mustBe ""
-    }
+        "registration unpopulated" in {
+          val unpopulatedLiableDateRow = populatedLiableDateRow.copy(value = "")
 
-    "display link to change liability weight" in {
-
-      summaryList.first.getElementsByClass("govuk-link").first() must haveHref(
-        routes.LiabilityWeightController.displayPage()
-      )
-
+          assertSummaryRows(postLaunchViewWithEmptyRegistration,
+                            List(unpopulatedWeightRow, unpopulatedLiableDateRow)
+          )
+        }
+      }
     }
 
     "display 'Save And Continue' button" in {
+      preLaunchView must containElementWithID("submit")
+      preLaunchView.getElementById("submit").text() mustBe "Save and Continue"
+    }
 
-      view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and Continue"
+    // TODO: we need a better way of achieving the minimum test code coverage than doing this!
+    "validate other rendering methods" in {
+      page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(request,
+                                                                                        messages
+      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
+      page.render(registration = populatedRegistration,
+                  backLink = routes.LiabilityLiableDateController.displayPage(),
+                  request = request,
+                  messages = messages
+      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
+    }
+
+  }
+
+  private def createView(preLaunch: Boolean, reg: Registration, backLink: Call): Document = {
+    when(mockAppConfig.isPreLaunch).thenReturn(preLaunch)
+    page(reg, backLink)(request, messages)
+  }
+
+  private case class SummaryRowDetail(label: String, value: String, actionLink: Call)
+
+  private def assertSummaryRows(view: Document, rows: List[SummaryRowDetail]) = {
+    val summaryRowKeys = view.getElementsByClass("govuk-summary-list__key")
+    rows.zip(summaryRowKeys).foreach { row =>
+      row._2 must containMessage(row._1.label)
+    }
+
+    val summaryRowValues = view.getElementsByClass("govuk-summary-list__value")
+    rows.zip(summaryRowValues).foreach { row =>
+      row._2 must containText(row._1.value)
+    }
+
+    val summaryRowLinks = view.getElementsByClass("govuk-summary-list__value").filter {
+      elem: Element => elem.hasClass("govuk-link")
+    }
+    rows.zip(summaryRowLinks).foreach { row =>
+      row._2 must haveHref(row._1.actionLink)
     }
   }
+
 }
