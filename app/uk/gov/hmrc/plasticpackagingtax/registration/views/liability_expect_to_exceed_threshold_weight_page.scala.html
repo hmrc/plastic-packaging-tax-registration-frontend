@@ -95,8 +95,8 @@
         idPrefix = Some(form("answer").name),
         name = form("answer").name,
         items = Seq(
-            RadioItem(content = Text(messages("liabilityExpectToExceedThresholdWeightPage.radio.option.yes")), value = Some("yes"), checked = form("answer").value.contains(yes)),
-            RadioItem(content = Text(messages("liabilityExpectToExceedThresholdWeightPage.radio.option.no")), value = Some("no"), checked = form("answer").value.contains(no))
+            RadioItem(content = Text(messages("general.true")), value = Some("yes"), checked = form("answer").value.contains(yes)),
+            RadioItem(content = Text(messages("general.false")), value = Some("no"), checked = form("answer").value.contains(no))
         ),
         classes = "govuk-radios",
         errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
