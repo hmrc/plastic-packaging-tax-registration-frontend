@@ -29,8 +29,8 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthActionImpl,
-  EmailAllowedList
+  AllowedUsers,
+  AuthActionImpl
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 
@@ -41,7 +41,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
   val mockAuthAction = new AuthActionImpl(mockAuthConnector,
-                                          new EmailAllowedList(Seq.empty),
+                                          new AllowedUsers(Seq.empty),
                                           metricsMock,
                                           stubMessagesControllerComponents()
   )

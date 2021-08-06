@@ -21,6 +21,7 @@ import base.{MetricsMocks, PptTestData}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -31,7 +32,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
   private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
 
   private def createAuthAction(
-    emailAllowedList: EmailAllowedList = new EmailAllowedList(Seq.empty)
+    emailAllowedList: AllowedUsers = new AllowedUsers(Seq.empty)
   ): AuthAction =
     new AuthActionImpl(mockAuthConnector,
                        emailAllowedList,
@@ -66,7 +67,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       await(
-        createAuthAction(new EmailAllowedList(Seq(allowedEmail))).invokeBlock(
+        createAuthAction(new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))).invokeBlock(
           authRequest(Headers(), user),
           okResponseGenerator
         )
@@ -78,10 +79,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       val result =
-        createAuthAction(new EmailAllowedList(Seq("not.allowed@hmrc.co.uk"))).invokeBlock(
-          authRequest(Headers(), user),
-          okResponseGenerator
-        )
+        createAuthAction(
+          new AllowedUsers(Seq(AllowedUser(email = "not.allowed@hmrc.co.uk")))
+        ).invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
     }

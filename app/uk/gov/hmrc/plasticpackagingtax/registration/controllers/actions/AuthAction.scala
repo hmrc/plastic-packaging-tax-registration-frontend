@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  userEmailAllowedList: EmailAllowedList,
+  allowedUsers: AllowedUsers,
   metrics: Metrics,
   mcc: MessagesControllerComponents
 ) extends AuthAction with AuthorisedFunctions {
@@ -97,7 +97,7 @@ class AuthActionImpl @Inject() (
     email: String,
     allEnrolments: Enrolments
   ) =
-    if (userEmailAllowedList.isAllowed(email))
+    if (allowedUsers.isAllowed(email))
       block(new AuthenticatedRequest(request, SignedInUser(allEnrolments, identityData)))
     else {
       logger.warn("User is not allowed, access denied")

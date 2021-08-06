@@ -18,18 +18,18 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
 import com.google.inject.{Inject, ProvidedBy}
 import play.api.Configuration
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 
 import javax.inject.Provider
 
-@ProvidedBy(classOf[EmailAllowedListProvider])
-class EmailAllowedList(emails: Seq[String]) {
-  def isAllowed(email: String): Boolean = emails.isEmpty || emails.contains(email)
+@ProvidedBy(classOf[AllowedUsersProvider])
+class AllowedUsers(users: Seq[AllowedUser]) {
+  def isAllowed(email: String): Boolean = users.isEmpty || users.exists(user => user.email == email)
 }
 
-class EmailAllowedListProvider @Inject() (configuration: Configuration)
-    extends Provider[EmailAllowedList] {
+class AllowedUsersProvider @Inject() (configuration: Configuration) extends Provider[AllowedUsers] {
 
-  override def get(): EmailAllowedList =
-    new EmailAllowedList(configuration.get[Seq[String]]("allowedList.emails").map(_.trim))
+  override def get(): AllowedUsers =
+    new AllowedUsers(configuration.get[Seq[AllowedUser]]("allowedUsers"))
 
 }
