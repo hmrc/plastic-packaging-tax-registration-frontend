@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers
 
 import base.PptTestData
 import base.unit.ControllerSpec
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.Headers
 import uk.gov.hmrc.http.HeaderNames
@@ -43,7 +42,8 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
               authRequest(headers, user = PptTestData.newUser("123")),
             aRegistration(
               withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(10001)))))
-            )
+            ),
+            appConfig = appConfig
           )
         val result = helper.backLink()(journeyRequest)
         result mustBe
@@ -58,7 +58,8 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
               authRequest(headers, user = PptTestData.newUser("123")),
             aRegistration(
               withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(9000)))))
-            )
+            ),
+            appConfig = appConfig
           )
         val result = helper.backLink()(journeyRequest)
         result mustBe
@@ -70,7 +71,8 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
         val journeyRequest =
           new JourneyRequest(authenticatedRequest =
                                authRequest(headers, user = PptTestData.newUser("123")),
-                             aRegistration(withLiabilityDetails(LiabilityDetails(weight = None)))
+                             aRegistration(withLiabilityDetails(LiabilityDetails(weight = None))),
+                             appConfig = appConfig
           )
         val result = helper.backLink()(journeyRequest)
         result mustBe
@@ -85,7 +87,8 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
               authRequest(headers, user = PptTestData.newUser("123")),
             aRegistration(
               withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(None))))
-            )
+            ),
+            appConfig = appConfig
           )
         val result = helper.backLink()(journeyRequest)
         result mustBe

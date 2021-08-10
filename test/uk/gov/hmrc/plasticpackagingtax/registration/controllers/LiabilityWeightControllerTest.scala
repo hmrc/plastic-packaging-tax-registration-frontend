@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
@@ -28,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
@@ -138,7 +139,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            when(config.isPreLaunch).thenReturn(true)
+            when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
             mockLiabilityLinkHelperNextPage(routes.LiabilityLiableDateController.displayPage())
 
             val result =
@@ -164,7 +165,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            when(config.isPreLaunch).thenReturn(true)
+            when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
 
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(None), formAction))

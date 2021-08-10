@@ -42,7 +42,7 @@ case class LiabilityLinkHelper @Inject() (appConfig: AppConfig) {
     }
 
   def nextPage()(implicit req: JourneyRequest[AnyContent]): Call =
-    if (req.user.features.getOrElse(Features.isPreLaunch, appConfig.isPreLaunch))
+    if (req.isFeatureFlagEnabled(Features.isPreLaunch))
       routes.LiabilityLiableDateController.displayPage()
     else routes.LiabilityStartDateController.displayPage()
 

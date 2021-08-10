@@ -18,17 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.not_liable
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
 @ViewTest
 class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
-  private val page      = instanceOf[not_liable]
-  private val appConfig = instanceOf[AppConfig]
+  private val page = instanceOf[not_liable]
 
   private def createView(): Document =
     page()(journeyRequest, messages)
@@ -102,8 +101,11 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
     "display feedback link for authenticated users" in {
 
+      when(appConfig.feedbackAuthenticatedLink).thenReturn(
+        "http://localhost:9250/contact/beta-feedback"
+      )
       view.getElementById("feedback-link") must haveHref(
-        s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}/"
+        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:9250/"
       )
     }
 
@@ -111,7 +113,7 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
       val unauthenticatedView = page()(FakeRequest(), messages)
       unauthenticatedView.getElementById("feedback-link") must haveHref(
-        s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}/"
+        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax&backUrl=http://localhost:9250/"
       )
     }
   }

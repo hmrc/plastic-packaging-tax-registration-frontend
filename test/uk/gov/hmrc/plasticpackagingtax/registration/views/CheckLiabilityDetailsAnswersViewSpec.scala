@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
+import org.mockito.ArgumentMatchers.refEq
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Call}
@@ -56,8 +57,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                                                               govukButton,
                                                               govukSummaryList,
                                                               pageTitle,
-                                                              saveAndContinue,
-                                                              mockAppConfig
+                                                              saveAndContinue
   )
 
   private val populatedRegistration   = aRegistration()
@@ -217,7 +217,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   private def createView(preLaunch: Boolean, reg: Registration, backLink: Call)(implicit
     request: JourneyRequest[AnyContent]
   ): Document = {
-    when(mockAppConfig.isPreLaunch).thenReturn(preLaunch)
+    when(mockAppConfig.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(
+      preLaunch
+    )
     page(reg, backLink)(request, messages(request))
   }
 

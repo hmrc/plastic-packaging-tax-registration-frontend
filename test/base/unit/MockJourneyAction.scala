@@ -16,6 +16,7 @@
 
 package base.unit
 
+import base.MockAuthAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.{BeforeAndAfterEach, Suite}
@@ -27,12 +28,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockJourneyAction
     extends MockRegistrationConnector with MockAuditorConnector with BeforeAndAfterEach
-    with MockitoSugar {
+    with MockAuthAction with MockitoSugar {
   self: MockitoSugar with Suite =>
 
-  val mockJourneyAction: JourneyAction = new JourneyAction(mockRegistrationConnector, mockAuditor)(
-    ExecutionContext.global
-  )
+  val mockJourneyAction: JourneyAction =
+    new JourneyAction(mockRegistrationConnector, mockAuditor, appConfig = appConfig)(
+      ExecutionContext.global
+    )
 
   override protected def beforeEach() {
     super.beforeEach()

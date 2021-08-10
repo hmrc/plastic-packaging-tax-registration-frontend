@@ -16,9 +16,19 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 class JourneyRequest[+A](
   val authenticatedRequest: AuthenticatedRequest[A],
-  val registration: Registration
-) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user) {}
+  val registration: Registration,
+  appConfig: AppConfig
+) extends AuthenticatedRequest[A](authenticatedRequest, authenticatedRequest.user) {
+
+  val featureFlags: Map[String, Boolean] =
+    authenticatedRequest.user.features
+
+  def isFeatureFlagEnabled(flag: String) =
+    featureFlags.getOrElse(flag, appConfig.isDefaultFeatureFlagEnabled(flag))
+
+}

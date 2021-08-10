@@ -19,12 +19,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.session_timed_out
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-import utils.FakeRequestCSRFSupport._
 
 @ViewTest
 class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {

@@ -17,6 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import base.unit.UnitViewSpec
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import play.api.http.Status.SEE_OTHER
@@ -32,7 +34,6 @@ class ErrorHandlerTest
     extends UnitViewSpec with Matchers with DefaultAwaitTimeout with OptionValues {
 
   private val errorPage    = instanceOf[error_template]
-  private val appConfig    = app.injector.instanceOf[AppConfig]
   private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())(appConfig)
 
   "ErrorHandlerSpec" should {
@@ -48,6 +49,11 @@ class ErrorHandlerTest
     }
 
     "handle no active session authorisation exception" in {
+
+      when(appConfig.loginUrl).thenReturn("http://localhost:9949/auth-login-stub/gg-sign-in")
+      when(appConfig.loginContinueUrl).thenReturn(
+        "http://localhost:8503/plastic-packaging-tax/registration"
+      )
 
       val error            = new NoActiveSession("A user is not logged in") {}
       val result           = Future.successful(errorHandler.resolveError(journeyRequest, error))

@@ -126,7 +126,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
     "inspect feature flags" when {
       "and check that 'isPreLaunch' is false" in {
-        validAppConfig.isPreLaunch mustBe false
+        validAppConfig.isDefaultFeatureFlagEnabled(Features.isPreLaunch) mustBe false
       }
     }
   }
@@ -137,7 +137,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "inspect feature flags" when {
       "and check that 'isPreLaunch' default value is 'true'" in {
-        emptyAppConfig.isPreLaunch mustBe false
+        emptyAppConfig.isDefaultFeatureFlagEnabled(Features.isPreLaunch) mustBe false
       }
     }
   }

@@ -16,18 +16,18 @@
 
 package spec
 
-import base.PptTestData
 import base.PptTestData.testUserFeatures
+import base.{MockAuthAction, PptTestData}
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.PARTNERSHIP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   PartnershipTypeEnum,
   SCOTTISH_PARTNERSHIP
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
@@ -48,13 +48,14 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions
 
-trait PptTestData extends RegistrationBuilder {
+trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   implicit val journeyRequest: JourneyRequest[AnyContent] =
     new JourneyRequest(
       authenticatedRequest =
         new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser()),
-      registration = aRegistration()
+      registration = aRegistration(),
+      appConfig = appConfig
     )
 
   implicit def generateRequest(
@@ -65,7 +66,8 @@ trait PptTestData extends RegistrationBuilder {
                            FakeRequest().withCSRFToken,
                            PptTestData.newUser(featureFlags = userFeatureFlags)
                          ),
-                       registration = aRegistration()
+                       registration = aRegistration(),
+                       appConfig = appConfig
     )
 
   val request: Request[AnyContent] = FakeRequest().withCSRFToken

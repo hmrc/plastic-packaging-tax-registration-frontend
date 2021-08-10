@@ -98,8 +98,8 @@ class LiabilityLiableDateController @Inject() (
 
   private def startDate(formData: LiabilityLiableDate): Option[Date] =
     formData.answer match {
-      case Some(true)  => Some(Date(Some(1), Some(4), Some(2022)))
-      case Some(false) => None
+      case Some(true) => Some(Date(Some(1), Some(4), Some(2022)))
+      case _          => None
     }
 
 }
