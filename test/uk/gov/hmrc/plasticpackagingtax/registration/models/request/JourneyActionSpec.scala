@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
-import base.PptTestData
+import base.{MockAuthAction, PptTestData}
 import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -31,11 +31,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registra
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyActionSpec extends ControllerSpec {
+class JourneyActionSpec extends ControllerSpec with MockAuthAction {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
-  private val actionRefiner = new JourneyAction(mockRegistrationConnector, mockAuditor)(
+  private val actionRefiner = new JourneyAction(mockRegistrationConnector, mockAuditor, appConfig)(
     ExecutionContext.global
   )
 

@@ -31,7 +31,7 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[email_address_page]
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Email Address View" should {
 

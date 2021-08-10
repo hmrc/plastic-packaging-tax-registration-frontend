@@ -25,6 +25,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -47,7 +48,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     val registration = aRegistration()
     mockRegistrationFind(registration)
     given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
-    when(config.isPreLaunch).thenReturn(false)
+    when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(false)
   }
 
   override protected def afterEach(): Unit = {
@@ -61,7 +62,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
       "user is authorised and display page method is invoked" when {
         "and 'isPreLaunch' is true" in {
-          when(config.isPreLaunch).thenReturn(true)
+          when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
           authorizedUser()
           val result = controller.displayPage()(getRequest())
 
@@ -69,7 +70,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
         }
 
         "and 'isPreLaunch' is false" in {
-          when(config.isPreLaunch).thenReturn(false)
+          when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
           authorizedUser()
           val result = controller.displayPage()(getRequest())
 

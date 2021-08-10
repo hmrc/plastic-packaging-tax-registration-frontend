@@ -36,7 +36,7 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
     form: Form[LiabilityLiableDate] = LiabilityLiableDate.form(),
     backLink: Call = routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
   ): Document =
-    page(form, backLink = backLink)(request, messages)
+    page(form, backLink = backLink)(journeyRequest, messages)
 
   "Liability section 'Liable Date' view" should {
 
@@ -51,12 +51,14 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(form(), routes.LiabilityWeightController.displayPage())(request, messages).select(
-        "title"
-      ).text() must include(messages("liabilityLiableDatePage.title"))
-      page.render(form(), routes.LiabilityWeightController.displayPage(), request, messages).select(
-        "title"
-      ).text() must include(messages("liabilityLiableDatePage.title"))
+      page.f(form(), routes.LiabilityWeightController.displayPage())(journeyRequest,
+                                                                     messages
+      ).select("title").text() must include(messages("liabilityLiableDatePage.title"))
+      page.render(form(),
+                  routes.LiabilityWeightController.displayPage(),
+                  journeyRequest,
+                  messages
+      ).select("title").text() must include(messages("liabilityLiableDatePage.title"))
     }
 
     "contain timeout dialog function" in {

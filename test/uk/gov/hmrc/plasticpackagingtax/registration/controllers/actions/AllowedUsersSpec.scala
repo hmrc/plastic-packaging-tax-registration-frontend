@@ -19,21 +19,22 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 
-class EmailAllowedListSpec extends AnyWordSpec with Matchers with MockitoSugar {
+class AllowedUsersSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   "email allow list" when {
     val testEmail1 = "email1@test.com"
     val testEmail2 = "email2@test.com"
     "is empty" should {
       "allow everyone" in {
-        val emailAllowedList = new EmailAllowedList(Seq.empty)
+        val emailAllowedList = new AllowedUsers(Seq.empty)
         emailAllowedList.isAllowed(testEmail1) mustBe true
         emailAllowedList.isAllowed(testEmail2) mustBe true
       }
     }
     "has elements" should {
-      val emailAllowedList = new EmailAllowedList(Seq(testEmail1))
+      val emailAllowedList = new AllowedUsers(Seq(AllowedUser(email = testEmail1)))
       "allow listed email" in {
         emailAllowedList.isAllowed(testEmail1) mustBe true
       }

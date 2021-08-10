@@ -32,7 +32,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[full_name_page]
 
   private def createView(form: Form[FullName] = FullName.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Primary Contact Details Full Name View" should {
 

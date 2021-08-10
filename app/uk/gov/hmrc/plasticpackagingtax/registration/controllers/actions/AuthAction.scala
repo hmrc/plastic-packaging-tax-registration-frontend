@@ -24,6 +24,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
@@ -36,9 +37,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  userEmailAllowedList: EmailAllowedList,
+  allowedUsers: AllowedUsers,
   metrics: Metrics,
-  mcc: MessagesControllerComponents
+  mcc: MessagesControllerComponents,
+  appConfig: AppConfig
 ) extends AuthAction with AuthorisedFunctions {
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
@@ -97,8 +99,16 @@ class AuthActionImpl @Inject() (
     email: String,
     allEnrolments: Enrolments
   ) =
-    if (userEmailAllowedList.isAllowed(email))
-      block(new AuthenticatedRequest(request, SignedInUser(allEnrolments, identityData)))
+    if (allowedUsers.isAllowed(email))
+      block(
+        new AuthenticatedRequest(
+          request,
+          SignedInUser(allEnrolments,
+                       identityData,
+                       allowedUsers.getUserFeatures(email).getOrElse(appConfig.defaultFeatures)
+          )
+        )
+      )
     else {
       logger.warn("User is not allowed, access denied")
       Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))

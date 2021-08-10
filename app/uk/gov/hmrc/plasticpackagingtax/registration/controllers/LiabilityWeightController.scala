@@ -86,12 +86,14 @@ class LiabilityWeightController @Inject() (
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
-  private def handleSaveAndContinue(formData: LiabilityWeight): Result =
+  private def handleSaveAndContinue(
+    formData: LiabilityWeight
+  )(implicit req: JourneyRequest[AnyContent]): Result =
     formData.totalKg match {
       case Some(weight) =>
         if (weight <= 10000)
           Redirect(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-        else Redirect(liabilityLinkHelper.nextPage)
+        else Redirect(liabilityLinkHelper.nextPage())
       case None => BadRequest
     }
 

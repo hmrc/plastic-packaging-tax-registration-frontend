@@ -16,7 +16,7 @@
 
 package base.unit
 
-import base.{Injector, PptTestData}
+import base.Injector
 import com.codahale.metrics.SharedMetricRegistries
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
@@ -24,32 +24,25 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.FakeRequest
+import play.api.mvc.Request
 import spec.{PptTestData, ViewMatchers}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 class UnitViewSpec
     extends AnyWordSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
     with ViewAssertions with Injector with GuiceOneAppPerSuite with PptTestData {
 
-  import utils.FakeRequestCSRFSupport._
-
-  implicit val request: Request[AnyContent] =
-    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser())
-
   protected implicit def messages(implicit request: Request[_]): Messages =
     realMessagesApi.preferred(request)
 
-  protected def messages(key: String, args: Any*)(implicit request: Request[_]): String =
-    messages(request)(key, args: _*)
-
-  val realMessagesApi = UnitViewSpec.realMessagesApi
+  val realMessagesApi: MessagesApi = UnitViewSpec.realMessagesApi
 
   override def fakeApplication(): Application = {
     SharedMetricRegistries.clear()
     new GuiceApplicationBuilder().build()
   }
+
+  protected def messages(key: String, args: Any*)(implicit request: Request[_]): String =
+    messages(request)(key, args: _*)
 
 }
 

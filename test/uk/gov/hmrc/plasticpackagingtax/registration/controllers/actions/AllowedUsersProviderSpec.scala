@@ -20,36 +20,41 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 
-class EmailAllowedListProviderSpec extends AnyWordSpec with Matchers with MockitoSugar {
+class AllowedUsersProviderSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
-  "EmailAllowedListProvider" should {
+  "AllowedUsersProvider" should {
 
-    val allowedEmail = "allowed@test.com"
+    val allowedUser = AllowedUser(email = "allowed@test.com")
     "load correctly from configuration" in {
 
-      val config   = Configuration("allowedList.emails.0" -> allowedEmail)
-      val provider = new EmailAllowedListProvider(config)
-      provider.get() mustBe a[EmailAllowedList]
+      val config = Configuration("allowedUsers.0.email" -> "allowed@test.com",
+                                 "allowedUsers.0.features.isPreLaunch" -> true
+      )
+      val provider = new AllowedUsersProvider(config)
+      provider.get() mustBe a[AllowedUsers]
     }
 
     "trim spaces during loading" in {
 
-      val config   = Configuration("allowedList.emails.0" -> s" $allowedEmail ")
-      val provider = new EmailAllowedListProvider(config)
-      provider.get().isAllowed(allowedEmail) mustBe true
+      val config = Configuration("allowedUsers.0.email" -> " allowed@test.com ",
+                                 "allowedUsers.0.features.isPreLaunch" -> true
+      )
+      val provider = new AllowedUsersProvider(config)
+      provider.get().isAllowed(allowedUser.email) mustBe true
     }
 
     "allow empty list" in {
 
-      val config   = Configuration("allowedList.emails.0" -> "")
-      val provider = new EmailAllowedListProvider(config)
-      provider.get() mustBe a[EmailAllowedList]
+      val config   = Configuration("allowedUsers" -> Seq.empty)
+      val provider = new AllowedUsersProvider(config)
+      provider.get() mustBe a[AllowedUsers]
     }
 
     "throw exception when there is not configuration key" in {
 
-      val provider = new EmailAllowedListProvider(Configuration.empty)
+      val provider = new AllowedUsersProvider(Configuration.empty)
       an[Exception] mustBe thrownBy {
         provider.get()
       }

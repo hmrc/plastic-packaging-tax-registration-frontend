@@ -78,6 +78,8 @@ trait ControllerSpec
       .withHeaders(testUserHeaders.toSeq: _*)
       .withCSRFToken
 
+  private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
+
   protected def postRequestEncoded(
     form: AnyRef,
     formAction: (String, String) = saveAndContinueFormAction
@@ -107,7 +109,5 @@ trait ControllerSpec
     postRequest
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
-
-  private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
 
 }

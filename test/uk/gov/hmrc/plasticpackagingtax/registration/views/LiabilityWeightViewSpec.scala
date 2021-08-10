@@ -30,7 +30,7 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[liability_weight_page]
 
   private def createView(form: Form[LiabilityWeight] = LiabilityWeight.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Liability Weight View" should {
 

@@ -38,7 +38,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[organisation_type]
 
   private def createView(form: Form[OrganisationType] = OrganisationType.form()): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Confirm Organisation Based In Uk View" should {
 

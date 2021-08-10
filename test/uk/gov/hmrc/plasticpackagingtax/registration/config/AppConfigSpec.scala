@@ -125,8 +125,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       )
     }
     "inspect feature flags" when {
-      "and check that 'liabilityPreLaunch' is false" in {
-        validAppConfig.isPreLaunch mustBe false
+      "and check that 'isPreLaunch' is false" in {
+        validAppConfig.isDefaultFeatureFlagEnabled(Features.isPreLaunch) mustBe false
       }
     }
   }
@@ -136,8 +136,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     val emptyAppConfig: AppConfig = appConfig(Configuration(emptyConfig))
 
     "inspect feature flags" when {
-      "and check that 'liabilityPreLaunch' default value is 'true'" in {
-        emptyAppConfig.isPreLaunch mustBe false
+      "and check that 'isPreLaunch' default value is 'true'" in {
+        emptyAppConfig.isDefaultFeatureFlagEnabled(Features.isPreLaunch) mustBe false
       }
     }
   }

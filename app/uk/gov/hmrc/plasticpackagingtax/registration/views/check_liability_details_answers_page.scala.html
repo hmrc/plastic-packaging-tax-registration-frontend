@@ -19,11 +19,12 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 @import java.time.format.DateTimeFormatter
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
 @this(
         formHelper: formWithCSRF,
@@ -31,10 +32,9 @@
         govukButton: GovukButton,
         govukSummaryList: GovukSummaryList,
         pageTitle: pageTitle,
-        saveAndContinue: saveAndContinue,
-        appConfig: AppConfig
+        saveAndContinue: saveAndContinue
 )
-@(registration: Registration, backLink: Call)(implicit request: Request[_], messages: Messages)
+@(registration: Registration, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 @govukLayout(
     title = Title("checkLiabilityDetailsAnswers.title"),
@@ -68,7 +68,7 @@
                             content = Text(messages("checkLiabilityDetailsAnswers.future.exceed"))
                         ),
                         value = Value(
-                            content = if (appConfig.isPreLaunch) {
+                            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                               registration.liabilityDetails.expectToExceedThresholdWeight match {
                                   case Some(true) => Text(messages("general.true"))
                                   case Some(false) => Text(messages("general.false"))
@@ -93,7 +93,7 @@
                             content = Text(messages("checkLiabilityDetailsAnswers.future.liable"))
                         ),
                         value = Value(
-                            content = if (appConfig.isPreLaunch) {
+                            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                                 registration.liabilityDetails.isLiable match {
                                     case Some(true) => Text(messages("general.true"))
                                     case Some(false) => Text(messages("general.false"))
@@ -118,7 +118,7 @@
                             content = Text(messages("checkLiabilityDetailsAnswers.date"))
                         ),
                         value = Value(
-                            content = if (appConfig.isPreLaunch) {
+                            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                                 Empty
                             } else {
                                 Text(registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))

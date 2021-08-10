@@ -29,7 +29,7 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
   private val page = instanceOf[unauthorised]
 
   private def createView(): Document =
-    page()(request, messages)
+    page()(journeyRequest, messages)
 
   "Unauthorised Page view" should {
 

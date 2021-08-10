@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers
 
 import play.api.mvc.{AnyContent, Call}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
@@ -26,12 +26,14 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 case class LiabilityLinkHelper @Inject() (appConfig: AppConfig) {
 
+  private val deMinimis: Int = 10000
+
   def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
     request.registration.liabilityDetails.weight match {
       case Some(weight) =>
         weight.totalKg match {
           case Some(totalKg) =>
-            if (totalKg <= 10000)
+            if (totalKg <= deMinimis)
               routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
             else routes.LiabilityWeightController.displayPage()
           case None => routes.RegistrationController.displayPage()
@@ -39,8 +41,9 @@ case class LiabilityLinkHelper @Inject() (appConfig: AppConfig) {
       case None => routes.RegistrationController.displayPage()
     }
 
-  def nextPage(): Call =
-    if (appConfig.isPreLaunch) routes.LiabilityLiableDateController.displayPage()
+  def nextPage()(implicit req: JourneyRequest[AnyContent]): Call =
+    if (req.isFeatureFlagEnabled(Features.isPreLaunch))
+      routes.LiabilityLiableDateController.displayPage()
     else routes.LiabilityStartDateController.displayPage()
 
 }

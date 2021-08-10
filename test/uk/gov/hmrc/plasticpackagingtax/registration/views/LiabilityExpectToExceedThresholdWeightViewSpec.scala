@@ -34,7 +34,7 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
   private def createView(
     form: Form[ExpectToExceedThresholdWeight] = ExpectToExceedThresholdWeight.form()
   ): Document =
-    page(form)(request, messages)
+    page(form)(journeyRequest, messages)
 
   "Liability section expect process more weight view" should {
 
@@ -51,10 +51,10 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
     val view = createView()
 
     "validate other rendering  methods" in {
-      page.f(form())(request, messages).select("title").text() must include(
+      page.f(form())(journeyRequest, messages).select("title").text() must include(
         messages("liabilityExpectToExceedThresholdWeightPage.title")
       )
-      page.render(form(), request, messages).select("title").text() must include(
+      page.render(form(), journeyRequest, messages).select("title").text() must include(
         messages("liabilityExpectToExceedThresholdWeightPage.title")
       )
     }

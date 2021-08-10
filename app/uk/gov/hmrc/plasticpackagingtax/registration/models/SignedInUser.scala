@@ -19,4 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
 
-case class SignedInUser(enrolments: Enrolments, identityData: IdentityData)
+case class SignedInUser(
+  enrolments: Enrolments,
+  identityData: IdentityData,
+  features: Map[String, Boolean]
+)

@@ -34,7 +34,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     registration: Registration = aRegistration(),
     flash: Flash = new Flash(Map.empty)
   ): Html =
-    page()(request, messages, flash)
+    page()(journeyRequest, messages, flash)
 
   "Confirmation Page view" should {
 

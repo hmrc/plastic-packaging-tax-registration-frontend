@@ -23,13 +23,11 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBanner
 
 class PhaseBannerSpec extends UnitViewSpec with Matchers {
 
-  private val appConfig     = mock[AppConfig]
   private val bannerPartial = instanceOf[phaseBanner]
 
   private val requestPath          = "/plastic-packaging-tax/some-page"

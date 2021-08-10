@@ -41,7 +41,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
       )
     }
 
-    val view = page()(request = request, messages = messages)
+    val view = page()(request = journeyRequest, messages = messages)
 
     "contain timeout dialog function" in {
 
