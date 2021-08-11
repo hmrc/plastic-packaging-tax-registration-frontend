@@ -29,6 +29,9 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import java.time.format.DateTimeFormatter
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 
 @this(
     formHelper: formWithCSRF,
@@ -36,7 +39,8 @@
     govukSummaryList: GovukSummaryList,
     pageTitle: pageTitle,
     saveAndContinue: saveAndContinue,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    appConfig: AppConfig
 )
 
 @(
@@ -44,7 +48,7 @@
     incorporationDetails: Option[IncorporationDetails] = None,
     soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
     partnershipDetails: Option[PartnershipDetails] = None
-)(implicit request: Request[_], messages: Messages)
+)(implicit request: JourneyRequest[_], messages: Messages)
 
 @extractAddress(address: Address) = @{
     Seq(address.addressLine1,
@@ -74,6 +78,74 @@
     )
 }
 
+@rowWithBooleanAnswers(key: String, value: Value , call: Option[Call] = None) = @{
+    SummaryListRow(
+        key = Key(
+            content = Text(messages(key))
+        ),
+        value = value,
+        actions = call.flatMap(c => Some(Actions(
+            items = Seq(
+                ActionItem(
+                    href = c.url,
+                    content = Text(messages("site.link.change")),
+                    visuallyHiddenText = Some(messages(key))
+                )
+            )
+        )))
+    )
+}
+@expectToExceedThresholdWeightRow() = @{
+    rowWithBooleanAnswers(
+        key = "checkLiabilityDetailsAnswers.future.exceed",
+        value = Value(
+            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                registration.liabilityDetails.expectToExceedThresholdWeight match {
+                    case Some(true) => Text(messages("general.true"))
+                    case Some(false) => Text(messages("general.false"))
+                    case None => Empty
+                }
+            } else {
+                registration.liabilityDetails.expectToExceedThresholdWeight match {
+                    case Some(true) => Text(messages("general.true"))
+                    case Some(false) => Text(messages("general.false"))
+                    case None => Empty
+                }
+            }
+        ),
+        Some(pptRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage())
+    )
+}
+
+@liabilityIsPreLaunchRow() = @{
+    rowWithBooleanAnswers(key = "checkLiabilityDetailsAnswers.future.liable",
+        value = Value(
+            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                registration.liabilityDetails.isLiable match {
+                    case Some(true) => Text(messages("general.true"))
+                    case Some(false) => Text(messages("general.false"))
+                    case None => Text(messages("general.false"))
+                }
+            } else {
+                Empty
+            }
+        ),
+        call = Some(pptRoutes.LiabilityLiableDateController.displayPage())
+    )
+}
+
+@liabilityLiableDateRow() = @{
+    rowWithBooleanAnswers(key = "checkLiabilityDetailsAnswers.date",
+        value = Value(
+            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                Empty
+            } else {
+                Text(registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
+            }
+        ),
+        call = Some(pptRoutes.LiabilityStartDateController.displayPage())
+    )
+}
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
@@ -116,6 +188,18 @@
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
+    <h2 id="liability-details" class="govuk-heading-m">@messages("checkLiabilityDetailsAnswers.check.label")</h2>
+    @govukSummaryList(
+        SummaryList(
+            rows = Seq(
+                row("checkLiabilityDetailsAnswers.weight", registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg"), Some(pptRoutes.LiabilityWeightController.displayPage())),
+                expectToExceedThresholdWeightRow,
+                liabilityIsPreLaunchRow,
+                liabilityLiableDateRow,
+            ).filterNot(_.value.content == Empty)
+        )
+    )
+
     <h2 id="primary-contact-details" class="govuk-heading-m">
         @messages("reviewRegistration.organisationDetails.check.label")</h2>
     @govukSummaryList(
@@ -131,16 +215,6 @@
                     row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage())),
                     row("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),
                     row("primaryContactDetails.check.email", registration.primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage()))
-                ).filterNot(_.value.content == Empty)
-            )
-        )
-
-    <h2 id="liability-details" class="govuk-heading-m">@messages("checkLiabilityDetailsAnswers.check.label")</h2>
-    @govukSummaryList(
-        SummaryList(
-            rows = Seq(
-                    row("checkLiabilityDetailsAnswers.date", registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))), Some(pptRoutes.LiabilityStartDateController.displayPage())),
-                    row("checkLiabilityDetailsAnswers.weight", registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg"), Some(pptRoutes.LiabilityWeightController.displayPage()))
                 ).filterNot(_.value.content == Empty)
             )
         )

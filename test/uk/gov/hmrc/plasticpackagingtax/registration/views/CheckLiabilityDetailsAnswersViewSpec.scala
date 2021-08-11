@@ -180,8 +180,16 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                                                       routes.LiabilityStartDateController.displayPage()
         )
 
+        val populatedExceedIn30Row =
+          SummaryRowDetail("checkLiabilityDetailsAnswers.future.exceed",
+                           messages("general.true"),
+                           routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+          )
+
         "registration populated" in {
-          assertSummaryRows(postLaunchView, List(populatedWeightRow, populatedLiableDateRow))
+          assertSummaryRows(postLaunchView,
+                            List(populatedWeightRow, populatedExceedIn30Row, populatedLiableDateRow)
+          )
         }
 
         "registration unpopulated" in {
