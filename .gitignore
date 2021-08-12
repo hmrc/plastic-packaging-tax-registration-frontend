@@ -1,5 +1,6 @@
 .*
 
+!.github
 !.gitignore
 !.scalafmt.conf
 .cache
