@@ -78,7 +78,7 @@
     )
 }
 
-@rowWithBooleanAnswers(key: String, value: Value , call: Option[Call] = None) = @{
+@rowWithValue(key: String, value: Value , call: Option[Call] = None) = @{
     SummaryListRow(
         key = Key(
             content = Text(messages(key))
@@ -96,7 +96,7 @@
     )
 }
 @expectToExceedThresholdWeightRow() = @{
-    rowWithBooleanAnswers(
+    rowWithValue(
         key = "checkLiabilityDetailsAnswers.future.exceed",
         value = Value(
             content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
@@ -118,7 +118,7 @@
 }
 
 @liabilityIsPreLaunchRow() = @{
-    rowWithBooleanAnswers(key = "checkLiabilityDetailsAnswers.future.liable",
+    rowWithValue(key = "checkLiabilityDetailsAnswers.future.liable",
         value = Value(
             content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                 registration.liabilityDetails.isLiable match {
@@ -135,7 +135,7 @@
 }
 
 @liabilityLiableDateRow() = @{
-    rowWithBooleanAnswers(key = "checkLiabilityDetailsAnswers.date",
+    rowWithValue(key = "checkLiabilityDetailsAnswers.date",
         value = Value(
             content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                 Empty

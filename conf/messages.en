@@ -99,7 +99,7 @@ liabilityWeight.empty.error = Weight cannot be empty
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
-checkLiabilityDetailsAnswers.check.label = Plastic packaging liability details
+checkLiabilityDetailsAnswers.check.label = Liability details
 checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
 checkLiabilityDetailsAnswers.future.liable = Liable for the Plastic Packaging Tax until at least 1 April 2022
 
