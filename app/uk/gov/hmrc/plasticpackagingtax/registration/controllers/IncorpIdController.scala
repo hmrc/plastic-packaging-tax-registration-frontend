@@ -159,6 +159,7 @@ class IncorpIdController @Inject() (
   ): OrganisationDetails = {
     val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
       PartnershipDetails(partnershipType = partnershipTypeEnum,
+                         partnershipName = None,
                          generalPartnershipDetails = generalPartnershipDetails,
                          scottishPartnershipDetails = scottishPartnershipDetails
       )
