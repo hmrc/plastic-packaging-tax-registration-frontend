@@ -200,7 +200,7 @@
         )
     )
 
-    <h2 id="primary-contact-details" class="govuk-heading-m">
+    <h2 id="organisation-details" class="govuk-heading-m">
         @messages("reviewRegistration.organisationDetails.check.label")</h2>
     @govukSummaryList(
         {if (incorporationDetails.isDefined) ukCompanySummary() else if (soleTraderDetails.isDefined) soleTraderSummary() else partnershipSummary()}
