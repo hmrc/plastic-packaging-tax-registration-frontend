@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import com.kenshoo.play.metrics.Metrics
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
-import uk.gov.hmrc.http.InternalServerException
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
@@ -42,6 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionCreateResponse
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -115,38 +116,38 @@ class ReviewRegistrationController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      markRegistrationAsCompleted().flatMap {
-        case Right(updatedRegistration) =>
-          val updatedRegistrationWithUserHeaders =
-            updatedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
-          subscriptionsConnector.submitSubscription(getSafeId(updatedRegistrationWithUserHeaders),
-                                                    updatedRegistrationWithUserHeaders
-          ).map { response =>
-            successSubmissionCounter.inc()
-            val updatedMetadata = updatedRegistration.metaData.copy(nrsDetails =
-              Some(NrsDetails(response.nrSubmissionId, response.nrsFailureReason))
-            )
-            auditor.registrationSubmitted(updatedRegistration.copy(metaData = updatedMetadata),
-                                          Some(response.pptReference)
-            )
-            Redirect(routes.ConfirmationController.displayPage())
-              .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
-          }
-        case Left(error) =>
-          auditor.registrationSubmitted(request.registration)
-          failedSubmissionCounter.inc()
-          throw error
-      }
+      val completedRegistration = request.registration.asCompleted()
+      val completedRegistrationWithUserHeaders =
+        completedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
+      subscriptionsConnector.submitSubscription(getSafeId(completedRegistrationWithUserHeaders),
+                                                completedRegistrationWithUserHeaders
+      ).transform(response => handleSuccessfulSubscription(completedRegistration, response),
+                  e => handleFailedSubscription(completedRegistration, e)
+      )
     }
 
-  private def markRegistrationAsCompleted()(implicit
-    req: JourneyRequest[AnyContent]
-  ): Future[Either[ServiceError, Registration]] =
-    update { registration =>
-      val updatedMetaData =
-        registration.metaData.copy(registrationCompleted = true)
-      registration.copy(metaData = updatedMetaData)
-    }
+  private def handleSuccessfulSubscription(
+    registration: Registration,
+    response: SubscriptionCreateResponse
+  )(implicit hc: HeaderCarrier) = {
+    successSubmissionCounter.inc()
+    val updatedMetadata = registration.metaData.copy(nrsDetails =
+      Some(NrsDetails(response.nrSubmissionId, response.nrsFailureReason))
+    )
+    auditor.registrationSubmitted(registration.copy(metaData = updatedMetadata),
+                                  Some(response.pptReference)
+    )
+    Redirect(routes.ConfirmationController.displayPage())
+      .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
+  }
+
+  private def handleFailedSubscription(registration: Registration, e: Throwable)(implicit
+    hc: HeaderCarrier
+  ) = {
+    failedSubmissionCounter.inc()
+    auditor.registrationSubmitted(registration)
+    DownstreamServiceError(s"PPT subscription failed - ${e.getMessage}", e)
+  }
 
   private def getSafeId(registration: Registration): String =
     registration.organisationDetails.organisationType.flatMap {

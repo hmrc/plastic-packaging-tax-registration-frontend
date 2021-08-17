@@ -200,11 +200,9 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "when form is submitted" in {
         authorizedUser()
-        val completeRegistrations =
-          aCompleteRegistration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
-        mockRegistrationFind(completeRegistrations)
-        val aReviewedRegistration = reviewedRegistration(completeRegistrations)
-        mockRegistrationUpdate(aReviewedRegistration)
+        val completedRegistration =
+          aCompletedRegistration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+        mockRegistrationFind(completedRegistration)
         mockSubscriptionSubmit(subscriptionCreate)
 
         val result = controller.submit()(postRequest(JsObject.empty))
@@ -213,7 +211,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
         verify(mockSubscriptionsConnector).submitSubscription(
           ArgumentMatchers.eq(safeNumber),
-          ArgumentMatchers.eq(aReviewedRegistration.copy(userHeaders = Some(testUserHeaders)))
+          ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
         )(any[HeaderCarrier])
 
         metricsMock.defaultRegistry.counter(
@@ -225,20 +223,23 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     "send audit event" when {
       "submission of audit event" in {
         authorizedUser()
-        mockRegistrationFind(aCompleteRegistration)
-        val aReviewedRegistration = aCompleteRegistration.copy(metaData =
-          MetaData(registrationReviewed = true,
-                   registrationCompleted = true,
-                   nrsDetails = Some(NrsDetails(Some(nrsSubmissionId)))
-          )
-        )
-        mockRegistrationUpdate(aReviewedRegistration)
+
+        val completedRegistration = aCompletedRegistration
+        mockRegistrationFind(completedRegistration)
         mockSubscriptionSubmit(subscriptionCreate)
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
+        val completedRegistrationWithNrsDetail = completedRegistration.copy(metaData =
+          aCompletedRegistration.metaData.copy(nrsDetails =
+            Some(
+              NrsDetails(nrSubsmissionId = subscriptionCreate.nrSubmissionId, failureReason = None)
+            )
+          )
+        )
+
         verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
-          ArgumentMatchers.eq(aReviewedRegistration),
+          ArgumentMatchers.eq(completedRegistrationWithNrsDetail),
           ArgumentMatchers.eq(Some("XXPPTP123456789"))
         )(any(), any())
       }
@@ -253,9 +254,10 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         intercept[RuntimeException](status(result))
       }
 
-      "user submits form and the registration update fails" in {
+      "user submits form and the submission fails" in {
         authorizedUser()
-        mockRegistrationUpdateFailure()
+        mockRegistrationFind(aCompletedRegistration)
+        mockSubscriptionSubmitFailure(new IllegalStateException("BANG!"))
         val result =
           controller.submit()(postRequest(JsObject.empty))
 
@@ -309,12 +311,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     }
   }
 
-  private def reviewedRegistration(aCompleteRegistration: Registration) =
-    aCompleteRegistration.copy(metaData =
-      MetaData(registrationReviewed = true, registrationCompleted = true)
-    )
-
-  private def aCompleteRegistration =
+  private def aCompletedRegistration =
     aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)),
                   withLiabilityDetails(
                     LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
