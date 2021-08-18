@@ -392,6 +392,7 @@ const primaryContactAddress = () => {
      if (currentPageIs('/plastic-packaging-tax/primary-contact-business-address')) {
 
          document.getElementById('addressLine1').value = '2-3 Scala Street'
+         document.getElementById('addressLine2').value = 'Soho'
          document.getElementById('townOrCity').value = 'London'
          document.getElementById('postCode').value = 'W1T 2HN'
          document.getElementsByClassName('govuk-button')[0].click()
