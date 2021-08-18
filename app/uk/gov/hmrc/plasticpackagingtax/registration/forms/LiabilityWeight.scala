@@ -26,20 +26,21 @@ object LiabilityWeight {
   implicit val format = Json.format[LiabilityWeight]
 
   val maxTotalKg            = 100000000 // one hundred million
-  val minTotalKg            = 1000
+  val minTotalKg            = 0
   val totalKg               = "totalKg"
   val weightEmptyError      = "liabilityWeight.empty.error"
   val weightOutOfRangeError = "liabilityWeight.outOfRange.error"
 
-  private val isWithinRange: LiabilityWeight => Boolean = weight =>
-    minTotalKg to maxTotalKg contains weight.totalKg.getOrElse(0)
+  private val isWithinRange: Option[Long] => Boolean = weight =>
+    minTotalKg to maxTotalKg contains weight.getOrElse(minTotalKg)
 
   def form(): Form[LiabilityWeight] =
     Form(
-      mapping(totalKg -> Forms.optional(longNumber()).verifying(weightEmptyError, _.nonEmpty))(
-        LiabilityWeight.apply
-      )(LiabilityWeight.unapply)
-        .verifying(weightOutOfRangeError, liabilityWeight => isWithinRange(liabilityWeight))
+      mapping(
+        totalKg -> Forms.optional(longNumber())
+          .verifying(weightEmptyError, _.nonEmpty)
+          .verifying(weightOutOfRangeError, isWithinRange)
+      )(LiabilityWeight.apply)(LiabilityWeight.unapply)
     )
 
 }
