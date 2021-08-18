@@ -21,6 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.Pa
 
 case class PartnershipDetails(
   partnershipType: PartnershipTypeEnum,
+  partnershipName: Option[String] = None,
   generalPartnershipDetails: Option[GeneralPartnershipDetails] = None,
   scottishPartnershipDetails: Option[ScottishPartnershipDetails] = None
   // TODO: other partnership type details here
