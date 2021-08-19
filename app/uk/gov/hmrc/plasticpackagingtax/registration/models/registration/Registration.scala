@@ -84,6 +84,9 @@ case class Registration(
     else
       this.primaryContactDetails.status
 
+  def asCompleted(): Registration =
+    this.copy(metaData = this.metaData.copy(registrationCompleted = true))
+
 }
 
 object Registration {

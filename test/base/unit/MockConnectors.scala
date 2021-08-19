@@ -138,6 +138,13 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       Future.successful(subscription)
     )
 
+  protected def mockSubscriptionSubmitFailure(
+    ex: Exception
+  ): OngoingStubbing[Future[SubscriptionCreateResponse]] =
+    when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(
+      Future.failed(ex)
+    )
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockIncorpIdConnector, mockSoleTraderConnector)
