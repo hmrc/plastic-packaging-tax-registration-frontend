@@ -91,7 +91,7 @@ class LiabilityWeightController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Result =
     formData.totalKg match {
       case Some(weight) =>
-        if (weight <= 10000)
+        if (weight < 10000)
           Redirect(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
         else Redirect(liabilityLinkHelper.nextPage())
       case None => BadRequest

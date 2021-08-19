@@ -143,11 +143,11 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             mockLiabilityLinkHelperNextPage(routes.LiabilityLiableDateController.displayPage())
 
             val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))
+              controller.submit()(postRequestEncoded(LiabilityWeight(Some(10000)), formAction))
 
             status(result) mustBe SEE_OTHER
 
-            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
+            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(10000)))
 
             formAction._1 match {
               case "SaveAndContinue" =>
@@ -186,7 +186,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     "return 400 (BAD_REQUEST)" when {
       "user submits invalid liability weight" in {
         authorizedUser()
-        val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(999)))))
+        val result =
+          controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(10000000000L)))))
 
         status(result) mustBe BAD_REQUEST
       }

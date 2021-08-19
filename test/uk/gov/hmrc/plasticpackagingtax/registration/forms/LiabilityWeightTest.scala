@@ -79,7 +79,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
       "contains total less than minimum allowed weight" in {
 
         val input          = Map(totalKg -> (minTotalKg - 1).toString)
-        val expectedErrors = Seq(FormError("", weightOutOfRangeError))
+        val expectedErrors = Seq(FormError("totalKg", weightOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -87,7 +87,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
       "contains total more than maximum allowed weight" in {
 
         val input          = Map(totalKg -> (maxTotalKg + 1).toString)
-        val expectedErrors = Seq(FormError("", weightOutOfRangeError))
+        val expectedErrors = Seq(FormError("totalKg", weightOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
