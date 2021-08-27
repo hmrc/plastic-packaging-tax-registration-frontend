@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
-import akka.util.Helpers.Requiring
 import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
@@ -203,7 +202,7 @@ class EmailVerificationConnectorISpec
 
       val res = await(connector.getTestOnlyPasscode())
 
-      res.right.value mustBe validResponse
+      res.value mustBe validResponse
     }
 
     "throws exception for errors" in {
