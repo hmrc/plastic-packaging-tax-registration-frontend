@@ -12,4 +12,4 @@
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
 
-GET /test-only/passcode uk.gov.hmrc.plasticpackagingtax.registration.controllers.testOnly.EmailPasscodeController.testOnlyGetPasscodes
+GET /plastic-packaging-tax/test-only/passcode uk.gov.hmrc.plasticpackagingtax.registration.controllers.testOnly.EmailPasscodeController.testOnlyGetPasscodes
