@@ -118,6 +118,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def getEmailVerificationStatusUrl(credId: String): String =
     s"$emailVerificationHost/email-verification/verification-status/$credId"
 
+  def getTestOnlyPasscodeUrl: String =
+    s"$emailVerificationHost/test-only/passcodes"
+
   def getSubmitPassscodeUrl(journeyId: String): String =
     s"$emailVerificationHost/email-verification/journey/$journeyId/passcode"
 

@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 import com.kenshoo.play.metrics.Metrics
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
   COMPLETE,
@@ -119,7 +119,22 @@ class EmailVerificationConnector @Inject() (
       }
   }
 
+  def getTestOnlyPasscode()(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] =
+    httpClient.GET[HttpResponse](appConfig.getTestOnlyPasscodeUrl)
+      .map {
+        case response @ HttpResponse(OK, _, _) =>
+          Right(response.body)
+        case response =>
+          Left(
+            DownstreamServiceError(
+              s"Unable to find test only passcodes :, status: ${response.status}, error: ${response.body}",
+              FailedToFetchTestOnlyPasscode("Failed to get test only passcodes")
+            )
+          )
+      }
+
 }
 
 case class CreateEmailVerificationException(message: String) extends Exception
 case class VerifyPasscodeException(message: String)          extends Exception
+case class FailedToFetchTestOnlyPasscode(message: String)    extends Exception
