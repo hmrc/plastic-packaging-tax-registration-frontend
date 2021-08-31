@@ -116,9 +116,9 @@ function createPartnershipGRSFeatureFlagsLink() {
 function getPasscode(){
     var url;
     if (window.location.hostname === 'localhost') {
-        url = 'http://localhost:8503/test-only/passcode'
+        url = 'http://localhost:8503/plastic-packaging-tax/test-only/passcode'
     } else {
-        url = '/test-only/passcode'
+        url = '/plastic-packaging-tax/test-only/passcode'
     }
     var xmlHttp = new XMLHttpRequest();
     xmlHttp. open("GET", url, false); // false for synchronous request.
