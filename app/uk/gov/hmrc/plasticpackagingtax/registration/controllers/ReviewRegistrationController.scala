@@ -132,13 +132,19 @@ class ReviewRegistrationController @Inject() (
   )(implicit hc: HeaderCarrier) = {
     successSubmissionCounter.inc()
     val updatedMetadata = registration.metaData.copy(nrsDetails =
-      Some(NrsDetails(response.nrSubmissionId, response.nrsFailureReason))
+      Some(NrsDetails(response.nrsSubmissionId, response.nrsFailureReason))
     )
     auditor.registrationSubmitted(registration.copy(metaData = updatedMetadata),
                                   Some(response.pptReference)
     )
     Redirect(routes.ConfirmationController.displayPage())
-      .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
+      .flashing(
+        Flash(
+          Map(FlashKeys.referenceId         -> response.pptReference,
+              FlashKeys.enrolmentSuccessful -> response.enrolmentInitiatedSuccessfully.toString
+          )
+        )
+      )
   }
 
   private def handleFailedSubscription(registration: Registration, e: Throwable)(implicit

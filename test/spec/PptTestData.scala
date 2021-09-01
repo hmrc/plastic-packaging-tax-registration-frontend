@@ -163,7 +163,10 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     processingDate =
       ZonedDateTime.now(ZoneOffset.UTC),
     formBundleNumber = "123456789",
-    nrSubmissionId = Some(nrsSubmissionId)
+    nrsNotifiedSuccessfully = true,
+    nrsSubmissionId = Some(nrsSubmissionId),
+    nrsFailureReason = None,
+    enrolmentInitiatedSuccessfully = true
   )
 
   protected val emailVerification: VerificationStatus = VerificationStatus(

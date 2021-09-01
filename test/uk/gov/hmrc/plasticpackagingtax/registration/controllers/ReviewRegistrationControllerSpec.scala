@@ -233,7 +233,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         val completedRegistrationWithNrsDetail = completedRegistration.copy(metaData =
           aCompletedRegistration.metaData.copy(nrsDetails =
             Some(
-              NrsDetails(nrSubsmissionId = subscriptionCreate.nrSubmissionId, failureReason = None)
+              NrsDetails(nrSubsmissionId = subscriptionCreate.nrsSubmissionId, failureReason = None)
             )
           )
         )

@@ -89,6 +89,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val emailVerificationHost: String =
     servicesConfig.baseUrl("email-verification")
 
+  lazy val pptAccountHost: String =
+    servicesConfig.baseUrl("ppt-account-frontend")
+
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
   lazy val feedbackUnauthenticatedLink: String =
@@ -137,4 +140,5 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       .getOptional[Map[String, Boolean]](s"features")
       .getOrElse(Map.empty)
 
+  lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
 }

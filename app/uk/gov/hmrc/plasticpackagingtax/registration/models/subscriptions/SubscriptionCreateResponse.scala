@@ -24,8 +24,10 @@ case class SubscriptionCreateResponse(
   pptReference: String,
   processingDate: ZonedDateTime,
   formBundleNumber: String,
-  nrSubmissionId: Option[String] = None,
-  nrsFailureReason: Option[String] = None
+  nrsNotifiedSuccessfully: Boolean,
+  nrsSubmissionId: Option[String],
+  nrsFailureReason: Option[String],
+  enrolmentInitiatedSuccessfully: Boolean
 )
 
 object SubscriptionCreateResponse {
