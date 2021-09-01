@@ -119,20 +119,6 @@ class EmailVerificationConnector @Inject() (
       }
   }
 
-  def getTestOnlyPasscode()(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] =
-    httpClient.GET[HttpResponse](appConfig.getTestOnlyPasscodeUrl)
-      .map {
-        case response @ HttpResponse(OK, _, _) =>
-          Right(response.body)
-        case response =>
-          Left(
-            DownstreamServiceError(
-              s"Unable to find test only passcodes :, status: ${response.status}, error: ${response.body}",
-              FailedToFetchTestOnlyPasscode("Failed to get test only passcodes")
-            )
-          )
-      }
-
 }
 
 case class CreateEmailVerificationException(message: String) extends Exception

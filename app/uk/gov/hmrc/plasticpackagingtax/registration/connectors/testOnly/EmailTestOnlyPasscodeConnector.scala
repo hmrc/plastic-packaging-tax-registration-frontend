@@ -16,24 +16,22 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.testOnly
 
-import com.kenshoo.play.metrics.Metrics
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{DownstreamServiceError, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{CreateEmailVerificationRequest, VerificationStatus, VerifyPasscodeRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  DownstreamServiceError,
+  ServiceError
+}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailTestOnlyPasscodeConnector @Inject() (
-  httpClient: HttpClient,
-  appConfig: AppConfig,
-  metrics: Metrics
-)(implicit ec: ExecutionContext) {
+class EmailTestOnlyPasscodeConnector @Inject() (httpClient: HttpClient, appConfig: AppConfig)(
+  implicit ec: ExecutionContext
+) {
 
   def getTestOnlyPasscode()(implicit hc: HeaderCarrier): Future[Either[ServiceError, String]] =
     httpClient.GET[HttpResponse](appConfig.getTestOnlyPasscodeUrl)
@@ -51,4 +49,4 @@ class EmailTestOnlyPasscodeConnector @Inject() (
 
 }
 
-case class FailedToFetchTestOnlyPasscode(message: String)    extends Exception
+case class FailedToFetchTestOnlyPasscode(message: String) extends Exception

@@ -23,6 +23,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.status
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.testOnly.EmailTestOnlyPasscodeConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   FailedToFetchTestOnlyPasscode
@@ -34,11 +35,14 @@ import scala.concurrent.Future
 class EmailPasscodeControllerSpec extends ControllerSpec {
   private val mcc = stubMessagesControllerComponents()
 
+  val mockEmailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector =
+    mock[EmailTestOnlyPasscodeConnector]
+
   private val controller =
     new EmailPasscodeController(authenticate = mockAuthAction,
                                 mcc = mcc,
                                 mockJourneyAction,
-                                emailVerificationConnector = mockEmailVerificationConnector
+                                emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector
     )
 
   "EmailPasscode controller" should {
@@ -47,9 +51,9 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
 
       "passcode is returned successfully" in {
         authorizedUser()
-        when(mockEmailVerificationConnector.getTestOnlyPasscode()(any[HeaderCarrier])).thenReturn(
-          Future.successful(Right("passcodes"))
-        )
+        when(
+          mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])
+        ).thenReturn(Future.successful(Right("passcodes")))
         val result = controller.testOnlyGetPasscodes()(getRequest())
         status(result) mustBe OK
       }
@@ -66,7 +70,9 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
 
       "connector throws an exception" in {
         authorizedUser()
-        when(mockEmailVerificationConnector.getTestOnlyPasscode()(any[HeaderCarrier])).thenReturn(
+        when(
+          mockEmailTestOnlyPasscodeConnector.getTestOnlyPasscode()(any[HeaderCarrier])
+        ).thenReturn(
           Future.successful(
             Left(
               DownstreamServiceError(

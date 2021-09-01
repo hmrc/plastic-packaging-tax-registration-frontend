@@ -18,17 +18,15 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors.testOnly
 
 import base.Injector
 import base.it.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.Status
-import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
-import play.api.libs.json.Json
-import play.api.libs.json.Json.toJson
-import play.api.test.Helpers.{OK, await}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{DownstreamServiceError, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, TOO_MANY_ATTEMPTS}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
+import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.test.Helpers.{await, OK}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  DownstreamServiceError,
+  ServiceError
+}
 
 class EmailTestOnlyPasscodeConnectorISpec
     extends ConnectorISpec with Injector with ScalaFutures with EitherValues {

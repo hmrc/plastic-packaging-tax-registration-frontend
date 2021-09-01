@@ -193,29 +193,6 @@ class EmailVerificationConnectorISpec
     }
   }
 
-  "getTestOnlyPasscode" when {
-
-    "returns passcode" in {
-      val validResponse =
-        "{\"passcodes\":\"[{\"email\" : \"ppt@mail.com\", \"passcode\" : \"HDDDYX\", }]\"}"
-      givenGetTestOnlyPasscode(OK, validResponse)
-
-      val res = await(connector.getTestOnlyPasscode())
-
-      res.value mustBe validResponse
-    }
-
-    "throws exception for errors" in {
-      val validResponse =
-        "{\"code\": \"UNEXPECTED_ERROR\",\n    \"message\": \"Bearer token expired\"}"
-      givenGetTestOnlyPasscode(INTERNAL_SERVER_ERROR, validResponse)
-
-      val res: Either[ServiceError, String] = await(connector.getTestOnlyPasscode())
-
-      res.left.value.isInstanceOf[DownstreamServiceError]
-    }
-  }
-
   private def givenGetEmailVerificationDetailsReturns(status: Int, credId: String, body: String) =
     stubFor(
       get(urlMatching(s"/email-verification/verification-status/$credId"))
@@ -239,16 +216,6 @@ class EmailVerificationConnectorISpec
   private def givenPostToSubmitPasscode(status: Int, journeyId: String, body: String) =
     stubFor(
       post(s"/email-verification/journey/$journeyId/passcode")
-        .willReturn(
-          aResponse()
-            .withStatus(status)
-            .withBody(body)
-        )
-    )
-
-  private def givenGetTestOnlyPasscode(status: Int, body: String) =
-    stubFor(
-      get(s"/test-only/passcodes")
         .willReturn(
           aResponse()
             .withStatus(status)

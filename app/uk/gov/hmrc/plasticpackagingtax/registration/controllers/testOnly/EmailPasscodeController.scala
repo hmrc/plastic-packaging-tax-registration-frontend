@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.testOnly
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.EmailVerificationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.testOnly.EmailTestOnlyPasscodeConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -30,13 +30,13 @@ class EmailPasscodeController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
   journeyAction: JourneyAction,
-  emailVerificationConnector: EmailVerificationConnector
+  emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def testOnlyGetPasscodes(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      emailVerificationConnector.getTestOnlyPasscode.flatMap {
+      emailTestOnlyPasscodeConnector.getTestOnlyPasscode.flatMap {
         case Right(response) => Future.successful(Ok(response))
         case Left(error)     => throw error
       }
