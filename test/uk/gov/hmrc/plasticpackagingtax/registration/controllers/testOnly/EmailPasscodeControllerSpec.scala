@@ -45,7 +45,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
 
     "return 200" when {
 
-      "user there is passcode" in {
+      "passcode is returned successfully" in {
         authorizedUser()
         when(mockEmailVerificationConnector.getTestOnlyPasscode()(any[HeaderCarrier])).thenReturn(
           Future.successful(Right("passcodes"))
