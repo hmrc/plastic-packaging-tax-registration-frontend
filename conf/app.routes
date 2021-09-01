@@ -40,6 +40,10 @@ POST       /primary-contact-email-passcode   uk.gov.hmrc.plasticpackagingtax.reg
 GET        /primary-contact-email-passcode-confirmation   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage()
 POST       /primary-contact-email-passcode-confirmation   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.submit()
 
+GET        /incorrect-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
+POST       /incorrect-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTooManyAttemptsPasscodeController.submit()
+
+
 GET        /primary-contact-phone-number    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.displayPage()
 POST       /primary-contact-phone-number    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.submit()
 

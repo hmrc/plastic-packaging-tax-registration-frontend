@@ -101,12 +101,8 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
           )
         )
       case Right(TOO_MANY_ATTEMPTS) =>
-        Future.successful(
-          BadRequest(
-            page(EmailAddressPasscode.form().withError("tooManyAttempts", "Too Many Attempts"),
-                 None
-            )
-          )
+        Future(
+          Redirect(routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage())
         )
       case Right(_) =>
         Future.successful(
