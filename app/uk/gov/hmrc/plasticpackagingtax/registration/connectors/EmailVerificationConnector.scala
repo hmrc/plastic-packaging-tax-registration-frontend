@@ -123,3 +123,4 @@ class EmailVerificationConnector @Inject() (
 
 case class CreateEmailVerificationException(message: String) extends Exception
 case class VerifyPasscodeException(message: String)          extends Exception
+case class FailedToFetchTestOnlyPasscode(message: String)    extends Exception

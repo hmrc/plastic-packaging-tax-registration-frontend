@@ -113,6 +113,20 @@ function createPartnershipGRSFeatureFlagsLink() {
     return a
 }
 
+function getPasscode(){
+    var url;
+    if (window.location.hostname === 'localhost') {
+        url = 'http://localhost:8503/plastic-packaging-tax/test-only/passcode'
+    } else {
+        url = '/plastic-packaging-tax/test-only/passcode'
+    }
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp. open("GET", url, false); // false for synchronous request.
+    xmlHttp. send();
+    var passcode = JSON.parse(xmlHttp.responseText).passcodes[0].passcode
+    return passcode
+}
+
 const currentPageIs = (path) => {
     if(path.includes("*")) {
         let matches = window.location.pathname.match(path)
@@ -367,8 +381,9 @@ const primaryContactEmailAddress = () => {
 
 const primaryContactEmailAddressPasscode = () => {
     if (currentPageIs('/plastic-packaging-tax/primary-contact-email-passcode')) {
+        var passcode = getPasscode()
 
-        document.getElementById('value').value = 'DNCLRK'
+        document.getElementById('value').value = passcode
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
