@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -75,10 +75,12 @@ class OrganisationDetailsTypeController @Inject() (
                           case Some(OrgType.UK_COMPANY) =>
                             getUkCompanyRedirectUr()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.SOLE_TRADER) =>
+                          case Some(OrgType.SOLE_TRADER)
+                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
                             getSoleTraderRedirectUr()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.PARTNERSHIP) =>
+                          case Some(OrgType.PARTNERSHIP)
+                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
                             Future(Redirect(routes.PartnershipTypeController.displayPage()))
                           case _ =>
                             Future(
