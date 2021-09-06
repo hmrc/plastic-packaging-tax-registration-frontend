@@ -60,11 +60,6 @@ class TooManyAttemptsPasscodeViewSpec extends UnitViewSpec with Matchers {
         messages("primaryContactDetails.tooManyAttempts.passcode.2")
       )
     }
-
-    "display 'Continue' button" in {
-      view.getElementById("submit").text() mustBe "Continue"
-    }
-
   }
 
 }

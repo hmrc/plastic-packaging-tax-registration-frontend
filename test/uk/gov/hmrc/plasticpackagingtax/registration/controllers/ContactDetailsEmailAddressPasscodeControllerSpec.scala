@@ -60,7 +60,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
                                                      emailVerificationConnector =
                                                        mockEmailVerificationConnector,
                                                      mcc = mcc,
-                                                     page = page
+                                                     page = page,
+                                                     appConfig = config
     )
 
   override protected def beforeEach(): Unit = {
@@ -157,12 +158,15 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
           mockEmailVerificationVerifyPasscode(TOO_MANY_ATTEMPTS)
+          when(config.signOutUrl).thenReturn("signOutUrl")
+          when(config.incorrectPasscodeUrl).thenReturn("incorrectPasscodeUrl")
+
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
           formAction._1 match {
             case "Continue" =>
-              status(result) mustBe BAD_REQUEST
+              status(result) mustBe SEE_OTHER
             case "Unknown" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }

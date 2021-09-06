@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   EmailVerificationConnector,
   ServiceError
@@ -49,7 +50,8 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   emailVerificationConnector: EmailVerificationConnector,
-  page: email_address_passcode_page
+  page: email_address_passcode_page,
+  appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -101,8 +103,8 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
           )
         )
       case Right(TOO_MANY_ATTEMPTS) =>
-        Future(
-          Redirect(routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage())
+        Future.successful(
+          Redirect(appConfig.signOutUrl, Map("continue" -> Seq(appConfig.incorrectPasscodeUrl)))
         )
       case Right(_) =>
         Future.successful(

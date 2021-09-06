@@ -21,10 +21,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.json.JsObject
-import play.api.test.FakeRequest
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.http.Status.OK
+import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.too_many_attempts_passcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -34,11 +32,7 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsTooManyAttemptsPasscodeController(authenticate = mockAuthAction,
-                                                        mockJourneyAction,
-                                                        mcc = mcc,
-                                                        page = page
-    )
+    new ContactDetailsTooManyAttemptsPasscodeController(mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -56,7 +50,7 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
 
     "page is displayed " when {
 
-      "user is authorised and display page method is invoked" in {
+      "display page method is invoked" in {
         authorizedUser()
         val result = controller.displayPage()(getRequest())
 
@@ -64,37 +58,6 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
       }
     }
 
-    "return 303" when {
-
-      "when form is submitted" in {
-        authorizedUser()
-
-        val result = controller.submit()(postRequest(JsObject.empty))
-
-        status(result) mustBe SEE_OTHER
-      }
-    }
-
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
-    "redirects to registration page" when {
-      "user submits answers" in {
-        authorizedUser()
-        val result =
-          controller.submit()(FakeRequest("POST", ""))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-      }
-    }
   }
 
 }

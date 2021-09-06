@@ -47,13 +47,6 @@
         </label>
     </h1>
 
-  @formHelper(action = pptRoutes.ContactDetailsTooManyAttemptsPasscodeController.submit(), 'autoComplete -> "off") {
+  @paragraphBody(message = messages("primaryContactDetails.tooManyAttempts.passcode.2"), id = Some("tooManyAttempts-passcode-id"))
 
-      @paragraphBody(message = messages("primaryContactDetails.tooManyAttempts.passcode.2"), id = Some("tooManyAttempts-passcode-id"))
-
-    @govukButton(Button(
-          content = Text(messages("site.button.continue")),
-          classes = "govuk-!-margin-right-1",
-          attributes = Map("id" -> "submit", "name" -> Continue.toString)))
-    }
-  }
+}
