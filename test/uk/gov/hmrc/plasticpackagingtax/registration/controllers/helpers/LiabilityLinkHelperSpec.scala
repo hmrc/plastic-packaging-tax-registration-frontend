@@ -66,6 +66,22 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
           routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
       }
 
+      "weight is equal to deMinis" in {
+        val headers = Headers().add(HeaderNames.xRequestId -> "req1")
+        val journeyRequest =
+          new JourneyRequest(
+            authenticatedRequest =
+              authRequest(headers, user = PptTestData.newUser("123")),
+            aRegistration(
+              withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(10000)))))
+            ),
+            appConfig = appConfig
+          )
+        val result = helper.backLink()(journeyRequest)
+        result mustBe
+          routes.LiabilityWeightController.displayPage()
+      }
+
       "weight is None" in {
         val headers = Headers().add(HeaderNames.xRequestId -> "req1")
         val journeyRequest =
