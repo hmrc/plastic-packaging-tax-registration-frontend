@@ -50,8 +50,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   emailVerificationConnector: EmailVerificationConnector,
-  page: email_address_passcode_page,
-  appConfig: AppConfig
+  page: email_address_passcode_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
@@ -104,7 +103,9 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
         )
       case Right(TOO_MANY_ATTEMPTS) =>
         Future.successful(
-          Redirect(appConfig.signOutUrl, Map("continue" -> Seq(appConfig.incorrectPasscodeUrl)))
+          Redirect(
+            routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
+          ).withNewSession
         )
       case Right(_) =>
         Future.successful(

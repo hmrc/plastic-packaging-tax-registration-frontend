@@ -144,8 +144,4 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       .getOrElse(Map.empty)
 
   lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
-
-  lazy val signOutUrl: String = config.get[String]("urls.signOut")
-
-  lazy val incorrectPasscodeUrl: String = config.get[String]("urls.incorrectPasscode")
 }

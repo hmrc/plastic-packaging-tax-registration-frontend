@@ -31,6 +31,8 @@ class TooManyAttemptsPasscodeViewSpec extends UnitViewSpec with Matchers {
     "have proper messages for labels" in {
       messages must haveTranslationFor("primaryContactDetails.sectionHeader")
       messages must haveTranslationFor("primaryContactDetails.tooManyAttempts.passcode.title")
+      messages must haveTranslationFor("primaryContactDetails.tooManyAttempts.passcode.1")
+      messages must haveTranslationFor("primaryContactDetails.tooManyAttempts.passcode.2")
     }
 
     val view = page()(request = journeyRequest, messages = messages)

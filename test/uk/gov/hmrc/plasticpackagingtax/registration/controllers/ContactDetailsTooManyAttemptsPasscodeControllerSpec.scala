@@ -46,9 +46,9 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
     super.afterEach()
   }
 
-  "Too many attempts " should {
+  "Too many attempts page" should {
 
-    "page is displayed " when {
+    "be displayed " when {
 
       "display page method is invoked" in {
         authorizedUser()
