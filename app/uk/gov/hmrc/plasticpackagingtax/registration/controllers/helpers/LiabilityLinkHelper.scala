@@ -33,7 +33,7 @@ case class LiabilityLinkHelper @Inject() (appConfig: AppConfig) {
       case Some(weight) =>
         weight.totalKg match {
           case Some(totalKg) =>
-            if (totalKg <= deMinimis)
+            if (totalKg < deMinimis)
               routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
             else routes.LiabilityWeightController.displayPage()
           case None => routes.RegistrationController.displayPage()
