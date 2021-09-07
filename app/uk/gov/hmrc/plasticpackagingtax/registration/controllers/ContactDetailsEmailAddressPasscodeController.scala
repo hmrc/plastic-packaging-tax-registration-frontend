@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   EmailVerificationConnector,
   ServiceError
@@ -102,11 +103,9 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
         )
       case Right(TOO_MANY_ATTEMPTS) =>
         Future.successful(
-          BadRequest(
-            page(EmailAddressPasscode.form().withError("tooManyAttempts", "Too Many Attempts"),
-                 None
-            )
-          )
+          Redirect(
+            routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
+          ).withNewSession
         )
       case Right(_) =>
         Future.successful(

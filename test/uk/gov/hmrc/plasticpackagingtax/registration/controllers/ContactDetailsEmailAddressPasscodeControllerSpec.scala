@@ -157,12 +157,13 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockRegistrationFind(reg)
           mockRegistrationUpdate(reg)
           mockEmailVerificationVerifyPasscode(TOO_MANY_ATTEMPTS)
+
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
           formAction._1 match {
             case "Continue" =>
-              status(result) mustBe BAD_REQUEST
+              status(result) mustBe SEE_OTHER
             case "Unknown" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
