@@ -20,10 +20,22 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{EmailVerificationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, Continue => ContinueAction}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  EmailVerificationConnector,
+  ServiceError
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  Continue => ContinueAction
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddressPasscode
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JourneyStatus, TOO_MANY_ATTEMPTS}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
+  COMPLETE,
+  INCORRECT_PASSCODE,
+  JourneyStatus,
+  TOO_MANY_ATTEMPTS
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
