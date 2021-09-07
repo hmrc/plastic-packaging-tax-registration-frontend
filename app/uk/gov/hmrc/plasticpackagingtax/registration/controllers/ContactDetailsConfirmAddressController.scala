@@ -169,7 +169,8 @@ class ContactDetailsConfirmAddressController @Inject() (
         else
           registration.primaryContactDetails.copy(useRegisteredAddress =
                                                     formData.useRegisteredAddress,
-                                                  address = None
+                                                  address =
+                                                    registration.primaryContactDetails.address
           )
       }
       val updatedOrgDetails =

@@ -27,7 +27,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Cacheable,
+  PrimaryContactDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -79,9 +83,10 @@ class ContactDetailsAddressController @Inject() (
     formData: Address
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedAddress =
-        registration.primaryContactDetails.copy(address = Some(formData))
-      registration.copy(primaryContactDetails = updatedAddress)
+      registration.copy(primaryContactDetails = updateAddress(formData, registration))
     }
+
+  private def updateAddress(address: Address, registration: Registration): PrimaryContactDetails =
+    registration.primaryContactDetails.copy(address = Some(address))
 
 }
