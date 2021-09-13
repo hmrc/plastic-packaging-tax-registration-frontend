@@ -34,12 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
-  Address,
-  FullName,
-  LiabilityWeight,
-  OrgType
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
@@ -312,7 +307,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
   }
 
   private def aCompletedRegistration =
-    aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)),
+    aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()),
                   withLiabilityDetails(
                     LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
                   ),

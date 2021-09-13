@@ -21,13 +21,17 @@ import base.{MockAuthAction, PptTestData}
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.PARTNERSHIP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   PartnershipTypeEnum,
   SCOTTISH_PARTNERSHIP
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
@@ -107,12 +111,34 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                      registrationStatus = "REGISTERED"
     )
 
+  protected val unregisteredIncorporationRegistrationDetails: IncorporationRegistrationDetails =
+    IncorporationRegistrationDetails(registeredBusinessPartnerId = None,
+                                     registrationStatus = "REGISTRATION_NOT_CALLED"
+    )
+
   protected val incorporationDetails: IncorporationDetails =
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
                          testUtr,
                          testCompanyAddress,
                          incorporationRegistrationDetails
+    )
+
+  protected val unregisteredIncorporationDetails: IncorporationDetails =
+    IncorporationDetails(testCompanyNumber,
+                         testCompanyName,
+                         testUtr,
+                         testCompanyAddress,
+                         unregisteredIncorporationRegistrationDetails
+    )
+
+  protected val unregisteredSoleTraderDetails: SoleTraderIncorporationDetails =
+    SoleTraderIncorporationDetails(firstName = "Sole",
+                                   lastName = "Trader",
+                                   dateOfBirth = "12/12/1960",
+                                   nino = "1234",
+                                   sautr = Some("ABC"),
+                                   registration = unregisteredIncorporationRegistrationDetails
     )
 
   protected val soleTraderIncorporationDetails: SoleTraderIncorporationDetails =
@@ -173,12 +199,20 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
   )
 
-  protected def registeredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
+  protected def registeredUkCompanyOrgDetails(): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(orgType),
+                        organisationType = Some(UK_COMPANY),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         safeNumber = Some(safeNumber),
                         incorporationDetails = Some(incorporationDetails)
+    )
+
+  protected def registeredSoleTraderDetails(): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(SOLE_TRADER),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        safeNumber = Some(safeNumber),
+                        soleTraderDetails = Some(soleTraderIncorporationDetails)
     )
 
   protected def registeredGeneralPartnershipDetails(): OrganisationDetails =
@@ -197,8 +231,21 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                         partnershipDetails = Some(partnershipDetailsWithScottishPartnership)
     )
 
-  protected def unregisteredUkOrgDetails(orgType: OrgType.Value): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true), organisationType = Some(orgType))
+  protected def unregisteredUkCompanyOrgDetails(): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(UK_COMPANY),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        safeNumber = None,
+                        incorporationDetails = Some(unregisteredIncorporationDetails)
+    )
+
+  protected def unregisteredSoleTraderOrgDetails(): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(SOLE_TRADER),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        safeNumber = None,
+                        soleTraderDetails = Some(unregisteredSoleTraderDetails)
+    )
 
   protected def unregisteredPartnershipDetails(
     partnershipType: PartnershipTypeEnum

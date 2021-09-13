@@ -18,7 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  OrgType,
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
   PartnershipDetails,
@@ -33,7 +42,26 @@ case class OrganisationDetails(
   soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None
-)
+) {
+
+  def businessPartnerIdPresent() =
+    organisationType match {
+      case Some(UK_COMPANY) =>
+        incorporationDetails.get.registration.registeredBusinessPartnerId.isDefined
+      case Some(SOLE_TRADER) =>
+        soleTraderDetails.get.registration.registeredBusinessPartnerId.isDefined
+      case Some(PARTNERSHIP) =>
+        partnershipDetails.get.partnershipType match {
+          case GENERAL_PARTNERSHIP =>
+            partnershipDetails.get.generalPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
+          case SCOTTISH_PARTNERSHIP =>
+            partnershipDetails.get.scottishPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
+          case _ => false
+        }
+      case _ => false
+    }
+
+}
 
 object OrganisationDetails {
   implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
