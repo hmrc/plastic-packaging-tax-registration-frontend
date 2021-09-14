@@ -84,11 +84,11 @@ class IncorpIdControllerSpec extends ControllerSpec {
   )
 
   private val registeredGeneralPartnership = aRegistration(
-    withOrganisationDetails(registeredGeneralPartnershipDetails())
+    withOrganisationDetails(registeredGeneralPartnershipOrgDetails())
   )
 
   private val registeredScottishPartnership = aRegistration(
-    withOrganisationDetails(registeredScottishPartnershipDetails())
+    withOrganisationDetails(registeredScottishPartnershipOrgDetails())
   )
 
   "incorpIdCallback" should {
