@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentMatchers, Mockito}
@@ -26,10 +26,9 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  CHARITY_OR_NOT_FOR_PROFIT,
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
@@ -78,7 +77,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked with uk company" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(UK_COMPANY),
+            OrganisationDetails(isBasedInUk = Some(true),
+                                organisationType = Some(UK_COMPANY),
                                 incorporationDetails =
                                   Some(
                                     IncorporationDetails(companyNumber = "123456",
@@ -104,7 +104,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked with sole trader" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(SOLE_TRADER),
+            OrganisationDetails(isBasedInUk = Some(true),
+                                organisationType = Some(SOLE_TRADER),
                                 soleTraderDetails = Some(soleTraderIncorporationDetails)
             )
           )
@@ -121,7 +122,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked with partnership" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(PARTNERSHIP),
+            OrganisationDetails(isBasedInUk = Some(true),
+                                organisationType = Some(PARTNERSHIP),
                                 partnershipDetails = Some(partnershipDetails)
             )
           )
@@ -138,61 +140,6 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     }
 
     "return 303" when {
-
-      "Journey ID is invalid or does not exist" in {
-        authorizedUser()
-
-        val registration = aRegistration(withIncorpJourneyId(None))
-        mockRegistrationFind(registration)
-        given(
-          page.apply(refEq(registration),
-                     refEq(Some(incorporationDetails)),
-                     refEq(Some(soleTraderIncorporationDetails)),
-                     refEq(Some(partnershipDetails))
-          )(any(), any())
-        ).willReturn(HtmlFormat.empty)
-
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe SEE_OTHER
-      }
-
-      "get details fails for uk company" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
-        )
-        authorizedUser()
-        mockRegistrationFind(registration)
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "get details fails for sole trader" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
-        )
-        authorizedUser()
-        mockRegistrationFind(registration)
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "get details fails for partnership" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
-        )
-        authorizedUser()
-        mockRegistrationFind(registration)
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
       "when form is submitted" in {
         authorizedUser()
         val completedRegistration =
@@ -212,6 +159,35 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         metricsMock.defaultRegistry.counter(
           "ppt.registration.success.submission.counter"
         ).getCount mustBe 1
+      }
+    }
+
+    "throw exceptions" when {
+      "get details fails for uk company" in {
+        authorizedUser()
+        mockRegistrationFindFailure()
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[Exception](status(result))
+      }
+
+      "get details fails for sole trader" in {
+        authorizedUser()
+        mockRegistrationFindFailure()
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[Exception](status(result))
+      }
+
+      "get details fails for partnership" in {
+        authorizedUser()
+        mockRegistrationFindFailure()
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[Exception](status(result))
       }
     }
 
@@ -260,48 +236,6 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
         metricsMock.defaultRegistry.counter(
           "ppt.registration.failed.submission.counter"
         ).getCount mustBe 1
-      }
-
-      "user is not shown confirmation page if registration has no incorporation details for limited company" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(organisationDetails =
-              OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = None)
-            )
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "user is not shown confirmation page if registration has no incorporation details for sole trader" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(organisationDetails =
-              OrganisationDetails(organisationType = Some(SOLE_TRADER), soleTraderDetails = None)
-            )
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "user is not shown confirmation page if registration for not supported company type" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(organisationDetails =
-              OrganisationDetails(organisationType = Some(CHARITY_OR_NOT_FOR_PROFIT))
-            )
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        intercept[InternalServerException](status(result))
       }
     }
   }
