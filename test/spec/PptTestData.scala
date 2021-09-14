@@ -207,7 +207,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                         incorporationDetails = Some(incorporationDetails)
     )
 
-  protected def registeredSoleTraderDetails(): OrganisationDetails =
+  protected def registeredSoleTraderOrgDetails(): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true),
                         organisationType = Some(SOLE_TRADER),
                         businessRegisteredAddress = Some(testBusinessAddress),
@@ -215,7 +215,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                         soleTraderDetails = Some(soleTraderIncorporationDetails)
     )
 
-  protected def registeredGeneralPartnershipDetails(): OrganisationDetails =
+  protected def registeredGeneralPartnershipOrgDetails(): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true),
                         organisationType = Some(PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
@@ -223,7 +223,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                         partnershipDetails = Some(partnershipDetails)
     )
 
-  protected def registeredScottishPartnershipDetails(): OrganisationDetails =
+  protected def registeredScottishPartnershipOrgDetails(): OrganisationDetails =
     OrganisationDetails(isBasedInUk = Some(true),
                         organisationType = Some(PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),

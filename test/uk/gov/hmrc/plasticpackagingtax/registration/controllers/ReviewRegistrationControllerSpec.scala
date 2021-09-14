@@ -22,6 +22,7 @@ import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, redirectLocation, status}
@@ -42,7 +43,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.util.UUID
 
-class ReviewRegistrationControllerSpec extends ControllerSpec {
+class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
   private val page = mock[review_registration_page]
   private val mcc  = stubMessagesControllerComponents()
 
@@ -141,24 +142,38 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
     "return 303" when {
       "when form is submitted" in {
-        authorizedUser()
-        val completedRegistration =
-          aCompletedRegistration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
-        mockRegistrationFind(completedRegistration)
-        mockSubscriptionSubmit(subscriptionCreate)
 
-        val result = controller.submit()(postRequest(JsObject.empty))
+        val registrations = Table("Registration",
+                                  aCompletedUkCompanyRegistration,
+                                  aCompletedSoleTraderRegistration,
+                                  aCompletedGeneralPartnershipRegistration,
+                                  aCompletedScottishPartnershipRegistration
+        )
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
-        verify(mockSubscriptionsConnector).submitSubscription(
-          ArgumentMatchers.eq(safeNumber),
-          ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
-        )(any[HeaderCarrier])
+        var submissionCount = 0
 
-        metricsMock.defaultRegistry.counter(
-          "ppt.registration.success.submission.counter"
-        ).getCount mustBe 1
+        forAll(registrations) { registration =>
+          authorizedUser()
+          val completedRegistration =
+            registration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+          mockRegistrationFind(completedRegistration)
+          mockSubscriptionSubmit(subscriptionCreate)
+
+          val result = controller.submit()(postRequest(JsObject.empty))
+          submissionCount += 1
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+          verify(mockSubscriptionsConnector).submitSubscription(
+            ArgumentMatchers.eq(safeNumber),
+            ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
+          )(any[HeaderCarrier])
+
+          metricsMock.defaultRegistry.counter(
+            "ppt.registration.success.submission.counter"
+          ).getCount mustBe submissionCount
+        }
+
       }
     }
 
@@ -195,14 +210,14 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "submission of audit event" in {
         authorizedUser()
 
-        val completedRegistration = aCompletedRegistration
+        val completedRegistration = aCompletedUkCompanyRegistration
         mockRegistrationFind(completedRegistration)
         mockSubscriptionSubmit(subscriptionCreate)
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
         val completedRegistrationWithNrsDetail = completedRegistration.copy(metaData =
-          aCompletedRegistration.metaData.copy(nrsDetails =
+          aCompletedUkCompanyRegistration.metaData.copy(nrsDetails =
             Some(
               NrsDetails(nrSubsmissionId = subscriptionCreate.nrsSubmissionId, failureReason = None)
             )
@@ -227,7 +242,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "user submits form and the submission fails" in {
         authorizedUser()
-        mockRegistrationFind(aCompletedRegistration)
+        mockRegistrationFind(aCompletedUkCompanyRegistration)
         mockSubscriptionSubmitFailure(new IllegalStateException("BANG!"))
         val result =
           controller.submit()(postRequest(JsObject.empty))
@@ -240,26 +255,49 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     }
   }
 
-  private def aCompletedRegistration =
+  private def aCompletedUkCompanyRegistration =
     aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()),
-                  withLiabilityDetails(
-                    LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
-                  ),
-                  withPrimaryContactDetails(
-                    PrimaryContactDetails(fullName = Some(FullName("Jack", "Gatsby")),
-                                          jobTitle = Some("Developer"),
-                                          phoneNumber = Some("0203 4567 890"),
-                                          email = Some("test@test.com"),
-                                          address = Some(
-                                            Address(addressLine1 = "2 Scala Street",
-                                                    addressLine2 = Some("Soho"),
-                                                    townOrCity = "London",
-                                                    postCode = "W1T 2HN"
-                                            )
-                                          )
-                    )
-                  ),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
                   withMetaData(MetaData(registrationCompleted = true))
     )
+
+  private def aCompletedSoleTraderRegistration =
+    aRegistration(withOrganisationDetails(registeredSoleTraderOrgDetails()),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
+                  withMetaData(MetaData(registrationCompleted = true))
+    )
+
+  private def aCompletedGeneralPartnershipRegistration =
+    aRegistration(withOrganisationDetails(registeredGeneralPartnershipOrgDetails()),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
+                  withMetaData(MetaData(registrationCompleted = true))
+    )
+
+  private def aCompletedScottishPartnershipRegistration =
+    aRegistration(withOrganisationDetails(registeredScottishPartnershipOrgDetails()),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
+                  withMetaData(MetaData(registrationCompleted = true))
+    )
+
+  private val liabilityDetails =
+    LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+
+  private val primaryContactDetails = PrimaryContactDetails(
+    fullName = Some(FullName("Jack", "Gatsby")),
+    jobTitle = Some("Developer"),
+    phoneNumber = Some("0203 4567 890"),
+    email = Some("test@test.com"),
+    address = Some(
+      Address(addressLine1 = "2 Scala Street",
+              addressLine2 = Some("Soho"),
+              townOrCity = "London",
+              postCode = "W1T 2HN"
+      )
+    )
+  )
 
 }

@@ -180,27 +180,21 @@ class ReviewRegistrationController @Inject() (
         registration.organisationDetails.incorporationDetails.flatMap(
           details => details.registration.registeredBusinessPartnerId
         )
-    }.getOrElse(throw new Exception("Safe Id is required for a Subscription create"))
+    }.getOrElse(throw new IllegalStateException("Safe Id is required for a Subscription create"))
 
   private def getSoleTraderDetails()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[SoleTraderIncorporationDetails] =
-    request.registration.organisationDetails.soleTraderDetails.fold(
-      throw new Exception("Unable to fetch sole trader details from cache")
-    )(details => Future.successful(details))
+    Future.successful(request.registration.organisationDetails.soleTraderDetails.get)
 
   private def getPartnershipDetails()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[PartnershipDetails] =
-    request.registration.organisationDetails.partnershipDetails.fold(
-      throw new Exception("Unable to fetch partnership details from cache")
-    )(details => Future.successful(details))
+    Future.successful(request.registration.organisationDetails.partnershipDetails.get)
 
   private def getIncorporationDetails()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[IncorporationDetails] =
-    request.registration.organisationDetails.incorporationDetails.fold(
-      throw new Exception("Unable to fetch incorporation details from cache")
-    )(details => Future.successful(details))
+    Future.successful(request.registration.organisationDetails.incorporationDetails.get)
 
 }
