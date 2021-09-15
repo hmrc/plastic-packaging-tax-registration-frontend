@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import com.kenshoo.play.metrics.Metrics
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
@@ -71,11 +71,12 @@ class ReviewRegistrationController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       if (request.registration.isCheckAndSubmitReady)
-        request.registration.organisationDetails.organisationType match {
+        // The call to check that the registration is in a suitable state before this means that
+        // exhaustive matching is not needed
+        (request.registration.organisationDetails.organisationType: @unchecked) match {
           case Some(UK_COMPANY)  => ukCompanyReview()
           case Some(SOLE_TRADER) => soleTraderReview()
           case Some(PARTNERSHIP) => partnershipReview()
-          case _                 => throw new InternalServerException(s"Company type not supported")
         }
       else
         Future(Redirect(routes.RegistrationController.displayPage()))
@@ -159,20 +160,22 @@ class ReviewRegistrationController @Inject() (
     registration.organisationDetails.organisationType.flatMap {
       case OrgType.SOLE_TRADER =>
         registration.organisationDetails.soleTraderDetails.flatMap(
-          details => details.registration.registeredBusinessPartnerId
+          soleTraderDetails => soleTraderDetails.registration.registeredBusinessPartnerId
         )
       case OrgType.PARTNERSHIP =>
         registration.organisationDetails.partnershipDetails.flatMap(
           partnershipDetails =>
             partnershipDetails.partnershipType match {
               case GENERAL_PARTNERSHIP =>
-                partnershipDetails.generalPartnershipDetails.fold(
-                  throw new IllegalStateException("Missing general partnership details")
-                )(_.registration.registeredBusinessPartnerId)
+                partnershipDetails.generalPartnershipDetails.flatMap(
+                  generalPartnershipDetails =>
+                    generalPartnershipDetails.registration.registeredBusinessPartnerId
+                )
               case SCOTTISH_PARTNERSHIP =>
-                partnershipDetails.scottishPartnershipDetails.fold(
-                  throw new IllegalStateException("Missing scottish partnership details")
-                )(_.registration.registeredBusinessPartnerId)
+                partnershipDetails.scottishPartnershipDetails.flatMap(
+                  scottishPartnershipDetails =>
+                    scottishPartnershipDetails.registration.registeredBusinessPartnerId
+                )
               case _ => throw new IllegalStateException("Illegal partnership type")
             }
         )
