@@ -70,41 +70,28 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      if (request.registration.isCheckAndSubmitReady)
-        // The call to check that the registration is in a suitable state before this means that
-        // exhaustive matching is not needed
-        (request.registration.organisationDetails.organisationType: @unchecked) match {
-          case Some(UK_COMPANY)  => ukCompanyReview()
-          case Some(SOLE_TRADER) => soleTraderReview()
-          case Some(PARTNERSHIP) => partnershipReview()
+      if (request.registration.isCheckAndSubmitReady) {
+        markRegistrationAsReviewed().map { _ =>
+          // The call to check that the registration is in a suitable state before this means that
+          // exhaustive matching is not needed
+          (request.registration.organisationDetails.organisationType: @unchecked) match {
+            case Some(UK_COMPANY) => ukCompanyReview()
+            case Some(SOLE_TRADER) => soleTraderReview()
+            case Some(PARTNERSHIP) => partnershipReview()
+          }
         }
-      else
+      } else
         Future(Redirect(routes.RegistrationController.displayPage()))
     }
 
   private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =
-    for {
-      soleTraderDetails <- getSoleTraderDetails()
-      _                 <- markRegistrationAsReviewed()
-    } yield Ok(
-      page(registration = request.registration, soleTraderDetails = Some(soleTraderDetails))
-    )
+    Ok(page(registration = request.registration, soleTraderDetails = getSoleTraderDetails()))
 
   private def partnershipReview()(implicit request: JourneyRequest[AnyContent]) =
-    for {
-      partnershipDetails <- getPartnershipDetails()
-      _                  <- markRegistrationAsReviewed()
-    } yield Ok(
-      page(registration = request.registration, partnershipDetails = Some(partnershipDetails))
-    )
+    Ok(page(registration = request.registration, partnershipDetails = getPartnershipDetails()))
 
   private def ukCompanyReview()(implicit request: JourneyRequest[AnyContent]) =
-    for {
-      incorporationDetails <- getIncorporationDetails()
-      _                    <- markRegistrationAsReviewed()
-    } yield Ok(
-      page(registration = request.registration, incorporationDetails = Some(incorporationDetails))
-    )
+    Ok(page(registration = request.registration, incorporationDetails = getIncorporationDetails()))
 
   private def markRegistrationAsReviewed()(implicit
     req: JourneyRequest[AnyContent]
@@ -187,17 +174,17 @@ class ReviewRegistrationController @Inject() (
 
   private def getSoleTraderDetails()(implicit
     request: JourneyRequest[AnyContent]
-  ): Future[SoleTraderIncorporationDetails] =
-    Future.successful(request.registration.organisationDetails.soleTraderDetails.get)
+  ): Option[SoleTraderIncorporationDetails] =
+    request.registration.organisationDetails.soleTraderDetails
 
   private def getPartnershipDetails()(implicit
     request: JourneyRequest[AnyContent]
-  ): Future[PartnershipDetails] =
-    Future.successful(request.registration.organisationDetails.partnershipDetails.get)
+  ): Option[PartnershipDetails] =
+    request.registration.organisationDetails.partnershipDetails
 
   private def getIncorporationDetails()(implicit
     request: JourneyRequest[AnyContent]
-  ): Future[IncorporationDetails] =
-    Future.successful(request.registration.organisationDetails.incorporationDetails.get)
+  ): Option[IncorporationDetails] =
+    request.registration.organisationDetails.incorporationDetails
 
 }

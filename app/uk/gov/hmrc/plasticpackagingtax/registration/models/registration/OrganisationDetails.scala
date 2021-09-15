@@ -50,20 +50,20 @@ case class OrganisationDetails(
     else if (businessPartnerIdPresent()) TaskStatus.Completed
     else TaskStatus.InProgress
 
-  def businessPartnerIdPresent() =
+  def businessPartnerIdPresent(): Boolean =
     organisationType match {
-      case Some(UK_COMPANY) if incorporationDetails.isDefined =>
-        incorporationDetails.get.registration.registeredBusinessPartnerId.isDefined
-      case Some(SOLE_TRADER) if soleTraderDetails.isDefined =>
-        soleTraderDetails.get.registration.registeredBusinessPartnerId.isDefined
-      case Some(PARTNERSHIP) if partnershipDetails.isDefined =>
-        partnershipDetails.get.partnershipType match {
+      case Some(UK_COMPANY) =>
+        incorporationDetails.exists(_.registration.registeredBusinessPartnerId.isDefined)
+      case Some(SOLE_TRADER) =>
+        soleTraderDetails.exists(_.registration.registeredBusinessPartnerId.isDefined)
+      case Some(PARTNERSHIP) =>
+        partnershipDetails.exists(_.partnershipType match {
           case GENERAL_PARTNERSHIP =>
             partnershipDetails.get.generalPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
           case SCOTTISH_PARTNERSHIP =>
             partnershipDetails.get.scottishPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
           case _ => false
-        }
+        })
       case _ => false
     }
 
