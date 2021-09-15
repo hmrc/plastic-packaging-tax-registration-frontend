@@ -70,17 +70,17 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      if (request.registration.isCheckAndSubmitReady) {
+      if (request.registration.isCheckAndSubmitReady)
         markRegistrationAsReviewed().map { _ =>
           // The call to check that the registration is in a suitable state before this means that
           // exhaustive matching is not needed
           (request.registration.organisationDetails.organisationType: @unchecked) match {
-            case Some(UK_COMPANY) => ukCompanyReview()
+            case Some(UK_COMPANY)  => ukCompanyReview()
             case Some(SOLE_TRADER) => soleTraderReview()
             case Some(PARTNERSHIP) => partnershipReview()
           }
         }
-      } else
+      else
         Future(Redirect(routes.RegistrationController.displayPage()))
     }
 
