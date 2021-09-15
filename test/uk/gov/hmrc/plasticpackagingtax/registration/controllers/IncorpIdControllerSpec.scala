@@ -18,14 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.SEE_OTHER
+import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.i18n.Messages
+import play.api.mvc.Request
 import play.api.test.Helpers.{await, redirectLocation, status}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
@@ -36,12 +38,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_registration_failure_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class IncorpIdControllerSpec extends ControllerSpec {
 
-  private val mcc          = stubMessagesControllerComponents()
-  private val registration = aRegistration()
+  private val mcc           = stubMessagesControllerComponents()
+  private val mockErrorPage = mock[business_registration_failure_page]
+  private val registration  = aRegistration()
 
   private val controller =
     new IncorpIdController(authenticate = mockAuthAction,
@@ -51,23 +55,24 @@ class IncorpIdControllerSpec extends ControllerSpec {
                            mockSoleTraderConnector,
                            mockGeneralPartnershipConnector,
                            mockScottishPartnershipConnector,
+                           mockErrorPage,
                            mcc
     )(ec)
 
   private val unregisteredLimitedCompany = aRegistration(
-    withOrganisationDetails(unregisteredUkOrgDetails(OrgType.UK_COMPANY))
+    withOrganisationDetails(unregisteredUkCompanyOrgDetails())
   )
 
   private val registeredLimitedCompany = aRegistration(
-    withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY))
+    withOrganisationDetails(registeredUkCompanyOrgDetails())
   )
 
   private val unregisteredSoleTrader = aRegistration(
-    withOrganisationDetails(unregisteredUkOrgDetails(OrgType.SOLE_TRADER))
+    withOrganisationDetails(unregisteredSoleTraderOrgDetails())
   )
 
   private val registeredSoleTrader = aRegistration(
-    withOrganisationDetails(registeredUkOrgDetails(OrgType.SOLE_TRADER))
+    withOrganisationDetails(registeredUkCompanyOrgDetails())
   )
 
   private val unregisteredGeneralPartnership = aRegistration(
@@ -79,14 +84,16 @@ class IncorpIdControllerSpec extends ControllerSpec {
   )
 
   private val registeredGeneralPartnership = aRegistration(
-    withOrganisationDetails(registeredGeneralPartnershipDetails())
+    withOrganisationDetails(registeredGeneralPartnershipOrgDetails())
   )
 
   private val registeredScottishPartnership = aRegistration(
-    withOrganisationDetails(registeredScottishPartnershipDetails())
+    withOrganisationDetails(registeredScottishPartnershipOrgDetails())
   )
 
   "incorpIdCallback" should {
+
+    when(mockErrorPage.apply()(any[Request[_]](), any[Messages]())).thenReturn(HtmlFormat.empty)
 
     "redirect to the registration page" when {
       "registering a UK Limited Company" in {
@@ -283,6 +290,16 @@ class IncorpIdControllerSpec extends ControllerSpec {
         }
       }
     }
+
+    "show error page" when {
+      "business partner id is absent" in {
+        authorizedUser()
+        val result = simulateUnregisteredLimitedCompanyCallback()
+
+        status(result) mustBe OK
+        verify(mockErrorPage).apply()(any[Request[_]](), any[Messages]())
+      }
+    }
   }
 
   private def simulateLimitedCompanyCallback() = {
@@ -290,6 +307,15 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockGetUkCompanyDetails(incorporationDetails)
     mockRegistrationFind(unregisteredLimitedCompany)
     mockRegistrationUpdate(registeredLimitedCompany)
+
+    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def simulateUnregisteredLimitedCompanyCallback() = {
+    authorizedUser()
+    mockGetUkCompanyDetails(unregisteredIncorporationDetails)
+    mockRegistrationFind(unregisteredLimitedCompany)
+    mockRegistrationUpdate(unregisteredLimitedCompany)
 
     controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
   }

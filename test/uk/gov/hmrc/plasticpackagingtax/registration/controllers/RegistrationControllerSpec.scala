@@ -23,7 +23,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   ETMPSubscriptionStatus,
   SubscriptionStatus
@@ -64,7 +63,7 @@ class RegistrationControllerSpec extends ControllerSpec {
           mockRegistrationFind(
             aRegistration(
               withOrganisationDetails(organisationDetails =
-                registeredUkOrgDetails(OrgType.UK_COMPANY)
+                registeredUkCompanyOrgDetails()
               )
             )
           )

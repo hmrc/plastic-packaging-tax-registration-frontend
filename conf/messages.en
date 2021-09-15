@@ -260,3 +260,6 @@ liabilityExpectToExceedThresholdWeightPage.guidance.href = https://www.gov.uk/go
 liabilityExpectToExceedThresholdWeightPage.radio.option.yes= Yes
 liabilityExpectToExceedThresholdWeightPage.radio.option.no= No
 
+businessEntityIdentification.failure.title = We have been unable to identify your organisation
+businessEntityIdentification.failure.heading = We have been unable to identify your organisation
+businessEntityIdentification.failure.detail = TODO: content to assist user to go here

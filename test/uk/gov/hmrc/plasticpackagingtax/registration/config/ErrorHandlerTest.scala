@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import base.unit.UnitViewSpec
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
