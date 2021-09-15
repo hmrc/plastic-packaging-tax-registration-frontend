@@ -19,7 +19,12 @@ package builders
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{PARTNERSHIP, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorporationAddressDetails,
+  IncorporationDetails,
+  IncorporationRegistrationDetails,
+  PartnershipDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 
 import java.util.UUID
@@ -55,16 +60,35 @@ trait RegistrationBuilder {
                    ),
                    journeyId = Some("journey-id")
                  ),
-                 organisationDetails = OrganisationDetails(
-                   businessRegisteredAddress =
-                     Some(
-                       Address(addressLine1 = "2 Scala Street",
-                               addressLine2 = Some("Soho"),
-                               townOrCity = "London",
-                               postCode = "W1T 2HN"
-                       )
-                     ),
-                   organisationType = Some(UK_COMPANY)
+                 organisationDetails = OrganisationDetails(isBasedInUk = Some(true),
+                                                           organisationType = Some(UK_COMPANY),
+                                                           businessRegisteredAddress =
+                                                             Some(
+                                                               Address(addressLine1 =
+                                                                         "2 Scala Street",
+                                                                       addressLine2 = Some("Soho"),
+                                                                       townOrCity = "London",
+                                                                       postCode = "W1T 2HN"
+                                                               )
+                                                             ),
+                                                           incorporationDetails =
+                                                             Some(
+                                                               IncorporationDetails(
+                                                                 companyNumber = "12345678",
+                                                                 companyName =
+                                                                   "Plastic Packaging Ltd",
+                                                                 ctutr = "1234567890",
+                                                                 companyAddress =
+                                                                   IncorporationAddressDetails(),
+                                                                 registration =
+                                                                   IncorporationRegistrationDetails(
+                                                                     registrationStatus =
+                                                                       "REGISTERED",
+                                                                     registeredBusinessPartnerId =
+                                                                       Some("X00000123456789")
+                                                                   )
+                                                               )
+                                                             )
                  ),
                  metaData =
                    MetaData(verifiedEmails =

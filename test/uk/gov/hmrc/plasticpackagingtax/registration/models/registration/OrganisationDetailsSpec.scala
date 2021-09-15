@@ -20,6 +20,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  CHARITY_OR_NOT_FOR_PROFIT,
   OrgType,
   PARTNERSHIP,
   SOLE_TRADER,
@@ -27,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
+  LIMITED_LIABILITY_PARTNERSHIP,
   PartnershipTypeEnum,
   SCOTTISH_PARTNERSHIP
 }
@@ -39,6 +41,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   ScottishPartnershipDetails,
   SoleTraderIncorporationDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDrivenPropertyChecks {
 
@@ -57,6 +60,19 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
   )
 
   "OrganisationDetails" should {
+
+    "report task status as expected" when {
+      "not started" in {
+        OrganisationDetails().status mustBe TaskStatus.NotStarted
+      }
+      "in progress" in {
+        createOrg(UK_COMPANY, None, false).status mustBe TaskStatus.InProgress
+      }
+      "completed" in {
+        createOrg(UK_COMPANY, None, true).status mustBe TaskStatus.Completed
+      }
+    }
+
     "identify that business partner id is present" in {
       forAll(registeredOrgs) { organisationDetails =>
         organisationDetails.businessPartnerIdPresent() mustBe true
@@ -68,6 +84,22 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
         organisationDetails.businessPartnerIdPresent() mustBe false
       }
     }
+
+    "suggest business partner id absent" when {
+      "organisation type is unsupported" in {
+        OrganisationDetails(organisationType =
+          Some(CHARITY_OR_NOT_FOR_PROFIT)
+        ).businessPartnerIdPresent() mustBe false
+      }
+
+      "partnership type is unsupported" in {
+        OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                            partnershipDetails = Some(
+                              PartnershipDetails(partnershipType = LIMITED_LIABILITY_PARTNERSHIP)
+                            )
+        ).businessPartnerIdPresent() mustBe false
+      }
+    }
   }
 
   private def createOrg(
@@ -77,7 +109,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
   ) =
     orgType match {
       case UK_COMPANY =>
-        OrganisationDetails(organisationType = Some(UK_COMPANY),
+        OrganisationDetails(isBasedInUk = Some(true),
+                            organisationType = Some(UK_COMPANY),
                             incorporationDetails = Some(
                               IncorporationDetails(companyNumber = "123",
                                                    companyName = "Test",

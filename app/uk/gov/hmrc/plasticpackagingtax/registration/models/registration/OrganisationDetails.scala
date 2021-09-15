@@ -33,6 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   PartnershipDetails,
   SoleTraderIncorporationDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class OrganisationDetails(
   isBasedInUk: Option[Boolean] = None,
@@ -44,20 +45,25 @@ case class OrganisationDetails(
   partnershipDetails: Option[PartnershipDetails] = None
 ) {
 
-  def businessPartnerIdPresent() =
+  def status: TaskStatus =
+    if (isBasedInUk.isEmpty) TaskStatus.NotStarted
+    else if (businessPartnerIdPresent()) TaskStatus.Completed
+    else TaskStatus.InProgress
+
+  def businessPartnerIdPresent(): Boolean =
     organisationType match {
       case Some(UK_COMPANY) =>
-        incorporationDetails.get.registration.registeredBusinessPartnerId.isDefined
+        incorporationDetails.exists(_.registration.registeredBusinessPartnerId.isDefined)
       case Some(SOLE_TRADER) =>
-        soleTraderDetails.get.registration.registeredBusinessPartnerId.isDefined
+        soleTraderDetails.exists(_.registration.registeredBusinessPartnerId.isDefined)
       case Some(PARTNERSHIP) =>
-        partnershipDetails.get.partnershipType match {
+        partnershipDetails.exists(_.partnershipType match {
           case GENERAL_PARTNERSHIP =>
             partnershipDetails.get.generalPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
           case SCOTTISH_PARTNERSHIP =>
             partnershipDetails.get.scottishPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
           case _ => false
-        }
+        })
       case _ => false
     }
 
