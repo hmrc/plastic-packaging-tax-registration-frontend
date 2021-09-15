@@ -25,8 +25,9 @@ sm -s
 * Visit the HMRC [Generic Registration service feature switch config page](http://localhost:9718/identify-your-incorporated-business/test-only/feature-switches) and
 select the appropriate stubbing behaviour _(select all)_. 
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
-* Enter the redirect url: http://localhost:8503/plastic-packaging-tax/start and press **Submit**.
+* Enter the redirect url: http://localhost:8503/plastic-packaging-tax/start-plastic-packaging-tax-registration.
 * Choose affinity group as `Organisation`
+* Enter the email `test.preLaunch@ppt.test` or `test.postLaunch@ppt.test`
 * Enter `Submit`
 
 ### User Journey autocompletion scripts
