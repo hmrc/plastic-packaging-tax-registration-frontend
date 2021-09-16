@@ -32,7 +32,7 @@ case class CreateRegistrationEvent(
 
 object CreateRegistrationEvent {
   implicit val format: OFormat[CreateRegistrationEvent] = Json.format[CreateRegistrationEvent]
-  val eventType: String                                 = "CREATE_PPT_REGISTRATION"
+  val eventType: String                                 = "createPPTRegistration"
 
   def apply(registration: Registration, pptReference: Option[String]): CreateRegistrationEvent =
     CreateRegistrationEvent(id = registration.id,
