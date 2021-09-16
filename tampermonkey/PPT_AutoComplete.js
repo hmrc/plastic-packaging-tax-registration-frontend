@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.0
+// @version      14.1
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -123,8 +123,8 @@ function getPasscode(){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp. open("GET", url, false); // false for synchronous request.
     xmlHttp. send();
-    var passcode = JSON.parse(xmlHttp.responseText).passcodes[0].passcode
-    return passcode
+    var passcodes = JSON.parse(xmlHttp.responseText).passcodes
+    return passcodes[passcodes.length-1].passcode
 }
 
 const currentPageIs = (path) => {
