@@ -103,67 +103,29 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       }
 
       "return 400 (BAD_REQUEST) for " + formAction._1 when {
-        "user does not enter" when {
-          "first name" in {
-            authorizedUser()
-            val result =
-              controller.submit()(postRequestEncoded("LastName", formAction))
+        "user does not enter name" in {
 
-            status(result) mustBe BAD_REQUEST
-          }
+          authorizedUser()
+          val result = controller.submit()(postRequestEncoded(FullName(""), formAction))
 
-          "last name" in {
-            authorizedUser()
-            val result =
-              controller.submit()(postRequestEncoded("FirstName", formAction))
-
-            status(result) mustBe BAD_REQUEST
-          }
-
-          "both first name and last name" in {
-            authorizedUser()
-            val result = controller.submit()(postRequestEncoded("", formAction))
-
-            status(result) mustBe BAD_REQUEST
-          }
+          status(result) mustBe BAD_REQUEST
         }
 
-        "user enters a long" when {
-          "first name" in {
-            authorizedUser()
-            val result = controller.submit()(
-              postRequestEncoded("averyveryveryveryverylongname LastName", formAction)
-            )
+        "user enters a long name" in {
+          authorizedUser()
+          val result = controller.submit()(postRequestEncoded(FullName("abced" * 40), formAction))
 
-            status(result) mustBe BAD_REQUEST
-          }
-
-          "last name" in {
-            authorizedUser()
-            val result = controller.submit()(
-              postRequestEncoded("FirstName averyveryveryveryverylongname", formAction)
-            )
-
-            status(result) mustBe BAD_REQUEST
-          }
+          status(result) mustBe BAD_REQUEST
         }
 
-        "user enters non-alphabetic characters" when {
-          "first name" in {
-            authorizedUser()
-            val result =
-              controller.submit()(postRequestEncoded("FirstNam807980234£$ LastName", formAction))
+        "user enters non-alphabetic characters" in {
+          authorizedUser()
+          val result =
+            controller.submit()(
+              postRequestEncoded(FullName("FirstNam807980234£$ LastName"), formAction)
+            )
 
-            status(result) mustBe BAD_REQUEST
-          }
-
-          "last name" in {
-            authorizedUser()
-            val result =
-              controller.submit()(postRequestEncoded("FirstName F!!!m807980234£$", formAction))
-
-            status(result) mustBe BAD_REQUEST
-          }
+          status(result) mustBe BAD_REQUEST
         }
       }
 
