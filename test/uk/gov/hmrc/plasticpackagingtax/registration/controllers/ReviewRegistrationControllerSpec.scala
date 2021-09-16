@@ -17,29 +17,25 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  CHARITY_OR_NOT_FOR_PROFIT,
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
-  Address,
-  FullName,
-  LiabilityWeight,
-  OrgType
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
@@ -48,7 +44,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.util.UUID
 
-class ReviewRegistrationControllerSpec extends ControllerSpec {
+class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
   private val page = mock[review_registration_page]
   private val mcc  = stubMessagesControllerComponents()
 
@@ -83,7 +79,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked with uk company" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(UK_COMPANY),
+            OrganisationDetails(isBasedInUk = Some(true),
+                                organisationType = Some(UK_COMPANY),
                                 incorporationDetails =
                                   Some(
                                     IncorporationDetails(companyNumber = "123456",
@@ -109,7 +106,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked with sole trader" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(SOLE_TRADER),
+            OrganisationDetails(isBasedInUk = Some(true),
+                                organisationType = Some(SOLE_TRADER),
                                 soleTraderDetails = Some(soleTraderIncorporationDetails)
             )
           )
@@ -126,7 +124,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked with partnership" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(PARTNERSHIP),
+            OrganisationDetails(isBasedInUk = Some(true),
+                                organisationType = Some(PARTNERSHIP),
                                 partnershipDetails = Some(partnershipDetails)
             )
           )
@@ -143,80 +142,132 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
     }
 
     "return 303" when {
+      "form is submitted" in {
 
-      "Journey ID is invalid or does not exist" in {
+        val registrations = Table("Registration",
+                                  aCompletedUkCompanyRegistration,
+                                  aCompletedSoleTraderRegistration,
+                                  aCompletedGeneralPartnershipRegistration,
+                                  aCompletedScottishPartnershipRegistration
+        )
+
+        var submissionCount = 0
+
+        forAll(registrations) { registration =>
+          authorizedUser()
+          val completedRegistration =
+            registration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+          mockRegistrationFind(completedRegistration)
+          mockSubscriptionSubmit(subscriptionCreate)
+
+          val result = controller.submit()(postRequest(JsObject.empty))
+          submissionCount += 1
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+          verify(mockSubscriptionsConnector).submitSubscription(
+            ArgumentMatchers.eq(safeNumber),
+            ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
+          )(any[HeaderCarrier])
+
+          metricsMock.defaultRegistry.counter(
+            "ppt.registration.success.submission.counter"
+          ).getCount mustBe submissionCount
+        }
+
+      }
+
+      "display page and registration not in ready state" in {
         authorizedUser()
+        val unreadyRegistration =
+          aCompletedGeneralPartnershipRegistration
+            .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+            .copy(organisationDetails =
+              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(isBasedInUk = None)
+            )
+        mockRegistrationFind(unreadyRegistration)
 
-        val registration = aRegistration(withIncorpJourneyId(None))
-        mockRegistrationFind(registration)
-        given(
-          page.apply(refEq(registration),
-                     refEq(Some(incorporationDetails)),
-                     refEq(Some(soleTraderIncorporationDetails)),
-                     refEq(Some(partnershipDetails))
-          )(any(), any())
-        ).willReturn(HtmlFormat.empty)
-
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
       }
 
-      "get details fails for uk company" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
-        )
+    }
+
+    "throw exceptions" when {
+      "display page and get details fails for uk company" in {
         authorizedUser()
-        mockRegistrationFind(registration)
+        mockRegistrationFindFailure()
 
         val result = controller.displayPage()(getRequest())
 
         intercept[Exception](status(result))
       }
 
-      "get details fails for sole trader" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
-        )
+      "display page and get details fails for sole trader" in {
         authorizedUser()
-        mockRegistrationFind(registration)
+        mockRegistrationFindFailure()
 
         val result = controller.displayPage()(getRequest())
 
         intercept[Exception](status(result))
       }
 
-      "get details fails for partnership" in {
-        val registration = aRegistration(
-          withOrganisationDetails(OrganisationDetails(organisationType = Some(PARTNERSHIP)))
-        )
+      "display page and get details fails for partnership" in {
         authorizedUser()
-        mockRegistrationFind(registration)
+        mockRegistrationFindFailure()
 
         val result = controller.displayPage()(getRequest())
 
         intercept[Exception](status(result))
       }
 
-      "when form is submitted" in {
+      "submit unsupported partnership type" in {
         authorizedUser()
-        val completedRegistration =
-          aCompletedRegistration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
-        mockRegistrationFind(completedRegistration)
+        val unsupportedPartnershipTypeRegistration =
+          aCompletedGeneralPartnershipRegistration
+            .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+            .copy(organisationDetails =
+              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(partnershipDetails =
+                Some(
+                  aCompletedGeneralPartnershipRegistration.organisationDetails.partnershipDetails.get.copy(
+                    partnershipType = LIMITED_LIABILITY_PARTNERSHIP
+                  )
+                )
+              )
+            )
+        mockRegistrationFind(unsupportedPartnershipTypeRegistration)
         mockSubscriptionSubmit(subscriptionCreate)
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
-        verify(mockSubscriptionsConnector).submitSubscription(
-          ArgumentMatchers.eq(safeNumber),
-          ArgumentMatchers.eq(completedRegistration.copy(userHeaders = Some(testUserHeaders)))
-        )(any[HeaderCarrier])
+        intercept[IllegalStateException](status(result))
+      }
 
-        metricsMock.defaultRegistry.counter(
-          "ppt.registration.success.submission.counter"
-        ).getCount mustBe 1
+      "submit registration with missing business partner id" in {
+        authorizedUser()
+        val registrationWithMissingBusinessPartnerId =
+          aCompletedUkCompanyRegistration
+            .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+            .copy(organisationDetails =
+              aCompletedUkCompanyRegistration.organisationDetails.copy(incorporationDetails =
+                Some(
+                  aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.copy(
+                    registration =
+                      aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.registration.copy(
+                        registeredBusinessPartnerId = None
+                      )
+                  )
+                )
+              )
+            )
+        mockRegistrationFind(registrationWithMissingBusinessPartnerId)
+        mockSubscriptionSubmit(subscriptionCreate)
+
+        val result = controller.submit()(postRequest(JsObject.empty))
+
+        intercept[IllegalStateException](status(result))
       }
     }
 
@@ -224,14 +275,14 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
       "submission of audit event" in {
         authorizedUser()
 
-        val completedRegistration = aCompletedRegistration
+        val completedRegistration = aCompletedUkCompanyRegistration
         mockRegistrationFind(completedRegistration)
         mockSubscriptionSubmit(subscriptionCreate)
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
         val completedRegistrationWithNrsDetail = completedRegistration.copy(metaData =
-          aCompletedRegistration.metaData.copy(nrsDetails =
+          aCompletedUkCompanyRegistration.metaData.copy(nrsDetails =
             Some(
               NrsDetails(nrSubsmissionId = subscriptionCreate.nrsSubmissionId, failureReason = None)
             )
@@ -256,7 +307,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
 
       "user submits form and the submission fails" in {
         authorizedUser()
-        mockRegistrationFind(aCompletedRegistration)
+        mockRegistrationFind(aCompletedUkCompanyRegistration)
         mockSubscriptionSubmitFailure(new IllegalStateException("BANG!"))
         val result =
           controller.submit()(postRequest(JsObject.empty))
@@ -266,71 +317,52 @@ class ReviewRegistrationControllerSpec extends ControllerSpec {
           "ppt.registration.failed.submission.counter"
         ).getCount mustBe 1
       }
-
-      "user is not shown confirmation page if registration has no incorporation details for limited company" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(organisationDetails =
-              OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = None)
-            )
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "user is not shown confirmation page if registration has no incorporation details for sole trader" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(organisationDetails =
-              OrganisationDetails(organisationType = Some(SOLE_TRADER), soleTraderDetails = None)
-            )
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "user is not shown confirmation page if registration for not supported company type" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(organisationDetails =
-              OrganisationDetails(organisationType = Some(CHARITY_OR_NOT_FOR_PROFIT))
-            )
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        intercept[InternalServerException](status(result))
-      }
     }
   }
 
-  private def aCompletedRegistration =
-    aRegistration(withOrganisationDetails(registeredUkOrgDetails(OrgType.UK_COMPANY)),
-                  withLiabilityDetails(
-                    LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
-                  ),
-                  withPrimaryContactDetails(
-                    PrimaryContactDetails(fullName = Some(FullName("Jack", "Gatsby")),
-                                          jobTitle = Some("Developer"),
-                                          phoneNumber = Some("0203 4567 890"),
-                                          email = Some("test@test.com"),
-                                          address = Some(
-                                            Address(addressLine1 = "2 Scala Street",
-                                                    addressLine2 = Some("Soho"),
-                                                    townOrCity = "London",
-                                                    postCode = "W1T 2HN"
-                                            )
-                                          )
-                    )
-                  ),
+  private def aCompletedUkCompanyRegistration =
+    aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
                   withMetaData(MetaData(registrationCompleted = true))
     )
+
+  private def aCompletedSoleTraderRegistration =
+    aRegistration(withOrganisationDetails(registeredSoleTraderOrgDetails()),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
+                  withMetaData(MetaData(registrationCompleted = true))
+    )
+
+  private def aCompletedGeneralPartnershipRegistration =
+    aRegistration(withOrganisationDetails(registeredGeneralPartnershipOrgDetails()),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
+                  withMetaData(MetaData(registrationCompleted = true))
+    )
+
+  private def aCompletedScottishPartnershipRegistration =
+    aRegistration(withOrganisationDetails(registeredScottishPartnershipOrgDetails()),
+                  withLiabilityDetails(liabilityDetails),
+                  withPrimaryContactDetails(primaryContactDetails),
+                  withMetaData(MetaData(registrationCompleted = true))
+    )
+
+  private val liabilityDetails =
+    LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+
+  private val primaryContactDetails = PrimaryContactDetails(
+    fullName = Some(FullName("Jack", "Gatsby")),
+    jobTitle = Some("Developer"),
+    phoneNumber = Some("0203 4567 890"),
+    email = Some("test@test.com"),
+    address = Some(
+      Address(addressLine1 = "2 Scala Street",
+              addressLine2 = Some("Soho"),
+              townOrCity = "London",
+              postCode = "W1T 2HN"
+      )
+    )
+  )
 
 }

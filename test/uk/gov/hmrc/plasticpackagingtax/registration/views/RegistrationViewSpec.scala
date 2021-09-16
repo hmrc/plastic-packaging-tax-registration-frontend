@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   MetaData,
+  OrganisationDetails,
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
@@ -171,7 +172,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
                              startDate = Some(Date(Some(1), Some(4), Some(2022)))
             )
           ),
-          withIncorpJourneyId(None),
+          withOrganisationDetails(OrganisationDetails()),
           withNoPrimaryContactDetails()
         )
         val view: Html = createView(registration)
