@@ -33,7 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   ServiceError
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, EmailAddress, FullName}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, EmailAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   CreateEmailVerificationRequest,
   EmailStatus,
@@ -348,8 +348,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
               )
             ),
             withPrimaryContactDetails(primaryContactDetails =
-              PrimaryContactDetails(fullName =
-                                      Some(FullName(firstName = "Jack", lastName = "Gatsby")),
+              PrimaryContactDetails(name =
+                                      Some("Jack Gatsby"),
                                     jobTitle = Some("Developer"),
                                     phoneNumber = Some("0203 4567 890"),
                                     address = Some(

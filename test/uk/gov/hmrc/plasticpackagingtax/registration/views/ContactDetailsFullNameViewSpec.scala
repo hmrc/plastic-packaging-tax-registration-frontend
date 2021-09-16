@@ -40,8 +40,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("primaryContactDetails.sectionHeader")
       messages must haveTranslationFor("primaryContactDetails.fullNamePage.title")
       messages must haveTranslationFor("primaryContactDetails.fullNamePage.hint")
-      messages must haveTranslationFor("primaryContactDetails.fullNamePage.firstName")
-      messages must haveTranslationFor("primaryContactDetails.fullNamePage.lastName")
+      messages must haveTranslationFor("primaryContactDetails.fullNamePage.label")
     }
 
     val view = createView()
@@ -89,10 +88,9 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display first name and last name text input boxes" in {
+    "display full name text input boxes" in {
 
-      view must containElementWithID("firstName")
-      view must containElementWithID("lastName")
+      view must containElementWithID("value")
     }
 
     "display 'Save and Continue' button" in {
@@ -112,68 +110,56 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       val form = FullName
         .form()
-        .fill(FullName("FirstName", "LastName"))
+        .fill(FullName("FirstName LastName"))
       val view = createView(form)
 
-      view.getElementById("firstName").attr("value") mustBe "FirstName"
-      view.getElementById("lastName").attr("value") mustBe "LastName"
+      view.getElementById("value").attr("value") mustBe "FirstName LastName"
     }
 
     "allow whitespace and special chars" in {
 
       val form = FullName
         .form()
-        .fill(FullName("First Name " + allowedChars.get, "Last Name " + allowedChars.get))
+        .fill(FullName("First Name " + allowedChars.get + " Last Name " + allowedChars.get))
       val view = createView(form)
 
-      view.getElementById("firstName").attr("value") mustBe "First Name .-'"
-      view.getElementById("lastName").attr("value") mustBe "Last Name .-'"
+      view.getElementById("value").attr("value") mustBe "First Name .-' Last Name .-'"
     }
   }
 
   "display error" when {
 
-    "user did not enter first name or last name" in {
+    "user did not enter name" in {
       val form = FullName
         .form()
-        .fillAndValidate(FullName("", ""))
+        .fillAndValidate(FullName(""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("firstName", "Enter a first name")
-      view must haveGovukFieldError("lastName", "Enter a last name")
-
+      view must haveGovukFieldError("value", "Enter a name")
     }
 
-    "user did entered non-alphabetic characters" in {
+    "user entered non-alphabetic characters" in {
       val form = FullName
         .form()
-        .fillAndValidate(FullName("123", "321"))
+        .fillAndValidate(FullName("123 321"))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("firstName", "Enter a first name in the correct format")
-      view must haveGovukFieldError("lastName", "Enter a last name in the correct format")
-
+      view must haveGovukFieldError("value", "Enter a name in the correct format")
     }
 
-    "user did entered more than 20 characters" in {
+    "user entered more than 160 characters" in {
       val form = FullName
         .form()
-        .fillAndValidate(
-          FullName("averyveryveryveryverylongfirst", "averyveryveryveryverylonglast")
-        )
+        .fillAndValidate(FullName("abcde" * 40))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("firstName",
-                                    "First name cannot be more than 20 characters long"
-      )
-      view must haveGovukFieldError("lastName", "Last name cannot be more than 20 characters long")
-
+      view must haveGovukFieldError("value", "Name cannot be more than 160 characters long")
     }
   }
 }

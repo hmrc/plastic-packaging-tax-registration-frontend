@@ -17,11 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class PrimaryContactDetails(
-  fullName: Option[FullName] = None,
+  name: Option[String] = None,
   jobTitle: Option[String] = None,
   email: Option[String] = None,
   phoneNumber: Option[String] = None,
@@ -36,10 +36,10 @@ case class PrimaryContactDetails(
     else TaskStatus.NotStarted
 
   def isCompleted: Boolean =
-    fullName.isDefined && jobTitle.isDefined && email.isDefined && phoneNumber.isDefined && address.isDefined
+    name.isDefined && jobTitle.isDefined && email.isDefined && phoneNumber.isDefined && address.isDefined
 
   def isInProgress: Boolean =
-    fullName.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined || address.isDefined
+    name.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined || address.isDefined
 
 }
 

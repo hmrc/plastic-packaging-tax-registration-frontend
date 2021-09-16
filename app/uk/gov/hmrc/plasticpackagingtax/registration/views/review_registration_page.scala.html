@@ -210,7 +210,7 @@
     @govukSummaryList(
         SummaryList(
             rows = Seq(
-                    row("primaryContactDetails.check.fullName", registration.primaryContactDetails.fullName.map(n => s"${n.firstName} ${n.lastName}"), Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
+                    row("primaryContactDetails.check.fullName", registration.primaryContactDetails.name, Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
                     row("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
                     row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage())),
                     row("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),

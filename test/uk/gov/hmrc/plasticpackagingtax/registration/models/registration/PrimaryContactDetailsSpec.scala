@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
@@ -35,21 +35,21 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
     "be IN_PROGRESS " when {
       "primary contact details when only 'FullName' is complete" in {
         val contactDetails =
-          PrimaryContactDetails(fullName = Some(FullName("firstName", "lastName")))
+          PrimaryContactDetails(name = Some("firstName lastName"))
         contactDetails.status mustBe TaskStatus.InProgress
       }
 
       "primary contact details when only 'FullName' and 'JobTitle' are complete" in {
-        val contactDetails = PrimaryContactDetails(fullName =
-                                                     Some(FullName("firstName", "lastName")),
+        val contactDetails = PrimaryContactDetails(name =
+                                                     Some("firstName lastName"),
                                                    jobTitle = Some("Dev")
         )
         contactDetails.status mustBe TaskStatus.InProgress
       }
 
       "primary contact details when only 'FullName', 'JobTitle' and 'Email' are complete" in {
-        val contactDetails = PrimaryContactDetails(fullName =
-                                                     Some(FullName("firstName", "lastName")),
+        val contactDetails = PrimaryContactDetails(name =
+                                                     Some("firstName lastName"),
                                                    jobTitle = Some("Dev"),
                                                    email = Some("test@test.com")
         )
@@ -57,8 +57,8 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
       }
 
       "primary contact details when only 'FullName', 'JobTitle', 'Email' and 'phoneNumber' are complete" in {
-        val contactDetails = PrimaryContactDetails(fullName =
-                                                     Some(FullName("firstName", "lastName")),
+        val contactDetails = PrimaryContactDetails(name =
+                                                     Some("firstName lastName"),
                                                    jobTitle = Some("Dev"),
                                                    email = Some("test@test.com"),
                                                    phoneNumber = Some("0203 12345 678")
@@ -70,7 +70,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
     "be COMPLETED " when {
       "primary contact details are all filled in" in {
         val contactDetails =
-          PrimaryContactDetails(fullName = Some(FullName("FirstName", "LastName")),
+          PrimaryContactDetails(name = Some("FirstName LastName"),
                                 jobTitle = Some("Developer"),
                                 email = Some("test@test.com"),
                                 phoneNumber = Some("07712345678"),

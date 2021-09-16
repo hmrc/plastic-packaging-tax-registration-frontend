@@ -20,7 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   PrimaryContactDetails,
   Registration
@@ -35,7 +35,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   private val registration = aRegistration(
     withPrimaryContactDetails(
-      PrimaryContactDetails(fullName = Some(FullName("Jack", "Gatsby")),
+      PrimaryContactDetails(name = Some("Jack Gatsby"),
                             jobTitle = Some("Developer"),
                             phoneNumber = Some("0203 4567 890"),
                             email = Some("test@test.com"),

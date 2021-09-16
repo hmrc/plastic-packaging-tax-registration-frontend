@@ -33,7 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   ServiceError
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, EmailAddressPasscode, FullName}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, EmailAddressPasscode}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
   COMPLETE,
   INCORRECT_PASSCODE,
@@ -193,8 +193,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
         "user submits passcode" in {
           val reg = aRegistration(
             withPrimaryContactDetails(primaryContactDetails =
-              PrimaryContactDetails(fullName =
-                                      Some(FullName(firstName = "Jack", lastName = "Gatsby")),
+              PrimaryContactDetails(name =
+                                      Some("Jack Gatsby"),
                                     jobTitle = Some("Developer"),
                                     phoneNumber = Some("0203 4567 890"),
                                     address = Some(

@@ -46,8 +46,8 @@ class ContactDetailsFullNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.primaryContactDetails.fullName match {
-        case Some(data) => Ok(page(FullName.form().fill(data)))
+      request.registration.primaryContactDetails.name match {
+        case Some(data) => Ok(page(FullName.form().fill(FullName(data))))
         case _          => Ok(page(FullName.form()))
       }
     }
@@ -76,7 +76,7 @@ class ContactDetailsFullNameController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedPrimaryContactDetails =
-        registration.primaryContactDetails.copy(fullName = Some(formData))
+        registration.primaryContactDetails.copy(name = Some(formData.value))
       registration.copy(primaryContactDetails = updatedPrimaryContactDetails)
     }
 

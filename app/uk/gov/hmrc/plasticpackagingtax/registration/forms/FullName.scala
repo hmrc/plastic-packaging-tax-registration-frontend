@@ -20,30 +20,21 @@ import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
 
-case class FullName(firstName: String, lastName: String)
+case class FullName(value: String)
 
 object FullName extends CommonFormValidators {
   implicit val format: OFormat[FullName] = Json.format[FullName]
 
   val allowedChars: Option[String] = Some(".-'")
 
-  private val firstName = "firstName"
-
-  private val lastName = "lastName"
+  private val fullName = "value"
 
   private val mapping = Forms.mapping(
-    firstName ->
+    fullName ->
       text()
-        .verifying(emptyError(firstName), isNonEmpty)
-        .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 20))
-        .verifying(nonAlphabeticError(firstName),
-                   containsOnlyAlphaAndWhitespacesAnd(_, allowedChars)
-        ),
-    lastName ->
-      text()
-        .verifying(emptyError(lastName), isNonEmpty)
-        .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 20))
-        .verifying(nonAlphabeticError(lastName),
+        .verifying(emptyError(fullName), isNonEmpty)
+        .verifying(lengthError(fullName), isNotExceedingMaxLength(_, 160))
+        .verifying(nonAlphabeticError(fullName),
                    containsOnlyAlphaAndWhitespacesAnd(_, allowedChars)
         )
   )(FullName.apply)(FullName.unapply)
