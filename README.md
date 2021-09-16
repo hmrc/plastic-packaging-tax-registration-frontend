@@ -20,6 +20,16 @@ sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE
 sm -s 
 ```
 
+* Run the microservice locally
+
+```
+# Stop the microservice in service manager 
+sm --stop PLASTIC_PACKAGING_TAX_REGISTRATION_FRONTEND
+
+# Run the microservice using sbt
+sbt -Dapplication.router=testOnlyDoNotUseInAppConf.Routes run
+```
+
 ### Login/Access
 
 * Visit the HMRC [Generic Registration service feature switch config page](http://localhost:9718/identify-your-incorporated-business/test-only/feature-switches) and
