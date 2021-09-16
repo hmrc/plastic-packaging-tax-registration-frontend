@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.1
+// @version      14.2
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -356,8 +356,7 @@ const liabilityCheckYourAnswers = () => {
 
 const primaryContactFullName = () => {
     if (currentPageIs('/plastic-packaging-tax/primary-contact-name')) {
-        document.getElementById('firstName').value = 'Jack'
-        document.getElementById('lastName').value = 'Gatsby'
+        document.getElementById('value').value = 'Jack Gatsby'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
