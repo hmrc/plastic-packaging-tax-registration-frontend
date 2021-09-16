@@ -34,7 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress, FullName}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
@@ -57,7 +57,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
   private val registrationWithoutPrimaryContactAddress = aRegistration(
     withPrimaryContactDetails(
-      PrimaryContactDetails(fullName = Some(FullName(firstName = "Jack", lastName = "Gatsby")),
+      PrimaryContactDetails(name = Some("Jack Gatsby"),
                             jobTitle = Some("Developer"),
                             email = Some("test@test.com"),
                             phoneNumber = Some("0203 4567 890"),

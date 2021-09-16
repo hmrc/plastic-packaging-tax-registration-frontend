@@ -29,7 +29,6 @@ object FullName extends CommonFormValidators {
 
   private val fullName = "value"
 
-
   private val mapping = Forms.mapping(
     fullName ->
       text()

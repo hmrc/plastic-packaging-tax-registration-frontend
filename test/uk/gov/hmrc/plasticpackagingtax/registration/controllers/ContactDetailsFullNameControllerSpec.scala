@@ -68,9 +68,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(
           aRegistration(
-            withPrimaryContactDetails(
-              PrimaryContactDetails(fullName = Some(FullName("FirstName", "LastName")))
-            )
+            withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName")))
           )
         )
         val result = controller.displayPage()(getRequest())
@@ -87,13 +85,11 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           mockRegistrationUpdate(aRegistration())
 
           val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName", "LastName"), formAction))
+            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
 
           status(result) mustBe SEE_OTHER
 
-          modifiedRegistration.primaryContactDetails.fullName mustBe Some(
-            FullName("FirstName", "LastName")
-          )
+          modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName LastName")
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -111,7 +107,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           "first name" in {
             authorizedUser()
             val result =
-              controller.submit()(postRequestEncoded(FullName("", "LastName"), formAction))
+              controller.submit()(postRequestEncoded("LastName", formAction))
 
             status(result) mustBe BAD_REQUEST
           }
@@ -119,14 +115,14 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           "last name" in {
             authorizedUser()
             val result =
-              controller.submit()(postRequestEncoded(FullName("FirstName", ""), formAction))
+              controller.submit()(postRequestEncoded("FirstName", formAction))
 
             status(result) mustBe BAD_REQUEST
           }
 
           "both first name and last name" in {
             authorizedUser()
-            val result = controller.submit()(postRequestEncoded(FullName("", ""), formAction))
+            val result = controller.submit()(postRequestEncoded("", formAction))
 
             status(result) mustBe BAD_REQUEST
           }
@@ -136,7 +132,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           "first name" in {
             authorizedUser()
             val result = controller.submit()(
-              postRequestEncoded(FullName("averyveryveryveryverylongname", "LastName"), formAction)
+              postRequestEncoded("averyveryveryveryverylongname LastName", formAction)
             )
 
             status(result) mustBe BAD_REQUEST
@@ -145,7 +141,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           "last name" in {
             authorizedUser()
             val result = controller.submit()(
-              postRequestEncoded(FullName("FirstName", "averyveryveryveryverylongname"), formAction)
+              postRequestEncoded("FirstName averyveryveryveryverylongname", formAction)
             )
 
             status(result) mustBe BAD_REQUEST
@@ -156,9 +152,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           "first name" in {
             authorizedUser()
             val result =
-              controller.submit()(
-                postRequestEncoded(FullName("FirstNam807980234£$", "LastName"), formAction)
-              )
+              controller.submit()(postRequestEncoded("FirstNam807980234£$ LastName", formAction))
 
             status(result) mustBe BAD_REQUEST
           }
@@ -166,9 +160,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           "last name" in {
             authorizedUser()
             val result =
-              controller.submit()(
-                postRequestEncoded(FullName("FirstName", "F!!!m807980234£$"), formAction)
-              )
+              controller.submit()(postRequestEncoded("FirstName F!!!m807980234£$", formAction))
 
             status(result) mustBe BAD_REQUEST
           }
@@ -188,7 +180,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationUpdateFailure()
           val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName", "LastName"), formAction))
+            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
 
           intercept[DownstreamServiceError](status(result))
         }
@@ -197,7 +189,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationException()
           val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName", "LastName"), formAction))
+            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
 
           intercept[RuntimeException](status(result))
         }

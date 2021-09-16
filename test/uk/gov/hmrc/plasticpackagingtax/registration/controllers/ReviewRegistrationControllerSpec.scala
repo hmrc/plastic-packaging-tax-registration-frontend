@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import java.util.UUID
+
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -35,14 +37,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, FullName, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-
-import java.util.UUID
 
 class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
   private val page = mock[review_registration_page]
@@ -351,18 +351,18 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
   private val liabilityDetails =
     LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
 
-  private val primaryContactDetails = PrimaryContactDetails(
-    fullName = Some(FullName("Jack", "Gatsby")),
-    jobTitle = Some("Developer"),
-    phoneNumber = Some("0203 4567 890"),
-    email = Some("test@test.com"),
-    address = Some(
-      Address(addressLine1 = "2 Scala Street",
-              addressLine2 = Some("Soho"),
-              townOrCity = "London",
-              postCode = "W1T 2HN"
-      )
-    )
+  private val primaryContactDetails = PrimaryContactDetails(name = Some("Jack Gatsby"),
+                                                            jobTitle = Some("Developer"),
+                                                            phoneNumber = Some("0203 4567 890"),
+                                                            email = Some("test@test.com"),
+                                                            address = Some(
+                                                              Address(addressLine1 =
+                                                                        "2 Scala Street",
+                                                                      addressLine2 = Some("Soho"),
+                                                                      townOrCity = "London",
+                                                                      postCode = "W1T 2HN"
+                                                              )
+                                                            )
   )
 
 }

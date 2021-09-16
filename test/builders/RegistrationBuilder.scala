@@ -16,8 +16,10 @@
 
 package builders
 
+import java.util.UUID
+
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{PARTNERSHIP, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, FullName, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
@@ -26,8 +28,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   PartnershipDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
-
-import java.util.UUID
 
 //noinspection ScalaStyle
 trait RegistrationBuilder {
@@ -46,19 +46,19 @@ trait RegistrationBuilder {
                                                      isLiable = Some(true),
                                                      expectToExceedThresholdWeight = Some(true)
                  ),
-                 primaryContactDetails = PrimaryContactDetails(
-                   fullName = Some(FullName(firstName = "Jack", lastName = "Gatsby")),
-                   jobTitle = Some("Developer"),
-                   email = Some("test@test.com"),
-                   phoneNumber = Some("0203 4567 890"),
-                   address = Some(
-                     Address(addressLine1 = "2 Scala Street",
-                             addressLine2 = Some("Soho"),
-                             townOrCity = "London",
-                             postCode = "W1T 2HN"
-                     )
-                   ),
-                   journeyId = Some("journey-id")
+                 primaryContactDetails = PrimaryContactDetails(name = Some("Jack Gatsby"),
+                                                               jobTitle = Some("Developer"),
+                                                               email = Some("test@test.com"),
+                                                               phoneNumber = Some("0203 4567 890"),
+                                                               address = Some(
+                                                                 Address(
+                                                                   addressLine1 = "2 Scala Street",
+                                                                   addressLine2 = Some("Soho"),
+                                                                   townOrCity = "London",
+                                                                   postCode = "W1T 2HN"
+                                                                 )
+                                                               ),
+                                                               journeyId = Some("journey-id")
                  ),
                  organisationDetails = OrganisationDetails(isBasedInUk = Some(true),
                                                            organisationType = Some(UK_COMPANY),
