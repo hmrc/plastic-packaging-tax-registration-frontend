@@ -107,14 +107,10 @@ primaryContactDetails.sectionHeader = Primary contact details
 
 primaryContactDetails.fullNamePage.title = Who is the primary contact?
 primaryContactDetails.fullNamePage.hint = This is the name of the person who will manage the Plastic Packaging Tax account and submit returns.
-primaryContactDetails.fullNamePage.firstName = First name
-primaryContactDetails.fullNamePage.firstName.error.empty = Enter a first name
-primaryContactDetails.fullNamePage.firstName.error.length = First name cannot be more than 20 characters long
-primaryContactDetails.fullNamePage.firstName.error.specialCharacters = Enter a first name in the correct format
-primaryContactDetails.fullNamePage.lastName = Last name
-primaryContactDetails.fullNamePage.lastName.error.empty = Enter a last name
-primaryContactDetails.fullNamePage.lastName.error.length = Last name cannot be more than 20 characters long
-primaryContactDetails.fullNamePage.lastName.error.specialCharacters = Enter a last name in the correct format
+primaryContactDetails.fullNamePage.value = Name
+primaryContactDetails.fullNamePage.value.error.empty = Enter a name
+primaryContactDetails.fullNamePage.value.error.length = Name cannot be more than 160 characters long
+primaryContactDetails.fullNamePage.value.error.specialCharacters = Enter a name in the correct format
 
 primaryContactDetails.jobTitlePage.title = What is the primary contact’s job title?
 primaryContactDetails.jobTitle.empty.error = Enter a job title

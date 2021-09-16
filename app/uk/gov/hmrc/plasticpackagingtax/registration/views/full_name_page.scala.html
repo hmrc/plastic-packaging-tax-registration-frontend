@@ -38,8 +38,7 @@
 
 @(form: Form[FullName])(implicit request: Request[_], messages: Messages)
 
-@firstNameField = @{form("firstName")}
-@lastNameField = @{form("lastName")}
+@fullNameField = @{form("value")}
 
 @fieldSetBody = {
 
@@ -48,26 +47,16 @@
     ))
 
     @govukInput(Input(
-        id    = firstNameField.name,
-        name  = firstNameField.name,
-        value = firstNameField.value,
+        id    = fullNameField.name,
+        name  = fullNameField.name,
+        value = fullNameField.value,
         classes = "govuk-!-width-two-thirds",
-        errorMessage = firstNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        errorMessage = fullNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
         label = Label(
-            content = Text(messages("primaryContactDetails.fullNamePage.firstName")),
+            content = Text(messages("primaryContactDetails.fullNamePage.value")),
             classes = s"govuk-label--s"),
     ))
 
-    @govukInput(Input(
-        id    = lastNameField.name,
-        name  = lastNameField.name,
-        value = lastNameField.value,
-        classes = "govuk-!-width-two-thirds",
-        errorMessage = lastNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-        label = Label(
-            content = Text(messages("primaryContactDetails.fullNamePage.lastName")),
-            classes = s"govuk-label--s"),
-    ))
 }
 
 
