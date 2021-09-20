@@ -259,3 +259,7 @@ liabilityExpectToExceedThresholdWeightPage.radio.option.no= No
 businessEntityIdentification.failure.title = We have been unable to identify your organisation
 businessEntityIdentification.failure.heading = We have been unable to identify your organisation
 businessEntityIdentification.failure.detail = TODO: content to assist user to go here
+
+businessEntityVerification.failure.title = We have been unable to verify your organisation
+businessEntityVerification.failure.heading = We have been unable to verify your organisation
+businessEntityVerification.failure.detail = TODO: content to assist user to go here

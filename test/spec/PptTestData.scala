@@ -105,6 +105,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected val testUtr = "0123456789"
 
+  protected val testBusinessVerificationPassStatus = "PASS"
+
   protected val incorporationRegistrationDetails: IncorporationRegistrationDetails =
     IncorporationRegistrationDetails(registeredBusinessPartnerId =
                                        Some(safeNumber),
@@ -120,6 +122,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
                          testUtr,
+                         testBusinessVerificationPassStatus,
                          testCompanyAddress,
                          incorporationRegistrationDetails
     )
@@ -128,6 +131,16 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
                          testUtr,
+                         testBusinessVerificationPassStatus,
+                         testCompanyAddress,
+                         unregisteredIncorporationRegistrationDetails
+    )
+
+  protected val verificationFailedIncorporationDetails: IncorporationDetails =
+    IncorporationDetails(testCompanyNumber,
+                         testCompanyName,
+                         testUtr,
+                         "FAIL",
                          testCompanyAddress,
                          unregisteredIncorporationRegistrationDetails
     )
@@ -253,6 +266,14 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     OrganisationDetails(isBasedInUk = Some(true),
                         organisationType = Some(PARTNERSHIP),
                         partnershipDetails = Some(PartnershipDetails(partnershipType))
+    )
+
+  protected def verificationFailedUkCompanyOrgDetails(): OrganisationDetails =
+    OrganisationDetails(isBasedInUk = Some(true),
+                        organisationType = Some(UK_COMPANY),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        safeNumber = Some(safeNumber),
+                        incorporationDetails = Some(verificationFailedIncorporationDetails)
     )
 
 }

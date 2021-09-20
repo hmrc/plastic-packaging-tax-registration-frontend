@@ -115,6 +115,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                               IncorporationDetails(companyNumber = "123",
                                                    companyName = "Test",
                                                    ctutr = "ABC",
+                                                   businessVerificationStatus = "PASS",
                                                    companyAddress = IncorporationAddressDetails(),
                                                    registration =
                                                      if (registered)

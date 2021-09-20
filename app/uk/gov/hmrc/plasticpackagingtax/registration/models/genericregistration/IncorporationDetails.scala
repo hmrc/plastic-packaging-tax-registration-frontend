@@ -24,6 +24,7 @@ case class IncorporationDetails(
   companyNumber: String,
   companyName: String,
   ctutr: String,
+  businessVerificationStatus: String,
   companyAddress: IncorporationAddressDetails,
   override val registration: IncorporationRegistrationDetails
 ) extends RegistrationDetails with GrsEntityDetails
@@ -34,6 +35,7 @@ object IncorporationDetails {
     (__ \ "companyProfile" \ "companyNumber").read[String] and
       (__ \ "companyProfile" \ "companyName").read[String] and
       (__ \ "ctutr").read[String] and
+      (__ \ "businessVerification" \ "verificationStatus").read[String] and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress").read[IncorporationAddressDetails] and
       (__ \ "registration").read[IncorporationRegistrationDetails]
   )(IncorporationDetails.apply _)
@@ -42,6 +44,7 @@ object IncorporationDetails {
     (__ \ "companyProfile" \ "companyNumber").write[String] and
       (__ \ "companyProfile" \ "companyName").write[String] and
       (__ \ "ctutr").write[String] and
+      (__ \ "businessVerification" \ "verificationStatus").write[String] and
       (__ \ "companyProfile" \ "unsanitisedCHROAddress").write[IncorporationAddressDetails] and
       (__ \ "registration").write[IncorporationRegistrationDetails]
   )(unlift(IncorporationDetails.unapply))
