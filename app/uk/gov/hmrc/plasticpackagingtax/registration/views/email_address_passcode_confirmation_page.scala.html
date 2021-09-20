@@ -44,18 +44,15 @@
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-    <h1 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--l" for="value">
-            @messages("primaryContactDetails.emailAddress.passcode.confirmation.title")
-        </label>
-    </h1>
+  <h1 class="govuk-heading-l">@messages("primaryContactDetails.emailAddress.passcode.confirmation.title")</h1>
 
   @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(), 'autoComplete -> "off") {
 
-      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation"), id = Some("email-address-passcode-confirmation-id"))
+  @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation"), id = Some("email-address-passcode-confirmation-id"))
 
-      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice", hmrcPrivacyLink))
-    @govukButton(Button(
+  @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice", hmrcPrivacyLink))
+
+  @govukButton(Button(
           content = Text(messages("site.button.continue")),
           classes = "govuk-!-margin-right-1",
           attributes = Map("id" -> "submit", "name" -> Continue.toString)))
