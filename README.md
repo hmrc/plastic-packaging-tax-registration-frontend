@@ -26,8 +26,10 @@ sm -s
 # Stop the microservice in service manager 
 sm --stop PLASTIC_PACKAGING_TAX_REGISTRATION_FRONTEND
 
-# Run the microservice using sbt
+# Run the microservice using sbt  (script run_local-sh)
 sbt -Dapplication.router=testOnlyDoNotUseInAppConf.Routes run
+
+
 ```
 
 ### Login/Access
