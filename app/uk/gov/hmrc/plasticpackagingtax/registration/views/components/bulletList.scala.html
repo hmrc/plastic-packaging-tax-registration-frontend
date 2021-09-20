@@ -18,13 +18,11 @@
 
 @(title: Option[String] = None, elements: Seq[Html])
 
-<nav>
-    @title.map(paragraphBody(_, "govuk-body"))
-    <ul class="govuk-list govuk-list--bullet">
-        @elements.map { element =>
-            <li class="dashed-list-item">
-                @element
-            </li>
-        }
-    </ul>
-</nav>
+@title.map(paragraphBody(_, "govuk-body"))
+<ul class="govuk-list govuk-list--bullet">
+    @elements.map { element =>
+        <li class="dashed-list-item">
+            @element
+        </li>
+    }
+</ul>

@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.bulletList
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.dashList
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.navList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
@@ -31,7 +31,7 @@ pageTitle: pageTitle,
 sectionHeader: sectionHeader,
 paragraphBody: paragraphBody,
 link: link,
-dashList: dashList,
+navList: navList,
 bulletList: bulletList,
 govukInsetText: GovukInsetText,
 govukButton: GovukButton
@@ -52,8 +52,8 @@ govukButton: GovukButton
 <div class="govuk-!-width-two-thirds">
 
     <div id="contents">
-        @dashList(
-            title = Some(messages("startPage.contents.header")),
+        @navList(
+            title = messages("startPage.contents.header"),
             elements = Seq(
                 link(text = messages("startPage.overview.header"), call = Call("GET", "#overview")),
                 link(text = messages("startPage.informationYouNeed.header"), call = Call("GET", "#information-you-need")),
