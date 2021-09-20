@@ -110,7 +110,7 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Use this service to' section" in {
 
-      view.getElementsByClass("govuk-body").get(0) must containMessage(
+      view.getElementsByClass("govuk-body").get(1) must containMessage(
         "startPage.useThisServiceTo.header"
       )
 
@@ -144,7 +144,7 @@ class StartViewSpec extends UnitViewSpec with Matchers {
         "startPage.informationYouNeed.header"
       )
 
-      view.getElementsByClass("govuk-body").get(4) must containMessage(
+      view.getElementsByClass("govuk-body").get(5) must containMessage(
         "startPage.informationYouNeed.line.1"
       )
 
