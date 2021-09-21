@@ -68,7 +68,7 @@ class IncorpIdController @Inject() (
         saveRegistrationDetails(journeyId).flatMap(res => res)
           .map {
             case Right(registration) =>
-              if (registration.organisationDetails.businessVerificationFailureStatus())
+              if (registration.organisationDetails.businessVerificationFailed)
                 Ok(business_verification_failure_page())
               else if (registration.organisationDetails.businessPartnerIdPresent())
                 Redirect(routes.RegistrationController.displayPage())

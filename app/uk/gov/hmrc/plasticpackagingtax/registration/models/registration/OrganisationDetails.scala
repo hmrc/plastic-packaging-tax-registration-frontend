@@ -50,7 +50,7 @@ case class OrganisationDetails(
     else if (businessPartnerIdPresent()) TaskStatus.Completed
     else TaskStatus.InProgress
 
-  def businessVerificationFailureStatus(): Boolean =
+  val businessVerificationFailed: Boolean =
     incorporationDetails.exists(
       details =>
         details.registration.registrationStatus == "REGISTRATION_NOT_CALLED" && details.businessVerificationStatus == "FAIL"
