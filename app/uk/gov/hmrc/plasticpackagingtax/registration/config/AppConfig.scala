@@ -90,7 +90,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     servicesConfig.baseUrl("email-verification")
 
   lazy val pptAccountHost: String =
-    servicesConfig.baseUrl("ppt-account-frontend")
+    config.getOptional[String]("platform.frontend.host").getOrElse(
+      servicesConfig.baseUrl("ppt-account-frontend")
+    )
 
   lazy val feedbackAuthenticatedLink: String = config.get[String]("urls.feedback.authenticatedLink")
 
