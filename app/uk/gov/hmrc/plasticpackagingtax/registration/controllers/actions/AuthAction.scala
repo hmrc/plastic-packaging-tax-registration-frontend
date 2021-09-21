@@ -99,7 +99,9 @@ class AuthActionImpl @Inject() (
     email: String,
     allEnrolments: Enrolments
   ) =
-    if (allowedUsers.isAllowed(email))
+    if (allEnrolments.getEnrolment("HMRC-PPT-ORG").isDefined)
+      Future.successful(Results.Redirect(appConfig.pptAccountUrl))
+    else if (allowedUsers.isAllowed(email))
       block(
         new AuthenticatedRequest(
           request,

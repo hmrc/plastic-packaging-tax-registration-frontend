@@ -18,9 +18,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
 import base.unit.ControllerSpec
 import base.{MetricsMocks, PptTestData}
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -43,7 +45,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
   "Auth Action" should {
 
-    "process request successfully is User Identity Data is available" in {
+    "process request successfully if User Identity Data is available" in {
       val user = PptTestData.newUser("123")
       authorizedUser(user)
 
@@ -85,6 +87,18 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
         ).invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+    }
+
+    "redirect to PPT account url when user already enrolled" in {
+      when(appConfig.pptAccountUrl).thenReturn("/ppt-accounts-url")
+      val user =
+        PptTestData.newUser("123").copy(enrolments = Enrolments(Set(Enrolment("HMRC-PPT-ORG"))))
+      authorizedUser(user)
+
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+
+      redirectLocation(result) mustBe Some("/ppt-accounts-url")
     }
   }
 }
