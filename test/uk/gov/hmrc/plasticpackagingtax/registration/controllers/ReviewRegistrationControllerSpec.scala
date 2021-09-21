@@ -86,6 +86,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
                                     IncorporationDetails(companyNumber = "123456",
                                                          companyName = "NewPlastics",
                                                          ctutr = "1890894",
+                                                         businessVerificationStatus = "PASS",
                                                          companyAddress = testCompanyAddress,
                                                          registration =
                                                            incorporationRegistrationDetails

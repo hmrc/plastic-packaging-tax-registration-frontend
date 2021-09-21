@@ -38,7 +38,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_registration_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  business_registration_failure_page,
+  business_verification_failure_page
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -54,6 +57,7 @@ class IncorpIdController @Inject() (
   generalPartnershipConnector: GeneralPartnershipConnector,
   scottishPartnershipConnector: ScottishPartnershipConnector,
   business_registration_failure_page: business_registration_failure_page,
+  business_verification_failure_page: business_verification_failure_page,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -64,7 +68,9 @@ class IncorpIdController @Inject() (
         saveRegistrationDetails(journeyId).flatMap(res => res)
           .map {
             case Right(registration) =>
-              if (registration.organisationDetails.businessPartnerIdPresent())
+              if (registration.organisationDetails.businessVerificationFailed)
+                Ok(business_verification_failure_page())
+              else if (registration.organisationDetails.businessPartnerIdPresent())
                 Redirect(routes.RegistrationController.displayPage())
               else
                 Ok(business_registration_failure_page())

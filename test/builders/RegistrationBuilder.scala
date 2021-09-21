@@ -78,6 +78,8 @@ trait RegistrationBuilder {
                                                                  companyName =
                                                                    "Plastic Packaging Ltd",
                                                                  ctutr = "1234567890",
+                                                                 businessVerificationStatus =
+                                                                   "PASS",
                                                                  companyAddress =
                                                                    IncorporationAddressDetails(),
                                                                  registration =

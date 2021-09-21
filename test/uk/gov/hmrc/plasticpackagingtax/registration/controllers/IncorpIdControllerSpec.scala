@@ -38,14 +38,18 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_registration_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  business_registration_failure_page,
+  business_verification_failure_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class IncorpIdControllerSpec extends ControllerSpec {
 
-  private val mcc           = stubMessagesControllerComponents()
-  private val mockErrorPage = mock[business_registration_failure_page]
-  private val registration  = aRegistration()
+  private val mcc                         = stubMessagesControllerComponents()
+  private val mockErrorPage               = mock[business_registration_failure_page]
+  private val mockVerificationFailurePage = mock[business_verification_failure_page]
+  private val registration                = aRegistration()
 
   private val controller =
     new IncorpIdController(authenticate = mockAuthAction,
@@ -56,11 +60,16 @@ class IncorpIdControllerSpec extends ControllerSpec {
                            mockGeneralPartnershipConnector,
                            mockScottishPartnershipConnector,
                            mockErrorPage,
+                           mockVerificationFailurePage,
                            mcc
     )(ec)
 
   private val unregisteredLimitedCompany = aRegistration(
     withOrganisationDetails(unregisteredUkCompanyOrgDetails())
+  )
+
+  private val verificationFailedLimitedCompany = aRegistration(
+    withOrganisationDetails(verificationFailedUkCompanyOrgDetails())
   )
 
   private val registeredLimitedCompany = aRegistration(
@@ -94,6 +103,9 @@ class IncorpIdControllerSpec extends ControllerSpec {
   "incorpIdCallback" should {
 
     when(mockErrorPage.apply()(any[Request[_]](), any[Messages]())).thenReturn(HtmlFormat.empty)
+    when(mockVerificationFailurePage.apply()(any[Request[_]](), any[Messages]())).thenReturn(
+      HtmlFormat.empty
+    )
 
     "redirect to the registration page" when {
       "registering a UK Limited Company" in {
@@ -300,6 +312,16 @@ class IncorpIdControllerSpec extends ControllerSpec {
         verify(mockErrorPage).apply()(any[Request[_]](), any[Messages]())
       }
     }
+
+    "show verification error page" when {
+      "business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED " in {
+        authorizedUser()
+        val result = simulateBusinessVerificationFailureLimitedCompanyCallback()
+
+        status(result) mustBe OK
+        verify(mockVerificationFailurePage).apply()(any[Request[_]](), any[Messages]())
+      }
+    }
   }
 
   private def simulateLimitedCompanyCallback() = {
@@ -316,6 +338,15 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockGetUkCompanyDetails(unregisteredIncorporationDetails)
     mockRegistrationFind(unregisteredLimitedCompany)
     mockRegistrationUpdate(unregisteredLimitedCompany)
+
+    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def simulateBusinessVerificationFailureLimitedCompanyCallback() = {
+    authorizedUser()
+    mockGetUkCompanyDetails(verificationFailedIncorporationDetails)
+    mockRegistrationFind(verificationFailedLimitedCompany)
+    mockRegistrationUpdate(verificationFailedLimitedCompany)
 
     controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
   }

@@ -50,6 +50,12 @@ case class OrganisationDetails(
     else if (businessPartnerIdPresent()) TaskStatus.Completed
     else TaskStatus.InProgress
 
+  val businessVerificationFailed: Boolean =
+    incorporationDetails.exists(
+      details =>
+        details.registration.registrationStatus == "REGISTRATION_NOT_CALLED" && details.businessVerificationStatus == "FAIL"
+    )
+
   def businessPartnerIdPresent(): Boolean =
     organisationType match {
       case Some(UK_COMPANY) =>
