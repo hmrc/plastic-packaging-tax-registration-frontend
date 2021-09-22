@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Registration Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   6.1
+// @version   6.2
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
 // @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax*
@@ -18,7 +18,7 @@
 
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
-    document.getElementById('global-header').appendChild(createQuickButton())
+    document.querySelector('header').appendChild(createQuickButton())
 
 })();
 
@@ -35,7 +35,7 @@ function createQuickButton() {
     button.style.position = 'absolute'
     button.style.top = '50px'
     button.innerHTML = 'Quick Submit'
-    button.onclick = () => document.getElementsByClassName('button')[0].click();
+    button.onclick = () => document.getElementById('submit').click();
     return button;
 
 }
