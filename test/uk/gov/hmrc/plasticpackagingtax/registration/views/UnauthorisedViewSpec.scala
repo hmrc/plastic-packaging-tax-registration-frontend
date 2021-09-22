@@ -62,6 +62,7 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
       link must haveHref(
         "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"
       )
+      link.attributes().hasKey("target") mustBe false
     }
   }
 }
