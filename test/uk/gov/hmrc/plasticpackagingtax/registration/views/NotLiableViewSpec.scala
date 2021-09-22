@@ -76,17 +76,18 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
     "display guidance text" in {
 
-      val link = view.getElementById("guidance-text")
-      link.text() must include(
+      view.getElementById("guidance-text").text() must include(
         messages("notLiable.guidance", messages("notLiable.guidance.link.description"))
       )
-      link.attr("target") mustBe "_blank"
-      link.attr("rel") mustBe "noopener noreferrer"
     }
 
     "display guidance link" in {
+      val link = view.getElementById("guidance-link")
 
-      view.getElementById("guidance-link") must haveHref(messages("notLiable.guidance.link.href"))
+      link must haveHref(messages("notLiable.guidance.link.href"))
+
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
     }
 
     "display feedback subheading" in {
