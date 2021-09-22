@@ -97,9 +97,10 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display liability weight information link" in {
 
-      view.getElementById("guidance-link") must haveHref(
-        messages("liabilityWeightPage.guidance.href")
-      )
+      val link = view.getElementById("guidance-link")
+      link must haveHref(messages("liabilityWeightPage.guidance.href"))
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
     }
 
     "display total weight label" in {
