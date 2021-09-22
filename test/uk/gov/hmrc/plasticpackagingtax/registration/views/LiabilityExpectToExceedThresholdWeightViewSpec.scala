@@ -96,6 +96,14 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
       view.getElementsByClass("govuk-label").get(1).text() mustBe "No"
     }
 
+    "display guidance link" in {
+
+      val link = view.getElementById("guidance-link")
+      link must haveHref(messages("liabilityExpectToExceedThresholdWeightPage.guidance.href"))
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
+    }
+
     "display 'Save And Continue' button" in {
 
       view must containElementWithID("submit")

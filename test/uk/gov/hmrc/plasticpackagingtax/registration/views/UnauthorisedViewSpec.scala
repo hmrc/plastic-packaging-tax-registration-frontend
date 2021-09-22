@@ -52,7 +52,7 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
       link must containMessage("unauthorised.paragraph.1.link")
       link must haveHref(routes.StartController.displayStartPage().url)
-      link.attr("target") mustBe "_self"
+      link.attributes().hasKey("target") mustBe false
     }
 
     "display ppt guidance link" in {
@@ -62,7 +62,6 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
       link must haveHref(
         "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"
       )
-      link.attr("target") mustBe "_self"
     }
   }
 }
