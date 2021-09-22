@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.timeoutDialog
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.TimeoutDialogConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcStandardFooter
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
 
 @this(
@@ -34,7 +34,7 @@
         hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
         siteHeader: siteHeader,
         phaseBanner: phaseBanner,
-        hmrcFooter: hmrcStandardFooter
+        hmrcFooter: HmrcStandardFooter
 )
 @(title: Title,
   backButton: Option[BackButton] = None,

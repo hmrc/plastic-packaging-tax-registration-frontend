@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -26,7 +25,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{UK_COMPANY, SOLE_TRADER, PARTNERSHIP, CHARITY_OR_NOT_FOR_PROFIT, OVERSEAS_COMPANY}
 
 @this(
-    formHelper: formWithCSRF,
+    formHelper: FormWithCSRF,
     govukLayout: main_template,
     govukRadios : GovukRadios,
     sectionHeader: sectionHeader,

@@ -5,7 +5,7 @@ resolvers += Resolver.typesafeRepo("releases")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.3")
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "3.0.0")
+addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "3.5.0")
 
 addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.5.1")
 

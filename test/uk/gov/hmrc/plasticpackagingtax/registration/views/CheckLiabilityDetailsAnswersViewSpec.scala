@@ -23,8 +23,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Call}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import uk.gov.hmrc.govukfrontend.views.html.components.{GovukButton, GovukSummaryList}
-import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
+import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukButton, GovukSummaryList}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -38,13 +37,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   main_template
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-
 import java.time.format.DateTimeFormatter
 
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val formHelper       = instanceOf[formWithCSRF]
+  private val formHelper       = instanceOf[FormWithCSRF]
   private val govukLayout      = instanceOf[main_template]
   private val govukButton      = instanceOf[GovukButton]
   private val govukSummaryList = instanceOf[GovukSummaryList]
