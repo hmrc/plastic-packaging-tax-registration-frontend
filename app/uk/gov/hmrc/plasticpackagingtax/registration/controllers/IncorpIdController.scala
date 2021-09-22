@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -44,7 +45,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -65,23 +65,22 @@ class IncorpIdController @Inject() (
   def incorpIdCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        saveRegistrationDetails(journeyId).flatMap(res => res)
-          .map {
-            case Right(registration) =>
-              if (registration.organisationDetails.businessVerificationFailed)
-                Ok(business_verification_failure_page())
-              else if (registration.organisationDetails.businessPartnerIdPresent())
-                Redirect(routes.RegistrationController.displayPage())
-              else
-                Ok(business_registration_failure_page())
-            case Left(error) => throw error
-          }
+        saveRegistrationDetails(journeyId).map {
+          case Right(registration) =>
+            if (registration.organisationDetails.businessVerificationFailed)
+              Ok(business_verification_failure_page())
+            else if (registration.organisationDetails.businessPartnerIdPresent())
+              Redirect(routes.RegistrationController.displayPage())
+            else
+              Ok(business_registration_failure_page())
+          case Left(error) => throw error
+        }
     }
 
   private def saveRegistrationDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
-  ): Future[Future[Either[ServiceError, Registration]]] =
+  ): Future[Either[ServiceError, Registration]] =
     request.registration.organisationDetails.organisationType match {
       case Some(OrgType.UK_COMPANY)  => updateIncorporationDetails(journeyId)
       case Some(OrgType.SOLE_TRADER) => updateSoleTraderDetails(journeyId)
@@ -92,10 +91,10 @@ class IncorpIdController @Inject() (
   private def updateIncorporationDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
-  ): Future[Future[Either[ServiceError, Registration]]] =
+  ): Future[Either[ServiceError, Registration]] =
     for {
       details <- ukLimitedConnector.getDetails(journeyId)
-      result = update { model =>
+      result <- update { model =>
         val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = Some(details),
                                                                soleTraderDetails = None,
                                                                partnershipDetails = None
@@ -107,10 +106,10 @@ class IncorpIdController @Inject() (
   private def updateSoleTraderDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
-  ): Future[Future[Either[ServiceError, Registration]]] =
+  ): Future[Either[ServiceError, Registration]] =
     for {
       details <- soleTraderConnector.getDetails(journeyId)
-      result = update { model =>
+      result <- update { model =>
         val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = None,
                                                                partnershipDetails = None,
                                                                soleTraderDetails = Some(details)
@@ -122,14 +121,14 @@ class IncorpIdController @Inject() (
   private def updatePartnershipDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
-  ): Future[Future[Either[ServiceError, Registration]]] =
+  ): Future[Either[ServiceError, Registration]] =
     request.registration.organisationDetails.partnershipDetails match {
       case Some(partnershipDetails) =>
         partnershipDetails.partnershipType match {
           case GENERAL_PARTNERSHIP =>
             for {
               generalPartnershipDetails <- generalPartnershipConnector.getDetails(journeyId)
-              result = update { registration =>
+              result <- update { registration =>
                 val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
                                                                   registration.organisationDetails,
                                                                 generalPartnershipDetails =
@@ -145,7 +144,7 @@ class IncorpIdController @Inject() (
           case SCOTTISH_PARTNERSHIP =>
             for {
               scottishPartnershipDetails <- scottishPartnershipConnector.getDetails(journeyId)
-              result = update { registration =>
+              result <- update { registration =>
                 val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
                                                                   registration.organisationDetails,
                                                                 generalPartnershipDetails = None,
