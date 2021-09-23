@@ -92,7 +92,7 @@ class AuthActionImpl @Inject() (
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-      case _: InsufficientEnrolments =>
+      case _: AuthorisationException =>
         Results.Redirect(routes.UnauthorisedController.onPageLoad())
 
     }

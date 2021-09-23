@@ -17,23 +17,17 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import base.unit.UnitViewSpec
-import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
-import play.api.http.Status.SEE_OTHER
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{redirectLocation, status, stubMessagesApi}
-import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
-import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
+import play.api.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
-
-import scala.concurrent.Future
 
 class ErrorHandlerTest
     extends UnitViewSpec with Matchers with DefaultAwaitTimeout with OptionValues {
 
   private val errorPage    = instanceOf[error_template]
-  private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())(appConfig)
+  private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())
 
   "ErrorHandlerSpec" should {
 
@@ -47,29 +41,5 @@ class ErrorHandlerTest
       result must include("message")
     }
 
-    "handle no active session authorisation exception" in {
-
-      when(appConfig.loginUrl).thenReturn("http://localhost:9949/auth-login-stub/gg-sign-in")
-      when(appConfig.loginContinueUrl).thenReturn(
-        "http://localhost:8503/plastic-packaging-tax/registration"
-      )
-
-      val error            = new NoActiveSession("A user is not logged in") {}
-      val result           = Future.successful(errorHandler.resolveError(journeyRequest, error))
-      val encodedTargetUrl = urlEncode("http://localhost:8503/plastic-packaging-tax/registration")
-      val expectedLocation =
-        s"http://localhost:9949/auth-login-stub/gg-sign-in?continue=$encodedTargetUrl"
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(expectedLocation)
-    }
-    "handle insufficient enrolments authorisation exception" in {
-
-      val error  = InsufficientEnrolments("HMRC-PPT-ORG")
-      val result = Future.successful(errorHandler.resolveError(journeyRequest, error))
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value must endWith("/unauthorised")
-    }
   }
 }
