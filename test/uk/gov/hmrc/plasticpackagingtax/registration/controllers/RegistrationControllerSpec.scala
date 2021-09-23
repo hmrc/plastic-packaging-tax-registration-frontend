@@ -24,6 +24,7 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  ETMPSubscriptionChannel,
   ETMPSubscriptionStatus,
   SubscriptionStatus
 }
@@ -70,7 +71,8 @@ class RegistrationControllerSpec extends ControllerSpec {
           mockGetSubscriptionStatus(
             SubscriptionStatus(subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
                                idType = "ZPPT",
-                               idValue = "XXPPTP123456789"
+                               idValue = "XXPPTP123456789",
+                               channel = ETMPSubscriptionChannel.ONLINE
             )
           )
           val result = controller.displayPage()(getRequest())
