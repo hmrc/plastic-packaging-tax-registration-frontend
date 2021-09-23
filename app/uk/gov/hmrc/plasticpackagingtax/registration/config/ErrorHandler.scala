@@ -18,30 +18,18 @@ package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Request, RequestHeader, Result, Results}
+import play.api.mvc.Request
 import play.twirl.api.Html
-import uk.gov.hmrc.auth.core.{InsufficientEnrolments, NoActiveSession}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 
 @Singleton
-class ErrorHandler @Inject() (error_template: error_template, val messagesApi: MessagesApi)(implicit
-  appConfig: AppConfig
-) extends FrontendErrorHandler {
+class ErrorHandler @Inject() (error_template: error_template, val messagesApi: MessagesApi)
+    extends FrontendErrorHandler {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
     request: Request[_]
   ): Html =
     error_template(pageTitle, heading, message)
-
-  override def resolveError(rh: RequestHeader, ex: Throwable): Result =
-    ex match {
-      case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
-      case _: InsufficientEnrolments =>
-        Results.Redirect(routes.UnauthorisedController.onPageLoad())
-      case _ => super.resolveError(rh, ex)
-    }
 
 }

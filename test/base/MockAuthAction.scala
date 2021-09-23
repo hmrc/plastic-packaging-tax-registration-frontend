@@ -240,4 +240,8 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
       )(any(), any())
     ).thenReturn(Future.failed(new RuntimeException))
 
+  def whenAuthFailsWith(exc: AuthorisationException): Unit =
+    when(mockAuthConnector.authorise(any(), any())(any(), any()))
+      .thenReturn(Future.failed(exc))
+
 }
