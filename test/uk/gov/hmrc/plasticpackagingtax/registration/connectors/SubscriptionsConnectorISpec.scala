@@ -21,10 +21,11 @@ import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
+import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  SubscriptionCreateResponse,
+  SubscriptionCreateResponseSuccess,
   SubscriptionStatus
 }
 
@@ -89,7 +90,7 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
           post(urlMatching(s"/subscriptions/$safeNumber"))
             .willReturn(
               aResponse().withStatus(OK)
-                withBody toJson(validResponse)(SubscriptionCreateResponse.format).toString
+                withBody toJson(validResponse)(SubscriptionCreateResponseSuccess.format).toString
             )
         )
 
@@ -99,7 +100,7 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
         getTimer("ppt.subscription.submit.timer").getCount mustBe 1
       }
 
-      "handle an invalid payload" in {
+      "handle an unexpected success response" in {
         val invalidResponse =
           Map("invalidKey1" -> "invalidValue1", "invalidKey2" -> "invalidValue2")
         stubFor(
@@ -110,7 +111,23 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
             )
         )
 
-        intercept[Exception] {
+        intercept[IllegalStateException] {
+          await(connector.submitSubscription(safeNumber, aRegistration()))
+        }
+      }
+
+      "handle an unexpected failed response" in {
+        val invalidResponse =
+          Map("invalidKey1" -> "invalidValue1", "invalidKey2" -> "invalidValue2")
+        stubFor(
+          post(urlMatching(s"/subscriptions/$safeNumber"))
+            .willReturn(
+              aResponse().withStatus(BAD_REQUEST)
+                withBody (toJson(invalidResponse).toString)
+            )
+        )
+
+        intercept[IllegalStateException] {
           await(connector.submitSubscription(safeNumber, aRegistration()))
         }
       }

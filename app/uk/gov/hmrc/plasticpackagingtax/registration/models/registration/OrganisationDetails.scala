@@ -73,6 +73,12 @@ case class OrganisationDetails(
       case _ => false
     }
 
+  val businessName: Option[String] = organisationType match {
+    case Some(UK_COMPANY)  => incorporationDetails.map(_.companyName)
+    case Some(SOLE_TRADER) => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
+    case _                 => None
+  }
+
 }
 
 object OrganisationDetails {

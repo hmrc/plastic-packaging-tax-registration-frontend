@@ -263,3 +263,7 @@ businessEntityIdentification.failure.detail = TODO: content to assist user to go
 businessEntityVerification.failure.title = We have been unable to verify your organisation
 businessEntityVerification.failure.heading = We have been unable to verify your organisation
 businessEntityVerification.failure.detail = TODO: content to assist user to go here
+
+duplicateSubscription.title = Active subscription already exists
+duplicateSubscription.heading = Active subscription already exists
+duplicateSubscription.detail = We have detected that there is already an active PPT registration for {0}.

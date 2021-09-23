@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import java.util.UUID
-
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -41,12 +40,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, LiabilityWei
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  EisError,
+  SubscriptionCreateResponseFailure
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  duplicate_subscription_page,
+  review_registration_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
-  private val page = mock[review_registration_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val mockReviewRegistrationPage    = mock[review_registration_page]
+  private val mockDuplicateSubscriptionPage = mock[duplicate_subscription_page]
+  private val mcc                           = stubMessagesControllerComponents()
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,
@@ -55,8 +62,9 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
                                      registrationConnector = mockRegistrationConnector,
                                      subscriptionsConnector = mockSubscriptionsConnector,
                                      auditor = mockAuditor,
-                                     page = page,
-                                     metrics = metricsMock
+                                     reviewRegistrationPage = mockReviewRegistrationPage,
+                                     metrics = metricsMock,
+                                     duplicateSubscriptionPage = mockDuplicateSubscriptionPage
     )
 
   override protected def beforeEach(): Unit = {
@@ -64,11 +72,14 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
     val registration = aRegistration()
 
     mockRegistrationFind(registration)
-    given(page.apply(any(), any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockReviewRegistrationPage.apply(any(), any(), any(), any())(any(), any())).willReturn(
+      HtmlFormat.empty
+    )
+    given(mockDuplicateSubscriptionPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
-    reset(page)
+    reset(mockReviewRegistrationPage)
     super.afterEach()
   }
 
@@ -102,6 +113,13 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(registration),
+                                                 incorporationDetails = ArgumentMatchers.eq(
+                                                   registration.organisationDetails.incorporationDetails
+                                                 ),
+                                                 soleTraderDetails = ArgumentMatchers.eq(null),
+                                                 partnershipDetails = ArgumentMatchers.eq(null)
+        )(any(), any())
       }
 
       "user is authorised and display page method is invoked with sole trader" in {
@@ -306,7 +324,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         intercept[RuntimeException](status(result))
       }
 
-      "user submits form and the submission fails" in {
+      "user submits form and the submission fails with an exception" in {
         authorizedUser()
         mockRegistrationFind(aCompletedUkCompanyRegistration)
         mockSubscriptionSubmitFailure(new IllegalStateException("BANG!"))
@@ -317,6 +335,49 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         metricsMock.defaultRegistry.counter(
           "ppt.registration.failed.submission.counter"
         ).getCount mustBe 1
+      }
+
+      "user submits form and the submission fails with an error response" in {
+        val registration = aCompletedUkCompanyRegistration
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockSubscriptionSubmitFailure(
+          SubscriptionCreateResponseFailure(
+            List(
+              EisError("INVALID_SAFEID",
+                       "The remote endpoint has indicated that the SAFEID provided is invalid."
+              )
+            )
+          )
+        )
+
+        val result = controller.submit()(postRequest(JsObject.empty))
+
+        intercept[DownstreamServiceError](status(result))
+      }
+    }
+
+    "display the duplicate subscription page" when {
+      "duplicate subscription detected at the back end" in {
+        val registration = aCompletedUkCompanyRegistration
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockSubscriptionSubmitFailure(
+          SubscriptionCreateResponseFailure(
+            List(
+              EisError("ACTIVE_SUBSCRIPTION_EXISTS",
+                       "The remote endpoint has indicated that Business Partner already has active subscription for this regime."
+              )
+            )
+          )
+        )
+
+        val result = controller.submit()(postRequest(JsObject.empty))
+
+        status(result) mustBe OK
+        verify(mockDuplicateSubscriptionPage).apply(
+          ArgumentMatchers.eq(registration.organisationDetails.businessName)
+        )(any(), any())
       }
     }
   }

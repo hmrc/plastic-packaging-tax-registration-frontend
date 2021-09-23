@@ -17,18 +17,21 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import com.kenshoo.play.metrics.Metrics
+import play.api.http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponse,
+  SubscriptionCreateResponseFailure,
+  SubscriptionCreateResponseSuccess,
   SubscriptionStatus
 }
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class SubscriptionsConnector @Inject() (
@@ -57,18 +60,30 @@ class SubscriptionsConnector @Inject() (
     hc: HeaderCarrier
   ): Future[SubscriptionCreateResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.submit.timer").time()
-    httpClient.POST[Registration, SubscriptionCreateResponse](
-      config.pptSubscriptionCreateUrl(safeNumber),
-      payload
+    httpClient.POST[Registration, HttpResponse](config.pptSubscriptionCreateUrl(safeNumber),
+                                                payload
     )
       .andThen { case _ => timer.stop() }
-      .andThen {
-        case Success(response) => response
-        case Failure(exception) =>
-          throw new Exception(
-            s"Subscription Submission with Safe ID [${safeNumber}] is currently unavailable due to [${exception.getMessage}]",
-            exception
-          )
+      .map {
+        subscriptionResponse =>
+          if (Status.isSuccessful(subscriptionResponse.status))
+            Try(subscriptionResponse.json.as[SubscriptionCreateResponseSuccess]) match {
+              case Success(successfulSubscription) => successfulSubscription
+              case Failure(e) =>
+                throw new IllegalStateException(
+                  s"Unexpected successful subscription response - ${e.getMessage}",
+                  e
+                )
+            }
+          else
+            Try(subscriptionResponse.json.as[SubscriptionCreateResponseFailure]) match {
+              case Success(failedSubscription) => failedSubscription
+              case Failure(e) =>
+                throw new IllegalStateException(
+                  s"Unexpected failed subscription response - ${e.getMessage}",
+                  e
+                )
+            }
       }
   }
 

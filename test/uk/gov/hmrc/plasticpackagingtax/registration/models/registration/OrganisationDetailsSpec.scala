@@ -100,6 +100,21 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
         ).businessPartnerIdPresent() mustBe false
       }
     }
+
+    "report business name" when {
+      "incorporated business" in {
+        val corp = createOrg(UK_COMPANY, None, true)
+        corp.businessName mustBe Some(corp.incorporationDetails.get.companyName)
+      }
+
+      "sole trader" in {
+        val soleTrader        = createOrg(SOLE_TRADER, None, true)
+        val soleTraderDetails = soleTrader.soleTraderDetails.get
+        soleTrader.businessName mustBe Some(
+          s"${soleTraderDetails.firstName} ${soleTraderDetails.lastName}"
+        )
+      }
+    }
   }
 
   private def createOrg(

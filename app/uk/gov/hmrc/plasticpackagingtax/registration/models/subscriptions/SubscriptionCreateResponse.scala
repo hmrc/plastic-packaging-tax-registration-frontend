@@ -20,7 +20,9 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.ZonedDateTime
 
-case class SubscriptionCreateResponse(
+trait SubscriptionCreateResponse
+
+case class SubscriptionCreateResponseSuccess(
   pptReference: String,
   processingDate: ZonedDateTime,
   formBundleNumber: String,
@@ -28,11 +30,32 @@ case class SubscriptionCreateResponse(
   nrsSubmissionId: Option[String],
   nrsFailureReason: Option[String],
   enrolmentInitiatedSuccessfully: Boolean
-)
+) extends SubscriptionCreateResponse
 
-object SubscriptionCreateResponse {
+object SubscriptionCreateResponseSuccess {
 
-  implicit val format: OFormat[SubscriptionCreateResponse] =
-    Json.format[SubscriptionCreateResponse]
+  implicit val format: OFormat[SubscriptionCreateResponseSuccess] =
+    Json.format[SubscriptionCreateResponseSuccess]
+
+}
+
+case class EisError(code: String, reason: String) {
+  val isDuplicateSubscription: Boolean = code == "ACTIVE_SUBSCRIPTION_EXISTS"
+}
+
+object EisError {
+
+  implicit val format: OFormat[EisError] =
+    Json.format[EisError]
+
+}
+
+case class SubscriptionCreateResponseFailure(failures: Seq[EisError])
+    extends SubscriptionCreateResponse
+
+object SubscriptionCreateResponseFailure {
+
+  implicit val format: OFormat[SubscriptionCreateResponseFailure] =
+    Json.format[SubscriptionCreateResponseFailure]
 
 }
