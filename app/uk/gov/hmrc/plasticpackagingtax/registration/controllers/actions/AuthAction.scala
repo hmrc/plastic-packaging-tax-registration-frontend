@@ -89,7 +89,13 @@ class AuthActionImpl @Inject() (
           )
 
           executeRequest(request, block, identityData, email.getOrElse(""), allEnrolments)
-      }
+      } recover {
+      case _: NoActiveSession =>
+        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+      case _: InsufficientEnrolments =>
+        Results.Redirect(routes.UnauthorisedController.onPageLoad())
+
+    }
   }
 
   private def executeRequest[A](
