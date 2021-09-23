@@ -19,8 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
-import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
+import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukSummaryList}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
@@ -53,7 +52,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
 
-  private val formHelper       = instanceOf[formWithCSRF]
+  private val formHelper       = instanceOf[FormWithCSRF]
   private val govukLayout      = instanceOf[main_template]
   private val govukSummaryList = instanceOf[GovukSummaryList]
   private val pageTitle        = instanceOf[pageTitle]

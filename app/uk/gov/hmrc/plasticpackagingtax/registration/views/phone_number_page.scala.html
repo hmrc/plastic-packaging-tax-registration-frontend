@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
@@ -30,7 +29,7 @@
   govukInput: GovukInput,
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
-  formHelper: formWithCSRF
+  formHelper: FormWithCSRF
 )
 @(form: Form[PhoneNumber])(implicit request: Request[_], messages: Messages)
 
