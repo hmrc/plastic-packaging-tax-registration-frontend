@@ -122,9 +122,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
         val form = OrganisationType
           .form()
-          .fillAndValidate(OrganisationType(""))
+          .bind(emptyFormData)
         val view = createView(form)
 
+        view must haveGovukFieldError("answer", "This field is required")
         view must haveGovukGlobalErrorSummary
       }
     }

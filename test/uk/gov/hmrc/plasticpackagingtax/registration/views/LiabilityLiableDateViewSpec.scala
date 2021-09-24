@@ -126,9 +126,10 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
       "no radio button checked" in {
 
         val form = LiabilityLiableDate.form()
-          .fillAndValidate(LiabilityLiableDate(None))
+          .bind(emptyFormData)
         val view = createView(form)
 
+        view must haveGovukFieldError("answer", "This field is required")
         view must haveGovukGlobalErrorSummary
       }
     }

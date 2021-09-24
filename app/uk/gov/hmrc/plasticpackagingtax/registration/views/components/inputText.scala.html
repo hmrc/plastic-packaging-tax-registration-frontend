@@ -25,12 +25,13 @@
 )(implicit messages: Messages)
 
 @inputTextLabel = @{
+    val label = if(labelKey.isEmpty) "" else messages(labelKey)
     if(labelHiddenKey.isDefined) {
         Label(content = HtmlContent(Html(
-            s"""${messages(labelKey)}<span class="govuk-visually-hidden">${labelHiddenKey.map(messages(_)).getOrElse("")}</span>""")
+            s"""$label<span class="govuk-visually-hidden">${labelHiddenKey.map(messages(_)).getOrElse("")}</span>""")
         ), classes = labelClasses)
     } else {
-        Label(content = Text(messages(labelKey)), classes = labelClasses)
+        Label(content = Text(label), classes = labelClasses)
     }
 }
 

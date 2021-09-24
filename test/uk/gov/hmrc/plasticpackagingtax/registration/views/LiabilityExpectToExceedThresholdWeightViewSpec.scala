@@ -132,9 +132,10 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
       "no radio button checked" in {
 
         val form = ExpectToExceedThresholdWeight.form()
-          .fillAndValidate(ExpectToExceedThresholdWeight(None))
+          .bind(emptyFormData)
         val view = createView(form)
 
+        view must haveGovukFieldError("answer", "This field is required")
         view must haveGovukGlobalErrorSummary
       }
     }
