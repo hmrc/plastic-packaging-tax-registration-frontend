@@ -20,7 +20,7 @@ import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAllowEnrolmentAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.session_timed_out
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.Future
 
 class SignOutController @Inject() (
-  authenticate: AuthAllowEnrolmentAction,
+  authenticate: AuthNoEnrolmentCheckAction,
   appConfig: AppConfig,
   sessionTimedOut: session_timed_out,
   mcc: MessagesControllerComponents

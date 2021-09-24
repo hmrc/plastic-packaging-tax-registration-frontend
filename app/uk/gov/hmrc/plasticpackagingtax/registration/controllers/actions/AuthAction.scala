@@ -45,14 +45,14 @@ class AuthActionImpl @Inject() (
   override val checkAlreadyEnrolled: Boolean = true
 }
 
-class AuthAllowEnrolmentActionImpl @Inject() (
+class AuthNoEnrolmentCheckActionImpl @Inject() (
   override val authConnector: AuthConnector,
   allowedUsers: AllowedUsers,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
-    with AuthAllowEnrolmentAction {
+    with AuthNoEnrolmentCheckAction {
   override val checkAlreadyEnrolled: Boolean = false
 }
 
@@ -153,7 +153,7 @@ trait AuthAction
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]
 
-@ImplementedBy(classOf[AuthAllowEnrolmentActionImpl])
-trait AuthAllowEnrolmentAction
+@ImplementedBy(classOf[AuthNoEnrolmentCheckActionImpl])
+trait AuthNoEnrolmentCheckAction
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]
