@@ -31,6 +31,20 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
   private val page: duplicate_subscription_page =
     instanceOf[duplicate_subscription_page]
 
+  private def pageParagraphMessageKeys =
+    List("duplicateSubscription.detail",
+         "pptHelpline.intro",
+         "pptHelpline.telephone.title",
+         "pptHelpline.telephone.detail",
+         "pptHelpline.textphone.title",
+         "pptHelpline.textphone.detail",
+         "pptHelpline.telephone.outsideUK.title",
+         "pptHelpline.telephone.outsideUK.detail",
+         "pptHelpline.openingTimes.title",
+         "pptHelpline.openingTimes.detail.1",
+         "pptHelpline.openingTimes.detail.2"
+    )
+
   private def createView(): Html = page(Some("Plastic Packaging Ltd"))(journeyRequest, messages)
 
   "Duplicate Subscription Page" should {
@@ -38,7 +52,10 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
     "have proper messages for labels" in {
       messages must haveTranslationFor("duplicateSubscription.title")
       messages must haveTranslationFor("duplicateSubscription.heading")
-      messages must haveTranslationFor("duplicateSubscription.detail")
+
+      pageParagraphMessageKeys.foreach { messageKey =>
+        messages must haveTranslationFor(messageKey)
+      }
     }
 
     val view: Html = createView()
@@ -53,8 +70,19 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
 
     "display detail" in {
       view.select("p.govuk-body").text() must include(
-        messages("duplicateSubscription.detail", "Plastic Packaging Ltd")
+        messages(pageParagraphMessageKeys.head, "Plastic Packaging Ltd")
       )
+    }
+
+    "display ppt helpline detail" in {
+      pageParagraphMessageKeys.tail.foreach { messageKey =>
+        view.select("p.govuk-body").text must include(messages(messageKey))
+      }
+    }
+
+    "validate other rendering methods" in {
+      page.f(Some("Test Company"))(journeyRequest, messages)
+      page.render(Some("Test Company"), journeyRequest, messages)
     }
   }
 }

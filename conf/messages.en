@@ -264,6 +264,18 @@ businessEntityVerification.failure.title = We have been unable to verify your or
 businessEntityVerification.failure.heading = We have been unable to verify your organisation
 businessEntityVerification.failure.detail = TODO: content to assist user to go here
 
-duplicateSubscription.title = Active subscription already exists
-duplicateSubscription.heading = Active subscription already exists
-duplicateSubscription.detail = We have detected that there is already an active PPT registration for {0}.
+duplicateSubscription.title = Your organisation is already registered
+duplicateSubscription.heading = Your organisation is already registered
+duplicateSubscription.detail = Someone has already submitted a PPT registration for {0}.
+
+pptHelpline.intro = Contact the Plastic Packaging Helpline if you have any questions.
+pptHelpline.telephone.title = Telephone:
+pptHelpline.telephone.detail = 0300 300 3000
+pptHelpline.textphone.title = Textphone:
+pptHelpline.textphone.detail = 0300 300 3001
+pptHelpline.telephone.outsideUK.title = Outside UK:
+pptHelpline.telephone.outsideUK.detail = +44 0300 300 3002
+pptHelpline.openingTimes.title = Opening times:
+pptHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 8pm
+pptHelpline.openingTimes.detail.2 = Closed Easter Sunday, Christmas Day, Boxing Day and New Year’s Day.
+
