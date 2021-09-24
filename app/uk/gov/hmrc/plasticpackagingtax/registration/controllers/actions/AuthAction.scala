@@ -41,7 +41,31 @@ class AuthActionImpl @Inject() (
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
-) extends AuthAction with AuthorisedFunctions {
+) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig) with AuthAction {
+  override val checkAlreadyEnrolled: Boolean = true
+}
+
+class AuthAllowEnrolmentActionImpl @Inject() (
+  override val authConnector: AuthConnector,
+  allowedUsers: AllowedUsers,
+  metrics: Metrics,
+  mcc: MessagesControllerComponents,
+  appConfig: AppConfig
+) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
+    with AuthAllowEnrolmentAction {
+  override val checkAlreadyEnrolled: Boolean = false
+}
+
+abstract class AuthActionBase @Inject() (
+  override val authConnector: AuthConnector,
+  allowedUsers: AllowedUsers,
+  metrics: Metrics,
+  mcc: MessagesControllerComponents,
+  appConfig: AppConfig
+) extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, AuthenticatedRequest] with AuthorisedFunctions {
+
+  val checkAlreadyEnrolled: Boolean
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -105,7 +129,7 @@ class AuthActionImpl @Inject() (
     email: String,
     allEnrolments: Enrolments
   ) =
-    if (allEnrolments.getEnrolment("HMRC-PPT-ORG").isDefined)
+    if (checkAlreadyEnrolled && allEnrolments.getEnrolment("HMRC-PPT-ORG").isDefined)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
     else if (allowedUsers.isAllowed(email))
       block(
@@ -126,5 +150,10 @@ class AuthActionImpl @Inject() (
 
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction
+    extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    with ActionFunction[Request, AuthenticatedRequest]
+
+@ImplementedBy(classOf[AuthAllowEnrolmentActionImpl])
+trait AuthAllowEnrolmentAction
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]

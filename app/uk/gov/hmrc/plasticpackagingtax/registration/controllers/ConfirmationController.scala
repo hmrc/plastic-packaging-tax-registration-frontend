@@ -19,15 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAllowEnrolmentAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class ConfirmationController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
+  authenticate: AuthAllowEnrolmentAction,
   mcc: MessagesControllerComponents,
   page: confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {

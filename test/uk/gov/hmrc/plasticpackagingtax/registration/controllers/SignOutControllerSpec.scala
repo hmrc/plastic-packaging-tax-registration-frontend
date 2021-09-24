@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import akka.http.scaladsl.model.StatusCodes.OK
+import base.PptTestData
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -24,6 +25,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, session, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.session_timed_out
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -32,7 +34,9 @@ class SignOutControllerSpec extends ControllerSpec {
 
   private val mcc                = stubMessagesControllerComponents()
   private val sessionTimeoutPage = mock[session_timed_out]
-  private val controller         = new SignOutController(mockAuthAction, config, sessionTimeoutPage, mcc)
+
+  private val controller =
+    new SignOutController(mockAuthAllowEnrolmentAction, config, sessionTimeoutPage, mcc)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -51,6 +55,20 @@ class SignOutControllerSpec extends ControllerSpec {
       "auth user signs out" in {
 
         authorizedUser()
+        val exitSurveyUrl: String = givenExistSurveyUrl
+
+        val result = controller.signOut(SignOutReason.UserAction)(getRequest())
+
+        redirectLocation(result) mustBe Some(exitSurveyUrl)
+
+      }
+
+      "enrolled user signs out" in {
+
+        val user =
+          PptTestData.newUser().copy(enrolments = Enrolments(Set(Enrolment("HMRC-PPT-ORG"))))
+        authorizedUser(user)
+
         val exitSurveyUrl: String = givenExistSurveyUrl
 
         val result = controller.signOut(SignOutReason.UserAction)(getRequest())
