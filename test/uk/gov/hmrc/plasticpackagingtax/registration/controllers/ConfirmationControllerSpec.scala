@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import base.PptTestData
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -24,6 +25,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -32,11 +34,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ConfirmationController(authenticate = mockAuthAction,
-                               mockJourneyAction,
-                               mcc = mcc,
-                               page = page
-    )
+    new ConfirmationController(authenticate = mockAuthAllowEnrolmentAction, mcc = mcc, page = page)
 
   private val registration = aRegistration()
 
@@ -58,11 +56,24 @@ class ConfirmationControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
+
         mockRegistrationUpdate(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
+
+      "user is already enrolled and display page method is invoked" in {
+        val user =
+          PptTestData.newUser().copy(enrolments = Enrolments(Set(Enrolment("HMRC-PPT-ORG"))))
+        authorizedUser(user)
+
+        mockRegistrationUpdate(aRegistration())
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
     }
 
     "return an error" when {
