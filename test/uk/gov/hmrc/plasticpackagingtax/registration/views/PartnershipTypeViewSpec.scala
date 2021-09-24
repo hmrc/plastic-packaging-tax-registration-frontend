@@ -22,6 +22,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType.form
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
@@ -41,6 +42,11 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
     page(form)(journeyRequest, messages)
 
   "Partnership Type View" should {
+
+    "validate other rendering methods" in {
+      page.f(form())(request, messages)
+      page.render(form(), request, messages)
+    }
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("partnership.type.title")

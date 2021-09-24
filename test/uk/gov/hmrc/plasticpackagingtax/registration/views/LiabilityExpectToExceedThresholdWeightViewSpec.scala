@@ -38,6 +38,11 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
 
   "Liability section expect process more weight view" should {
 
+    "validate other rendering methods" in {
+      page.f(form())(request, messages)
+      page.render(form(), request, messages)
+    }
+
     "have proper messages for labels" in {
       messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.sectionHeader")
       messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.title")

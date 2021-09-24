@@ -31,6 +31,11 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
   "Start Page view" should {
 
+    "validate other rendering methods" in {
+      startPage.f()(request, messages)
+      startPage.render(request, messages)
+    }
+
     "have proper messages for labels" in {
 
       messages must haveTranslationFor("startPage.title.sectionHeader")
