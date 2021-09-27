@@ -39,7 +39,7 @@ class RegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.organisationDetails.safeNumber match {
+      request.registration.organisationDetails.businessPartnerId() match {
         case Some(safeNumber) =>
           for {
             subscriptionStatus <- subscriptionsConnector.getSubscriptionStatus(safeNumber)

@@ -39,7 +39,6 @@ case class OrganisationDetails(
   isBasedInUk: Option[Boolean] = None,
   organisationType: Option[OrgType] = None,
   businessRegisteredAddress: Option[Address] = None,
-  safeNumber: Option[String] = None,
   soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None
@@ -47,7 +46,7 @@ case class OrganisationDetails(
 
   def status: TaskStatus =
     if (isBasedInUk.isEmpty) TaskStatus.NotStarted
-    else if (businessPartnerIdPresent()) TaskStatus.Completed
+    else if (businessPartnerId().isDefined) TaskStatus.Completed
     else TaskStatus.InProgress
 
   val businessVerificationFailed: Boolean =
@@ -56,21 +55,23 @@ case class OrganisationDetails(
         details.registration.registrationStatus == "REGISTRATION_NOT_CALLED" && details.businessVerificationStatus == "FAIL"
     )
 
-  def businessPartnerIdPresent(): Boolean =
+  def businessPartnerId(): Option[String] =
     organisationType match {
       case Some(UK_COMPANY) =>
-        incorporationDetails.exists(_.registration.registeredBusinessPartnerId.isDefined)
+        incorporationDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
       case Some(SOLE_TRADER) =>
-        soleTraderDetails.exists(_.registration.registeredBusinessPartnerId.isDefined)
+        soleTraderDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
       case Some(PARTNERSHIP) =>
-        partnershipDetails.exists(_.partnershipType match {
-          case GENERAL_PARTNERSHIP =>
-            partnershipDetails.get.generalPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
-          case SCOTTISH_PARTNERSHIP =>
-            partnershipDetails.get.scottishPartnershipDetails.get.registration.registeredBusinessPartnerId.isDefined
-          case _ => false
-        })
-      case _ => false
+        partnershipDetails.flatMap { pd =>
+          pd.partnershipType match {
+            case GENERAL_PARTNERSHIP =>
+              partnershipDetails.get.generalPartnershipDetails.get.registration.registeredBusinessPartnerId
+            case SCOTTISH_PARTNERSHIP =>
+              partnershipDetails.get.scottishPartnershipDetails.get.registration.registeredBusinessPartnerId
+            case _ => None
+          }
+        }
+      case _ => None
     }
 
   val businessName: Option[String] = organisationType match {

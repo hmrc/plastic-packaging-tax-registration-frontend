@@ -69,7 +69,7 @@ class IncorpIdController @Inject() (
           case Right(registration) =>
             if (registration.organisationDetails.businessVerificationFailed)
               Ok(business_verification_failure_page())
-            else if (registration.organisationDetails.businessPartnerIdPresent())
+            else if (registration.organisationDetails.businessPartnerId().isDefined)
               Redirect(routes.RegistrationController.displayPage())
             else
               Ok(business_registration_failure_page())
