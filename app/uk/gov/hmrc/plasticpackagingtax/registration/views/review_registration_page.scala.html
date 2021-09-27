@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
@@ -34,7 +33,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 
 @this(
-    formHelper: formWithCSRF,
+    formHelper: FormWithCSRF,
     govukLayout: main_template,
     govukSummaryList: GovukSummaryList,
     pageTitle: pageTitle,
@@ -222,6 +221,6 @@
     <h2 id="send-your-application" class="govuk-heading-m">@messages("reviewRegistration.sendYourApplication.title")</h2>
     @paragraphBody(messages("reviewRegistration.sendYourApplication.body"))
 
-    @saveAndContinue(messages("site.button.acceptAndSend"))
+    @saveAndContinue("site.button.acceptAndSend")
     }
 }

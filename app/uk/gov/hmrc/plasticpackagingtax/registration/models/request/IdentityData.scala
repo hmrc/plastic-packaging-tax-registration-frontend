@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
-import org.joda.time.{DateTime, LocalDate}
-import play.api.libs.json._
+import org.joda.time.LocalDate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, LoginTimes, Name, _}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
-import uk.gov.hmrc.http.controllers.RestFormats
 
 case class IdentityData(
   internalId: Option[String] = None,
@@ -44,23 +42,3 @@ case class IdentityData(
   credentialStrength: Option[String] = None,
   loginTimes: Option[LoginTimes] = None
 )
-
-object IdentityData {
-  implicit val localDateFormat: Format[LocalDate] = RestFormats.localDateFormats
-  implicit val dateTimeReads: Format[DateTime]    = RestFormats.dateTimeFormats
-  implicit val credentialsFormat                  = Json.format[Credentials]
-  implicit val nameFormat                         = Json.format[Name]
-  implicit val agentInformationFormat             = Json.format[AgentInformation]
-  implicit val mdtpInformationFormat              = Json.format[MdtpInformation]
-  implicit val itmpNameFormat                     = Json.format[ItmpName]
-  implicit val itmpAddressFormat                  = Json.format[ItmpAddress]
-  implicit val loginTimesFormat                   = Json.format[LoginTimes]
-
-  implicit val format: OFormat[IdentityData] = Json.format[IdentityData]
-}
-
-case class SearchKeys(conversationId: Option[String], ducr: Option[String])
-
-object SearchKeys {
-  implicit val format: OFormat[SearchKeys] = Json.format[SearchKeys]
-}

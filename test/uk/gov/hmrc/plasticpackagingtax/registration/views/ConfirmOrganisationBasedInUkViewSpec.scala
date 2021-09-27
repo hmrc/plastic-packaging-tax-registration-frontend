@@ -110,9 +110,10 @@ class ConfirmOrganisationBasedInUkViewSpec extends UnitViewSpec with Matchers {
 
         val form = ConfirmOrganisationBasedInUk
           .form()
-          .fillAndValidate(ConfirmOrganisationBasedInUk(None))
+          .bind(emptyFormData)
         val view = createView(form)
 
+        view must haveGovukFieldError("answer", "This field is required")
         view must haveGovukGlobalErrorSummary
       }
     }

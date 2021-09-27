@@ -33,6 +33,11 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
   "Unauthorised Page view" should {
 
+    "validate other rendering methods" in {
+      page.f()(request, messages)
+      page.render(request, messages)
+    }
+
     "have proper messages for labels" in {
       messages must haveTranslationFor("unauthorised.heading")
       messages must haveTranslationFor("unauthorised.paragraph.1")
@@ -52,7 +57,7 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
       link must containMessage("unauthorised.paragraph.1.link")
       link must haveHref(routes.StartController.displayStartPage().url)
-      link.attr("target") mustBe "_self"
+      link.attributes().hasKey("target") mustBe false
     }
 
     "display ppt guidance link" in {
@@ -62,7 +67,7 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
       link must haveHref(
         "https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax"
       )
-      link.attr("target") mustBe "_self"
+      link.attributes().hasKey("target") mustBe false
     }
   }
 }

@@ -38,6 +38,11 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
 
   "Liability section expect process more weight view" should {
 
+    "validate other rendering methods" in {
+      page.f(form())(request, messages)
+      page.render(form(), request, messages)
+    }
+
     "have proper messages for labels" in {
       messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.sectionHeader")
       messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.title")
@@ -96,6 +101,14 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
       view.getElementsByClass("govuk-label").get(1).text() mustBe "No"
     }
 
+    "display guidance link" in {
+
+      val link = view.getElementById("guidance-link")
+      link must haveHref(messages("liabilityExpectToExceedThresholdWeightPage.guidance.href"))
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
+    }
+
     "display 'Save And Continue' button" in {
 
       view must containElementWithID("submit")
@@ -124,9 +137,10 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
       "no radio button checked" in {
 
         val form = ExpectToExceedThresholdWeight.form()
-          .fillAndValidate(ExpectToExceedThresholdWeight(None))
+          .bind(emptyFormData)
         val view = createView(form)
 
+        view must haveGovukFieldError("answer", "This field is required")
         view must haveGovukGlobalErrorSummary
       }
     }

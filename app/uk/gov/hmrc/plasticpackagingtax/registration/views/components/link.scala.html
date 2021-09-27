@@ -15,6 +15,6 @@
 *@
 @this()
 
-@(text: String, call: Call, target: String = "_self", id: Option[String] = None, classes: String = "govuk-link govuk-link--no-visited-state")
+@(text: String, call: Call, newTab: Boolean = false, id: Option[String] = None, classes: String = "govuk-link govuk-link--no-visited-state")
 
-<a class="@classes" href="@call" target="@target" @id.map{id => id="@id"}>@text</a>
+<a class="@classes" href="@call" @if(newTab) { target="_blank" rel="noopener noreferrer" } @id.map { id => id="@id"}>@text</a>

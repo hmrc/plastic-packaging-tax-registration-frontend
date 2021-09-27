@@ -22,7 +22,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments, InsufficientEnrolments, MissingBearerToken}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -99,6 +99,33 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
         createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
       redirectLocation(result) mustBe Some("/ppt-accounts-url")
+    }
+
+    "redirect when user not logged in" in {
+
+      when(appConfig.loginUrl).thenReturn("login-url")
+      when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
+
+      whenAuthFailsWith(MissingBearerToken())
+
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                       okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
+    }
+
+    "redirect when user not authorised" in {
+
+      whenAuthFailsWith(InsufficientEnrolments())
+
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                       okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
     }
   }
 }

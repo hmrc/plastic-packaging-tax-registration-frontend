@@ -43,6 +43,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  ETMPSubscriptionChannel,
   ETMPSubscriptionStatus,
   SubscriptionCreateResponseSuccess,
   SubscriptionStatus
@@ -192,7 +193,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val subscriptionStatus: SubscriptionStatus = SubscriptionStatus(
     subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
     idValue = "XXPPTP123456789",
-    idType = "ZPPT"
+    idType = "ZPPT",
+    channel = ETMPSubscriptionChannel.ONLINE
   )
 
   protected val nrsSubmissionId = "nrs-id-999"

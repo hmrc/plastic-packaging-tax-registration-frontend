@@ -20,7 +20,6 @@ import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Flash
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -30,13 +29,15 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
 
   private val page: confirmation_page = instanceOf[confirmation_page]
 
-  private def createView(
-    registration: Registration = aRegistration(),
-    flash: Flash = new Flash(Map.empty)
-  ): Html =
+  private def createView(flash: Flash = new Flash(Map.empty)): Html =
     page()(journeyRequest, messages, flash)
 
   "Confirmation Page view" should {
+
+    "validate other rendering methods" in {
+      page.f()(request, messages, new Flash(Map.empty))
+      page.render(request, messages, new Flash(Map.empty))
+    }
 
     "have proper messages for labels" in {
 
@@ -72,6 +73,18 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(messages("confirmationPage.title"))
+    }
+
+    "display link to ppt accounts" when {
+
+      "flash contains successful enrolment " in {
+
+        val successView = createView(new Flash(Map("enrolmentSuccessful" -> "true")))
+        successView.getElementById("ppt-account-link") must containMessage(
+          "confirmationPage.enrolment.link.text"
+        )
+      }
+
     }
 
     "display panel" when {

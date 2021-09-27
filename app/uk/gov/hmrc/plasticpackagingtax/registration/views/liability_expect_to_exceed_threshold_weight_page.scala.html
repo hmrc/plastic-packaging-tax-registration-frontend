@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.helpers.formWithCSRF
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -30,7 +29,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageHeading
 
 @this(
-    formHelper: formWithCSRF,
+    formHelper: FormWithCSRF,
         pageHeading: pageHeading,
         paragraph: paragraph,
         link: link,
@@ -59,7 +58,7 @@
 @pptGuidanceLink = {
 @link(
     id = Some("guidance-link"),
-    target = "_blank",
+    newTab = true,
     text = messages("liabilityExpectToExceedThresholdWeightPage.guidance.description"),
     call = Call(
         method = "GET",

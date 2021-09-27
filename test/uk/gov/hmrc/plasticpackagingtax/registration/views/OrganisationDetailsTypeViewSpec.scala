@@ -29,6 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType.form
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -41,6 +42,11 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     page(form)(journeyRequest, messages)
 
   "Confirm Organisation Based In Uk View" should {
+
+    "validate other rendering methods" in {
+      page.f(form())(request, messages)
+      page.render(form(), request, messages)
+    }
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("organisationDetails.type.title")
@@ -122,9 +128,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
         val form = OrganisationType
           .form()
-          .fillAndValidate(OrganisationType(""))
+          .bind(emptyFormData)
         val view = createView(form)
 
+        view must haveGovukFieldError("answer", "This field is required")
         view must haveGovukGlobalErrorSummary
       }
     }
