@@ -16,22 +16,19 @@
 
 package base.unit
 
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import spec.{PptTestData, ViewMatchers}
 
-trait UnitTestCodeCoverageWorkaround extends AnyWordSpec {
-  def exerciseGeneratedRenderingMethods(): Unit
+abstract class UnitViewSpec
+    extends MessagesSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
+    with ViewAssertions with PptTestData {
+
+  protected val emptyFormData: Map[String, String] = Map.empty
 
   "Exercise generated rendering methods" in {
     exerciseGeneratedRenderingMethods()
   }
-}
 
-abstract class UnitViewSpec
-    extends MessagesSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
-    with ViewAssertions with PptTestData with UnitTestCodeCoverageWorkaround {
-
-  protected val emptyFormData: Map[String, String] = Map.empty
+  def exerciseGeneratedRenderingMethods(): Unit
 
 }
