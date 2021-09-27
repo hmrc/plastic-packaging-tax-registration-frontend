@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import com.kenshoo.play.metrics.Metrics
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Flash, MessagesControllerComponents}
+import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
@@ -42,8 +42,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionCreateResponse
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  EisError,
+  SubscriptionCreateResponseFailure,
+  SubscriptionCreateResponseSuccess
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  duplicate_subscription_page,
+  review_registration_page
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -58,7 +65,8 @@ class ReviewRegistrationController @Inject() (
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
   auditor: Auditor,
-  page: review_registration_page
+  reviewRegistrationPage: review_registration_page,
+  duplicateSubscriptionPage: duplicate_subscription_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -85,13 +93,25 @@ class ReviewRegistrationController @Inject() (
     }
 
   private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =
-    Ok(page(registration = request.registration, soleTraderDetails = getSoleTraderDetails()))
+    Ok(
+      reviewRegistrationPage(registration = request.registration,
+                             soleTraderDetails = getSoleTraderDetails()
+      )
+    )
 
   private def partnershipReview()(implicit request: JourneyRequest[AnyContent]) =
-    Ok(page(registration = request.registration, partnershipDetails = getPartnershipDetails()))
+    Ok(
+      reviewRegistrationPage(registration = request.registration,
+                             partnershipDetails = getPartnershipDetails()
+      )
+    )
 
   private def ukCompanyReview()(implicit request: JourneyRequest[AnyContent]) =
-    Ok(page(registration = request.registration, incorporationDetails = getIncorporationDetails()))
+    Ok(
+      reviewRegistrationPage(registration = request.registration,
+                             incorporationDetails = getIncorporationDetails()
+      )
+    )
 
   private def markRegistrationAsReviewed()(implicit
     req: JourneyRequest[AnyContent]
@@ -107,17 +127,25 @@ class ReviewRegistrationController @Inject() (
       val completedRegistration = request.registration.asCompleted()
       val completedRegistrationWithUserHeaders =
         completedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
-      subscriptionsConnector.submitSubscription(getSafeId(completedRegistrationWithUserHeaders),
+
+      subscriptionsConnector.submitSubscription(getSafeId(completedRegistration),
                                                 completedRegistrationWithUserHeaders
-      ).transform(response => handleSuccessfulSubscription(completedRegistration, response),
-                  e => handleFailedSubscription(completedRegistration, e)
       )
+        .map {
+          case successfulSubscription @ SubscriptionCreateResponseSuccess(_, _, _, _, _, _, _) =>
+            handleSuccessfulSubscription(completedRegistration, successfulSubscription)
+          case SubscriptionCreateResponseFailure(failures) =>
+            handleFailedSubscription(completedRegistration, failures)
+        }
+        .recoverWith {
+          case e: Throwable => Future.failed(handleFailedSubscription(completedRegistration, e))
+        }
     }
 
   private def handleSuccessfulSubscription(
     registration: Registration,
-    response: SubscriptionCreateResponse
-  )(implicit hc: HeaderCarrier) = {
+    response: SubscriptionCreateResponseSuccess
+  )(implicit hc: HeaderCarrier): Result = {
     successSubmissionCounter.inc()
     val updatedMetadata = registration.metaData.copy(nrsDetails =
       Some(NrsDetails(response.nrsSubmissionId, response.nrsFailureReason))
@@ -135,12 +163,33 @@ class ReviewRegistrationController @Inject() (
       )
   }
 
+  private def handleFailedSubscription(registration: Registration, failures: Seq[EisError])(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Result = {
+    performFailedSubscriptionCommonTasks(registration)
+    if (failures.head.isDuplicateSubscription)
+      Ok(duplicateSubscriptionPage(registration.organisationDetails.businessName))
+    else {
+      val error = new IllegalStateException(
+        s"PPT subscription already exists for ${registration.organisationDetails.businessName}"
+      )
+      throw DownstreamServiceError(s"PPT subscription failed - ${error.getMessage}", error)
+    }
+  }
+
   private def handleFailedSubscription(registration: Registration, e: Throwable)(implicit
     hc: HeaderCarrier
-  ) = {
+  ): DownstreamServiceError = {
+    performFailedSubscriptionCommonTasks(registration)
+    DownstreamServiceError(s"PPT subscription failed - ${e.getMessage}", e)
+  }
+
+  private def performFailedSubscriptionCommonTasks(
+    registration: Registration
+  )(implicit hc: HeaderCarrier): Unit = {
     failedSubmissionCounter.inc()
     auditor.registrationSubmitted(registration)
-    DownstreamServiceError(s"PPT subscription failed - ${e.getMessage}", e)
   }
 
   private def getSafeId(registration: Registration): String =

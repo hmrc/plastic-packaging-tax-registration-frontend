@@ -17,10 +17,13 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.EisError.DUPLICATE_SUBSCRIPTION_ERROR_CODES
 
 import java.time.ZonedDateTime
 
-case class SubscriptionCreateResponse(
+trait SubscriptionCreateResponse
+
+case class SubscriptionCreateResponseSuccess(
   pptReference: String,
   processingDate: ZonedDateTime,
   formBundleNumber: String,
@@ -28,11 +31,38 @@ case class SubscriptionCreateResponse(
   nrsSubmissionId: Option[String],
   nrsFailureReason: Option[String],
   enrolmentInitiatedSuccessfully: Boolean
-)
+) extends SubscriptionCreateResponse
 
-object SubscriptionCreateResponse {
+object SubscriptionCreateResponseSuccess {
 
-  implicit val format: OFormat[SubscriptionCreateResponse] =
-    Json.format[SubscriptionCreateResponse]
+  implicit val format: OFormat[SubscriptionCreateResponseSuccess] =
+    Json.format[SubscriptionCreateResponseSuccess]
+
+}
+
+case class EisError(code: String, reason: String) {
+  val isDuplicateSubscription: Boolean = DUPLICATE_SUBSCRIPTION_ERROR_CODES.contains(code)
+}
+
+object EisError {
+
+  implicit val format: OFormat[EisError] =
+    Json.format[EisError]
+
+  private val DUPLICATE_SUBSCRIPTION_ERROR_CODES = List("ACTIVE_SUBSCRIPTION_EXISTS",
+                                                        "BUSINESS_VALIDATION",
+                                                        "ACTIVE_GROUP_SUBSCRIPTION_EXISTS",
+                                                        "CANNOT_CREATE_PARTNERSHIP_SUBSCRIPTION"
+  )
+
+}
+
+case class SubscriptionCreateResponseFailure(failures: Seq[EisError])
+    extends SubscriptionCreateResponse
+
+object SubscriptionCreateResponseFailure {
+
+  implicit val format: OFormat[SubscriptionCreateResponseFailure] =
+    Json.format[SubscriptionCreateResponseFailure]
 
 }

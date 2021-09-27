@@ -45,7 +45,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   ETMPSubscriptionChannel,
   ETMPSubscriptionStatus,
-  SubscriptionCreateResponse,
+  SubscriptionCreateResponseSuccess,
   SubscriptionStatus
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
@@ -199,16 +199,16 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected val nrsSubmissionId = "nrs-id-999"
 
-  protected val subscriptionCreate: SubscriptionCreateResponse = SubscriptionCreateResponse(
-    pptReference = "XXPPTP123456789",
-    processingDate =
-      ZonedDateTime.now(ZoneOffset.UTC),
-    formBundleNumber = "123456789",
-    nrsNotifiedSuccessfully = true,
-    nrsSubmissionId = Some(nrsSubmissionId),
-    nrsFailureReason = None,
-    enrolmentInitiatedSuccessfully = true
-  )
+  protected val subscriptionCreate: SubscriptionCreateResponseSuccess =
+    SubscriptionCreateResponseSuccess(pptReference = "XXPPTP123456789",
+                                      processingDate =
+                                        ZonedDateTime.now(ZoneOffset.UTC),
+                                      formBundleNumber = "123456789",
+                                      nrsNotifiedSuccessfully = true,
+                                      nrsSubmissionId = Some(nrsSubmissionId),
+                                      nrsFailureReason = None,
+                                      enrolmentInitiatedSuccessfully = true
+    )
 
   protected val emailVerification: VerificationStatus = VerificationStatus(
     Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
