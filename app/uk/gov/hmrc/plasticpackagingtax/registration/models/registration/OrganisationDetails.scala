@@ -58,11 +58,11 @@ case class OrganisationDetails(
   def businessPartnerId(): Option[String] =
     organisationType match {
       case Some(UK_COMPANY) =>
-        incorporationDetails.fold[Option[String]](None)(_.registration.registeredBusinessPartnerId)
+        incorporationDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
       case Some(SOLE_TRADER) =>
-        soleTraderDetails.fold[Option[String]](None)(_.registration.registeredBusinessPartnerId)
+        soleTraderDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
       case Some(PARTNERSHIP) =>
-        partnershipDetails.fold[Option[String]](None) { pd =>
+        partnershipDetails.flatMap { pd =>
           pd.partnershipType match {
             case GENERAL_PARTNERSHIP =>
               partnershipDetails.get.generalPartnershipDetails.get.registration.registeredBusinessPartnerId
