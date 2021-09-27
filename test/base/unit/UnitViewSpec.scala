@@ -27,6 +27,14 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Request
 import spec.{PptTestData, ViewMatchers}
 
+trait UnitTestCodeCoverageWorkaround extends AnyWordSpec {
+  def exerciseGeneratedViewFunctions(): Unit
+
+  "Exercise generated rendering methods" in {
+    exerciseGeneratedViewFunctions()
+  }
+}
+
 class UnitViewSpec
     extends AnyWordSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
     with ViewAssertions with Injector with GuiceOneAppPerSuite with PptTestData {

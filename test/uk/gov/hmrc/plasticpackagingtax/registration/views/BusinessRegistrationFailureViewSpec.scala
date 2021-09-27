@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
-import base.unit.UnitViewSpec
+import base.unit.{UnitTestCodeCoverageWorkaround, UnitViewSpec}
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_registration_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class BusinessRegistrationFailureViewSpec extends UnitViewSpec with Matchers {
+class BusinessRegistrationFailureViewSpec extends UnitViewSpec with Matchers with UnitTestCodeCoverageWorkaround {
 
   private val page: business_registration_failure_page =
     instanceOf[business_registration_failure_page]
@@ -31,11 +31,6 @@ class BusinessRegistrationFailureViewSpec extends UnitViewSpec with Matchers {
   private def createView(): Html = page()(journeyRequest, messages)
 
   "Business Registration Failure Page" should {
-
-    "validate other rendering methods" in {
-      page.f()(request, messages)
-      page.render(request, messages)
-    }
 
     "have proper messages for labels" in {
       messages must haveTranslationFor("businessEntityIdentification.failure.title")
@@ -62,5 +57,10 @@ class BusinessRegistrationFailureViewSpec extends UnitViewSpec with Matchers {
         messages("businessEntityIdentification.failure.detail")
       )
     }
+  }
+
+  override def exerciseGeneratedViewFunctions() = {
+    page.f()(request, messages)
+    page.render(request, messages)
   }
 }
