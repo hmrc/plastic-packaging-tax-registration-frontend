@@ -75,13 +75,13 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
 
     "identify that business partner id is present" in {
       forAll(registeredOrgs) { organisationDetails =>
-        organisationDetails.businessPartnerIdPresent() mustBe true
+        organisationDetails.businessPartnerId() mustBe Some("XP001")
       }
     }
 
     "identify that business partner id is absent" in {
       forAll(unregisteredOrgs) { organisationDetails =>
-        organisationDetails.businessPartnerIdPresent() mustBe false
+        organisationDetails.businessPartnerId() mustBe None
       }
     }
 
@@ -89,7 +89,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
       "organisation type is unsupported" in {
         OrganisationDetails(organisationType =
           Some(CHARITY_OR_NOT_FOR_PROFIT)
-        ).businessPartnerIdPresent() mustBe false
+        ).businessPartnerId() mustBe None
       }
 
       "partnership type is unsupported" in {
@@ -97,7 +97,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                             partnershipDetails = Some(
                               PartnershipDetails(partnershipType = LIMITED_LIABILITY_PARTNERSHIP)
                             )
-        ).businessPartnerIdPresent() mustBe false
+        ).businessPartnerId() mustBe None
       }
     }
   }
