@@ -15,15 +15,6 @@
 *@
 @this()
 
-@(text: String, textHidden: Option[String] = None, call: Call, target: String = "_self", id: Option[String] = None, classes: String = "govuk-link govuk-link--no-visited-state")
+@(text: String, call: Call, target: String = "_self", id: Option[String] = None, classes: String = "govuk-link govuk-link--no-visited-state")
 
-@hasHint = @{
-    textHidden.exists(_.nonEmpty)
-}
-
-<a class="@classes" href="@call" target=@target @id.map { id => id="@id"}><span @if(hasHint) {
-    aria-hidden="true"}>@text</span>@if(hasHint) {
-    <span class="govuk-visually-hidden">@{
-        textHidden.getOrElse("")
-    }</span>
-}</a>
+<a class="@classes" href="@call" target="@target" @id.map{id => id="@id"}>@text</a>

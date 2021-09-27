@@ -16,9 +16,9 @@
 
 @this()
 
-@(label: String, classes: String = "govuk-body", content: String, contentClasses: String = "govuk-!-font-weight-bold", id: Option[String] = None)
+@(label: String, classes: String = "govuk-body", content: String, contentClasses: String = "govuk-!-font-weight-bold")
 
 <p class="@classes">
  @label<br/>
- <strong class="@contentClasses" @id.map{id => id="@id"}>@content</strong>
+ <strong class="@contentClasses">@content</strong>
 </p>
