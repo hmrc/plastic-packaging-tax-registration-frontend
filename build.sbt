@@ -44,9 +44,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "features\\..*",
     "test\\..*",
     ".*(BuildInfo|Routes|Options).*",
-    "logger.*\\(.*\\)",
-    ".*views.html.components\\..*",
-    ".*views.html.partials\\..*"
+    "logger.*\\(.*\\)"
   ).mkString(";"),
   coverageMinimum := 96,
   coverageFailOnMinimum := true,
