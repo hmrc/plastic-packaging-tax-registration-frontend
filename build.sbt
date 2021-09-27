@@ -35,6 +35,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(scoverageSettings)
   .settings(silencerSettings)
 
+  .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
+
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := List(
     "<empty>",
