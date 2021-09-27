@@ -57,6 +57,11 @@ class PhaseBannerSpec extends UnitViewSpec with Matchers {
 
     "display feedback link with correct href" when {
 
+      "validate other rendering methods" in {
+        bannerPartial.f("beta")(request, messages)
+        bannerPartial.render("beta", request, messages)
+      }
+
       "when user authenticated" in {
         import utils.FakeRequestCSRFSupport._
 
