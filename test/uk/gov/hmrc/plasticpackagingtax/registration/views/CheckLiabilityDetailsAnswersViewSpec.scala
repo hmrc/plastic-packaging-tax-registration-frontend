@@ -205,19 +205,18 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       preLaunchView.getElementById("submit").text() mustBe "Save and Continue"
     }
 
-    // TODO: we need a better way of achieving the minimum test code coverage than doing this!
-    "validate other rendering methods" in {
-      page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(
-        journeyRequest,
-        messages
-      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
-      page.render(registration = populatedRegistration,
-                  backLink = routes.LiabilityLiableDateController.displayPage(),
-                  request = journeyRequest,
-                  messages = messages
-      ).select("title").text() must include(messages("checkLiabilityDetailsAnswers.title"))
-    }
+  }
 
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(
+      journeyRequest,
+      messages
+    )
+    page.render(populatedRegistration,
+                routes.LiabilityLiableDateController.displayPage(),
+                journeyRequest,
+                messages
+    )
   }
 
   private def createView(preLaunch: Boolean, reg: Registration, backLink: Call)(implicit

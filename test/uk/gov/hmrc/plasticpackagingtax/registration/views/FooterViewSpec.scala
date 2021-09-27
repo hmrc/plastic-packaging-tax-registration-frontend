@@ -37,4 +37,10 @@ class FooterViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-footer__inline-list-item").size() must be(7)
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    startPage.f()(request, messages)
+    startPage.render(request, messages)
+  }
+
 }

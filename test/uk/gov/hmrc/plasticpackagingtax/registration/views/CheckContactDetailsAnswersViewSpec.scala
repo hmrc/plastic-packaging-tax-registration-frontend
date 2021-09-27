@@ -148,4 +148,10 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-button").text() must include("Save and Continue")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(registration)(request, messages)
+    page.render(registration, request, messages)
+  }
+
 }

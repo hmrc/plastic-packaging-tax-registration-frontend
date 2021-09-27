@@ -34,11 +34,6 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
 
   "Confirmation Page view" should {
 
-    "validate other rendering methods" in {
-      page.f()(request, messages, new Flash(Map.empty))
-      page.render(request, messages, new Flash(Map.empty))
-    }
-
     "have proper messages for labels" in {
 
       messages must haveTranslationFor("confirmationPage.title")
@@ -147,4 +142,10 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     }
 
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f()(request, messages, new Flash(Map.empty))
+    page.render(request, messages, new Flash(Map.empty))
+  }
+
 }

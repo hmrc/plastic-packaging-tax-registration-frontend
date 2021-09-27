@@ -127,4 +127,10 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("value", "Enter a phone number")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(PhoneNumber.form())(request, messages)
+    page.render(PhoneNumber.form(), request, messages)
+  }
+
 }

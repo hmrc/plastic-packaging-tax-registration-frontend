@@ -16,15 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
-import base.unit.UnitViewSpec
+import base.unit.MessagesSpec
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.stubMessagesApi
+import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
 
 class ErrorHandlerTest
-    extends UnitViewSpec with Matchers with DefaultAwaitTimeout with OptionValues {
+    extends MessagesSpec with Matchers with DefaultAwaitTimeout with OptionValues with PptTestData {
 
   private val errorPage    = instanceOf[error_template]
   private val errorHandler = new ErrorHandler(errorPage, stubMessagesApi())
@@ -42,4 +43,5 @@ class ErrorHandlerTest
     }
 
   }
+
 }

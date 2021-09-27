@@ -32,11 +32,6 @@ class BusinessVerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
   "Business Verification Failure Page" should {
 
-    "validate other rendering methods" in {
-      page.f()(request, messages)
-      page.render(request, messages)
-    }
-
     "have proper messages for labels" in {
       messages must haveTranslationFor("businessEntityVerification.failure.title")
       messages must haveTranslationFor("businessEntityVerification.failure.heading")
@@ -59,4 +54,10 @@ class BusinessVerificationFailureViewSpec extends UnitViewSpec with Matchers {
       )
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f()(request, messages)
+    page.render(request, messages)
+  }
+
 }

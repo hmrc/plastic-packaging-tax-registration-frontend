@@ -46,11 +46,6 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
   "Registration Page view" should {
 
-    "validate other rendering methods" in {
-      registrationPage.f(aRegistration())(request, messages)
-      registrationPage.render(aRegistration(), request, messages)
-    }
-
     "have proper messages for labels" in {
 
       messages must haveTranslationFor("registrationPage.title")
@@ -352,4 +347,10 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
       }
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    registrationPage.f(aRegistration())(request, messages)
+    registrationPage.render(aRegistration(), request, messages)
+  }
+
 }
