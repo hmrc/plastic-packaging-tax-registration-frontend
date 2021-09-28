@@ -26,7 +26,7 @@ import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponseSuccess,
-  SubscriptionStatus
+  SubscriptionStatusResponse
 }
 
 class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
@@ -44,7 +44,7 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
           get(urlMatching(s"/subscriptions/status/$safeNumber"))
             .willReturn(
               aResponse().withStatus(OK)
-                withBody (toJson(validResponse)(SubscriptionStatus.format).toString)
+                withBody (toJson(validResponse)(SubscriptionStatusResponse.format).toString)
             )
         )
 

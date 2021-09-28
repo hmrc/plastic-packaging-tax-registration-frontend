@@ -26,7 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponse,
   SubscriptionCreateResponseFailure,
   SubscriptionCreateResponseSuccess,
-  SubscriptionStatus
+  SubscriptionStatusResponse
 }
 
 import javax.inject.{Inject, Singleton}
@@ -42,9 +42,9 @@ class SubscriptionsConnector @Inject() (
 
   def getSubscriptionStatus(
     safeNumber: String
-  )(implicit hc: HeaderCarrier): Future[SubscriptionStatus] = {
+  )(implicit hc: HeaderCarrier): Future[SubscriptionStatusResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.status.timer").time()
-    httpClient.GET[SubscriptionStatus](config.pptSubscriptionStatusUrl(safeNumber))
+    httpClient.GET[SubscriptionStatusResponse](config.pptSubscriptionStatusUrl(safeNumber))
       .andThen { case _ => timer.stop() }
       .andThen {
         case Success(response) => response

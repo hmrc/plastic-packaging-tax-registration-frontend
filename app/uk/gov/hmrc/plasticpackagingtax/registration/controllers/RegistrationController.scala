@@ -22,7 +22,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  duplicate_subscription_page,
+  registration_page
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +36,8 @@ class RegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  registration_page: registration_page,
+  registrationPage: registration_page,
+  duplicateSubscriptionPage: duplicate_subscription_page,
   subscriptionsConnector: SubscriptionsConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -42,11 +47,13 @@ class RegistrationController @Inject() (
       request.registration.organisationDetails.businessPartnerId() match {
         case Some(safeNumber) =>
           for {
-            subscriptionStatus <- subscriptionsConnector.getSubscriptionStatus(safeNumber)
-          } yield subscriptionStatus.subscriptionStatus match {
-            case _ => Ok(registration_page(request.registration))
+            statusResponse <- subscriptionsConnector.getSubscriptionStatus(safeNumber)
+          } yield statusResponse.status match {
+            case SUBSCRIBED =>
+              Ok(duplicateSubscriptionPage(request.registration.organisationDetails.businessName))
+            case _ => Ok(registrationPage(request.registration))
           }
-        case None => Future.successful(Ok(registration_page(request.registration)))
+        case None => Future.successful(Ok(registrationPage(request.registration)))
       }
     }
 
