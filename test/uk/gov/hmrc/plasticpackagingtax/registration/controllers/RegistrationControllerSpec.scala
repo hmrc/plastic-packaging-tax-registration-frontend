@@ -21,45 +21,59 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   ETMPSubscriptionChannel,
   ETMPSubscriptionStatus,
   SubscriptionStatus
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  duplicate_subscription_page,
+  registration_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class RegistrationControllerSpec extends ControllerSpec {
 
-  private val mcc              = stubMessagesControllerComponents()
-  private val registrationPage = mock[registration_page]
+  private val mcc                       = stubMessagesControllerComponents()
+  private val registrationPage          = mock[registration_page]
+  private val duplicateSubscriptionPage = mock[duplicate_subscription_page]
 
   private val controller =
     new RegistrationController(authenticate = mockAuthAction,
                                mockJourneyAction,
                                mcc = mcc,
-                               registration_page = registrationPage,
+                               registrationPage = registrationPage,
+                               duplicateSubscriptionPage = duplicateSubscriptionPage,
                                subscriptionsConnector = mockSubscriptionsConnector
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(registrationPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(registrationPage.apply(any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Registration Page")
+    )
+    when(duplicateSubscriptionPage.apply(any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Duplicate Page")
+    )
   }
 
   override protected def afterEach(): Unit = {
-    reset(registrationPage, mockRegistrationConnector, mockSubscriptionsConnector)
+    reset(registrationPage,
+          duplicateSubscriptionPage,
+          mockRegistrationConnector,
+          mockSubscriptionsConnector
+    )
     super.afterEach()
   }
 
   "Registration Controller" should {
 
     "return 200" when {
-      "display page method is invoked" when {
+      "display registration page" when {
 
-        "a 'SafeNumber' exists" in {
+        "a 'businessPartnerId' exists that is not already subscribed" in {
           authorizedUser()
           mockRegistrationFind(
             aRegistration(
@@ -78,17 +92,48 @@ class RegistrationControllerSpec extends ControllerSpec {
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
+          contentAsString(result) mustBe "Registration Page"
 
           verify(mockSubscriptionsConnector).getSubscriptionStatus(any())(any())
         }
 
-        "a 'SafeNumber' does not exist" in {
+        "a 'businessPartnerId' does not exist" in {
           authorizedUser()
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
+          contentAsString(result) mustBe "Registration Page"
+
           verifyNoInteractions(mockSubscriptionsConnector)
         }
+      }
+
+      "display duplicate subscription page" when {
+
+        "a 'businessPartnerId' exists that is already subscribed" in {
+          authorizedUser()
+          mockRegistrationFind(
+            aRegistration(
+              withOrganisationDetails(organisationDetails =
+                registeredUkCompanyOrgDetails()
+              )
+            )
+          )
+          mockGetSubscriptionStatus(
+            SubscriptionStatus(subscriptionStatus = ETMPSubscriptionStatus.SUCCESSFUL,
+                               idType = "ZPPT",
+                               idValue = "XXPPTP123456789",
+                               channel = ETMPSubscriptionChannel.ONLINE
+            )
+          )
+          val result = controller.displayPage()(getRequest())
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe "Duplicate Page"
+
+          verify(mockSubscriptionsConnector).getSubscriptionStatus(any())(any())
+        }
+
       }
     }
   }
