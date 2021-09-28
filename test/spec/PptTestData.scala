@@ -16,6 +16,8 @@
 
 package spec
 
+import java.time.{ZoneOffset, ZonedDateTime}
+
 import base.PptTestData.testUserFeatures
 import base.{MockAuthAction, PptTestData}
 import builders.RegistrationBuilder
@@ -43,14 +45,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  ETMPSubscriptionChannel,
-  ETMPSubscriptionStatus,
   SubscriptionCreateResponseSuccess,
-  SubscriptionStatus
+  SubscriptionStatus,
+  SubscriptionStatusResponse
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
-import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
@@ -190,11 +190,9 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                        )
     )
 
-  protected val subscriptionStatus: SubscriptionStatus = SubscriptionStatus(
-    subscriptionStatus = ETMPSubscriptionStatus.NO_FORM_BUNDLE_FOUND,
-    idValue = "XXPPTP123456789",
-    idType = "ZPPT",
-    channel = ETMPSubscriptionChannel.ONLINE
+  protected val subscriptionStatus: SubscriptionStatusResponse = SubscriptionStatusResponse(
+    status = SubscriptionStatus.NOT_SUBSCRIBED,
+    pptReference = Some("XXPPTP123456789")
   )
 
   protected val nrsSubmissionId = "nrs-id-999"

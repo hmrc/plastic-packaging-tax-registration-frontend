@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.ETMPSubscriptionStatus.SUCCESSFUL
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   duplicate_subscription_page,
   registration_page
@@ -47,9 +47,9 @@ class RegistrationController @Inject() (
       request.registration.organisationDetails.businessPartnerId() match {
         case Some(safeNumber) =>
           for {
-            subscriptionStatus <- subscriptionsConnector.getSubscriptionStatus(safeNumber)
-          } yield subscriptionStatus.subscriptionStatus match {
-            case SUCCESSFUL =>
+            statusResponse <- subscriptionsConnector.getSubscriptionStatus(safeNumber)
+          } yield statusResponse.status match {
+            case SUBSCRIBED =>
               Ok(duplicateSubscriptionPage(request.registration.organisationDetails.businessName))
             case _ => Ok(registrationPage(request.registration))
           }

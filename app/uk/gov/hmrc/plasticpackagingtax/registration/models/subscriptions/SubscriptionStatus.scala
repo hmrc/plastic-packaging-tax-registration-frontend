@@ -16,17 +16,15 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions
 
-import play.api.libs.json.{Json, OFormat}
-import ETMPSubscriptionStatus.EtmpSubscriptionStatus
-import ETMPSubscriptionChannel.EtmpSubscriptionChannel
+import play.api.libs.json.{Format, Reads, Writes}
 
-case class SubscriptionStatus(
-  subscriptionStatus: EtmpSubscriptionStatus,
-  idType: String,
-  idValue: String,
-  channel: EtmpSubscriptionChannel
-)
+object SubscriptionStatus extends Enumeration {
+  type Status = Value
+  val SUBSCRIBED: Value     = Value
+  val NOT_SUBSCRIBED: Value = Value
+  val UNKNOWN: Value        = Value
 
-object SubscriptionStatus {
-  implicit val format: OFormat[SubscriptionStatus] = Json.format[SubscriptionStatus]
+  implicit val format: Format[Status] =
+    Format(Reads.enumNameReads(SubscriptionStatus), Writes.enumNameWrites)
+
 }

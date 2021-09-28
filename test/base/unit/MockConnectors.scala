@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponse,
   SubscriptionCreateResponseFailure,
   SubscriptionCreateResponseSuccess,
-  SubscriptionStatus
+  SubscriptionStatusResponse
 }
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -122,13 +122,13 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   protected def mockGetSubscriptionStatusFailure(
     ex: Exception
-  ): OngoingStubbing[Future[SubscriptionStatus]] =
+  ): OngoingStubbing[Future[SubscriptionStatusResponse]] =
     when(mockSubscriptionsConnector.getSubscriptionStatus(any())(any()))
       .thenThrow(ex)
 
   protected def mockGetSubscriptionStatus(
-    subscription: SubscriptionStatus
-  ): OngoingStubbing[Future[SubscriptionStatus]] =
+    subscription: SubscriptionStatusResponse
+  ): OngoingStubbing[Future[SubscriptionStatusResponse]] =
     when(mockSubscriptionsConnector.getSubscriptionStatus(any())(any())).thenReturn(
       Future.successful(subscription)
     )
