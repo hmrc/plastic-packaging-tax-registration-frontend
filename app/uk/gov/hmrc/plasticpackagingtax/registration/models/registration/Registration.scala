@@ -84,6 +84,7 @@ case class Registration(
   def asCompleted(): Registration =
     this.copy(metaData = this.metaData.copy(registrationCompleted = true))
 
+  val isStarted: Boolean = liabilityDetails.status != TaskStatus.NotStarted
 }
 
 object Registration {

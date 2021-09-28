@@ -4,6 +4,8 @@ GET        /assets/*file            controllers.Assets.versioned(path="/public",
 
 GET        /start-plastic-packaging-tax-registration        uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
 
+GET        /start   uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartRegistrationController.startRegistration()
+
 GET        /register-plastic-packaging-tax                  uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationController.displayPage()
 
 GET        /incorp-id-callback      uk.gov.hmrc.plasticpackagingtax.registration.controllers.IncorpIdController.incorpIdCallback(journeyId)
