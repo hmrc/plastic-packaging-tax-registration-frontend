@@ -145,4 +145,10 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
       view must haveGovukFieldError("value", "Enter a passcode")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(EmailAddressPasscode.form(), Some("test@test.com"))(request, messages)
+    page.render(EmailAddressPasscode.form(), Some("test@test.com"), request, messages)
+  }
+
 }

@@ -16,61 +16,19 @@
 
 package base.unit
 
-import base.Injector
-import com.codahale.metrics.SharedMetricRegistries
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.Request
 import spec.{PptTestData, ViewMatchers}
 
-class UnitViewSpec
-    extends AnyWordSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
-    with ViewAssertions with Injector with GuiceOneAppPerSuite with PptTestData {
-
-  protected implicit def messages(implicit request: Request[_]): Messages =
-    new AllMessageKeysAreMandatoryMessages(realMessagesApi.preferred(request))
-
-  private val realMessagesApi: MessagesApi = UnitViewSpec.realMessagesApi
-
-  override def fakeApplication(): Application = {
-    SharedMetricRegistries.clear()
-    new GuiceApplicationBuilder().build()
-  }
-
-  protected def messages(key: String, args: Any*)(implicit request: Request[_]): String =
-    messages(request)(key, args: _*)
+abstract class UnitViewSpec
+    extends MessagesSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
+    with ViewAssertions with PptTestData {
 
   protected val emptyFormData: Map[String, String] = Map.empty
 
-}
+  "Exercise generated rendering methods" in {
+    exerciseGeneratedRenderingMethods()
+  }
 
-object UnitViewSpec extends Injector {
-  val realMessagesApi: MessagesApi = instanceOf[MessagesApi]
-}
+  def exerciseGeneratedRenderingMethods(): Unit
 
-private class AllMessageKeysAreMandatoryMessages(msg: Messages) extends Messages {
-
-  override def asJava: play.i18n.Messages = msg.asJava
-
-  override def messages: Messages = msg.messages
-
-  override def lang: Lang = msg.lang
-
-  override def apply(key: String, args: Any*): String =
-    if (msg.isDefinedAt(key))
-      msg.apply(key, args: _*)
-    else throw new AssertionError(s"Message Key is not configured for {$key}")
-
-  override def apply(keys: Seq[String], args: Any*): String =
-    if (keys.exists(key => !msg.isDefinedAt(key)))
-      msg.apply(keys, args)
-    else throw new AssertionError(s"Message Key is not configured for {$keys}")
-
-  override def translate(key: String, args: Seq[Any]): Option[String] = msg.translate(key, args)
-
-  override def isDefinedAt(key: String): Boolean = msg.isDefinedAt(key)
 }

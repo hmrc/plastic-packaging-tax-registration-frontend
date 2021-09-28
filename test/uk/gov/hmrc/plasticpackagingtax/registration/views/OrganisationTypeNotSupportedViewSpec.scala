@@ -31,11 +31,6 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
 
   "Organisation Type Not Supported View" should {
 
-    "validate other rendering methods" in {
-      page.f()(request, messages)
-      page.render(request, messages)
-    }
-
     "have proper messages for labels" in {
       messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.heading")
       messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.paragraph.1")
@@ -106,6 +101,11 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
         "organisationDetails.feedback.link"
       )
     }
+  }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f()(request, messages)
+    page.render(request, messages)
   }
 
 }

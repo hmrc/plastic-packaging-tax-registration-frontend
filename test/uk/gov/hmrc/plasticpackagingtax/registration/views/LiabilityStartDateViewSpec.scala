@@ -49,18 +49,6 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
     val view = createView()
 
-    "validate other rendering  methods" in {
-      page.f(form(), routes.LiabilityExpectToExceedThresholdWeightController.displayPage())(
-        journeyRequest,
-        messages
-      ).select("title").text() must include(messages("liabilityStartDatePage.title"))
-      page.render(form(),
-                  routes.LiabilityExpectToExceedThresholdWeightController.displayPage(),
-                  journeyRequest,
-                  messages
-      ).select("title").text() must include(messages("liabilityStartDatePage.title"))
-    }
-
     "contain timeout dialog function" in {
 
       containTimeoutDialogFunction(view) mustBe true
@@ -166,4 +154,17 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("liability-start-date", "year cannot be empty")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(form(), routes.LiabilityExpectToExceedThresholdWeightController.displayPage())(
+      journeyRequest,
+      messages
+    )
+    page.render(form(),
+                routes.LiabilityExpectToExceedThresholdWeightController.displayPage(),
+                journeyRequest,
+                messages
+    )
+  }
+
 }

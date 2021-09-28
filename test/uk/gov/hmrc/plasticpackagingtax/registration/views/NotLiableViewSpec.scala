@@ -121,4 +121,10 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
       )
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f()(request, messages)
+    page.render(request, messages)
+  }
+
 }

@@ -31,11 +31,6 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
   "Start Page view" should {
 
-    "validate other rendering methods" in {
-      startPage.f()(request, messages)
-      startPage.render(request, messages)
-    }
-
     "have proper messages for labels" in {
 
       messages must haveTranslationFor("startPage.title.sectionHeader")
@@ -182,4 +177,10 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("back-to-top").child(0) must haveHref("#contents")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    startPage.f()(request, messages)
+    startPage.render(request, messages)
+  }
+
 }

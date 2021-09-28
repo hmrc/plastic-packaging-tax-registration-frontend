@@ -31,11 +31,6 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
   "Session Timeout View" should {
 
-    "validate other rendering methods" in {
-      page.f()(request, messages)
-      page.render(request, messages)
-    }
-
     "have proper messages for labels" in {
       messages must haveTranslationFor("sessionTimout.title")
       messages must haveTranslationFor("sessionTimout.paragraph.saved")
@@ -81,4 +76,10 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("govuk-link") must haveHref("https://www.gov.uk")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f()(request, messages)
+    page.render(request, messages)
+  }
+
 }

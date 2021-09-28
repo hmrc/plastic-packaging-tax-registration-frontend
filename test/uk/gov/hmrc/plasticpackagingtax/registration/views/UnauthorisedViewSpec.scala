@@ -33,11 +33,6 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
   "Unauthorised Page view" should {
 
-    "validate other rendering methods" in {
-      page.f()(request, messages)
-      page.render(request, messages)
-    }
-
     "have proper messages for labels" in {
       messages must haveTranslationFor("unauthorised.heading")
       messages must haveTranslationFor("unauthorised.paragraph.1")
@@ -70,4 +65,10 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
       link.attributes().hasKey("target") mustBe false
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f()(request, messages)
+    page.render(request, messages)
+  }
+
 }

@@ -58,17 +58,6 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
 
     val view = createView()
 
-    "validate other rendering  methods" in {
-      page.f(ConfirmAddress.form(), incorporationAddressDetails.toPptAddress)(journeyRequest,
-                                                                              messages
-      ).select("title").text() must include(messages("primaryContactDetails.confirmAddress.title"))
-      page.render(ConfirmAddress.form(),
-                  incorporationAddressDetails.toPptAddress,
-                  journeyRequest,
-                  messages
-      ).select("title").text() must include(messages("primaryContactDetails.confirmAddress.title"))
-    }
-
     "contain timeout dialog function" in {
 
       containTimeoutDialogFunction(view) mustBe true
@@ -149,4 +138,16 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("useRegisteredAddress-2") must not(haveAttribute("checked"))
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(ConfirmAddress.form(), incorporationAddressDetails.toPptAddress)(journeyRequest,
+                                                                            messages
+    )
+    page.render(ConfirmAddress.form(),
+                incorporationAddressDetails.toPptAddress,
+                journeyRequest,
+                messages
+    )
+  }
+
 }

@@ -68,15 +68,6 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "validate other rendering  methods" in {
-      page.f(Address.form())(journeyRequest, messages).select("title").text() must include(
-        messages("primaryContactDetails.address.title")
-      )
-      page.render(Address.form(), journeyRequest, messages).select("title").text() must include(
-        messages("primaryContactDetails.address.title")
-      )
-    }
-
     "display title" in {
 
       view.select("title").text() must include(messages("primaryContactDetails.address.title"))
@@ -205,4 +196,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(Address.form())(journeyRequest, messages)
+    page.render(Address.form(), journeyRequest, messages)
+  }
+
 }

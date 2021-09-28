@@ -126,4 +126,10 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("value", "Enter a job title")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(JobTitle.form())(request, messages)
+    page.render(JobTitle.form(), request, messages)
+  }
+
 }
