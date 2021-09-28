@@ -167,7 +167,7 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
       view.getElementsByClass("govuk-button").first() must containMessage("startPage.buttonName")
       view.getElementsByClass("govuk-button").first() must haveHref(
-        uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.LiabilityWeightController.displayPage().url
+        uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.StartRegistrationController.startRegistration().url
       )
     }
 

@@ -20,6 +20,7 @@ import builders.RegistrationBuilder
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class RegistrationSpec
@@ -112,6 +113,22 @@ class RegistrationSpec
         completeRegistration.isCheckAndSubmitReady mustBe true
         completeRegistration.checkAndSubmitStatus mustBe TaskStatus.Completed
 
+      }
+    }
+  }
+
+  "Registration" should {
+    "be not started" when {
+      "freshly created" in {
+        Registration("123").isStarted mustBe false
+      }
+    }
+    "be started" when {
+      "liability weight captured" in {
+        Registration(id = "123",
+                     liabilityDetails =
+                       LiabilityDetails(weight = Some(LiabilityWeight(Some(12000))))
+        ).isStarted mustBe true
       }
     }
   }
