@@ -50,17 +50,6 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
 
     val view = createView()
 
-    "validate other rendering  methods" in {
-      page.f(form(), routes.LiabilityWeightController.displayPage())(journeyRequest,
-                                                                     messages
-      ).select("title").text() must include(messages("liabilityLiableDatePage.title"))
-      page.render(form(),
-                  routes.LiabilityWeightController.displayPage(),
-                  journeyRequest,
-                  messages
-      ).select("title").text() must include(messages("liabilityLiableDatePage.title"))
-    }
-
     "contain timeout dialog function" in {
 
       containTimeoutDialogFunction(view) mustBe true
@@ -134,4 +123,10 @@ class LiabilityLiableDateViewSpec extends UnitViewSpec with Matchers {
       }
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(form(), routes.LiabilityWeightController.displayPage())(journeyRequest, messages)
+    page.render(form(), routes.LiabilityWeightController.displayPage(), journeyRequest, messages)
+  }
+
 }

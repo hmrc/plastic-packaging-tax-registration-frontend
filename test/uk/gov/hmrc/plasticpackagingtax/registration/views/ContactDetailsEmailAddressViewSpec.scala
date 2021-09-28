@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{EmailAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -155,4 +155,10 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("value", "Enter an email address in the correct format")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(EmailAddress.form())(request, messages)
+    page.render(EmailAddress.form(), request, messages)
+  }
+
 }

@@ -612,4 +612,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
       )
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(registration, None, None, None)(journeyRequest, messages)
+    page.render(registration, None, None, None, journeyRequest, messages)
+  }
+
 }

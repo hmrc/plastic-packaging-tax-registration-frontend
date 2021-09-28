@@ -145,4 +145,10 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
       }
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(ExpectToExceedThresholdWeight.form())(request, messages)
+    page.render(ExpectToExceedThresholdWeight.form(), request, messages)
+  }
+
 }

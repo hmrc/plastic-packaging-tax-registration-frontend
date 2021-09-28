@@ -43,11 +43,6 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   "Confirm Organisation Based In Uk View" should {
 
-    "validate other rendering methods" in {
-      page.f(form())(request, messages)
-      page.render(form(), request, messages)
-    }
-
     "have proper messages for labels" in {
       messages must haveTranslationFor("organisationDetails.type.title")
       messages must haveTranslationFor("organisationDetails.type.empty.error")
@@ -136,4 +131,10 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       }
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(form())(request, messages)
+    page.render(form(), request, messages)
+  }
+
 }

@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
-import base.unit.UnitViewSpec
+import base.unit.MessagesSpec
 import org.scalatest.matchers.must.Matchers
+import spec.PptTestData
 
-class TitleSpec extends UnitViewSpec with Matchers {
+class TitleSpec extends MessagesSpec with Matchers with PptTestData {
 
   val serviceName = messages("service.name")
 

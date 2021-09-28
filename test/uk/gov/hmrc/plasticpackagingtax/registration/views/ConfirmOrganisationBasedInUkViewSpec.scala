@@ -119,14 +119,9 @@ class ConfirmOrganisationBasedInUkViewSpec extends UnitViewSpec with Matchers {
     }
   }
 
-  // TODO: we need a better way of achieving the minimum test code coverage than doing this!
-  "validate other rendering methods" in {
-    page.f(ConfirmOrganisationBasedInUk.form())(journeyRequest, messages).select(
-      "title"
-    ).text() must include(messages("organisationDetails.basedInUk.title"))
-    page.render(ConfirmOrganisationBasedInUk.form(), journeyRequest, messages).select(
-      "title"
-    ).text() must include(messages("organisationDetails.basedInUk.title"))
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(ConfirmOrganisationBasedInUk.form())(journeyRequest, messages)
+    page.render(ConfirmOrganisationBasedInUk.form(), journeyRequest, messages)
   }
 
 }

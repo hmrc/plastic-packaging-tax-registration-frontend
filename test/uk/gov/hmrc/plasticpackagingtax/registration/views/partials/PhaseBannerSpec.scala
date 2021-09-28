@@ -81,4 +81,9 @@ class PhaseBannerSpec extends UnitViewSpec with Matchers {
     }
   }
 
+  override def exerciseGeneratedRenderingMethods() = {
+    bannerPartial.f("")(request, messages)
+    bannerPartial.render("", request, messages)
+  }
+
 }

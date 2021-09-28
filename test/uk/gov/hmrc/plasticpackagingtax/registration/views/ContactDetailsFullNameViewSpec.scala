@@ -162,4 +162,10 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("value", "Name cannot be more than 160 characters long")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(FullName.form())(request, messages)
+    page.render(FullName.form(), request, messages)
+  }
+
 }

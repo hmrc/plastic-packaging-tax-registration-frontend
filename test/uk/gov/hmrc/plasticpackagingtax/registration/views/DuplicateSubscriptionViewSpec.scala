@@ -19,10 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  business_registration_failure_page,
-  duplicate_subscription_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.duplicate_subscription_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
@@ -79,10 +76,11 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
         view.select("p.govuk-body").text must include(messages(messageKey))
       }
     }
-
-    "validate other rendering methods" in {
-      page.f(Some("Test Company"))(journeyRequest, messages)
-      page.render(Some("Test Company"), journeyRequest, messages)
-    }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(Some("Test Company"))(journeyRequest, messages)
+    page.render(Some("Test Company"), journeyRequest, messages)
+  }
+
 }

@@ -87,4 +87,9 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
   }
 
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f()(request, messages)
+    page.render(request, messages)
+  }
+
 }

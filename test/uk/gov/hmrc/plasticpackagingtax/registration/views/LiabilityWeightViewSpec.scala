@@ -154,4 +154,10 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("totalKg", "Weight cannot be empty")
     }
   }
+
+  override def exerciseGeneratedRenderingMethods() = {
+    page.f(LiabilityWeight.form())(request, messages)
+    page.render(LiabilityWeight.form(), request, messages)
+  }
+
 }

@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
-import base.unit.UnitViewSpec
 import org.scalatest.EitherValues
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class SignOutReasonSpec extends UnitViewSpec with Matchers with EitherValues {
+class SignOutReasonSpec extends AnyWordSpec with Matchers with EitherValues {
 
   "Sign out request params binder" should {
 
