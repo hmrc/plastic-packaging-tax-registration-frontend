@@ -56,6 +56,17 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
         val form = Address.form().bind(input)
         form.errors.size mustBe 0
       }
+
+      "address mandatory fields with lower case post code are valid " in {
+
+        val input = Map(addressLine1 -> "Address Line 1 .'-&",
+                        townOrCity -> "Town or City .'-&",
+                        postCode   -> "ls4 1rh"
+        )
+
+        val form = Address.form().bind(input)
+        form.errors.size mustBe 0
+      }
     }
 
     "return errors" when {
@@ -87,6 +98,20 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
               FormError(townOrCity, "primaryContactDetails.address.townOrCity.format.error"),
               FormError(postCode, "primaryContactDetails.address.postCode.format.error")
           )
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains invalid postcode" in {
+
+        val input = Map(addressLine1 -> "Address Line 1",
+                        addressLine2 -> "Address Line 2",
+                        addressLine3 -> "Address Line 3",
+                        townOrCity   -> "Town ",
+                        postCode     -> "LSA41RH"
+        )
+        val expectedErrors =
+          Seq(FormError(postCode, "primaryContactDetails.address.postCode.format.error"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
