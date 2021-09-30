@@ -37,7 +37,8 @@ object Address extends CommonFormValidators {
 
   private val validatePostcode: Int => String => Boolean =
     (length: Int) =>
-      (input: String) => isNotExceedingMaxLength(input, length) && isValidPostcode(input)
+      (input: String) =>
+        isNotExceedingMaxLength(input, length) && isValidPostcode(input.toUpperCase)
 
   private val addressFieldMaxSize = 35
 
@@ -63,6 +64,7 @@ object Address extends CommonFormValidators {
       .verifying(emptyError(townOrCity), isNonEmpty)
       .verifying(notValidError(townOrCity), validateAddressField(addressFieldMaxSize)),
     postCode -> text()
+      .transform[String](postCode => postCode.toUpperCase, postCode => postCode)
       .verifying(emptyError(postCode), isNonEmpty)
       .verifying(notValidError(postCode), validatePostcode(10))
   )(Address.apply)(Address.unapply)

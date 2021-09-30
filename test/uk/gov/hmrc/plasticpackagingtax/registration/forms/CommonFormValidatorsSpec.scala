@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import base.unit.CommonTestUtils
+import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -130,6 +131,31 @@ class CommonFormValidatorsSpec
       "is not valid postcode" in {
 
         isValidPostcode("LS5 7THHHHH") must be(false)
+      }
+    }
+
+    forAll(
+      Seq("AA9A 9AA",
+          "A9A 9AA",
+          "A9 9AA",
+          "A99 9AA",
+          "AA99AA",
+          "aa9a 9aa",
+          "a9a 9aa",
+          "a9 9aa",
+          "a99 9aa",
+          "aa9 9aa",
+          "aa9a9aa",
+          "a9a9aa",
+          "a99aa",
+          "a999aa",
+          "aa99aa"
+      )
+    ) { postcode =>
+      "return true for " + postcode when {
+        "valid" in {
+          isValidPostcode(postcode.toUpperCase) must be(true)
+        }
       }
     }
   }

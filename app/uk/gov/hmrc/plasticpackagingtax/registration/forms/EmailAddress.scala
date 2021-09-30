@@ -31,7 +31,7 @@ object EmailAddress {
   lazy val emailAddressEmptyError            = "primaryContactDetails.emailAddress.empty.error"
   lazy val emailAddressFormatError           = "primaryContactDetails.emailAddress.format.error"
 
-  val maxLength    = 241
+  val maxLength    = 132
   val emailAddress = "value"
 
   private val mapping = Forms.mapping(
