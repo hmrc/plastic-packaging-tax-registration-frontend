@@ -14,20 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
 
-@this(govukLayout: main_template)
+@this(
+    errorTemplate: error_template
+)
 
-@(pageTitle: String, heading: String, messageFragments: List[String])(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title(pageTitle)) {
- <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-   <h1 class="govuk-heading-l" >@heading</h1>
-   @for(fragment <- messageFragments) {
-    <p class="govuk-body">@fragment</p>
-   }
-  </div>
- </div>
-}
+@errorTemplate(
+    pageTitle = "error.title",
+    heading = messages("error.title"),
+    messageFragments = List(
+        messages("error.detail1"),
+        messages("error.detail2")
+    )
+)

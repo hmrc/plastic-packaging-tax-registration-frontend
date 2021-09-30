@@ -138,7 +138,7 @@ class ReviewRegistrationController @Inject() (
             handleFailedSubscription(completedRegistration, failures)
         }
         .recoverWith {
-          case e: Throwable => Future.failed(handleFailedSubscription(completedRegistration, e))
+          case _ => Future.successful(handleFailedSubscription(completedRegistration))
         }
     }
 
@@ -170,19 +170,15 @@ class ReviewRegistrationController @Inject() (
     performFailedSubscriptionCommonTasks(registration)
     if (failures.head.isDuplicateSubscription)
       Ok(duplicateSubscriptionPage(registration.organisationDetails.businessName))
-    else {
-      val error = new IllegalStateException(
-        s"PPT subscription already exists for ${registration.organisationDetails.businessName}"
-      )
-      throw DownstreamServiceError(s"PPT subscription failed - ${error.getMessage}", error)
-    }
+    else
+      Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
-  private def handleFailedSubscription(registration: Registration, e: Throwable)(implicit
-    hc: HeaderCarrier
-  ): DownstreamServiceError = {
+  private def handleFailedSubscription(
+    registration: Registration
+  )(implicit hc: HeaderCarrier): Result = {
     performFailedSubscriptionCommonTasks(registration)
-    DownstreamServiceError(s"PPT subscription failed - ${e.getMessage}", e)
+    Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
   private def performFailedSubscriptionCommonTasks(

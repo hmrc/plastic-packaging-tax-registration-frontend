@@ -33,6 +33,10 @@ date.month = Month
 date.year = Year
 date.empty.error = Error: {0} cannot be empty
 
+error.title = Sorry, there is a problem with the service
+error.detail1 = Try again later.
+error.detail2 = We saved your answers. They will be available for 30 days.
+
 startPage.title.sectionHeader = Guidance
 startPage.meta.title = Start a Plastic Packaging Tax registration
 startPage.title = Plastic Packaging Tax Service
