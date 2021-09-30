@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Request
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
@@ -31,5 +31,20 @@ class ErrorHandler @Inject() (error_template: error_template, val messagesApi: M
     request: Request[_]
   ): Html =
     error_template(pageTitle, heading, List(message))
+
+  override def badRequestTemplate(implicit request: Request[_]): Html          = pptErrorTemplate()
+  override def notFoundTemplate(implicit request: Request[_]): Html            = pptErrorTemplate()
+  override def internalServerErrorTemplate(implicit request: Request[_]): Html = pptErrorTemplate()
+
+  private def pptErrorTemplate()(implicit request: Request[_]) =
+    customisedErrorTemplate(Messages("error.title"),
+                            Messages("error.title"),
+                            List(Messages("error.detail1"), Messages("error.detail2"))
+    )
+
+  private def customisedErrorTemplate(pageTitle: String, heading: String, messages: List[String])(
+    implicit request: Request[_]
+  ): Html =
+    error_template(pageTitle, heading, messages)
 
 }
