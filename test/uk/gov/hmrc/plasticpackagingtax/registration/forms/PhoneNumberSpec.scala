@@ -52,7 +52,7 @@ class PhoneNumberSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "phone number contains allowed characters" in {
 
-        val input = Map(phoneNumber -> "077 23 23 23")
+        val input = Map(phoneNumber -> "+077 23 23 23")
 
         val form = PhoneNumber.form().bind(input)
         form.errors.size mustBe 0
