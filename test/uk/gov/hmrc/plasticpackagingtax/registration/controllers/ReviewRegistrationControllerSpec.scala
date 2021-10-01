@@ -364,6 +364,18 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
           routes.NotableErrorController.subscriptionFailure().url
         )
       }
+
+      "user submits form and the enrolment initiation fails" in {
+        val registration = aCompletedUkCompanyRegistration
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockSubscriptionSubmit(subscriptionCreateWithEnrolmentFailure)
+
+        val result = controller.submit()(postRequest(JsObject.empty))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.NotableErrorController.enrolmentFailure().url)
+      }
     }
 
     "display the duplicate subscription page" when {

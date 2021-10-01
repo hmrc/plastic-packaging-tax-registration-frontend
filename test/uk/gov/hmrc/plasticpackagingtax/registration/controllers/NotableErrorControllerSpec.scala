@@ -46,5 +46,12 @@ class NotableErrorControllerSpec extends ControllerSpec {
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error page content"
     }
+
+    "present the generic error page on enrolment failure" in {
+      val resp = controller.enrolmentFailure()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "error page content"
+    }
   }
 }

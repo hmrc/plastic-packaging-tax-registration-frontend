@@ -31,17 +31,6 @@
 
 @()(implicit request: Request[_], messages: Messages, flash: Flash)
 
-@pptAccountLink = @{
-    link(
-        id = Some("ppt-account-link"),
-        text = messages("confirmationPage.enrolment.link.text"),
-        call = Call(
-            method = "GET",
-            url = appConfig.pptAccountUrl
-        )
-    )
-}
-
 @govukLayout(title = Title("confirmationPage.title")) {
 
     @govukPanel(Panel(
@@ -53,12 +42,6 @@
     ))
 
     @paragraphBody(message = messages("confirmationPage.body"))
-
-    @if(flash.get(FlashKeys.enrolmentSuccessful).contains("true")) {
-        @paragraphBody(message = messages("confirmationPage.enrolment.initiationSuccess", pptAccountLink))
-    } else {
-        @paragraphBody(message = messages("confirmationPage.enrolment.initiationFailure"))
-    }
 
     <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("confirmationPage.whatHappensNext.title")</h2>
     <br>

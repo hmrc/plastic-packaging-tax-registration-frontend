@@ -153,14 +153,11 @@ class ReviewRegistrationController @Inject() (
     auditor.registrationSubmitted(registration.copy(metaData = updatedMetadata),
                                   Some(response.pptReference)
     )
-    Redirect(routes.ConfirmationController.displayPage())
-      .flashing(
-        Flash(
-          Map(FlashKeys.referenceId         -> response.pptReference,
-              FlashKeys.enrolmentSuccessful -> response.enrolmentInitiatedSuccessfully.toString
-          )
-        )
-      )
+    if (response.enrolmentInitiatedSuccessfully)
+      Redirect(routes.ConfirmationController.displayPage())
+        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
+    else
+      Redirect(routes.NotableErrorController.enrolmentFailure())
   }
 
   private def handleFailedSubscription(registration: Registration, failures: Seq[EisError])(implicit

@@ -46,9 +46,6 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("confirmationPage.whatHappensNext.liable.bulletPoint.2")
       messages must haveTranslationFor("confirmationPage.exitSurvey.text.link")
       messages must haveTranslationFor("confirmationPage.exitSurvey.text")
-      messages must haveTranslationFor("confirmationPage.enrolment.initiationSuccess")
-      messages must haveTranslationFor("confirmationPage.enrolment.link.text")
-      messages must haveTranslationFor("confirmationPage.enrolment.initiationFailure")
     }
 
     val view: Html = createView()
@@ -68,18 +65,6 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(messages("confirmationPage.title"))
-    }
-
-    "display link to ppt accounts" when {
-
-      "flash contains successful enrolment " in {
-
-        val successView = createView(new Flash(Map("enrolmentSuccessful" -> "true")))
-        successView.getElementById("ppt-account-link") must containMessage(
-          "confirmationPage.enrolment.link.text"
-        )
-      }
-
     }
 
     "display panel" when {
@@ -110,22 +95,15 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-body").get(0) must containMessage("confirmationPage.body")
     }
 
-    "display enrolment status" in {
-
-      view.getElementsByClass("govuk-body").get(1) must containMessage(
-        "confirmationPage.enrolment.initiationFailure"
-      )
-    }
-
     "display 'What happens next'" in {
 
       view.getElementsByClass("govuk-heading-m").get(0) must containMessage(
         "confirmationPage.whatHappensNext.title"
       )
-      view.getElementsByClass("govuk-body").get(2) must containMessage(
+      view.getElementsByClass("govuk-body").get(1) must containMessage(
         "confirmationPage.whatHappensNext.paragraph1"
       )
-      view.getElementsByClass("govuk-body").get(3) must containMessage(
+      view.getElementsByClass("govuk-body").get(2) must containMessage(
         "confirmationPage.whatHappensNext.liable.title"
       )
       view.getElementsByClass("dashed-list-item").get(0) must containMessage(
@@ -135,7 +113,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
         "confirmationPage.whatHappensNext.liable.bulletPoint.2"
       )
 
-      view.getElementsByClass("govuk-body").get(4) must containMessage(
+      view.getElementsByClass("govuk-body").get(3) must containMessage(
         "confirmationPage.exitSurvey.text",
         messages("confirmationPage.exitSurvey.text.link")
       )

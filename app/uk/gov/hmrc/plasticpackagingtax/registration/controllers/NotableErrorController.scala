@@ -32,4 +32,9 @@ class NotableErrorController @Inject() (mcc: MessagesControllerComponents, error
       Ok(errorPage())
     }
 
+  def enrolmentFailure(): Action[AnyContent] =
+    Action { implicit request =>
+      Ok(errorPage())
+    }
+
 }
