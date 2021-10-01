@@ -23,20 +23,24 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{error_no_save_page, error_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
-  private val page = mock[error_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val errorPage       = mock[error_page]
+  private val errorNoSavePage = mock[error_no_save_page]
+  private val mcc             = stubMessagesControllerComponents()
 
   private val controller =
-    new NotableErrorController(mcc = mcc, errorPage = page)
+    new NotableErrorController(mcc = mcc, errorPage = errorPage, errorNoSavePage = errorNoSavePage)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply()(any(), any())).thenReturn(HtmlFormat.raw("error page content"))
+    when(errorPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error page content"))
+    when(errorNoSavePage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error no save page content")
+    )
   }
 
   "NotableErrorController" should {
@@ -47,11 +51,11 @@ class NotableErrorControllerSpec extends ControllerSpec {
       contentAsString(resp) mustBe "error page content"
     }
 
-    "present the generic error page on enrolment failure" in {
+    "present the generic error no save page on enrolment failure" in {
       val resp = controller.enrolmentFailure()(getRequest())
 
       status(resp) mustBe OK
-      contentAsString(resp) mustBe "error page content"
+      contentAsString(resp) mustBe "error no save page content"
     }
   }
 }

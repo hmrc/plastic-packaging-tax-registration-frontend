@@ -18,14 +18,17 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{error_no_save_page, error_page}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NotableErrorController @Inject() (mcc: MessagesControllerComponents, errorPage: error_page)
-    extends FrontendController(mcc) with I18nSupport {
+class NotableErrorController @Inject() (
+  mcc: MessagesControllerComponents,
+  errorPage: error_page,
+  errorNoSavePage: error_no_save_page
+) extends FrontendController(mcc) with I18nSupport {
 
   def subscriptionFailure(): Action[AnyContent] =
     Action { implicit request =>
@@ -34,7 +37,7 @@ class NotableErrorController @Inject() (mcc: MessagesControllerComponents, error
 
   def enrolmentFailure(): Action[AnyContent] =
     Action { implicit request =>
-      Ok(errorPage())
+      Ok(errorNoSavePage())
     }
 
 }
