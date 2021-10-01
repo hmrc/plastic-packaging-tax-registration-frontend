@@ -208,6 +208,17 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                       enrolmentInitiatedSuccessfully = true
     )
 
+  protected val subscriptionCreateWithEnrolmentFailure: SubscriptionCreateResponseSuccess =
+    SubscriptionCreateResponseSuccess(pptReference = "XXPPTP123456789",
+                                      processingDate =
+                                        ZonedDateTime.now(ZoneOffset.UTC),
+                                      formBundleNumber = "123456789",
+                                      nrsNotifiedSuccessfully = true,
+                                      nrsSubmissionId = Some(nrsSubmissionId),
+                                      nrsFailureReason = None,
+                                      enrolmentInitiatedSuccessfully = false
+    )
+
   protected val emailVerification: VerificationStatus = VerificationStatus(
     Seq(EmailStatus(emailAddress = "test@hmrc.com", verified = true, locked = false))
   )

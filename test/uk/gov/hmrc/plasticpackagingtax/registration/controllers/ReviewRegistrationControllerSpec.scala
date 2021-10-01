@@ -29,7 +29,6 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
@@ -323,6 +322,9 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
 
         intercept[RuntimeException](status(result))
       }
+    }
+
+    "redirect to the error page" when {
 
       "user submits form and the submission fails with an exception" in {
         authorizedUser()
@@ -331,7 +333,11 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         val result =
           controller.submit()(postRequest(JsObject.empty))
 
-        intercept[DownstreamServiceError](status(result))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.NotableErrorController.subscriptionFailure().url
+        )
+
         metricsMock.defaultRegistry.counter(
           "ppt.registration.failed.submission.counter"
         ).getCount mustBe 1
@@ -353,7 +359,22 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        intercept[DownstreamServiceError](status(result))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.NotableErrorController.subscriptionFailure().url
+        )
+      }
+
+      "user submits form and the enrolment initiation fails" in {
+        val registration = aCompletedUkCompanyRegistration
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockSubscriptionSubmit(subscriptionCreateWithEnrolmentFailure)
+
+        val result = controller.submit()(postRequest(JsObject.empty))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.NotableErrorController.enrolmentFailure().url)
       }
     }
 
