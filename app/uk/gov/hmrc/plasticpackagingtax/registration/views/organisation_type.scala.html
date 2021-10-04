@@ -37,7 +37,7 @@
 
     @govukLayout(
         title = Title("organisationDetails.type.title"),
-        backButton = Some(BackButton(messages("site.back"), pptRoutes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage(), messages("site.back.hiddenText")))) {
+        backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 
         @sectionHeader(messages("organisationDetails.sectionHeader"))

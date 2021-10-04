@@ -19,7 +19,7 @@ package spec
 import java.time.{ZoneOffset, ZonedDateTime}
 
 import base.PptTestData.testUserFeatures
-import base.{MockAuthAction, PptTestData}
+import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
@@ -56,20 +56,18 @@ import scala.language.implicitConversions
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   implicit val journeyRequest: JourneyRequest[AnyContent] =
-    new JourneyRequest(
-      authenticatedRequest =
-        new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser()),
-      registration = aRegistration(),
-      appConfig = appConfig
+    new JourneyRequest(authenticatedRequest =
+                         new AuthenticatedRequest(FakeRequest().withCSRFToken, TestData.newUser()),
+                       registration = aRegistration(),
+                       appConfig = appConfig
     )
 
   implicit def generateRequest(
     userFeatureFlags: Map[String, Boolean] = testUserFeatures
   ): JourneyRequest[AnyContent] =
     new JourneyRequest(authenticatedRequest =
-                         new AuthenticatedRequest(
-                           FakeRequest().withCSRFToken,
-                           PptTestData.newUser(featureFlags = userFeatureFlags)
+                         new AuthenticatedRequest(FakeRequest().withCSRFToken,
+                                                  TestData.newUser(featureFlags = userFeatureFlags)
                          ),
                        registration = aRegistration(),
                        appConfig = appConfig
@@ -224,43 +222,37 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   )
 
   protected def registeredUkCompanyOrgDetails(): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(UK_COMPANY),
+    OrganisationDetails(organisationType = Some(UK_COMPANY),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         incorporationDetails = Some(incorporationDetails)
     )
 
   protected def registeredSoleTraderOrgDetails(): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(SOLE_TRADER),
+    OrganisationDetails(organisationType = Some(SOLE_TRADER),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         soleTraderDetails = Some(soleTraderIncorporationDetails)
     )
 
   protected def registeredGeneralPartnershipOrgDetails(): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(PARTNERSHIP),
+    OrganisationDetails(organisationType = Some(PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         partnershipDetails = Some(partnershipDetails)
     )
 
   protected def registeredScottishPartnershipOrgDetails(): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(PARTNERSHIP),
+    OrganisationDetails(organisationType = Some(PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         partnershipDetails = Some(partnershipDetailsWithScottishPartnership)
     )
 
   protected def unregisteredUkCompanyOrgDetails(): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(UK_COMPANY),
+    OrganisationDetails(organisationType = Some(UK_COMPANY),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         incorporationDetails = Some(unregisteredIncorporationDetails)
     )
 
   protected def unregisteredSoleTraderOrgDetails(): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(SOLE_TRADER),
+    OrganisationDetails(organisationType = Some(SOLE_TRADER),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         soleTraderDetails = Some(unregisteredSoleTraderDetails)
     )
@@ -268,14 +260,12 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected def unregisteredPartnershipDetails(
     partnershipType: PartnershipTypeEnum
   ): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(PARTNERSHIP),
+    OrganisationDetails(organisationType = Some(PARTNERSHIP),
                         partnershipDetails = Some(PartnershipDetails(partnershipType))
     )
 
   protected def verificationFailedUkCompanyOrgDetails(): OrganisationDetails =
-    OrganisationDetails(isBasedInUk = Some(true),
-                        organisationType = Some(UK_COMPANY),
+    OrganisationDetails(organisationType = Some(UK_COMPANY),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         incorporationDetails = Some(verificationFailedIncorporationDetails)
     )

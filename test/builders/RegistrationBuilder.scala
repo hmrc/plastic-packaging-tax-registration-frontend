@@ -60,8 +60,7 @@ trait RegistrationBuilder {
                                                                ),
                                                                journeyId = Some("journey-id")
                  ),
-                 organisationDetails = OrganisationDetails(isBasedInUk = Some(true),
-                                                           organisationType = Some(UK_COMPANY),
+                 organisationDetails = OrganisationDetails(organisationType = Some(UK_COMPANY),
                                                            businessRegisteredAddress =
                                                              Some(
                                                                Address(addressLine1 =
