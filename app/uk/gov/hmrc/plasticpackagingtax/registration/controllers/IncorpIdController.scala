@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
@@ -39,6 +39,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   business_registration_failure_page,
   business_verification_failure_page
@@ -56,6 +57,7 @@ class IncorpIdController @Inject() (
   soleTraderConnector: SoleTraderInorpIdConnector,
   generalPartnershipConnector: GeneralPartnershipConnector,
   scottishPartnershipConnector: ScottishPartnershipConnector,
+  subscriptionsConnector: SubscriptionsConnector,
   business_registration_failure_page: business_registration_failure_page,
   business_verification_failure_page: business_verification_failure_page,
   mcc: MessagesControllerComponents
@@ -65,16 +67,29 @@ class IncorpIdController @Inject() (
   def incorpIdCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        saveRegistrationDetails(journeyId).map {
+        saveRegistrationDetails(journeyId).flatMap {
           case Right(registration) =>
             if (registration.organisationDetails.businessVerificationFailed)
-              Ok(business_verification_failure_page())
-            else if (registration.organisationDetails.businessPartnerId().isDefined)
-              Redirect(routes.RegistrationController.displayPage())
+              Future.successful(Ok(business_verification_failure_page()))
             else
-              Ok(business_registration_failure_page())
+              registration.organisationDetails.businessPartnerId() match {
+                case Some(id) => checkExistingSubscription(id)
+                case None     => Future.successful(Ok(business_registration_failure_page()))
+              }
+
           case Left(error) => throw error
         }
+    }
+
+  private def checkExistingSubscription(
+    businessPartnerId: String
+  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Result] =
+    subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map { response =>
+      response.status match {
+        case SubscriptionStatus.SUBSCRIBED =>
+          Redirect(routes.NotableErrorController.duplicateSubscription())
+        case _ => Redirect(routes.RegistrationController.displayPage())
+      }
     }
 
   private def saveRegistrationDetails(journeyId: String)(implicit

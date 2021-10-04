@@ -18,26 +18,35 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{error_no_save_page, error_page}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{duplicate_subscription_page, error_no_save_page, error_page}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 
 @Singleton
 class NotableErrorController @Inject() (
   mcc: MessagesControllerComponents,
+  authenticate: AuthAction,
+  journeyAction: JourneyAction,
   errorPage: error_page,
-  errorNoSavePage: error_no_save_page
+  errorNoSavePage: error_no_save_page,
+  duplicateSubscriptionPage: duplicate_subscription_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def subscriptionFailure(): Action[AnyContent] =
-    Action { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       Ok(errorPage())
     }
 
   def enrolmentFailure(): Action[AnyContent] =
-    Action { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       Ok(errorNoSavePage())
+    }
+
+  def duplicateSubscription(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok(duplicateSubscriptionPage(request.registration.organisationDetails.businessName))
     }
 
 }
