@@ -36,7 +36,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class OrganisationDetails(
-  isBasedInUk: Option[Boolean] = None,
   organisationType: Option[OrgType] = None,
   businessRegisteredAddress: Option[Address] = None,
   soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
@@ -45,7 +44,7 @@ case class OrganisationDetails(
 ) {
 
   def status: TaskStatus =
-    if (isBasedInUk.isEmpty) TaskStatus.NotStarted
+    if (organisationType.isEmpty) TaskStatus.NotStarted
     else if (businessPartnerId().isDefined) TaskStatus.Completed
     else TaskStatus.InProgress
 

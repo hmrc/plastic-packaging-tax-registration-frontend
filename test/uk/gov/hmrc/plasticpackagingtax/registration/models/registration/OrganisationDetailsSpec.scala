@@ -124,8 +124,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
   ) =
     orgType match {
       case UK_COMPANY =>
-        OrganisationDetails(isBasedInUk = Some(true),
-                            organisationType = Some(UK_COMPANY),
+        OrganisationDetails(organisationType = Some(UK_COMPANY),
                             incorporationDetails = Some(
                               IncorporationDetails(companyNumber = "123",
                                                    companyName = "Test",

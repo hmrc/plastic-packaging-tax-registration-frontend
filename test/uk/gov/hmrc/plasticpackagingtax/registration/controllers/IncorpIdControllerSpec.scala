@@ -199,9 +199,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
     "throw exception" when {
       "organisation type is invalid" in {
         authorizedUser()
-        mockRegistrationFind(
-          aRegistration(withOrganisationDetails(OrganisationDetails(isBasedInUk = Some(true))))
-        )
+        mockRegistrationFind(aRegistration(withOrganisationDetails(OrganisationDetails())))
 
         intercept[InternalServerException] {
           await(controller.incorpIdCallback("uuid-id")(getRequest()))

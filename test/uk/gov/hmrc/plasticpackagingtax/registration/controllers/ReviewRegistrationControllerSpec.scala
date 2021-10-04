@@ -89,8 +89,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
       "user is authorised and display page method is invoked with uk company" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(isBasedInUk = Some(true),
-                                organisationType = Some(UK_COMPANY),
+            OrganisationDetails(organisationType = Some(UK_COMPANY),
                                 incorporationDetails =
                                   Some(
                                     IncorporationDetails(companyNumber = "123456",
@@ -124,8 +123,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
       "user is authorised and display page method is invoked with sole trader" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(isBasedInUk = Some(true),
-                                organisationType = Some(SOLE_TRADER),
+            OrganisationDetails(organisationType = Some(SOLE_TRADER),
                                 soleTraderDetails = Some(soleTraderIncorporationDetails)
             )
           )
@@ -142,8 +140,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
       "user is authorised and display page method is invoked with partnership" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(isBasedInUk = Some(true),
-                                organisationType = Some(PARTNERSHIP),
+            OrganisationDetails(organisationType = Some(PARTNERSHIP),
                                 partnershipDetails = Some(partnershipDetails)
             )
           )
@@ -201,7 +198,9 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
           aCompletedGeneralPartnershipRegistration
             .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
             .copy(organisationDetails =
-              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(isBasedInUk = None)
+              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(organisationType =
+                None
+              )
             )
         mockRegistrationFind(unreadyRegistration)
 

@@ -212,7 +212,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.notStarted"
           )
           sectionLink(prepareApplicationElem, BUSINESS_DETAILS) must haveHref(
-            routes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage()
+            routes.OrganisationDetailsTypeController.displayPage()
           )
 
           sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
@@ -282,7 +282,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, BUSINESS_DETAILS) must haveHref(
-            routes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage()
+            routes.OrganisationDetailsTypeController.displayPage()
           )
 
           sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
