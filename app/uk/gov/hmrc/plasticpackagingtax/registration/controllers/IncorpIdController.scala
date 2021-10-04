@@ -52,7 +52,7 @@ class IncorpIdController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
-  ukLimitedConnector: IncorpIdConnector,
+  ukLimitedConnector: UkCompanyConnector,
   soleTraderConnector: SoleTraderInorpIdConnector,
   generalPartnershipConnector: GeneralPartnershipConnector,
   scottishPartnershipConnector: ScottishPartnershipConnector,
