@@ -103,7 +103,7 @@ class OrganisationDetailsTypeController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[String] =
     soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+      SoleTraderGrsCreateRequest(appConfig.grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.exitSurveyUrl
@@ -114,7 +114,7 @@ class OrganisationDetailsTypeController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[String] =
     ukCompanyGrsConnector.createJourney(
-      UkCompanyGrsCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+      UkCompanyGrsCreateRequest(appConfig.grsCallbackUrl,
                                 Some(request2Messages(request)("service.name")),
                                 appConfig.serviceIdentifier,
                                 appConfig.exitSurveyUrl

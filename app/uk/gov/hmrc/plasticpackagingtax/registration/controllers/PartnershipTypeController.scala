@@ -110,7 +110,7 @@ class PartnershipTypeController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[String] =
     generalPartnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.exitSurveyUrl
@@ -121,7 +121,7 @@ class PartnershipTypeController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[String] =
     scottishPartnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
+      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.exitSurveyUrl

@@ -81,7 +81,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val scottishPartnershipJourneyUrl = s"$partnershipBaseUrl/scottish-partnership/journey"
   // Define other partnership URLs here?
 
-  lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
+  lazy val grsCallbackUrl: String = config.get[String]("urls.grsCallback")
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
