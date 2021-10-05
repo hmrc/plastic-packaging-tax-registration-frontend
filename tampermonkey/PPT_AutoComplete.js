@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.3
+// @version      14.4
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -355,7 +355,7 @@ const primaryContactFullName = () => {
 }
 
 const primaryContactJobTitle = () => {
-    if (currentPageIs('/plastic-packaging-tax/primary-contact-job-title')) {
+    if (currentPageIs('/plastic-packaging-tax/main-contact-job-title')) {
 
         document.getElementById('value').value = 'Chief Financial Officer'
         document.getElementsByClassName('govuk-button')[0].click()

@@ -30,8 +30,8 @@ POST       /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.r
 GET        /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.displayPage()
 POST       /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.submit()
 
-GET        /primary-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.displayPage()
-POST       /primary-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.submit()
+GET        /main-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.displayPage()
+POST       /main-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.submit()
 
 GET        /primary-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.displayPage()
 POST       /primary-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.submit()
