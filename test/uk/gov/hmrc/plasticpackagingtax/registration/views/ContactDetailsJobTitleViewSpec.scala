@@ -33,6 +33,8 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
   private def createView(form: Form[JobTitle] = JobTitle.form()): Document =
     page(form)(journeyRequest, messages)
 
+  val contactName = journeyRequest.registration.primaryContactDetails.name.get
+
   "Job Title View" should {
 
     "have proper messages for labels" in {
@@ -64,9 +66,11 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display title" in {
+    "display title including contact name" in {
 
-      view.select("title").text() must include(messages("primaryContactDetails.jobTitlePage.title"))
+      view.select("title").text() must include(
+        messages("primaryContactDetails.jobTitlePage.title", contactName)
+      )
     }
 
     "display header" in {
@@ -76,10 +80,10 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display job title question" in {
+    "display job title question including contact name" in {
 
       view.getElementsByAttributeValueMatching("for", "value").text() must include(
-        messages("primaryContactDetails.jobTitlePage.title")
+        messages("primaryContactDetails.jobTitlePage.title", contactName)
       )
     }
 
@@ -128,8 +132,8 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(JobTitle.form())(request, messages)
-    page.render(JobTitle.form(), request, messages)
+    page.f(JobTitle.form())(journeyRequest, messages)
+    page.render(JobTitle.form(), journeyRequest, messages)
   }
 
 }
