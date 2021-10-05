@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.connectors
+package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import base.Injector
 import base.it.ConnectorISpec
@@ -24,22 +24,24 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorpIdCreateRequest,
-  IncorporationDetails
+  GrsIncorporationDetails,
+  IncorporationDetails,
+  UkCompanyGrsCreateRequest
 }
 
-class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
-  lazy val connector: IncorpIdConnector = app.injector.instanceOf[IncorpIdConnector]
-  val incorpId                          = "uuid-id"
+  lazy val connector: UkCompanyGrsConnector = app.injector.instanceOf[UkCompanyGrsConnector]
+  val incorpId                              = "uuid-id"
 
   "createJourney" should {
     "call the test only route to stub the journey" in {
       val testJourneyConfig =
-        IncorpIdCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                              deskProServiceId = "plastic-packaging-tax",
-                              signOutUrl = "/feedback/plastic-packaging-tax"
+        UkCompanyGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
+                                  deskProServiceId = "plastic-packaging-tax",
+                                  signOutUrl = "/feedback/plastic-packaging-tax"
         )
       val testJourneyStartUrl  = "/identify-your-incorporated-business/uuid-id/company-number"
       val testDeskProServiceId = "plastic-packaging-tax"
@@ -65,9 +67,9 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
 
     "throw exception if http status is not 'CREATED'" in {
       val testJourneyConfig =
-        IncorpIdCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                              deskProServiceId = "plastic-packaging-tax",
-                              signOutUrl = "/feedback/plastic-packaging-tax"
+        UkCompanyGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
+                                  deskProServiceId = "plastic-packaging-tax",
+                                  signOutUrl = "/feedback/plastic-packaging-tax"
         )
 
       stubFor(
@@ -88,18 +90,18 @@ class IncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutu
     val testJourneyId = "testJourneyId"
 
     "incorp ID returns valid incorporation details" in {
-      val validResponse = incorporationDetails
+      val validResponse = grsIncorporationDetails
       stubFor(
         get(urlMatching(s"/incorporated-entity-identification/api/journey/$testJourneyId"))
           .willReturn(
             aResponse().withStatus(OK)
-              withBody (toJson(validResponse)(IncorporationDetails.apiFormat).toString)
+              withBody (toJson(validResponse)(GrsIncorporationDetails.format).toString)
           )
       )
 
       val res = await(connector.getDetails(testJourneyId))
 
-      res mustBe validResponse
+      res mustBe IncorporationDetails(validResponse)
       getTimer("ppt.incorpId.get.details.timer").getCount mustBe 1
     }
 

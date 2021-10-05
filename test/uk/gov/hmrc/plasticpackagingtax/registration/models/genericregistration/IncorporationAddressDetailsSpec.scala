@@ -66,7 +66,7 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
       "apply json payload" when {
         "payload is not available" in {
           val incorporationAddressDetails =
-            IncorporationAddressDetails.apiFormat.reads(JsObject.empty).get
+            IncorporationAddressDetails.format.reads(JsObject.empty).get
           incorporationAddressDetails.address_line_1 mustBe None
           incorporationAddressDetails.address_line_2 mustBe None
           incorporationAddressDetails.locality mustBe None

@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
 
 case class IncorporationRegistrationDetails(
@@ -25,21 +24,6 @@ case class IncorporationRegistrationDetails(
 )
 
 object IncorporationRegistrationDetails {
-
-  val apiReads: Reads[IncorporationRegistrationDetails] = (
-    (__ \ "registration" \ "registrationStatus").read[String] and
-      (__ \ "registration" \ "registeredBusinessPartnerId").readNullable[String].orElse(
-        Reads.pure(None)
-      )
-  )(IncorporationRegistrationDetails.apply _)
-
-  val apiWrites: Writes[IncorporationRegistrationDetails] = (
-    (__ \ "registration" \ "registrationStatus").write[String] and
-      (__ \ "registration" \ "registeredBusinessPartnerId").writeNullable[String]
-  )(unlift(IncorporationRegistrationDetails.unapply))
-
-  val apiFormat: Format[IncorporationRegistrationDetails] =
-    Format[IncorporationRegistrationDetails](apiReads, apiWrites)
 
   implicit val format: OFormat[IncorporationRegistrationDetails] =
     Json.format[IncorporationRegistrationDetails]

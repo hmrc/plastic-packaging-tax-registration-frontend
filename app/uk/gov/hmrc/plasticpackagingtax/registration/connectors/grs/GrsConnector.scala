@@ -14,36 +14,44 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.connectors
+package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import com.kenshoo.play.metrics.Metrics
+import play.api.Logger
 import play.api.http.Status.CREATED
-import play.api.libs.json.{Reads, Writes}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
+import play.api.libs.json.Writes
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{
+  HeaderCarrier,
+  HttpClient,
+  HttpReads,
+  HttpResponse,
+  InternalServerException
+}
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class GrsConnector[
-  GrsCreateJourneyPayload,
-  GrsResponse
-] @Inject() (
+abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResponse](
   httpClient: HttpClient,
   metrics: Metrics,
-  grsUrl: String,
+  val grsCreateJourneyUrl: String,
+  val grsGetDetailsUrl: String,
   createJourneyTimerTag: String,
   getJourneyDetailsTimerTag: String
-)
-(implicit ec: ExecutionContext) {
-  type RedirectUrl  = String
-  type GrsJourneyId = String
+)(implicit ec: ExecutionContext) {
+  type RedirectUrl = String
 
-  def createJourney(payload: GrsCreateJourneyPayload)(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] = {
+  private val logger = Logger(this.getClass)
+
+  def createJourney(
+    payload: GrsCreateJourneyPayload
+  )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] = {
+    logger.info("Create GRS journey")
     val timerCtx = metrics.defaultRegistry.timer(createJourneyTimerTag).time()
-    httpClient.POST[GrsCreateJourneyPayload, HttpResponse](grsUrl, payload)
+    httpClient.POST[GrsCreateJourneyPayload, HttpResponse](grsCreateJourneyUrl, payload)
       .andThen { case _ => timerCtx.stop() }
       .map {
-        case response@HttpResponse(CREATED, _, _) =>
+        case response @ HttpResponse(CREATED, _, _) =>
           (response.json \ "journeyStartUrl").as[String]
         case response =>
           throw new InternalServerException(
@@ -52,10 +60,13 @@ abstract class GrsConnector[
       }
   }
 
-  def getDetails(journeyId: String)(implicit rds: Reads[GrsResponse], hc: HeaderCarrier): Future[GrsResponse] = {
+  def getDetails(
+    journeyId: String
+  )(implicit rds: HttpReads[GrsResponse], hc: HeaderCarrier): Future[TranslatedResponse] = {
     val timerCtx = metrics.defaultRegistry.timer(getJourneyDetailsTimerTag).time()
-    httpClient.GET[GrsResponse](s"$grsUrl/$journeyId")
+    httpClient.GET[GrsResponse](s"$grsGetDetailsUrl/$journeyId").map(translateDetails(_))
       .andThen { case _ => timerCtx.stop() }
   }
-}
 
+  def translateDetails(grsResponse: GrsResponse): TranslatedResponse
+}

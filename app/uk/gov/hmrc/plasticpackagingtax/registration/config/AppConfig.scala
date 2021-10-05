@@ -76,6 +76,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     servicesConfig.baseUrl("partnership-identification-frontend")
 
   lazy val partnershipBaseUrl            = s"$partnershipHost/partnership-identification/api"
+  lazy val partnershipJourneyUrl         = s"$partnershipBaseUrl/journey"
   lazy val generalPartnershipJourneyUrl  = s"$partnershipBaseUrl/general-partnership/journey"
   lazy val scottishPartnershipJourneyUrl = s"$partnershipBaseUrl/scottish-partnership/journey"
   // Define other partnership URLs here?

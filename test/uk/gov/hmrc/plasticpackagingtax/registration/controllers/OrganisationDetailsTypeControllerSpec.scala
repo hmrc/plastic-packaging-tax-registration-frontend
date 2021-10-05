@@ -50,8 +50,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                           registrationConnector = mockRegistrationConnector,
                                           mcc = mcc,
                                           page = page,
-                                          incorpIdConnector = mockIncorpIdConnector,
-                                          soleTraderIdConnector = mockSoleTraderConnector,
+                                          ukCompanyGrsConnector = mockUkCompanyGrsConnector,
+                                          soleTraderGrsConnector = mockSoleTraderGrsConnector,
                                           appConfig = config
     )
 
@@ -65,7 +65,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   }
 
   override protected def afterEach(): Unit = {
-    reset(page, mockSoleTraderConnector, mockIncorpIdConnector)
+    reset(page, mockSoleTraderGrsConnector, mockUkCompanyGrsConnector)
     super.afterEach()
   }
 

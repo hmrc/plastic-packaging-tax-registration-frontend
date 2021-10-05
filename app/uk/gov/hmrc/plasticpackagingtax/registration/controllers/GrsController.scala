@@ -16,11 +16,17 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  GeneralPartnershipGrsConnector,
+  ScottishPartnershipGrsConnector,
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
@@ -45,24 +51,25 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncorpIdController @Inject() (
+class GrsController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
-  ukLimitedConnector: UkCompanyConnector,
-  soleTraderConnector: SoleTraderInorpIdConnector,
-  generalPartnershipConnector: GeneralPartnershipConnector,
-  scottishPartnershipConnector: ScottishPartnershipConnector,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  soleTraderGrsConnector: SoleTraderGrsConnector,
+  generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
+  scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
   business_registration_failure_page: business_registration_failure_page,
   business_verification_failure_page: business_verification_failure_page,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def incorpIdCallback(journeyId: String): Action[AnyContent] =
+  def grsCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
         saveRegistrationDetails(journeyId).map {
@@ -93,7 +100,7 @@ class IncorpIdController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     for {
-      details <- ukLimitedConnector.getDetails(journeyId)
+      details <- ukCompanyGrsConnector.getDetails(journeyId)
       result <- update { model =>
         val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = Some(details),
                                                                soleTraderDetails = None,
@@ -108,7 +115,7 @@ class IncorpIdController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     for {
-      details <- soleTraderConnector.getDetails(journeyId)
+      details <- soleTraderGrsConnector.getDetails(journeyId)
       result <- update { model =>
         val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = None,
                                                                partnershipDetails = None,
@@ -127,7 +134,7 @@ class IncorpIdController @Inject() (
         partnershipDetails.partnershipType match {
           case GENERAL_PARTNERSHIP =>
             for {
-              generalPartnershipDetails <- generalPartnershipConnector.getDetails(journeyId)
+              generalPartnershipDetails <- generalPartnershipGrsConnector.getDetails(journeyId)
               result <- update { registration =>
                 val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
                                                                   registration.organisationDetails,
@@ -143,7 +150,7 @@ class IncorpIdController @Inject() (
             } yield result
           case SCOTTISH_PARTNERSHIP =>
             for {
-              scottishPartnershipDetails <- scottishPartnershipConnector.getDetails(journeyId)
+              scottishPartnershipDetails <- scottishPartnershipGrsConnector.getDetails(journeyId)
               result <- update { registration =>
                 val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
                                                                   registration.organisationDetails,

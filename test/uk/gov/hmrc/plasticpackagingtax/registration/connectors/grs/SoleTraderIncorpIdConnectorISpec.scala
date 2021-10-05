@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.connectors
+package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import base.Injector
 import base.it.ConnectorISpec
@@ -24,15 +24,17 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  SoleTraderIncorpIdCreateRequest,
+  GrsSoleTraderDetails,
+  SoleTraderGrsCreateRequest,
   SoleTraderIncorporationDetails
 }
 
 class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
-  lazy val connector: SoleTraderInorpIdConnector =
-    app.injector.instanceOf[SoleTraderInorpIdConnector]
+  lazy val connector: SoleTraderGrsConnector =
+    app.injector.instanceOf[SoleTraderGrsConnector]
 
   val incorpId = "uuid-id"
 
@@ -41,10 +43,10 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
       val testJourneyStartUrl  = "/identify-your-incorporated-business/uuid-id/company-number"
       val testDeskProServiceId = "plastic-packaging-tax"
       val testJourneyRequest =
-        SoleTraderIncorpIdCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                                        deskProServiceId = "plastic-packaging-tax",
-                                        signOutUrl = "/feedback/plastic-packaging-tax",
-                                        optServiceName = Some("myService")
+        SoleTraderGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
+                                   deskProServiceId = "plastic-packaging-tax",
+                                   signOutUrl = "/feedback/plastic-packaging-tax",
+                                   optServiceName = Some("myService")
         )
 
       stubFor(
@@ -68,10 +70,10 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
 
     "throw exception if http status is not 'CREATED'" in {
       val testJourneyConfig =
-        SoleTraderIncorpIdCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
-                                        deskProServiceId = "plastic-packaging-tax",
-                                        signOutUrl = "/feedback/plastic-packaging-tax",
-                                        optServiceName = Some("myService")
+        SoleTraderGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
+                                   deskProServiceId = "plastic-packaging-tax",
+                                   signOutUrl = "/feedback/plastic-packaging-tax",
+                                   optServiceName = Some("myService")
         )
 
       stubFor(
@@ -92,19 +94,19 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
     val testJourneyId = "testJourneyId"
 
     "incorp ID returns valid incorporation details" in {
-      val validResponse = soleTraderIncorporationDetails
+      val validResponse = grsSoleTraderIncorporationDetails
       stubFor(
         get(urlMatching(s"/sole-trader-identification/api/journey/$testJourneyId"))
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(toJson(validResponse)(SoleTraderIncorporationDetails.apiFormat).toString)
+              .withBody(toJson(validResponse)(GrsSoleTraderDetails.format).toString)
           )
       )
 
       val res = await(connector.getDetails(testJourneyId))
 
-      res mustBe validResponse
+      res mustBe SoleTraderIncorporationDetails(validResponse)
       getTimer("ppt.soleTrader.incorpId.get.details.timer").getCount mustBe 1
     }
 

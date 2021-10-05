@@ -14,26 +14,41 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.connectors
+package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import com.kenshoo.play.metrics.Metrics
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorpIdCreateRequest,
-  IncorporationDetails
+  GrsSoleTraderDetails,
+  SoleTraderGrsCreateRequest,
+  SoleTraderIncorporationDetails
 }
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UkCompanyConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(
-  implicit ec: ExecutionContext
-) extends GrsConnector[IncorpIdCreateRequest, IncorporationDetails](
-      httpClient,
+class SoleTraderGrsConnector @Inject() (
+  httpClient: HttpClient,
+  config: AppConfig,
+  metrics: Metrics
+)(implicit ec: ExecutionContext)
+    extends GrsConnector[
+      SoleTraderGrsCreateRequest,
+      GrsSoleTraderDetails,
+      SoleTraderIncorporationDetails
+    ](httpClient,
       metrics,
-      config.incorpJourneyUrl,
-      "ppt.incorpId.create.journey.timer",
-      "ppt.incorpId.get.details.timer"
-    )
+      config.soleTraderJourneyUrl,
+      config.soleTraderJourneyUrl,
+      "ppt.soleTrader.incorpId.create.journey.timer",
+      "ppt.soleTrader.incorpId.get.details.timer"
+    ) {
+
+  override def translateDetails(
+    grsSoleTraderDetails: GrsSoleTraderDetails
+  ): SoleTraderIncorporationDetails =
+    SoleTraderIncorporationDetails(grsSoleTraderDetails)
+
+}
