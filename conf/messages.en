@@ -123,12 +123,10 @@ primaryContactDetails.jobTitle.empty.error = Enter a job title
 primaryContactDetails.jobTitle.tooLong.error = Job title must be no longer than 155 characters
 primaryContactDetails.jobTitle.nonAlphaChar.error = Enter a job title in the correct format
 
-primaryContactDetails.emailAddress.title = What is the primary contact’s email address?
-primaryContactDetails.emailAddress.hint = We’ll only use this to send you notifications about the registration, account and returns.
+primaryContactDetails.emailAddress.title = What is {0}’s email address?
+primaryContactDetails.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
 primaryContactDetails.emailAddress.empty.error = Enter an email address
 primaryContactDetails.emailAddress.format.error = Enter an email address in the correct format
-primaryContactDetails.emailAddress.privacyNotice = Full details of how we use your information are in the {0}.
-primaryContactDetails.emailAddress.privacyNotice.link = HMRC Privacy Notice (opens in a new tab)
 
 primaryContactDetails.emailAddress.passcode.title = Enter the code to confirm the email address
 primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK

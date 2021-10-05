@@ -33,6 +33,8 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
     page(form)(journeyRequest, messages)
 
+  private val mainContact = journeyRequest.registration.primaryContactDetails.name.get
+
   "Email Address View" should {
 
     "have proper messages for labels" in {
@@ -40,8 +42,6 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("primaryContactDetails.emailAddress.title")
       messages must haveTranslationFor("primaryContactDetails.emailAddress.empty.error")
       messages must haveTranslationFor("primaryContactDetails.emailAddress.format.error")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.privacyNotice")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.privacyNotice.link")
     }
 
     val view = createView()
@@ -67,7 +67,9 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("primaryContactDetails.emailAddress.title"))
+      view.select("title").text() must include(
+        messages("primaryContactDetails.emailAddress.title", mainContact)
+      )
     }
 
     "display header" in {
@@ -84,25 +86,16 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display email address question" in {
+    "display email address label" in {
 
       view.getElementsByAttributeValueMatching("for", "value").text() must include(
-        messages("primaryContactDetails.emailAddress.title")
+        messages("primaryContactDetails.emailAddress.title", mainContact)
       )
     }
 
     "display email address input box" in {
 
       view must containElementWithID("value")
-    }
-
-    "display 'Privacy' Notice" in {
-
-      view.getElementsByClass("govuk-body").get(0).text() must include(
-        messages("primaryContactDetails.emailAddress.privacyNotice",
-                 messages("primaryContactDetails.emailAddress.privacyNotice.link")
-        )
-      )
     }
 
     "display 'Save And Continue' button" in {
@@ -157,8 +150,8 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddress.form())(request, messages)
-    page.render(EmailAddress.form(), request, messages)
+    page.f(EmailAddress.form())(journeyRequest, messages)
+    page.render(EmailAddress.form(), journeyRequest, messages)
   }
 
 }
