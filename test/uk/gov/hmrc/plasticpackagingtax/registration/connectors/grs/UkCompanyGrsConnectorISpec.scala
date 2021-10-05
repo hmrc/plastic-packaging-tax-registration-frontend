@@ -47,7 +47,7 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
       val testDeskProServiceId = "plastic-packaging-tax"
 
       stubFor(
-        post("/incorporated-entity-identification/api/journey")
+        post("/incorporated-entity-identification/api/limited-company-journey")
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
@@ -73,7 +73,7 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
         )
 
       stubFor(
-        post("/incorporated-entity-identification/api/journey")
+        post("/incorporated-entity-identification/api/limited-company-journey")
           .willReturn(
             aResponse()
               .withStatus(Status.INTERNAL_SERVER_ERROR)

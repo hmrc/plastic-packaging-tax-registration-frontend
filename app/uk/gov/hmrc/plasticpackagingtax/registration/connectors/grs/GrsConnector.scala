@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import com.kenshoo.play.metrics.Metrics
-import play.api.Logger
 import play.api.http.Status.CREATED
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.HttpReads.Implicits._
