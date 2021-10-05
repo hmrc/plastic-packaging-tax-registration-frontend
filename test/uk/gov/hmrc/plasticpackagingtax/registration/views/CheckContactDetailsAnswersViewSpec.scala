@@ -52,9 +52,9 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   private val fullNameKey    = 0
   private val jobTitleKey    = 1
-  private val addressKey     = 2
+  private val emailKey       = 2
   private val phoneNumberKey = 3
-  private val emailKey       = 4
+  private val addressKey     = 4
 
   private def createView(reg: Registration = registration): Document =
     page(reg)(journeyRequest, messages)
@@ -69,6 +69,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("primaryContactDetails.check.address")
       messages must haveTranslationFor("primaryContactDetails.check.email")
       messages must haveTranslationFor("site.link.change")
+      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
     }
 
     val view: Document = createView()
@@ -99,7 +100,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass("govuk-label--l").first() must containMessage(
+      view.getElementsByClass("govuk-heading-l").first() must containMessage(
         "primaryContactDetails.check.title"
       )
     }

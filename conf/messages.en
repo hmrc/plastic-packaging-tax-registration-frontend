@@ -177,14 +177,14 @@ primaryContactDetails.address.postCode = Postcode
 primaryContactDetails.address.postCode.empty.error = Enter a postcode
 primaryContactDetails.address.postCode.format.error = Enter a postcode in the correct format. For example, AB1 2CD
 
-primaryContactDetails.check.meta.title = Check the primary contact‘s details
+primaryContactDetails.check.meta.title = Check the main contact‘s details
 primaryContactDetails.check.title = Check your answers
 primaryContactDetails.check.label = Primary contact details
 primaryContactDetails.check.fullName = Name
-primaryContactDetails.check.jobTitle = Job
-primaryContactDetails.check.address = Address
-primaryContactDetails.check.phoneNumber = Phone Number
-primaryContactDetails.check.email = Email Address
+primaryContactDetails.check.jobTitle = Job title
+primaryContactDetails.check.address = Contact address
+primaryContactDetails.check.phoneNumber = Phone number
+primaryContactDetails.check.email = Email address
 
 reviewRegistration.organisationDetails.title = Review and send your registration
 reviewRegistration.organisationDetails.check.label = Registered organisation details

@@ -53,8 +53,8 @@ POST       /confirm-primary-contact-address    uk.gov.hmrc.plasticpackagingtax.r
 GET        /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.displayPage()
 POST       /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.submit()
 
-GET        /check-primary-contact-details    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.displayPage()
-POST       /check-primary-contact-details    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.submit()
+GET        /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.displayPage()
+POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.submit()
 
 GET        /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationDetailsTypeController.displayPage()
 POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationDetailsTypeController.submit()
