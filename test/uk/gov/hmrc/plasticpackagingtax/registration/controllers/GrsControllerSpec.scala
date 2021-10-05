@@ -44,7 +44,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class IncorpIdControllerSpec extends ControllerSpec {
+class GrsControllerSpec extends ControllerSpec {
 
   private val mcc                         = stubMessagesControllerComponents()
   private val mockErrorPage               = mock[business_registration_failure_page]
@@ -52,16 +52,16 @@ class IncorpIdControllerSpec extends ControllerSpec {
   private val registration                = aRegistration()
 
   private val controller =
-    new IncorpIdController(authenticate = mockAuthAction,
-                           mockJourneyAction,
-                           mockRegistrationConnector,
-                           mockIncorpIdConnector,
-                           mockSoleTraderConnector,
-                           mockGeneralPartnershipConnector,
-                           mockScottishPartnershipConnector,
-                           mockErrorPage,
-                           mockVerificationFailurePage,
-                           mcc
+    new GrsController(authenticate = mockAuthAction,
+                      mockJourneyAction,
+                      mockRegistrationConnector,
+                      mockUkCompanyGrsConnector,
+                      mockSoleTraderGrsConnector,
+                      mockGeneralPartnershipGrsConnector,
+                      mockScottishPartnershipGrsConnector,
+                      mockErrorPage,
+                      mockVerificationFailurePage,
+                      mcc
     )(ec)
 
   private val unregisteredLimitedCompany = aRegistration(
@@ -202,7 +202,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration(withOrganisationDetails(OrganisationDetails())))
 
         intercept[InternalServerException] {
-          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(getRequest()))
         }
       }
 
@@ -217,7 +217,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         mockRegistrationUpdate(registeredGeneralPartnership)
 
         intercept[IllegalStateException] {
-          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(getRequest()))
         }
       }
 
@@ -238,7 +238,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         mockRegistrationUpdate(registeredGeneralPartnership)
 
         intercept[IllegalStateException] {
-          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(getRequest()))
         }
       }
 
@@ -254,7 +254,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         mockRegistrationUpdate(registeredScottishPartnership)
 
         intercept[IllegalStateException] {
-          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(getRequest()))
         }
       }
 
@@ -275,7 +275,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         mockRegistrationUpdate(registeredScottishPartnership)
 
         intercept[IllegalStateException] {
-          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(getRequest()))
         }
       }
 
@@ -286,7 +286,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError] {
-          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(getRequest()))
         }
       }
 
@@ -296,7 +296,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
         mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
         intercept[RuntimeException] {
-          await(controller.incorpIdCallback("uuid-id")(getRequest()))
+          await(controller.grsCallback("uuid-id")(getRequest()))
         }
       }
     }
@@ -328,7 +328,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockRegistrationFind(unregisteredLimitedCompany)
     mockRegistrationUpdate(registeredLimitedCompany)
 
-    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateUnregisteredLimitedCompanyCallback() = {
@@ -337,7 +337,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockRegistrationFind(unregisteredLimitedCompany)
     mockRegistrationUpdate(unregisteredLimitedCompany)
 
-    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateBusinessVerificationFailureLimitedCompanyCallback() = {
@@ -346,7 +346,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockRegistrationFind(verificationFailedLimitedCompany)
     mockRegistrationUpdate(verificationFailedLimitedCompany)
 
-    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateSoleTraderCallback() = {
@@ -355,7 +355,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockRegistrationFind(unregisteredSoleTrader)
     mockRegistrationUpdate(registeredSoleTrader)
 
-    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateGeneralPartnershipCallback() = {
@@ -364,7 +364,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockRegistrationFind(unregisteredGeneralPartnership)
     mockRegistrationUpdate(registeredGeneralPartnership)
 
-    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateScottishPartnershipCallback() = {
@@ -373,7 +373,7 @@ class IncorpIdControllerSpec extends ControllerSpec {
     mockRegistrationFind(unregisteredScottishPartnership)
     mockRegistrationUpdate(registeredScottishPartnership)
 
-    controller.incorpIdCallback(registration.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def getRegistration: Registration = {

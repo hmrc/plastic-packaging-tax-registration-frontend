@@ -16,8 +16,6 @@
 
 package spec
 
-import java.time.{ZoneOffset, ZonedDateTime}
-
 import base.PptTestData.testUserFeatures
 import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
@@ -51,6 +49,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
+import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
@@ -126,6 +125,14 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          incorporationRegistrationDetails
     )
 
+  protected val grsIncorporationDetails: GrsIncorporationDetails =
+    GrsIncorporationDetails(
+      GrsCompanyProfile(testCompanyNumber, testCompanyName, testCompanyAddress),
+      testUtr,
+      GrsBusinessVerification(testBusinessVerificationPassStatus),
+      incorporationRegistrationDetails
+    )
+
   protected val unregisteredIncorporationDetails: IncorporationDetails =
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
@@ -160,6 +167,14 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                    testNino,
                                    Some(testSatur),
                                    incorporationRegistrationDetails
+    )
+
+  protected val grsSoleTraderIncorporationDetails: GrsSoleTraderDetails =
+    GrsSoleTraderDetails(GrsFullname(testFirstName, testLastName),
+                         testDob,
+                         testNino,
+                         Some(testSatur),
+                         incorporationRegistrationDetails
     )
 
   protected val generalPartnershipDetails: GeneralPartnershipDetails =

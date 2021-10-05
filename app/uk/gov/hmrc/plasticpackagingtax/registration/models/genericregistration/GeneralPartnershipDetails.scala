@@ -16,32 +16,15 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{__, Format, Json, OFormat, Reads, Writes}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.GrsEntityDetails
+import play.api.libs.json.{Json, OFormat}
 
 case class GeneralPartnershipDetails(
   sautr: String,
   postcode: String,
   override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails with GrsEntityDetails
+) extends RegistrationDetails
 
 object GeneralPartnershipDetails {
-
-  val apiReads: Reads[GeneralPartnershipDetails] = (
-    (__ \ "sautr").read[String] and
-      (__ \ "postcode").read[String] and
-      (__ \ "registration").read[IncorporationRegistrationDetails]
-  )(GeneralPartnershipDetails.apply _)
-
-  val apiWrites: Writes[GeneralPartnershipDetails] = (
-    (__ \ "sautr").write[String] and
-      (__ \ "postcode").write[String] and
-      (__ \ "registration").write[IncorporationRegistrationDetails]
-  )(unlift(GeneralPartnershipDetails.unapply))
-
-  val apiFormat: Format[GeneralPartnershipDetails] =
-    Format[GeneralPartnershipDetails](apiReads, apiWrites)
 
   implicit val format: OFormat[GeneralPartnershipDetails] =
     Json.format[GeneralPartnershipDetails]

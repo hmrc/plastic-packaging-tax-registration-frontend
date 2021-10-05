@@ -16,9 +16,34 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.GrsEntityDetails
+
+case class GrsCompanyProfile(
+  companyNumber: String,
+  companyName: String,
+  unsanitisedCHROAddress: IncorporationAddressDetails
+)
+
+object GrsCompanyProfile {
+  implicit val format: OFormat[GrsCompanyProfile] = Json.format[GrsCompanyProfile]
+}
+
+case class GrsBusinessVerification(verificationStatus: String)
+
+object GrsBusinessVerification {
+  implicit val format: OFormat[GrsBusinessVerification] = Json.format[GrsBusinessVerification]
+}
+
+case class GrsIncorporationDetails(
+  companyProfile: GrsCompanyProfile,
+  ctutr: String,
+  businessVerification: GrsBusinessVerification,
+  registration: IncorporationRegistrationDetails
+)
+
+object GrsIncorporationDetails {
+  implicit val format: OFormat[GrsIncorporationDetails] = Json.format[GrsIncorporationDetails]
+}
 
 case class IncorporationDetails(
   companyNumber: String,
@@ -27,29 +52,19 @@ case class IncorporationDetails(
   businessVerificationStatus: String,
   companyAddress: IncorporationAddressDetails,
   override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails with GrsEntityDetails
+) extends RegistrationDetails
 
 object IncorporationDetails {
 
-  val apiReads: Reads[IncorporationDetails] = (
-    (__ \ "companyProfile" \ "companyNumber").read[String] and
-      (__ \ "companyProfile" \ "companyName").read[String] and
-      (__ \ "ctutr").read[String] and
-      (__ \ "businessVerification" \ "verificationStatus").read[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress").read[IncorporationAddressDetails] and
-      (__ \ "registration").read[IncorporationRegistrationDetails]
-  )(IncorporationDetails.apply _)
-
-  val apiWrites: Writes[IncorporationDetails] = (
-    (__ \ "companyProfile" \ "companyNumber").write[String] and
-      (__ \ "companyProfile" \ "companyName").write[String] and
-      (__ \ "ctutr").write[String] and
-      (__ \ "businessVerification" \ "verificationStatus").write[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress").write[IncorporationAddressDetails] and
-      (__ \ "registration").write[IncorporationRegistrationDetails]
-  )(unlift(IncorporationDetails.unapply))
-
-  val apiFormat: Format[IncorporationDetails] = Format[IncorporationDetails](apiReads, apiWrites)
-
   implicit val format: Format[IncorporationDetails] = Json.format[IncorporationDetails]
+
+  def apply(grsIncorporationDetails: GrsIncorporationDetails): IncorporationDetails =
+    IncorporationDetails(grsIncorporationDetails.companyProfile.companyNumber,
+                         grsIncorporationDetails.companyProfile.companyName,
+                         grsIncorporationDetails.ctutr,
+                         grsIncorporationDetails.businessVerification.verificationStatus,
+                         grsIncorporationDetails.companyProfile.unsanitisedCHROAddress,
+                         grsIncorporationDetails.registration
+    )
+
 }

@@ -16,9 +16,25 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.GrsEntityDetails
+
+case class GrsFullname(firstName: String, lastName: String)
+
+object GrsFullname {
+  implicit val format: Format[GrsFullname] = Json.format[GrsFullname]
+}
+
+case class GrsSoleTraderDetails(
+  fullName: GrsFullname,
+  dateOfBirth: String,
+  nino: String,
+  sautr: Option[String],
+  registration: IncorporationRegistrationDetails
+)
+
+object GrsSoleTraderDetails {
+  implicit val format: Format[GrsSoleTraderDetails] = Json.format[GrsSoleTraderDetails]
+}
 
 case class SoleTraderIncorporationDetails(
   firstName: String,
@@ -27,32 +43,20 @@ case class SoleTraderIncorporationDetails(
   nino: String,
   sautr: Option[String],
   override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails with GrsEntityDetails
+) extends RegistrationDetails
 
 object SoleTraderIncorporationDetails {
 
-  val apiReads: Reads[SoleTraderIncorporationDetails] = (
-    (__ \ "fullName" \ "firstName").read[String] and
-      (__ \ "fullName" \ "lastName").read[String] and
-      (__ \ "dateOfBirth").read[String] and
-      (__ \ "nino").read[String] and
-      (__ \ "sautr").readNullable[String] and
-      (__ \ "registration").read[IncorporationRegistrationDetails]
-  )(SoleTraderIncorporationDetails.apply _)
-
-  val apiWrites: Writes[SoleTraderIncorporationDetails] = (
-    (__ \ "fullName" \ "firstName").write[String] and
-      (__ \ "fullName" \ "lastName").write[String] and
-      (__ \ "dateOfBirth").write[String] and
-      (__ \ "nino").write[String] and
-      (__ \ "sautr").writeNullable[String] and
-      (__ \ "registration").write[IncorporationRegistrationDetails]
-  )(unlift(SoleTraderIncorporationDetails.unapply))
-
-  val apiFormat: Format[SoleTraderIncorporationDetails] =
-    Format[SoleTraderIncorporationDetails](apiReads, apiWrites)
-
   implicit val format: Format[SoleTraderIncorporationDetails] =
     Json.format[SoleTraderIncorporationDetails]
+
+  def apply(grsSoleTraderDetails: GrsSoleTraderDetails): SoleTraderIncorporationDetails =
+    SoleTraderIncorporationDetails(grsSoleTraderDetails.fullName.firstName,
+                                   grsSoleTraderDetails.fullName.lastName,
+                                   grsSoleTraderDetails.dateOfBirth,
+                                   grsSoleTraderDetails.nino,
+                                   grsSoleTraderDetails.sautr,
+                                   grsSoleTraderDetails.registration
+    )
 
 }
