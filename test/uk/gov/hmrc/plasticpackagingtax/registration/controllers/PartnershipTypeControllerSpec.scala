@@ -44,10 +44,10 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   val controller = new PartnershipTypeController(authenticate = mockAuthAction,
                                                  journeyAction = mockJourneyAction,
                                                  appConfig = config,
-                                                 generalPartnershipConnector =
-                                                   mockGeneralPartnershipConnector,
-                                                 scottishPartnershipConnector =
-                                                   mockScottishPartnershipConnector,
+                                                 generalPartnershipGrsConnector =
+                                                   mockGeneralPartnershipGrsConnector,
+                                                 scottishPartnershipGrsConnector =
+                                                   mockScottishPartnershipGrsConnector,
                                                  registrationConnector = mockRegistrationConnector,
                                                  mcc = mcc,
                                                  page = page
