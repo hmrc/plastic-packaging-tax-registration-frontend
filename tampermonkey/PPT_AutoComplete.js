@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.2
+// @version      14.5
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -165,14 +165,6 @@ const registrationPage = () => {
         } else {
             document.querySelectorAll('li')[5].getElementsByClassName('govuk-link')[0].click()
         }
-    }
-}
-
-const organisationBasedInUk = () => {
-    if (currentPageIs('/plastic-packaging-tax/organisation-uk-based')) {
-
-		document.getElementById('answer').checked = true
-        document.getElementsByClassName('govuk-button')[0].click()
     }
 }
 
@@ -355,7 +347,7 @@ const liabilityCheckYourAnswers = () => {
 }
 
 const primaryContactFullName = () => {
-    if (currentPageIs('/plastic-packaging-tax/primary-contact-name')) {
+    if (currentPageIs('/plastic-packaging-tax/main-contact-name')) {
         document.getElementById('value').value = 'Jack Gatsby'
 
         document.getElementsByClassName('govuk-button')[0].click()
@@ -363,7 +355,7 @@ const primaryContactFullName = () => {
 }
 
 const primaryContactJobTitle = () => {
-    if (currentPageIs('/plastic-packaging-tax/primary-contact-job-title')) {
+    if (currentPageIs('/plastic-packaging-tax/main-contact-job-title')) {
 
         document.getElementById('value').value = 'Chief Financial Officer'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -462,7 +454,6 @@ const completeJourney = () => {
     grsPartnershipCheckYourAnswers()
 
     // Business Details
-    organisationBasedInUk()
     organisationType()
 
     // Liability Details

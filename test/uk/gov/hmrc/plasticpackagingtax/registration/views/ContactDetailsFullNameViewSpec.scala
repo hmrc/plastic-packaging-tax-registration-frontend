@@ -69,7 +69,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
     "display section header" in {
 
-      view.getElementsByClass("govuk-caption-xl").text() must include(
+      view.getElementsByClass("govuk-caption-l").text() must include(
         messages("primaryContactDetails.sectionHeader")
       )
     }
@@ -83,7 +83,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
     "display question hint" in {
 
-      view.getElementsByClass("govuk-inset-text").text() must include(
+      view.getElementsByClass("govuk-body").text() must include(
         messages("primaryContactDetails.fullNamePage.hint")
       )
     }

@@ -73,7 +73,7 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-xl").text() must include(
+      view.getElementsByClass("govuk-caption-l").text() must include(
         messages("liabilityWeightPage.sectionHeader")
       )
     }

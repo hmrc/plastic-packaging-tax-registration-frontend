@@ -62,9 +62,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        routes.OrganisationDetailsConfirmOrgBasedInUkController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
     }
 
     "display title" in {
@@ -74,7 +72,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementsByClass("govuk-caption-xl").text() must include(
+      view.getElementsByClass("govuk-caption-l").text() must include(
         messages("organisationDetails.sectionHeader")
       )
     }

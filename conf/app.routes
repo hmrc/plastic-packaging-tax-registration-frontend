@@ -27,11 +27,11 @@ GET        /not-liable  uk.gov.hmrc.plasticpackagingtax.registration.controllers
 GET        /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.displayPage()
 POST       /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.CheckLiabilityDetailsAnswersController.submit()
 
-GET        /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.displayPage()
-POST       /primary-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.submit()
+GET        /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.displayPage()
+POST       /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsFullNameController.submit()
 
-GET        /primary-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.displayPage()
-POST       /primary-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.submit()
+GET        /main-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.displayPage()
+POST       /main-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsJobTitleController.submit()
 
 GET        /primary-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.displayPage()
 POST       /primary-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.submit()
@@ -55,9 +55,6 @@ POST       /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.
 
 GET        /check-primary-contact-details    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.displayPage()
 POST       /check-primary-contact-details    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.submit()
-
-GET        /organisation-uk-based    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationDetailsConfirmOrgBasedInUkController.displayPage()
-POST       /organisation-uk-based    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationDetailsConfirmOrgBasedInUkController.submit()
 
 GET        /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationDetailsTypeController.displayPage()
 POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationDetailsTypeController.submit()

@@ -107,16 +107,18 @@ checkLiabilityDetailsAnswers.check.label = Liability details
 checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
 checkLiabilityDetailsAnswers.future.liable = Liable for the Plastic Packaging Tax until at least 1 April 2022
 
-primaryContactDetails.sectionHeader = Primary contact details
+primaryContactDetails.sectionHeader = Contact details
 
-primaryContactDetails.fullNamePage.title = Who is the primary contact?
-primaryContactDetails.fullNamePage.hint = This is the name of the person who will manage the Plastic Packaging Tax account and submit returns.
+primaryContactDetails.fullName.default = the primary contact
+
+primaryContactDetails.fullNamePage.title = Who is the main contact?
+primaryContactDetails.fullNamePage.hint = This is the name of the person who will manage the company’s PPT account, receive updates about the account and submit returns.
 primaryContactDetails.fullNamePage.label = Name
 primaryContactDetails.fullNamePage.value.error.empty = Enter a name
 primaryContactDetails.fullNamePage.value.error.length = Name cannot be more than 160 characters long
 primaryContactDetails.fullNamePage.value.error.specialCharacters = Enter a name in the correct format
 
-primaryContactDetails.jobTitlePage.title = What is the primary contact’s job title?
+primaryContactDetails.jobTitlePage.title = What is {0}’s job title?
 primaryContactDetails.jobTitle.empty.error = Enter a job title
 primaryContactDetails.jobTitle.tooLong.error = Job title must be no longer than 155 characters
 primaryContactDetails.jobTitle.nonAlphaChar.error = Enter a job title in the correct format
