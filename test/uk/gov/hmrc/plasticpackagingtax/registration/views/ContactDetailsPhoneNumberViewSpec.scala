@@ -40,7 +40,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.title")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.caption")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.hint")
-      messages must haveTranslationFor("primaryContactDetails.phoneNumber.default")
+      messages must haveTranslationFor("primaryContactDetails.fullName.default")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.empty.error")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.tooLong.error")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.invalidFormat.error")
