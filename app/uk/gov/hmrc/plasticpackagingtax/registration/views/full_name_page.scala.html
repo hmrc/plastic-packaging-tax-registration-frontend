@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraph
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
@@ -29,7 +30,7 @@
   govukButton: GovukButton,
   govukInput: GovukInput,
   govukFieldset: GovukFieldset,
-  govukInsetText: GovukInsetText,
+  paragraph: paragraph,
   sectionHeader: sectionHeader,
   saveButtons: saveButtons,
   errorSummary: errorSummary
@@ -41,9 +42,9 @@
 
 @fieldSetBody = {
 
-    @govukInsetText(InsetText(
-        content = Text(messages("primaryContactDetails.fullNamePage.hint"))
-    ))
+    @paragraph(
+        content = Html(messages("primaryContactDetails.fullNamePage.hint"))
+    )
 
     @govukInput(Input(
         id    = fullNameField.name,
@@ -53,7 +54,7 @@
         errorMessage = fullNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
         label = Label(
             content = Text(messages("primaryContactDetails.fullNamePage.label")),
-            classes = s"govuk-label--s"),
+            classes = s"govuk-label"),
     ))
 
 }
