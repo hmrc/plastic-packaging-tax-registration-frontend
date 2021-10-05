@@ -38,7 +38,9 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
     "have proper messages for labels" in {
       messages must haveTranslationFor("primaryContactDetails.sectionHeader")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.title")
+      messages must haveTranslationFor("primaryContactDetails.phoneNumber.caption")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.hint")
+      messages must haveTranslationFor("primaryContactDetails.phoneNumber.default")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.empty.error")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.tooLong.error")
       messages must haveTranslationFor("primaryContactDetails.phoneNumber.invalidFormat.error")
@@ -67,7 +69,13 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("primaryContactDetails.phoneNumber.title"))
+      view.select("title").text() must include(
+        messages("primaryContactDetails.phoneNumber.title",
+                 journeyRequest.registration.primaryContactDetails.name.getOrElse(
+                   messages("primaryContactDetails.phoneNumber.default")
+                 )
+        )
+      )
     }
 
     "display header" in {
@@ -129,8 +137,8 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PhoneNumber.form())(request, messages)
-    page.render(PhoneNumber.form(), request, messages)
+    page.f(PhoneNumber.form())(journeyRequest, messages)
+    page.render(PhoneNumber.form(), journeyRequest, messages)
   }
 
 }
