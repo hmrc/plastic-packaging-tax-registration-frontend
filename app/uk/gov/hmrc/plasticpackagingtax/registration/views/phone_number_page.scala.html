@@ -40,7 +40,7 @@
 
 
 @phoneNumberField = @{form("value")}
-@contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.phoneNumber.default"))}
+@contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
 
 @fieldsetBody = {
     @paragraphBody(messages("primaryContactDetails.phoneNumber.caption"))
