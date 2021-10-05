@@ -41,12 +41,9 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
 )(implicit ec: ExecutionContext) {
   type RedirectUrl = String
 
-  private val logger = Logger(this.getClass)
-
   def createJourney(
     payload: GrsCreateJourneyPayload
   )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] = {
-    logger.info("Create GRS journey")
     val timerCtx = metrics.defaultRegistry.timer(createJourneyTimerTag).time()
     httpClient.POST[GrsCreateJourneyPayload, HttpResponse](grsCreateJourneyUrl, payload)
       .andThen { case _ => timerCtx.stop() }
