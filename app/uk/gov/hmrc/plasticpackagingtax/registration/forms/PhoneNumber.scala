@@ -29,7 +29,7 @@ object PhoneNumber extends CommonFormValidators {
   lazy val phoneNumberEmptyError    = "primaryContactDetails.phoneNumber.empty.error"
   lazy val phoneNumberTooLongError  = "primaryContactDetails.phoneNumber.tooLong.error"
   lazy val phoneNumberInvalidFormat = "primaryContactDetails.phoneNumber.invalidFormat.error"
-  val maxLength                     = 11
+  val maxLength                     = 24
   val phoneNumber                   = "value"
 
   def form(): Form[PhoneNumber] =

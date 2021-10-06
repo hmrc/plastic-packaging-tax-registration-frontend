@@ -67,6 +67,7 @@ class CommonFormValidatorsSpec
 
         isValidTelephoneNumber("07723456765") must be(true)
         isValidTelephoneNumber("077 234 567 65") must be(true)
+        isValidTelephoneNumber("+7723456765") must be(true)
       }
 
       "is valid address Input" in {
