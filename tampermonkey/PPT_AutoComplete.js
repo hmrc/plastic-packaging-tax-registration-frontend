@@ -412,7 +412,7 @@ const primaryContactAddress = () => {
  }
 
 const primaryContactCheckYourAnswers = () => {
-     if (currentPageIs('/plastic-packaging-tax/check-primary-contact-details')) {
+     if (currentPageIs('/plastic-packaging-tax/contact-check-answers')) {
 
          document.getElementsByClassName('govuk-button')[0].click()
      }
