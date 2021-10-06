@@ -63,25 +63,25 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
 
-  lazy val incorpJourneyUrl                       = s"$incorpIdHost/incorporated-entity-identification/api/journey"
-  def incorpDetailsUrl(journeyId: String): String = s"$incorpJourneyUrl/$journeyId"
+  private lazy val incorpBaseUrl          = s"$incorpIdHost/incorporated-entity-identification/api"
+  lazy val incorpLimitedCompanyJourneyUrl = s"$incorpBaseUrl/limited-company-journey"
+  lazy val incorpJourneyUrl               = s"$incorpBaseUrl/journey"
 
   lazy val soleTraderHost: String =
     servicesConfig.baseUrl("sole-trader-identification-frontend")
 
-  lazy val soleTraderJourneyUrl                       = s"$soleTraderHost/sole-trader-identification/api/journey"
-  def soleTraderDetailsUrl(journeyId: String): String = s"$soleTraderJourneyUrl/$journeyId"
+  lazy val soleTraderJourneyUrl = s"$soleTraderHost/sole-trader-identification/api/journey"
 
   lazy val partnershipHost: String =
     servicesConfig.baseUrl("partnership-identification-frontend")
 
   lazy val partnershipBaseUrl            = s"$partnershipHost/partnership-identification/api"
+  lazy val partnershipJourneyUrl         = s"$partnershipBaseUrl/journey"
   lazy val generalPartnershipJourneyUrl  = s"$partnershipBaseUrl/general-partnership/journey"
   lazy val scottishPartnershipJourneyUrl = s"$partnershipBaseUrl/scottish-partnership/journey"
   // Define other partnership URLs here?
-  def partnershipDetailsUrl(journeyId: String): String = s"$partnershipBaseUrl/journey/$journeyId"
 
-  lazy val incorpIdJourneyCallbackUrl: String = config.get[String]("urls.incorpIdCallback")
+  lazy val grsCallbackUrl: String = config.get[String]("urls.grsCallback")
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")

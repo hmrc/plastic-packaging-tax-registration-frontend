@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
@@ -23,27 +22,28 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
+
 @this(
   govukLayout: main_template,
   saveButtons: saveButtons,
   govukInput: GovukInput,
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
-  formHelper: FormWithCSRF
+  formHelper: FormWithCSRF,
+  paragraphBody: paragraphBody,
+  govukFieldset: GovukFieldset,
 )
-@(form: Form[PhoneNumber])(implicit request: Request[_], messages: Messages)
+
+@(form: Form[PhoneNumber])(implicit request: JourneyRequest[_], messages: Messages)
+
 
 @phoneNumberField = @{form("value")}
+@contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
 
-@govukLayout(
-  title = Title("primaryContactDetails.phoneNumber.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressController.displayPage(), messages("site.back.hiddenText")))) {
-  @errorSummary(form.errors)
-
-  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
-
-  @formHelper(action = pptRoutes.ContactDetailsTelephoneNumberController.submit(), 'autoComplete -> "off") {
-
+@fieldsetBody = {
+    @paragraphBody(messages("primaryContactDetails.phoneNumber.caption"))
     @govukInput(
         Input(
             id = s"${phoneNumberField.name}",
@@ -52,10 +52,28 @@
             hint = Some(Hint(content = HtmlContent(Html( messages("primaryContactDetails.phoneNumber.hint"))))),
             errorMessage = phoneNumberField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             label = Label(
-                isPageHeading = true,
-                classes = s"govuk-label--l",
+                isPageHeading = false,
+                classes = s"govuk-label govuk-visually-hidden",
                 content = Text(messages("primaryContactDetails.phoneNumber.title"))))
-            )
+    )
+}
+@govukLayout(
+  title = Title(headingKey = "primaryContactDetails.phoneNumber.title", headingArg = contactName),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressController.displayPage(), messages("site.back.hiddenText")))) {
+  @errorSummary(form.errors)
+
+  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+
+  @formHelper(action = pptRoutes.ContactDetailsTelephoneNumberController.submit(), 'autoComplete -> "off") {
+
+      @govukFieldset(Fieldset(
+          legend = Some(Legend(
+              content = Text(messages("primaryContactDetails.phoneNumber.title", contactName)),
+              classes = "govuk-fieldset__legend--l",
+              isPageHeading = true
+          )),
+          html = fieldsetBody
+      ))
         @saveButtons()
     }
 }

@@ -18,12 +18,12 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 
 @this(
   formHelper: FormWithCSRF,
@@ -31,8 +31,9 @@
   govukSummaryList: GovukSummaryList,
   pageTitle: pageTitle,
   saveAndContinue: saveAndContinue,
-  paragraphBody: paragraphBody
+  sectionHeader: sectionHeader
 )
+
 
 @(registration: Registration)(implicit request: Request[_], messages: Messages)
 
@@ -72,9 +73,9 @@
   title = Title("primaryContactDetails.check.meta.title"),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsConfirmAddressController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @pageTitle(text = messages("primaryContactDetails.check.title"), classes = "govuk-label--l")
+    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+    @pageTitle(text = messages("primaryContactDetails.check.title"), classes = "govuk-heading-l")
 
-    <h2 id="primary-contact-details" class="govuk-heading-m">@messages("primaryContactDetails.check.label")</h2>
 
     @formHelper(action = pptRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
         @govukSummaryList(
@@ -82,9 +83,9 @@
                 rows = Seq(
                     row("primaryContactDetails.check.fullName", registration.primaryContactDetails.name, pptRoutes.ContactDetailsFullNameController.displayPage()),
                     row("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, pptRoutes.ContactDetailsJobTitleController.displayPage()),
-                    row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), pptRoutes.ContactDetailsConfirmAddressController.displayPage()),
+                    row("primaryContactDetails.check.email", registration.primaryContactDetails.email, pptRoutes.ContactDetailsEmailAddressController.displayPage()),
                     row("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, pptRoutes.ContactDetailsTelephoneNumberController.displayPage()),
-                    row("primaryContactDetails.check.email", registration.primaryContactDetails.email, pptRoutes.ContactDetailsEmailAddressController.displayPage())
+                    row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), pptRoutes.ContactDetailsConfirmAddressController.displayPage())
                 ).filterNot(_.value.content == Empty)
             )
         )

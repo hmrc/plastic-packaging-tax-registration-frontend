@@ -21,6 +21,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
@@ -28,8 +32,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorpIdCreateRequest,
-  SoleTraderIncorpIdCreateRequest
+  SoleTraderGrsCreateRequest,
+  UkCompanyGrsCreateRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -44,8 +48,8 @@ class OrganisationDetailsTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   appConfig: AppConfig,
-  soleTraderIdConnector: SoleTraderInorpIdConnector,
-  incorpIdConnector: IncorpIdConnector,
+  soleTraderGrsConnector: SoleTraderGrsConnector,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: organisation_type
@@ -98,22 +102,22 @@ class OrganisationDetailsTypeController @Inject() (
   private def getSoleTraderRedirectUr()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[String] =
-    soleTraderIdConnector.createJourney(
-      SoleTraderIncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
-                                      Some(request2Messages(request)("service.name")),
-                                      appConfig.serviceIdentifier,
-                                      appConfig.exitSurveyUrl
+    soleTraderGrsConnector.createJourney(
+      SoleTraderGrsCreateRequest(appConfig.grsCallbackUrl,
+                                 Some(request2Messages(request)("service.name")),
+                                 appConfig.serviceIdentifier,
+                                 appConfig.exitSurveyUrl
       )
     )
 
   private def getUkCompanyRedirectUr()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[String] =
-    incorpIdConnector.createJourney(
-      IncorpIdCreateRequest(appConfig.incorpIdJourneyCallbackUrl,
-                            Some(request2Messages(request)("service.name")),
-                            appConfig.serviceIdentifier,
-                            appConfig.exitSurveyUrl
+    ukCompanyGrsConnector.createJourney(
+      UkCompanyGrsCreateRequest(appConfig.grsCallbackUrl,
+                                Some(request2Messages(request)("service.name")),
+                                appConfig.serviceIdentifier,
+                                appConfig.exitSurveyUrl
       )
     )
 

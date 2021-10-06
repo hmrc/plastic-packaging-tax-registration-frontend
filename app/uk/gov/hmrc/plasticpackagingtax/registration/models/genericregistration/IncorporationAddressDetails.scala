@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 
@@ -67,49 +66,6 @@ case class IncorporationAddressDetails(
 }
 
 object IncorporationAddressDetails {
-
-  val apiReads: Reads[IncorporationAddressDetails] = (
-    (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "address_line_1").readNullable[
-      String
-    ].orElse(Reads.pure(None)) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "address_line_2").readNullable[
-        String
-      ].orElse(Reads.pure(None)) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "locality").readNullable[String].orElse(
-        Reads.pure(None)
-      ) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "care_of").readNullable[String].orElse(
-        Reads.pure(None)
-      ) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "po_box").readNullable[String].orElse(
-        Reads.pure(None)
-      ) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "postal_code").readNullable[
-        String
-      ].orElse(Reads.pure(None)) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "premises").readNullable[String].orElse(
-        Reads.pure(None)
-      ) and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "country").readNullable[String].orElse(
-        Reads.pure(None)
-      )
-  )(IncorporationAddressDetails.apply _)
-
-  val apiWrites: Writes[IncorporationAddressDetails] = (
-    (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "address_line_1").writeNullable[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "address_line_2").writeNullable[
-        String
-      ] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "locality").writeNullable[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "care_of").writeNullable[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "po_box").writeNullable[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "postal_code").writeNullable[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "premises").writeNullable[String] and
-      (__ \ "companyProfile" \ "unsanitisedCHROAddress" \ "country").writeNullable[String]
-  )(unlift(IncorporationAddressDetails.unapply))
-
-  val apiFormat: Format[IncorporationAddressDetails] =
-    Format[IncorporationAddressDetails](apiReads, apiWrites)
 
   implicit val format: Format[IncorporationAddressDetails] =
     Json.format[IncorporationAddressDetails]

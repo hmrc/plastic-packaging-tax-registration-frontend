@@ -133,12 +133,10 @@ primaryContactDetails.jobTitle.empty.error = Enter a job title
 primaryContactDetails.jobTitle.tooLong.error = Job title must be no longer than 155 characters
 primaryContactDetails.jobTitle.nonAlphaChar.error = Enter a job title in the correct format
 
-primaryContactDetails.emailAddress.title = What is the primary contact’s email address?
-primaryContactDetails.emailAddress.hint = We’ll only use this to send you notifications about the registration, account and returns.
+primaryContactDetails.emailAddress.title = What is {0}’s email address?
+primaryContactDetails.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
 primaryContactDetails.emailAddress.empty.error = Enter an email address
 primaryContactDetails.emailAddress.format.error = Enter an email address in the correct format
-primaryContactDetails.emailAddress.privacyNotice = Full details of how we use your information are in the {0}.
-primaryContactDetails.emailAddress.privacyNotice.link = HMRC Privacy Notice (opens in a new tab)
 
 primaryContactDetails.emailAddress.passcode.title = Enter the code to confirm the email address
 primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK
@@ -157,8 +155,9 @@ primaryContactDetails.tooManyAttempts.passcode.title = You have entered an incor
 primaryContactDetails.tooManyAttempts.passcode.1 = You have entered an incorrect passcode too many times
 primaryContactDetails.tooManyAttempts.passcode.2 = You must log out of you Government Gateway account and log back in to restart your registration.
 
-primaryContactDetails.phoneNumber.title = What is the primary contact’s telephone number?
-primaryContactDetails.phoneNumber.hint = This must be 11 numbers. For example 01234 567890.
+primaryContactDetails.phoneNumber.title = What is the {0}’s telephone number?
+primaryContactDetails.phoneNumber.caption = We’ll use this to contact you about your PPT account.
+primaryContactDetails.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
 primaryContactDetails.phoneNumber.empty.error = Enter a phone number
 primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 11 digits
 primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
@@ -186,14 +185,14 @@ primaryContactDetails.address.postCode = Postcode
 primaryContactDetails.address.postCode.empty.error = Enter a postcode
 primaryContactDetails.address.postCode.format.error = Enter a postcode in the correct format. For example, AB1 2CD
 
-primaryContactDetails.check.meta.title = Check the primary contact‘s details
+primaryContactDetails.check.meta.title = Check the main contact‘s details
 primaryContactDetails.check.title = Check your answers
 primaryContactDetails.check.label = Primary contact details
 primaryContactDetails.check.fullName = Name
-primaryContactDetails.check.jobTitle = Job
-primaryContactDetails.check.address = Address
-primaryContactDetails.check.phoneNumber = Phone Number
-primaryContactDetails.check.email = Email Address
+primaryContactDetails.check.jobTitle = Job title
+primaryContactDetails.check.address = Contact address
+primaryContactDetails.check.phoneNumber = Phone number
+primaryContactDetails.check.email = Email address
 
 reviewRegistration.organisationDetails.title = Review and send your registration
 reviewRegistration.organisationDetails.check.label = Registered organisation details

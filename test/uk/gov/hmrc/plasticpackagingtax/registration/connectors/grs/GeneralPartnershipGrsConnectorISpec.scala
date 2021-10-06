@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.connectors
+package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import base.Injector
 import base.it.ConnectorISpec
@@ -24,18 +24,19 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  GeneralPartnershipDetails,
   IncorporationRegistrationDetails,
-  PartnershipCreateJourneyRequest,
-  ScottishPartnershipDetails
+  PartnershipGrsCreateRequest
 }
 
 import java.util.UUID
 
-class ScottishPartnershipConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
-  val connector: ScottishPartnershipConnector =
-    app.injector.instanceOf[ScottishPartnershipConnector]
+  val connector: GeneralPartnershipGrsConnector =
+    app.injector.instanceOf[GeneralPartnershipGrsConnector]
 
   val testJourneyStartUrl = "/identify-your-partnership/uuid-id/sa-utr"
 
@@ -52,11 +53,11 @@ class ScottishPartnershipConnectorISpec extends ConnectorISpec with Injector wit
     }
 
     "be timed" in {
-      val timerCount = getTimer(ScottishPartnershipConnector.CreateJourneyTimer).getCount
+      val timerCount = getTimer(GeneralPartnershipGrsConnector.CreateJourneyTimer).getCount
 
       await(connector.createJourney(createJourneyRequest))
 
-      getTimer(ScottishPartnershipConnector.CreateJourneyTimer).getCount mustBe (timerCount + 1)
+      getTimer(GeneralPartnershipGrsConnector.CreateJourneyTimer).getCount mustBe (timerCount + 1)
     }
 
     "throw exception" when {
@@ -72,26 +73,26 @@ class ScottishPartnershipConnectorISpec extends ConnectorISpec with Injector wit
 
   "get details" should {
     val journeyId = UUID.randomUUID().toString
-    val expectedScottishPartnershipDetails = ScottishPartnershipDetails(sautr = "1234567890",
-                                                                        postcode = "AA1 1AA",
-                                                                        registration =
-                                                                          IncorporationRegistrationDetails(
-                                                                            registrationStatus =
-                                                                              "REGISTERED",
-                                                                            registeredBusinessPartnerId =
-                                                                              Some("123")
-                                                                          )
+    val expectedGeneralPartnershipDetails = GeneralPartnershipDetails(sautr = "1234567890",
+                                                                      postcode = "AA1 1AA",
+                                                                      registration =
+                                                                        IncorporationRegistrationDetails(
+                                                                          registrationStatus =
+                                                                            "REGISTERED",
+                                                                          registeredBusinessPartnerId =
+                                                                            Some("123")
+                                                                        )
     )
 
     "obtain partnership details from the partnership identification service" in {
       expectPartnershipIdentificationServiceToReturnPartnershipDetails(
         journeyId,
-        expectedScottishPartnershipDetails
+        expectedGeneralPartnershipDetails
       )
 
       val actualPartnershipDetails = await(connector.getDetails(journeyId))
 
-      actualPartnershipDetails mustBe expectedScottishPartnershipDetails
+      actualPartnershipDetails mustBe expectedGeneralPartnershipDetails
     }
 
     "throw exception" when {
@@ -107,7 +108,7 @@ class ScottishPartnershipConnectorISpec extends ConnectorISpec with Injector wit
 
   private def expectPartnershipIdentificationServiceToSuccessfullyCreateNewJourney() =
     stubFor(
-      post("/partnership-identification/api/scottish-partnership/journey")
+      post("/partnership-identification/api/general-partnership/journey")
         .willReturn(
           aResponse()
             .withStatus(Status.CREATED)
@@ -117,7 +118,7 @@ class ScottishPartnershipConnectorISpec extends ConnectorISpec with Injector wit
 
   private def expectPartnershipIdentificationServiceToFailToCreateNewJourney(statusCode: Int) =
     stubFor(
-      post("/partnership-identification/api/scottish-partnership/journey")
+      post("/partnership-identification/api/general-partnership/journey")
         .willReturn(
           aResponse()
             .withStatus(statusCode)
@@ -126,14 +127,14 @@ class ScottishPartnershipConnectorISpec extends ConnectorISpec with Injector wit
 
   private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
     journeyId: String,
-    scottishPartnershipDetails: ScottishPartnershipDetails
+    generalPartnershipDetails: GeneralPartnershipDetails
   ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")
         .willReturn(
           aResponse()
             .withStatus(Status.OK)
-            .withBody(Json.toJsObject(scottishPartnershipDetails).toString())
+            .withBody(Json.toJsObject(generalPartnershipDetails).toString())
         )
     )
 
@@ -147,11 +148,11 @@ class ScottishPartnershipConnectorISpec extends ConnectorISpec with Injector wit
     )
 
   private def aCreateJourneyRequest() =
-    PartnershipCreateJourneyRequest(continueUrl = "callbackUrl",
-                                    optServiceName = Some("PPT"),
-                                    deskProServiceId = "xxx",
-                                    signOutUrl = "signoutUrl",
-                                    enableSautrCheck = true
+    PartnershipGrsCreateRequest(continueUrl = "callbackUrl",
+                                optServiceName = Some("PPT"),
+                                deskProServiceId = "xxx",
+                                signOutUrl = "signoutUrl",
+                                enableSautrCheck = true
     )
 
 }
