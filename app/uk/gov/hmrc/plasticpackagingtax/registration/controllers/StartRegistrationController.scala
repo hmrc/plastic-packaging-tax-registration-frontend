@@ -20,15 +20,17 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
+
 import scala.concurrent.Future
 
 @Singleton
 class StartRegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents
+  mcc: MessagesControllerComponents,
+  liabilityLinkHelper: LiabilityLinkHelper
 ) extends FrontendController(mcc) {
 
   def startRegistration(): Action[AnyContent] =
@@ -36,7 +38,7 @@ class StartRegistrationController @Inject() (
       if (request.registration.isStarted)
         Future.successful(Redirect(routes.RegistrationController.displayPage()))
       else
-        Future.successful(Redirect(routes.LiabilityWeightController.displayPage()))
+        Future.successful(Redirect(liabilityLinkHelper.startPage()))
     }
 
 }

@@ -129,7 +129,20 @@
                 Empty
             }
         ),
-        call = Some(pptRoutes.LiabilityLiableDateController.displayPage())
+        call = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) Some(pptRoutes.LiabilityWeightExpectedController.displayPage()) else Some(pptRoutes.LiabilityWeightController.displayPage())
+    )
+}
+
+@liabilityWeightRow() = @{
+    rowWithValue(key = "checkLiabilityDetailsAnswers.weight",
+        value = Value(
+            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                Text(registration.liabilityDetails.expectedWeight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            } else {
+                Text(registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            }
+        ),
+        call = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) Some(pptRoutes.LiabilityWeightExpectedController.displayPage()) else Some(pptRoutes.LiabilityWeightController.displayPage())
     )
 }
 
@@ -191,7 +204,7 @@
     @govukSummaryList(
         SummaryList(
             rows = Seq(
-                row("checkLiabilityDetailsAnswers.weight", registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg"), Some(pptRoutes.LiabilityWeightController.displayPage())),
+                liabilityWeightRow(),
                 expectToExceedThresholdWeightRow,
                 liabilityIsPreLaunchRow,
                 liabilityLiableDateRow,

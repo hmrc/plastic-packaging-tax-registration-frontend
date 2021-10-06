@@ -111,7 +111,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate(aRegistration())
-          mockLiabilityLinkHelperNextPage(routes.LiabilityLiableDateController.displayPage())
+          mockLiabilityLinkHelperNextPage(routes.LiabilityWeightController.displayPage())
 
           val correctForm = Seq("answer" -> "yes", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -122,7 +122,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
           formAction._1 match {
             case "SaveAndContinue" =>
               redirectLocation(result) mustBe Some(
-                routes.LiabilityLiableDateController.displayPage().url
+                routes.LiabilityWeightController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)

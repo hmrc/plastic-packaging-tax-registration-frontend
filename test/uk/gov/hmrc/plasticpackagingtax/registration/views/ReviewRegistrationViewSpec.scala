@@ -27,7 +27,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Date,
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
   PartnershipDetails,
@@ -358,7 +362,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
           page(registration =
             aRegistration(
               withLiabilityDetails(
-                LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(1000))),
+                LiabilityDetails(expectedWeight =
+                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(1000))),
                                  isLiable = Some(true),
                                  expectToExceedThresholdWeight = Some(true)
                 )
@@ -387,14 +392,14 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getValueFor(liabilitySection, liabilityDateKey, liabilityView) mustBe "Yes"
 
         getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightController.displayPage()
+          routes.LiabilityWeightExpectedController.displayPage()
         )
         getChangeLinkFor(liabilitySection,
                          liabilityExpectToExceedThresholdWeightKey,
                          liabilityView
         ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
         getChangeLinkFor(liabilitySection, liabilityDateKey, liabilityView) must haveHref(
-          routes.LiabilityLiableDateController.displayPage()
+          routes.LiabilityWeightExpectedController.displayPage()
         )
       }
 
@@ -481,7 +486,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
           page(registration =
             aRegistration(
               withLiabilityDetails(
-                LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(10001))),
+                LiabilityDetails(expectedWeight =
+                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(10001))),
                                  isLiable = Some(true),
                                  expectToExceedThresholdWeight = Some(false)
                 )
@@ -509,14 +515,14 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getValueFor(liabilitySection, liabilityDateKey, liabilityView) mustBe "Yes"
 
         getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightController.displayPage()
+          routes.LiabilityWeightExpectedController.displayPage()
         )
         getChangeLinkFor(liabilitySection,
                          liabilityExpectToExceedThresholdWeightKey,
                          liabilityView
         ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
         getChangeLinkFor(liabilitySection, liabilityDateKey, liabilityView) must haveHref(
-          routes.LiabilityLiableDateController.displayPage()
+          routes.LiabilityWeightExpectedController.displayPage()
         )
       }
 
@@ -525,7 +531,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
           page(registration =
             aRegistration(
               withLiabilityDetails(
-                LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(10001))),
+                LiabilityDetails(expectedWeight =
+                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(10001))),
                                  isLiable = Some(false),
                                  expectToExceedThresholdWeight = Some(false)
                 )
@@ -553,14 +560,14 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getValueFor(liabilitySection, liabilityDateKey, liabilityView) mustBe "No"
 
         getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightController.displayPage()
+          routes.LiabilityWeightExpectedController.displayPage()
         )
         getChangeLinkFor(liabilitySection,
                          liabilityExpectToExceedThresholdWeightKey,
                          liabilityView
         ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
         getChangeLinkFor(liabilitySection, liabilityDateKey, liabilityView) must haveHref(
-          routes.LiabilityLiableDateController.displayPage()
+          routes.LiabilityWeightExpectedController.displayPage()
         )
       }
 
@@ -569,7 +576,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
           page(registration =
             aRegistration(
               withLiabilityDetails(
-                LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(10001))),
+                LiabilityDetails(expectedWeight =
+                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(10001))),
                                  isLiable = None,
                                  expectToExceedThresholdWeight = Some(false)
                 )
@@ -596,7 +604,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         ) mustBe "No"
 
         getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightController.displayPage()
+          routes.LiabilityWeightExpectedController.displayPage()
         )
         getChangeLinkFor(liabilitySection,
                          liabilityExpectToExceedThresholdWeightKey,
