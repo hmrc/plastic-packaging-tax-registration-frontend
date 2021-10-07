@@ -228,10 +228,8 @@ unauthorised.paragraph.1.link = register for the Plastic Packaging Tax
 unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
 
-organisationDetails.notSupportCompanyTypePage.heading = We do not support this organisation type yet
-organisationDetails.notSupportCompanyTypePage.paragraph.1 = This is a work in progress and will be addressed soon.
-organisationDetails.notSupportCompanyTypePage.tellUs = Tell us what you think
-organisationDetails.notSupportCompanyTypePage.paragraph.2 = This is a new service and we want to know what you think of it.
+organisationDetails.notSupportCompanyTypePage.title = This type of organisation is not supported yet
+organisationDetails.notSupportCompanyTypePage.detail = This is a new service and different types of organisation will be added as the service develops.
 organisationDetails.feedback = {0}. Your thoughts and ideas will help us to make improvements.
 organisationDetails.feedback.link = Send us your feedback
 

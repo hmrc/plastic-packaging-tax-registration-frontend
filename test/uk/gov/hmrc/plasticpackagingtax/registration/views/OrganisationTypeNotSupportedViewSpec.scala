@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.test.FakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type_not_supported
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -32,10 +33,8 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
   "Organisation Type Not Supported View" should {
 
     "have proper messages for labels" in {
-      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.heading")
-      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.paragraph.1")
-      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.tellUs")
-      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.paragraph.2")
+      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.title")
+      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.detail")
       messages must haveTranslationFor("organisationDetails.feedback")
       messages must haveTranslationFor("organisationDetails.feedback.link")
     }
@@ -54,8 +53,8 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass("govuk-heading-xl").first() must containMessage(
-        "organisationDetails.notSupportCompanyTypePage.heading"
+      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
+        "organisationDetails.notSupportCompanyTypePage.title"
       )
     }
 
@@ -66,18 +65,8 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
 
     "display info paragraph" in {
 
-      view.getElementsByClass("govuk-body").first() must containMessage(
-        "organisationDetails.notSupportCompanyTypePage.paragraph.1"
-      )
-    }
-
-    "display 'tell us what you think' paragraph" in {
-
-      view.getElementsByClass("govuk-heading-m").first() must containMessage(
-        "organisationDetails.notSupportCompanyTypePage.tellUs"
-      )
-      view.getElementsByClass("govuk-body").get(1) must containMessage(
-        "organisationDetails.notSupportCompanyTypePage.paragraph.2"
+      view.getElementsByClass(Styles.gdsPageBodyText).first() must containMessage(
+        "organisationDetails.notSupportCompanyTypePage.detail"
       )
     }
 
