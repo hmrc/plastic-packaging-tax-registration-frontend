@@ -19,7 +19,12 @@ package builders
 import java.util.UUID
 
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{PARTNERSHIP, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Address,
+  Date,
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
@@ -41,6 +46,11 @@ trait RegistrationBuilder {
     Registration(id = "id",
                  incorpJourneyId = Some(UUID.randomUUID().toString),
                  liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
+                                                     expectedWeight = Some(
+                                                       LiabilityExpectedWeight(Some(true),
+                                                                               Some(12000)
+                                                       )
+                                                     ),
                                                      startDate =
                                                        Some(Date(Some(1), Some(4), Some(2022))),
                                                      isLiable = Some(true),

@@ -100,6 +100,17 @@ liabilityWeightPage.question = How much plastic packaging have you processed in 
 liabilityWeight.outOfRange.error = Weight out of range
 liabilityWeight.empty.error = Weight cannot be empty
 
+liabilityExpectedWeightPage.sectionHeader = Eligibility check
+liabilityExpectedWeightPage.title = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
+liabilityExpectedWeightPage.label = Expected weight, in kilograms
+liabilityExpectedWeightPage.question = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
+liabilityExpectedWeight.answer.empty.error = Select yes if you expect to process 10,000kg or more of plastic packaging
+liabilityExpectedWeight.below.threshold.error = Weight must be greater than 9,999kg
+liabilityExpectedWeight.format.error = Amount must be entered as numbers only
+liabilityExpectedWeight.outOfRange.error = Amount cannot exceed 99,999,999 kgs
+liabilityExpectedWeight.empty.error = Enter an amount to continue
+liabilityExpectedWeight.decimal.error = Amount must not include decimal points
+
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight

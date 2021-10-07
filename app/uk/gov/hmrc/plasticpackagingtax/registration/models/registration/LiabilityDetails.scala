@@ -17,18 +17,23 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Date,
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class LiabilityDetails(
   weight: Option[LiabilityWeight] = None,
+  expectedWeight: Option[LiabilityExpectedWeight] = None,
   startDate: Option[Date] = None,
   isLiable: Option[Boolean] = None,
   expectToExceedThresholdWeight: Option[Boolean] = None
 ) {
 
   def isCompleted: Boolean =
-    weight.isDefined && (startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined)
+    expectedWeight.isDefined || (weight.isDefined && (startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined))
 
   def isInProgress: Boolean =
     weight.isDefined || startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined
