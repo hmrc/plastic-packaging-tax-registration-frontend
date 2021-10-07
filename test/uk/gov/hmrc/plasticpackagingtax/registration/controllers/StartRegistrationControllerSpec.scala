@@ -17,9 +17,13 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
+import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
@@ -29,8 +33,18 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class StartRegistrationControllerSpec extends ControllerSpec {
 
-  private val mcc        = stubMessagesControllerComponents()
-  private val controller = new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc)
+  private val mcc            = stubMessagesControllerComponents()
+  private val mockLinkHelper = mock[LiabilityLinkHelper]
+
+  private val emptyRegistration = Registration("123")
+
+  private val partialRegistration = Registration(
+    id = "123",
+    liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(12000))))
+  )
+
+  private val controller =
+    new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc, mockLinkHelper)
 
   "StartRegistrationController" should {
     "redirect to liability weight capture page" when {
@@ -38,10 +52,12 @@ class StartRegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(emptyRegistration)
 
+        when(mockLinkHelper.startPage()(any())).thenReturn(Call("GET", "/start-url"))
+
         val result = controller.startRegistration()(getRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.LiabilityWeightController.displayPage().url)
+        redirectLocation(result) mustBe Some("/start-url")
       }
     }
     "redirect to task list page" when {
@@ -56,12 +72,5 @@ class StartRegistrationControllerSpec extends ControllerSpec {
       }
     }
   }
-
-  private val emptyRegistration = Registration("123")
-
-  private val partialRegistration = Registration(
-    id = "123",
-    liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(12000))))
-  )
 
 }

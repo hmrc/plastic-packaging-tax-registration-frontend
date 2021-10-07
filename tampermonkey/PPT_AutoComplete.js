@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.7
+// @version      14.8
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -339,6 +339,15 @@ const liabilityWeight = () => {
     }
 }
 
+const liabilityExpectedWeight = () => {
+    if (currentPageIs('/plastic-packaging-tax/packaging-weight-next-12months')) {
+
+        document.getElementById('answer').checked = true
+        document.getElementById('totalKg').value = '12000'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const liabilityCheckYourAnswers = () => {
     if (currentPageIs('/plastic-packaging-tax/check-plastic-packaging-answers')) {
 
@@ -460,6 +469,7 @@ const completeJourney = () => {
     liabilityLiableDate()
     liabilityStartDate()
     liabilityWeight()
+    liabilityExpectedWeight()
     liabilityCheckYourAnswers()
 
     // Primary Contact Details

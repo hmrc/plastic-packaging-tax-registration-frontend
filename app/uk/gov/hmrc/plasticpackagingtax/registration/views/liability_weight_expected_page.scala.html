@@ -1,0 +1,100 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityExpectedWeight
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+
+@this(
+        govukLayout: main_template,
+        pageHeading: pageHeading,
+        paragraph: paragraph,
+        link: link,
+        govukRadios : GovukRadios,
+        govukInput: GovukInput,
+        sectionHeader: sectionHeader,
+        errorSummary: errorSummary,
+        formHelper: FormWithCSRF,
+        saveButtons: saveButtons,
+        govukInsetText: GovukInsetText,
+)
+@(form: Form[LiabilityExpectedWeight])(implicit request: Request[_], messages: Messages)
+
+@totalWeightField = @{
+    form("totalKg")
+}
+
+@errorMessages = @{
+    val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@weightHtml = {
+    @govukInput(
+        Input(
+            id = s"${totalWeightField.name}",
+            name = totalWeightField.name,
+            value = totalWeightField.value,
+            hint = None,
+            label = Label(
+                content = Text(messages("liabilityExpectedWeightPage.label"))
+            ),
+            errorMessage = totalWeightField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            suffix = Some(PrefixOrSuffix(
+                content = Text("kg")
+            )),
+            classes = "govuk-input--width-5"
+        )
+    )
+}
+
+@govukLayout(title = Title("liabilityExpectedWeightPage.title")) {
+
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("liabilityExpectedWeightPage.sectionHeader"))
+
+    @formHelper(action = pptRoutes.LiabilityWeightExpectedController.submit(), 'autoComplete -> "off") {
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("liabilityExpectedWeightPage.question")),
+                    classes = gdsFieldsetPageHeading,
+                    isPageHeading = true
+                ))
+            )),
+            hint = None,
+            idPrefix = Some("answer"),
+            name = "answer",
+            items = Seq(
+                RadioItem(
+                    content = Text(messages("general.true")),
+                    value = Some("yes"),
+                    conditionalHtml = Some(weightHtml),
+                    checked = form("answer").value.contains("yes")
+                ),
+                RadioItem(
+                    content = Text(messages("general.false")),
+                    value = Some("no"),
+                    checked = form("answer").value.contains("no")
+                )
+            ),
+            errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message))))
+        ))
+
+        @saveButtons()
+    }
+}

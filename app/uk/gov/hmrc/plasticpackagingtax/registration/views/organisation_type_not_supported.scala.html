@@ -15,20 +15,12 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.govUkLink
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.link
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 
 @this(
     govukLayout: main_template,
-    pageTitle: pageTitle,
+    pageHeading: pageHeading,
     paragraphBody: paragraphBody,
     govUkLink: govUkLink,
     govukButton: GovukButton,
@@ -51,18 +43,13 @@
 
 @link = {<a href="@feedbackUrl" class="govuk-link">@messages("organisationDetails.feedback.link")</a>}
 
-@govukLayout(title = Title("sessionTimout.title")) {
+@govukLayout(title = Title("organisationDetails.notSupportCompanyTypePage.title")) {
 
     @sectionHeader(messages("organisationDetails.sectionHeader"))
 
-    @pageTitle(messages("organisationDetails.notSupportCompanyTypePage.heading"))
+    @pageHeading(messages("organisationDetails.notSupportCompanyTypePage.title"))
 
-    @paragraphBody(messages("organisationDetails.notSupportCompanyTypePage.paragraph.1"))
-
-    <h2 id="primary-contact-details" class="govuk-heading-m">
-        @messages("organisationDetails.notSupportCompanyTypePage.tellUs")</h2>
-
-    @paragraphBody(messages("organisationDetails.notSupportCompanyTypePage.paragraph.2"))
+    @paragraphBody(messages("organisationDetails.notSupportCompanyTypePage.detail"))
 
     @paragraphBody(messages("organisationDetails.feedback", link))
 }

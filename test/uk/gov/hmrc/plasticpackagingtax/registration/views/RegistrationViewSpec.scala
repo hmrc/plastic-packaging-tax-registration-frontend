@@ -81,7 +81,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementById("title") must containMessage("registrationPage.title")
+      view.getElementsByTag("h1") must containMessageForElements("registrationPage.title")
     }
 
     "display sections" when {
@@ -134,7 +134,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.inProgress"
           )
           sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityWeightController.displayPage()
+            routes.LiabilityWeightExpectedController.displayPage()
           )
 
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
@@ -202,7 +202,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityWeightController.displayPage()
+            routes.LiabilityWeightExpectedController.displayPage()
           )
 
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
@@ -272,7 +272,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
             "task.status.completed"
           )
           sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
-            routes.LiabilityWeightController.displayPage()
+            routes.LiabilityWeightExpectedController.displayPage()
           )
 
           sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
@@ -349,8 +349,8 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(aRegistration())(request, messages)
-    registrationPage.render(aRegistration(), request, messages)
+    registrationPage.f(aRegistration())(journeyRequest, messages)
+    registrationPage.render(aRegistration(), journeyRequest, messages)
   }
 
 }

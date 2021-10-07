@@ -17,46 +17,35 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
-import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityExpectedWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_expected_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class LiabilityWeightControllerTest extends ControllerSpec {
+class LiabilityWeightExpectedControllerTest extends ControllerSpec {
 
-  private val page                = mock[liability_weight_page]
-  private val mcc                 = stubMessagesControllerComponents()
-  private val liabilityLinkHelper = mock[LiabilityLinkHelper]
+  private val page = mock[liability_weight_expected_page]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new LiabilityWeightController(authenticate = mockAuthAction,
-                                  mockJourneyAction,
-                                  mockRegistrationConnector,
-                                  mcc = mcc,
-                                  page = page,
-                                  liabilityLinkHelper = liabilityLinkHelper
+    new LiabilityWeightExpectedController(authenticate = mockAuthAction,
+                                          mockJourneyAction,
+                                          mockRegistrationConnector,
+                                          mcc = mcc,
+                                          page = page
     )
-
-  def mockLiabilityLinkHelperNextPage(link: Call): OngoingStubbing[Call] =
-    when(liabilityLinkHelper.nextPage()(any()))
-      .thenReturn(link)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[LiabilityWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[LiabilityExpectedWeight]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -64,7 +53,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     super.afterEach()
   }
 
-  "Liability Weight Controller" should {
+  "Liability Weight Expected Controller" should {
 
     "return 200" when {
 
@@ -88,23 +77,46 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       "return 303 (OK) for " + formAction._1 when {
         "user submits the liability total weight" when {
 
-          "and weight is greater than minimum weight and feature flag 'liabilityPreLaunch' is disabled" in {
+          "and user selects 'no'" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate(aRegistration())
-            mockLiabilityLinkHelperNextPage(routes.LiabilityStartDateController.displayPage())
 
-            val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))
+            val correctForm = Seq("answer" -> "no", formAction)
+            val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
             status(result) mustBe SEE_OTHER
 
-            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
+            modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
+              LiabilityExpectedWeight(Some(false), None)
+            )
+
+            formAction._1 match {
+              case "SaveAndContinue" =>
+                redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
+              case _ =>
+                redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
+            }
+          }
+
+          "and weight is greater than minimum weight" in {
+            authorizedUser()
+            mockRegistrationFind(aRegistration())
+            mockRegistrationUpdate(aRegistration())
+
+            val correctForm = Seq("answer" -> "yes", "totalKg" -> "10000", formAction)
+            val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+            status(result) mustBe SEE_OTHER
+
+            modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
+              LiabilityExpectedWeight(Some(true), Some(10000))
+            )
 
             formAction._1 match {
               case "SaveAndContinue" =>
                 redirectLocation(result) mustBe Some(
-                  routes.LiabilityStartDateController.displayPage().url
+                  routes.RegistrationController.displayPage().url
                 )
               case _ =>
                 redirectLocation(result) mustBe Some(
@@ -112,47 +124,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                 )
             }
           }
-          "and weight is less than minimum weight" in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
-            val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
 
-            status(result) mustBe SEE_OTHER
-
-            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
-
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe Some(
-                  routes.LiabilityExpectToExceedThresholdWeightController.displayPage().url
-                )
-              case _ =>
-                redirectLocation(result) mustBe Some(
-                  routes.RegistrationController.displayPage().url
-                )
-            }
-          }
-
-          "and weight is not set" in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
-            when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
-
-            val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(None), formAction))
-
-            status(result) mustBe BAD_REQUEST
-
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe None
-              case _ =>
-                redirectLocation(result) mustBe None
-            }
-          }
         }
       }
     }
@@ -160,8 +132,17 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     "return 400 (BAD_REQUEST)" when {
       "user submits invalid liability weight" in {
         authorizedUser()
-        val result =
-          controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(10000000000L)))))
+        val correctForm =
+          Seq("answer" -> "yes", "totalKg" -> "10000000000", saveAndContinueFormAction)
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "user submits liability weight below threshold" in {
+        authorizedUser()
+        val correctForm = Seq("answer" -> "yes", "totalKg" -> "10", saveAndContinueFormAction)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -179,7 +160,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       "user submits form and the registration update fails" in {
         authorizedUser()
         mockRegistrationUpdateFailure()
-        val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+        val correctForm = Seq("answer" -> "yes", "totalKg" -> "20000", saveAndContinueFormAction)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -187,7 +169,8 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       "user submits form and a registration update runtime exception occurs" in {
         authorizedUser()
         mockRegistrationException()
-        val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+        val correctForm = Seq("answer" -> "yes", "totalKg" -> "20000", saveAndContinueFormAction)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[RuntimeException](status(result))
       }

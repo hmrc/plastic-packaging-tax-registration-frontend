@@ -16,12 +16,8 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 
 @this(
   formHelper: FormWithCSRF,
@@ -60,7 +56,7 @@
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
                         content = Text(messages("liabilityStartDatePage.question")),
-                            classes = "govuk-fieldset__legend--l",
+                            classes = gdsFieldsetPageHeading,
                             isPageHeading = true))
                 )),
                 items = Seq(

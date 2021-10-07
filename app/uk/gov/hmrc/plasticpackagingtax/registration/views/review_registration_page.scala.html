@@ -14,18 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.SoleTraderIncorporationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -36,9 +33,10 @@
     formHelper: FormWithCSRF,
     govukLayout: main_template,
     govukSummaryList: GovukSummaryList,
-    pageTitle: pageTitle,
+    pageHeading: pageHeading,
     saveAndContinue: saveAndContinue,
     paragraphBody: paragraphBody,
+    liabilityLinkHelper: LiabilityLinkHelper,
     appConfig: AppConfig
 )
 
@@ -47,7 +45,7 @@
     incorporationDetails: Option[IncorporationDetails] = None,
     soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
     partnershipDetails: Option[PartnershipDetails] = None
-)(implicit request: JourneyRequest[_], messages: Messages)
+)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @extractAddress(address: Address) = @{
     Seq(address.addressLine1,
@@ -129,7 +127,20 @@
                 Empty
             }
         ),
-        call = Some(pptRoutes.LiabilityLiableDateController.displayPage())
+        call = Some(liabilityLinkHelper.startPage())
+    )
+}
+
+@liabilityWeightRow() = @{
+    rowWithValue(key = "checkLiabilityDetailsAnswers.weight",
+        value = Value(
+            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                Text(registration.liabilityDetails.expectedWeight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            } else {
+                Text(registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            }
+        ),
+        call = Some(liabilityLinkHelper.startPage())
     )
 }
 
@@ -183,7 +194,7 @@
     title = Title("reviewRegistration.organisationDetails.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @pageTitle(text = messages("reviewRegistration.organisationDetails.title"), classes = "govuk-label--l")
+    @pageHeading(messages("reviewRegistration.organisationDetails.title"))
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
@@ -191,7 +202,7 @@
     @govukSummaryList(
         SummaryList(
             rows = Seq(
-                row("checkLiabilityDetailsAnswers.weight", registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg"), Some(pptRoutes.LiabilityWeightController.displayPage())),
+                liabilityWeightRow(),
                 expectToExceedThresholdWeightRow,
                 liabilityIsPreLaunchRow,
                 liabilityLiableDateRow,

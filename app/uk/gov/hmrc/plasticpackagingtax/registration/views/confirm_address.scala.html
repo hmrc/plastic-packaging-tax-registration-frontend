@@ -14,14 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.yes
@@ -31,6 +26,7 @@
 
 @this(
   formHelper: FormWithCSRF,
+  pageHeading: pageHeading,
   govukLayout: main_template,
   govukButton: GovukButton,
   govukRadios : GovukRadios,
@@ -63,7 +59,7 @@
     @errorSummary(form.errors)
 
     @sectionHeader(messages("primaryContactDetails.sectionHeader"))
-    <h1 id="heading" class="govuk-heading-l">@messages("primaryContactDetails.confirmAddress.title")</h1>
+    @pageHeading(messages("primaryContactDetails.confirmAddress.title"))
 
     @paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
 

@@ -100,6 +100,17 @@ liabilityWeightPage.question = How much plastic packaging have you processed in 
 liabilityWeight.outOfRange.error = Weight out of range
 liabilityWeight.empty.error = Weight cannot be empty
 
+liabilityExpectedWeightPage.sectionHeader = Eligibility check
+liabilityExpectedWeightPage.title = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
+liabilityExpectedWeightPage.label = Expected weight, in kilograms
+liabilityExpectedWeightPage.question = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
+liabilityExpectedWeight.answer.empty.error = Select yes if you expect to process 10,000kg or more of plastic packaging
+liabilityExpectedWeight.below.threshold.error = Weight must be greater than 9,999kg
+liabilityExpectedWeight.format.error = Amount must be entered as numbers only
+liabilityExpectedWeight.outOfRange.error = Amount cannot exceed 99,999,999 kgs
+liabilityExpectedWeight.empty.error = Enter an amount to continue
+liabilityExpectedWeight.decimal.error = Amount must not include decimal points
+
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
@@ -145,11 +156,11 @@ primaryContactDetails.tooManyAttempts.passcode.title = You have entered an incor
 primaryContactDetails.tooManyAttempts.passcode.1 = You have entered an incorrect passcode too many times
 primaryContactDetails.tooManyAttempts.passcode.2 = You must log out of you Government Gateway account and log back in to restart your registration.
 
-primaryContactDetails.phoneNumber.title = What is the {0}’s telephone number?
+primaryContactDetails.phoneNumber.title = What is {0}’s telephone number?
 primaryContactDetails.phoneNumber.caption = We’ll use this to contact you about your PPT account.
 primaryContactDetails.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
 primaryContactDetails.phoneNumber.empty.error = Enter a phone number
-primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 11 digits
+primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 24 digits
 primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
 
 primaryContactDetails.confirmAddress.title = What is the primary contact’s business address?
@@ -228,10 +239,8 @@ unauthorised.paragraph.1.link = register for the Plastic Packaging Tax
 unauthorised.paragraph.2 = Visit the {0} for more information.
 unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
 
-organisationDetails.notSupportCompanyTypePage.heading = We do not support this organisation type yet
-organisationDetails.notSupportCompanyTypePage.paragraph.1 = This is a work in progress and will be addressed soon.
-organisationDetails.notSupportCompanyTypePage.tellUs = Tell us what you think
-organisationDetails.notSupportCompanyTypePage.paragraph.2 = This is a new service and we want to know what you think of it.
+organisationDetails.notSupportCompanyTypePage.title = This type of organisation is not supported yet
+organisationDetails.notSupportCompanyTypePage.detail = This is a new service and different types of organisation will be added as the service develops.
 organisationDetails.feedback = {0}. Your thoughts and ideas will help us to make improvements.
 organisationDetails.feedback.link = Send us your feedback
 

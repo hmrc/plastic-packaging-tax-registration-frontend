@@ -16,14 +16,10 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.govUkLink
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 
 @this(
         govukLayout: main_template,
-        pageTitle: pageTitle,
+        pageHeading: pageHeading,
         paragraphBody: paragraphBody,
         govUkLink: govUkLink,
         govukButton: GovukButton
@@ -34,7 +30,7 @@
 @govukLayout(
    title = Title("sessionTimout.title")) {
 
-  @pageTitle(messages("sessionTimout.title"))
+  @pageHeading(messages("sessionTimout.title"))
 
   @paragraphBody(messages("sessionTimout.paragraph.saved"))
 

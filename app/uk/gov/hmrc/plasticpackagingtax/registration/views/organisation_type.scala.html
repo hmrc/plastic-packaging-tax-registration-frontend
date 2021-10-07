@@ -17,15 +17,13 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{UK_COMPANY, SOLE_TRADER, PARTNERSHIP, CHARITY_OR_NOT_FOR_PROFIT, OVERSEAS_COMPANY}
 
 @this(
     formHelper: FormWithCSRF,
+    pageHeading: pageHeading,
     govukLayout: main_template,
     govukRadios : GovukRadios,
     sectionHeader: sectionHeader,
@@ -41,7 +39,7 @@
             @errorSummary(form.errors)
 
         @sectionHeader(messages("organisationDetails.sectionHeader"))
-        <h1 id="heading" class="govuk-heading-l">@messages("organisationDetails.type.title")</h1>
+        @pageHeading(messages("organisationDetails.type.title"))
 
         @formHelper(action = pptRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
 

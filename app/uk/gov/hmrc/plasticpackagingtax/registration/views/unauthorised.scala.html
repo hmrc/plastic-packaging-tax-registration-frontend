@@ -16,14 +16,12 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.link
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.StartController
 
 @this(
   govukLayout: main_template,
-  pageTitle: pageTitle,
+  pageHeading: pageHeading,
   link: link,
   config: AppConfig
 )
@@ -51,7 +49,7 @@
 
 @govukLayout(title = Title("unauthorised.heading")) {
 
-  @pageTitle(messages("unauthorised.heading"))
+  @pageHeading(messages("unauthorised.heading"))
 
   @helpSection
 

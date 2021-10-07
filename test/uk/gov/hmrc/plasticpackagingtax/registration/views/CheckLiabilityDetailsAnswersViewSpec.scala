@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
+import java.time.format.DateTimeFormatter
+
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.ArgumentMatchers.refEq
@@ -23,40 +25,20 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Call}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukButton, GovukSummaryList}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
-  pageTitle,
-  saveAndContinue
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  check_liability_details_answers_page,
-  main_template
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-import java.time.format.DateTimeFormatter
 
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val formHelper       = instanceOf[FormWithCSRF]
-  private val govukLayout      = instanceOf[main_template]
-  private val govukButton      = instanceOf[GovukButton]
-  private val govukSummaryList = instanceOf[GovukSummaryList]
-  private val pageTitle        = instanceOf[pageTitle]
-  private val saveAndContinue  = instanceOf[saveAndContinue]
-  private val mockAppConfig    = mock[AppConfig]
+  private val mockAppConfig = mock[AppConfig]
 
-  private val page = new check_liability_details_answers_page(formHelper,
-                                                              govukLayout,
-                                                              govukButton,
-                                                              govukSummaryList,
-                                                              pageTitle,
-                                                              saveAndContinue
-  )
+  private val page = instanceOf[check_liability_details_answers_page]
 
   private val populatedRegistration   = aRegistration()
   private val unpopulatedRegistration = Registration("id")
@@ -64,12 +46,12 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   "Check liability details answers View" should {
     val preLaunchView = createView(preLaunch = true,
                                    reg = populatedRegistration,
-                                   backLink = routes.LiabilityLiableDateController.displayPage()
+                                   backLink = routes.RegistrationController.displayPage()
     )
     val preLaunchViewWithEmptyRegistration =
       createView(preLaunch = true,
                  reg = unpopulatedRegistration,
-                 backLink = routes.LiabilityLiableDateController.displayPage()
+                 backLink = routes.RegistrationController.displayPage()
       )
 
     val postLaunchView = createView(preLaunch = false,
@@ -115,7 +97,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" when {
       "feature flag 'isPreLaunch' is enabled" in {
         preLaunchView.getElementById("back-link") must haveHref(
-          routes.LiabilityLiableDateController.displayPage()
+          routes.RegistrationController.displayPage()
         )
       }
 
@@ -128,7 +110,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
       List(preLaunchView, postLaunchView).foreach { view =>
-        view.getElementsByClass("govuk-heading-xl").first() must containMessage(
+        view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
           "checkLiabilityDetailsAnswers.title"
         )
       }
@@ -208,12 +190,11 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(
-      journeyRequest,
-      messages
+    page.f(populatedRegistration, routes.RegistrationController.displayPage())(journeyRequest,
+                                                                               messages
     )
     page.render(populatedRegistration,
-                routes.LiabilityLiableDateController.displayPage(),
+                routes.RegistrationController.displayPage(),
                 journeyRequest,
                 messages
     )
