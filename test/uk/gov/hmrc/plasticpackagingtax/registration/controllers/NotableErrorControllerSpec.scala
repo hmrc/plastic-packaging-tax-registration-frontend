@@ -33,18 +33,18 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
-  private val errorPage                      = mock[error_page]
-  private val errorNoSavePage                = mock[error_no_save_page]
-  private val businessVerificationFailedPage = mock[business_verification_failure_page]
-  private val businessRegistrationFailurePage= mock[grs_failure_page]
-  private val mcc                            = stubMessagesControllerComponents()
+  private val errorPage                       = mock[error_page]
+  private val errorNoSavePage                 = mock[error_no_save_page]
+  private val businessVerificationFailedPage  = mock[business_verification_failure_page]
+  private val businessRegistrationFailurePage = mock[grs_failure_page]
+  private val mcc                             = stubMessagesControllerComponents()
 
   private val controller =
     new NotableErrorController(authenticate = mockAuthAction,
                                mcc = mcc,
                                errorPage = errorPage,
                                errorNoSavePage = errorNoSavePage,
-      grsFailurePage = businessRegistrationFailurePage,
+                               grsFailurePage = businessRegistrationFailurePage,
                                businessVerificationFailurePage = businessVerificationFailedPage
     )
 

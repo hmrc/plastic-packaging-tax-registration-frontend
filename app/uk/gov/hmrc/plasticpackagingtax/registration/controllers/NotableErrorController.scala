@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  business_verification_failure_page,
   error_no_save_page,
   error_page,
-  grs_failure_page,
-  business_verification_failure_page
+  grs_failure_page
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

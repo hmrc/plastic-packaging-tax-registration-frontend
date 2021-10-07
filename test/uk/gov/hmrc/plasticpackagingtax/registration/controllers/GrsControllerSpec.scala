@@ -18,32 +18,21 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.verify
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, Registration}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GrsControllerSpec extends ControllerSpec {
 
-  private val mcc                         = stubMessagesControllerComponents()
-  private val registration                = aRegistration()
+  private val mcc          = stubMessagesControllerComponents()
+  private val registration = aRegistration()
 
   private val controller =
     new GrsController(authenticate = mockAuthAction,
