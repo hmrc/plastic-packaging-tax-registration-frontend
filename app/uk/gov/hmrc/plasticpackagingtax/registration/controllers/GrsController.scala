@@ -75,7 +75,7 @@ class GrsController @Inject() (
             else if (registration.organisationDetails.businessPartnerId().isDefined)
               Redirect(routes.RegistrationController.displayPage())
             else
-              Redirect(routes.NotableErrorController.businessRegistrationFailure())
+              Redirect(routes.NotableErrorController.grsFailure())
           case Left(error) => throw error
         }
     }

@@ -24,9 +24,9 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  business_registration_failure_page,
   error_no_save_page,
-  error_page
+  error_page,
+  grs_failure_page
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -34,14 +34,14 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   private val errorPage                       = mock[error_page]
   private val errorNoSavePage                 = mock[error_no_save_page]
-  private val businessRegistrationFailurePage = mock[business_registration_failure_page]
+  private val businessRegistrationFailurePage = mock[grs_failure_page]
   private val mcc                             = stubMessagesControllerComponents()
 
   private val controller =
     new NotableErrorController(mcc = mcc,
                                errorPage = errorPage,
                                errorNoSavePage = errorNoSavePage,
-                               businessRegistrationFailurePage = businessRegistrationFailurePage
+                               grsFailurePage = businessRegistrationFailurePage
     )
 
   override protected def beforeEach(): Unit = {
@@ -49,6 +49,11 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(errorPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error page content"))
     when(errorNoSavePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error no save page content")
+    )
+    when(businessRegistrationFailurePage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw(
+        "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
+      )
     )
   }
 
@@ -68,10 +73,12 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the business registration failure page on grs not able to find safe id " in {
-      val resp = controller.businessRegistrationFailure()(getRequest())
+      val resp = controller.grsFailure()(getRequest())
 
       status(resp) mustBe OK
-      contentAsString(resp) mustBe "error no save page content"
+      contentAsString(
+        resp
+      ) mustBe "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
     }
   }
 }

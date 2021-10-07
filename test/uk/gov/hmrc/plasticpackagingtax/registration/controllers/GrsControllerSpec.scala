@@ -39,15 +39,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  business_registration_failure_page,
-  business_verification_failure_page
+  business_verification_failure_page,
+  grs_failure_page
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GrsControllerSpec extends ControllerSpec {
 
   private val mcc                         = stubMessagesControllerComponents()
-  private val mockErrorPage               = mock[business_registration_failure_page]
+  private val mockErrorPage               = mock[grs_failure_page]
   private val mockVerificationFailurePage = mock[business_verification_failure_page]
   private val registration                = aRegistration()
 
@@ -306,9 +306,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateUnregisteredLimitedCompanyCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.NotableErrorController.businessRegistrationFailure().url
-        )
+        redirectLocation(result) mustBe Some(routes.NotableErrorController.grsFailure().url)
       }
     }
 

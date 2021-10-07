@@ -19,42 +19,38 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_registration_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.grs_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class BusinessRegistrationFailureViewSpec extends UnitViewSpec with Matchers {
+class GrsFailureViewSpec extends UnitViewSpec with Matchers {
 
-  private val page: business_registration_failure_page =
-    instanceOf[business_registration_failure_page]
+  private val page: grs_failure_page =
+    instanceOf[grs_failure_page]
 
   private def createView(): Html = page()(journeyRequest, messages)
 
   "Business Registration Failure Page" should {
 
     "have proper messages for labels" in {
-      messages must haveTranslationFor("businessEntityIdentification.failure.title")
-      messages must haveTranslationFor("businessEntityIdentification.failure.heading")
-      messages must haveTranslationFor("businessEntityIdentification.failure.detail")
+      messages must haveTranslationFor("grs.failure.title")
+      messages must haveTranslationFor("grs.failure.heading")
+      messages must haveTranslationFor("grs.failure.detail.1")
+      messages must haveTranslationFor("grs.failure.detail.2")
     }
 
     val view: Html = createView()
 
     "display title" in {
-      view.select("title").text() must include(
-        messages("businessEntityIdentification.failure.title")
-      )
-    }
-
-    "display heading" in {
-      view.select("h1").text() must include(
-        messages("businessEntityIdentification.failure.heading")
+      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
+        "grs.failure.title"
       )
     }
 
     "display detail" in {
-      view.select("p.govuk-body").text() must include(
-        messages("businessEntityIdentification.failure.detail")
+      view.getElementsByClass(Styles.gdsPageBodyText).first() must containMessage(
+        "grs.failure.detail.1"
       )
     }
   }
