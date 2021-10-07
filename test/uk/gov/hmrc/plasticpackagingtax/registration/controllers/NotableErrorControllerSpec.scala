@@ -26,7 +26,8 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   business_verification_failure_page,
   error_no_save_page,
-  error_page
+  error_page,
+  grs_failure_page
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -35,6 +36,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
   private val errorPage                      = mock[error_page]
   private val errorNoSavePage                = mock[error_no_save_page]
   private val businessVerificationFailedPage = mock[business_verification_failure_page]
+  private val grsFailurePage                 = mock[grs_failure_page]
   private val mcc                            = stubMessagesControllerComponents()
 
   private val controller =
@@ -42,6 +44,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
                                mcc = mcc,
                                errorPage = errorPage,
                                errorNoSavePage = errorNoSavePage,
+                               grsFailurePage = grsFailurePage,
                                businessVerificationFailurePage = businessVerificationFailedPage
     )
 
@@ -50,6 +53,11 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(errorPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error page content"))
     when(errorNoSavePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error no save page content")
+    )
+    when(grsFailurePage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw(
+        "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
+      )
     )
     when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error business verification failed content")
@@ -79,6 +87,15 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error business verification failed content"
+    }
+
+    "present the business registration failure page on grs not able to find safe id " in {
+      val resp = controller.grsFailure()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(
+        resp
+      ) mustBe "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
     }
   }
 }

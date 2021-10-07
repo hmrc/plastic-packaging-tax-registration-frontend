@@ -18,14 +18,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.verify
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
@@ -38,14 +35,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_registration_failure_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GrsControllerSpec extends ControllerSpec {
 
-  private val mcc           = stubMessagesControllerComponents()
-  private val mockErrorPage = mock[business_registration_failure_page]
-  private val registration  = aRegistration()
+  private val mcc          = stubMessagesControllerComponents()
+  private val registration = aRegistration()
 
   private val controller =
     new GrsController(authenticate = mockAuthAction,
@@ -55,7 +50,6 @@ class GrsControllerSpec extends ControllerSpec {
                       mockSoleTraderGrsConnector,
                       mockGeneralPartnershipGrsConnector,
                       mockScottishPartnershipGrsConnector,
-                      mockErrorPage,
                       mcc
     )(ec)
 
@@ -96,8 +90,6 @@ class GrsControllerSpec extends ControllerSpec {
   )
 
   "incorpIdCallback" should {
-
-    when(mockErrorPage.apply()(any[Request[_]](), any[Messages]())).thenReturn(HtmlFormat.empty)
 
     "redirect to the registration page" when {
       "registering a UK Limited Company" in {
@@ -298,8 +290,8 @@ class GrsControllerSpec extends ControllerSpec {
         authorizedUser()
         val result = simulateUnregisteredLimitedCompanyCallback()
 
-        status(result) mustBe OK
-        verify(mockErrorPage).apply()(any[Request[_]](), any[Messages]())
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.NotableErrorController.grsFailure().url)
       }
     }
 

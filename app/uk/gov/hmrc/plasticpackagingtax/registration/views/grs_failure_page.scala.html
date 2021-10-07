@@ -16,16 +16,29 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageHeading
 
-@this(govukLayout: main_template)
+@this(
+        govukLayout: main_template,
+        govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
+        paragraphBody: paragraphBody,
+        pageHeading: pageHeading,
+        sectionHeader: sectionHeader,
+        formHelper: FormWithCSRF
+)
+
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("businessEntityIdentification.failure.title")) {
- <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-   <h1 class="@gdsPageHeading" >@messages("businessEntityIdentification.failure.heading")</h1>
-   <p class="govuk-body">@messages("businessEntityIdentification.failure.detail")</p>
-  </div>
- </div>
-}
+ @govukLayout(
+  title = Title("grs.failure.title")) {
+
+  @sectionHeader(messages("organisationDetails.sectionHeader"))
+
+  @pageHeading(messages("grs.failure.heading"))
+
+  @paragraphBody(message = messages("grs.failure.detail.1"), id = Some("grs-failure-detail-id"))
+  @paragraphBody(message = messages("grs.failure.detail.2"), id = Some("grs-failure-detail-id-2"))
+ }

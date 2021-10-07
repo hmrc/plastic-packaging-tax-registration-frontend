@@ -46,7 +46,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_registration_failure_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,7 +59,6 @@ class GrsController @Inject() (
   soleTraderGrsConnector: SoleTraderGrsConnector,
   generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
   scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
-  business_registration_failure_page: business_registration_failure_page,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -75,7 +73,7 @@ class GrsController @Inject() (
             else if (registration.organisationDetails.businessPartnerId().isDefined)
               Redirect(routes.RegistrationController.displayPage())
             else
-              Ok(business_registration_failure_page())
+              Redirect(routes.NotableErrorController.grsFailure())
           case Left(error) => throw error
         }
     }
