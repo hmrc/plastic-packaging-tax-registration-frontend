@@ -30,6 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
   pageTitle,
   saveAndContinue
@@ -129,7 +130,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
       List(preLaunchView, postLaunchView).foreach { view =>
-        view.getElementsByClass("govuk-heading-xl").first() must containMessage(
+        view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
           "checkLiabilityDetailsAnswers.title"
         )
       }

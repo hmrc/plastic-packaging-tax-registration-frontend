@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.session_timed_out
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -48,7 +49,9 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass("govuk-heading-xl").first() must containMessage("sessionTimout.title")
+      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
+        "sessionTimout.title"
+      )
     }
 
     "display saved answers info" in {

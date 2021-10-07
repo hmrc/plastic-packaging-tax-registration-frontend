@@ -18,7 +18,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.components
 
 object Styles {
 
-  val gdsPageLegend  = "govuk-fieldset__legend--xl"
-  val gdsPageHeading = "govuk-heading-xl"
-  val gdsPageLabel   = "govuk-label--xl"
+  val gdsPageLegend   = "govuk-fieldset__legend--xl"
+  val gdsPageHeading  = "govuk-heading-l"
+  val gdsPageBodyText = "govuk-body"
+  val gdsPageLabel    = "govuk-label--xl"
 }
