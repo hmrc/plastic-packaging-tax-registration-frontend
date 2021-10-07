@@ -21,7 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Flash
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
-import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -34,21 +34,6 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     page()(journeyRequest, messages, flash)
 
   "Confirmation Page view" should {
-
-    "have proper messages for labels" in {
-
-      messages must haveTranslationFor("confirmationPage.title")
-      messages must haveTranslationFor("confirmationPage.panel.body")
-      messages must haveTranslationFor("confirmationPage.panel.body.default")
-      messages must haveTranslationFor("confirmationPage.detail.1")
-      messages must haveTranslationFor("confirmationPage.detail.2")
-      messages must haveTranslationFor("confirmationPage.whatHappensNext.title")
-      messages must haveTranslationFor("confirmationPage.whatHappensNext.detail")
-      messages must haveTranslationFor("confirmationPage.whatHappensNext.link")
-      messages must haveTranslationFor("confirmationPage.whatHappensNext.link.text")
-      messages must haveTranslationFor("confirmationPage.exitSurvey.link")
-      messages must haveTranslationFor("confirmationPage.exitSurvey.link.text")
-    }
 
     val view: Html = createView()
 
@@ -72,20 +57,18 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
     "display panel" when {
 
       "no 'referenceId' has been provided" in {
-        view.getElementsByClass(Styles.gdsPanelTitle).get(0) must containMessage(
-          "confirmationPage.title"
-        )
-        view.getElementsByClass(Styles.gdsPanelBody).get(0) must containMessage(
+        view.getElementsByClass(gdsPanelTitle).get(0) must containMessage("confirmationPage.title")
+        view.getElementsByClass(gdsPanelBody).get(0) must containMessage(
           "confirmationPage.panel.body.default"
         )
       }
 
       "a 'referenceId' has been provided" in {
         val viewWithReferenceId = createView(flash = Flash(Map(FlashKeys.referenceId -> "PPT123")))
-        viewWithReferenceId.getElementsByClass(Styles.gdsPanelTitle).get(0) must containMessage(
+        viewWithReferenceId.getElementsByClass(gdsPanelTitle).get(0) must containMessage(
           "confirmationPage.title"
         )
-        viewWithReferenceId.getElementsByClass(Styles.gdsPanelBody).get(0) must containMessage(
+        viewWithReferenceId.getElementsByClass(gdsPanelBody).get(0) must containMessage(
           "confirmationPage.panel.body",
           "PPT123"
         )
@@ -94,18 +77,18 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
 
     "display body" in {
 
-      val mainDetail = view.getElementsByClass(Styles.gdsPageBodyText)
+      val mainDetail = view.getElementsByClass(gdsPageBodyText)
       mainDetail.get(0) must containMessage("confirmationPage.detail.1")
       mainDetail.get(1) must containMessage("confirmationPage.detail.2")
     }
 
     "display 'What happens next'" in {
 
-      view.getElementsByClass(Styles.gdsPageSubHeading).get(0) must containMessage(
+      view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(
         "confirmationPage.whatHappensNext.title"
       )
 
-      val whatHappensNextDetail = view.getElementsByClass(Styles.gdsPageBodyText)
+      val whatHappensNextDetail = view.getElementsByClass(gdsPageBodyText)
       whatHappensNextDetail.get(2) must containMessage("confirmationPage.whatHappensNext.detail")
       whatHappensNextDetail.get(3) must containMessage(
         "confirmationPage.whatHappensNext.link",
