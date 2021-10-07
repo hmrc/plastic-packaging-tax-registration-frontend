@@ -145,11 +145,11 @@ primaryContactDetails.tooManyAttempts.passcode.title = You have entered an incor
 primaryContactDetails.tooManyAttempts.passcode.1 = You have entered an incorrect passcode too many times
 primaryContactDetails.tooManyAttempts.passcode.2 = You must log out of you Government Gateway account and log back in to restart your registration.
 
-primaryContactDetails.phoneNumber.title = What is the {0}’s telephone number?
+primaryContactDetails.phoneNumber.title = What is {0}’s telephone number?
 primaryContactDetails.phoneNumber.caption = We’ll use this to contact you about your PPT account.
 primaryContactDetails.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
 primaryContactDetails.phoneNumber.empty.error = Enter a phone number
-primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 11 digits
+primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 24 digits
 primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
 
 primaryContactDetails.confirmAddress.title = What is the primary contact’s business address?
