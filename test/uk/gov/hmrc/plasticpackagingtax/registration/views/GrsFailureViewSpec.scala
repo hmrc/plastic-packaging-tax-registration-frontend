@@ -19,7 +19,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.{
+  gdsPageBodyText,
+  gdsPageHeading
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.grs_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -43,15 +46,12 @@ class GrsFailureViewSpec extends UnitViewSpec with Matchers {
     val view: Html = createView()
 
     "display title" in {
-      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
-        "grs.failure.title"
-      )
+      view.getElementsByClass(gdsPageHeading).first() must containMessage("grs.failure.title")
     }
 
     "display detail" in {
-      view.getElementsByClass(Styles.gdsPageBodyText).first() must containMessage(
-        "grs.failure.detail.1"
-      )
+      view.getElementsByClass(gdsPageBodyText).get(0) must containMessage("grs.failure.detail.1")
+      view.getElementsByClass(gdsPageBodyText).get(1) must containMessage("grs.failure.detail.2")
     }
   }
 

@@ -25,6 +25,7 @@
         govukInsetText: GovukInsetText,
         paragraphBody: paragraphBody,
         pageHeading: pageHeading,
+        sectionHeader: sectionHeader,
         formHelper: FormWithCSRF
 )
 
@@ -33,6 +34,8 @@
 
  @govukLayout(
   title = Title("grs.failure.title")) {
+
+  @sectionHeader(messages("organisationDetails.sectionHeader"))
 
   @pageHeading(messages("grs.failure.heading"))
 
