@@ -25,40 +25,20 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Call}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukButton, GovukSummaryList}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
-  pageTitle,
-  saveAndContinue
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  check_liability_details_answers_page,
-  main_template
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val formHelper       = instanceOf[FormWithCSRF]
-  private val govukLayout      = instanceOf[main_template]
-  private val govukButton      = instanceOf[GovukButton]
-  private val govukSummaryList = instanceOf[GovukSummaryList]
-  private val pageTitle        = instanceOf[pageTitle]
-  private val saveAndContinue  = instanceOf[saveAndContinue]
-  private val mockAppConfig    = mock[AppConfig]
+  private val mockAppConfig = mock[AppConfig]
 
-  private val page = new check_liability_details_answers_page(formHelper,
-                                                              govukLayout,
-                                                              govukButton,
-                                                              govukSummaryList,
-                                                              pageTitle,
-                                                              saveAndContinue
-  )
+  private val page = instanceOf[check_liability_details_answers_page]
 
   private val populatedRegistration   = aRegistration()
   private val unpopulatedRegistration = Registration("id")

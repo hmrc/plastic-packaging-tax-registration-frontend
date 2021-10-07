@@ -14,22 +14,18 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import play.twirl.api.HtmlFormat
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
 
 @this(
   formHelper: FormWithCSRF,
   govukLayout: main_template,
   govukSummaryList: GovukSummaryList,
-  pageTitle: pageTitle,
+  pageHeading: pageHeading,
   saveAndContinue: saveAndContinue,
   sectionHeader: sectionHeader
 )
@@ -74,7 +70,7 @@
   backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsConfirmAddressController.displayPage(), messages("site.back.hiddenText")))) {
 
     @sectionHeader(messages("primaryContactDetails.sectionHeader"))
-    @pageTitle(text = messages("primaryContactDetails.check.title"), classes = "govuk-heading-l")
+    @pageHeading(messages("primaryContactDetails.check.title"))
 
 
     @formHelper(action = pptRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {

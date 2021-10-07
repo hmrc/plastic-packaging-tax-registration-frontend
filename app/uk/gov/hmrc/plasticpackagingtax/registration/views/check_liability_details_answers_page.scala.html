@@ -14,12 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -31,7 +27,7 @@
         govukLayout: main_template,
         govukButton: GovukButton,
         govukSummaryList: GovukSummaryList,
-        pageTitle: pageTitle,
+        pageHeading: pageHeading,
         saveAndContinue: saveAndContinue
 )
 @(registration: Registration, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
@@ -40,7 +36,7 @@
     title = Title("checkLiabilityDetailsAnswers.title"),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
 
-    @pageTitle(text = messages("checkLiabilityDetailsAnswers.title"))
+    @pageHeading(messages("checkLiabilityDetailsAnswers.title"))
 
     @formHelper(action = pptRoutes.CheckLiabilityDetailsAnswersController.submit(), 'autoComplete -> "off") {
         @govukSummaryList(
