@@ -59,7 +59,6 @@ class GrsControllerSpec extends ControllerSpec {
                       mockSoleTraderGrsConnector,
                       mockGeneralPartnershipGrsConnector,
                       mockScottishPartnershipGrsConnector,
-                      mockErrorPage,
                       mockVerificationFailurePage,
                       mcc
     )(ec)
@@ -306,8 +305,10 @@ class GrsControllerSpec extends ControllerSpec {
         authorizedUser()
         val result = simulateUnregisteredLimitedCompanyCallback()
 
-        status(result) mustBe OK
-        verify(mockErrorPage).apply()(any[Request[_]](), any[Messages]())
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.NotableErrorController.businessRegistrationFailure().url
+        )
       }
     }
 

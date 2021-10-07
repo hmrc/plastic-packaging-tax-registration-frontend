@@ -23,17 +23,26 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{error_no_save_page, error_page}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  business_registration_failure_page,
+  error_no_save_page,
+  error_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
-  private val errorPage       = mock[error_page]
-  private val errorNoSavePage = mock[error_no_save_page]
-  private val mcc             = stubMessagesControllerComponents()
+  private val errorPage                       = mock[error_page]
+  private val errorNoSavePage                 = mock[error_no_save_page]
+  private val businessRegistrationFailurePage = mock[business_registration_failure_page]
+  private val mcc                             = stubMessagesControllerComponents()
 
   private val controller =
-    new NotableErrorController(mcc = mcc, errorPage = errorPage, errorNoSavePage = errorNoSavePage)
+    new NotableErrorController(mcc = mcc,
+                               errorPage = errorPage,
+                               errorNoSavePage = errorNoSavePage,
+                               businessRegistrationFailurePage = businessRegistrationFailurePage
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -53,6 +62,13 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present the generic error no save page on enrolment failure" in {
       val resp = controller.enrolmentFailure()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "error no save page content"
+    }
+
+    "present the business registration failure page on grs not able to find safe id " in {
+      val resp = controller.businessRegistrationFailure()(getRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error no save page content"
