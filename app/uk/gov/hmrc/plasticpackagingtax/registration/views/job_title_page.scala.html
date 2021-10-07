@@ -14,15 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.JobTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 
 @this(
   govukLayout: main_template,
@@ -55,7 +51,7 @@
             errorMessage = jobTitleField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             label = Label(
                 isPageHeading = true,
-                classes = s"govuk-label--l",
+                classes = gdsLabelPageHeading,
                 content = Text(messages("primaryContactDetails.jobTitlePage.title", contactName))))
             )
         @saveButtons()

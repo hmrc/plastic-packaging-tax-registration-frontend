@@ -14,27 +14,19 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.bulletList
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.navList
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.link
 
 @this(
-govukLayout: main_template,
-pageTitle: pageTitle,
-sectionHeader: sectionHeader,
-paragraphBody: paragraphBody,
-link: link,
-navList: navList,
-bulletList: bulletList,
-govukInsetText: GovukInsetText,
-govukButton: GovukButton
+    govukLayout: main_template,
+    pageHeading: pageHeading,
+    sectionHeader: sectionHeader,
+    paragraphBody: paragraphBody,
+    link: link,
+    navList: navList,
+    bulletList: bulletList,
+    govukInsetText: GovukInsetText,
+    govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -43,7 +35,7 @@ govukButton: GovukButton
 
 <div class="govuk-!-width-two-thirds">
     @sectionHeader(messages("startPage.title.sectionHeader"))
-    @pageTitle(text = messages("startPage.title"))
+    @pageHeading(messages("startPage.title"))
     @paragraphBody(message = messages("startPage.description"), classes = "govuk-body-l", id = Some("description"))
 </div>
 

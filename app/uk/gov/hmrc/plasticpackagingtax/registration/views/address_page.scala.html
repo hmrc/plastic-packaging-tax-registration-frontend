@@ -17,11 +17,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.inputText
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 
@@ -87,7 +82,7 @@
         @govukFieldset(Fieldset(
             legend = Some(Legend(
                 content = Text(messages("primaryContactDetails.address.title")),
-                classes = "govuk-fieldset__legend--l",
+                classes = gdsFieldsetPageHeading,
                 isPageHeading = true
             )),
             html = fieldSetBody

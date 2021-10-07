@@ -81,7 +81,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementById("title") must containMessage("registrationPage.title")
+      view.getElementsByTag("h1") must containMessageForElements("registrationPage.title")
     }
 
     "display sections" when {

@@ -14,10 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsPageHeading
-
 @this()
 
-@(text: String, classes: String = "govuk-heading-l", id: Option[String] = None)
+@(text: String, classes: String = gdsPageHeading, id: Option[String] = None)
 
 <h1 class="@{classes}" @id.map{id => id="@id"}>@text</h1>
