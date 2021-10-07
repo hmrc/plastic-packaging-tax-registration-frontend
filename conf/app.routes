@@ -67,11 +67,11 @@ GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.regist
 GET        /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.displayPage()
 POST       /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.submit()
 
-GET        /registration-submitted  uk.gov.hmrc.plasticpackagingtax.registration.controllers.ConfirmationController.displayPage()
+GET        /confirmation            uk.gov.hmrc.plasticpackagingtax.registration.controllers.ConfirmationController.displayPage()
 GET        /registration-failed     uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotableErrorController.subscriptionFailure()
 GET        /enrolment-failed        uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotableErrorController.enrolmentFailure()
 
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
 GET        /we-sign-you-out         uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
 
-GET         /unauthorised   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad()
+GET        /unauthorised   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad()
