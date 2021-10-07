@@ -22,8 +22,8 @@
 @this(
     govukLayout: main_template,
     govukPanel : GovukPanel,
+    subHeading: subHeading,
     paragraphBody: paragraphBody,
-    bulletList: bulletList,
     link: link,
     appConfig: AppConfig
 )
@@ -40,25 +40,17 @@
                     .getOrElse(messages("confirmationPage.panel.body.default")))
     ))
 
-    @paragraphBody(message = messages("confirmationPage.body"))
+    @paragraphBody(message = messages("confirmationPage.detail.1"))
+    @paragraphBody(message = messages("confirmationPage.detail.2"))
 
-    <h2 class="govuk-heading-m govuk-!-margin-bottom-2">@messages("confirmationPage.whatHappensNext.title")</h2>
-    <br>
+    @subHeading(text = messages("confirmationPage.whatHappensNext.title"))
 
-    @paragraphBody(message = messages("confirmationPage.whatHappensNext.paragraph1"))
+    @paragraphBody(message = messages("confirmationPage.whatHappensNext.detail"))
 
-    @bulletList(
-        title = Some(messages("confirmationPage.whatHappensNext.liable.title")),
-        elements = Seq(
-            Html(messages("confirmationPage.whatHappensNext.liable.bulletPoint.1")),
-            Html(messages("confirmationPage.whatHappensNext.liable.bulletPoint.2"))
-        )
-    )
+    @paragraphBody(message = messages("confirmationPage.whatHappensNext.link",
+        link(text = messages("confirmationPage.whatHappensNext.link.text"), call = Call("GET", appConfig.pptAccountUrl))))
 
-    <br>
-    @paragraphBody(message = messages("confirmationPage.exitSurvey.text",
-        link(text = messages("confirmationPage.exitSurvey.text.link"), call = Call("GET", appConfig.exitSurveyUrl))))
-
-
+    @paragraphBody(message = messages("confirmationPage.exitSurvey.link",
+        link(text = messages("confirmationPage.exitSurvey.link.text"), call = Call("GET", appConfig.exitSurveyUrl))))
 
 }

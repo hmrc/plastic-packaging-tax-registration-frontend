@@ -212,16 +212,16 @@ reviewRegistration.organisationDetails.soleTrader.nino = National insurance numb
 reviewRegistration.organisationDetails.partnership.name = Partnership name
 
 confirmationPage.title = Registration submitted
-confirmationPage.panel.body = Your reference number {0}
+confirmationPage.panel.body = Your Plastic Packaging Tax (PPT) registration number is {0}
 confirmationPage.panel.body.default = Your registration has already been submitted
-confirmationPage.body = We have sent an email to confirm this registration.
+confirmationPage.detail.1 = You will need this registration number when you contact us about your PPT account.
+confirmationPage.detail.2 = We will not email you a confirmation.
 confirmationPage.whatHappensNext.title = What happens next
-confirmationPage.whatHappensNext.paragraph1 = The Plastic Packaging Tax starts from April 1 2022.
-confirmationPage.whatHappensNext.liable.title = If you are liable for the tax:
-confirmationPage.whatHappensNext.liable.bulletPoint.1 = The first return will be due by July 31 2022
-confirmationPage.whatHappensNext.liable.bulletPoint.2 = The first payment will be due by August 31 2022
-confirmationPage.exitSurvey.text = {0} (Takes 30 seconds)
-confirmationPage.exitSurvey.text.link = What did you think of this service?
+confirmationPage.whatHappensNext.detail = PPT starts on 1 April 2022.
+confirmationPage.whatHappensNext.link = Go to your {0} to find out how to prepare your return.
+confirmationPage.whatHappensNext.link.text = PPT account
+confirmationPage.exitSurvey.link = {0} (Takes 30 seconds)
+confirmationPage.exitSurvey.link.text = What did you think of this service?
 
 organisationDetails.sectionHeader = Organisation details
 organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
