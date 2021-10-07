@@ -23,17 +23,27 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{error_no_save_page, error_page}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  business_verification_failure_page,
+  error_no_save_page,
+  error_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
-  private val errorPage       = mock[error_page]
-  private val errorNoSavePage = mock[error_no_save_page]
-  private val mcc             = stubMessagesControllerComponents()
+  private val errorPage                      = mock[error_page]
+  private val errorNoSavePage                = mock[error_no_save_page]
+  private val businessVerificationFailedPage = mock[business_verification_failure_page]
+  private val mcc                            = stubMessagesControllerComponents()
 
   private val controller =
-    new NotableErrorController(mcc = mcc, errorPage = errorPage, errorNoSavePage = errorNoSavePage)
+    new NotableErrorController(authenticate = mockAuthAction,
+                               mcc = mcc,
+                               errorPage = errorPage,
+                               errorNoSavePage = errorNoSavePage,
+                               businessVerificationFailurePage = businessVerificationFailedPage
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -41,10 +51,14 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(errorNoSavePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error no save page content")
     )
+    when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error business verification failed content")
+    )
   }
 
   "NotableErrorController" should {
     "present the generic error page on subscription failure" in {
+      authorizedUser()
       val resp = controller.subscriptionFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -52,10 +66,19 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the generic error no save page on enrolment failure" in {
+      authorizedUser()
       val resp = controller.enrolmentFailure()(getRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error no save page content"
+    }
+
+    "present the business verification failed page" in {
+      authorizedUser()
+      val resp = controller.businessVerificationFailure()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "error business verification failed content"
     }
   }
 }
