@@ -25,8 +25,16 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  LIMITED_PARTNERSHIP,
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GrsControllerSpec extends ControllerSpec {
