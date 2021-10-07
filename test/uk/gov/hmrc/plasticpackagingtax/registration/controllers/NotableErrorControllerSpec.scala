@@ -24,6 +24,7 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  business_verification_failure_page,
   error_no_save_page,
   error_page,
   grs_failure_page
@@ -32,16 +33,19 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
-  private val errorPage                       = mock[error_page]
-  private val errorNoSavePage                 = mock[error_no_save_page]
-  private val businessRegistrationFailurePage = mock[grs_failure_page]
-  private val mcc                             = stubMessagesControllerComponents()
+  private val errorPage                      = mock[error_page]
+  private val errorNoSavePage                = mock[error_no_save_page]
+  private val businessVerificationFailedPage = mock[business_verification_failure_page]
+  private val businessRegistrationFailurePage= mock[grs_failure_page]
+  private val mcc                            = stubMessagesControllerComponents()
 
   private val controller =
-    new NotableErrorController(mcc = mcc,
+    new NotableErrorController(authenticate = mockAuthAction,
+                               mcc = mcc,
                                errorPage = errorPage,
                                errorNoSavePage = errorNoSavePage,
-                               grsFailurePage = businessRegistrationFailurePage
+      grsFailurePage = businessRegistrationFailurePage,
+                               businessVerificationFailurePage = businessVerificationFailedPage
     )
 
   override protected def beforeEach(): Unit = {
@@ -55,10 +59,14 @@ class NotableErrorControllerSpec extends ControllerSpec {
         "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
       )
     )
+    when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error business verification failed content")
+    )
   }
 
   "NotableErrorController" should {
     "present the generic error page on subscription failure" in {
+      authorizedUser()
       val resp = controller.subscriptionFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -66,10 +74,19 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the generic error no save page on enrolment failure" in {
+      authorizedUser()
       val resp = controller.enrolmentFailure()(getRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error no save page content"
+    }
+
+    "present the business verification failed page" in {
+      authorizedUser()
+      val resp = controller.businessVerificationFailure()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "error business verification failed content"
     }
 
     "present the business registration failure page on grs not able to find safe id " in {

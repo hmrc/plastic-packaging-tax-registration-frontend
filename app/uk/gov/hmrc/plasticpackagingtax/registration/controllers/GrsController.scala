@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -45,10 +46,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.business_verification_failure_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -60,7 +59,6 @@ class GrsController @Inject() (
   soleTraderGrsConnector: SoleTraderGrsConnector,
   generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
   scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
-  business_verification_failure_page: business_verification_failure_page,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -71,7 +69,7 @@ class GrsController @Inject() (
         saveRegistrationDetails(journeyId).map {
           case Right(registration) =>
             if (registration.organisationDetails.businessVerificationFailed)
-              Ok(business_verification_failure_page())
+              Redirect(routes.NotableErrorController.businessVerificationFailure())
             else if (registration.organisationDetails.businessPartnerId().isDefined)
               Redirect(routes.RegistrationController.displayPage())
             else

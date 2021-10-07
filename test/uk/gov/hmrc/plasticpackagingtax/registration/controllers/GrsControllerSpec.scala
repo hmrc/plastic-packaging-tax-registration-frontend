@@ -38,17 +38,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  business_verification_failure_page,
-  grs_failure_page
-}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GrsControllerSpec extends ControllerSpec {
 
   private val mcc                         = stubMessagesControllerComponents()
-  private val mockErrorPage               = mock[grs_failure_page]
-  private val mockVerificationFailurePage = mock[business_verification_failure_page]
   private val registration                = aRegistration()
 
   private val controller =
@@ -59,7 +53,6 @@ class GrsControllerSpec extends ControllerSpec {
                       mockSoleTraderGrsConnector,
                       mockGeneralPartnershipGrsConnector,
                       mockScottishPartnershipGrsConnector,
-                      mockVerificationFailurePage,
                       mcc
     )(ec)
 
@@ -100,11 +93,6 @@ class GrsControllerSpec extends ControllerSpec {
   )
 
   "incorpIdCallback" should {
-
-    when(mockErrorPage.apply()(any[Request[_]](), any[Messages]())).thenReturn(HtmlFormat.empty)
-    when(mockVerificationFailurePage.apply()(any[Request[_]](), any[Messages]())).thenReturn(
-      HtmlFormat.empty
-    )
 
     "redirect to the registration page" when {
       "registering a UK Limited Company" in {
@@ -315,8 +303,10 @@ class GrsControllerSpec extends ControllerSpec {
         authorizedUser()
         val result = simulateBusinessVerificationFailureLimitedCompanyCallback()
 
-        status(result) mustBe OK
-        verify(mockVerificationFailurePage).apply()(any[Request[_]](), any[Messages]())
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.NotableErrorController.businessVerificationFailure().url
+        )
       }
     }
   }

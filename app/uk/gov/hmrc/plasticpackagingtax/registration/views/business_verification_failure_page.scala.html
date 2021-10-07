@@ -14,18 +14,24 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 
-@this(govukLayout: main_template)
+@this(
+        govukLayout: main_template,
+        pageHeading: pageHeading,
+        sectionHeader: sectionHeader,
+        paragraph: paragraph,
+        link: link
+)
 
 @()(implicit request: Request[_], messages: Messages)
 
 @govukLayout(title = Title("businessEntityVerification.failure.title")) {
- <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-   <h1 class="@gdsPageHeading" >@messages("businessEntityVerification.failure.heading")</h1>
-   <p class="govuk-body">@messages("businessEntityVerification.failure.detail")</p>
-  </div>
- </div>
+
+    @sectionHeader(messages("organisationDetails.sectionHeader"))
+    @pageHeading(messages("businessEntityVerification.failure.heading"))
+
+    @paragraph(Html(messages("businessEntityVerification.failure.detail")))
+
 }

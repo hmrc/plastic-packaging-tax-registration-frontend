@@ -272,9 +272,9 @@ grs.failure.heading = Sorry, there is a problem with the service.
 grs.failure.detail.1 = Try again later.
 grs.failure.detail.2 = Your answers have not been saved. When the service is available, you will have to start again.
 
-businessEntityVerification.failure.title = We have been unable to verify your organisation
-businessEntityVerification.failure.heading = We have been unable to verify your organisation
-businessEntityVerification.failure.detail = TODO: content to assist user to go here
+businessEntityVerification.failure.title = Sorry, your business could not be verified
+businessEntityVerification.failure.heading = Sorry, your business could not be verified
+businessEntityVerification.failure.detail = You can try again after 24 hours.
 
 duplicateSubscription.title = Your organisation is already registered
 duplicateSubscription.heading = Your organisation is already registered
