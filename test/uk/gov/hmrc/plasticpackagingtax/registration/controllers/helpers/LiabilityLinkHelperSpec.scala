@@ -118,7 +118,7 @@ class LiabilityLinkHelperSpec extends ControllerSpec {
       "preLaunch is enabled" in {
         val result = helper.nextPage()(generateRequest(Map(Features.isPreLaunch -> true)))
         result mustBe
-          routes.LiabilityLiableDateController.displayPage()
+          routes.RegistrationController.displayPage()
       }
 
       "preLaunch is disabled" in {

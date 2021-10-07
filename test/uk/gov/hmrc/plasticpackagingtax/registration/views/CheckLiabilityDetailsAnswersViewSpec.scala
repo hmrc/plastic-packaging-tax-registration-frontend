@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
+import java.time.format.DateTimeFormatter
+
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
 import org.mockito.ArgumentMatchers.refEq
@@ -39,7 +41,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
-import java.time.format.DateTimeFormatter
 
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
@@ -66,12 +67,12 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   "Check liability details answers View" should {
     val preLaunchView = createView(preLaunch = true,
                                    reg = populatedRegistration,
-                                   backLink = routes.LiabilityLiableDateController.displayPage()
+                                   backLink = routes.RegistrationController.displayPage()
     )
     val preLaunchViewWithEmptyRegistration =
       createView(preLaunch = true,
                  reg = unpopulatedRegistration,
-                 backLink = routes.LiabilityLiableDateController.displayPage()
+                 backLink = routes.RegistrationController.displayPage()
       )
 
     val postLaunchView = createView(preLaunch = false,
@@ -117,7 +118,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" when {
       "feature flag 'isPreLaunch' is enabled" in {
         preLaunchView.getElementById("back-link") must haveHref(
-          routes.LiabilityLiableDateController.displayPage()
+          routes.RegistrationController.displayPage()
         )
       }
 
@@ -210,12 +211,11 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(populatedRegistration, routes.LiabilityLiableDateController.displayPage())(
-      journeyRequest,
-      messages
+    page.f(populatedRegistration, routes.RegistrationController.displayPage())(journeyRequest,
+                                                                               messages
     )
     page.render(populatedRegistration,
-                routes.LiabilityLiableDateController.displayPage(),
+                routes.RegistrationController.displayPage(),
                 journeyRequest,
                 messages
     )

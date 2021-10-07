@@ -26,6 +26,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.SoleTraderIncorporationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -39,6 +40,7 @@
     pageTitle: pageTitle,
     saveAndContinue: saveAndContinue,
     paragraphBody: paragraphBody,
+    liabilityLinkHelper: LiabilityLinkHelper,
     appConfig: AppConfig
 )
 
@@ -47,7 +49,7 @@
     incorporationDetails: Option[IncorporationDetails] = None,
     soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
     partnershipDetails: Option[PartnershipDetails] = None
-)(implicit request: JourneyRequest[_], messages: Messages)
+)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @extractAddress(address: Address) = @{
     Seq(address.addressLine1,
@@ -129,7 +131,20 @@
                 Empty
             }
         ),
-        call = Some(pptRoutes.LiabilityLiableDateController.displayPage())
+        call = Some(liabilityLinkHelper.startPage())
+    )
+}
+
+@liabilityWeightRow() = @{
+    rowWithValue(key = "checkLiabilityDetailsAnswers.weight",
+        value = Value(
+            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                Text(registration.liabilityDetails.expectedWeight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            } else {
+                Text(registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            }
+        ),
+        call = Some(liabilityLinkHelper.startPage())
     )
 }
 
@@ -191,7 +206,7 @@
     @govukSummaryList(
         SummaryList(
             rows = Seq(
-                row("checkLiabilityDetailsAnswers.weight", registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg"), Some(pptRoutes.LiabilityWeightController.displayPage())),
+                liabilityWeightRow(),
                 expectToExceedThresholdWeightRow,
                 liabilityIsPreLaunchRow,
                 liabilityLiableDateRow,

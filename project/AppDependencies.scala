@@ -8,6 +8,7 @@ object AppDependencies {
     ws,
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-28" % "5.14.0",
     "uk.gov.hmrc"             %% "play-frontend-hmrc"         % "1.11.0-play-28",
+    "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.9.0-play-28",
     "org.webjars.npm"         %  "govuk-frontend"             % "3.11.0",
     "org.webjars.npm"         %  "hmrc-frontend"              % "1.32.0"
   )
