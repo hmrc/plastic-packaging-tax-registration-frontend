@@ -33,18 +33,18 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
-  private val errorPage                       = mock[error_page]
-  private val errorNoSavePage                 = mock[error_no_save_page]
-  private val businessVerificationFailedPage  = mock[business_verification_failure_page]
-  private val businessRegistrationFailurePage = mock[grs_failure_page]
-  private val mcc                             = stubMessagesControllerComponents()
+  private val errorPage                      = mock[error_page]
+  private val errorNoSavePage                = mock[error_no_save_page]
+  private val businessVerificationFailedPage = mock[business_verification_failure_page]
+  private val grsFailurePage                 = mock[grs_failure_page]
+  private val mcc                            = stubMessagesControllerComponents()
 
   private val controller =
     new NotableErrorController(authenticate = mockAuthAction,
                                mcc = mcc,
                                errorPage = errorPage,
                                errorNoSavePage = errorNoSavePage,
-                               grsFailurePage = businessRegistrationFailurePage,
+                               grsFailurePage = grsFailurePage,
                                businessVerificationFailurePage = businessVerificationFailedPage
     )
 
@@ -54,7 +54,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(errorNoSavePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error no save page content")
     )
-    when(businessRegistrationFailurePage.apply()(any(), any())).thenReturn(
+    when(grsFailurePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw(
         "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
       )
