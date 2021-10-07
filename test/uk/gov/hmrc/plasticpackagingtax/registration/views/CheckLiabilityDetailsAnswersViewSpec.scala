@@ -41,7 +41,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
-
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
