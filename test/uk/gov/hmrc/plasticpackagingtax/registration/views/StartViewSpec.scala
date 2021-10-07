@@ -77,7 +77,7 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
     "display header" in {
 
-      view.getElementById("title") must containMessage("startPage.title")
+      view.getElementsByTag("h1") must containMessageForElements("startPage.title")
     }
 
     "display general description" in {

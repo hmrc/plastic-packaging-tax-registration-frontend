@@ -14,12 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInput
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.EmailAddress
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, paragraphBody, saveButtons, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
@@ -62,7 +60,7 @@
             hint = Some(Hint(content = Text(messages("primaryContactDetails.emailAddress.hint")))),
             label = Label(
                 isPageHeading = true,
-                classes = s"govuk-label--l",
+                classes = gdsLabelPageHeading,
                 content = Text(messages("primaryContactDetails.emailAddress.title", contactName))),
                 errorMessage = errorMessages)
             )

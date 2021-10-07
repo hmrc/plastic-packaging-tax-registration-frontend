@@ -16,13 +16,13 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, paragraphBody, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.Continue
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 
 @this(
   govukLayout: main_template,
+  pageHeading: pageHeading,
   govukButton: GovukButton,
   govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
@@ -43,7 +43,7 @@
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-  <h1 class="govuk-heading-l">@messages("primaryContactDetails.emailAddress.passcode.confirmation.title")</h1>
+  @pageHeading(messages("primaryContactDetails.emailAddress.passcode.confirmation.title"))
 
   @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(), 'autoComplete -> "off") {
 

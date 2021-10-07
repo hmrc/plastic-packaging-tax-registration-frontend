@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   PrimaryContactDetails,
   Registration
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsPageHeading
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_primary_contact_details_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -100,7 +101,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.getElementsByClass("govuk-heading-l").first() must containMessage(
+      view.getElementsByClass(gdsPageHeading).first() must containMessage(
         "primaryContactDetails.check.title"
       )
     }

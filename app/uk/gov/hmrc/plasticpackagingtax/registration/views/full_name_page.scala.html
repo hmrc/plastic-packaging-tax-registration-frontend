@@ -14,12 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.sectionHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraph
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.errorSummary
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
@@ -72,7 +68,7 @@
         @govukFieldset(Fieldset(
             legend = Some(Legend(
                 content = Text(messages("primaryContactDetails.fullNamePage.title")),
-                classes = "govuk-fieldset__legend--l",
+                classes = gdsFieldsetPageHeading,
                 isPageHeading = true
             )),
             html = fieldSetBody

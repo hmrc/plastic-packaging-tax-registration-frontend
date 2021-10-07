@@ -24,7 +24,7 @@
 @govukLayout(title = Title(pageTitle)) {
  <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-   <h1 class="govuk-heading-l" >@heading</h1>
+   <h1 class="@gdsPageHeading" >@heading</h1>
    @for(fragment <- messageFragments) {
     <p class="govuk-body">@fragment</p>
    }

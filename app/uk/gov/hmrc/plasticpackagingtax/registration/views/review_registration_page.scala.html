@@ -14,13 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukSummaryList
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageTitle
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.SoleTraderIncorporationDetails
@@ -37,7 +33,7 @@
     formHelper: FormWithCSRF,
     govukLayout: main_template,
     govukSummaryList: GovukSummaryList,
-    pageTitle: pageTitle,
+    pageHeading: pageHeading,
     saveAndContinue: saveAndContinue,
     paragraphBody: paragraphBody,
     liabilityLinkHelper: LiabilityLinkHelper,
@@ -198,7 +194,7 @@
     title = Title("reviewRegistration.organisationDetails.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @pageTitle(text = messages("reviewRegistration.organisationDetails.title"), classes = "govuk-label--l")
+    @pageHeading(messages("reviewRegistration.organisationDetails.title"))
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
