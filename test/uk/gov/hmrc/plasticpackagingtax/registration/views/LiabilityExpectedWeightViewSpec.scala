@@ -41,8 +41,6 @@ class LiabilityExpectedWeightViewSpec extends UnitViewSpec with Matchers {
       messages must haveTranslationFor("liabilityExpectedWeightPage.title")
       messages must haveTranslationFor("liabilityExpectedWeightPage.question")
       messages must haveTranslationFor("liabilityExpectedWeightPage.label")
-      messages must haveTranslationFor("liabilityExpectedWeight.outOfRange.error")
-      messages must haveTranslationFor("liabilityExpectedWeight.empty.error")
     }
 
     val view = createView()
@@ -131,7 +129,7 @@ class LiabilityExpectedWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg", "Weight cannot be empty")
+      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
     }
   }
 

@@ -51,9 +51,4 @@ case class LiabilityLinkHelper @Inject() (appConfig: AppConfig) {
       routes.LiabilityWeightExpectedController.displayPage()
     else routes.LiabilityWeightController.displayPage()
 
-  def belowWeightThresholdNextPage()(implicit req: JourneyRequest[AnyContent]): Call =
-    if (req.isFeatureFlagEnabled(Features.isPreLaunch))
-      routes.NotLiableController.displayPage()
-    else routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
-
 }

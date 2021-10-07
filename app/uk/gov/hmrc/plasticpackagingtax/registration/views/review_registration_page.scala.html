@@ -26,6 +26,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.SoleTraderIncorporationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -39,6 +40,7 @@
     pageTitle: pageTitle,
     saveAndContinue: saveAndContinue,
     paragraphBody: paragraphBody,
+    liabilityLinkHelper: LiabilityLinkHelper,
     appConfig: AppConfig
 )
 
@@ -47,7 +49,7 @@
     incorporationDetails: Option[IncorporationDetails] = None,
     soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
     partnershipDetails: Option[PartnershipDetails] = None
-)(implicit request: JourneyRequest[_], messages: Messages)
+)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @extractAddress(address: Address) = @{
     Seq(address.addressLine1,
@@ -129,7 +131,7 @@
                 Empty
             }
         ),
-        call = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) Some(pptRoutes.LiabilityWeightExpectedController.displayPage()) else Some(pptRoutes.LiabilityWeightController.displayPage())
+        call = Some(liabilityLinkHelper.startPage())
     )
 }
 
@@ -142,7 +144,7 @@
                 Text(registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
             }
         ),
-        call = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) Some(pptRoutes.LiabilityWeightExpectedController.displayPage()) else Some(pptRoutes.LiabilityWeightController.displayPage())
+        call = Some(liabilityLinkHelper.startPage())
     )
 }
 

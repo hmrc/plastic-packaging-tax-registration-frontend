@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTag
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskStatus, Title, TaskSection}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -31,10 +31,11 @@
     paragraphBody: paragraphBody,
     govukButton: GovukButton,
     link: link,
+    liabilityLinkHelper: LiabilityLinkHelper,
     govukTag: GovukTag
 )
 
-@(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @task(index: Int, title: String, sections: Set[TaskSection]) = {
     <h2 class="app-task-list__section">
@@ -80,7 +81,7 @@
             @task(1, "registrationPage.prepareApplication", Set(
                 TaskSection(
                     title  = "registrationPage.liabilityDetails",
-                    link   = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) pptRoutes.LiabilityWeightExpectedController.displayPage() else pptRoutes.LiabilityWeightController.displayPage(),
+                    link   = liabilityLinkHelper.startPage(),
                     status = registration.liabilityDetailsStatus
                 ),
                 TaskSection(

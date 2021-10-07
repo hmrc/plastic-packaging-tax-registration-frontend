@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukSummaryList}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
@@ -62,6 +63,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val pageTitle        = instanceOf[pageTitle]
   private val saveAndContinue  = instanceOf[saveAndContinue]
   private val paragraphBody    = instanceOf[paragraphBody]
+  private val linkHelper       = instanceOf[LiabilityLinkHelper]
   private val mockAppConfig    = mock[AppConfig]
 
   private val page = new review_registration_page(formHelper = formHelper,
@@ -70,6 +72,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
                                                   pageTitle = pageTitle,
                                                   saveAndContinue = saveAndContinue,
                                                   paragraphBody = paragraphBody,
+                                                  liabilityLinkHelper = linkHelper,
                                                   appConfig = mockAppConfig
   )
 

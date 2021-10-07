@@ -46,15 +46,19 @@ object LiabilityExpectedWeight {
   val weightBelowThresholdError = "liabilityExpectedWeight.below.threshold.error"
   val weightOutOfRangeError     = "liabilityExpectedWeight.outOfRange.error"
   val weightFormatError         = "liabilityExpectedWeight.format.error"
+  val weightDecimalError        = "liabilityExpectedWeight.decimal.error"
 
   private val weightIsValidNumber: String => Boolean = weight =>
-    weight.isEmpty || Try(BigInt(weight)).isSuccess
+    weight.isEmpty || Try(BigDecimal(weight)).isSuccess
+
+  private val weightIsWholeNumber: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
 
   private val weightAboveThreshold: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigInt(weight) >= weightThresholdKg
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= weightThresholdKg
 
   private val weightWithinRange: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigInt(weight) <= maxTotalKg
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
   def form(): Form[LiabilityExpectedWeight] =
     Form(
@@ -66,6 +70,7 @@ object LiabilityExpectedWeight {
                                     text()
                                       .verifying(weightEmptyError, _.nonEmpty)
                                       .verifying(weightFormatError, weightIsValidNumber)
+                                      .verifying(weightDecimalError, weightIsWholeNumber)
                                       .verifying(weightBelowThresholdError, weightAboveThreshold)
                                       .verifying(weightOutOfRangeError, weightWithinRange)
         )
@@ -75,7 +80,7 @@ object LiabilityExpectedWeight {
   def fromForm(answer: Option[String], totalKg: Option[String]): LiabilityExpectedWeight =
     answer match {
       case Some(`yes`) =>
-        new LiabilityExpectedWeight(Some(true), totalKg.map(_.toLong))
+        new LiabilityExpectedWeight(Some(true), totalKg.map(BigInt(_).longValue()))
       case _ => new LiabilityExpectedWeight(Some(false), None)
     }
 
