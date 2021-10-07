@@ -271,9 +271,9 @@ businessEntityIdentification.failure.title = We have been unable to identify you
 businessEntityIdentification.failure.heading = We have been unable to identify your organisation
 businessEntityIdentification.failure.detail = TODO: content to assist user to go here
 
-businessEntityVerification.failure.title = We have been unable to verify your organisation
-businessEntityVerification.failure.heading = We have been unable to verify your organisation
-businessEntityVerification.failure.detail = TODO: content to assist user to go here
+businessEntityVerification.failure.title = Sorry, your business could not be verified
+businessEntityVerification.failure.heading = Sorry, your business could not be verified
+businessEntityVerification.failure.detail = You can try again after 24 hours.
 
 duplicateSubscription.title = Your organisation is already registered
 duplicateSubscription.heading = Your organisation is already registered
