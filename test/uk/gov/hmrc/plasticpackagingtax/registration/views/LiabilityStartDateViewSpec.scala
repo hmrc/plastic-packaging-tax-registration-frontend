@@ -40,13 +40,6 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
   "Liability Start Date View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("liabilityStartDatePage.sectionHeader")
-      messages must haveTranslationFor("liabilityStartDatePage.title")
-      messages must haveTranslationFor("liabilityStartDatePage.hint")
-      messages must haveTranslationFor("liabilityStartDatePage.question")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

@@ -65,17 +65,6 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                  backLink = routes.LiabilityStartDateController.displayPage()
       )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.title")
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.date")
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.weight")
-      messages must haveTranslationFor("site.link.change")
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.future.exceed")
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.future.liable")
-      messages must haveTranslationFor("general.true")
-      messages must haveTranslationFor("general.false")
-    }
-
     "have the correct title" in {
       List(preLaunchView, postLaunchView).foreach { view =>
         view.select("title").first must containMessage("checkLiabilityDetailsAnswers.title")

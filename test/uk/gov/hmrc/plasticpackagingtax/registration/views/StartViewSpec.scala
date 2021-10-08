@@ -31,32 +31,6 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
   "Start Page view" should {
 
-    "have proper messages for labels" in {
-
-      messages must haveTranslationFor("startPage.title.sectionHeader")
-      messages must haveTranslationFor("startPage.title")
-      messages must haveTranslationFor("startPage.description")
-      messages must haveTranslationFor("startPage.hmrcUrl")
-      messages must haveTranslationFor("startPage.information")
-      messages must haveTranslationFor("startPage.contents.header")
-      messages must haveTranslationFor("startPage.useThisServiceTo.header")
-      messages must haveTranslationFor("startPage.useThisServiceTo.listItem.1")
-      messages must haveTranslationFor("startPage.useThisServiceTo.listItem.2")
-      messages must haveTranslationFor("startPage.useThisServiceTo.listItem.3")
-      messages must haveTranslationFor("startPage.useThisServiceTo.listItem.4")
-      messages must haveTranslationFor("startPage.overview.header")
-      messages must haveTranslationFor("startPage.overview.line.1")
-      messages must haveTranslationFor("startPage.overview.line.2")
-      messages must haveTranslationFor("startPage.overview.line.3")
-      messages must haveTranslationFor("startPage.informationYouNeed.header")
-      messages must haveTranslationFor("startPage.informationYouNeed.line.1")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.1")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.2")
-      messages must haveTranslationFor("startPage.informationYouNeed.listItem.3")
-      messages must haveTranslationFor("startPage.makeDeclaration.header")
-      messages must haveTranslationFor("startPage.buttonName")
-    }
-
     val view: Html = createView()
 
     "not contain timeout dialog function" in {

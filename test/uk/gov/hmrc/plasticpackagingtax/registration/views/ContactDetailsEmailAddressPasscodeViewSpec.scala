@@ -38,16 +38,6 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
   "Email Address Passcode View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.passcode.title")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.passcode.empty.error")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.passcode.privacyNotice")
-      messages must haveTranslationFor(
-        "primaryContactDetails.emailAddress.passcode.privacyNotice.link"
-      )
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

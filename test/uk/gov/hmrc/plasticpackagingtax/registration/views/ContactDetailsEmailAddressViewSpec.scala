@@ -37,13 +37,6 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
   "Email Address View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.title")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.empty.error")
-      messages must haveTranslationFor("primaryContactDetails.emailAddress.format.error")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

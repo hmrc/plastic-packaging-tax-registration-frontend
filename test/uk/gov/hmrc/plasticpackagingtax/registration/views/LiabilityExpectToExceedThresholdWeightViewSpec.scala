@@ -43,16 +43,6 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
       page.render(form(), request, messages)
     }
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.sectionHeader")
-      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.title")
-      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.hint")
-      messages must haveTranslationFor("liabilityExpectToExceedThresholdWeightPage.question")
-      messages must haveTranslationFor(
-        "liabilityExpectToExceedThresholdWeightPage.question.empty.error"
-      )
-    }
-
     val view = createView()
 
     "validate other rendering  methods" in {

@@ -35,14 +35,6 @@ class GrsFailureViewSpec extends UnitViewSpec with Matchers {
   private def createView(): Html = page()(journeyRequest, messages)
 
   "Business Registration Failure Page" should {
-
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("grs.failure.title")
-      messages must haveTranslationFor("grs.failure.heading")
-      messages must haveTranslationFor("grs.failure.detail.1")
-      messages must haveTranslationFor("grs.failure.detail.2")
-    }
-
     val view: Html = createView()
 
     "display title" in {

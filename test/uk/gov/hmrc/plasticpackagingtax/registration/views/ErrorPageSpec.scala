@@ -32,12 +32,6 @@ class ErrorPageSpec extends UnitViewSpec with Matchers {
 
   "Error page" should {
 
-    "have required messages" in {
-      messages must haveTranslationFor("error.title")
-      messages must haveTranslationFor("error.detail1")
-      messages must haveTranslationFor("error.detail2")
-    }
-
     val view = createView()
 
     "contain title" in {

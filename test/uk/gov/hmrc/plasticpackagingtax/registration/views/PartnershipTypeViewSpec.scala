@@ -43,11 +43,6 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
   "Partnership Type View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("partnership.type.title")
-      messages must haveTranslationFor("organisationDetails.sectionHeader")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

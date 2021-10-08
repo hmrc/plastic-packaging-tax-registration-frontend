@@ -35,18 +35,6 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
   "Address View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-      messages must haveTranslationFor("primaryContactDetails.address.title")
-      messages must haveTranslationFor("primaryContactDetails.address.hint")
-      messages must haveTranslationFor("primaryContactDetails.address.addressLine1")
-      messages must haveTranslationFor("primaryContactDetails.address.addressLine1.hidden")
-      messages must haveTranslationFor("primaryContactDetails.address.addressLine2.hidden")
-      messages must haveTranslationFor("primaryContactDetails.address.addressLine3.hidden")
-      messages must haveTranslationFor("primaryContactDetails.address.townOrCity")
-      messages must haveTranslationFor("primaryContactDetails.address.postCode")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

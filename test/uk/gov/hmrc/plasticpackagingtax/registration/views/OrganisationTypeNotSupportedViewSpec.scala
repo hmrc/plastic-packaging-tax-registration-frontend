@@ -32,13 +32,6 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
 
   "Organisation Type Not Supported View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.title")
-      messages must haveTranslationFor("organisationDetails.notSupportCompanyTypePage.detail")
-      messages must haveTranslationFor("organisationDetails.feedback")
-      messages must haveTranslationFor("organisationDetails.feedback.link")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

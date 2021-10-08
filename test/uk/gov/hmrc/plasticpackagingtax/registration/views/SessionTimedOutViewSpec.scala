@@ -32,14 +32,6 @@ class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
   "Session Timeout View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("sessionTimout.title")
-      messages must haveTranslationFor("sessionTimout.paragraph.saved")
-      messages must haveTranslationFor("sessionTimout.signin.button")
-      messages must haveTranslationFor("site.backToGovUk")
-
-    }
-
     val view = createView()
 
     "not contain timeout dialog function" in {

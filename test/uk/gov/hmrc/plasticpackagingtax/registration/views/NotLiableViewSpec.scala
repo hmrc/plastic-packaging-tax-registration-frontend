@@ -34,19 +34,6 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
   "Not Liable View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("notLiable.pageTitle")
-      messages must haveTranslationFor("notLiable.title")
-      messages must haveTranslationFor("notLiable.inset")
-      messages must haveTranslationFor("notLiable.guidance")
-      messages must haveTranslationFor("notLiable.guidance.link.description")
-      messages must haveTranslationFor("notLiable.guidance.link.href")
-      messages must haveTranslationFor("notLiable.think.title")
-      messages must haveTranslationFor("notLiable.think.info")
-      messages must haveTranslationFor("notLiable.think.feedback")
-      messages must haveTranslationFor("notLiable.think.feedback.link.description")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

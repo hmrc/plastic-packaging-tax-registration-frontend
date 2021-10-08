@@ -62,17 +62,6 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   "Check primary contact details answers View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.check.title")
-      messages must haveTranslationFor("primaryContactDetails.check.label")
-      messages must haveTranslationFor("primaryContactDetails.check.jobTitle")
-      messages must haveTranslationFor("primaryContactDetails.check.phoneNumber")
-      messages must haveTranslationFor("primaryContactDetails.check.address")
-      messages must haveTranslationFor("primaryContactDetails.check.email")
-      messages must haveTranslationFor("site.link.change")
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-    }
-
     val view: Document = createView()
 
     "contain timeout dialog function" in {

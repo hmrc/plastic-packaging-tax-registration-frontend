@@ -46,20 +46,6 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
   "Registration Page view" should {
 
-    "have proper messages for labels" in {
-
-      messages must haveTranslationFor("registrationPage.title")
-      messages must haveTranslationFor("registrationPage.apply")
-      messages must haveTranslationFor("registrationPage.completedSections")
-      messages must haveTranslationFor("registrationPage.companyInformation")
-      messages must haveTranslationFor("registrationPage.primaryContactDetails")
-      messages must haveTranslationFor("registrationPage.liabilityDetails")
-      messages must haveTranslationFor("registrationPage.checkAndSubmit")
-      messages must haveTranslationFor("task.status.notStarted")
-      messages must haveTranslationFor("task.status.inProgress")
-      messages must haveTranslationFor("task.status.completed")
-    }
-
     val view: Html = createView()
 
     "contain timeout dialog function" in {

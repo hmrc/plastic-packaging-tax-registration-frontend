@@ -36,13 +36,6 @@ class LiabilityExpectedWeightViewSpec extends UnitViewSpec with Matchers {
 
   "Liability Weight Expected View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("liabilityExpectedWeightPage.sectionHeader")
-      messages must haveTranslationFor("liabilityExpectedWeightPage.title")
-      messages must haveTranslationFor("liabilityExpectedWeightPage.question")
-      messages must haveTranslationFor("liabilityExpectedWeightPage.label")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {
