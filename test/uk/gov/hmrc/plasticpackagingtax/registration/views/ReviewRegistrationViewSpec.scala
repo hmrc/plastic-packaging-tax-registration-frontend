@@ -80,41 +80,6 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
 
   "Review registration View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("reviewRegistration.organisationDetails.title")
-
-      messages must haveTranslationFor("reviewRegistration.organisationDetails.check.label")
-      messages must haveTranslationFor(
-        "reviewRegistration.organisationDetails.registeredBusinessAddress"
-      )
-      messages must haveTranslationFor("reviewRegistration.organisationDetails.organisationType")
-      messages must haveTranslationFor(
-        "reviewRegistration.organisationDetails.businessRegistrationNumber"
-      )
-      messages must haveTranslationFor(
-        "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
-      )
-
-      messages must haveTranslationFor("primaryContactDetails.check.title")
-      messages must haveTranslationFor("primaryContactDetails.check.label")
-      messages must haveTranslationFor("primaryContactDetails.check.jobTitle")
-      messages must haveTranslationFor("primaryContactDetails.check.phoneNumber")
-      messages must haveTranslationFor("primaryContactDetails.check.address")
-      messages must haveTranslationFor("primaryContactDetails.check.email")
-
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.check.label")
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.date")
-      messages must haveTranslationFor("checkLiabilityDetailsAnswers.weight")
-
-      messages must haveTranslationFor("reviewRegistration.sendYourApplication.title")
-      messages must haveTranslationFor("reviewRegistration.sendYourApplication.body")
-
-      messages must haveTranslationFor("site.button.acceptAndSend")
-      messages must haveTranslationFor("site.link.change")
-
-      messages must haveTranslationFor("reviewRegistration.organisationDetails.partnership.name")
-    }
-
     val view: Document = createView(ukCompanyDetails = Some(incorporationDetails))
 
     "contain timeout dialog function" in {

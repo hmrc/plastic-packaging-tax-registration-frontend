@@ -43,11 +43,6 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   "Confirm Organisation Based In Uk View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("organisationDetails.type.title")
-      messages must haveTranslationFor("organisationDetails.type.empty.error")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

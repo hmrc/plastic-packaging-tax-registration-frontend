@@ -32,12 +32,6 @@ class BusinessVerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
   "Business Verification Failure Page" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("businessEntityVerification.failure.title")
-      messages must haveTranslationFor("businessEntityVerification.failure.heading")
-      messages must haveTranslationFor("businessEntityVerification.failure.detail")
-    }
-
     val view: Html = createView()
 
     "display title" in {

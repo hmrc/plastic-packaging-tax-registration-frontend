@@ -37,14 +37,6 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
 
   "Job Title View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-      messages must haveTranslationFor("primaryContactDetails.jobTitlePage.title")
-      messages must haveTranslationFor("primaryContactDetails.jobTitle.empty.error")
-      messages must haveTranslationFor("primaryContactDetails.jobTitle.tooLong.error")
-      messages must haveTranslationFor("primaryContactDetails.jobTitle.nonAlphaChar.error")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

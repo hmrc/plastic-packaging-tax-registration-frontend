@@ -28,19 +28,6 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
   "Email Address Passcode Confirmation View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-      messages must haveTranslationFor(
-        "primaryContactDetails.emailAddress.passcode.confirmation.title"
-      )
-      messages must haveTranslationFor(
-        "primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice"
-      )
-      messages must haveTranslationFor(
-        "primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice.link"
-      )
-    }
-
     val view = page()(request = journeyRequest, messages = messages)
 
     "contain timeout dialog function" in {

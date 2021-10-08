@@ -47,15 +47,6 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
 
   "Confirm Address View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.confirmAddress.title")
-      messages must haveTranslationFor("primaryContactDetails.confirmAddress.description")
-      messages must haveTranslationFor(
-        "primaryContactDetails.confirmAddress.registeredBusinessAddress"
-      )
-      messages must haveTranslationFor("primaryContactDetails.confirmAddress.radio.title")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

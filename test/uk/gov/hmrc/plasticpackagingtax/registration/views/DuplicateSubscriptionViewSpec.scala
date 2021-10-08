@@ -46,15 +46,6 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
 
   "Duplicate Subscription Page" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("duplicateSubscription.title")
-      messages must haveTranslationFor("duplicateSubscription.heading")
-
-      pageParagraphMessageKeys.foreach { messageKey =>
-        messages must haveTranslationFor(messageKey)
-      }
-    }
-
     val view: Html = createView()
 
     "display title" in {

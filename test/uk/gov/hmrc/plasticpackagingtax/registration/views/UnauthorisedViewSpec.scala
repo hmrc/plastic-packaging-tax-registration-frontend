@@ -33,14 +33,6 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
   "Unauthorised Page view" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("unauthorised.heading")
-      messages must haveTranslationFor("unauthorised.paragraph.1")
-      messages must haveTranslationFor("unauthorised.paragraph.1.link")
-      messages must haveTranslationFor("unauthorised.paragraph.2")
-      messages must haveTranslationFor("unauthorised.paragraph.2.link")
-    }
-
     val view = createView()
 
     "display page header" in {

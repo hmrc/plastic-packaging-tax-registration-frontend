@@ -35,17 +35,6 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
   "Phone Number View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-      messages must haveTranslationFor("primaryContactDetails.phoneNumber.title")
-      messages must haveTranslationFor("primaryContactDetails.phoneNumber.caption")
-      messages must haveTranslationFor("primaryContactDetails.phoneNumber.hint")
-      messages must haveTranslationFor("primaryContactDetails.fullName.default")
-      messages must haveTranslationFor("primaryContactDetails.phoneNumber.empty.error")
-      messages must haveTranslationFor("primaryContactDetails.phoneNumber.tooLong.error")
-      messages must haveTranslationFor("primaryContactDetails.phoneNumber.invalidFormat.error")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {

@@ -36,13 +36,6 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
   "Primary Contact Details Full Name View" should {
 
-    "have proper messages for labels" in {
-      messages must haveTranslationFor("primaryContactDetails.sectionHeader")
-      messages must haveTranslationFor("primaryContactDetails.fullNamePage.title")
-      messages must haveTranslationFor("primaryContactDetails.fullNamePage.hint")
-      messages must haveTranslationFor("primaryContactDetails.fullNamePage.label")
-    }
-
     val view = createView()
 
     "contain timeout dialog function" in {
