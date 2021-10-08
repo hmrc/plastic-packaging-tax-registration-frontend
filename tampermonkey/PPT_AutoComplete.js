@@ -402,7 +402,7 @@ const primaryContactTelephoneNumber = () => {
  }
 
 const primaryContactConfirmAddress = () => {
-     if (currentPageIs('/plastic-packaging-tax/confirm-primary-contact-address')) {
+     if (currentPageIs('/plastic-packaging-tax/confirm-contact-address ')) {
 
          document.getElementById('useRegisteredAddress-2').checked = true
          document.getElementsByClassName('govuk-button')[0].click()

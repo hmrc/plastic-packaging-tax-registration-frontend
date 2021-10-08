@@ -47,8 +47,8 @@ GET        /incorrect-passcode   uk.gov.hmrc.plasticpackagingtax.registration.co
 GET        /main-contact-telephone    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.displayPage()
 POST       /main-contact-telephone    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.submit()
 
-GET        /confirm-primary-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.displayPage()
-POST       /confirm-primary-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.submit()
+GET        /confirm-contact-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.displayPage()
+POST       /confirm-contact-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.submit()
 
 GET        /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.displayPage()
 POST       /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.submit()

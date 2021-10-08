@@ -31,6 +31,7 @@
   govukButton: GovukButton,
   govukRadios : GovukRadios,
   govukSummaryList : GovukSummaryList,
+  govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
   paragraphBody: paragraphBody,
   saveButtons: saveButtons,
@@ -59,33 +60,15 @@
     @errorSummary(form.errors)
 
     @sectionHeader(messages("primaryContactDetails.sectionHeader"))
-    @pageHeading(messages("primaryContactDetails.confirmAddress.title"))
+    @pageHeading(messages("primaryContactDetails.confirmAddress.heading"))
 
     @paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
 
-    @govukSummaryList(SummaryList(
-        rows = Seq(
-            SummaryListRow(
-                key = Key(
-                    content = Text(messages("primaryContactDetails.confirmAddress.registeredBusinessAddress"))
-                ),
-                value = Value(
-                    content = extractAddress(businessAddress)
-                )
-            )
-        )
-    ))
+    @govukInsetText(InsetText(content = extractAddress(businessAddress)))
 
     @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("primaryContactDetails.confirmAddress.radio.title")),
-                    classes = "govuk-fieldset__legend--s",
-                    isPageHeading = false
-                ))
-            )),
             hint = None,
             idPrefix = Some(form("useRegisteredAddress").name),
             name = form("useRegisteredAddress").name,

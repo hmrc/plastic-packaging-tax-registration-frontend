@@ -163,10 +163,9 @@ primaryContactDetails.phoneNumber.empty.error = Enter a phone number
 primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 24 digits
 primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
 
-primaryContactDetails.confirmAddress.title = What is the primary contact’s business address?
+primaryContactDetails.confirmAddress.title = Do you want to use this as the main contact address?
+primaryContactDetails.confirmAddress.heading = Do you want to use this as the main contact address?
 primaryContactDetails.confirmAddress.description = This is the registered business address we hold.
-primaryContactDetails.confirmAddress.registeredBusinessAddress = Registered business address
-primaryContactDetails.confirmAddress.radio.title = Do you want to use this as your primary contact address?
 primaryContactDetails.confirmAddress.empty.error = Choose an option
 
 primaryContactDetails.address.title = What is the primary contact’s business address?
