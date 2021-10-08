@@ -102,10 +102,6 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("submit").text() mustBe "Save and Continue"
     }
 
-    "display 'Save and come back later' button" in {
-
-      view.getElementById("save_and_come_back_later").text() mustBe "Save and come back later"
-    }
   }
 
   "Partnership Type when filled" should {

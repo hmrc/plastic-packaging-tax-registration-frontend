@@ -14,15 +14,18 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndContinue
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveAndComeBackLater
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features.isUkCompanyPrivateBeta
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{saveAndComeBackLater, saveAndContinue}
 
-@this(saveAndContinue: saveAndContinue, saveAndComeBackLater: saveAndComeBackLater)
+@this(saveAndContinue: saveAndContinue, saveAndComeBackLater: saveAndComeBackLater, appConfig: AppConfig)
 
 @(saveAndContinueKey: String = "site.button.saveAndContinue",
-  saveAndComeBackLaterKey: String = "site.button.saveAndComeBackLater")(implicit messages: Messages)
+        saveAndComeBackLaterKey: String = "site.button.saveAndComeBackLater")(implicit messages: Messages)
 
 <div class="govuk-button-group">
- @saveAndContinue(saveAndContinueKey)
- @saveAndComeBackLater(saveAndComeBackLaterKey)
+    @saveAndContinue(saveAndContinueKey)
+    @if(!appConfig.isDefaultFeatureFlagEnabled(isUkCompanyPrivateBeta)) {
+        @saveAndComeBackLater(saveAndComeBackLaterKey)
+    }
 </div>
