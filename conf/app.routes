@@ -36,11 +36,11 @@ POST       /main-contact-job-title    uk.gov.hmrc.plasticpackagingtax.registrati
 GET        /main-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.displayPage()
 POST       /main-contact-email   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressController.submit()
 
-GET        /primary-contact-email-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeController.displayPage()
-POST       /primary-contact-email-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeController.submit()
+GET        /confirm-email-code   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeController.displayPage()
+POST       /confirm-email-code   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeController.submit()
 
-GET        /primary-contact-email-passcode-confirmation   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage()
-POST       /primary-contact-email-passcode-confirmation   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.submit()
+GET        /email-confirmed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage()
+POST       /email-confirmed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.submit()
 
 GET        /incorrect-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
 

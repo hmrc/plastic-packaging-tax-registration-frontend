@@ -17,7 +17,6 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.Continue
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 
 @this(
@@ -29,10 +28,9 @@
   errorSummary: errorSummary,
   paragraphBody: paragraphBody,
   appConfig: AppConfig,
-  formHelper: FormWithCSRF
+  formHelper: FormWithCSRF,
+  continueButton: continue
 )
-
-
 @()(implicit request: Request[_], messages: Messages)
 
 @hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice.link")</a>}
@@ -41,19 +39,14 @@
   title = Title("primaryContactDetails.emailAddress.passcode.confirmation.title"),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressPasscodeController.displayPage(), messages("site.back.hiddenText")))) {
 
-  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-  @pageHeading(messages("primaryContactDetails.emailAddress.passcode.confirmation.title"))
+    @pageHeading(messages("primaryContactDetails.emailAddress.passcode.confirmation.title"))
 
-  @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(), 'autoComplete -> "off") {
 
-  @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation"), id = Some("email-address-passcode-confirmation-id"))
+        @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation.detail"), id = Some("email-address-passcode-confirmation-id"))
 
-  @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice", hmrcPrivacyLink))
-
-  @govukButton(Button(
-          content = Text(messages("site.button.continue")),
-          classes = "govuk-!-margin-right-1",
-          attributes = Map("id" -> "submit", "name" -> Continue.toString)))
+        @continueButton()
     }
-  }
+}

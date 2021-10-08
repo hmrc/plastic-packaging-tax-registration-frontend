@@ -29,7 +29,8 @@
   errorSummary: errorSummary,
   paragraphBody: paragraphBody,
   appConfig: AppConfig,
-  formHelper: FormWithCSRF
+  formHelper: FormWithCSRF,
+  continueButton: continue
 )
 
 
@@ -66,10 +67,6 @@
                 errorMessage = errorMessages)
             )
 
-    @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.privacyNotice", hmrcPrivacyLink))
-  @govukButton(Button(
-      content = Text(messages("site.button.continue")),
-      classes = "govuk-!-margin-right-1",
-      attributes = Map("id" -> "submit", "name" -> Continue.toString)))
+    @continueButton()
   }
 }

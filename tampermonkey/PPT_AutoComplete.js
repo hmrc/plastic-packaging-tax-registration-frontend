@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.8
+// @version      14.9
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -380,15 +380,16 @@ const primaryContactEmailAddress = () => {
 }
 
 const primaryContactEmailAddressPasscode = () => {
-    if (currentPageIs('/plastic-packaging-tax/primary-contact-email-passcode')) {
+    if (currentPageIs('/plastic-packaging-tax/confirm-email-code')) {
         var passcode = getPasscode()
 
         document.getElementById('value').value = passcode
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
+
 const primaryContactEmailAddressPasscodeConfirmation = () => {
-    if (currentPageIs('/plastic-packaging-tax/primary-contact-email-passcode-confirmation')) {
+    if (currentPageIs('/plastic-packaging-tax/email-confirmed')) {
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
