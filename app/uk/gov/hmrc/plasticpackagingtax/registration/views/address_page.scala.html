@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
@@ -33,8 +34,10 @@
   errorSummary: errorSummary
 )
 
+@(form: Form[Address])(implicit request: JourneyRequest[_], messages: Messages)
 
-@(form: Form[Address])(implicit request: Request[_], messages: Messages)
+@contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
+
 
 @fieldSetBody = {
 
@@ -42,20 +45,17 @@
 
     @inputText(
         field    = form("addressLine1"),
-        labelKey  = "primaryContactDetails.address.addressLine1",
-        labelHiddenKey  = Some("primaryContactDetails.address.addressLine1.hidden")
+        labelKey  = "primaryContactDetails.address.addressLine1"
     )
 
     @inputText(
         field    = form("addressLine2"),
-        labelKey  = "",
-        labelHiddenKey  = Some("primaryContactDetails.address.addressLine2.hidden")
+        labelKey  = "primaryContactDetails.address.addressLine2"
     )
 
     @inputText(
         field    = form("addressLine3"),
-        labelKey  = "",
-        labelHiddenKey  = Some("primaryContactDetails.address.addressLine3.hidden")
+        labelKey  = "primaryContactDetails.address.addressLine3"
     )
 
     @inputText(
@@ -65,13 +65,14 @@
 
     @inputText(
         field    = form("postCode"),
-        labelKey  = "primaryContactDetails.address.postCode"
+        labelKey  = "primaryContactDetails.address.postCode",
+        classes = Some("govuk-input govuk-input--width-5")
     )
 }
 
 
 @govukLayout(
-  title = Title("primaryContactDetails.address.title"),
+  title = Title("primaryContactDetails.address.title", headingArg = contactName),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsConfirmAddressController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
@@ -81,7 +82,7 @@
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages("primaryContactDetails.address.title")),
+                content = Text(messages("primaryContactDetails.address.title", contactName)),
                 classes = gdsFieldsetPageHeading,
                 isPageHeading = true
             )),

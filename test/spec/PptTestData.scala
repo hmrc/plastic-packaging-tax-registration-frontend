@@ -96,7 +96,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   )
 
   protected val testBusinessAddress = Address(addressLine1 = "2 Scala Street",
-                                              addressLine2 = Some("Soho"),
+                                              addressLine2 = "Soho",
                                               townOrCity = "London",
                                               postCode = "W1T 2HN"
   )

@@ -49,8 +49,9 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
       "address mandatory fields are valid" in {
 
         val input = Map(addressLine1 -> "Address Line 1 .'-&",
-                        townOrCity -> "Town or City .'-&",
-                        postCode   -> "LS4 1RH"
+                        addressLine2 -> "Address Line 2 .'-&",
+                        townOrCity   -> "Town or City .'-&",
+                        postCode     -> "LS4 1RH"
         )
 
         val form = Address.form().bind(input)
@@ -60,8 +61,9 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
       "address mandatory fields with lower case post code are valid " in {
 
         val input = Map(addressLine1 -> "Address Line 1 .'-&",
-                        townOrCity -> "Town or City .'-&",
-                        postCode   -> "ls4 1rh"
+                        addressLine2 -> "Address Line 2 .'-&",
+                        townOrCity   -> "Town or City .'-&",
+                        postCode     -> "ls4 1rh"
         )
 
         val form = Address.form().bind(input)

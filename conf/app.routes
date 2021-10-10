@@ -50,8 +50,8 @@ POST       /main-contact-telephone    uk.gov.hmrc.plasticpackagingtax.registrati
 GET        /confirm-primary-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.displayPage()
 POST       /confirm-primary-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsConfirmAddressController.submit()
 
-GET        /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.displayPage()
-POST       /primary-contact-business-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.submit()
+GET        /enter-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.displayPage()
+POST       /enter-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsAddressController.submit()
 
 GET        /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.displayPage()
 POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsCheckAnswersController.submit()

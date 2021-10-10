@@ -58,7 +58,11 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("primaryContactDetails.address.title"))
+      view.select("title").text() must include(
+        messages("primaryContactDetails.address.title",
+                 journeyRequest.registration.primaryContactDetails.name.get
+        )
+      )
     }
 
     "display header" in {
@@ -79,15 +83,6 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
       view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(
         messages("site.back.hiddenText")
-      )
-      view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
-        messages("primaryContactDetails.address.addressLine1.hidden")
-      )
-      view.getElementsByClass("govuk-visually-hidden").get(3).text() must include(
-        messages("primaryContactDetails.address.addressLine2.hidden")
-      )
-      view.getElementsByClass("govuk-visually-hidden").get(4).text() must include(
-        messages("primaryContactDetails.address.addressLine3.hidden")
       )
     }
 
@@ -117,7 +112,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
       val anAddress =
         Address(addressLine1 = "Address Line 1",
-                addressLine2 = Some("Address Line 2"),
+                addressLine2 = "Address Line 2",
                 addressLine3 = Some("Address Line 3"),
                 townOrCity = "townOrCity",
                 postCode = "LS3 3UJ"
@@ -141,7 +136,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
       val anInvalidAddress =
         Address(addressLine1 = "",
-                addressLine2 = Some("Address Line 2"),
+                addressLine2 = "",
                 addressLine3 = Some("Address Line 3"),
                 townOrCity = "",
                 postCode = ""
@@ -154,7 +149,8 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("addressLine1", "Enter an address")
+      view must haveGovukFieldError("addressLine1", "Enter address line 1")
+      view must haveGovukFieldError("addressLine2", "Enter address line 2")
       view must haveGovukFieldError("townOrCity", "Enter a town or city")
       view must haveGovukFieldError("postCode", "Enter a postcode")
     }
@@ -163,7 +159,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
       val anInvalidAddress =
         Address(addressLine1 = "*&%^",
-                addressLine2 = Some("Address Line 2*&%^"),
+                addressLine2 = "Address Line 2*&%^",
                 addressLine3 = Some("Address Line 3*&%^"),
                 townOrCity = "*&%^",
                 postCode = "*&%^"
