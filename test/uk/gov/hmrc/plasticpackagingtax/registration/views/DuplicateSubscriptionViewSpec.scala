@@ -28,21 +28,7 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
   private val page: duplicate_subscription_page =
     instanceOf[duplicate_subscription_page]
 
-  private def pageParagraphMessageKeys =
-    List("duplicateSubscription.detail",
-         "pptHelpline.intro",
-         "pptHelpline.telephone.title",
-         "pptHelpline.telephone.detail",
-         "pptHelpline.textphone.title",
-         "pptHelpline.textphone.detail",
-         "pptHelpline.telephone.outsideUK.title",
-         "pptHelpline.telephone.outsideUK.detail",
-         "pptHelpline.openingTimes.title",
-         "pptHelpline.openingTimes.detail.1",
-         "pptHelpline.openingTimes.detail.2"
-    )
-
-  private def createView(): Html = page(Some("Plastic Packaging Ltd"))(journeyRequest, messages)
+  private def createView(): Html = page()(journeyRequest, messages)
 
   "Duplicate Subscription Page" should {
 
@@ -53,25 +39,19 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display heading" in {
-      view.select("h1").text() must include(messages("duplicateSubscription.heading"))
+      view.select("h1").text() must include(messages("duplicateSubscription.title"))
     }
 
     "display detail" in {
       view.select("p.govuk-body").text() must include(
-        messages(pageParagraphMessageKeys.head, "Plastic Packaging Ltd")
+        messages("duplicateSubscription.detail", "Plastic Packaging Ltd")
       )
-    }
-
-    "display ppt helpline detail" in {
-      pageParagraphMessageKeys.tail.foreach { messageKey =>
-        view.select("p.govuk-body").text must include(messages(messageKey))
-      }
     }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Some("Test Company"))(journeyRequest, messages)
-    page.render(Some("Test Company"), journeyRequest, messages)
+    page.f()(journeyRequest, messages)
+    page.render(journeyRequest, messages)
   }
 
 }

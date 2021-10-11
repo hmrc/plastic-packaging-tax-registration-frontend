@@ -47,10 +47,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponseFailure,
   SubscriptionCreateResponseSuccess
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  duplicate_subscription_page,
-  review_registration_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -65,8 +62,7 @@ class ReviewRegistrationController @Inject() (
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
   auditor: Auditor,
-  reviewRegistrationPage: review_registration_page,
-  duplicateSubscriptionPage: duplicate_subscription_page
+  reviewRegistrationPage: review_registration_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -161,12 +157,11 @@ class ReviewRegistrationController @Inject() (
   }
 
   private def handleFailedSubscription(registration: Registration, failures: Seq[EisError])(implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[AnyContent]
+    hc: HeaderCarrier
   ): Result = {
     performFailedSubscriptionCommonTasks(registration)
     if (failures.head.isDuplicateSubscription)
-      Ok(duplicateSubscriptionPage(registration.organisationDetails.businessName))
+      Redirect(routes.NotableErrorController.duplicateRegistration())
     else
       Redirect(routes.NotableErrorController.subscriptionFailure())
   }

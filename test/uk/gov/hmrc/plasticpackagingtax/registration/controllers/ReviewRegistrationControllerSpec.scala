@@ -62,8 +62,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
                                      subscriptionsConnector = mockSubscriptionsConnector,
                                      auditor = mockAuditor,
                                      reviewRegistrationPage = mockReviewRegistrationPage,
-                                     metrics = metricsMock,
-                                     duplicateSubscriptionPage = mockDuplicateSubscriptionPage
+                                     metrics = metricsMock
     )
 
   override protected def beforeEach(): Unit = {
@@ -74,7 +73,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
     given(mockReviewRegistrationPage.apply(any(), any(), any(), any())(any(), any())).willReturn(
       HtmlFormat.empty
     )
-    given(mockDuplicateSubscriptionPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -375,9 +374,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.NotableErrorController.enrolmentFailure().url)
       }
-    }
 
-    "display the duplicate subscription page" when {
       "duplicate subscription detected at the back end" in {
         val registration = aCompletedUkCompanyRegistration
         authorizedUser()
@@ -394,10 +391,10 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        status(result) mustBe OK
-        verify(mockDuplicateSubscriptionPage).apply(
-          ArgumentMatchers.eq(registration.organisationDetails.businessName)
-        )(any(), any())
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.NotableErrorController.duplicateRegistration().url
+        )
       }
     }
   }

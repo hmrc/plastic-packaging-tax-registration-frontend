@@ -25,6 +25,7 @@ import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   business_verification_failure_page,
+  duplicate_subscription_page,
   error_no_save_page,
   error_page,
   grs_failure_page
@@ -33,19 +34,23 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
+  private val mcc = stubMessagesControllerComponents()
+
   private val errorPage                      = mock[error_page]
   private val errorNoSavePage                = mock[error_no_save_page]
-  private val businessVerificationFailedPage = mock[business_verification_failure_page]
   private val grsFailurePage                 = mock[grs_failure_page]
-  private val mcc                            = stubMessagesControllerComponents()
+  private val businessVerificationFailedPage = mock[business_verification_failure_page]
+  private val duplicateSubscriptionPage      = mock[duplicate_subscription_page]
 
   private val controller =
     new NotableErrorController(authenticate = mockAuthAction,
+                               mockJourneyAction,
                                mcc = mcc,
                                errorPage = errorPage,
                                errorNoSavePage = errorNoSavePage,
                                grsFailurePage = grsFailurePage,
-                               businessVerificationFailurePage = businessVerificationFailedPage
+                               businessVerificationFailurePage = businessVerificationFailedPage,
+                               duplicateSubscriptionPage = duplicateSubscriptionPage
     )
 
   override protected def beforeEach(): Unit = {
@@ -54,13 +59,12 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(errorNoSavePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error no save page content")
     )
-    when(grsFailurePage.apply()(any(), any())).thenReturn(
-      HtmlFormat.raw(
-        "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
-      )
-    )
+    when(grsFailurePage.apply()(any(), any())).thenReturn(HtmlFormat.raw("grs failure content"))
     when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error business verification failed content")
+    )
+    when(duplicateSubscriptionPage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("duplicate subscription content")
     )
   }
 
@@ -89,13 +93,18 @@ class NotableErrorControllerSpec extends ControllerSpec {
       contentAsString(resp) mustBe "error business verification failed content"
     }
 
-    "present the business registration failure page on grs not able to find safe id " in {
+    "present the grs failure page" in {
       val resp = controller.grsFailure()(getRequest())
 
       status(resp) mustBe OK
-      contentAsString(
-        resp
-      ) mustBe "Sorry, there is a problem with the service. Try again later. Your answers have not been saved. When the service is available, you will have to start again."
+      contentAsString(resp) mustBe "grs failure content"
+    }
+
+    "present the duplicate subscription page" in {
+      val resp = controller.duplicateRegistration()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "duplicate subscription content"
     }
   }
 }
