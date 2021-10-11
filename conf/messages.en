@@ -141,16 +141,10 @@ primaryContactDetails.emailAddress.format.error = Enter an email address in the 
 
 primaryContactDetails.emailAddress.passcode.title = Enter the code to confirm the email address
 primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK
-primaryContactDetails.emailAddress.passcode.details= We have sent a code to : {0}
 primaryContactDetails.emailAddress.passcode.empty.error = Enter a passcode
-primaryContactDetails.emailAddress.passcode.info= If you use a browser to access your email, you may need to open a new window or tab to see the code.
-primaryContactDetails.emailAddress.passcode.privacyNotice = Full details of how we use your information are in the {0}.
-primaryContactDetails.emailAddress.passcode.privacyNotice.link = HMRC Privacy Notice (opens in a new tab)
 
 primaryContactDetails.emailAddress.passcode.confirmation.title = Email address confirmed
-primaryContactDetails.emailAddress.passcode.confirmation= This will enable us to help you get the most from this service
-primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice = Full details of how we use your information are in the {0}.
-primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice.link = HMRC Privacy Notice (opens in a new tab)
+primaryContactDetails.emailAddress.passcode.confirmation.detail = Your email address is now confirmed.
 
 primaryContactDetails.tooManyAttempts.passcode.title = You have entered an incorrect passcode too many times - Register for the Plastic Packaging Tax and submit returns - GOV.UK
 primaryContactDetails.tooManyAttempts.passcode.1 = You have entered an incorrect passcode too many times

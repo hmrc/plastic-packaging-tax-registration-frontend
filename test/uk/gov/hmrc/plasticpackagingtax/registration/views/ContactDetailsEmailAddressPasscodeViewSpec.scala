@@ -80,7 +80,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
       )
     }
 
-    "display email address passcode  question" in {
+    "display email address passcode question" in {
 
       view.getElementsByAttributeValueMatching("for", "value").text() must include(
         messages("primaryContactDetails.emailAddress.passcode.title")
@@ -90,15 +90,6 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
     "display email address passcode input box" in {
 
       view must containElementWithID("value")
-    }
-
-    "display 'Privacy' Notice" in {
-
-      view.getElementsByClass("govuk-body").get(0).text() must include(
-        messages("primaryContactDetails.emailAddress.passcode.privacyNotice",
-                 messages("primaryContactDetails.emailAddress.passcode.privacyNotice.link")
-        )
-      )
     }
 
     "display 'Continue' button" in {

@@ -50,24 +50,6 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
       )
     }
 
-    "display hint" in {
-
-      view.getElementById("email-address-passcode-confirmation-id").text() must include(
-        messages("primaryContactDetails.emailAddress.passcode.confirmation")
-      )
-    }
-
-    "display 'Privacy' Notice" in {
-
-      view.getElementsByClass("govuk-body").get(1).text() must include(
-        messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice",
-                 messages(
-                   "primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice.link"
-                 )
-        )
-      )
-    }
-
     "display 'Continue' button" in {
       view.getElementById("submit").text() mustBe "Continue"
     }
