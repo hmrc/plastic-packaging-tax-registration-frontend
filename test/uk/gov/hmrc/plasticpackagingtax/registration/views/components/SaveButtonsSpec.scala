@@ -17,11 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views.components
 
 import base.unit.UnitViewSpec
-import com.codahale.metrics.SharedMetricRegistries
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features.isUkCompanyPrivateBeta
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{

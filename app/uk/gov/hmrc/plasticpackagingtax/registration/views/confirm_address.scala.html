@@ -28,9 +28,9 @@
   formHelper: FormWithCSRF,
   pageHeading: pageHeading,
   govukLayout: main_template,
-  govukButton: GovukButton,
+  govukFieldset: GovukFieldset,
   govukRadios : GovukRadios,
-  govukSummaryList : GovukSummaryList,
+  govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
   paragraphBody: paragraphBody,
   saveButtons: saveButtons,
@@ -53,39 +53,10 @@
     )
 }
 
-@govukLayout(
-  title = Title("primaryContactDetails.confirmAddress.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
-    @errorSummary(form.errors)
-
-    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
-    @pageHeading(messages("primaryContactDetails.confirmAddress.title"))
-
-    @paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
-
-    @govukSummaryList(SummaryList(
-        rows = Seq(
-            SummaryListRow(
-                key = Key(
-                    content = Text(messages("primaryContactDetails.confirmAddress.registeredBusinessAddress"))
-                ),
-                value = Value(
-                    content = extractAddress(businessAddress)
-                )
-            )
-        )
-    ))
-
-    @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
-
+    @fieldSetBody = {
+        @paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
+        @govukInsetText(InsetText(content = extractAddress(businessAddress)))
         @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("primaryContactDetails.confirmAddress.radio.title")),
-                    classes = "govuk-fieldset__legend--s",
-                    isPageHeading = false
-                ))
-            )),
             hint = None,
             idPrefix = Some(form("useRegisteredAddress").name),
             name = form("useRegisteredAddress").name,
@@ -95,6 +66,25 @@
             ),
             classes = "govuk-radios",
             errorMessage = form("useRegisteredAddress").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        ))
+    }
+
+@govukLayout(
+  title = Title("primaryContactDetails.confirmAddress.title"),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
+    @errorSummary(form.errors)
+
+    @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
+
+        @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("primaryContactDetails.confirmAddress.heading")),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
+            html = fieldSetBody
         ))
 
         @saveButtons()
