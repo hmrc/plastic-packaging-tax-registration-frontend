@@ -28,6 +28,7 @@
   formHelper: FormWithCSRF,
   pageHeading: pageHeading,
   govukLayout: main_template,
+  govukFieldset: GovukFieldset,
   govukRadios : GovukRadios,
   govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
@@ -52,20 +53,9 @@
     )
 }
 
-@govukLayout(
-  title = Title("primaryContactDetails.confirmAddress.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
-    @errorSummary(form.errors)
-
-    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
-    @pageHeading(messages("primaryContactDetails.confirmAddress.heading"))
-
-    @paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
-
-    @govukInsetText(InsetText(content = extractAddress(businessAddress)))
-
-    @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
-
+    @fieldSetBody = {
+        @paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
+        @govukInsetText(InsetText(content = extractAddress(businessAddress)))
         @govukRadios(Radios(
             hint = None,
             idPrefix = Some(form("useRegisteredAddress").name),
@@ -76,6 +66,25 @@
             ),
             classes = "govuk-radios",
             errorMessage = form("useRegisteredAddress").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        ))
+    }
+
+@govukLayout(
+  title = Title("primaryContactDetails.confirmAddress.title"),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
+    @errorSummary(form.errors)
+
+    @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
+
+        @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("primaryContactDetails.confirmAddress.heading")),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
+            html = fieldSetBody
         ))
 
         @saveButtons()
