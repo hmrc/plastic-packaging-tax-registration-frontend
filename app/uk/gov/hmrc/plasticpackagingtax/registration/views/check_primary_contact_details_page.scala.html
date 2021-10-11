@@ -36,7 +36,7 @@
 @extractAddress(address: Address) = @{
     Seq(
         Some(address.addressLine1),
-        address.addressLine2,
+        Some(address.addressLine2),
         address.addressLine3,
         Some(address.townOrCity),
         Some(address.postCode)

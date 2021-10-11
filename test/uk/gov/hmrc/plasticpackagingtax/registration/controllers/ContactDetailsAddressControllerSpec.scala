@@ -44,7 +44,11 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
     )
 
   private val anAddress =
-    Address(addressLine1 = "Address Line 1", townOrCity = "townOrCity", postCode = "LS3 3UJ")
+    Address(addressLine1 = "Address Line 1",
+            addressLine2 = "Address Line 2",
+            townOrCity = "townOrCity",
+            postCode = "LS3 3UJ"
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -112,7 +116,8 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
       "return 400 (BAD_REQUEST) for " + formAction._1 when {
         "user does not enter mandatory fields" in {
           authorizedUser()
-          val invalidAddress = Address(addressLine1 = "", townOrCity = "", postCode = "")
+          val invalidAddress =
+            Address(addressLine1 = "", addressLine2 = "", townOrCity = "", postCode = "")
           val result =
             controller.submit()(postRequestEncoded(invalidAddress, formAction))
 
@@ -122,7 +127,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
         "user enters invalid data" in {
           authorizedUser()
           val invalidAddress = Address(addressLine1 = "Address Line 1",
-                                       addressLine2 = Some("Address Line ****"),
+                                       addressLine2 = "Address Line ****",
                                        townOrCity = "townOrCity",
                                        postCode = "LS3 3UJ"
           )

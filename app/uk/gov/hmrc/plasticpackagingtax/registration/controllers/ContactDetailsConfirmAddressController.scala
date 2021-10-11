@@ -125,7 +125,7 @@ class ContactDetailsConfirmAddressController @Inject() (
           _ =>
             //TODO - temporary while we're working out where to get it from
             Address(addressLine1 = "2 Scala Street",
-                    addressLine2 = Some("Soho"),
+                    addressLine2 = "Soho",
                     townOrCity = "London",
                     postCode = "W1T 2HN"
             )
@@ -140,7 +140,7 @@ class ContactDetailsConfirmAddressController @Inject() (
           partnershipDetails =>
             //TODO - temporary while we're working out where to get it from
             Address(addressLine1 = "3 Scala Street",
-                    addressLine2 = Some("Soho"),
+                    addressLine2 = "Soho",
                     townOrCity = "London",
                     postCode =
                       partnershipDetails.generalPartnershipDetails.fold("W1T 2HN")(_.postcode)

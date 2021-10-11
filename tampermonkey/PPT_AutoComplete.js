@@ -411,7 +411,7 @@ const primaryContactConfirmAddress = () => {
  }
 
 const primaryContactAddress = () => {
-     if (currentPageIs('/plastic-packaging-tax/primary-contact-business-address')) {
+     if (currentPageIs('/plastic-packaging-tax/enter-contact-address')) {
 
          document.getElementById('addressLine1').value = '2-3 Scala Street'
          document.getElementById('addressLine2').value = 'Soho'

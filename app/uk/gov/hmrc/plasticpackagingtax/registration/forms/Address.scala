@@ -22,7 +22,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class Address(
   addressLine1: String,
-  addressLine2: Option[String] = None,
+  addressLine2: String,
   addressLine3: Option[String] = None,
   townOrCity: String,
   postCode: String
@@ -52,10 +52,10 @@ object Address extends CommonFormValidators {
     addressLine1 -> text()
       .verifying(emptyError(addressLine1), isNonEmpty)
       .verifying(notValidError(addressLine1), validateAddressField(addressFieldMaxSize)),
-    addressLine2 -> optional(
+    addressLine2 ->
       text()
-        .verifying(notValidError(addressLine2), validateAddressField(addressFieldMaxSize))
-    ),
+        .verifying(emptyError(addressLine2), isNonEmpty)
+        .verifying(notValidError(addressLine2), validateAddressField(addressFieldMaxSize)),
     addressLine3 -> optional(
       text()
         .verifying(notValidError(addressLine3), validateAddressField(addressFieldMaxSize))

@@ -199,7 +199,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
                                     phoneNumber = Some("0203 4567 890"),
                                     address = Some(
                                       Address(addressLine1 = "2 Scala Street",
-                                              addressLine2 = Some("Soho"),
+                                              addressLine2 = "Soho",
                                               townOrCity = "London",
                                               postCode = "W1T 2HN"
                                       )
