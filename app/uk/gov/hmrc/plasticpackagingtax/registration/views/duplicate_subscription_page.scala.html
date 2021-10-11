@@ -14,8 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 
 @this(
         govukLayout: main_template,
@@ -23,9 +24,13 @@
         paragraphBody: paragraphBody
 )
 
-@(businessName: Option[String])(implicit request: Request[_], messages: Messages)
+@()(implicit request: JourneyRequest[_], messages: Messages)
 
 @govukLayout(title = Title("duplicateSubscription.title")) {
     @pageHeading(text = messages("duplicateSubscription.title"))
-    @paragraphBody(message = messages("duplicateSubscription.detail", businessName.getOrElse("<missing-business-name>")))
+    @paragraphBody(
+        message = messages("duplicateSubscription.detail",
+            request.registration.organisationDetails.businessName.getOrElse("your organisation")
+        )
+    )
 }

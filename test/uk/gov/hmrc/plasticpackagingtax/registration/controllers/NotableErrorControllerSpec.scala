@@ -63,7 +63,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error business verification failed content")
     )
-    when(duplicateSubscriptionPage.apply(any())(any(), any())).thenReturn(
+    when(duplicateSubscriptionPage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("duplicate subscription content")
     )
   }

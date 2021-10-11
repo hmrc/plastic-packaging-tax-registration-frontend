@@ -28,7 +28,7 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
   private val page: duplicate_subscription_page =
     instanceOf[duplicate_subscription_page]
 
-  private def createView(): Html = page(Some("Plastic Packaging Ltd"))(journeyRequest, messages)
+  private def createView(): Html = page()(journeyRequest, messages)
 
   "Duplicate Subscription Page" should {
 
@@ -50,8 +50,8 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Some("Test Company"))(journeyRequest, messages)
-    page.render(Some("Test Company"), journeyRequest, messages)
+    page.f()(journeyRequest, messages)
+    page.render(journeyRequest, messages)
   }
 
 }

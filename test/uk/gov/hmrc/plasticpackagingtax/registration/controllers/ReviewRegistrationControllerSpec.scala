@@ -73,7 +73,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
     given(mockReviewRegistrationPage.apply(any(), any(), any(), any())(any(), any())).willReturn(
       HtmlFormat.empty
     )
-    given(mockDuplicateSubscriptionPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {

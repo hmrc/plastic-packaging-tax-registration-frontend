@@ -65,7 +65,7 @@ class NotableErrorController @Inject() (
 
   def duplicateRegistration(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(duplicateSubscriptionPage(request.registration.organisationDetails.businessName))
+      Ok(duplicateSubscriptionPage())
     }
 
 }
