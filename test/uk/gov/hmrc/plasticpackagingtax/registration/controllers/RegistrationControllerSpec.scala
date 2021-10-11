@@ -20,31 +20,26 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.OK
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionStatus,
   SubscriptionStatusResponse
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  duplicate_subscription_page,
-  registration_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class RegistrationControllerSpec extends ControllerSpec {
 
-  private val mcc                       = stubMessagesControllerComponents()
-  private val registrationPage          = mock[registration_page]
-  private val duplicateSubscriptionPage = mock[duplicate_subscription_page]
+  private val mcc              = stubMessagesControllerComponents()
+  private val registrationPage = mock[registration_page]
 
   private val controller =
     new RegistrationController(authenticate = mockAuthAction,
                                mockJourneyAction,
                                mcc = mcc,
                                registrationPage = registrationPage,
-                               duplicateSubscriptionPage = duplicateSubscriptionPage,
                                subscriptionsConnector = mockSubscriptionsConnector
     )
 
@@ -53,17 +48,10 @@ class RegistrationControllerSpec extends ControllerSpec {
     when(registrationPage.apply(any())(any(), any())).thenReturn(
       HtmlFormat.raw("Registration Page")
     )
-    when(duplicateSubscriptionPage.apply(any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Duplicate Page")
-    )
   }
 
   override protected def afterEach(): Unit = {
-    reset(registrationPage,
-          duplicateSubscriptionPage,
-          mockRegistrationConnector,
-          mockSubscriptionsConnector
-    )
+    reset(registrationPage, mockRegistrationConnector, mockSubscriptionsConnector)
     super.afterEach()
   }
 
@@ -102,36 +90,33 @@ class RegistrationControllerSpec extends ControllerSpec {
           verifyNoInteractions(mockSubscriptionsConnector)
         }
       }
+    }
 
-      "display duplicate subscription page" when {
-
-        "a 'businessPartnerId' exists that is already subscribed" in {
-          authorizedUser()
-          mockRegistrationFind(
-            aRegistration(
-              withOrganisationDetails(organisationDetails =
-                registeredUkCompanyOrgDetails()
-              )
+    "redirect to duplicate subscription page" when {
+      "a 'businessPartnerId' exists that is already subscribed" in {
+        authorizedUser()
+        mockRegistrationFind(
+          aRegistration(
+            withOrganisationDetails(organisationDetails =
+              registeredUkCompanyOrgDetails()
             )
           )
-          mockGetSubscriptionStatus(
-            SubscriptionStatusResponse(status = SubscriptionStatus.SUBSCRIBED,
-                                       pptReference = Some("XXPPTP123456789")
-            )
+        )
+        mockGetSubscriptionStatus(
+          SubscriptionStatusResponse(status = SubscriptionStatus.SUBSCRIBED,
+                                     pptReference = Some("XXPPTP123456789")
           )
-          val result = controller.displayPage()(getRequest())
+        )
+        val result = controller.displayPage()(getRequest())
 
-          status(result) mustBe OK
-          contentAsString(result) mustBe "Duplicate Page"
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.NotableErrorController.duplicateRegistration().url
+        )
 
-          verify(mockSubscriptionsConnector).getSubscriptionStatus(any())(any())
-        }
-
+        verify(mockSubscriptionsConnector).getSubscriptionStatus(any())(any())
       }
     }
-  }
-
-  "Registration Controller" should {
 
     "return error" when {
 

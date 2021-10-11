@@ -16,19 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  duplicate_subscription_page,
-  registration_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -37,7 +34,6 @@ class RegistrationController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   registrationPage: registration_page,
-  duplicateSubscriptionPage: duplicate_subscription_page,
   subscriptionsConnector: SubscriptionsConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -50,7 +46,7 @@ class RegistrationController @Inject() (
             statusResponse <- subscriptionsConnector.getSubscriptionStatus(safeNumber)
           } yield statusResponse.status match {
             case SUBSCRIBED =>
-              Ok(duplicateSubscriptionPage(request.registration.organisationDetails.businessName))
+              Redirect(routes.NotableErrorController.duplicateRegistration())
             case _ => Ok(registrationPage(request.registration))
           }
         case None => Future.successful(Ok(registrationPage(request.registration)))

@@ -16,19 +16,16 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.pptHelplineDetails
 
 @this(
         govukLayout: main_template,
         pageHeading: pageHeading,
-        paragraphBody: paragraphBody,
-        pptHelplineDetails: pptHelplineDetails
+        paragraphBody: paragraphBody
 )
 
 @(businessName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(title = Title("duplicateSubscription.title")) {
-    @pageHeading(text = messages("duplicateSubscription.heading"))
+    @pageHeading(text = messages("duplicateSubscription.title"))
     @paragraphBody(message = messages("duplicateSubscription.detail", businessName.getOrElse("<missing-business-name>")))
-    @pptHelplineDetails()
 }

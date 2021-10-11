@@ -271,8 +271,7 @@ businessEntityVerification.failure.heading = Sorry, your business could not be v
 businessEntityVerification.failure.detail = You can try again after 24 hours.
 
 duplicateSubscription.title = Your organisation is already registered
-duplicateSubscription.heading = Your organisation is already registered
-duplicateSubscription.detail = Someone has already submitted a PPT registration for {0}.
+duplicateSubscription.detail = Someone in {0} has already registered for Plastic Packaging Tax (PPT).
 
 pptHelpline.intro = Contact the Plastic Packaging Helpline if you have any questions.
 pptHelpline.telephone.title = Telephone:
