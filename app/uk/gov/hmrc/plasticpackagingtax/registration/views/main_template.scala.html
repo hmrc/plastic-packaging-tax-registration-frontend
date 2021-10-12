@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcTrackingConsentSnippet}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcTrackingConsentSnippet, HmrcReportTechnicalIssueHelper}
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.TimeoutDialogConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -28,7 +28,7 @@
         timeoutDialogConfig: TimeoutDialogConfig,
         govukBackLink: GovukBackLink,
         hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-        hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
         siteHeader: siteHeader,
         phaseBanner: phaseBanner,
         hmrcFooter: HmrcStandardFooter,
@@ -93,13 +93,7 @@
         )
     </div>
     @contentBlock
-    @hmrcReportTechnicalIssue(
-        ReportTechnicalIssue(
-            serviceCode = "plastic-packaging-tax",
-            language = if(messages.lang.code == "en") En else Cy,
-            referrerUrl = Some(s"${request.uri}"),
-        )
-    )
+    @hmrcReportTechnicalIssueHelper()
 }
 
 @govukLayout(
