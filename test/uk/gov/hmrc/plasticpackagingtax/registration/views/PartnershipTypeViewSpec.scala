@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{PartnershipType, PartnershipTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipType.form
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
@@ -77,23 +77,29 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
     "display radio inputs" in {
 
       view.getElementById("answer").attr("value").text() mustBe GENERAL_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").first().text() mustBe GENERAL_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").first().text() mustBe PartnershipTypeEnum.displayName(
+        GENERAL_PARTNERSHIP
+      )
       view.getElementById("answer-2").attr(
         "value"
       ).text() mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(
-        1
-      ).text() mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(1).text() mustBe PartnershipTypeEnum.displayName(
+        LIMITED_LIABILITY_PARTNERSHIP
+      )
       view.getElementById("answer-3").attr("value").text() mustBe LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(2).text() mustBe LIMITED_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(2).text() mustBe PartnershipTypeEnum.displayName(
+        LIMITED_PARTNERSHIP
+      )
       view.getElementById("answer-4").attr("value").text() mustBe SCOTTISH_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(3).text() mustBe SCOTTISH_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(3).text() mustBe PartnershipTypeEnum.displayName(
+        SCOTTISH_PARTNERSHIP
+      )
       view.getElementById("answer-5").attr(
         "value"
       ).text() mustBe SCOTTISH_LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(
-        4
-      ).text() mustBe SCOTTISH_LIMITED_PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(4).text() mustBe PartnershipTypeEnum.displayName(
+        SCOTTISH_LIMITED_PARTNERSHIP
+      )
     }
 
     "display 'Save And Continue' button" in {

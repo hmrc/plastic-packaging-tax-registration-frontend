@@ -18,17 +18,23 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
+import play.api.i18n.Messages
 import play.api.libs.json.{Format, Reads, Writes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
 
 object OrgType extends Enumeration {
   type OrgType = Value
-  val UK_COMPANY: Value                        = Value("UK limited or unlimited company")
-  val SOLE_TRADER: Value                       = Value("Sole trader")
+  val UK_COMPANY: Value                        = Value("UkCompany")
+  val SOLE_TRADER: Value                       = Value("SoleTrader")
   val PARTNERSHIP: Value                       = Value("Partnership")
-  val CHARITY_OR_NOT_FOR_PROFIT: Value         = Value("Charity, Not for Profit, Trust or Society")
-  val OVERSEAS_COMPANY: Value                  = Value("Overseas company")
+  val CHARITY_OR_NOT_FOR_PROFIT: Value         = Value("RegisteredSociety")
+  val OVERSEAS_COMPANY: Value                  = Value("OverseasCompany")
   def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
+
+  def displayName(orgType: OrgType)(implicit messages: Messages): String =
+    messages(s"organisationDetails.type.$orgType")
+
+  implicit def value(orgType: OrgType): String = orgType.toString
 
   implicit val format: Format[OrgType] =
     Format(Reads.enumNameReads(OrgType), Writes.enumNameWrites)

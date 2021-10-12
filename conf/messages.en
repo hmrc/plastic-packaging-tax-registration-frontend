@@ -223,8 +223,20 @@ organisationDetails.basedInUk.empty.error = Choose an option
 organisationDetails.type.title = What is your organisation type?
 organisationDetails.type.empty.error = Value must be selected
 
+organisationDetails.type.UkCompany = UK limited or unlimited company
+organisationDetails.type.SoleTrader = Sole trader
+organisationDetails.type.Partnership = Partnership
+organisationDetails.type.RegisteredSociety = Charity, Not for Profit, Trust or Society
+organisationDetails.type.OverseasCompany = Overseas company
+
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected
+
+partnership.type.GeneralPartnership = General partnership
+partnership.type.LimitedLiabilityPartnership = Limited liability partnership
+partnership.type.LimitedPartnership = Limited partnership
+partnership.type.ScottishPartnership = Scottish partnership
+partnership.type.ScottishLimitedPartnership = Scottish limited partnership
 
 unauthorised.heading = You must be registered to use this service
 unauthorised.paragraph.1 = You need to {0} to use this service

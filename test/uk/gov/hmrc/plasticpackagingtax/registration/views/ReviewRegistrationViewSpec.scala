@@ -29,7 +29,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   Date,
   LiabilityExpectedWeight,
-  LiabilityWeight
+  LiabilityWeight,
+  OrgType
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
@@ -149,7 +150,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
                     organisationAddressKey,
                     ukCompanyView
         ) mustBe "2 Scala Street Soho London W1T 2HN"
-        getValueFor(organisationSection, organisationTypeKey) mustBe UK_COMPANY.toString
+        getValueFor(organisationSection, organisationTypeKey) mustBe OrgType.displayName(UK_COMPANY)
         getValueFor(organisationSection,
                     organisationCnrKey,
                     ukCompanyView
