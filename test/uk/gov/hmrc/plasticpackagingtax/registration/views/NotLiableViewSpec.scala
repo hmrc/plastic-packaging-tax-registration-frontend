@@ -96,7 +96,7 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
         "http://localhost:9250/contact/beta-feedback"
       )
       view.getElementById("feedback-link") must haveHref(
-        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:9250/"
+        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
       )
     }
 
@@ -104,7 +104,7 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
       val unauthenticatedView = page()(FakeRequest(), messages)
       unauthenticatedView.getElementById("feedback-link") must haveHref(
-        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax&backUrl=http://localhost:9250/"
+        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
       )
     }
   }

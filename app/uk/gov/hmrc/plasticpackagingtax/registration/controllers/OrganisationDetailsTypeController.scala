@@ -106,7 +106,7 @@ class OrganisationDetailsTypeController @Inject() (
       SoleTraderGrsCreateRequest(appConfig.grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
-                                 appConfig.exitSurveyUrl
+                                 appConfig.externalSignOutLink
       )
     )
 
@@ -117,7 +117,7 @@ class OrganisationDetailsTypeController @Inject() (
       UkCompanyGrsCreateRequest(appConfig.grsCallbackUrl,
                                 Some(request2Messages(request)("service.name")),
                                 appConfig.serviceIdentifier,
-                                appConfig.exitSurveyUrl
+                                appConfig.externalSignOutLink
       )
     )
 
