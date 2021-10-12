@@ -147,7 +147,7 @@ primaryContactDetails.emailAddress.passcode.empty.error = Enter a passcode
 primaryContactDetails.emailAddress.passcode.confirmation.title = Email address confirmed
 primaryContactDetails.emailAddress.passcode.confirmation.detail = Your email address is now confirmed.
 
-primaryContactDetails.tooManyAttempts.passcode.title = You''ve been locked out of your PPT registration
+primaryContactDetails.tooManyAttempts.passcode.title = You’ve been locked out of your PPT registration
 primaryContactDetails.tooManyAttempts.passcode.1 = This is because you entered the wrong email passcode too many times.
 primaryContactDetails.tooManyAttempts.passcode.2 = You can try again after 24 hours by signing into your PPT registration.
 
