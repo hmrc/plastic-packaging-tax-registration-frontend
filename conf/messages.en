@@ -147,9 +147,9 @@ primaryContactDetails.emailAddress.passcode.empty.error = Enter a passcode
 primaryContactDetails.emailAddress.passcode.confirmation.title = Email address confirmed
 primaryContactDetails.emailAddress.passcode.confirmation.detail = Your email address is now confirmed.
 
-primaryContactDetails.tooManyAttempts.passcode.title = You have entered an incorrect passcode too many times - Register for the Plastic Packaging Tax and submit returns - GOV.UK
-primaryContactDetails.tooManyAttempts.passcode.1 = You have entered an incorrect passcode too many times
-primaryContactDetails.tooManyAttempts.passcode.2 = You must log out of you Government Gateway account and log back in to restart your registration.
+primaryContactDetails.tooManyAttempts.passcode.title = You''ve been locked out of your PPT registration
+primaryContactDetails.tooManyAttempts.passcode.1 = This is because you entered the wrong email passcode too many times.
+primaryContactDetails.tooManyAttempts.passcode.2 = You can try again after 24 hours by signing into your PPT registration.
 
 primaryContactDetails.phoneNumber.title = What is {0}’s telephone number?
 primaryContactDetails.phoneNumber.caption = We’ll use this to contact you about your PPT account.
