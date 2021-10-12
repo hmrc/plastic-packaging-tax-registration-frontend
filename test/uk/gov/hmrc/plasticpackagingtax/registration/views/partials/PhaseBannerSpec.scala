@@ -36,12 +36,12 @@ class PhaseBannerSpec extends UnitViewSpec with Matchers {
   private val authenticatedLink =
     "http://localhost:9250/contact/beta-feedback?" +
       "service=plastic-packaging-tax&" +
-      "backUrl=http://localhost:9250/plastic-packaging-tax/some-page"
+      "backUrl=http://localhost:8503/plastic-packaging-tax/some-page"
 
   private val unauthenticatedLink =
     "http://localhost:9250/contact/beta-feedback-unauthenticated?" +
       "service=plastic-packaging-tax&" +
-      "backUrl=http://localhost:9250/plastic-packaging-tax/some-page"
+      "backUrl=http://localhost:8503/plastic-packaging-tax/some-page"
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -34,6 +34,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -47,7 +48,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val selfBaseUrl: String = config
     .getOptional[String]("platform.frontend.host")
-    .getOrElse("http://localhost:9250")
+    .getOrElse("http://localhost:8503")
 
   lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
 
@@ -59,6 +60,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val loginUrl         = config.get[String]("urls.login")
   lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
+
+  lazy val externalSignOutLink =
+    s"$selfBaseUrl${routes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction).url}"
 
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
