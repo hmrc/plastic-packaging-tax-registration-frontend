@@ -22,18 +22,10 @@ import spec.ViewMatchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
 
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
-
 trait ViewAssertions extends ViewMatchers {
 
   def containTimeoutDialogFunction(view: Element) =
-    view.getElementById("timeout-dialog") != null &&
-      view.getElementsByTag("script")
-        .map(
-          s =>
-            s.getElementsByAttributeValueContaining("src", "/assets/javascripts/timeoutDialog.js")
-        )
-        .nonEmpty
+    view.select("meta[name='hmrc-timeout-dialog']").size() == 1
 
   def displaySignOutLink(view: Element) = {
     view.getElementsByClass("hmrc-sign-out-nav__link").first().text() must include("Sign out")

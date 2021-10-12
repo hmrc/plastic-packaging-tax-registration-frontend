@@ -19,15 +19,15 @@ package uk.gov.hmrc.plasticpackagingtax.registration.config
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.duration.FiniteDuration
 
 @Singleton
 class TimeoutDialogConfig @Inject() (config: ServicesConfig) {
 
-  val timeout: Duration =
-    config.getDuration("timeoutDialog.timeout").asInstanceOf[FiniteDuration]
+  val timeoutSecs: Int =
+    config.getDuration("timeoutDialog.timeout").toSeconds.toInt
 
-  val countdown: Duration =
-    config.getDuration("timeoutDialog.countdown").asInstanceOf[FiniteDuration]
+  val countdownSecs: Int =
+    config.getDuration("timeoutDialog.countdown").toSeconds.toInt
 
 }
