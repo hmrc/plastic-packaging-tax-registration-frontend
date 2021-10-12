@@ -42,7 +42,7 @@ POST       /confirm-email-code   uk.gov.hmrc.plasticpackagingtax.registration.co
 GET        /email-confirmed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage()
 POST       /email-confirmed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsEmailAddressPasscodeConfirmationController.submit()
 
-GET        /incorrect-passcode   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
+GET        /email-verification-failed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
 
 GET        /main-contact-telephone    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.displayPage()
 POST       /main-contact-telephone    uk.gov.hmrc.plasticpackagingtax.registration.controllers.ContactDetailsTelephoneNumberController.submit()

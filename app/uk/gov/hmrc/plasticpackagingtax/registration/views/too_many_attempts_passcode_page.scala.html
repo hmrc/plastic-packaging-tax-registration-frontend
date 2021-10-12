@@ -14,18 +14,16 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.paragraphBody
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.pageHeading
 
 @this(
   govukLayout: main_template,
-  govukButton: GovukButton,
-  govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
-  errorSummary: errorSummary,
   paragraphBody: paragraphBody,
-  appConfig: AppConfig,
+  pageHeading: pageHeading,
   formHelper: FormWithCSRF
 )
 
@@ -37,12 +35,9 @@
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-    <h1 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--l">
-            @messages("primaryContactDetails.tooManyAttempts.passcode.1")
-        </label>
-    </h1>
+  @pageHeading(messages("primaryContactDetails.tooManyAttempts.passcode.title"))
 
-  @paragraphBody(message = messages("primaryContactDetails.tooManyAttempts.passcode.2"), id = Some("tooManyAttempts-passcode-id"))
+  @paragraphBody(message = messages("primaryContactDetails.tooManyAttempts.passcode.1"), id = Some("tooManyAttempts-passcode-id-1"))
+  @paragraphBody(message = messages("primaryContactDetails.tooManyAttempts.passcode.2"), id = Some("tooManyAttempts-passcode-id-2"))
 
 }
