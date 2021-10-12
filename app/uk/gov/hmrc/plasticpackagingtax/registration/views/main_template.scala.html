@@ -14,15 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.siteHeader
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBanner
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.timeoutDialog
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcTrackingConsentSnippet}
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.TimeoutDialogConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardFooter
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.{phaseBanner, siteHeader}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
 @this(
         govukHeader: GovukHeader,
@@ -34,7 +31,8 @@
         hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
         siteHeader: siteHeader,
         phaseBanner: phaseBanner,
-        hmrcFooter: HmrcStandardFooter
+        hmrcFooter: HmrcStandardFooter,
+        hmrcTimeoutDialog: HmrcTimeoutDialog
 )
 @(title: Title,
   backButton: Option[BackButton] = None,
@@ -53,7 +51,18 @@
         <!--[if gt IE 8]><!--><link href='@routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" /><!--<![endif]-->
 
     @if(useTimeoutDialog) {
-        @timeoutDialog(request.uri, timeoutDialogConfig.timeout, timeoutDialogConfig.countdown)
+        @hmrcTimeoutDialog(TimeoutDialog(
+          timeout = Some(timeoutDialogConfig.timeoutSecs),
+          countdown = Some(timeoutDialogConfig.countdownSecs),
+          keepAliveUrl = Some(request.uri),
+          signOutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction).url),
+          timeoutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.SessionTimeout).url),
+          title = Some(messages("timeoutDialog.title")),
+          message = Some(messages("timeoutDialog.message")),
+          messageSuffix = Some(messages("timeoutDialog.messageSuffix")),
+          keepAliveButtonText = Some(messages("timeoutDialog.keepAlive.text")),
+          signOutButtonText = Some(messages("timeoutDialog.signout.text"))
+        ))
     }
 }
 

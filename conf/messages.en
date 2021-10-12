@@ -19,12 +19,13 @@ site.button.continue = Continue
 general.true = Yes
 general.false = No
 
-sessionTimout.title = For your security, we signed you out
-sessionTimout.paragraph.saved = We saved your answers.
+sessionTimout.title = For your security, you have been signed out
+sessionTimout.detail = Your answers have been saved.
 sessionTimout.signin.button = Sign in
 
-timeoutDialog.title = Your session will timeout soon
+timeoutDialog.title = You’re about to be signed out
 timeoutDialog.message = For your security, we will sign you out in
+timeoutDialog.messageSuffix = Your answers will be saved.
 timeoutDialog.keepAlive.text = Stay signed in
 timeoutDialog.signout.text = Sign out
 

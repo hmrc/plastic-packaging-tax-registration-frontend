@@ -81,7 +81,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display visually hidden labels" in {
 
-      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(
+      view.getElementsByClass("govuk-visually-hidden").get(0).text() must include(
         messages("site.back.hiddenText")
       )
     }
