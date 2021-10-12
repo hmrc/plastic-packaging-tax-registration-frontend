@@ -24,6 +24,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 @import java.time.format.DateTimeFormatter
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -160,7 +161,7 @@
     SummaryList(
         rows = Seq(
             row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
+            row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(OrgType.displayName)),
             row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.get.companyNumber)),
             row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.get.ctutr))
             ).filterNot(_.value.content == Empty)

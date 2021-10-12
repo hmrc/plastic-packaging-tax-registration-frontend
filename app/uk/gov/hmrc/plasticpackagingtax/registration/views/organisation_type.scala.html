@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.displayName
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{UK_COMPANY, SOLE_TRADER, PARTNERSHIP, CHARITY_OR_NOT_FOR_PROFIT, OVERSEAS_COMPANY}
 
 @this(
@@ -55,11 +56,11 @@
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = Seq(
-                    RadioItem(content = Text(UK_COMPANY.toString), value = Some(UK_COMPANY.toString), checked = form("answer").value.contains(UK_COMPANY.toString)),
-                    RadioItem(content = Text(SOLE_TRADER.toString), value = Some(SOLE_TRADER.toString), checked = form("answer").value.contains(SOLE_TRADER.toString)),
-                    RadioItem(content = Text(PARTNERSHIP.toString), value = Some(PARTNERSHIP.toString), checked = form("answer").value.contains(PARTNERSHIP.toString)),
-                    RadioItem(content = Text(CHARITY_OR_NOT_FOR_PROFIT.toString), value = Some(CHARITY_OR_NOT_FOR_PROFIT.toString), checked = form("answer").value.contains(CHARITY_OR_NOT_FOR_PROFIT.toString)),
-                    RadioItem(content = Text(OVERSEAS_COMPANY.toString), value = Some(OVERSEAS_COMPANY.toString), checked = form("answer").value.contains(OVERSEAS_COMPANY.toString))
+                    RadioItem(content = Text(displayName(UK_COMPANY)), value = Some(UK_COMPANY), checked = form("answer").value.contains(UK_COMPANY)),
+                    RadioItem(content = Text(displayName(SOLE_TRADER)), value = Some(SOLE_TRADER), checked = form("answer").value.contains(SOLE_TRADER)),
+                    RadioItem(content = Text(displayName(PARTNERSHIP)), value = Some(PARTNERSHIP), checked = form("answer").value.contains(PARTNERSHIP)),
+                    RadioItem(content = Text(displayName(CHARITY_OR_NOT_FOR_PROFIT)), value = Some(CHARITY_OR_NOT_FOR_PROFIT), checked = form("answer").value.contains(CHARITY_OR_NOT_FOR_PROFIT)),
+                    RadioItem(content = Text(displayName(OVERSEAS_COMPANY)), value = Some(OVERSEAS_COMPANY), checked = form("answer").value.contains(OVERSEAS_COMPANY))
                 ),
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType.form
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -75,15 +75,19 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display radio inputs" in {
 
       view.getElementById("answer").attr("value").text() mustBe UK_COMPANY.toString
-      view.getElementsByClass("govuk-label").first().text() mustBe UK_COMPANY.toString
+      view.getElementsByClass("govuk-label").first().text() mustBe OrgType.displayName(UK_COMPANY)
       view.getElementById("answer-2").attr("value").text() mustBe SOLE_TRADER.toString
-      view.getElementsByClass("govuk-label").get(1).text() mustBe SOLE_TRADER.toString
+      view.getElementsByClass("govuk-label").get(1).text() mustBe OrgType.displayName(SOLE_TRADER)
       view.getElementById("answer-3").attr("value").text() mustBe PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(2).text() mustBe PARTNERSHIP.toString
+      view.getElementsByClass("govuk-label").get(2).text() mustBe OrgType.displayName(PARTNERSHIP)
       view.getElementById("answer-4").attr("value").text() mustBe CHARITY_OR_NOT_FOR_PROFIT.toString
-      view.getElementsByClass("govuk-label").get(3).text() mustBe CHARITY_OR_NOT_FOR_PROFIT.toString
+      view.getElementsByClass("govuk-label").get(3).text() mustBe OrgType.displayName(
+        CHARITY_OR_NOT_FOR_PROFIT
+      )
       view.getElementById("answer-5").attr("value").text() mustBe OVERSEAS_COMPANY.toString
-      view.getElementsByClass("govuk-label").get(4).text() mustBe OVERSEAS_COMPANY.toString
+      view.getElementsByClass("govuk-label").get(4).text() mustBe OrgType.displayName(
+        OVERSEAS_COMPANY
+      )
     }
 
     "display 'Save And Continue' button" in {

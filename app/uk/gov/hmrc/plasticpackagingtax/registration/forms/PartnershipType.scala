@@ -18,18 +18,25 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
+import play.api.i18n.Messages
 import play.api.libs.json.{Format, Reads, Writes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.PartnershipTypeEnum
 
 object PartnershipTypeEnum extends Enumeration {
   type PartnershipTypeEnum = Value
-  val GENERAL_PARTNERSHIP: Value           = Value("General partnership")
-  val LIMITED_LIABILITY_PARTNERSHIP: Value = Value("Limited liability partnership")
-  val LIMITED_PARTNERSHIP: Value           = Value("Limited partnership")
-  val SCOTTISH_PARTNERSHIP: Value          = Value("Scottish partnership")
-  val SCOTTISH_LIMITED_PARTNERSHIP: Value  = Value("Scottish limited partnership")
+  val GENERAL_PARTNERSHIP: Value           = Value("GeneralPartnership")
+  val LIMITED_LIABILITY_PARTNERSHIP: Value = Value("LimitedLiabilityPartnership")
+  val LIMITED_PARTNERSHIP: Value           = Value("LimitedPartnership")
+  val SCOTTISH_PARTNERSHIP: Value          = Value("ScottishPartnership")
+  val SCOTTISH_LIMITED_PARTNERSHIP: Value  = Value("ScottishLimitedPartnership")
 
   def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
+
+  def displayName(partnershipTypeEnum: PartnershipTypeEnum)(implicit messages: Messages): String =
+    messages(s"partnership.type.$partnershipTypeEnum")
+
+  implicit def value(partnershipTypeEnum: PartnershipTypeEnum): String =
+    partnershipTypeEnum.toString
 
   implicit val format: Format[PartnershipTypeEnum] =
     Format(Reads.enumNameReads(PartnershipTypeEnum), Writes.enumNameWrites)
