@@ -25,13 +25,9 @@ import scala.concurrent.duration.FiniteDuration
 class TimeoutDialogConfig @Inject() (config: ServicesConfig) {
 
   val timeoutSecs: Int =
-    config.getDuration("timeoutDialog.timeout").asInstanceOf[FiniteDuration].toSeconds.asInstanceOf[
-      Int
-    ]
+    config.getDuration("timeoutDialog.timeout").toSeconds.toInt
 
   val countdownSecs: Int =
-    config.getDuration("timeoutDialog.countdown").asInstanceOf[
-      FiniteDuration
-    ].toSeconds.asInstanceOf[Int]
+    config.getDuration("timeoutDialog.countdown").toSeconds.toInt
 
 }
