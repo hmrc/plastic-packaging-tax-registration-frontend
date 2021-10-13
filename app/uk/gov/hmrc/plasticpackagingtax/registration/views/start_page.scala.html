@@ -20,11 +20,11 @@
 @this(
     govukLayout: main_template,
     pageHeading: pageHeading,
+    subHeading: subHeading,
     sectionHeader: sectionHeader,
     paragraphBody: paragraphBody,
     paragraph: paragraph,
     link: link,
-    navList: navList,
     bulletList: bulletList,
     govukInsetText: GovukInsetText,
     govukButton: GovukButton
@@ -93,22 +93,16 @@
 
 @govukLayout(title = Title("startPage.title")) {
 
-<div>
-    @pageHeading(messages("startPage.title"))
-    @paragraphBody(message = messages("startPage.description"), classes = "govuk-body", id = Some("description"))
-</div>
+@pageHeading(messages("startPage.title"), classes="govuk-heading-xl")
+@paragraphBody(message = messages("startPage.description"), classes = "govuk-body", id = Some("description"))
 
 <div>
-    <h2 id="when-to-register" class="@gdsPageHeading">@messages("startPage.whenToRegister")</h2>
+    @subHeading(text = messages("startPage.whenToRegister"), classes="govuk-heading-l", id=Some("when-to-register"))
 
-    <div>
-        @whenToRegister
-    </div>
+    @whenToRegister
 
-    <h2 id="before-you-start" class="@gdsPageSubHeading">@messages("startPage.beforeYouStart")</h2>
-    <div>
-        @beforeYouStart
-    </div>
+    @subHeading(text = messages("startPage.beforeYouStart"), id=Some("before-you-start"))
+    @beforeYouStart
     
     <div class="govuk-!-margin-bottom-8">
         @bulletList(

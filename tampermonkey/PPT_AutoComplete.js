@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.9
+// @version      14.10
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -138,7 +138,7 @@ const currentPageIs = (path) => {
 
 /*########################     PPT REGISTRATION PAGES     ########################## */
 const startPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/start-plastic-packaging-tax-registration')) {
+    if (currentPageIs('/plastic-packaging-tax/start')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }

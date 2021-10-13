@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Registration Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   6.2
+// @version   6.3
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
 // @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax*
@@ -12,7 +12,7 @@
 (function() {
     'use strict';
 
-    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/start-plastic-packaging-tax-registration";
+    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/start";
 
     document.getElementById("email").value = "test.preLaunch@ppt.test";
 
