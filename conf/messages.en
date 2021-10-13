@@ -1,10 +1,9 @@
 feedback=This is a new service - your {0} will help us to improve it.
 feedback.link=feedback
 
-service.name=Plastic Packaging Tax
+service.name=Register for Plastic Packaging Tax
 
 title.format={0} - {1} - GOV.UK
-title.withSection.format={0} - {1} - {2} - GOV.UK
 
 site.back = Back
 site.back.hiddenText = to previous page
@@ -38,28 +37,25 @@ error.title = Sorry, there is a problem with the service
 error.detail1 = Try again later.
 error.detail2 = Your answers have been saved. They will be available for 30 days.
 
-startPage.title.sectionHeader = Guidance
-startPage.meta.title = Start a Plastic Packaging Tax registration
-startPage.title = Plastic Packaging Tax Service
-startPage.description = If you’re a business manufacturing or importing plastic packaging into UK you can use Plastic Packaging Tax Service to make tax return
-startPage.hmrcUrl = HM Revenue & Customs
-startPage.information = All times recorded in this service will be in UK local time
-startPage.contents.header = Contents
-startPage.useThisServiceTo.header = Use this service to:
-startPage.useThisServiceTo.listItem.1 = start a new declaration
-startPage.useThisServiceTo.listItem.2 = complete or discard any drafts
-startPage.useThisServiceTo.listItem.3 = cancel declarations you’ve already submitted
-startPage.useThisServiceTo.listItem.4 = view notifications
-startPage.overview.header = Overview
-startPage.overview.line.1 = Plastic Packaging Tax has been introduced into UK law from 1st April 2022.
-startPage.overview.line.2 = All businesses who are liable to pay plastic packaging must be registered before April 1st 2022.
-startPage.overview.line.3 = Accounts must be provided to HMRC on a quarterly basis, with payment of liabilities due within one month of the accounts due date.
-startPage.informationYouNeed.header = Information you need
-startPage.informationYouNeed.line.1 = You will need:
-startPage.informationYouNeed.listItem.1 = you will need the Corporation Tax Number or Unique Taxpayer Reference for your organisation if you are UK registered business
-startPage.informationYouNeed.listItem.2 = address and contact details for the business you are registering
-startPage.informationYouNeed.listItem.3 = the volume of plastic packaging that the business has imported or manufactured in the last 12 months
-startPage.makeDeclaration.header = Make a declaration
+startPage.title = Register for Plastic Packaging Tax (PPT)
+startPage.description = Use this service to register a business for Plastic Packaging Tax (PPT) with HM Revenue & Customs.
+startPage.whenToRegister = When to register
+startPage.whenToRegister.line.1 = You must register for PPT if you realise that you’ll manufacture, convert or import 10,000kg or more of finished plastic packaging in the 12 months from 1 April 2022.
+startPage.whenToRegister.line.2 = Read guidance on {0}.
+startPage.registration.guidance.href = https://www.gov.uk/government/publications/get-your-business-ready-for-the-plastic-packaging-tax
+startPage.registration.guidance.description = registration, liability and exemptions (opens in a new tab)
+startPage.beforeYouStart = Before you start
+startPage.beforeYouStart.line.1 = To register for this service, you'll need to know how much plastic packaging you expect to process in the 12 months from 1 April 2022.
+startPage.beforeYouStart.line.2 = If you’re not sure, read the {0}
+startPage.business.guidance.href = https://www.gov.uk/government/publications/get-your-business-ready-for-the-plastic-packaging-tax/further-information-for-businesses#about-registration
+startPage.business.guidance.description = guidance for businesses (opens in a new tab)
+startPage.informationYouNeed = You’ll also need:
+startPage.informationYouNeed.listItem.1 = the company registration number for the business that is registering. You can {0}
+startPage.informationYouNeed.listItem.2 = the Unique Taxpayer Reference for your organisation, if you are registered in the UK
+startPage.informationYouNeed.listItem.3 = the address and contact details for the business you are registering
+startPage.informationYouNeed.listItem.4 = Government Gateway user ID and password - you can create an account when you register your business’s details
+startPage.companyNumber.href = https://www.gov.uk/get-information-about-a-company
+startPage.companyNumber.description = look up the company number if you are unsure (opens in a new tab)
 startPage.buttonName = Start now
 
 registrationPage.title = Register for Plastic Packaging Tax

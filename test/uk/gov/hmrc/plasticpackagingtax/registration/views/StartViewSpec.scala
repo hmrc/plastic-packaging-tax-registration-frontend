@@ -36,17 +36,11 @@ class StartViewSpec extends UnitViewSpec with Matchers {
     "not contain timeout dialog function" in {
 
       containTimeoutDialogFunction(view) mustBe false
-
     }
 
     "display title" in {
 
       view.select("title").text() must include(messages("startPage.title"))
-    }
-
-    "display section header" in {
-
-      view.getElementById("section-header") must containMessage("startPage.title.sectionHeader")
     }
 
     "display header" in {
@@ -59,82 +53,71 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("description") must containMessage("startPage.description")
     }
 
-    "display Contents section" in {
+    "display 'When to register' section" in {
 
-      view.getElementsByClass("dashed-list-title").get(0) must containMessage(
-        "startPage.contents.header"
-      )
+      view.getElementById("when-to-register") must containMessage("startPage.whenToRegister")
 
-      val contentList = view.getElementsByClass("dashed-list").get(0)
-
-      contentList must haveChildCount(3)
-      contentList.child(0) must containMessage("startPage.overview.header")
-      contentList.child(1) must containMessage("startPage.informationYouNeed.header")
-      contentList.child(2) must containMessage("startPage.makeDeclaration.header")
-    }
-
-    "contain links in Contents section" in {
-
-      val contentList = view.getElementsByClass("dashed-list").get(0)
-
-      contentList.child(0).child(0) must haveHref("#overview")
-      contentList.child(1).child(0) must haveHref("#information-you-need")
-      contentList.child(2).child(0) must haveHref("#make-declaration")
-    }
-
-    "display 'Use this service to' section" in {
-
-      view.getElementsByClass("govuk-body").get(1) must containMessage(
-        "startPage.useThisServiceTo.header"
-      )
-
-      val useThisServiceList = view.getElementsByClass("govuk-list--bullet").get(0)
-
-      useThisServiceList must haveChildCount(4)
-      useThisServiceList.child(0) must containMessage("startPage.useThisServiceTo.listItem.1")
-      useThisServiceList.child(1) must containMessage("startPage.useThisServiceTo.listItem.2")
-      useThisServiceList.child(2) must containMessage("startPage.useThisServiceTo.listItem.3")
-      useThisServiceList.child(3) must containMessage("startPage.useThisServiceTo.listItem.4")
-    }
-
-    "display 'Overview' section" in {
-
-      view.getElementById("overview") must containMessage("startPage.overview.header")
-
-      view.getElementById("overview-element-1").text() must include(
-        messages("startPage.overview.line.1")
-      )
-      view.getElementById("overview-element-2").text() must include(
-        messages("startPage.overview.line.2")
-      )
-      view.getElementById("overview-element-3").text() must include(
-        messages("startPage.overview.line.3")
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("startPage.whenToRegister.line.1",
+                 "startPage.whenToRegister.line.2",
+                 "startPage.registration.guidance.description"
+        )
       )
     }
 
-    "display 'Information you need' section" in {
+    "display 'Before you start' section" in {
 
-      view.getElementById("information-you-need") must containMessage(
-        "startPage.informationYouNeed.header"
+      view.getElementById("before-you-start") must containMessage("startPage.beforeYouStart")
+
+      view.getElementsByClass("govuk-body").text() must include(
+        messages("startPage.beforeYouStart.line.1",
+                 "startPage.beforeYouStart.line.2",
+                 "startPage.business.guidance.description"
+        )
       )
-
-      view.getElementsByClass("govuk-body").get(5) must containMessage(
-        "startPage.informationYouNeed.line.1"
-      )
-
-      val informationYouNeedList = view.getElementsByClass("govuk-list--bullet").get(1)
-
-      informationYouNeedList must haveChildCount(3)
-      informationYouNeedList.child(0) must containMessage("startPage.informationYouNeed.listItem.1")
-      informationYouNeedList.child(1) must containMessage("startPage.informationYouNeed.listItem.2")
-      informationYouNeedList.child(2) must containMessage("startPage.informationYouNeed.listItem.3")
     }
 
-    "display 'Make a declaration' section" in {
+    "display bullet list section" in {
 
-      view.getElementById("make-declaration") must containMessage(
-        "startPage.makeDeclaration.header"
+      view.getElementsByClass("govuk-body").get(5).text() must include(
+        messages("startPage.informationYouNeed")
       )
+
+      val bulletList = view.getElementsByClass("govuk-list--bullet").get(0)
+
+      bulletList must haveChildCount(4)
+      bulletList.child(0).text() must include(
+        messages("startPage.informationYouNeed.listItem.1",
+                 "look up the company number if you are unsure (opens in a new tab)"
+        )
+      )
+      bulletList.child(1) must containMessage("startPage.informationYouNeed.listItem.2")
+      bulletList.child(2) must containMessage("startPage.informationYouNeed.listItem.3")
+      bulletList.child(3) must containMessage("startPage.informationYouNeed.listItem.4")
+    }
+
+    "display registration guidance link" in {
+
+      val link = view.getElementById("registration-guidance-link")
+      link must haveHref(messages("startPage.registration.guidance.href"))
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
+    }
+
+    "display business guidance link" in {
+
+      val link = view.getElementById("business-guidance-link")
+      link must haveHref(messages("startPage.business.guidance.href"))
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
+    }
+
+    "display company number link" in {
+
+      val link = view.getElementById("company-number-link")
+      link must haveHref(messages("startPage.companyNumber.href"))
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
     }
 
     "display 'Start now' button" in {
@@ -143,12 +126,6 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-button").first() must haveHref(
         uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.StartRegistrationController.startRegistration().url
       )
-    }
-
-    "display link to go back to Contents section" in {
-
-      view.getElementById("back-to-top") must containMessage("startPage.contents.header")
-      view.getElementById("back-to-top").child(0) must haveHref("#contents")
     }
   }
 
