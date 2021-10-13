@@ -20,10 +20,11 @@
 @this(
     govukLayout: main_template,
     pageHeading: pageHeading,
+    subHeading: subHeading,
     sectionHeader: sectionHeader,
     paragraphBody: paragraphBody,
+    paragraph: paragraph,
     link: link,
-    navList: navList,
     bulletList: bulletList,
     govukInsetText: GovukInsetText,
     govukButton: GovukButton
@@ -31,65 +32,88 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("startPage.title")) {
 
-<div class="govuk-!-width-two-thirds">
-    @sectionHeader(messages("startPage.title.sectionHeader"))
-    @pageHeading(messages("startPage.title"))
-    @paragraphBody(message = messages("startPage.description"), classes = "govuk-body-l", id = Some("description"))
-</div>
-
-<hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
-<div class="govuk-!-width-two-thirds">
-
-    <div id="contents">
-        @navList(
-            title = messages("startPage.contents.header"),
-            elements = Seq(
-                link(text = messages("startPage.overview.header"), call = Call("GET", "#overview")),
-                link(text = messages("startPage.informationYouNeed.header"), call = Call("GET", "#information-you-need")),
-                link(text = messages("startPage.makeDeclaration.header"), call = Call("GET", "#make-declaration"))
-            )
-        )
-    </div>
-
-    @bulletList(
-        title = Some(messages("startPage.useThisServiceTo.header")),
-        elements = Seq(
-            Html(messages("startPage.useThisServiceTo.listItem.1")),
-            Html(messages("startPage.useThisServiceTo.listItem.2")),
-            Html(messages("startPage.useThisServiceTo.listItem.3")),
-            Html(messages("startPage.useThisServiceTo.listItem.4"))
+@registrationGuidanceLink = {
+    @link(
+        id = Some("registration-guidance-link"),
+        newTab = true,
+        text = messages("startPage.registration.guidance.description"),
+        call = Call(
+            method = "GET",
+            url = messages("startPage.registration.guidance.href")
         )
     )
+}
 
-    <div>
-        <h2 id="overview" class="govuk-heading-m">@messages("startPage.overview.header")</h2>
-        @paragraphBody(message = messages("startPage.overview.line.1"), id = Some("overview-element-1"))
-        @paragraphBody(message = messages("startPage.overview.line.2"), id = Some("overview-element-2"))
-        @paragraphBody(message = messages("startPage.overview.line.3"), id = Some("overview-element-3"))
-    </div>
+@whenToRegister = {
+    @paragraph(
+        content = Html(messages("startPage.whenToRegister.line.1"))
+    )
+    @paragraph(
+        content = Html(messages("startPage.whenToRegister.line.2", registrationGuidanceLink))
+    )
+}
 
-    <div class="govuk-!-margin-bottom-9">
-        @govukInsetText(InsetText(
-        content = HtmlContent(messages("startPage.information"))
-        ))
-    </div>
+@businessGuidanceLink = {
+    @link(
+        id = Some("business-guidance-link"),
+        newTab = true,
+        text = messages("startPage.business.guidance.description"),
+        call = Call(
+            method = "GET",
+            url = messages("startPage.business.guidance.href")
+        )
+    )
+}
 
-    <div class="govuk-!-margin-bottom-9">
-        <h2 id="information-you-need" class="govuk-heading-m">@messages("startPage.informationYouNeed.header")</h2>
+@beforeYouStart = {
+    @paragraph(
+        content = Html(messages("startPage.beforeYouStart.line.1"))
+    )
+    @paragraph(
+        content = Html(messages("startPage.beforeYouStart.line.2", businessGuidanceLink))
+    )
+    @paragraph(
+        content = Html(messages("startPage.informationYouNeed"))
+    )
+}
+
+@companyNumberLink = {
+    @link(
+        id = Some("company-number-link"),
+        newTab = true,
+        text = messages("startPage.companyNumber.description"),
+        call = Call(
+            method = "GET",
+            url = messages("startPage.companyNumber.href")
+        )
+    )
+}
+
+
+@govukLayout(title = Title("startPage.title")) {
+
+@pageHeading(messages("startPage.title"), classes="govuk-heading-xl")
+@paragraphBody(message = messages("startPage.description"), classes = "govuk-body", id = Some("description"))
+
+<div>
+    @subHeading(text = messages("startPage.whenToRegister"), classes="govuk-heading-l", id=Some("when-to-register"))
+
+    @whenToRegister
+
+    @subHeading(text = messages("startPage.beforeYouStart"), id=Some("before-you-start"))
+    @beforeYouStart
+    
+    <div class="govuk-!-margin-bottom-8">
         @bulletList(
-            title = Some(messages("startPage.informationYouNeed.line.1")),
             elements = Seq(
-                Html(messages("startPage.informationYouNeed.listItem.1")),
+                Html(messages("startPage.informationYouNeed.listItem.1", companyNumberLink)),
                 Html(messages("startPage.informationYouNeed.listItem.2")),
-                Html(messages("startPage.informationYouNeed.listItem.3"))
+                Html(messages("startPage.informationYouNeed.listItem.3")),
+                Html(messages("startPage.informationYouNeed.listItem.4"))
             )
         )
     </div>
-
-    <h2 id="make-declaration" class="govuk-heading-m">@messages("startPage.makeDeclaration.header")</h2>
 
     @govukButton(
         Button(
@@ -99,14 +123,5 @@
             )
     )
 
-    <div class="govuk-!-margin-top-9" id="back-to-top">
-        <a class="govuk-link" href="#contents">
-            <svg class="app-c-back-to-top__icon" xmlns="http://www.w3.org/2000/svg" width="13" height="17"
-                 viewBox="0 0 13 17">
-                <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
-            </svg>
-            @messages("startPage.contents.header")
-        </a>
-    </div>
 </div>
 }

@@ -20,7 +20,6 @@ import play.api.i18n.Messages
 
 case class Title(
   headingKey: String,
-  sectionKey: String = "",
   headingArg: String = "",
   headingArgs: Option[Seq[String]] = None
 ) {
@@ -28,14 +27,7 @@ case class Title(
   def toString(implicit messages: Messages): String = {
     def args = headingArgs.getOrElse(Seq(headingArg))
 
-    if (sectionKey.isEmpty)
-      messages("title.format", messages(headingKey, args: _*), messages("service.name"))
-    else
-      messages("title.withSection.format",
-               messages(headingKey, args: _*),
-               messages(sectionKey),
-               messages("service.name")
-      )
+    messages("title.format", messages(headingKey, args: _*), messages("service.name"))
   }
 
 }

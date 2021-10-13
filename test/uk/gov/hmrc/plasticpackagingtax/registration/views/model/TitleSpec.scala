@@ -31,11 +31,5 @@ class TitleSpec extends MessagesSpec with Matchers with PptTestData {
         s"${messages("notLiable.pageTitle")} - $serviceName - GOV.UK"
       )
     }
-
-    "format title with section" in {
-      Title("startPage.title", "startPage.title.sectionHeader").toString(messages) must equal(
-        s"${messages("startPage.title")} - ${messages("startPage.title.sectionHeader")} - $serviceName - GOV.UK"
-      )
-    }
   }
 }
