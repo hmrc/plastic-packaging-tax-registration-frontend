@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  RegisteredSocietyGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
@@ -32,15 +34,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  SoleTraderGrsCreateRequest,
-  UkCompanyGrsCreateRequest
+  IncorpEntityGrsCreateRequest,
+  SoleTraderGrsCreateRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -50,6 +51,7 @@ class OrganisationDetailsTypeController @Inject() (
   appConfig: AppConfig,
   soleTraderGrsConnector: SoleTraderGrsConnector,
   ukCompanyGrsConnector: UkCompanyGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: organisation_type
@@ -83,6 +85,10 @@ class OrganisationDetailsTypeController @Inject() (
                               if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
                             getSoleTraderRedirectUr()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          case Some(OrgType.REGISTERED_SOCIETY)
+                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
+                            getRegisteredSocietyRedirectUr()
+                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(OrgType.PARTNERSHIP)
                               if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
                             Future(Redirect(routes.PartnershipTypeController.displayPage()))
@@ -110,16 +116,18 @@ class OrganisationDetailsTypeController @Inject() (
       )
     )
 
-  private def getUkCompanyRedirectUr()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    ukCompanyGrsConnector.createJourney(
-      UkCompanyGrsCreateRequest(appConfig.grsCallbackUrl,
-                                Some(request2Messages(request)("service.name")),
-                                appConfig.serviceIdentifier,
-                                appConfig.externalSignOutLink
-      )
+  private def incorpEntityGrsCreateRequest(implicit request: Request[_]) =
+    IncorpEntityGrsCreateRequest(appConfig.grsCallbackUrl,
+                                 Some(request2Messages(request)("service.name")),
+                                 appConfig.serviceIdentifier,
+                                 appConfig.externalSignOutLink
     )
+
+  private def getUkCompanyRedirectUr()(implicit request: Request[_]): Future[String] =
+    ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
+
+  private def getRegisteredSocietyRedirectUr()(implicit request: Request[_]): Future[String] =
+    registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
 
   private def updateRegistration(
     formData: OrganisationType

@@ -31,10 +31,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails
 }
 
-class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class RegisteredSocietyGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
-  lazy val connector: UkCompanyGrsConnector = app.injector.instanceOf[UkCompanyGrsConnector]
-  val incorpId                              = "uuid-id"
+  lazy val connector: RegisteredSocietyGrsConnector =
+    app.injector.instanceOf[RegisteredSocietyGrsConnector]
+
+  val incorpId = "uuid-id"
 
   "createJourney" should {
     "call the test only route to stub the journey" in {
@@ -47,7 +49,7 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
       val testDeskProServiceId = "plastic-packaging-tax"
 
       stubFor(
-        post("/incorporated-entity-identification/api/limited-company-journey")
+        post("/incorporated-entity-identification/api/registered-society-journey")
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
@@ -62,7 +64,7 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
       val res = await(connector.createJourney(testJourneyConfig))
 
       res mustBe testJourneyStartUrl
-      getTimer("ppt.incorpId.create.journey.timer").getCount mustBe 1
+      getTimer("ppt.regsoc.create.journey.timer").getCount mustBe 1
     }
 
     "throw exception if http status is not 'CREATED'" in {
@@ -73,7 +75,7 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
         )
 
       stubFor(
-        post("/incorporated-entity-identification/api/limited-company-journey")
+        post("/incorporated-entity-identification/api/registered-society-journey")
           .willReturn(
             aResponse()
               .withStatus(Status.INTERNAL_SERVER_ERROR)
@@ -102,7 +104,7 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
       val res = await(connector.getDetails(testJourneyId))
 
       res mustBe IncorporationDetails(validResponse)
-      getTimer("ppt.incorpId.get.details.timer").getCount mustBe 1
+      getTimer("ppt.regsoc.get.details.timer").getCount mustBe 1
     }
 
     "incorp ID returns invalid incorporation details" in {

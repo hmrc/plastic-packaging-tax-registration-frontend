@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import com.kenshoo.play.metrics.Metrics
+import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
@@ -25,22 +26,24 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails
 }
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UkCompanyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig, metrics: Metrics)(
-  implicit ec: ExecutionContext
-) extends GrsConnector[
+class RegisteredSocietyGrsConnector @Inject() (
+  httpClient: HttpClient,
+  config: AppConfig,
+  metrics: Metrics
+)(implicit ec: ExecutionContext)
+    extends GrsConnector[
       IncorpEntityGrsCreateRequest,
       GrsIncorporationDetails,
       IncorporationDetails
     ](httpClient,
       metrics,
-      config.incorpLimitedCompanyJourneyUrl,
+      config.incorpRegistedSocietyJourneyUrl,
       config.incorpDetailsUrl,
-      "ppt.incorpId.create.journey.timer",
-      "ppt.incorpId.get.details.timer"
+      "ppt.regsoc.create.journey.timer",
+      "ppt.regsoc.get.details.timer"
     ) {
 
   override def translateDetails(

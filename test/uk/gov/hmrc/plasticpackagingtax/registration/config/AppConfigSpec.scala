@@ -58,7 +58,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     val validAppConfig: AppConfig = appConfig(Configuration(validConfig))
 
     "have 'incorpJourneyUrl' defined" in {
-      validAppConfig.incorpJourneyUrl must be(
+      validAppConfig.incorpDetailsUrl must be(
         "http://localhost:9718/incorporated-entity-identification/api/journey"
       )
     }

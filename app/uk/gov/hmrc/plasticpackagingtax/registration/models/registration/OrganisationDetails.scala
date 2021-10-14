@@ -21,6 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   OrgType,
   PARTNERSHIP,
+  REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
 }
@@ -56,7 +57,7 @@ case class OrganisationDetails(
 
   def businessPartnerId(): Option[String] =
     organisationType match {
-      case Some(UK_COMPANY) =>
+      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) =>
         incorporationDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
       case Some(SOLE_TRADER) =>
         soleTraderDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
@@ -74,9 +75,9 @@ case class OrganisationDetails(
     }
 
   val businessName: Option[String] = organisationType match {
-    case Some(UK_COMPANY)  => incorporationDetails.map(_.companyName)
-    case Some(SOLE_TRADER) => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
-    case _                 => None
+    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorporationDetails.map(_.companyName)
+    case Some(SOLE_TRADER)                           => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
+    case _                                           => None
   }
 
 }

@@ -27,7 +27,8 @@ object OrgType extends Enumeration {
   val UK_COMPANY: Value                        = Value("UkCompany")
   val SOLE_TRADER: Value                       = Value("SoleTrader")
   val PARTNERSHIP: Value                       = Value("Partnership")
-  val CHARITY_OR_NOT_FOR_PROFIT: Value         = Value("RegisteredSociety")
+  val REGISTERED_SOCIETY: Value                = Value("RegisteredSociety")
+  val CHARITY_OR_NOT_FOR_PROFIT: Value         = Value("CharityOrNotForProfit")
   val OVERSEAS_COMPANY: Value                  = Value("OverseasCompany")
   def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
 

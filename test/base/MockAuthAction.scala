@@ -83,8 +83,8 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   private val exampleUser         = newUser()
 
   // format: off
-  def authorizedUser(user: SignedInUser = exampleUser): Unit = {
-    when(appConfig.defaultFeatures).thenReturn(Map(Features.isPreLaunch -> true))
+  def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPreLaunch -> true)): Unit = {
+    when(appConfig.defaultFeatures).thenReturn(features)
     when(
       mockAuthConnector.authorise(
         any(),
