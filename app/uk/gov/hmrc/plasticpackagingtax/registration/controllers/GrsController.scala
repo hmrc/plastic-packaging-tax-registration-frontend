@@ -22,12 +22,30 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStatus.{BUSINESS_IDENTIFICATION_FAILED, BUSINESS_VERIFICATION_FAILED, DUPLICATE_SUBSCRIPTION, RegistrationStatus}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStatus.{
+  BUSINESS_IDENTIFICATION_FAILED,
+  BUSINESS_VERIFICATION_FAILED,
+  DUPLICATE_SUBSCRIPTION,
+  RegistrationStatus
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{GENERAL_PARTNERSHIP, PartnershipTypeEnum, SCOTTISH_PARTNERSHIP}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{GeneralPartnershipDetails, IncorporationDetails, PartnershipDetails, ScottishPartnershipDetails}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  PartnershipTypeEnum,
+  SCOTTISH_PARTNERSHIP
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  GeneralPartnershipDetails,
+  IncorporationDetails,
+  PartnershipDetails,
+  ScottishPartnershipDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Cacheable,
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
