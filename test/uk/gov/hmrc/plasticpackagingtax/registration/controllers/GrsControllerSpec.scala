@@ -35,6 +35,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
+  NOT_SUBSCRIBED,
+  SUBSCRIBED
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GrsControllerSpec extends ControllerSpec {
@@ -51,6 +56,7 @@ class GrsControllerSpec extends ControllerSpec {
                       mockRegisteredSocietyGrsConnector,
                       mockGeneralPartnershipGrsConnector,
                       mockScottishPartnershipGrsConnector,
+                      mockSubscriptionsConnector,
                       mcc
     )(ec)
 
@@ -95,6 +101,8 @@ class GrsControllerSpec extends ControllerSpec {
   )
 
   "incorpIdCallback" should {
+
+    mockGetSubscriptionStatus(SubscriptionStatusResponse(NOT_SUBSCRIBED, None))
 
     "redirect to the registration page" when {
       "registering a UK Limited Company" in {
@@ -315,6 +323,23 @@ class GrsControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
           routes.NotableErrorController.businessVerificationFailure().url
+        )
+      }
+    }
+
+    "show duplicate subscription page" when {
+      "a ppt registration already exists for the organisation" in {
+        authorizedUser()
+        mockGetUkCompanyDetails(incorporationDetails)
+        mockRegistrationFind(registeredLimitedCompany)
+        mockRegistrationUpdate(registeredLimitedCompany)
+        mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
+
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.NotableErrorController.duplicateRegistration().url
         )
       }
     }
