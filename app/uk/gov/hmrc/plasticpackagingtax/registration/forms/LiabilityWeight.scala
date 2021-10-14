@@ -32,7 +32,7 @@ object LiabilityWeight {
   val weightOutOfRangeError = "liabilityWeight.outOfRange.error"
 
   private val isWithinRange: Option[Long] => Boolean = weight =>
-    minTotalKg to maxTotalKg contains weight.getOrElse(minTotalKg)
+    weight.exists(value => value >= minTotalKg && value <= maxTotalKg)
 
   def form(): Form[LiabilityWeight] =
     Form(

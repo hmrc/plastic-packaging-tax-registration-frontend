@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   CHARITY_OR_NOT_FOR_PROFIT,
   PARTNERSHIP,
+  REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
 }
@@ -159,6 +160,24 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(UK_COMPANY),
+                                incorporationDetails = Some(incorporationDetails)
+            )
+          )
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        businessRegisteredAddressPopulatedSameAs(incorporationDetails.companyAddress)
+      }
+
+      "display page method is invoked for registered society" in {
+        val registration = aRegistration(
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(REGISTERED_SOCIETY),
                                 incorporationDetails = Some(incorporationDetails)
             )
           )

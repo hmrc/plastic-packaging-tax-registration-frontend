@@ -18,13 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
 
-case class UkCompanyGrsCreateRequest(
+case class IncorpEntityGrsCreateRequest(
   continueUrl: String,
   optServiceName: Option[String] = None,
   deskProServiceId: String,
   signOutUrl: String
 )
 
-object UkCompanyGrsCreateRequest {
-  implicit val format: OFormat[UkCompanyGrsCreateRequest] = Json.format[UkCompanyGrsCreateRequest]
+object IncorpEntityGrsCreateRequest {
+
+  implicit val format: OFormat[IncorpEntityGrsCreateRequest] =
+    Json.format[IncorpEntityGrsCreateRequest]
+
 }

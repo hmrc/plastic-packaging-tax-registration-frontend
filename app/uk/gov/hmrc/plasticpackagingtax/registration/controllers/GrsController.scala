@@ -22,12 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
-  GeneralPartnershipGrsConnector,
-  ScottishPartnershipGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
@@ -37,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   GeneralPartnershipDetails,
+  IncorporationDetails,
   PartnershipDetails,
   ScottishPartnershipDetails
 }
@@ -57,6 +53,7 @@ class GrsController @Inject() (
   override val registrationConnector: RegistrationConnector,
   ukCompanyGrsConnector: UkCompanyGrsConnector,
   soleTraderGrsConnector: SoleTraderGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
   scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
   mcc: MessagesControllerComponents
@@ -83,18 +80,34 @@ class GrsController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     request.registration.organisationDetails.organisationType match {
-      case Some(OrgType.UK_COMPANY)  => updateIncorporationDetails(journeyId)
-      case Some(OrgType.SOLE_TRADER) => updateSoleTraderDetails(journeyId)
-      case Some(OrgType.PARTNERSHIP) => updatePartnershipDetails(journeyId)
-      case _                         => throw new InternalServerException(s"Invalid organisation type")
+      case Some(OrgType.UK_COMPANY)         => updateUkCompanyDetails(journeyId)
+      case Some(OrgType.REGISTERED_SOCIETY) => updateRegisteredSocietyDetails(journeyId)
+      case Some(OrgType.SOLE_TRADER)        => updateSoleTraderDetails(journeyId)
+      case Some(OrgType.PARTNERSHIP)        => updatePartnershipDetails(journeyId)
+      case _                                => throw new InternalServerException(s"Invalid organisation type")
     }
 
-  private def updateIncorporationDetails(journeyId: String)(implicit
+  private def updateUkCompanyDetails(journeyId: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    updateIncorporationDetails(journeyId, ukCompanyGrsConnector.getDetails)
+
+  private def updateRegisteredSocietyDetails(journeyId: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    updateIncorporationDetails(journeyId, registeredSocietyGrsConnector.getDetails)
+
+  private def updateIncorporationDetails(
+    journeyId: String,
+    getDetails: String => Future[IncorporationDetails]
+  )(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     for {
-      details <- ukCompanyGrsConnector.getDetails(journeyId)
+      details <- getDetails(journeyId)
       result <- update { model =>
         val updatedOrgDetails = model.organisationDetails.copy(incorporationDetails = Some(details),
                                                                soleTraderDetails = None,

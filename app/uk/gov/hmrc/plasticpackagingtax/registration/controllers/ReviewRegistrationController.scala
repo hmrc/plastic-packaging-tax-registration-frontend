@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import com.kenshoo.play.metrics.Metrics
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -26,6 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActi
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
+  REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
 }
@@ -50,7 +52,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -79,9 +80,9 @@ class ReviewRegistrationController @Inject() (
           // The call to check that the registration is in a suitable state before this means that
           // exhaustive matching is not needed
           (request.registration.organisationDetails.organisationType: @unchecked) match {
-            case Some(UK_COMPANY)  => ukCompanyReview()
-            case Some(SOLE_TRADER) => soleTraderReview()
-            case Some(PARTNERSHIP) => partnershipReview()
+            case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorpEntityReview()
+            case Some(SOLE_TRADER)                           => soleTraderReview()
+            case Some(PARTNERSHIP)                           => partnershipReview()
           }
         }
       else
@@ -102,7 +103,7 @@ class ReviewRegistrationController @Inject() (
       )
     )
 
-  private def ukCompanyReview()(implicit request: JourneyRequest[AnyContent]) =
+  private def incorpEntityReview()(implicit request: JourneyRequest[AnyContent]) =
     Ok(
       reviewRegistrationPage(registration = request.registration,
                              incorporationDetails = getIncorporationDetails()

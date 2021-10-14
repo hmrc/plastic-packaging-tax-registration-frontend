@@ -48,6 +48,7 @@ class GrsControllerSpec extends ControllerSpec {
                       mockRegistrationConnector,
                       mockUkCompanyGrsConnector,
                       mockSoleTraderGrsConnector,
+                      mockRegisteredSocietyGrsConnector,
                       mockGeneralPartnershipGrsConnector,
                       mockScottishPartnershipGrsConnector,
                       mcc
@@ -63,6 +64,10 @@ class GrsControllerSpec extends ControllerSpec {
 
   private val registeredLimitedCompany = aRegistration(
     withOrganisationDetails(registeredUkCompanyOrgDetails())
+  )
+
+  private val registeredRegisteredSociety = aRegistration(
+    withOrganisationDetails(registeredRegisteredSocietyOrgDetails())
   )
 
   private val unregisteredSoleTrader = aRegistration(
@@ -105,6 +110,13 @@ class GrsControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
         getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+      }
+
+      "registering a Registered Society" in {
+        val result = simulateRegisteredSocietyCallback()
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
       }
 
       "registering a GeneralPartnership" in {
@@ -313,6 +325,15 @@ class GrsControllerSpec extends ControllerSpec {
     mockGetUkCompanyDetails(incorporationDetails)
     mockRegistrationFind(unregisteredLimitedCompany)
     mockRegistrationUpdate(registeredLimitedCompany)
+
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def simulateRegisteredSocietyCallback() = {
+    authorizedUser()
+    mockGetRegisteredSocietyDetails(incorporationDetails)
+    mockRegistrationFind(registeredRegisteredSociety)
+    mockRegistrationUpdate(registeredRegisteredSociety)
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
