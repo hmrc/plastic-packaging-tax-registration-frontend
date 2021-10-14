@@ -79,7 +79,7 @@ class OrganisationDetailsTypeController @Inject() (
                       case SaveAndContinue =>
                         organisationType.answer match {
                           case Some(OrgType.UK_COMPANY) =>
-                            getUkCompanyRedirectUr()
+                            getUkCompanyRedirectUrl()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(OrgType.SOLE_TRADER)
                               if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
@@ -87,7 +87,7 @@ class OrganisationDetailsTypeController @Inject() (
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(OrgType.REGISTERED_SOCIETY)
                               if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            getRegisteredSocietyRedirectUr()
+                            getRegisteredSocietyRedirectUrl()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(OrgType.PARTNERSHIP)
                               if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
@@ -123,10 +123,10 @@ class OrganisationDetailsTypeController @Inject() (
                                  appConfig.externalSignOutLink
     )
 
-  private def getUkCompanyRedirectUr()(implicit request: Request[_]): Future[String] =
+  private def getUkCompanyRedirectUrl()(implicit request: Request[_]): Future[String] =
     ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
 
-  private def getRegisteredSocietyRedirectUr()(implicit request: Request[_]): Future[String] =
+  private def getRegisteredSocietyRedirectUrl()(implicit request: Request[_]): Future[String] =
     registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
 
   private def updateRegistration(
