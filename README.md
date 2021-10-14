@@ -3,8 +3,7 @@
 
 This is the Scala microservice responsible for the PPT registration UI user journey, which is part of the PPT tax regime, as discussed in this [GovUk Guidance](https://www.gov.uk/government/publications/introduction-of-plastic-packaging-tax/plastic-packaging-tax)
  
-This service integrates with the HMRC Strategic Generic Registration service, namely: 
- * [Incorporated Entity Identification Frontend](https://github.com/hmrc/incorporated-entity-identification-frontend)
+This service integrates with the Generic Registration Service and Tax Enrolments.
 
 ### How to run the service
 
@@ -13,8 +12,11 @@ This service integrates with the HMRC Strategic Generic Registration service, na
 * Start the microservices
  
 ```
-# Start the plastic packaging services and dependencies 
-sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL -r
+# Start the plastic packaging services and dependencies for company and registered society organisation types - 
+sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL -r
+
+# For the above organisation types along with partnerships and sole traders use these profiles -
+sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL -r
 
 # confirm all services are running
 sm -s 
@@ -37,7 +39,7 @@ sbt -Dapplication.router=testOnlyDoNotUseInAppConf.Routes run
 * Visit the HMRC [Generic Registration service feature switch config page](http://localhost:9718/identify-your-incorporated-business/test-only/feature-switches) and
 select the appropriate stubbing behaviour _(select all)_. 
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
-* Enter the redirect url: http://localhost:8503/plastic-packaging-tax/start-plastic-packaging-tax-registration.
+* Enter the redirect url: http://localhost:8503/plastic-packaging-tax/start
 * Choose affinity group as `Organisation`
 * Enter the email `test.preLaunch@ppt.test` or `test.postLaunch@ppt.test`
 * Enter `Submit`
