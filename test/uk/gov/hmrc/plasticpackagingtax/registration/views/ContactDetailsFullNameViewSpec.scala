@@ -68,15 +68,13 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display contact name question" in {
-
-      view.getElementsByClass("govuk-fieldset__heading").text() must include(
+      view.getElementsByAttributeValueMatching("for", "value").text() must include(
         messages("primaryContactDetails.fullNamePage.title")
       )
     }
 
     "display question hint" in {
-
-      view.getElementsByClass("govuk-body").text() must include(
+      view.getElementById("value-hint").text() must include(
         messages("primaryContactDetails.fullNamePage.hint")
       )
     }
@@ -86,9 +84,9 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
       view must containElementWithID("value")
     }
 
-    "display 'Save and Continue' button" in {
+    "display 'Save and continue' button" in {
 
-      view.getElementById("submit").text() mustBe "Save and Continue"
+      view.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }

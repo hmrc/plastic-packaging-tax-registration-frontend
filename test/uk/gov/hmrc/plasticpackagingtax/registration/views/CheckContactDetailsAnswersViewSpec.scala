@@ -136,7 +136,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Continue' button" in {
 
-      view.getElementsByClass("govuk-button").text() must include("Save and Continue")
+      view.getElementsByClass("govuk-button").text() must include("Save and continue")
     }
   }
 

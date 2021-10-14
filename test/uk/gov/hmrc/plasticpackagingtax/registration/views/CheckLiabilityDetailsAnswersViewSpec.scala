@@ -171,9 +171,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       }
     }
 
-    "display 'Save And Continue' button" in {
+    "display 'Save and continue' button" in {
       preLaunchView must containElementWithID("submit")
-      preLaunchView.getElementById("submit").text() mustBe "Save and Continue"
+      preLaunchView.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }
