@@ -95,10 +95,10 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
       view must containElementWithID("useRegisteredAddress-2")
     }
 
-    "display 'Save And Continue' button" in {
+    "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and Continue"
+      view.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }

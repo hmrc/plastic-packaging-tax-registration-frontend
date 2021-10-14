@@ -86,10 +86,10 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       view must containElementWithID("value")
     }
 
-    "display 'Save And Continue' button" in {
+    "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and Continue"
+      view.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }
