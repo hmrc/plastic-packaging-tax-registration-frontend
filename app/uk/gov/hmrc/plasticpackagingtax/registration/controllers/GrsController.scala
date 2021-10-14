@@ -26,7 +26,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStat
   BUSINESS_IDENTIFICATION_FAILED,
   BUSINESS_VERIFICATION_FAILED,
   DUPLICATE_SUBSCRIPTION,
-  RegistrationStatus
+  RegistrationStatus,
+  STATUS_OK
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
@@ -57,7 +58,7 @@ import scala.concurrent.{ExecutionContext, Future}
 object RegistrationStatus extends Enumeration {
   type RegistrationStatus = Value
 
-  val OK: Value                             = Value
+  val STATUS_OK: Value                      = Value
   val BUSINESS_IDENTIFICATION_FAILED: Value = Value
   val BUSINESS_VERIFICATION_FAILED: Value   = Value
   val DUPLICATE_SUBSCRIPTION: Value         = Value
@@ -84,7 +85,8 @@ class GrsController @Inject() (
         saveRegistrationDetails(journeyId).flatMap {
           case Right(registration) =>
             registrationStatus(registration).map {
-              case RegistrationStatus.OK => Redirect(routes.RegistrationController.displayPage())
+              case STATUS_OK =>
+                Redirect(routes.RegistrationController.displayPage())
               case BUSINESS_IDENTIFICATION_FAILED =>
                 Redirect(routes.NotableErrorController.grsFailure())
               case BUSINESS_VERIFICATION_FAILED =>
@@ -108,7 +110,7 @@ class GrsController @Inject() (
             subscriptionStatusResponse: SubscriptionStatusResponse =>
               subscriptionStatusResponse.status match {
                 case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
-                case _          => RegistrationStatus.OK
+                case _          => STATUS_OK
               }
           }
         case None => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
