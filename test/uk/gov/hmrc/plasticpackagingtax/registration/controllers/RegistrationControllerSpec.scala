@@ -39,8 +39,7 @@ class RegistrationControllerSpec extends ControllerSpec {
     new RegistrationController(authenticate = mockAuthAction,
                                mockJourneyAction,
                                mcc = mcc,
-                               registrationPage = registrationPage,
-                               subscriptionsConnector = mockSubscriptionsConnector
+                               registrationPage = registrationPage
     )
 
   override protected def beforeEach(): Unit = {
@@ -60,7 +59,7 @@ class RegistrationControllerSpec extends ControllerSpec {
     "return 200" when {
       "display registration page" when {
 
-        "a 'businessPartnerId' exists that is not already subscribed" in {
+        "a 'businessPartnerId' exists" in {
           authorizedUser()
           mockRegistrationFind(
             aRegistration(
@@ -69,15 +68,11 @@ class RegistrationControllerSpec extends ControllerSpec {
               )
             )
           )
-          mockGetSubscriptionStatus(
-            SubscriptionStatusResponse(status = SubscriptionStatus.NOT_SUBSCRIBED)
-          )
+
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Registration Page"
-
-          verify(mockSubscriptionsConnector).getSubscriptionStatus(any())(any())
         }
 
         "a 'businessPartnerId' does not exist" in {
@@ -89,32 +84,6 @@ class RegistrationControllerSpec extends ControllerSpec {
 
           verifyNoInteractions(mockSubscriptionsConnector)
         }
-      }
-    }
-
-    "redirect to duplicate subscription page" when {
-      "a 'businessPartnerId' exists that is already subscribed" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(organisationDetails =
-              registeredUkCompanyOrgDetails()
-            )
-          )
-        )
-        mockGetSubscriptionStatus(
-          SubscriptionStatusResponse(status = SubscriptionStatus.SUBSCRIBED,
-                                     pptReference = Some("XXPPTP123456789")
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.NotableErrorController.duplicateRegistration().url
-        )
-
-        verify(mockSubscriptionsConnector).getSubscriptionStatus(any())(any())
       }
     }
 

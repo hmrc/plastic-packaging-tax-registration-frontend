@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
@@ -27,6 +27,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   ScottishPartnershipGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStatus.{
+  BUSINESS_IDENTIFICATION_FAILED,
+  BUSINESS_VERIFICATION_FAILED,
+  DUPLICATE_SUBSCRIPTION,
+  RegistrationStatus
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
@@ -46,9 +52,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+
+object RegistrationStatus extends Enumeration {
+  type RegistrationStatus = Value
+
+  val OK: Value                             = Value
+  val BUSINESS_IDENTIFICATION_FAILED: Value = Value
+  val BUSINESS_VERIFICATION_FAILED: Value   = Value
+  val DUPLICATE_SUBSCRIPTION: Value         = Value
+}
 
 @Singleton
 class GrsController @Inject() (
@@ -59,6 +76,7 @@ class GrsController @Inject() (
   soleTraderGrsConnector: SoleTraderGrsConnector,
   generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
   scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
+  subscriptionsConnector: SubscriptionsConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -66,17 +84,38 @@ class GrsController @Inject() (
   def grsCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        saveRegistrationDetails(journeyId).map {
+        saveRegistrationDetails(journeyId).flatMap {
           case Right(registration) =>
-            if (registration.organisationDetails.businessVerificationFailed)
-              Redirect(routes.NotableErrorController.businessVerificationFailure())
-            else if (registration.organisationDetails.businessPartnerId().isDefined)
-              Redirect(routes.RegistrationController.displayPage())
-            else
-              Redirect(routes.NotableErrorController.grsFailure())
+            registrationStatus(registration).map {
+              case RegistrationStatus.OK => Redirect(routes.RegistrationController.displayPage())
+              case BUSINESS_IDENTIFICATION_FAILED =>
+                Redirect(routes.NotableErrorController.grsFailure())
+              case BUSINESS_VERIFICATION_FAILED =>
+                Redirect(routes.NotableErrorController.businessVerificationFailure())
+              case DUPLICATE_SUBSCRIPTION =>
+                Redirect(routes.NotableErrorController.duplicateRegistration())
+            }
           case Left(error) => throw error
         }
     }
+
+  private def registrationStatus(
+    registration: Registration
+  )(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    if (registration.organisationDetails.businessVerificationFailed)
+      Future.successful(BUSINESS_VERIFICATION_FAILED)
+    else
+      registration.organisationDetails.businessPartnerId() match {
+        case Some(businessPartnerId) =>
+          subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map {
+            subscriptionStatusResponse: SubscriptionStatusResponse =>
+              subscriptionStatusResponse.status match {
+                case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
+                case _          => RegistrationStatus.OK
+              }
+          }
+        case None => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
+      }
 
   private def saveRegistrationDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
