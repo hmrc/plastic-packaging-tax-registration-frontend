@@ -292,3 +292,11 @@ pptHelpline.openingTimes.title = Opening times:
 pptHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 8pm
 pptHelpline.openingTimes.detail.2 = Closed Easter Sunday, Christmas Day, Boxing Day and New Year’s Day.
 
+corpTaxHelpline.intro = Contact the corporation tax helpline if you have any questions.
+corpTaxHelpline.telephone.title = Telephone:
+corpTaxHelpline.telephone.detail = 0300 200 3410
+corpTaxHelpline.telephone.outsideUK.title = Outside UK:
+corpTaxHelpline.telephone.outsideUK.detail = +44 151 268 0571
+corpTaxHelpline.openingTimes.title = Opening times:
+corpTaxHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 6pm
+corpTaxHelpline.openingTimes.detail.2 = Closed on weekends and bank holidays.

@@ -47,6 +47,18 @@ class BusinessVerificationFailureViewSpec extends UnitViewSpec with Matchers {
         messages("businessEntityVerification.failure.detail")
       )
     }
+
+    "display corp tax helpline details" in {
+      val parasText = view.select("p").text
+      parasText must include(messages("corpTaxHelpline.intro"))
+      parasText must include(messages("corpTaxHelpline.telephone.title"))
+      parasText must include(messages("corpTaxHelpline.telephone.detail"))
+      parasText must include(messages("corpTaxHelpline.telephone.outsideUK.title"))
+      parasText must include(messages("corpTaxHelpline.telephone.outsideUK.detail"))
+      parasText must include(messages("corpTaxHelpline.openingTimes.title"))
+      parasText must include(messages("corpTaxHelpline.openingTimes.detail.1"))
+      parasText must include(messages("corpTaxHelpline.openingTimes.detail.2"))
+    }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
