@@ -67,9 +67,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
 
-  private lazy val incorpBaseUrl          = s"$incorpIdHost/incorporated-entity-identification/api"
-  lazy val incorpLimitedCompanyJourneyUrl = s"$incorpBaseUrl/limited-company-journey"
-  lazy val incorpJourneyUrl               = s"$incorpBaseUrl/journey"
+  private lazy val incorpBaseUrl           = s"$incorpIdHost/incorporated-entity-identification/api"
+  lazy val incorpLimitedCompanyJourneyUrl  = s"$incorpBaseUrl/limited-company-journey"
+  lazy val incorpRegistedSocietyJourneyUrl = s"$incorpBaseUrl/registered-society-journey"
+  lazy val incorpDetailsUrl                = s"$incorpBaseUrl/journey"
 
   lazy val soleTraderHost: String =
     servicesConfig.baseUrl("sole-trader-identification-frontend")

@@ -19,42 +19,22 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
 
 @this(
   formHelper: FormWithCSRF,
   govukLayout: main_template,
-  govukButton: GovukButton,
   govukInput: GovukInput,
-  govukFieldset: GovukFieldset,
   paragraph: paragraph,
   sectionHeader: sectionHeader,
   saveButtons: saveButtons,
   errorSummary: errorSummary
 )
 
+
 @(form: Form[FullName])(implicit request: Request[_], messages: Messages)
 
 @fullNameField = @{form("value")}
-
-@fieldSetBody = {
-
-    @paragraph(
-        content = Html(messages("primaryContactDetails.fullNamePage.hint"))
-    )
-
-    @govukInput(Input(
-        id    = fullNameField.name,
-        name  = fullNameField.name,
-        value = fullNameField.value,
-        classes = "govuk-!-width-two-thirds",
-        errorMessage = fullNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-        label = Label(
-            content = Text(messages("primaryContactDetails.fullNamePage.label")),
-            classes = s"govuk-label"),
-    ))
-
-}
-
 
 @govukLayout(
   title = Title("primaryContactDetails.fullNamePage.title"),
@@ -65,13 +45,18 @@
 
     @formHelper(action = pptRoutes.ContactDetailsFullNameController.submit(), 'autoComplete -> "off") {
 
-        @govukFieldset(Fieldset(
-            legend = Some(Legend(
+        @govukInput(Input(
+            id    = fullNameField.name,
+            name  = fullNameField.name,
+            value = fullNameField.value,
+            classes = "govuk-!-width-two-thirds",
+            hint = Some(Hint(content = Text(messages("primaryContactDetails.fullNamePage.hint")))),
+            errorMessage = fullNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            label = Label(
+                isPageHeading = true,
                 content = Text(messages("primaryContactDetails.fullNamePage.title")),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = true
-            )),
-            html = fieldSetBody
+                classes = gdsLabelPageHeading,
+            ),
         ))
 
         @saveButtons()

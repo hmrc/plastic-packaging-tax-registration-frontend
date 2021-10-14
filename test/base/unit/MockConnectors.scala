@@ -25,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   GeneralPartnershipGrsConnector,
+  RegisteredSocietyGrsConnector,
   ScottishPartnershipGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
@@ -43,7 +44,11 @@ import scala.concurrent.Future
 trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockUkCompanyGrsConnector: UkCompanyGrsConnector   = mock[UkCompanyGrsConnector]
+  val mockUkCompanyGrsConnector: UkCompanyGrsConnector = mock[UkCompanyGrsConnector]
+
+  val mockRegisteredSocietyGrsConnector: RegisteredSocietyGrsConnector =
+    mock[RegisteredSocietyGrsConnector]
+
   val mockSoleTraderGrsConnector: SoleTraderGrsConnector = mock[SoleTraderGrsConnector]
 
   val mockGeneralPartnershipGrsConnector: GeneralPartnershipGrsConnector =
@@ -59,6 +64,12 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     incorporationDetails: IncorporationDetails
   ): OngoingStubbing[Future[IncorporationDetails]] =
     when(mockUkCompanyGrsConnector.getDetails(any())(any(), any()))
+      .thenReturn(Future(incorporationDetails))
+
+  def mockGetRegisteredSocietyDetails(
+    incorporationDetails: IncorporationDetails
+  ): OngoingStubbing[Future[IncorporationDetails]] =
+    when(mockRegisteredSocietyGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(incorporationDetails))
 
   def mockGetSoleTraderDetails(
@@ -121,15 +132,26 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
   def mockSoleTraderCreateIncorpJourneyIdException(): OngoingStubbing[Future[String]] =
     when(
       mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest])(any(), any())
-    ).thenThrow(new RuntimeException("error"))
+    ).thenThrow(new RuntimeException("sole trader create journey error"))
 
   def mockUkCompanyCreateIncorpJourneyId(redirectUrl: String): OngoingStubbing[Future[String]] =
     when(mockUkCompanyGrsConnector.createJourney(any())(any(), any()))
       .thenReturn(Future.successful(redirectUrl))
 
+  def mockRegisteredSocietyCreateIncorpJourneyId(
+    redirectUrl: String
+  ): OngoingStubbing[Future[String]] =
+    when(mockRegisteredSocietyGrsConnector.createJourney(any())(any(), any()))
+      .thenReturn(Future.successful(redirectUrl))
+
   def mockUkCompanyCreateIncorpJourneyIdException(): OngoingStubbing[Future[String]] =
     when(mockUkCompanyGrsConnector.createJourney(any())(any(), any())).thenThrow(
-      new RuntimeException("error")
+      new RuntimeException("uk company create journey error")
+    )
+
+  def mockRegisteredSocietyCreateIncorpJourneyIdException(): OngoingStubbing[Future[String]] =
+    when(mockRegisteredSocietyGrsConnector.createJourney(any())(any(), any())).thenThrow(
+      new RuntimeException("registered society create journey error")
     )
 
   protected def mockGetSubscriptionStatusFailure(
@@ -168,7 +190,7 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockUkCompanyGrsConnector, mockSoleTraderGrsConnector)
+    reset(mockUkCompanyGrsConnector, mockSoleTraderGrsConnector, mockRegisteredSocietyGrsConnector)
   }
 
 }

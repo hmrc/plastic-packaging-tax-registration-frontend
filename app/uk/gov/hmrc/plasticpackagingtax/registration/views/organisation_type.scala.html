@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.displayName
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{UK_COMPANY, SOLE_TRADER, PARTNERSHIP, CHARITY_OR_NOT_FOR_PROFIT, OVERSEAS_COMPANY}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType._
 
 @this(
     formHelper: FormWithCSRF,
@@ -59,6 +59,7 @@
                     RadioItem(content = Text(displayName(UK_COMPANY)), value = Some(UK_COMPANY), checked = form("answer").value.contains(UK_COMPANY)),
                     RadioItem(content = Text(displayName(SOLE_TRADER)), value = Some(SOLE_TRADER), checked = form("answer").value.contains(SOLE_TRADER)),
                     RadioItem(content = Text(displayName(PARTNERSHIP)), value = Some(PARTNERSHIP), checked = form("answer").value.contains(PARTNERSHIP)),
+                    RadioItem(content = Text(displayName(REGISTERED_SOCIETY)), value = Some(REGISTERED_SOCIETY), checked = form("answer").value.contains(REGISTERED_SOCIETY)),
                     RadioItem(content = Text(displayName(CHARITY_OR_NOT_FOR_PROFIT)), value = Some(CHARITY_OR_NOT_FOR_PROFIT), checked = form("answer").value.contains(CHARITY_OR_NOT_FOR_PROFIT)),
                     RadioItem(content = Text(displayName(OVERSEAS_COMPANY)), value = Some(OVERSEAS_COMPANY), checked = form("answer").value.contains(OVERSEAS_COMPANY))
                 ),

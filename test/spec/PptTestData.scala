@@ -24,6 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
+  REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
 }
@@ -48,8 +49,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionStatusResponse
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
-
 import java.time.{ZoneOffset, ZonedDateTime}
+
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
@@ -238,6 +239,12 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected def registeredUkCompanyOrgDetails(): OrganisationDetails =
     OrganisationDetails(organisationType = Some(UK_COMPANY),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        incorporationDetails = Some(incorporationDetails)
+    )
+
+  protected def registeredRegisteredSocietyOrgDetails(): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(REGISTERED_SOCIETY),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         incorporationDetails = Some(incorporationDetails)
     )

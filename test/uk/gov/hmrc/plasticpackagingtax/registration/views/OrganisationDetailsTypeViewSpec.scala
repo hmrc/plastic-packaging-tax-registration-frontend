@@ -25,11 +25,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   CHARITY_OR_NOT_FOR_PROFIT,
   OVERSEAS_COMPANY,
   PARTNERSHIP,
+  REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType.form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -80,20 +81,24 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-label").get(1).text() mustBe OrgType.displayName(SOLE_TRADER)
       view.getElementById("answer-3").attr("value").text() mustBe PARTNERSHIP.toString
       view.getElementsByClass("govuk-label").get(2).text() mustBe OrgType.displayName(PARTNERSHIP)
-      view.getElementById("answer-4").attr("value").text() mustBe CHARITY_OR_NOT_FOR_PROFIT.toString
+      view.getElementById("answer-4").attr("value").text() mustBe REGISTERED_SOCIETY.toString
       view.getElementsByClass("govuk-label").get(3).text() mustBe OrgType.displayName(
+        REGISTERED_SOCIETY
+      )
+      view.getElementById("answer-5").attr("value").text() mustBe CHARITY_OR_NOT_FOR_PROFIT.toString
+      view.getElementsByClass("govuk-label").get(4).text() mustBe OrgType.displayName(
         CHARITY_OR_NOT_FOR_PROFIT
       )
-      view.getElementById("answer-5").attr("value").text() mustBe OVERSEAS_COMPANY.toString
-      view.getElementsByClass("govuk-label").get(4).text() mustBe OrgType.displayName(
+      view.getElementById("answer-6").attr("value").text() mustBe OVERSEAS_COMPANY.toString
+      view.getElementsByClass("govuk-label").get(5).text() mustBe OrgType.displayName(
         OVERSEAS_COMPANY
       )
     }
 
-    "display 'Save And Continue' button" in {
+    "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and Continue"
+      view.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }
