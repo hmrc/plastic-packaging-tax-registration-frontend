@@ -21,7 +21,8 @@
         labelKey: String = "",
         labelClasses: String = "govuk-label--s",
         labelHiddenKey: Option[String] = None,
-        classes: Option[String] = None
+        classes: Option[String] = None,
+        autocomplete: Option[String] = None
 )(implicit messages: Messages)
 
 @inputTextLabel = @{
@@ -41,5 +42,6 @@
     value = field.value,
     classes = classes.map(clazz => s" $clazz").getOrElse("govuk-!-width-two-thirds"),
     errorMessage = field.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-    label = inputTextLabel
+    label = inputTextLabel,
+    autocomplete = autocomplete
 ))

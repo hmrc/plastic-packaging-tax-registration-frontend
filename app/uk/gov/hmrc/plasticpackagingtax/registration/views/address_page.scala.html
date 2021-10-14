@@ -45,12 +45,14 @@
 
     @inputText(
         field    = form("addressLine1"),
-        labelKey  = "primaryContactDetails.address.addressLine1"
+        labelKey  = "primaryContactDetails.address.addressLine1",
+        autocomplete = Some("address-line1")
     )
 
     @inputText(
         field    = form("addressLine2"),
-        labelKey  = "primaryContactDetails.address.addressLine2"
+        labelKey  = "primaryContactDetails.address.addressLine2",
+        autocomplete = Some("address-line2")
     )
 
     @inputText(
@@ -60,13 +62,15 @@
 
     @inputText(
         field    = form("townOrCity"),
-        labelKey  = "primaryContactDetails.address.townOrCity"
-    )
+        labelKey  = "primaryContactDetails.address.townOrCity",
+        autocomplete = Some("address-level2")
+)
 
     @inputText(
         field    = form("postCode"),
         labelKey  = "primaryContactDetails.address.postCode",
-        classes = Some("govuk-input govuk-input--width-5")
+        classes = Some("govuk-input govuk-input--width-5"),
+        autocomplete = Some("address-level2")
     )
 }
 
