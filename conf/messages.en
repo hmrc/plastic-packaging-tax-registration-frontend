@@ -59,13 +59,17 @@ startPage.companyNumber.description = look up the company number if you are unsu
 startPage.buttonName = Start now
 
 registrationPage.title = Register for Plastic Packaging Tax
+registrationPage.subheading.complete = Registration complete
+registrationPage.subheading.incomplete = Registration incomplete
 registrationPage.completedSections = You have completed {0} of 4 sections.
-registrationPage.prepareApplication = Prepare Application
-registrationPage.apply = Apply
-registrationPage.companyInformation = Organisation information
-registrationPage.primaryContactDetails = Primary contact details
-registrationPage.liabilityDetails = Plastic packaging details
-registrationPage.checkAndSubmit = Check and submit
+registrationPage.task.eligibility.heading = Eligibility check
+registrationPage.task.eligibility = Need to register
+registrationPage.task.organisation.heading = Organisation details
+registrationPage.task.organisation = Organisation information
+registrationPage.task.contactDetails.heading = Contact details
+registrationPage.task.contactDetails = Main contact
+registrationPage.task.review.heading = Review and send
+registrationPage.task.review = Submit registration
 
 task.status.notStarted = Not Started
 task.status.inProgress = In Progress

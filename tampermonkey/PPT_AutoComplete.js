@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.10
+// @version      14.11
 // @description
 // @author       pmonteiro
 // @match        http*://*/plastic-packaging-tax*
@@ -145,25 +145,28 @@ const startPage = () => {
 }
 
 const registrationPage = () => {
-    if (currentPageIs('/plastic-packaging-tax/register-plastic-packaging-tax')) {
+    if (currentPageIs('/plastic-packaging-tax/task-list')) {
 
-        let BUSINESS_DETAILS_STATUS = 'li:nth-child(1) .govuk-tag';
-        let BUSINESS_DETAILS_LINK = 'li:nth-child(1) .govuk-link';
+        let LIABILITY_DETAILS_STATUS = 'li:nth-child(1) .govuk-tag';
+        let LIABILITY_DETAILS_LINK = 'li:nth-child(1) .govuk-link';
 
-        let PRIMARY_CONTACT_DETAILS_STATUS = 'li:nth-child(2) .govuk-tag';
-        let PRIMARY_CONTACT_DETAILS_LINK = 'li:nth-child(2) .govuk-link';
+        let BUSINESS_DETAILS_STATUS = 'li:nth-child(2) .govuk-tag';
+        let BUSINESS_DETAILS_LINK = 'li:nth-child(2) .govuk-link';
 
-        let LIABILITY_DETAILS_STATUS = 'li:nth-child(3) .govuk-tag';
-        let LIABILITY_DETAILS_LINK = 'li:nth-child(3) .govuk-link';
+        let PRIMARY_CONTACT_DETAILS_STATUS = 'li:nth-child(3) .govuk-tag';
+        let PRIMARY_CONTACT_DETAILS_LINK = 'li:nth-child(3) .govuk-link';
 
-        if (document.querySelector(BUSINESS_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
+        let REVIEW_STATUS = 'li:nth-child(4) .govuk-tag';
+        let REVIEW_LINK = 'li:nth-child(4) .govuk-link';
+
+        if (document.querySelector(LIABILITY_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
+            document.querySelector(LIABILITY_DETAILS_LINK).click()
+        } else if (document.querySelector(BUSINESS_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
             document.querySelector(BUSINESS_DETAILS_LINK).click()
         } else if (document.querySelector(PRIMARY_CONTACT_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
             document.querySelector(PRIMARY_CONTACT_DETAILS_LINK).click()
-        } else if (document.querySelector(LIABILITY_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
-            document.querySelector(LIABILITY_DETAILS_LINK).click()
-        } else {
-            document.querySelectorAll('li')[5].getElementsByClassName('govuk-link')[0].click()
+        } else if (document.querySelector(REVIEW_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
+            document.querySelector(REVIEW_LINK).click()
         }
     }
 }

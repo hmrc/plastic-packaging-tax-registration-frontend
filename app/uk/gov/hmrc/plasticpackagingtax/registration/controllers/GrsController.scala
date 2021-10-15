@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -48,11 +49,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 object RegistrationStatus extends Enumeration {
@@ -100,21 +100,37 @@ class GrsController @Inject() (
 
   private def registrationStatus(
     registration: Registration
-  )(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[RegistrationStatus] =
     if (registration.organisationDetails.businessVerificationFailed)
       Future.successful(BUSINESS_VERIFICATION_FAILED)
     else
-      registration.organisationDetails.businessPartnerId() match {
+      registration.organisationDetails.businessPartnerId match {
         case Some(businessPartnerId) =>
-          subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map {
-            subscriptionStatusResponse: SubscriptionStatusResponse =>
-              subscriptionStatusResponse.status match {
-                case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
-                case _          => STATUS_OK
-              }
+          checkSubscriptionStatus(businessPartnerId, registration).map {
+            case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
+            case _          => STATUS_OK
           }
         case None => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
       }
+
+  private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(
+    implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[SubscriptionStatus.Status] =
+    subscriptionsConnector.getSubscriptionStatus(businessPartnerId).flatMap {
+      response =>
+        update(
+          model =>
+            model.copy(
+              incorpJourneyId = registration.incorpJourneyId,
+              organisationDetails =
+                registration.organisationDetails.copy(subscriptionStatus = Some(response.status))
+            )
+        ).map { _ =>
+          response.status
+        }
+    }
 
   private def saveRegistrationDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
