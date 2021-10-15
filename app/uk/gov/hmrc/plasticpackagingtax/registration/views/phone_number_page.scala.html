@@ -46,6 +46,8 @@
             value = phoneNumberField.value,
             hint = Some(Hint(content = HtmlContent(Html( messages("primaryContactDetails.phoneNumber.hint"))))),
             errorMessage = phoneNumberField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            autocomplete = Some("tel"),
+            inputType = "tel",
             label = Label(
                 isPageHeading = false,
                 classes = s"govuk-label govuk-visually-hidden",
