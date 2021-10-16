@@ -301,3 +301,9 @@ corpTaxHelpline.telephone.outsideUK.detail = +44 151 268 0571
 corpTaxHelpline.openingTimes.title = Opening times:
 corpTaxHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 6pm
 corpTaxHelpline.openingTimes.detail.2 = Closed on weekends and bank holidays.
+
+enrolment.failure.title = Sorry, there is a problem with the service
+enrolment.failure.heading = Sorry, there is a problem with the service.
+enrolment.failure.detail.1 = Try again later.
+enrolment.failure.detail.2 = Your PPT reference number is {0}. You can {1}. We will respond to you within 2 working days.
+enrolment.failure.detail.2.text = report a problem if you need help

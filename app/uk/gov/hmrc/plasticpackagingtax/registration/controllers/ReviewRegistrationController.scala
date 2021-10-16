@@ -155,6 +155,7 @@ class ReviewRegistrationController @Inject() (
         .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
     else
       Redirect(routes.NotableErrorController.enrolmentFailure())
+        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
   }
 
   private def handleFailedSubscription(registration: Registration, failures: Seq[EisError])(implicit

@@ -18,15 +18,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
+import org.mockito.Mockito.{reset, verifyNoInteractions, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.test.Helpers.{contentAsString, redirectLocation, status}
+import play.api.http.Status.OK
+import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  SubscriptionStatus,
-  SubscriptionStatusResponse
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

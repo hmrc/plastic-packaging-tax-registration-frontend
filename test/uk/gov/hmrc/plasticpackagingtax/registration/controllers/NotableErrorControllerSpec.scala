@@ -26,7 +26,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   business_verification_failure_page,
   duplicate_subscription_page,
-  error_no_save_page,
+  enrolment_failure_page,
   error_page,
   grs_failure_page
 }
@@ -37,7 +37,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
   private val mcc = stubMessagesControllerComponents()
 
   private val errorPage                      = mock[error_page]
-  private val errorNoSavePage                = mock[error_no_save_page]
+  private val enrolmentFailurePage           = mock[enrolment_failure_page]
   private val grsFailurePage                 = mock[grs_failure_page]
   private val businessVerificationFailedPage = mock[business_verification_failure_page]
   private val duplicateSubscriptionPage      = mock[duplicate_subscription_page]
@@ -47,7 +47,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
                                mockJourneyAction,
                                mcc = mcc,
                                errorPage = errorPage,
-                               errorNoSavePage = errorNoSavePage,
+                               errorNoSavePage = enrolmentFailurePage,
                                grsFailurePage = grsFailurePage,
                                businessVerificationFailurePage = businessVerificationFailedPage,
                                duplicateSubscriptionPage = duplicateSubscriptionPage
@@ -56,7 +56,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(errorPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("error page content"))
-    when(errorNoSavePage.apply()(any(), any())).thenReturn(
+    when(enrolmentFailurePage.apply()(any(), any(), any())).thenReturn(
       HtmlFormat.raw("error no save page content")
     )
     when(grsFailurePage.apply()(any(), any())).thenReturn(HtmlFormat.raw("grs failure content"))
