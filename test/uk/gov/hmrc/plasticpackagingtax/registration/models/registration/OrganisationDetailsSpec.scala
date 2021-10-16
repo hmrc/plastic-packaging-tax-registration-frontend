@@ -36,7 +36,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   NOT_SUBSCRIBED,
   SUBSCRIBED,
-  Status
+  Status,
+  UNKNOWN
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
@@ -79,8 +80,19 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                   subscriptionStatus = Some(SUBSCRIBED)
         ).status mustBe TaskStatus.InProgress
       }
-      "completed" in {
-        createOrg(UK_COMPANY, None, true).status mustBe TaskStatus.Completed
+      "completed when registered and subscription status not-subscribed" in {
+        createOrg(UK_COMPANY,
+                  None,
+                  true,
+                  subscriptionStatus = Some(NOT_SUBSCRIBED)
+        ).status mustBe TaskStatus.Completed
+      }
+      "completed when registered and subscription status unknown" in {
+        createOrg(UK_COMPANY,
+                  None,
+                  true,
+                  subscriptionStatus = Some(UNKNOWN)
+        ).status mustBe TaskStatus.Completed
       }
     }
 
