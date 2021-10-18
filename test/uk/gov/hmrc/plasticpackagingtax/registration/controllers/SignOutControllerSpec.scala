@@ -36,7 +36,7 @@ class SignOutControllerSpec extends ControllerSpec {
   private val sessionTimeoutPage = mock[session_timed_out]
 
   private val controller =
-    new SignOutController(mockAuthAllowEnrolmentAction, config, sessionTimeoutPage, mcc)
+    new SignOutController(config, sessionTimeoutPage, mcc)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -55,6 +55,17 @@ class SignOutControllerSpec extends ControllerSpec {
       "auth user signs out" in {
 
         authorizedUser()
+        val exitSurveyUrl: String = givenExistSurveyUrl
+
+        val result = controller.signOut(SignOutReason.UserAction)(getRequest())
+
+        redirectLocation(result) mustBe Some(exitSurveyUrl)
+
+      }
+
+      "unauth user signs out" in {
+
+        unAuthorizedUser()
         val exitSurveyUrl: String = givenExistSurveyUrl
 
         val result = controller.signOut(SignOutReason.UserAction)(getRequest())
@@ -83,7 +94,15 @@ class SignOutControllerSpec extends ControllerSpec {
       "auth user signs out" in {
 
         authorizedUser()
+        val result = controller.signOut(SignOutReason.UserAction)(getRequest())
 
+        status(result) mustBe SEE_OTHER
+
+      }
+
+      "unauth user signs out" in {
+
+        unAuthorizedUser()
         val result = controller.signOut(SignOutReason.UserAction)(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -96,7 +115,15 @@ class SignOutControllerSpec extends ControllerSpec {
       "auth user signs out" in {
 
         authorizedUser()
+        val result = controller.signOut(SignOutReason.UserAction)(getRequest("keyA" -> "valueA"))
 
+        session(result).get("keyA") shouldBe None
+
+      }
+
+      "unauth user signs out" in {
+
+        unAuthorizedUser()
         val result = controller.signOut(SignOutReason.UserAction)(getRequest("keyA" -> "valueA"))
 
         session(result).get("keyA") shouldBe None
@@ -104,44 +131,30 @@ class SignOutControllerSpec extends ControllerSpec {
       }
     }
 
-    "throw exception" when {
-
-      "unauthorised user hits sign out url" in {
-
-        unAuthorizedUser()
-
-        val result = controller.signOut(SignOutReason.UserAction)(getRequest())
-
-        intercept[RuntimeException](status(result))
-
-      }
-    }
   }
 
   "SignOutController sessionTimeout function" should {
 
     "return 303 (SEE_OTHER) status" when {
 
-      "session times out" in {
+      "auth user session times out" in {
 
         authorizedUser()
-
         val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest())
 
         status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.SignOutController.sessionTimeoutSignedOut().url)
 
       }
-    }
 
-    "redirect to session timed out page" when {
+      "unauth user session times out" in {
 
-      "session times out" in {
-
-        authorizedUser()
-
+        unAuthorizedUser()
         val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest())
 
+        status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.SignOutController.sessionTimeoutSignedOut().url)
+
       }
     }
 
@@ -170,18 +183,6 @@ class SignOutControllerSpec extends ControllerSpec {
       }
     }
 
-    "throws exception" when {
-
-      "unauthorised user hits session timeout url" in {
-
-        unAuthorizedUser()
-
-        val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest())
-
-        intercept[RuntimeException](status(result))
-
-      }
-    }
   }
 
   private def givenExistSurveyUrl = {
