@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   business_verification_failure_page,
   duplicate_subscription_page,
-  error_no_save_page,
+  enrolment_failure_page,
   error_page,
   grs_failure_page
 }
@@ -37,7 +37,7 @@ class NotableErrorController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   errorPage: error_page,
-  errorNoSavePage: error_no_save_page,
+  errorNoSavePage: enrolment_failure_page,
   grsFailurePage: grs_failure_page,
   businessVerificationFailurePage: business_verification_failure_page,
   duplicateSubscriptionPage: duplicate_subscription_page
