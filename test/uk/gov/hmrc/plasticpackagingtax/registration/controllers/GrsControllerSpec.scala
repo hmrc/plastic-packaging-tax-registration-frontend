@@ -23,7 +23,7 @@ import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
@@ -80,24 +80,12 @@ class GrsControllerSpec extends ControllerSpec {
     withOrganisationDetails(unregisteredSoleTraderOrgDetails())
   )
 
-  private val registeredSoleTrader = aRegistration(
-    withOrganisationDetails(registeredUkCompanyOrgDetails())
-  )
-
   private val unregisteredGeneralPartnership = aRegistration(
     withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP))
   )
 
   private val unregisteredScottishPartnership = aRegistration(
     withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP))
-  )
-
-  private val registeredGeneralPartnership = aRegistration(
-    withOrganisationDetails(registeredGeneralPartnershipOrgDetails())
-  )
-
-  private val registeredScottishPartnership = aRegistration(
-    withOrganisationDetails(registeredScottishPartnershipOrgDetails())
   )
 
   "incorpIdCallback" should {
@@ -110,6 +98,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
       "registering a Sole Trader" in {
@@ -117,7 +106,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-        getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+        getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
       "registering a Registered Society" in {
@@ -125,6 +114,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
       "registering a GeneralPartnership" in {
@@ -132,7 +122,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-        getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+        getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
       "registering a ScottishPartnership" in {
@@ -140,7 +130,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-        getRegistration.incorpJourneyId mustBe registration.incorpJourneyId
+        getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
     }
 
@@ -148,55 +138,51 @@ class GrsControllerSpec extends ControllerSpec {
       "registering a UK Limited Company" in {
         await(simulateLimitedCompanyCallback())
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
+        val organisationDetails = getLastSavedRegistration.organisationDetails
 
-        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe Some(
-          incorporationDetails
-        )
-        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe None
-        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe None
+        organisationDetails.incorporationDetails mustBe Some(incorporationDetails)
+        organisationDetails.soleTraderDetails mustBe None
+        organisationDetails.partnershipDetails mustBe None
+
+        organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
 
       "registering a Sole Trader" in {
         await(simulateSoleTraderCallback())
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
+        val organisationDetails = getLastSavedRegistration.organisationDetails
 
-        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe Some(
-          soleTraderIncorporationDetails
-        )
-        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe None
-        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe None
+        organisationDetails.soleTraderDetails mustBe Some(soleTraderIncorporationDetails)
+        organisationDetails.incorporationDetails mustBe None
+        organisationDetails.partnershipDetails mustBe None
+
+        organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
 
       "registering a GeneralPartnership" in {
         await(simulateGeneralPartnershipCallback())
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
-        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe Some(
-          partnershipDetails
-        )
-        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe None
-        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe None
+        val organisationDetails = getLastSavedRegistration.organisationDetails
+
+        organisationDetails.partnershipDetails mustBe Some(partnershipDetails)
+        organisationDetails.incorporationDetails mustBe None
+        organisationDetails.soleTraderDetails mustBe None
+
+        organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
 
       "registering a ScottishPartnership" in {
         await(simulateScottishPartnershipCallback())
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockRegistrationConnector).update(registrationCaptor.capture())(any[HeaderCarrier]())
-        registrationCaptor.getValue.organisationDetails.partnershipDetails mustBe Some(
+        val organisationDetails = getLastSavedRegistration.organisationDetails
+
+        organisationDetails.partnershipDetails mustBe Some(
           partnershipDetailsWithScottishPartnership
         )
-        registrationCaptor.getValue.organisationDetails.incorporationDetails mustBe None
-        registrationCaptor.getValue.organisationDetails.soleTraderDetails mustBe None
+        organisationDetails.incorporationDetails mustBe None
+        organisationDetails.soleTraderDetails mustBe None
+
+        organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
     }
 
@@ -218,7 +204,7 @@ class GrsControllerSpec extends ControllerSpec {
             unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails = None)
           )
         )
-        mockRegistrationUpdate(registeredGeneralPartnership)
+        mockRegistrationUpdate()
 
         intercept[IllegalStateException] {
           await(controller.grsCallback("uuid-id")(getRequest()))
@@ -239,7 +225,7 @@ class GrsControllerSpec extends ControllerSpec {
             )
           )
         )
-        mockRegistrationUpdate(registeredGeneralPartnership)
+        mockRegistrationUpdate()
 
         intercept[IllegalStateException] {
           await(controller.grsCallback("uuid-id")(getRequest()))
@@ -255,7 +241,7 @@ class GrsControllerSpec extends ControllerSpec {
             unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails = None)
           )
         )
-        mockRegistrationUpdate(registeredScottishPartnership)
+        mockRegistrationUpdate()
 
         intercept[IllegalStateException] {
           await(controller.grsCallback("uuid-id")(getRequest()))
@@ -276,7 +262,7 @@ class GrsControllerSpec extends ControllerSpec {
             )
           )
         )
-        mockRegistrationUpdate(registeredScottishPartnership)
+        mockRegistrationUpdate()
 
         intercept[IllegalStateException] {
           await(controller.grsCallback("uuid-id")(getRequest()))
@@ -332,7 +318,7 @@ class GrsControllerSpec extends ControllerSpec {
         authorizedUser()
         mockGetUkCompanyDetails(incorporationDetails)
         mockRegistrationFind(registeredLimitedCompany)
-        mockRegistrationUpdate(registeredLimitedCompany)
+        mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
         val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
@@ -349,7 +335,7 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetUkCompanyDetails(incorporationDetails)
     mockRegistrationFind(unregisteredLimitedCompany)
-    mockRegistrationUpdate(registeredLimitedCompany)
+    mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
@@ -358,7 +344,7 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetRegisteredSocietyDetails(incorporationDetails)
     mockRegistrationFind(registeredRegisteredSociety)
-    mockRegistrationUpdate(registeredRegisteredSociety)
+    mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
@@ -367,7 +353,7 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetUkCompanyDetails(unregisteredIncorporationDetails)
     mockRegistrationFind(unregisteredLimitedCompany)
-    mockRegistrationUpdate(unregisteredLimitedCompany)
+    mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
@@ -376,7 +362,7 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetUkCompanyDetails(verificationFailedIncorporationDetails)
     mockRegistrationFind(verificationFailedLimitedCompany)
-    mockRegistrationUpdate(verificationFailedLimitedCompany)
+    mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
@@ -385,7 +371,7 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetSoleTraderDetails(soleTraderIncorporationDetails)
     mockRegistrationFind(unregisteredSoleTrader)
-    mockRegistrationUpdate(registeredSoleTrader)
+    mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
@@ -394,7 +380,7 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetGeneralPartnershipDetails(generalPartnershipDetails)
     mockRegistrationFind(unregisteredGeneralPartnership)
-    mockRegistrationUpdate(registeredGeneralPartnership)
+    mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
@@ -403,12 +389,12 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetScottishPartnershipDetails(scottishPartnershipDetails)
     mockRegistrationFind(unregisteredScottishPartnership)
-    mockRegistrationUpdate(registeredScottishPartnership)
+    mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def getRegistration: Registration = {
+  private def getLastSavedRegistration: Registration = {
     val captor = ArgumentCaptor.forClass(classOf[Registration])
     verify(mockRegistrationConnector, Mockito.atLeastOnce()).update(captor.capture())(any())
     captor.getValue

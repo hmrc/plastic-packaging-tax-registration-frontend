@@ -32,14 +32,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
   PartnershipTypeEnum,
   SCOTTISH_PARTNERSHIP
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GeneralPartnershipDetails,
-  IncorporationAddressDetails,
-  IncorporationDetails,
-  IncorporationRegistrationDetails,
-  PartnershipDetails,
-  ScottishPartnershipDetails,
-  SoleTraderIncorporationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
+  NOT_SUBSCRIBED,
+  SUBSCRIBED,
+  Status,
+  UNKNOWN
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
@@ -65,23 +63,48 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
       "not started" in {
         OrganisationDetails().status mustBe TaskStatus.NotStarted
       }
-      "in progress" in {
+      "in progress when not registered" in {
         createOrg(UK_COMPANY, None, false).status mustBe TaskStatus.InProgress
       }
-      "completed" in {
-        createOrg(UK_COMPANY, None, true).status mustBe TaskStatus.Completed
+      "in progress when subscription check not done" in {
+        createOrg(UK_COMPANY,
+                  None,
+                  true,
+                  subscriptionStatus = None
+        ).status mustBe TaskStatus.InProgress
+      }
+      "in progress when subscribed" in {
+        createOrg(UK_COMPANY,
+                  None,
+                  true,
+                  subscriptionStatus = Some(SUBSCRIBED)
+        ).status mustBe TaskStatus.InProgress
+      }
+      "completed when registered and subscription status not-subscribed" in {
+        createOrg(UK_COMPANY,
+                  None,
+                  true,
+                  subscriptionStatus = Some(NOT_SUBSCRIBED)
+        ).status mustBe TaskStatus.Completed
+      }
+      "completed when registered and subscription status unknown" in {
+        createOrg(UK_COMPANY,
+                  None,
+                  true,
+                  subscriptionStatus = Some(UNKNOWN)
+        ).status mustBe TaskStatus.Completed
       }
     }
 
     "identify that business partner id is present" in {
       forAll(registeredOrgs) { organisationDetails =>
-        organisationDetails.businessPartnerId() mustBe Some("XP001")
+        organisationDetails.businessPartnerId mustBe Some("XP001")
       }
     }
 
     "identify that business partner id is absent" in {
       forAll(unregisteredOrgs) { organisationDetails =>
-        organisationDetails.businessPartnerId() mustBe None
+        organisationDetails.businessPartnerId mustBe None
       }
     }
 
@@ -89,7 +112,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
       "organisation type is unsupported" in {
         OrganisationDetails(organisationType =
           Some(CHARITY_OR_NOT_FOR_PROFIT)
-        ).businessPartnerId() mustBe None
+        ).businessPartnerId mustBe None
       }
 
       "partnership type is unsupported" in {
@@ -97,7 +120,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                             partnershipDetails = Some(
                               PartnershipDetails(partnershipType = LIMITED_LIABILITY_PARTNERSHIP)
                             )
-        ).businessPartnerId() mustBe None
+        ).businessPartnerId mustBe None
       }
     }
 
@@ -120,7 +143,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
   private def createOrg(
     orgType: OrgType,
     partnershipType: Option[PartnershipTypeEnum],
-    registered: Boolean
+    registered: Boolean,
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
   ) =
     orgType match {
       case UK_COMPANY =>
@@ -144,7 +168,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                                          registeredBusinessPartnerId = None
                                                        )
                               )
-                            )
+                            ),
+                            subscriptionStatus = subscriptionStatus
         )
       case SOLE_TRADER =>
         OrganisationDetails(organisationType = Some(SOLE_TRADER),
@@ -170,7 +195,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                                                      None
                                                                  )
                               )
-                            )
+                            ),
+                            subscriptionStatus = subscriptionStatus
         )
       case PARTNERSHIP =>
         partnershipType match {
@@ -203,7 +229,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                                      ),
                                                      scottishPartnershipDetails = None
                                   )
-                                )
+                                ),
+                                subscriptionStatus = subscriptionStatus
             )
           case Some(SCOTTISH_PARTNERSHIP) =>
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
@@ -232,7 +259,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                                        )
                                                      )
                                   )
-                                )
+                                ),
+                                subscriptionStatus = subscriptionStatus
             )
           case _ => fail("Unsupported partnership type")
         }

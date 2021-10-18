@@ -35,10 +35,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
-  private val CHECK_AND_SUBMIT                    = 0
   private val LIABILITY_DETAILS                   = 0
   private val BUSINESS_DETAILS                    = 1
   private val PRIMARY_CONTACT_DETAILS             = 2
+  private val CHECK_AND_SUBMIT                    = 3
   private val registrationPage: registration_page = instanceOf[registration_page]
 
   private def createView(registration: Registration = aRegistration()): Html =
@@ -98,7 +98,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
         "application status should reflect the completed sections" in {
           view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
             0
-          ).text() mustBe "Application incomplete"
+          ).text() mustBe messages("registrationPage.subheading.incomplete")
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
@@ -106,48 +106,50 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
         }
 
-        "'Prepare application'" in {
-          val prepareApplicationElem = view.getElementsByTag("li").get(0)
+        "Eligibility check" in {
+          val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(prepareApplicationElem) must include(
-            messages("registrationPage.prepareApplication")
+          header(liabilityElement) must include(
+            messages("registrationPage.task.eligibility.heading")
           )
-
-          sectionName(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "registrationPage.liabilityDetails"
-          )
-          sectionStatus(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "task.status.inProgress"
-          )
-          sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
+          sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
+          sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
+          sectionLink(liabilityElement, 0) must haveHref(
             routes.LiabilityWeightExpectedController.displayPage()
           )
-
-          sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
-            "registrationPage.companyInformation"
-          )
-          sectionStatus(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
-            "task.status.cannotStartYet"
-          )
-          sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "registrationPage.primaryContactDetails"
-          )
-          sectionStatus(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "task.status.cannotStartYet"
-          )
         }
 
-        "'Apply'" in {
-          val applyElem = view.getElementsByTag("li").get(4)
+        "Organisation details" in {
+          val businessElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
-          header(applyElem) must include(messages("registrationPage.apply"))
-
-          sectionName(applyElem, CHECK_AND_SUBMIT) mustBe messages(
-            "registrationPage.checkAndSubmit"
+          header(businessElement) must include(
+            messages("registrationPage.task.organisation.heading")
           )
-          sectionStatus(applyElem, CHECK_AND_SUBMIT) mustBe messages("task.status.cannotStartYet")
-          sectionLinks(applyElem, CHECK_AND_SUBMIT).size() mustBe 0
+
+          sectionName(businessElement, 0) mustBe messages("registrationPage.task.organisation")
+          sectionStatus(businessElement, 0) mustBe messages("task.status.cannotStartYet")
         }
+
+        "Contact details" in {
+          val contactElement = view.getElementsByClass("app-task").get(PRIMARY_CONTACT_DETAILS)
+
+          header(contactElement) must include(
+            messages("registrationPage.task.contactDetails.heading")
+          )
+
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+        }
+
+        "Review and send" in {
+          val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
+
+          header(reviewElement) must include(messages("registrationPage.task.review.heading"))
+
+          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+          sectionStatus(reviewElement, 0) mustBe messages("task.status.cannotStartYet")
+        }
+
       }
 
       "Organisation information and Primary Contact details not started" when {
@@ -166,7 +168,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
         "application status should reflect the completed sections" in {
           view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
             0
-          ).text() mustBe "Application incomplete"
+          ).text() mustBe messages("registrationPage.subheading.incomplete")
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
@@ -174,52 +176,53 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
         }
 
-        "'Prepare application'" in {
-          val prepareApplicationElem = view.getElementsByTag("li").get(0)
+        "Eligibility check" in {
+          val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(prepareApplicationElem) must include(
-            messages("registrationPage.prepareApplication")
+          header(liabilityElement) must include(
+            messages("registrationPage.task.eligibility.heading")
           )
-
-          sectionName(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "registrationPage.liabilityDetails"
-          )
-          sectionStatus(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "task.status.completed"
-          )
-          sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
+          sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
+          sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
+          sectionLink(liabilityElement, 0) must haveHref(
             routes.LiabilityWeightExpectedController.displayPage()
           )
+        }
 
-          sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
-            "registrationPage.companyInformation"
+        "Organisation details" in {
+          val organisationElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
+
+          header(organisationElement) must include(
+            messages("registrationPage.task.organisation.heading")
           )
-          sectionStatus(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
-            "task.status.notStarted"
-          )
-          sectionLink(prepareApplicationElem, BUSINESS_DETAILS) must haveHref(
+
+          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation")
+          sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
+          sectionLink(organisationElement, 0) must haveHref(
             routes.OrganisationDetailsTypeController.displayPage()
           )
-
-          sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "registrationPage.primaryContactDetails"
-          )
-          sectionStatus(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "task.status.cannotStartYet"
-          )
         }
 
-        "'Apply'" in {
-          val applyElem = view.getElementsByTag("li").get(4)
+        "Contact details" in {
+          val contactElement = view.getElementsByClass("app-task").get(PRIMARY_CONTACT_DETAILS)
 
-          header(applyElem) must include(messages("registrationPage.apply"))
-
-          sectionName(applyElem, CHECK_AND_SUBMIT) mustBe messages(
-            "registrationPage.checkAndSubmit"
+          header(contactElement) must include(
+            messages("registrationPage.task.contactDetails.heading")
           )
-          sectionStatus(applyElem, CHECK_AND_SUBMIT) mustBe messages("task.status.cannotStartYet")
-          sectionLinks(applyElem, CHECK_AND_SUBMIT).size() mustBe 0
+
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
         }
+
+        "Review and send" in {
+          val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
+
+          header(reviewElement) must include(messages("registrationPage.task.review.heading"))
+
+          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+          sectionStatus(reviewElement, 0) mustBe messages("task.status.cannotStartYet")
+        }
+
       }
 
       "All Sections completed" when {
@@ -236,7 +239,7 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
           view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
             0
-          ).text() mustBe "Application complete"
+          ).text() mustBe messages("registrationPage.subheading.complete")
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
@@ -244,58 +247,59 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           )
         }
 
-        "'Prepare application'" in {
-          val prepareApplicationElem = view.getElementsByTag("li").get(0)
+        "Eligibility check" in {
+          val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-          header(prepareApplicationElem) must include(
-            messages("registrationPage.prepareApplication")
+          header(liabilityElement) must include(
+            messages("registrationPage.task.eligibility.heading")
           )
-
-          sectionName(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "registrationPage.liabilityDetails"
-          )
-          sectionStatus(prepareApplicationElem, LIABILITY_DETAILS) mustBe messages(
-            "task.status.completed"
-          )
-          sectionLink(prepareApplicationElem, LIABILITY_DETAILS) must haveHref(
+          sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
+          sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
+          sectionLink(liabilityElement, 0) must haveHref(
             routes.LiabilityWeightExpectedController.displayPage()
           )
+        }
 
-          sectionName(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
-            "registrationPage.companyInformation"
+        "Organisation details" in {
+          val organisationElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
+
+          header(organisationElement) must include(
+            messages("registrationPage.task.organisation.heading")
           )
-          sectionStatus(prepareApplicationElem, BUSINESS_DETAILS) mustBe messages(
-            "task.status.completed"
-          )
-          sectionLink(prepareApplicationElem, BUSINESS_DETAILS) must haveHref(
+
+          sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation")
+          sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
+          sectionLink(organisationElement, 0) must haveHref(
             routes.OrganisationDetailsTypeController.displayPage()
           )
+        }
 
-          sectionName(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "registrationPage.primaryContactDetails"
+        "Contact details" in {
+          val contactElement = view.getElementsByClass("app-task").get(PRIMARY_CONTACT_DETAILS)
+
+          header(contactElement) must include(
+            messages("registrationPage.task.contactDetails.heading")
           )
-          sectionStatus(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) mustBe messages(
-            "task.status.completed"
-          )
-          sectionLink(prepareApplicationElem, PRIMARY_CONTACT_DETAILS) must haveHref(
+
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
+          sectionLink(contactElement, 0) must haveHref(
             routes.ContactDetailsFullNameController.displayPage()
           )
         }
 
-        "'Apply'" in {
+        "Review and send" in {
+          val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
-          val applyElem = view.getElementsByTag("li").get(4)
+          header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-          header(applyElem) must include(messages("registrationPage.apply"))
-
-          sectionName(applyElem, CHECK_AND_SUBMIT) mustBe messages(
-            "registrationPage.checkAndSubmit"
-          )
-          sectionStatus(applyElem, CHECK_AND_SUBMIT) mustBe messages("task.status.completed")
-          sectionLink(applyElem, CHECK_AND_SUBMIT) must haveHref(
+          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+          sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
+          sectionLink(reviewElement, 0) must haveHref(
             routes.ReviewRegistrationController.displayPage()
           )
         }
+
       }
 
       "Check and Submit is 'In Progress'" in {
@@ -304,13 +308,13 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
         )
         val view: Html = createView(inProgressRegistration)
 
-        val applyElem = view.getElementsByTag("li").get(4)
+        val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
-        header(applyElem) must include(messages("registrationPage.apply"))
+        header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-        sectionName(applyElem, CHECK_AND_SUBMIT) mustBe messages("registrationPage.checkAndSubmit")
-        sectionStatus(applyElem, CHECK_AND_SUBMIT) mustBe messages("task.status.inProgress")
-        sectionLink(applyElem, CHECK_AND_SUBMIT) must haveHref(
+        sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+        sectionStatus(reviewElement, 0) mustBe messages("task.status.inProgress")
+        sectionLink(reviewElement, 0) must haveHref(
           routes.ReviewRegistrationController.displayPage()
         )
       }
@@ -321,13 +325,13 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
         )
         val view: Html = createView(completedRegistration)
 
-        val applyElem = view.getElementsByTag("li").get(4)
+        val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
-        header(applyElem) must include(messages("registrationPage.apply"))
+        header(reviewElement) must include(messages("registrationPage.task.review.heading"))
 
-        sectionName(applyElem, CHECK_AND_SUBMIT) mustBe messages("registrationPage.checkAndSubmit")
-        sectionStatus(applyElem, CHECK_AND_SUBMIT) mustBe messages("task.status.completed")
-        sectionLink(applyElem, CHECK_AND_SUBMIT) must haveHref(
+        sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+        sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
+        sectionLink(reviewElement, 0) must haveHref(
           routes.ReviewRegistrationController.displayPage()
         )
       }

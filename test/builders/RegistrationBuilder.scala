@@ -33,6 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   PartnershipDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 
 //noinspection ScalaStyle
 trait RegistrationBuilder {
@@ -99,7 +100,8 @@ trait RegistrationBuilder {
                                                                        Some("X00000123456789")
                                                                    )
                                                                )
-                                                             )
+                                                             ),
+                                                           subscriptionStatus = Some(NOT_SUBSCRIBED)
                  ),
                  metaData =
                    MetaData(verifiedEmails =

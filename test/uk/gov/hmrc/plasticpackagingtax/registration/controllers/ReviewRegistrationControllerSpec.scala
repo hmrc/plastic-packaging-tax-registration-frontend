@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import java.util.UUID
+
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -39,6 +40,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, LiabilityWei
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   EisError,
   SubscriptionCreateResponseFailure
@@ -99,7 +101,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
                                                          registration =
                                                            incorporationRegistrationDetails
                                     )
-                                  )
+                                  ),
+                                subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )
         )
@@ -123,7 +126,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(SOLE_TRADER),
-                                soleTraderDetails = Some(soleTraderIncorporationDetails)
+                                soleTraderDetails = Some(soleTraderIncorporationDetails),
+                                subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )
         )
@@ -140,7 +144,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
-                                partnershipDetails = Some(partnershipDetails)
+                                partnershipDetails = Some(partnershipDetails),
+                                subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )
         )
