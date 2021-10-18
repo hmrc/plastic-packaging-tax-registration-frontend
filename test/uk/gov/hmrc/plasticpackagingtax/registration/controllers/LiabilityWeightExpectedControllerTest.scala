@@ -80,7 +80,7 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
           "and user selects 'no'" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
+            mockRegistrationUpdate()
 
             val correctForm = Seq("answer" -> "no", formAction)
             val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -102,7 +102,7 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
           "and weight is greater than minimum weight" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
+            mockRegistrationUpdate()
 
             val correctForm = Seq("answer" -> "yes", "totalKg" -> "10000", formAction)
             val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

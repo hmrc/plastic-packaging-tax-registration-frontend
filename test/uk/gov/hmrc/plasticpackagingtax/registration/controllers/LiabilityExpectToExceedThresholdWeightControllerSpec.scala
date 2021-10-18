@@ -110,7 +110,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
         "user submits 'Yes' answer with isPreLaunch enabled" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
           mockLiabilityLinkHelperNextPage(routes.LiabilityWeightController.displayPage())
 
           val correctForm = Seq("answer" -> "yes", formAction)
@@ -132,7 +132,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
         "user submits 'Yes' answer with isPreLaunch disabled" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
           mockLiabilityLinkHelperNextPage(routes.LiabilityStartDateController.displayPage())
 
           val correctForm = Seq("answer" -> "yes", formAction)
@@ -154,7 +154,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
         "user submits 'No' answer" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> "no", formAction)
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

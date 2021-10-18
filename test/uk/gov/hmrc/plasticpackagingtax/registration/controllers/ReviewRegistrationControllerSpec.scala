@@ -108,7 +108,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
 
@@ -133,7 +133,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
 
@@ -151,7 +151,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         )
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
         mockGetGeneralPartnershipDetails(generalPartnershipDetails)
 
         val result = controller.displayPage()(getRequest())

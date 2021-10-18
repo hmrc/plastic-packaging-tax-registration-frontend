@@ -82,7 +82,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
         "user submits the job title" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
 
           val result =
             controller.submit()(postRequestEncoded(JobTitle("tester"), formAction))
