@@ -52,12 +52,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
 
-  lazy val reportAProblemPartialUrl: String =
-    s"$contactBaseUrl/contact/problem_reports_ajax?service=$serviceIdentifier"
-
-  lazy val reportAProblemNonJSUrl: String =
-    s"$contactBaseUrl/contact/problem_reports_nonjs?service=$serviceIdentifier"
-
   lazy val reportTechincalProblemUrl: String =
     s"$contactBaseUrl/contact/report-technical-problem?service=$serviceIdentifier"
 
