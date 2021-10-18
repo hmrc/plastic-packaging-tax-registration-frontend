@@ -38,11 +38,17 @@ trait MockRegistrationConnector
 
   protected val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
+  @deprecated("Use the non-arg version for a more realistic simulation of the update method")
   def mockRegistrationUpdate(
     dataToReturn: Registration
   ): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenReturn(Future.successful(Right(dataToReturn)))
+
+  // realistically mocks the "update" call by returning the passed in registration
+  def mockRegistrationUpdate(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
+    when(mockRegistrationConnector.update(any[Registration])(any()))
+      .thenAnswer(inv => Future.successful(Right(inv.getArgument(0))))
 
   def mockRegistrationFind(
     dataToReturn: Registration

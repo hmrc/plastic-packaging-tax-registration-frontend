@@ -67,36 +67,44 @@
 
     @pageHeading(messages("registrationPage.title"))
 
-    <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application @if(registration.isRegistrationComplete) { complete } else { incomplete }</h2>
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@{if(registration.isRegistrationComplete) messages("registrationPage.subheading.complete")  else messages("registrationPage.subheading.incomplete") }</h2>
     @paragraphBody(message = messages("registrationPage.completedSections", registration.numberOfCompletedSections), classes = "govuk-body govuk-!-margin-bottom-7")
 
     <ol class="app-task-list">
 
-        <li>
-            @task(1, "registrationPage.prepareApplication", Set(
-                TaskSection(
-                    title  = "registrationPage.liabilityDetails",
-                    link   = liabilityLinkHelper.startPage(),
-                    status = registration.liabilityDetailsStatus
-                ),
-                TaskSection(
-                    title = "registrationPage.companyInformation",
-                    link = pptRoutes.OrganisationDetailsTypeController.displayPage(),
-                    showLink = registration.isLiabilityDetailsComplete,
-                    status = registration.companyDetailsStatus
-                ),
-                TaskSection(
-                    title  = "registrationPage.primaryContactDetails",
-                    link   = pptRoutes.ContactDetailsFullNameController.displayPage(),
-                    showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
-                    status = registration.primaryContactDetailsStatus
-                )
-            ))
+        <li class="app-task">
+        @task(1, "registrationPage.task.eligibility.heading", Set(
+            TaskSection(
+                title  = "registrationPage.task.eligibility",
+                link   = liabilityLinkHelper.startPage(),
+                status = registration.liabilityDetailsStatus
+            )
+        ))
         </li>
-        <li>
-            @task(2, "registrationPage.apply", Set(
+        <li class="app-task">
+        @task(2, "registrationPage.task.organisation.heading", Set(
+            TaskSection(
+                title = "registrationPage.task.organisation",
+                link = pptRoutes.OrganisationDetailsTypeController.displayPage(),
+                showLink = registration.isLiabilityDetailsComplete,
+                status = registration.companyDetailsStatus
+            )
+        ))
+        </li>
+        <li class="app-task">
+        @task(3, "registrationPage.task.contactDetails.heading", Set(
+            TaskSection(
+                title  = "registrationPage.task.contactDetails",
+                link   = pptRoutes.ContactDetailsFullNameController.displayPage(),
+                showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
+                status = registration.primaryContactDetailsStatus
+            )
+        ))
+        </li>
+        <li class="app-task">
+            @task(4, "registrationPage.task.review.heading", Set(
                 TaskSection(
-                    title  = "registrationPage.checkAndSubmit",
+                    title  = "registrationPage.task.review",
                     link   = pptRoutes.ReviewRegistrationController.displayPage(),
                     showLink = registration.isCheckAndSubmitReady,
                     status = registration.checkAndSubmitStatus

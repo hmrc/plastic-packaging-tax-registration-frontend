@@ -34,6 +34,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   PartnershipDetails,
   SoleTraderIncorporationDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
+  SUBSCRIBED,
+  Status
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class OrganisationDetails(
@@ -41,21 +45,24 @@ case class OrganisationDetails(
   businessRegisteredAddress: Option[Address] = None,
   soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
-  partnershipDetails: Option[PartnershipDetails] = None
+  partnershipDetails: Option[PartnershipDetails] = None,
+  subscriptionStatus: Option[Status] = None
 ) {
 
   def status: TaskStatus =
     if (organisationType.isEmpty) TaskStatus.NotStarted
-    else if (businessPartnerId().isDefined) TaskStatus.Completed
+    else if (subscriptionCheckPassed && businessPartnerId.isDefined) TaskStatus.Completed
     else TaskStatus.InProgress
 
-  val businessVerificationFailed: Boolean =
+  lazy val subscriptionCheckPassed: Boolean = subscriptionStatus.exists(!_.equals(SUBSCRIBED))
+
+  lazy val businessVerificationFailed: Boolean =
     incorporationDetails.exists(
       details =>
         details.registration.registrationStatus == "REGISTRATION_NOT_CALLED" && details.businessVerificationStatus == "FAIL"
     )
 
-  def businessPartnerId(): Option[String] =
+  lazy val businessPartnerId: Option[String] =
     organisationType match {
       case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) =>
         incorporationDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
@@ -74,7 +81,7 @@ case class OrganisationDetails(
       case _ => None
     }
 
-  val businessName: Option[String] = organisationType match {
+  lazy val businessName: Option[String] = organisationType match {
     case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorporationDetails.map(_.companyName)
     case Some(SOLE_TRADER)                           => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
     case _                                           => None
