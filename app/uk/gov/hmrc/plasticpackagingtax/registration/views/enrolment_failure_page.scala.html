@@ -33,7 +33,7 @@
 
 @()(implicit request: Request[_], messages: Messages, flash: Flash)
 
-@linkText = @{link(text = messages("enrolment.failure.detail.1.text"), call = Call("GET", appConfig.reportAProblemPartialUrl))}
+@linkText = @{link(text = messages("enrolment.failure.detail.1.text"), call = Call("GET", appConfig.reportTechincalProblemUrl))}
 
  @govukLayout(
   title = Title("enrolment.failure.title")) {
