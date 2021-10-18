@@ -33,16 +33,16 @@
 
 @()(implicit request: Request[_], messages: Messages, flash: Flash)
 
+@linkText = @{link(text = messages("enrolment.failure.detail.1.text"), call = Call("GET", appConfig.reportAProblemPartialUrl))}
+
  @govukLayout(
   title = Title("enrolment.failure.title")) {
 
   @pageHeading(messages("enrolment.failure.heading"))
 
-  @paragraphBody(message = messages("enrolment.failure.detail.1"), id = Some("enrolment-failure-detail-id"))
-
-  @paragraphBody(id = Some("enrolment-failure-detail-id-2"),
+  @paragraphBody(id = Some("enrolment-failure-detail-id-1"),
    message = flash.get(FlashKeys.referenceId).map(referenceId =>
-    messages("enrolment.failure.detail.2", referenceId,
-     link(text = messages("enrolment.failure.detail.2.text"), call = Call("GET", appConfig.reportAProblemPartialUrl)))).get)
+    messages("enrolment.failure.detail.1", referenceId, linkText
+     )).getOrElse(messages("error.detail1")))
 
  }

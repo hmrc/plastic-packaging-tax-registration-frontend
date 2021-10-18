@@ -31,9 +31,7 @@ class EnrolmentFailureViewSpec extends UnitViewSpec with Matchers {
   private val page: enrolment_failure_page =
     instanceOf[enrolment_failure_page]
 
-  private val flash = Flash(Map(FlashKeys.referenceId -> "PPT123"))
-
-  private def createView(): Html =
+  private def createView(flash: Flash = Flash(Map.empty)): Html =
     page()(journeyRequest, messages, flash)
 
   "Enrolment Failure Page" should {
@@ -43,19 +41,23 @@ class EnrolmentFailureViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass(gdsPageHeading).first() must containMessage("enrolment.failure.title")
     }
 
-    "display detail" in {
-      val pptReferenceText = view.getElementsByClass(gdsPageBodyText)
-      pptReferenceText.get(0) must containMessage("enrolment.failure.detail.1")
-      pptReferenceText.get(1) must containMessage("enrolment.failure.detail.2",
+    "display detail with referenceId" in {
+      val viewWithReferenceId = createView(Flash(Map(FlashKeys.referenceId -> "PPT123")))
+      val pptReferenceText    = viewWithReferenceId.getElementsByClass(gdsPageBodyText)
+      pptReferenceText.get(0) must containMessage("enrolment.failure.detail.1",
                                                   "PPT123",
-                                                  messages("enrolment.failure.detail.2.text")
+                                                  messages("enrolment.failure.detail.1.text")
       )
+    }
+
+    "display detail with no referenceId provided" in {
+      view.getElementsByClass(gdsPageBodyText).get(0) must containMessage("error.detail1")
     }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f()(request, messages, flash)
-    page.render(request, messages, flash)
+    page.f()(request, messages, Flash(Map.empty))
+    page.render(request, messages, Flash(Map.empty))
   }
 
 }
