@@ -20,22 +20,18 @@ import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.session_timed_out
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.Future
-
 class SignOutController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
   appConfig: AppConfig,
   sessionTimedOut: session_timed_out,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) with I18nSupport {
 
   def signOut(signOutReason: SignOutReason): Action[AnyContent] =
-    authenticate { _ =>
+    Action { implicit request =>
       signOutReason match {
         case SignOutReason.SessionTimeout =>
           Redirect(routes.SignOutController.sessionTimeoutSignedOut()).withNewSession
@@ -44,8 +40,8 @@ class SignOutController @Inject() (
     }
 
   def sessionTimeoutSignedOut: Action[AnyContent] =
-    Action.async { implicit request =>
-      Future.successful(Ok(sessionTimedOut()))
+    Action { implicit request =>
+      Ok(sessionTimedOut())
     }
 
 }
