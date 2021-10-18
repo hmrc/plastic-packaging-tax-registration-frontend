@@ -90,7 +90,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
         mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
         val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndContinueFormAction)
@@ -106,7 +106,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
 
         val correctForm =
           Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndComeBackLaterFormAction)
@@ -122,7 +122,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
         authorizedUser()
         mockRegistrationFind(registration)
-        mockRegistrationUpdate(registration)
+        mockRegistrationUpdate()
         mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
         val correctForm =
@@ -143,7 +143,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
           authorizedUser()
           mockRegistrationFind(registration)
-          mockRegistrationUpdate(registration)
+          mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, formAction)
           await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
@@ -164,7 +164,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
           authorizedUser()
           mockRegistrationFind(registration)
-          mockRegistrationUpdate(registration)
+          mockRegistrationUpdate()
           mockCreateScottishPartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
           val correctForm = Seq("answer" -> SCOTTISH_PARTNERSHIP.toString, formAction)

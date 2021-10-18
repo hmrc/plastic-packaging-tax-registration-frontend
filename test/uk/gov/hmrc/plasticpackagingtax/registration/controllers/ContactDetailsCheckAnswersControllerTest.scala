@@ -89,7 +89,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
       "user submits answers" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
 
         val result =
           controller.submit()(FakeRequest("POST", ""))

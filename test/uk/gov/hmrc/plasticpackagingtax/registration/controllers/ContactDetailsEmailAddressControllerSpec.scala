@@ -132,7 +132,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
@@ -162,7 +162,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(None)
 
@@ -188,7 +188,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatusWithException(
             DownstreamServiceError("Failed to get status", new Exception())
@@ -213,7 +213,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
@@ -251,7 +251,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
@@ -279,7 +279,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         "user submits an email address with email-verification disabled " in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate(aRegistration())
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(false)
 
           val result =
@@ -308,7 +308,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
@@ -365,7 +365,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
@@ -377,7 +377,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
           formAction._1 match {
             case "SaveAndContinue" =>
-              intercept[RegistrationException] {
+              intercept[DownstreamServiceError] {
                 await(
                   controller.submit()(
                     postRequestEncoded(EmailAddress("test2@test.com"), formAction)
@@ -404,7 +404,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           )
           authorizedUserWithNoCredentials()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(

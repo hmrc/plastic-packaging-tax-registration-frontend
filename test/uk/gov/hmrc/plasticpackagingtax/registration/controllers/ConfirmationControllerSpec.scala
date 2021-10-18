@@ -57,7 +57,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
         authorizedUser()
 
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -68,7 +68,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
           PptTestData.newUser().copy(enrolments = Enrolments(Set(Enrolment("HMRC-PPT-ORG"))))
         authorizedUser(user)
 
-        mockRegistrationUpdate(aRegistration())
+        mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK

@@ -115,7 +115,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(COMPLETE)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
@@ -137,7 +137,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(INCORRECT_PASSCODE)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
@@ -155,7 +155,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(TOO_MANY_ATTEMPTS)
 
           val result =
@@ -174,7 +174,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(JOURNEY_NOT_FOUND)
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
@@ -210,7 +210,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           )
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           val result =
             controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
 
@@ -230,7 +230,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
-          mockRegistrationUpdate(reg)
+          mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscodeWithException(
             DownstreamServiceError("Error", RegistrationException("Error"))
           )

@@ -91,7 +91,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
           "and weight is greater than minimum weight and feature flag 'liabilityPreLaunch' is disabled" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
+            mockRegistrationUpdate()
             mockLiabilityLinkHelperNextPage(routes.LiabilityStartDateController.displayPage())
 
             val result =
@@ -115,7 +115,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
           "and weight is less than minimum weight" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
+            mockRegistrationUpdate()
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
 
@@ -138,7 +138,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
           "and weight is not set" in {
             authorizedUser()
             mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate(aRegistration())
+            mockRegistrationUpdate()
             when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
 
             val result =
