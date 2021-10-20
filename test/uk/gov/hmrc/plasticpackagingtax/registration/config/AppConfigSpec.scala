@@ -113,6 +113,10 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       validAppConfig.pptAccountUrl must be("http://localhost:8505/plastic-packaging-tax/account")
     }
 
+    "have 'mfaUpliftUrl' defined" in {
+      validAppConfig.mfaUpliftUrl must be("http://localhost:9553/bas-gateway/uplift-mfa")
+    }
+
     "inspect feature flags" when {
       "and check that 'isPreLaunch' is false" in {
         validAppConfig.isDefaultFeatureFlagEnabled(Features.isPreLaunch) mustBe false

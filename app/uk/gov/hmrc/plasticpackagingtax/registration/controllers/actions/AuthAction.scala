@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 import com.google.inject.{ImplementedBy, Inject}
 import com.kenshoo.play.metrics.Metrics
 import play.api.Logger
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
@@ -84,7 +85,7 @@ abstract class AuthActionBase @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     val authorisation = authTimer.time()
-    authorised()
+    authorised(CredentialStrength(CredentialStrength.strong))
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
@@ -116,11 +117,20 @@ abstract class AuthActionBase @Inject() (
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+      case _: IncorrectCredentialStrength =>
+        upliftCredentialStrength()
       case _: AuthorisationException =>
         Results.Redirect(routes.UnauthorisedController.onPageLoad())
 
     }
   }
+
+  private def upliftCredentialStrength[A](): Result =
+    Redirect(appConfig.mfaUpliftUrl,
+             Map("origin"      -> Seq(appConfig.serviceIdentifier),
+                 "continueUrl" -> Seq(appConfig.loginContinueUrl)
+             )
+    )
 
   private def executeRequest[A](
     request: Request[A],

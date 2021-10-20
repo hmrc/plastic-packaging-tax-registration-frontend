@@ -22,7 +22,13 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.{Enrolment, Enrolments, InsufficientEnrolments, MissingBearerToken}
+import uk.gov.hmrc.auth.core.{
+  Enrolment,
+  Enrolments,
+  IncorrectCredentialStrength,
+  InsufficientEnrolments,
+  MissingBearerToken
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -126,6 +132,22 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
         )
 
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+    }
+
+    "redirect the user to MFA Uplift page if the user has incorrect credential strength " in {
+      when(appConfig.mfaUpliftUrl).thenReturn("mfa-uplift-url")
+      when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
+      when(appConfig.serviceIdentifier).thenReturn("PPT")
+
+      whenAuthFailsWith(IncorrectCredentialStrength())
+      val result =
+        createAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                       okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some(
+        "mfa-uplift-url?origin=PPT&continueUrl=login-continue-url"
+      )
     }
   }
 }
