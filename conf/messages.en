@@ -310,3 +310,7 @@ enrolment.failure.title = Sorry, there is a problem with the service
 enrolment.failure.heading = Sorry, there is a problem with the service.
 enrolment.failure.detail.1 = Your PPT reference number is {0}. You can {1}. We will respond to you within 2 working days.
 enrolment.failure.detail.1.text = report a problem if you need help
+
+enrolment.pptReference.title = What is your PPT reference number?
+enrolment.pptReference.hint = You got this number when you registered for PPT. For example: XMPPT1234567890.
+enrolment.pptReference.value.error.regex = Enter a PPT reference number in the correct format
