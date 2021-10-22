@@ -17,29 +17,40 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import scala.concurrent.Future
+
 class PptReferenceControllerSpec extends ControllerSpec {
 
-  private val page = mock[ppt_reference_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page      = mock[ppt_reference_page]
+  private val mcc       = stubMessagesControllerComponents()
+  private val mockCache = mock[UserDataRepository]
 
-  private val controller = new PptReferenceController(mockAuthAction, mcc, page)
+  private val controller = new PptReferenceController(mockAuthAction, mcc, mockCache, page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[PptReference]])(any(), any())).thenReturn(
       HtmlFormat.raw("PPT Reference Page")
     )
+    when(mockCache.getData[PptReference](any())(any(), any())).thenReturn(Future.successful(None))
+  }
+
+  override protected def afterEach(): Unit = {
+    reset(page, mockCache)
+    super.afterEach()
   }
 
   "PPT Reference Controller" should {
@@ -73,11 +84,22 @@ class PptReferenceControllerSpec extends ControllerSpec {
     // TODO: this will need to change when we build out the next enrolment page
     "redisplay the ppt reference page with an OK status" when {
       "a valid ppt reference is submitted" in {
+
+        val pptReference = PptReference("XAPPT000123456")
+
+        when(mockCache.putData[PptReference](any(), any())(any(), any())).thenReturn(
+          Future.successful(pptReference)
+        )
+
         authorizedUser()
-        val result = controller.submit()(postRequestEncoded(PptReference("XAPPT000123456")))
+        val result = controller.submit()(postRequestEncoded(pptReference))
 
         status(result) mustBe OK
         contentAsString(result) mustBe "PPT Reference Page"
+
+        verify(mockCache).putData(ArgumentMatchers.eq("pptReference"),
+                                  ArgumentMatchers.eq(pptReference)
+        )(any(), any())
       }
     }
   }
