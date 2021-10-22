@@ -17,35 +17,31 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.{mapping, optional, text}
 
 case class LiabilityLiableDate(answer: Option[Boolean])
 
-object LiabilityLiableDate extends CommonFormValidators {
+object LiabilityLiableDate extends CommonFormValidators with CommonFormValues {
 
-  lazy val emptyError = "liabilityLiableDatePage.question.empty.error"
-  val yes             = "yes"
-  val no              = "no"
+  val emptyError = "liabilityLiableDatePage.question.empty.error"
+  val field      = "answer"
 
   def form(): Form[LiabilityLiableDate] =
     Form(
       mapping(
-        "answer" -> text()
-          .verifying(emptyError, contains(Seq(yes, no)))
-      )(LiabilityLiableDate.apply)(LiabilityLiableDate.unapply)
+        field -> optional(text)
+          .verifying(emptyError, _.nonEmpty)
+      )(LiabilityLiableDate.toForm)(LiabilityLiableDate.fromForm)
     )
 
-  def apply(value: String): LiabilityLiableDate =
-    if (value == yes)
-      LiabilityLiableDate(Some(true))
-    else if (value == no)
-      LiabilityLiableDate(Some(false))
-    else LiabilityLiableDate(None)
-
-  def unapply(liableDate: LiabilityLiableDate): Option[String] =
-    liableDate.answer.flatMap { value =>
-      if (value) Some(yes)
-      else Some(no)
+  def toForm(value: Option[String]): LiabilityLiableDate =
+    value match {
+      case Some(YES) => LiabilityLiableDate(Some(true))
+      case Some(NO)  => LiabilityLiableDate(Some(false))
+      case _         => LiabilityLiableDate(None)
     }
+
+  def fromForm(liableDate: LiabilityLiableDate): Option[Option[String]] =
+    liableDate.answer.map(value => if (value) Some(YES) else Some(NO))
 
 }
