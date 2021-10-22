@@ -74,7 +74,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
     "redisplay the ppt reference page with an OK status" when {
       "a valid ppt reference is submitted" in {
         authorizedUser()
-        val result = controller.submit()(postRequestEncoded(PptReference("XAPPT1234567890")))
+        val result = controller.submit()(postRequestEncoded(PptReference("XAPPT000123456")))
 
         status(result) mustBe OK
         contentAsString(result) mustBe "PPT Reference Page"
