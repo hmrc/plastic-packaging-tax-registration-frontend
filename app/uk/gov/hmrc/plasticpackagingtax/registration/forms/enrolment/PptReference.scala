@@ -30,14 +30,20 @@ object PptReference extends CommonFormValidators {
 
   private val pptReference = "value"
 
-  private val PPT_REGEX = Pattern.compile("^X[A-Z]PPT[0-9]{10}$")
+  private val PPT_REGEX = Pattern.compile("^X[A-Z]PPT000[0-9]{6}$")
 
   private val mapping = Forms.mapping(
     pptReference -> text()
-      .verifying(regexError(pptReference), isMatchingPattern(_, PPT_REGEX))
+      .verifying(emptyError(pptReference), isNonEmpty)
+      .verifying(regexError(pptReference),
+                 pptReference =>
+                   !isNonEmpty(pptReference) || isMatchingPattern(pptReference, PPT_REGEX)
+      )
   )(PptReference.apply)(PptReference.unapply)
 
   def form(): Form[PptReference] = Form(mapping)
+
+  private def emptyError(field: String) = s"enrolment.pptReference.${field}.error.empty"
 
   private def regexError(field: String) = s"enrolment.pptReference.${field}.error.regex"
 

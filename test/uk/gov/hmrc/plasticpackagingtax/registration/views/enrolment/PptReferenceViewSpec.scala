@@ -79,7 +79,17 @@ class PptReferenceViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("value").attr("value") mustBe "XMPPT1234567890"
     }
 
-    "display a validation error" when {
+    "display the appropriate validation error" when {
+
+      "a ppt reference was not supplied" in {
+        val form = PptReference
+          .form()
+          .fillAndValidate(PptReference(""))
+        val view = createView(form)
+
+        view must haveGovukGlobalErrorSummary
+        view must haveGovukFieldError("value", messages("enrolment.pptReference.value.error.empty"))
+      }
 
       "an invalid ppt reference was supplied" in {
         val form = PptReference
