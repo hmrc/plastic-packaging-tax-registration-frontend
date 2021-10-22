@@ -43,6 +43,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |features.isPreLaunch=false
         |urls.feedback.authenticatedLink="http://localhost:9250/contact/beta-feedback"
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
+        |urls.mfaUplift="http://localhost:9553/bas-gateway/uplift-mfa"
       """.stripMargin
     )
 
@@ -111,6 +112,10 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "have 'pptAccountUrl' defined" in {
       validAppConfig.pptAccountUrl must be("http://localhost:8505/plastic-packaging-tax/account")
+    }
+
+    "have 'mfaUpliftUrl' defined" in {
+      validAppConfig.mfaUpliftUrl must be("http://localhost:9553/bas-gateway/uplift-mfa")
     }
 
     "inspect feature flags" when {
