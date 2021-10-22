@@ -31,6 +31,7 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PublicBodyRegistration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -51,13 +52,18 @@ class PublicRegistrationRepositorySpec
   val userRepository = new UserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
   val repository     = new PublicBodyRegistrationRepository(userRepository)
 
+  implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
     new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),
                              PptTestData.newUser("123")
     )
 
   val publicBodyRegistration =
-    PublicBodyRegistration(Some("ref"), Some("postcode"), Some(Date(Some(1), Some(2), Some(2022))))
+    PublicBodyRegistration(Some(PptReference("ppt-ref")),
+                           Some("postcode"),
+                           Some(Date(Some(1), Some(2), Some(2022)))
+    )
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -68,16 +74,40 @@ class PublicRegistrationRepositorySpec
 
     "add data to cache and return it" in {
 
-      implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
-
       await(repository.put(publicBodyRegistration))
 
       await(repository.get()) mustBe Some(publicBodyRegistration)
     }
 
-    "return None when no data found" in {
+    "update data in the cache" when {
 
-      implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+      "a registration exists" in {
+
+        await(repository.put(publicBodyRegistration))
+
+        await(
+          repository.update(reg => reg.copy(pptReference = Some(PptReference("update-reference"))))
+        )
+
+        await(repository.get()) mustBe Some(
+          publicBodyRegistration.copy(pptReference = Some(PptReference("update-reference")))
+        )
+      }
+
+      "a registration does not exists" in {
+
+        await(
+          repository.update(reg => reg.copy(pptReference = Some(PptReference("new-reference"))))
+        )
+
+        await(repository.get()) mustBe Some(
+          PublicBodyRegistration(Some(PptReference("new-reference")), None, None)
+        )
+      }
+
+    }
+
+    "return None when no data found" in {
 
       await(repository.get()) mustBe None
     }

@@ -18,11 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
 
 case class PublicBodyRegistration(
-  pptReference: Option[String],
-  postcode: Option[String],
-  registrationDate: Option[Date]
+  pptReference: Option[PptReference] = None,
+  postcode: Option[String] = None,
+  registrationDate: Option[Date] = None
 )
 
 object PublicBodyRegistration {

@@ -21,8 +21,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.PublicBodyRegistrationRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -32,16 +33,16 @@ import scala.concurrent.{ExecutionContext, Future}
 class PptReferenceController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
-  cache: UserDataRepository,
+  cache: PublicBodyRegistrationRepository,
   page: ppt_reference_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      cache.getData[PptReference]("pptReference").map {
-        case Some(reference) =>
-          Ok(page(PptReference.form().fill(reference)))
+      cache.get().map {
+        case Some(data) if data.pptReference.isDefined =>
+          Ok(page(PptReference.form().fill(data.pptReference.get)))
         case _ => Ok(page(PptReference.form()))
       }
     }
@@ -54,8 +55,9 @@ class PptReferenceController @Inject() (
           (formWithErrors: Form[PptReference]) =>
             Future.successful(BadRequest(page(formWithErrors))),
           pptReference =>
-            cache.putData[PptReference]("pptReference", pptReference).map {
-              ref => Ok(page(PptReference.form().fill(ref)))
+            cache.update(data => data.copy(pptReference = Some(pptReference))).map {
+              // TODO - redirect to next question
+              _ => Redirect(routes.PptReferenceController.displayPage())
             }
         )
     }

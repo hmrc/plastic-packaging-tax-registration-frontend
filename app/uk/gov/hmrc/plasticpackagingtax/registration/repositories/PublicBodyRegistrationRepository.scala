@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PublicBodyRegistration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
@@ -34,5 +35,13 @@ class PublicBodyRegistrationRepository @Inject() (userDataRepository: UserDataRe
 
   def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[PublicBodyRegistration]] =
     userDataRepository.getData[PublicBodyRegistration](publicBodyRegistrationKey)
+
+  def update(
+    update: PublicBodyRegistration => PublicBodyRegistration
+  )(implicit request: AuthenticatedRequest[Any]): Future[PublicBodyRegistration] =
+    get().flatMap {
+      case Some(data) => put(update(data))
+      case _          => put(update(PublicBodyRegistration()))
+    }
 
 }
