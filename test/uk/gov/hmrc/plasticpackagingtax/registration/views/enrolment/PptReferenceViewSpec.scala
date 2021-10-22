@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views
+package uk.gov.hmrc.plasticpackagingtax.registration.views.enrolment
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.FullName.allowedChars
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.full_name_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
@@ -48,9 +44,9 @@ class PptReferenceViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-//    "display 'Back' button" in {
-//      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
-//    }
+    "display 'Back' button" in {
+      view.getElementById("back-link") must haveHref("#top")
+    }
 
     "display title" in {
       view.select("title").text() must include(messages("enrolment.pptReference.title"))

@@ -35,7 +35,7 @@
 
 @govukLayout(
   title = Title("enrolment.pptReference.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.PptReferenceController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), Call("GET", request.headers.get("Referer").getOrElse("#top")), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @formHelper(action = pptRoutes.PptReferenceController.submit(), 'autoComplete -> "off") {
