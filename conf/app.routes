@@ -80,3 +80,6 @@ GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration
 GET        /security-signed-out     uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
 
 GET        /unauthorised   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad()
+
+GET        /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
+POST       /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.submit()
