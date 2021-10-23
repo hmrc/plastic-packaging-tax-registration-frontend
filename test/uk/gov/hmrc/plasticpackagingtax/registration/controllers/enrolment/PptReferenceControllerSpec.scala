@@ -26,10 +26,10 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PublicBodyRegistration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
-  PublicBodyRegistrationRepository,
-  UserDataRepository
+  UserDataRepository,
+  UserEnrolmentDetailsRepository
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -41,20 +41,20 @@ class PptReferenceControllerSpec extends ControllerSpec {
   private val page       = mock[ppt_reference_page]
   private val mcc        = stubMessagesControllerComponents()
   private val mockCache  = mock[UserDataRepository]
-  private val repository = new PublicBodyRegistrationRepository(mockCache)
+  private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
   private val controller = new PptReferenceController(mockAuthAction, mcc, repository, page)
 
-  val pptReference = PptReference("XAPPT000123456")
-  val registration = PublicBodyRegistration(pptReference = Some(pptReference))
+  val pptReference     = PptReference("XAPPT000123456")
+  val enrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[PptReference]])(any(), any())).thenReturn(
       HtmlFormat.raw("PPT Reference Page")
     )
-    when(mockCache.getData[PublicBodyRegistration](any())(any(), any())).thenReturn(
-      Future.successful(Some(registration))
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(Some(enrolmentDetails))
     )
   }
 
@@ -67,6 +67,17 @@ class PptReferenceControllerSpec extends ControllerSpec {
     "display the ppt reference page" when {
       "user is authorised" in {
         authorizedUser()
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe "PPT Reference Page"
+      }
+
+      "user is authorised and cache is empty" in {
+        authorizedUser()
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+          Future.successful(None)
+        )
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -92,11 +103,11 @@ class PptReferenceControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirect to next page" when {
+    "redirect to next page and persist ppt reference" when {
       "a valid ppt reference is submitted" in {
 
-        when(mockCache.putData[PublicBodyRegistration](any(), any())(any(), any())).thenReturn(
-          Future.successful(registration)
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
+          Future.successful(enrolmentDetails)
         )
 
         authorizedUser()
@@ -107,8 +118,8 @@ class PptReferenceControllerSpec extends ControllerSpec {
         // TODO: this will need to change when we build out the next enrolment page
         redirectLocation(result) mustBe Some(routes.PptReferenceController.displayPage().url)
 
-        verify(mockCache).putData(ArgumentMatchers.eq("publicBodyRegistration"),
-                                  ArgumentMatchers.eq(registration)
+        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
+                                  ArgumentMatchers.eq(enrolmentDetails)
         )(any(), any())
       }
     }

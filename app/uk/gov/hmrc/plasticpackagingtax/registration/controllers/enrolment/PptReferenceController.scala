@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.PublicBodyRegistrationRepository
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PptReferenceController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
-  cache: PublicBodyRegistrationRepository,
+  cache: UserEnrolmentDetailsRepository,
   page: ppt_reference_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {

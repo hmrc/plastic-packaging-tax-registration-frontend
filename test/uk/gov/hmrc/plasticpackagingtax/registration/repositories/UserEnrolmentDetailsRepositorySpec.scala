@@ -32,13 +32,13 @@ import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PublicBodyRegistration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
 
-class PublicRegistrationRepositorySpec
+class UserEnrolmentDetailsRepositorySpec
     extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
     with DefaultAwaitTimeout with MongoSupport {
 
@@ -49,8 +49,8 @@ class PublicRegistrationRepositorySpec
 
   val mockTimeStampSupport = new CurrentTimestampSupport()
 
-  val userRepository = new UserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
-  val repository     = new PublicBodyRegistrationRepository(userRepository)
+  val userDataRepository             = new UserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
+  val userEnrolmentDetailsRepository = new UserEnrolmentDetailsRepository(userDataRepository)
 
   implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
 
@@ -59,10 +59,10 @@ class PublicRegistrationRepositorySpec
                              PptTestData.newUser("123")
     )
 
-  val publicBodyRegistration =
-    PublicBodyRegistration(Some(PptReference("ppt-ref")),
-                           Some("postcode"),
-                           Some(Date(Some(1), Some(2), Some(2022)))
+  val userEnrolmentDetails =
+    UserEnrolmentDetails(Some(PptReference("ppt-ref")),
+                         Some("postcode"),
+                         Some(Date(Some(1), Some(2), Some(2022)))
     )
 
   override def beforeEach(): Unit = {
@@ -74,34 +74,38 @@ class PublicRegistrationRepositorySpec
 
     "add data to cache and return it" in {
 
-      await(repository.put(publicBodyRegistration))
+      await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
 
-      await(repository.get()) mustBe Some(publicBodyRegistration)
+      await(userEnrolmentDetailsRepository.get()) mustBe Some(userEnrolmentDetails)
     }
 
     "update data in the cache" when {
 
       "a registration exists" in {
 
-        await(repository.put(publicBodyRegistration))
+        await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
 
         await(
-          repository.update(reg => reg.copy(pptReference = Some(PptReference("update-reference"))))
+          userEnrolmentDetailsRepository.update(
+            reg => reg.copy(pptReference = Some(PptReference("update-reference")))
+          )
         )
 
-        await(repository.get()) mustBe Some(
-          publicBodyRegistration.copy(pptReference = Some(PptReference("update-reference")))
+        await(userEnrolmentDetailsRepository.get()) mustBe Some(
+          userEnrolmentDetails.copy(pptReference = Some(PptReference("update-reference")))
         )
       }
 
       "a registration does not exists" in {
 
         await(
-          repository.update(reg => reg.copy(pptReference = Some(PptReference("new-reference"))))
+          userEnrolmentDetailsRepository.update(
+            reg => reg.copy(pptReference = Some(PptReference("new-reference")))
+          )
         )
 
-        await(repository.get()) mustBe Some(
-          PublicBodyRegistration(Some(PptReference("new-reference")), None, None)
+        await(userEnrolmentDetailsRepository.get()) mustBe Some(
+          UserEnrolmentDetails(Some(PptReference("new-reference")), None, None)
         )
       }
 
@@ -109,7 +113,7 @@ class PublicRegistrationRepositorySpec
 
     "return None when no data found" in {
 
-      await(repository.get()) mustBe None
+      await(userEnrolmentDetailsRepository.get()) mustBe None
     }
 
   }

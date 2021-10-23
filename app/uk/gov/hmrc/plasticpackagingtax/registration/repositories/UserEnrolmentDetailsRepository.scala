@@ -17,31 +17,34 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PublicBodyRegistration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository.repositoryKey
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class PublicBodyRegistrationRepository @Inject() (userDataRepository: UserDataRepository) {
-
-  private val publicBodyRegistrationKey = "publicBodyRegistration"
+class UserEnrolmentDetailsRepository @Inject() (userDataRepository: UserDataRepository) {
 
   def put(
-    registration: PublicBodyRegistration
-  )(implicit request: AuthenticatedRequest[Any]): Future[PublicBodyRegistration] =
-    userDataRepository.putData[PublicBodyRegistration](publicBodyRegistrationKey, registration)
+    registration: UserEnrolmentDetails
+  )(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
+    userDataRepository.putData[UserEnrolmentDetails](repositoryKey, registration)
 
-  def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[PublicBodyRegistration]] =
-    userDataRepository.getData[PublicBodyRegistration](publicBodyRegistrationKey)
+  def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[UserEnrolmentDetails]] =
+    userDataRepository.getData[UserEnrolmentDetails](repositoryKey)
 
   def update(
-    update: PublicBodyRegistration => PublicBodyRegistration
-  )(implicit request: AuthenticatedRequest[Any]): Future[PublicBodyRegistration] =
+    update: UserEnrolmentDetails => UserEnrolmentDetails
+  )(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
     get().flatMap {
       case Some(data) => put(update(data))
-      case _          => put(update(PublicBodyRegistration()))
+      case _          => put(update(UserEnrolmentDetails()))
     }
 
+}
+
+object UserEnrolmentDetailsRepository {
+  val repositoryKey = "userEnrolmentDetails"
 }

@@ -20,12 +20,12 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
 
-case class PublicBodyRegistration(
+case class UserEnrolmentDetails(
   pptReference: Option[PptReference] = None,
   postcode: Option[String] = None,
   registrationDate: Option[Date] = None
 )
 
-object PublicBodyRegistration {
-  implicit val format: OFormat[PublicBodyRegistration] = Json.format[PublicBodyRegistration]
+object UserEnrolmentDetails {
+  implicit val format: OFormat[UserEnrolmentDetails] = Json.format[UserEnrolmentDetails]
 }
