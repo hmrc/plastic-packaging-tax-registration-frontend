@@ -318,3 +318,7 @@ enrolment.pptReference.value.error.regex = Enter a PPT reference number in the c
 
 enrolment.isUkAddress.title = Is your organisation‘s principal place of business in the UK?
 enrolment.isUkAddress.value.error.empty = Please select yes or no
+
+enrolment.postcode.title = What is the postcode of your registered business address?
+enrolment.postcode.value.error.empty = Enter a postcode
+enrolment.postcode.value.error.regex = Enter a postcode in the correct format

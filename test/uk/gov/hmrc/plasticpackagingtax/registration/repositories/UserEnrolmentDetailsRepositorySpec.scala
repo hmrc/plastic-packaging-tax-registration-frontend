@@ -30,7 +30,11 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{IsUkAddress, PptReference}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
+  IsUkAddress,
+  Postcode,
+  PptReference
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -61,7 +65,7 @@ class UserEnrolmentDetailsRepositorySpec
   val userEnrolmentDetails =
     UserEnrolmentDetails(pptReference = Some(PptReference("ppt-ref")),
                          isUkAddress = Some(IsUkAddress(Some(true))),
-                         postcode = Some("postcode"),
+                         postcode = Some(Postcode("LS1 1AA")),
                          registrationDate = Some(Date(Some(1), Some(2), Some(2022)))
     )
 
