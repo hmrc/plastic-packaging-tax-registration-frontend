@@ -29,8 +29,11 @@ timeoutDialog.keepAlive.text = Stay signed in
 timeoutDialog.signout.text = Sign out
 
 date.day = Day
+date.day.error = Enter a valid day
 date.month = Month
+date.month.error = Enter a valid month
 date.year = Year
+date.year.error = Enter a valid year
 date.empty.error = Error: {0} cannot be empty
 
 error.title = Sorry, there is a problem with the service
@@ -315,3 +318,9 @@ enrolment.pptReference.title = What is your PPT reference number?
 enrolment.pptReference.hint = You got this number when you registered for PPT. It is 14 characters in length. For example: XMPPT000123456.
 enrolment.pptReference.value.error.empty = Enter a PPT reference number
 enrolment.pptReference.value.error.regex = Enter a PPT reference number in the correct format
+
+enrolment.registrationDate.title = What is your PPT registration date?
+enrolment.registrationDate.hint = For example, 27 3 2021
+enrolment.registrationDate.value.error.format = Enter your PPT registration date in the correct format
+enrolment.registrationDate.value.error.maxDate = Your PPT registration date must be in the past
+enrolment.registrationDate.value.error.minYear = Enter a year on or after 2020

@@ -30,8 +30,8 @@ import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{PptReference, RegistrationDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -62,7 +62,7 @@ class UserEnrolmentDetailsRepositorySpec
   val userEnrolmentDetails =
     UserEnrolmentDetails(Some(PptReference("ppt-ref")),
                          Some("postcode"),
-                         Some(Date(Some(1), Some(2), Some(2022)))
+                         Some(RegistrationDate(DateData("1", "2", "2022")))
     )
 
   override def beforeEach(): Unit = {
