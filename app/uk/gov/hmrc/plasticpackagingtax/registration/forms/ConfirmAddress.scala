@@ -17,35 +17,31 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.{mapping, optional, text}
 
 case class ConfirmAddress(useRegisteredAddress: Option[Boolean])
 
-object ConfirmAddress extends CommonFormValidators {
+object ConfirmAddress extends CommonFormValidators with CommonFormValues {
 
-  lazy val emptyError = "primaryContactDetails.confirmAddress.empty.error"
-  val yes             = "yes"
-  val no              = "no"
+  val emptyError = "primaryContactDetails.confirmAddress.empty.error"
+  val field      = "useRegisteredAddress"
 
   def form(): Form[ConfirmAddress] =
     Form(
       mapping(
-        "useRegisteredAddress" -> text()
-          .verifying(emptyError, contains(Seq(yes, no)))
-      )(ConfirmAddress.apply)(ConfirmAddress.unapply)
+        field -> optional(text)
+          .verifying(emptyError, _.nonEmpty)
+      )(ConfirmAddress.toForm)(ConfirmAddress.fromForm)
     )
 
-  def apply(value: String): ConfirmAddress =
-    if (value == yes)
-      ConfirmAddress(Some(true))
-    else if (value == no)
-      ConfirmAddress(Some(false))
-    else ConfirmAddress(None)
-
-  def unapply(confirmAddress: ConfirmAddress): Option[String] =
-    confirmAddress.useRegisteredAddress.flatMap { value =>
-      if (value) Some(yes)
-      else Some(no)
+  def toForm(value: Option[String]): ConfirmAddress =
+    value match {
+      case Some(YES) => ConfirmAddress(Some(true))
+      case Some(NO)  => ConfirmAddress(Some(false))
+      case _         => ConfirmAddress(None)
     }
+
+  def fromForm(confirmAddress: ConfirmAddress): Option[Option[String]] =
+    confirmAddress.useRegisteredAddress.map(value => if (value) Some(YES) else Some(NO))
 
 }

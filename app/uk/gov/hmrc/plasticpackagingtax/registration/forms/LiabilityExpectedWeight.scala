@@ -32,15 +32,13 @@ case class LiabilityExpectedWeight(
   def overLiabilityThreshold: Boolean = totalKg.exists(_ >= weightThresholdKg)
 }
 
-object LiabilityExpectedWeight {
+object LiabilityExpectedWeight extends CommonFormValues {
   implicit val format: OFormat[LiabilityExpectedWeight] = Json.format[LiabilityExpectedWeight]
 
   val weightThresholdKg         = 10000L
   val maxTotalKg                = 100000000 // one hundred million
   val answer                    = "answer"
   val totalKg                   = "totalKg"
-  val yes                       = "yes"
-  val no                        = "no"
   val answerError               = "liabilityExpectedWeight.answer.empty.error"
   val weightEmptyError          = "liabilityExpectedWeight.empty.error"
   val weightBelowThresholdError = "liabilityExpectedWeight.below.threshold.error"
@@ -66,7 +64,7 @@ object LiabilityExpectedWeight {
         answer -> optional(text())
           .verifying(answerError, _.nonEmpty),
         totalKg -> mandatoryIfEqual(answer,
-                                    yes,
+                                    YES,
                                     text()
                                       .verifying(weightEmptyError, _.nonEmpty)
                                       .verifying(weightFormatError, weightIsValidNumber)
@@ -79,15 +77,15 @@ object LiabilityExpectedWeight {
 
   def fromForm(answer: Option[String], totalKg: Option[String]): LiabilityExpectedWeight =
     answer match {
-      case Some(`yes`) =>
+      case Some(YES) =>
         new LiabilityExpectedWeight(Some(true), totalKg.map(BigInt(_).longValue()))
       case _ => new LiabilityExpectedWeight(Some(false), None)
     }
 
   def toForm(liabilityWeight: LiabilityExpectedWeight): Option[(Option[String], Option[String])] =
     liabilityWeight.expectToExceedThresholdWeight match {
-      case Some(true) => Some((Some(yes), liabilityWeight.totalKg.map(_.toString)))
-      case _          => Some((Some(no), None))
+      case Some(true) => Some((Some(YES), liabilityWeight.totalKg.map(_.toString)))
+      case _          => Some((Some(NO), None))
     }
 
 }

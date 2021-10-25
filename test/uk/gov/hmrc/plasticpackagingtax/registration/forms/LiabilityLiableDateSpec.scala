@@ -18,50 +18,42 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.data.FormError
 
 class LiabilityLiableDateSpec extends AnyWordSpec with Matchers {
 
-  "LiableDate " should {
-    "correctly apply" when {
-      "'yes' is provided" in {
-        val liabilityLiableDate = LiabilityLiableDate.apply("yes")
-        liabilityLiableDate.answer mustBe Some(true)
+  "Liability Liable Date Form" should {
+
+    "return success" when {
+
+      "yes is selected" in {
+        val input = Map(LiabilityLiableDate.field -> LiabilityLiableDate.YES)
+
+        val form = LiabilityLiableDate.form().bind(input)
+        form.errors.size mustBe 0
       }
 
-      "'no' is provided" in {
-        val liabilityLiableDate = LiabilityLiableDate.apply("no")
-        liabilityLiableDate.answer mustBe Some(false)
+      "no is selected" in {
+        val input = Map(LiabilityLiableDate.field -> LiabilityLiableDate.NO)
+
+        val form = LiabilityLiableDate.form().bind(input)
+        form.errors.size mustBe 0
       }
 
-      " neither 'yes' or 'no' are provided" in {
-        val liabilityLiableDate = LiabilityLiableDate.apply("maybe")
-        liabilityLiableDate.answer mustBe None
-      }
-
-      " string is empty" in {
-        val liabilityLiableDate = LiabilityLiableDate.apply("")
-        liabilityLiableDate.answer mustBe None
-      }
     }
 
-    "correctly unapply" when {
-      "answer is 'Some(true)'" in {
-        val liabilityLiableDate =
-          LiabilityLiableDate.unapply(LiabilityLiableDate(Some(true)))
-        liabilityLiableDate mustBe Some("yes")
+    "return errors" when {
+
+      "nothing is selected" in {
+        val input = Map[String, String]()
+
+        val form = LiabilityLiableDate.form().bind(input)
+        form.errors.size mustBe 1
+        form.errors must contain(
+          FormError(LiabilityLiableDate.field, LiabilityLiableDate.emptyError)
+        )
       }
 
-      "answer is 'Some(false)'" in {
-        val liabilityLiableDate =
-          LiabilityLiableDate.unapply(LiabilityLiableDate(Some(false)))
-        liabilityLiableDate mustBe Some("no")
-      }
-
-      "answer is None" in {
-        val liabilityLiableDate =
-          LiabilityLiableDate.unapply(LiabilityLiableDate(None))
-        liabilityLiableDate mustBe None
-      }
     }
   }
 }

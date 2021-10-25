@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
 import java.util.concurrent.TimeUnit
-
 import base.PptTestData
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -31,7 +30,7 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{IsUkAddress, PptReference}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -60,9 +59,10 @@ class UserEnrolmentDetailsRepositorySpec
     )
 
   val userEnrolmentDetails =
-    UserEnrolmentDetails(Some(PptReference("ppt-ref")),
-                         Some("postcode"),
-                         Some(Date(Some(1), Some(2), Some(2022)))
+    UserEnrolmentDetails(pptReference = Some(PptReference("ppt-ref")),
+                         isUkAddress = Some(IsUkAddress(Some(true))),
+                         postcode = Some("postcode"),
+                         registrationDate = Some(Date(Some(1), Some(2), Some(2022)))
     )
 
   override def beforeEach(): Unit = {

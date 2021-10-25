@@ -38,21 +38,7 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
 
   "Liability section expect process more weight view" should {
 
-    "validate other rendering methods" in {
-      page.f(form())(request, messages)
-      page.render(form(), request, messages)
-    }
-
     val view = createView()
-
-    "validate other rendering  methods" in {
-      page.f(form())(journeyRequest, messages).select("title").text() must include(
-        messages("liabilityExpectToExceedThresholdWeightPage.title")
-      )
-      page.render(form(), journeyRequest, messages).select("title").text() must include(
-        messages("liabilityExpectToExceedThresholdWeightPage.title")
-      )
-    }
 
     "contain timeout dialog function" in {
 

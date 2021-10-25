@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
+package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{IsUkAddress, PptReference}
-
-case class UserEnrolmentDetails(
-  pptReference: Option[PptReference] = None,
-  isUkAddress: Option[IsUkAddress] = None,
-  postcode: Option[String] = None,
-  registrationDate: Option[Date] = None
-)
-
-object UserEnrolmentDetails {
-  implicit val format: OFormat[UserEnrolmentDetails] = Json.format[UserEnrolmentDetails]
+trait CommonFormValues {
+  val YES = "yes"
+  val NO  = "no"
 }
