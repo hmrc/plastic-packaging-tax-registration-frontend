@@ -86,3 +86,6 @@ POST       /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registra
 
 GET        /enrolment-uk-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.displayPage()
 POST       /enrolment-uk-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.submit()
+
+GET        /enrolment-postcode     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.displayPage()
+POST       /enrolment-postcode     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.submit()

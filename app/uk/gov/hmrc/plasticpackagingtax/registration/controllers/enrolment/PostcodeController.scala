@@ -20,48 +20,41 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.IsUkAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.Postcode
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.is_uk_address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.postcode_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IsUkAddressController @Inject() (
+class PostcodeController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
   cache: UserEnrolmentDetailsRepository,
-  page: is_uk_address_page
+  page: postcode_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
       cache.get().map {
-        case Some(userEnrolmentDetails) if userEnrolmentDetails.isUkAddress.isDefined =>
-          Ok(page(IsUkAddress.form().fill(userEnrolmentDetails.isUkAddress.get)))
-        case _ => Ok(page(IsUkAddress.form()))
+        case Some(data) if data.postcode.isDefined =>
+          Ok(page(Postcode.form().fill(data.postcode.get)))
+        case _ => Ok(page(Postcode.form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      IsUkAddress.form()
+      Postcode.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[IsUkAddress]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
-          isUkAddress =>
-            cache.update(data => data.copy(isUkAddress = Some(isUkAddress))).map {
-              userEnrolmentDetails =>
-                userEnrolmentDetails.isUkAddress match {
-                  case Some(IsUkAddress(Some(true))) =>
-                    Redirect(routes.PostcodeController.displayPage())
-                  // TODO: route to date of registration when available
-                  case _ => Redirect(routes.IsUkAddressController.displayPage())
-                }
+          (formWithErrors: Form[Postcode]) => Future.successful(BadRequest(page(formWithErrors))),
+          postcode =>
+            cache.update(data => data.copy(postcode = Some(postcode))).map {
+              _ => Redirect(routes.PostcodeController.displayPage())
             }
         )
     }
