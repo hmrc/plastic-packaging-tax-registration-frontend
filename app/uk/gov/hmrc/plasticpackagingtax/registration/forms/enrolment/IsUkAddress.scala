@@ -18,11 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment
 
 import play.api.data.Forms.{optional, text}
 import play.api.data.{Form, Forms}
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
 
 case class IsUkAddress(value: Option[Boolean])
 
 object IsUkAddress extends CommonFormValidators with CommonFormValues {
+  implicit val format: OFormat[IsUkAddress] = Json.format[IsUkAddress]
 
   private val mapping = Forms.mapping(
     "value" -> optional(text)

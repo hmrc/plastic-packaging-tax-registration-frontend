@@ -17,34 +17,65 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
-import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.IsUkAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{IsUkAddress, PptReference}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
+  UserDataRepository,
+  UserEnrolmentDetailsRepository
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.is_uk_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import scala.concurrent.Future
+
 class IsUkAddressControllerSpec extends ControllerSpec {
 
-  private val page = mock[is_uk_address_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page       = mock[is_uk_address_page]
+  private val mcc        = stubMessagesControllerComponents()
+  private val mockCache  = mock[UserDataRepository]
+  private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
-  private val controller = new IsUkAddressController(mockAuthAction, mcc, page)
+  private val controller = new IsUkAddressController(mockAuthAction, mcc, repository, page)
+
+  val pptReference            = PptReference("XAPPT000123456")
+  val initialEnrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[IsUkAddress]])(any(), any())).thenReturn(
       HtmlFormat.raw("Is UK Address Page")
     )
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(Some(initialEnrolmentDetails))
+    )
+  }
+
+  override protected def afterEach(): Unit = {
+    reset(page, mockCache)
+    super.afterEach()
   }
 
   "Is UK Address Controller" should {
     "display the is uk address page" when {
       "user is authorised" in {
+        authorizedUser()
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe "Is UK Address Page"
+      }
+      "user is authorised and cache is empty" in {
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+          Future.successful(None)
+        )
         authorizedUser()
         val result = controller.displayPage()(getRequest())
 
@@ -70,14 +101,25 @@ class IsUkAddressControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Is UK Address Page"
       }
     }
-    // TODO: this will need to change when we build out the next enrolment page
-    "redisplay the is uk address page with an OK status" when {
-      "a selection is made" in {
-        authorizedUser()
-        val result = controller.submit()(postRequestEncoded(IsUkAddress(Some(true))))
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Is UK Address Page"
+    // TODO: this will need to change when we build out the next enrolment page
+    "redisplay the is uk address page with a SEE_OTHER status and persist is uk address selection" when {
+      "a selection is made" in {
+        val expectedEnrolmentDetails =
+          initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(true))))
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
+          Future.successful(expectedEnrolmentDetails)
+        )
+
+        authorizedUser()
+        val result = controller.submit()(postJsonRequestEncoded(("value", "yes")))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.IsUkAddressController.displayPage().url)
+
+        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
+                                  ArgumentMatchers.eq(expectedEnrolmentDetails)
+        )(any(), any())
       }
     }
   }

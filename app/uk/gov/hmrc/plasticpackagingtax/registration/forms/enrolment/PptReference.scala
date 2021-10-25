@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment
 
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 
 import java.util.regex.Pattern
@@ -25,6 +26,7 @@ import java.util.regex.Pattern
 case class PptReference(value: String)
 
 object PptReference extends CommonFormValidators {
+  implicit val format: OFormat[PptReference] = Json.format[PptReference]
 
   private val PPT_REGEX = Pattern.compile("^X[A-Z]PPT000[0-9]{6}$")
 

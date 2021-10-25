@@ -55,8 +55,7 @@ class PptReferenceController @Inject() (
             Future.successful(BadRequest(page(formWithErrors))),
           pptReference =>
             cache.update(data => data.copy(pptReference = Some(pptReference))).map {
-              // TODO - redirect to next question
-              _ => Redirect(routes.PptReferenceController.displayPage())
+              _ => Redirect(routes.IsUkAddressController.displayPage())
             }
         )
     }

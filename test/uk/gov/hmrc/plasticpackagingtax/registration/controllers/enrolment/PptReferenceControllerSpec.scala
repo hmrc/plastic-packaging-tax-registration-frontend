@@ -114,9 +114,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
         val result = controller.submit()(postRequestEncoded(pptReference))
 
         status(result) mustBe SEE_OTHER
-
-        // TODO: this will need to change when we build out the next enrolment page
-        redirectLocation(result) mustBe Some(routes.PptReferenceController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.IsUkAddressController.displayPage().url)
 
         verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
                                   ArgumentMatchers.eq(enrolmentDetails)
