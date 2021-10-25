@@ -153,7 +153,8 @@ class ContactDetailsEmailAddressController @Inject() (
   ): Future[Either[ServiceError, String]] =
     emailVerificationConnector.create(
       CreateEmailVerificationRequest(credId = credId,
-                                     continueUrl = "/plastic-packaging-tax/primary-contact-details",
+                                     continueUrl =
+                                       "/register-for-plastic-packaging-tax/primary-contact-details",
                                      origin = "ppt",
                                      accessibilityStatementUrl = "/accessibility",
                                      email = Email(address = email, enterUrl = "/start"),
