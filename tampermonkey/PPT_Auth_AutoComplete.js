@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Registration Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   6.3
+// @version   6.4
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
-// @match     http*://*/auth-login-stub/gg-sign-in?continue=*plastic-packaging-tax*
+// @match     http*://*/auth-login-stub/gg-sign-in?continue=*register-for-plastic-packaging-tax*
 // @grant     none
 // @updateURL https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-frontend/master/tampermonkey/PPT_Auth_AutoComplete.js
 // ==/UserScript==
@@ -12,7 +12,7 @@
 (function() {
     'use strict';
 
-    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/plastic-packaging-tax/start";
+    document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/register-for-plastic-packaging-tax/start";
 
     document.getElementById("email").value = "test.preLaunch@ppt.test";
 
