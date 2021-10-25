@@ -17,35 +17,67 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
-import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
+  UserDataRepository,
+  UserEnrolmentDetailsRepository
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import scala.concurrent.Future
+
 class PptReferenceControllerSpec extends ControllerSpec {
 
-  private val page = mock[ppt_reference_page]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page       = mock[ppt_reference_page]
+  private val mcc        = stubMessagesControllerComponents()
+  private val mockCache  = mock[UserDataRepository]
+  private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
-  private val controller = new PptReferenceController(mockAuthAction, mcc, page)
+  private val controller = new PptReferenceController(mockAuthAction, mcc, repository, page)
+
+  val pptReference     = PptReference("XAPPT000123456")
+  val enrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[PptReference]])(any(), any())).thenReturn(
       HtmlFormat.raw("PPT Reference Page")
     )
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(Some(enrolmentDetails))
+    )
+  }
+
+  override protected def afterEach(): Unit = {
+    reset(page, mockCache)
+    super.afterEach()
   }
 
   "PPT Reference Controller" should {
     "display the ppt reference page" when {
       "user is authorised" in {
         authorizedUser()
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe "PPT Reference Page"
+      }
+
+      "user is authorised and cache is empty" in {
+        authorizedUser()
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+          Future.successful(None)
+        )
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -70,14 +102,25 @@ class PptReferenceControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "PPT Reference Page"
       }
     }
-    // TODO: this will need to change when we build out the next enrolment page
-    "redisplay the ppt reference page with an OK status" when {
-      "a valid ppt reference is submitted" in {
-        authorizedUser()
-        val result = controller.submit()(postRequestEncoded(PptReference("XAPPT000123456")))
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe "PPT Reference Page"
+    "redirect to next page and persist ppt reference" when {
+      "a valid ppt reference is submitted" in {
+
+        when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
+          Future.successful(enrolmentDetails)
+        )
+
+        authorizedUser()
+        val result = controller.submit()(postRequestEncoded(pptReference))
+
+        status(result) mustBe SEE_OTHER
+
+        // TODO: this will need to change when we build out the next enrolment page
+        redirectLocation(result) mustBe Some(routes.PptReferenceController.displayPage().url)
+
+        verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
+                                  ArgumentMatchers.eq(enrolmentDetails)
+        )(any(), any())
       }
     }
   }
