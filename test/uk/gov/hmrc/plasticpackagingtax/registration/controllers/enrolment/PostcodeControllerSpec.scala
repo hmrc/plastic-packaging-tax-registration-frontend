@@ -72,7 +72,9 @@ class PostcodeControllerSpec extends ControllerSpec {
     "display the postcode page" when {
       "user is authorised" in {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(Some(initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA")))))
+          Future.successful(
+            Some(initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA"))))
+          )
         )
         authorizedUser()
         val result = controller.displayPage()(getRequest())

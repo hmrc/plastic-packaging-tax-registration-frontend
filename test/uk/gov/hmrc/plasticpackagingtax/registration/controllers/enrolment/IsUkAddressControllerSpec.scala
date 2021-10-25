@@ -67,7 +67,9 @@ class IsUkAddressControllerSpec extends ControllerSpec {
     "display the is uk address page" when {
       "user is authorised" in {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(Some(initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(true))))))
+          Future.successful(
+            Some(initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(true)))))
+          )
         )
         authorizedUser()
         val result = controller.displayPage()(getRequest())
