@@ -31,7 +31,7 @@ class SignOutController @Inject() (
 ) extends FrontendController(mcc) with I18nSupport {
 
   def signOut(signOutReason: SignOutReason): Action[AnyContent] =
-    Action { implicit request =>
+    Action {
       signOutReason match {
         case SignOutReason.SessionTimeout =>
           Redirect(routes.SignOutController.sessionTimeoutSignedOut()).withNewSession

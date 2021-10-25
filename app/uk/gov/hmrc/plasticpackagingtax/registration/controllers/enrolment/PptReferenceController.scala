@@ -16,36 +16,48 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PptReferenceController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
+  cache: UserEnrolmentDetailsRepository,
   page: ppt_reference_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Ok(page(PptReference.form()))
+    authenticate.async { implicit request =>
+      cache.get().map {
+        case Some(data) if data.pptReference.isDefined =>
+          Ok(page(PptReference.form().fill(data.pptReference.get)))
+        case _ => Ok(page(PptReference.form()))
+      }
     }
 
   def submit(): Action[AnyContent] =
-    authenticate { implicit request =>
+    authenticate.async { implicit request =>
       PptReference.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[PptReference]) => BadRequest(page(formWithErrors)),
-              pptReference => Ok(page(PptReference.form().fill(pptReference)))
+        .fold(
+          (formWithErrors: Form[PptReference]) =>
+            Future.successful(BadRequest(page(formWithErrors))),
+          pptReference =>
+            cache.update(data => data.copy(pptReference = Some(pptReference))).map {
+              // TODO - redirect to next question
+              _ => Redirect(routes.PptReferenceController.displayPage())
+            }
         )
     }
 
