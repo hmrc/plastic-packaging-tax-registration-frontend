@@ -111,7 +111,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirect to next page and persist registration date" when {
+    "redirect to check answers page and persist registration date" when {
       "a valid registration date is submitted" in {
 
         when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
@@ -128,8 +128,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
 
-        // TODO: this will need to change when we build out the "check your answers" page
-        redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.CheckAnswersController.displayPage().url)
 
         verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
                                   ArgumentMatchers.eq(enrolmentDetails)

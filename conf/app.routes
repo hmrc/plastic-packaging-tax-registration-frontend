@@ -92,3 +92,6 @@ POST       /enrolment-postcode     uk.gov.hmrc.plasticpackagingtax.registration.
 
 GET        /enrolment-registration-date     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.displayPage()
 POST       /enrolment-registration-date     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.submit()
+
+GET        /enrolment-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.displayPage()
+POST       /enrolment-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.submit()

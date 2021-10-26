@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.12
+// @version      14.13
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -438,6 +438,49 @@ const reviewRegistration = () => {
      }
  }
 
+/*########################     PPT ENROLMENT PAGES     ########################## */
+
+const pptReference = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-ppt-reference')) {
+        document.getElementById('value').value = 'XMPPT000123456'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const isUkAddress = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-uk-address')) {
+        document.getElementById('value').checked = true
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const ukPostcode = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-postcode')) {
+        document.getElementById('value').value = 'AB1 2CD'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const registrationDate = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-registration-date')) {
+        document.getElementById('date.day').value = '10'
+        document.getElementById('date.month').value = '10'
+        document.getElementById('date.year').value = '2021'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const enrolmentCheckAnswers = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-check-answers')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 /*########################     MAIN FUNCTION     ########################## */
 const completeJourney = () => {
 
@@ -489,4 +532,11 @@ const completeJourney = () => {
 
     //review registration
     reviewRegistration()
+
+    //enrolment
+    pptReference()
+    isUkAddress()
+    ukPostcode()
+    registrationDate()
+    enrolmentCheckAnswers()
 }

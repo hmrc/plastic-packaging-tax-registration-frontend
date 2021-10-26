@@ -105,20 +105,20 @@ trait ViewMatchers {
   def haveTag(tag: String): Matcher[Element] = new ElementTagMatcher(tag)
 
   def haveSummaryKey(value: String) =
-    new ElementsHasElementsContainingTextMatcher("govuk-summary-list__key", value)
+    new ElementHasElementsContainingTextMatcher("govuk-summary-list__key", value)
 
   def haveSummaryValue(value: String) =
-    new ElementsHasElementsContainingTextMatcher("govuk-summary-list__value", value)
+    new ElementHasElementsContainingTextMatcher("govuk-summary-list__value", value)
 
   def haveSummaryActionsText(value: String) =
-    new ElementsHasElementsContainingTextMatcher("govuk-summary-list__actions", value)
+    new ElementHasElementsContainingTextMatcher("govuk-summary-list__actions", value)
 
   def haveSummaryActionsTexts(label: String, hint: String, hintArgs: String*)(implicit
     messages: Messages
   ) =
     haveSummaryActionsText(s"${messages(label)} ${messages(hint, hintArgs: _*)}")
 
-  def haveSummaryActionsHref(value: Call) = new ElementsHasSummaryActionMatcher(value)
+  def haveSummaryActionsHref(value: Call) = new ElementHasSummaryActionMatcher(value)
 
   def haveChildCount(count: Int): Matcher[Element] = new ElementHasChildCountMatcher(count)
 
@@ -406,25 +406,26 @@ trait ViewMatchers {
 
   }
 
-  class ElementsHasElementsContainingTextMatcher(elementsClass: String, value: String)
-      extends Matcher[Elements] {
+  class ElementHasElementsContainingTextMatcher(elementsClass: String, value: String)
+      extends Matcher[Element] {
 
-    override def apply(left: Elements): MatchResult =
-      MatchResult(left != null && left.first().getElementsByClass(elementsClass).text() == value,
-                  s"Elements with class {$elementsClass} had text {${left.first().getElementsByClass(elementsClass).text()}}, expected {$value}",
-                  s"Element with class {$elementsClass} had text {${left.first().getElementsByClass(elementsClass).text()}}"
+    override def apply(left: Element): MatchResult =
+      MatchResult(left != null && left.getElementsByClass(elementsClass).text() == value,
+                  s"Elements with class {$elementsClass} had text {${left.getElementsByClass(elementsClass).text()}}, expected {$value}",
+                  s"Element with class {$elementsClass} had text {${left.getElementsByClass(elementsClass).text()}}"
       )
 
   }
 
-  class ElementsHasSummaryActionMatcher(value: Call) extends Matcher[Elements] {
+  class ElementHasSummaryActionMatcher(value: Call) extends Matcher[Element] {
 
-    override def apply(left: Elements): MatchResult = {
-      val actionElement = Try(left.first().getElementsByClass("govuk-link").first()).toOption.orNull
+    override def apply(left: Element): MatchResult = {
+      val actionElement = Try(left.getElementsByClass("govuk-link").first()).toOption.orNull
 
-      MatchResult(left != null && actionElement != null && actionElement.attr("href") == value.url,
-                  s"Elements had no summary action {$value}\n${actualContentWas(actionElement)}",
-                  s"Element had summary action {$value}"
+      MatchResult(
+        left != null && actionElement != null && value.url.endsWith(actionElement.attr("href")),
+        s"Elements had no summary action {$value}\n${actualContentWas(actionElement)}",
+        s"Element had summary action {$value}"
       )
     }
 
