@@ -331,3 +331,11 @@ enrolment.registrationDate.hint = For example, 27 3 2021
 enrolment.registrationDate.value.error.format = Enter your PPT registration date in the correct format
 enrolment.registrationDate.value.error.maxDate = Your PPT registration date must be today or in the past
 enrolment.registrationDate.value.error.minDate = Your PPT registration date must be after 1 January 2021
+
+enrolment.checkAnswers.title = Check your answers
+enrolment.checkAnswers.title = Check your answers
+enrolment.checkAnswers.pptReference = PPT reference number
+enrolment.checkAnswers.ukAddress = Principal place of business in the UK
+enrolment.checkAnswers.postcode = Postcode of registered business address
+enrolment.checkAnswers.registrationDate = Date of registration
+enrolment.checkAnswers.confirm = Confirm and continue

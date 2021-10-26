@@ -59,8 +59,7 @@ class RegistrationDateController @Inject() (
               Future.successful(BadRequest(page(formWithErrors, previousPage(data)))),
             registrationDate =>
               cache.update(data => data.copy(registrationDate = Some(registrationDate))).map {
-                // TODO - redirect to next question
-                _ => Redirect(routes.RegistrationDateController.displayPage())
+                _ => Redirect(routes.CheckAnswersController.displayPage())
               }
           )
 
