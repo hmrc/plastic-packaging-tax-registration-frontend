@@ -103,7 +103,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
         status(result) mustBe SEE_OTHER
 
         // TODO - redirect to confirmation or error page
-        redirectLocation(result) mustBe Some(routes.CheckAnswersController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
 
       }
     }

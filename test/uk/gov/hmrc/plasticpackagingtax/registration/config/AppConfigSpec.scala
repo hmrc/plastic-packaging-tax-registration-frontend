@@ -44,6 +44,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |urls.feedback.authenticatedLink="http://localhost:9250/contact/beta-feedback"
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
         |urls.mfaUplift="http://localhost:9553/bas-gateway/uplift-mfa"
+        |urls.businessAccount="http://localhost:9020/business-account"
       """.stripMargin
     )
 
@@ -116,6 +117,10 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "have 'mfaUpliftUrl' defined" in {
       validAppConfig.mfaUpliftUrl must be("http://localhost:9553/bas-gateway/uplift-mfa")
+    }
+
+    "have 'businessAccountUrl' defined" in {
+      validAppConfig.businessAccountUrl must be("http://localhost:9020/business-account")
     }
 
     "inspect feature flags" when {

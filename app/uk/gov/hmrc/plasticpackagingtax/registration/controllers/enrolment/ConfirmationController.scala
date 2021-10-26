@@ -16,39 +16,24 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.check_answers_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class CheckAnswersController @Inject() (
+class ConfirmationController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
-  cache: UserEnrolmentDetailsRepository,
-  page: check_answers_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+  page: confirmation_page
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate.async { implicit request =>
-      cache.get().map {
-        case answers if answers.isComplete => Ok(page(answers))
-        case _                             => Redirect(routes.PptReferenceController.displayPage())
-      }
-    }
-
-  def submit(): Action[AnyContent] =
-    authenticate.async { implicit request =>
-      cache.get().map { answers =>
-        // TODO - post enrolment request and handle response
-        Redirect(routes.ConfirmationController.displayPage())
-      }
+    authenticate { implicit request =>
+      Ok(page())
     }
 
 }
