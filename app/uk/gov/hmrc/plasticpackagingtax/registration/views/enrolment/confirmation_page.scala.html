@@ -37,10 +37,16 @@
 
   @subHeading(messages("enrolment.confirmation.whatHappensNext.title"))
 
-  @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.1", link(text = messages("enrolment.confirmation.whatHappensNext.detail.1.link.text"), call = Call("GET", appConfig.pptAccountUrl))))
+  @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.1",
+      link(text = messages("enrolment.confirmation.whatHappensNext.detail.1.link.text"),
+          call = Call("GET", appConfig.pptAccountUrl))))
 
-  @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.2", link(text = messages("enrolment.confirmation.whatHappensNext.detail.2.link.text"), call = Call("GET", appConfig.pptAccountUrl))))
+  @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.2",
+      link(text = messages("enrolment.confirmation.whatHappensNext.detail.2.link.text"),
+          call = Call("GET", appConfig.businessAccountUrl))))
 
-  @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.3", link(text = messages("enrolment.confirmation.whatHappensNext.detail.3.link.text"), call = Call("GET", appConfig.pptAccountUrl))))
+  @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.3",
+      link(text = messages("enrolment.confirmation.whatHappensNext.detail.3.link.text"),
+          call = Call("GET", appConfig.feedbackUnauthenticatedLink))))
 
 }
