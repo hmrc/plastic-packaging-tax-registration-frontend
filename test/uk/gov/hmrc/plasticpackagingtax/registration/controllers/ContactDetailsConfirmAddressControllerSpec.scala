@@ -84,7 +84,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "Primary Contact Details Confirm Address Controller" should {
+  "Contact Details Confirm Address Controller" should {
 
     "return 200" when {
 
@@ -282,15 +282,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty, formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters invalid data" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          val incorrectForm = Seq("useRegisteredAddress" -> "maybe", formAction)
-          val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
 
           status(result) mustBe BAD_REQUEST
         }

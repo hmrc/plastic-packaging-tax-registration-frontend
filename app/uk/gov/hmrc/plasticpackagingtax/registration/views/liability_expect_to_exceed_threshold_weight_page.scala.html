@@ -14,13 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.yes
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityLiableDate.no
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
 @this(
     formHelper: FormWithCSRF,
@@ -88,8 +85,8 @@
         idPrefix = Some(form("answer").name),
         name = form("answer").name,
         items = Seq(
-            RadioItem(content = Text(messages("general.true")), value = Some("yes"), checked = form("answer").value.contains(yes)),
-            RadioItem(content = Text(messages("general.false")), value = Some("no"), checked = form("answer").value.contains(no))
+            RadioItem(content = Text(messages("general.true")), value = Some(ExpectToExceedThresholdWeight.YES), checked = form("answer").value.contains(ExpectToExceedThresholdWeight.YES)),
+            RadioItem(content = Text(messages("general.false")), value = Some(ExpectToExceedThresholdWeight.NO), checked = form("answer").value.contains(ExpectToExceedThresholdWeight.NO))
         ),
         classes = "govuk-radios",
         errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

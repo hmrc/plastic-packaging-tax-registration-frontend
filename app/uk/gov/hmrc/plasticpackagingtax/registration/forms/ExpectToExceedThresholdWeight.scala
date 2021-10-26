@@ -21,31 +21,26 @@ import play.api.data.Forms.{mapping, text}
 
 case class ExpectToExceedThresholdWeight(answer: Option[Boolean])
 
-object ExpectToExceedThresholdWeight extends CommonFormValidators {
+object ExpectToExceedThresholdWeight extends CommonFormValidators with CommonFormValues {
 
   lazy val emptyError = "liabilityExpectToExceedThresholdWeightPage.question.empty.error"
-  val yes             = "yes"
-  val no              = "no"
 
   def form(): Form[ExpectToExceedThresholdWeight] =
     Form(
       mapping(
         "answer" -> text()
-          .verifying(emptyError, contains(Seq(yes, no)))
+          .verifying(emptyError, contains(Seq(YES, NO)))
       )(ExpectToExceedThresholdWeight.apply)(ExpectToExceedThresholdWeight.unapply)
     )
 
   def apply(value: String): ExpectToExceedThresholdWeight =
-    if (value == yes)
-      ExpectToExceedThresholdWeight(Some(true))
-    else if (value == no)
-      ExpectToExceedThresholdWeight(Some(false))
-    else ExpectToExceedThresholdWeight(None)
+    value match {
+      case YES => ExpectToExceedThresholdWeight(Some(true))
+      case NO  => ExpectToExceedThresholdWeight(Some(false))
+      case _   => ExpectToExceedThresholdWeight(None)
+    }
 
   def unapply(liableDate: ExpectToExceedThresholdWeight): Option[String] =
-    liableDate.answer.flatMap { value =>
-      if (value) Some(yes)
-      else Some(no)
-    }
+    liableDate.answer.map(value => if (value) YES else NO)
 
 }

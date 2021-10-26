@@ -18,46 +18,40 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.data.FormError
 
 class ConfirmAddressSpec extends AnyWordSpec with Matchers {
-  "ConfirmAddress" should {
-    "correctly apply" when {
-      "'yes' is provided" in {
-        val confirmAddress = ConfirmAddress.apply("yes")
-        confirmAddress.useRegisteredAddress mustBe Some(true)
+
+  "Confirm Address Form" should {
+
+    "return success" when {
+
+      "yes is selected" in {
+        val input = Map(ConfirmAddress.field -> ConfirmAddress.YES)
+
+        val form = ConfirmAddress.form().bind(input)
+        form.errors.size mustBe 0
       }
 
-      "'no' is provided" in {
-        val confirmAddress = ConfirmAddress.apply("no")
-        confirmAddress.useRegisteredAddress mustBe Some(false)
+      "no is selected" in {
+        val input = Map(ConfirmAddress.field -> ConfirmAddress.NO)
+
+        val form = ConfirmAddress.form().bind(input)
+        form.errors.size mustBe 0
       }
 
-      " neither 'yes' or 'no' are provided" in {
-        val confirmAddress = ConfirmAddress.apply("maybe")
-        confirmAddress.useRegisteredAddress mustBe None
-      }
-
-      " string is empty" in {
-        val confirmAddress = ConfirmAddress.apply("")
-        confirmAddress.useRegisteredAddress mustBe None
-      }
     }
 
-    "correctly unapply" when {
-      "userRegisteredAddress is 'Some(true)'" in {
-        val confirmAddress = ConfirmAddress.unapply(ConfirmAddress(Some(true)))
-        confirmAddress mustBe Some("yes")
+    "return errors" when {
+
+      "nothing is selected" in {
+        val input = Map[String, String]()
+
+        val form = ConfirmAddress.form().bind(input)
+        form.errors.size mustBe 1
+        form.errors must contain(FormError(ConfirmAddress.field, ConfirmAddress.emptyError))
       }
 
-      "userRegisteredAddress is 'Some(false)'" in {
-        val confirmAddress = ConfirmAddress.unapply(ConfirmAddress(Some(false)))
-        confirmAddress mustBe Some("no")
-      }
-
-      "userRegisteredAddress is None" in {
-        val confirmAddress = ConfirmAddress.unapply(ConfirmAddress(None))
-        confirmAddress mustBe None
-      }
     }
   }
 }

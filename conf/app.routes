@@ -84,5 +84,11 @@ GET        /unauthorised   uk.gov.hmrc.plasticpackagingtax.registration.controll
 GET        /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
 POST       /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.submit()
 
+GET        /enrolment-uk-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.displayPage()
+POST       /enrolment-uk-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.submit()
+
+GET        /enrolment-postcode     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.displayPage()
+POST       /enrolment-postcode     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.submit()
+
 GET        /enrolment-registration-date     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.displayPage()
 POST       /enrolment-registration-date     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.submit()

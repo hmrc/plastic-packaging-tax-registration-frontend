@@ -14,15 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.yes
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.no
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
 @import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, ConfirmAddress}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
 @this(
   formHelper: FormWithCSRF,
@@ -61,8 +57,8 @@
             idPrefix = Some(form("useRegisteredAddress").name),
             name = form("useRegisteredAddress").name,
             items = Seq(
-                RadioItem(content = Text("Yes"), value = Some("yes"), checked = form("useRegisteredAddress").value.contains(yes)),
-                RadioItem(content = Text("No"), value = Some("no"), checked = form("useRegisteredAddress").value.contains(no))
+                RadioItem(content = HtmlContent(messages("general.true")), value = Some(ConfirmAddress.YES), checked = form("useRegisteredAddress").value.contains(ConfirmAddress.YES)),
+                RadioItem(content = HtmlContent(messages("general.false")), value = Some(ConfirmAddress.NO), checked = form("useRegisteredAddress").value.contains(ConfirmAddress.NO))
             ),
             classes = "govuk-radios",
             errorMessage = form("useRegisteredAddress").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

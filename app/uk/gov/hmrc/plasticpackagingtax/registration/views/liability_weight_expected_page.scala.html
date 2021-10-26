@@ -82,14 +82,14 @@
             items = Seq(
                 RadioItem(
                     content = Text(messages("general.true")),
-                    value = Some("yes"),
+                    value = Some(LiabilityExpectedWeight.YES),
                     conditionalHtml = Some(weightHtml),
-                    checked = form("answer").value.contains("yes")
+                    checked = form("answer").value.contains(LiabilityExpectedWeight.YES)
                 ),
                 RadioItem(
                     content = Text(messages("general.false")),
-                    value = Some("no"),
-                    checked = form("answer").value.contains("no")
+                    value = Some(LiabilityExpectedWeight.NO),
+                    checked = form("answer").value.contains(LiabilityExpectedWeight.NO)
                 )
             ),
             errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message))))

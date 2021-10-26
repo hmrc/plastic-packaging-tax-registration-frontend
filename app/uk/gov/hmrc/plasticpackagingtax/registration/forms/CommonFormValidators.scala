@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
-import java.util.regex.Pattern
-
 import com.google.common.base.Strings
+
+import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
@@ -68,4 +68,10 @@ trait CommonFormValidators {
     value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
 
   val contains: Seq[String] => String => Boolean = seq => choice => seq.contains(choice)
+
+  protected val validatePostcode: Int => String => Boolean =
+    (length: Int) =>
+      (input: String) =>
+        isNotExceedingMaxLength(input, length) && isValidPostcode(input.toUpperCase)
+
 }
