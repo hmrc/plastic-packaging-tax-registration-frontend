@@ -19,46 +19,59 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.PptReference
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.RegistrationDate
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.ppt_reference_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.registration_date_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PptReferenceController @Inject() (
+class RegistrationDateController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
   cache: UserEnrolmentDetailsRepository,
-  page: ppt_reference_page
+  page: registration_date_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
       cache.get().map { data =>
-        data.pptReference match {
-          case Some(reference) => Ok(page(PptReference.form().fill(reference)))
-          case _               => Ok(page(PptReference.form()))
+        data.registrationDate match {
+          case Some(registrationDate) =>
+            Ok(page(RegistrationDate.form().fill(registrationDate), previousPage(data)))
+          case _ => Ok(page(RegistrationDate.form(), previousPage(data)))
         }
       }
     }
 
   def submit(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      PptReference.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[PptReference]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
-          pptReference =>
-            cache.update(data => data.copy(pptReference = Some(pptReference))).map {
-              _ => Redirect(routes.IsUkAddressController.displayPage())
-            }
-        )
+      cache.get().flatMap { data =>
+        RegistrationDate.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[RegistrationDate]) =>
+              Future.successful(BadRequest(page(formWithErrors, previousPage(data)))),
+            registrationDate =>
+              cache.update(data => data.copy(registrationDate = Some(registrationDate))).map {
+                // TODO - redirect to next question
+                _ => Redirect(routes.RegistrationDateController.displayPage())
+              }
+          )
+
+      }
+
+    }
+
+  private def previousPage(data: UserEnrolmentDetails): Call =
+    data.postcode match {
+      case Some(_) => routes.PostcodeController.displayPage()
+      case _       => routes.IsUkAddressController.displayPage()
     }
 
 }

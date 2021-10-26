@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -25,7 +26,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDe
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.postcode_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,10 +39,11 @@ class PostcodeController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      cache.get().map {
-        case Some(data) if data.postcode.isDefined =>
-          Ok(page(Postcode.form().fill(data.postcode.get)))
-        case _ => Ok(page(Postcode.form()))
+      cache.get().map { data =>
+        data.postcode match {
+          case Some(postcode) => Ok(page(Postcode.form().fill(postcode)))
+          case _              => Ok(page(Postcode.form()))
+        }
       }
     }
 
@@ -54,7 +55,7 @@ class PostcodeController @Inject() (
           (formWithErrors: Form[Postcode]) => Future.successful(BadRequest(page(formWithErrors))),
           postcode =>
             cache.update(data => data.copy(postcode = Some(postcode))).map {
-              _ => Redirect(routes.PostcodeController.displayPage())
+              _ => Redirect(routes.RegistrationDateController.displayPage())
             }
         )
     }

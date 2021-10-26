@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
 import java.util.concurrent.TimeUnit
+
 import base.PptTestData
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -29,11 +30,12 @@ import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   IsUkAddress,
   Postcode,
-  PptReference
+  PptReference,
+  RegistrationDate
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -45,7 +47,7 @@ class UserEnrolmentDetailsRepositorySpec
     extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
     with DefaultAwaitTimeout with MongoSupport {
 
-  val mockConfig = mock[Configuration]
+  private val mockConfig = mock[Configuration]
   when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
     FiniteDuration(1, TimeUnit.MINUTES)
   )
@@ -62,11 +64,11 @@ class UserEnrolmentDetailsRepositorySpec
                              PptTestData.newUser("123")
     )
 
-  val userEnrolmentDetails =
+  private val userEnrolmentDetails =
     UserEnrolmentDetails(pptReference = Some(PptReference("ppt-ref")),
                          isUkAddress = Some(IsUkAddress(Some(true))),
                          postcode = Some(Postcode("LS1 1AA")),
-                         registrationDate = Some(Date(Some(1), Some(2), Some(2022)))
+                         registrationDate = Some(RegistrationDate(DateData("1", "2", "2022")))
     )
 
   override def beforeEach(): Unit = {
@@ -80,7 +82,7 @@ class UserEnrolmentDetailsRepositorySpec
 
       await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
 
-      await(userEnrolmentDetailsRepository.get()) mustBe Some(userEnrolmentDetails)
+      await(userEnrolmentDetailsRepository.get()) mustBe userEnrolmentDetails
     }
 
     "update data in the cache" when {
@@ -95,9 +97,9 @@ class UserEnrolmentDetailsRepositorySpec
           )
         )
 
-        await(userEnrolmentDetailsRepository.get()) mustBe Some(
+        await(userEnrolmentDetailsRepository.get()) mustBe
           userEnrolmentDetails.copy(pptReference = Some(PptReference("update-reference")))
-        )
+
       }
 
       "a registration does not exists" in {
@@ -108,16 +110,15 @@ class UserEnrolmentDetailsRepositorySpec
           )
         )
 
-        await(userEnrolmentDetailsRepository.get()) mustBe Some(
+        await(userEnrolmentDetailsRepository.get()) mustBe
           UserEnrolmentDetails(Some(PptReference("new-reference")), None, None)
-        )
       }
 
     }
 
-    "return None when no data found" in {
+    "return new details when no data found" in {
 
-      await(userEnrolmentDetailsRepository.get()) mustBe None
+      await(userEnrolmentDetailsRepository.get()) mustBe UserEnrolmentDetails()
     }
 
   }

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
 import base.unit.ControllerSpec
+import com.codahale.metrics.SharedMetricRegistries
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -25,42 +26,40 @@ import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
-  IsUkAddress,
-  Postcode,
-  PptReference
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.RegistrationDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
   UserDataRepository,
   UserEnrolmentDetailsRepository
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.postcode_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.registration_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class PostcodeControllerSpec extends ControllerSpec {
+class RegistrationDateControllerSpec extends ControllerSpec {
 
-  private val page       = mock[postcode_page]
+  private val page       = mock[registration_date_page]
   private val mcc        = stubMessagesControllerComponents()
   private val mockCache  = mock[UserDataRepository]
   private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
-  private val controller = new PostcodeController(mockAuthAction, mcc, repository, page)
+  private val controller =
+    new RegistrationDateController(mockAuthAction, mcc, repository, page)
 
-  private val pptReference = PptReference("XAPPT000123456")
-  private val isUkAddress  = IsUkAddress(Some(true))
-
-  private val initialEnrolmentDetails =
-    UserEnrolmentDetails(pptReference = Some(pptReference), isUkAddress = Some(isUkAddress))
+  private val registrationDate = RegistrationDate(DateData("1", "2", "2021"))
+  private val enrolmentDetails = UserEnrolmentDetails(registrationDate = Some(registrationDate))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Postcode]])(any(), any())).thenReturn(HtmlFormat.raw("Postcode Page"))
-    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-      Future.successful(Some(initialEnrolmentDetails))
+    when(page.apply(any[Form[RegistrationDate]], any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Registration Date Page")
     )
+    when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(Some(enrolmentDetails))
+    )
+    SharedMetricRegistries.clear()
   }
 
   override protected def afterEach(): Unit = {
@@ -68,19 +67,14 @@ class PostcodeControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "Postcode Controller" should {
-    "display the postcode page" when {
+  "Registration Date Controller" should {
+    "display the registration data page" when {
       "user is authorised" in {
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(
-            Some(initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA"))))
-          )
-        )
         authorizedUser()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        contentAsString(result) mustBe "Postcode Page"
+        contentAsString(result) mustBe "Registration Date Page"
       }
 
       "user is authorised and cache is empty" in {
@@ -91,7 +85,7 @@ class PostcodeControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        contentAsString(result) mustBe "Postcode Page"
+        contentAsString(result) mustBe "Registration Date Page"
       }
     }
     "throw a RuntimeException" when {
@@ -103,32 +97,42 @@ class PostcodeControllerSpec extends ControllerSpec {
       }
     }
 
-    "redisplay the Postcode Page with a BAD REQUEST status" when {
-      "an invalid postcode is submitted" in {
+    "redisplay the registration date page with a BAD REQUEST status" when {
+      "an invalid registration date is submitted" in {
         authorizedUser()
-        val result = controller.submit()(postRequestEncoded(Postcode("XXX")))
+        val correctForm = Seq("date.day" -> registrationDate.value.day,
+                              "date.month" -> registrationDate.value.month,
+                              "date.year"  -> "1980"
+        )
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe BAD_REQUEST
-        contentAsString(result) mustBe "Postcode Page"
+        contentAsString(result) mustBe "Registration Date Page"
       }
     }
 
-    "redirect to next page and persist postcode" when {
-      "a valid postcode is submitted" in {
-        val expectedEnrolmentDetails =
-          initialEnrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA")))
+    "redirect to next page and persist registration date" when {
+      "a valid registration date is submitted" in {
+
         when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
-          Future.successful(expectedEnrolmentDetails)
+          Future.successful(enrolmentDetails)
         )
 
         authorizedUser()
-        val result = controller.submit()(postRequestEncoded(Postcode("LS1 1AA")))
+
+        val correctForm = Seq("date.day" -> registrationDate.value.day,
+                              "date.month" -> registrationDate.value.month,
+                              "date.year"  -> registrationDate.value.year
+        )
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
+
+        // TODO: this will need to change when we build out the "check your answers" page
         redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
 
         verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
-                                  ArgumentMatchers.eq(expectedEnrolmentDetails)
+                                  ArgumentMatchers.eq(enrolmentDetails)
         )(any(), any())
       }
     }
