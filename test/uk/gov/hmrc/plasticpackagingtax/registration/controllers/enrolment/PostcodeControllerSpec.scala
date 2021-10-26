@@ -49,10 +49,10 @@ class PostcodeControllerSpec extends ControllerSpec {
 
   private val controller = new PostcodeController(mockAuthAction, mcc, repository, page)
 
-  val pptReference = PptReference("XAPPT000123456")
-  val isUkAddress  = IsUkAddress(Some(true))
+  private val pptReference = PptReference("XAPPT000123456")
+  private val isUkAddress  = IsUkAddress(Some(true))
 
-  val initialEnrolmentDetails =
+  private val initialEnrolmentDetails =
     UserEnrolmentDetails(pptReference = Some(pptReference), isUkAddress = Some(isUkAddress))
 
   override protected def beforeEach(): Unit = {
@@ -125,7 +125,7 @@ class PostcodeControllerSpec extends ControllerSpec {
         val result = controller.submit()(postRequestEncoded(Postcode("LS1 1AA")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PostcodeController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
 
         verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
                                   ArgumentMatchers.eq(expectedEnrolmentDetails)

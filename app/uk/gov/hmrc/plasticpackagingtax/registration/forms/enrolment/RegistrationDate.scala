@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment
 
+import java.time.LocalDate
+
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Json, OFormat}
@@ -27,17 +29,18 @@ case class RegistrationDate(value: DateData)
 object RegistrationDate {
   implicit val format: OFormat[RegistrationDate] = Json.format[RegistrationDate]
 
+  val minRegistrationDate: LocalDate = LocalDate.parse("2021-01-01")
+
   def form(): Form[RegistrationDate] =
     Form[RegistrationDate](
       mapping(
         "date" -> mapping("day" -> text().verifying(validDay()),
                           "month" -> text().verifying(validMonth()),
-                          "year" -> text().verifying(
-                            validYear(2020, "enrolment.registrationDate.value.error.minYear")
-                          )
+                          "year"  -> text().verifying(validYear())
         )(DateData.apply)(DateData.unapply).verifying(
           validDate("enrolment.registrationDate.value.error.format"),
-          maxDateToday("enrolment.registrationDate.value.error.maxDate")
+          maxDateToday("enrolment.registrationDate.value.error.maxDate"),
+          minDate(minRegistrationDate, "enrolment.registrationDate.value.error.minDate")
         )
       )(RegistrationDate.apply)(RegistrationDate.unapply)
     )

@@ -32,16 +32,16 @@ class UserEnrolmentDetailsRepository @Inject() (userDataRepository: UserDataRepo
   )(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
     userDataRepository.putData[UserEnrolmentDetails](repositoryKey, registration)
 
-  def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[UserEnrolmentDetails]] =
-    userDataRepository.getData[UserEnrolmentDetails](repositoryKey)
+  def get()(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
+    userDataRepository.getData[UserEnrolmentDetails](repositoryKey).map {
+      case Some(data) => data
+      case _          => UserEnrolmentDetails()
+    }
 
   def update(
     update: UserEnrolmentDetails => UserEnrolmentDetails
   )(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
-    get().flatMap {
-      case Some(data) => put(update(data))
-      case _          => put(update(UserEnrolmentDetails()))
-    }
+    get().flatMap(data => put(update(data)))
 
 }
 

@@ -21,11 +21,8 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{Postcode, PptReference}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.{
-  postcode_page,
-  ppt_reference_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.Postcode
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.postcode_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
@@ -108,7 +105,7 @@ class PostcodeViewSpec extends UnitViewSpec with Matchers {
     }
   }
 
-  override def exerciseGeneratedRenderingMethods() = {
+  override def exerciseGeneratedRenderingMethods(): Unit = {
     page.f(Postcode.form())(request, messages)
     page.render(Postcode.form(), request, messages)
   }

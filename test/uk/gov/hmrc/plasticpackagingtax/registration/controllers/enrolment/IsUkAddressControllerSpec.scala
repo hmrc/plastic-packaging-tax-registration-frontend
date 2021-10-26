@@ -45,8 +45,8 @@ class IsUkAddressControllerSpec extends ControllerSpec {
 
   private val controller = new IsUkAddressController(mockAuthAction, mcc, repository, page)
 
-  val pptReference            = PptReference("XAPPT000123456")
-  val initialEnrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
+  private val pptReference            = PptReference("XAPPT000123456")
+  private val initialEnrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -127,9 +127,8 @@ class IsUkAddressControllerSpec extends ControllerSpec {
       }
     }
 
-    // TODO: update when we've built the date of registration page
-    "redirect to the is uk address page persist is uk address selection" when {
-      "is uk address is true" in {
+    "redirect to the registration date page and persist is uk address selection" when {
+      "is uk address is false" in {
         val expectedEnrolmentDetails =
           initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(false))))
         when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
@@ -140,7 +139,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
         val result = controller.submit()(postJsonRequestEncoded(("value", "no")))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IsUkAddressController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.RegistrationDateController.displayPage().url)
 
         verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
                                   ArgumentMatchers.eq(expectedEnrolmentDetails)

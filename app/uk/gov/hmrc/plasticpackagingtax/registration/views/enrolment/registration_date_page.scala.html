@@ -31,12 +31,13 @@
   errorSummary: GovukErrorSummary
 )
 
-@(form: Form[RegistrationDate])(implicit request: Request[_], messages: Messages)
+@(form: Form[RegistrationDate], previousPage: Call)(implicit request: Request[_], messages: Messages)
 
 @pptReferenceField = @{form("value")}
 
 @govukLayout(
-  title = Title("enrolment.registrationDate.title")) {
+  title = Title("enrolment.registrationDate.title"),
+  backButton = Some(BackButton(messages("site.back"), previousPage, messages("site.back.hiddenText")))) {
     @if(form.errors.nonEmpty) {
         @errorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("date" -> "date.day")))
     }

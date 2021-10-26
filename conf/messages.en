@@ -329,5 +329,5 @@ enrolment.postcode.value.error.regex = Enter a postcode in the correct format
 enrolment.registrationDate.title = What is your PPT registration date?
 enrolment.registrationDate.hint = For example, 27 3 2021
 enrolment.registrationDate.value.error.format = Enter your PPT registration date in the correct format
-enrolment.registrationDate.value.error.maxDate = Your PPT registration date must be in the past
-enrolment.registrationDate.value.error.minYear = Enter a year on or after 2020
+enrolment.registrationDate.value.error.maxDate = Your PPT registration date must be today or in the past
+enrolment.registrationDate.value.error.minDate = Your PPT registration date must be after 1 January 2021

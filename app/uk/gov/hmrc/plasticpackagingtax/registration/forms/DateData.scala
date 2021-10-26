@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 import java.time.LocalDate
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import scala.util.{Failure, Success, Try}
 
@@ -28,7 +28,7 @@ case class DateData(day: String, month: String, year: String) {
 }
 
 object DateData {
-  implicit val format = Json.format[DateData]
+  implicit val format: OFormat[DateData] = Json.format[DateData]
 
   def validDay(errorKey: String = "date.day.error"): Constraint[String] =
     Constraint {
@@ -50,17 +50,12 @@ object DateData {
         }
     }
 
-  def validYear(
-    minYear: Int = 1900,
-    minYearError: String = "date.year.error",
-    errorKey: String = "date.year.error"
-  ): Constraint[String] =
+  def validYear(errorKey: String = "date.year.error"): Constraint[String] =
     Constraint {
       data =>
         Try(data.toInt) match {
-          case Success(year) if year < minYear => Invalid(minYearError)
-          case Failure(_)                      => Invalid(errorKey)
-          case _                               => Valid
+          case Failure(_) => Invalid(errorKey)
+          case _          => Valid
         }
     }
 
@@ -76,6 +71,15 @@ object DateData {
         Try(data.asLocalDate) match {
           case Success(date) if date.isAfter(LocalDate.now()) => Invalid(errorKey)
           case _                                              => Valid
+        }
+    }
+
+  def minDate(minimum: LocalDate, errorKey: String): Constraint[DateData] =
+    Constraint {
+      data =>
+        Try(data.asLocalDate) match {
+          case Success(date) if date.isBefore(minimum) => Invalid(errorKey)
+          case _                                       => Valid
         }
     }
 

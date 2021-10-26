@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
 import base.unit.ControllerSpec
+import com.codahale.metrics.SharedMetricRegistries
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -44,19 +45,21 @@ class RegistrationDateControllerSpec extends ControllerSpec {
   private val mockCache  = mock[UserDataRepository]
   private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
-  private val controller = new RegistrationDateController(mockAuthAction, mcc, repository, page)
+  private val controller =
+    new RegistrationDateController(mockAuthAction, mcc, repository, page)
 
-  val registrationDate = RegistrationDate(DateData("1", "12", "2020"))
-  val enrolmentDetails = UserEnrolmentDetails(registrationDate = Some(registrationDate))
+  private val registrationDate = RegistrationDate(DateData("1", "2", "2021"))
+  private val enrolmentDetails = UserEnrolmentDetails(registrationDate = Some(registrationDate))
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[RegistrationDate]])(any(), any())).thenReturn(
+    when(page.apply(any[Form[RegistrationDate]], any())(any(), any())).thenReturn(
       HtmlFormat.raw("Registration Date Page")
     )
     when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
       Future.successful(Some(enrolmentDetails))
     )
+    SharedMetricRegistries.clear()
   }
 
   override protected def afterEach(): Unit = {
@@ -94,8 +97,8 @@ class RegistrationDateControllerSpec extends ControllerSpec {
       }
     }
 
-    "redisplay the ppt reference page with a BAD REQUEST status" when {
-      "an invalid ppt reference is submitted" in {
+    "redisplay the registration date page with a BAD REQUEST status" when {
+      "an invalid registration date is submitted" in {
         authorizedUser()
         val correctForm = Seq("date.day" -> registrationDate.value.day,
                               "date.month" -> registrationDate.value.month,
@@ -108,8 +111,8 @@ class RegistrationDateControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirect to next page and persist ppt reference" when {
-      "a valid ppt reference is submitted" in {
+    "redirect to next page and persist registration date" when {
+      "a valid registration date is submitted" in {
 
         when(mockCache.putData[UserEnrolmentDetails](any(), any())(any(), any())).thenReturn(
           Future.successful(enrolmentDetails)

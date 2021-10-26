@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -25,7 +26,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDe
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.is_uk_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,10 +39,11 @@ class IsUkAddressController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      cache.get().map {
-        case Some(userEnrolmentDetails) if userEnrolmentDetails.isUkAddress.isDefined =>
-          Ok(page(IsUkAddress.form().fill(userEnrolmentDetails.isUkAddress.get)))
-        case _ => Ok(page(IsUkAddress.form()))
+      cache.get().map { data =>
+        data.isUkAddress match {
+          case Some(isUkAddress) => Ok(page(IsUkAddress.form().fill(isUkAddress)))
+          case _                 => Ok(page(IsUkAddress.form()))
+        }
       }
     }
 
@@ -54,13 +55,17 @@ class IsUkAddressController @Inject() (
           (formWithErrors: Form[IsUkAddress]) =>
             Future.successful(BadRequest(page(formWithErrors))),
           isUkAddress =>
-            cache.update(data => data.copy(isUkAddress = Some(isUkAddress))).map {
+            cache.update(
+              data =>
+                data.copy(isUkAddress = Some(isUkAddress),
+                          postcode = if (isUkAddress.requiresPostCode) data.postcode else None
+                )
+            ).map {
               userEnrolmentDetails =>
                 userEnrolmentDetails.isUkAddress match {
                   case Some(IsUkAddress(Some(true))) =>
                     Redirect(routes.PostcodeController.displayPage())
-                  // TODO: route to date of registration when available
-                  case _ => Redirect(routes.IsUkAddressController.displayPage())
+                  case _ => Redirect(routes.RegistrationDateController.displayPage())
                 }
             }
         )

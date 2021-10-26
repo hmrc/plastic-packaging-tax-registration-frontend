@@ -22,7 +22,6 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight.form
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -118,7 +117,7 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
     }
   }
 
-  override def exerciseGeneratedRenderingMethods() = {
+  override def exerciseGeneratedRenderingMethods(): Unit = {
     page.f(ExpectToExceedThresholdWeight.form())(request, messages)
     page.render(ExpectToExceedThresholdWeight.form(), request, messages)
   }

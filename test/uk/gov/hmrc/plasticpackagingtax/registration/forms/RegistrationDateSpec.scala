@@ -18,12 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import java.time.LocalDate
 
+import base.Injector
+import base.unit.MessagesSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.RegistrationDate
 
-class RegistrationDateSpec extends AnyWordSpec with Matchers {
+class RegistrationDateSpec extends MessagesSpec with Matchers with Injector {
 
   private val year  = "date.year"
   private val month = "date.month"
@@ -34,9 +35,9 @@ class RegistrationDateSpec extends AnyWordSpec with Matchers {
 
     "is success" when {
 
-      "registration date is valid (2020-10-01)" in {
+      "registration date is valid (2021-10-01)" in {
 
-        val input = Map(year -> "2020", month -> "10", day -> "01")
+        val input = Map(year -> "2021", month -> "10", day -> "01")
 
         val form = RegistrationDate.form().bind(input)
         form.errors.size mustBe 0
@@ -68,13 +69,6 @@ class RegistrationDateSpec extends AnyWordSpec with Matchers {
         testFailedValidationErrors(input, expectedErrors)
       }
 
-      "contains year before 2020" in {
-
-        val input          = Map(year -> "2019", month -> "7", day -> "13")
-        val expectedErrors = Seq(FormError(year, "enrolment.registrationDate.value.error.minYear"))
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
     }
 
     "provided with month" which {
@@ -138,6 +132,15 @@ class RegistrationDateSpec extends AnyWordSpec with Matchers {
         val input =
           Map(year -> LocalDate.now().plusYears(1).getYear.toString, month -> "12", day -> "31")
         val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.maxDate"))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "is before 1-Jan-2021" in {
+
+        val input =
+          Map(year -> "2020", month -> "12", day -> "31")
+        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.minDate"))
 
         testFailedValidationErrors(input, expectedErrors)
       }

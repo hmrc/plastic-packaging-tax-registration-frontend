@@ -39,10 +39,11 @@ class PptReferenceController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      cache.get().map {
-        case Some(data) if data.pptReference.isDefined =>
-          Ok(page(PptReference.form().fill(data.pptReference.get)))
-        case _ => Ok(page(PptReference.form()))
+      cache.get().map { data =>
+        data.pptReference match {
+          case Some(reference) => Ok(page(PptReference.form().fill(reference)))
+          case _               => Ok(page(PptReference.form()))
+        }
       }
     }
 
