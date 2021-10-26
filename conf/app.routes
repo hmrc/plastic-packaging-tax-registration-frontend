@@ -95,3 +95,5 @@ POST       /enrolment-registration-date     uk.gov.hmrc.plasticpackagingtax.regi
 
 GET        /enrolment-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.displayPage()
 POST       /enrolment-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.submit()
+
+GET        /enrolment-confirmation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.ConfirmationController.displayPage()

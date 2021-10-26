@@ -150,4 +150,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
 
   lazy val mfaUpliftUrl: String = config.get[String]("urls.mfaUplift")
+
+  lazy val businessAccountUrl: String = config.get[String]("urls.businessAccount")
 }

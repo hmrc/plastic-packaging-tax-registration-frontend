@@ -339,3 +339,13 @@ enrolment.checkAnswers.ukAddress = Principal place of business in the UK
 enrolment.checkAnswers.postcode = Postcode of registered business address
 enrolment.checkAnswers.registrationDate = Date of registration
 enrolment.checkAnswers.confirm = Confirm and continue
+
+enrolment.confirmation.title = Account activated
+enrolment.confirmation.panel = Account Activated
+enrolment.confirmation.whatHappensNext.title = What happens next
+enrolment.confirmation.whatHappensNext.detail.1 = You can go to your {0} and pay your tax.
+enrolment.confirmation.whatHappensNext.detail.1.link.text = PPT account
+enrolment.confirmation.whatHappensNext.detail.2 = If you have a {0} you can view your PPT account there.
+enrolment.confirmation.whatHappensNext.detail.2.link.text = BTA account
+enrolment.confirmation.whatHappensNext.detail.3 = {0} (takes 30 seconds).
+enrolment.confirmation.whatHappensNext.detail.3.link.text = What did you think of this service?
