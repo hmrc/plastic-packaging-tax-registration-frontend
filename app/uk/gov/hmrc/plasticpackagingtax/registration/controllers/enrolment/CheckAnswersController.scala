@@ -47,7 +47,7 @@ class CheckAnswersController @Inject() (
     authenticate.async { implicit request =>
       cache.get().map { answers =>
         // TODO - post enrolment request and handle response
-        Redirect(routes.CheckAnswersController.displayPage())
+        Redirect(routes.ConfirmationController.displayPage())
       }
     }
 
