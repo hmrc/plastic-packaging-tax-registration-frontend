@@ -37,8 +37,9 @@ class CheckAnswersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      cache.get().map { answers =>
-        Ok(page(answers))
+      cache.get().map {
+        case answers if answers.isComplete => Ok(page(answers))
+        case _                             => Redirect(routes.PptReferenceController.displayPage())
       }
     }
 

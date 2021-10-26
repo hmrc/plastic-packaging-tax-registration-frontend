@@ -29,7 +29,14 @@ case class UserEnrolmentDetails(
   isUkAddress: Option[IsUkAddress] = None,
   postcode: Option[Postcode] = None,
   registrationDate: Option[RegistrationDate] = None
-)
+) {
+
+  def isComplete: Boolean =
+    pptReference.isDefined && isUkAddress.isDefined && registrationDate.isDefined && (isUkAddress.exists(
+      !_.requiresPostCode
+    ) || postcode.isDefined)
+
+}
 
 object UserEnrolmentDetails {
   implicit val format: OFormat[UserEnrolmentDetails] = Json.format[UserEnrolmentDetails]

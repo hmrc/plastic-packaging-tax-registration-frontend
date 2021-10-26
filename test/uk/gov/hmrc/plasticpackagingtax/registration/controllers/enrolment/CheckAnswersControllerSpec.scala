@@ -24,11 +24,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
-  IsUkAddress,
-  Postcode,
-  PptReference
-}
+import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
   UserDataRepository,
@@ -39,7 +35,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class CheckAnswersControllerSpec extends ControllerSpec {
+class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
   private val page       = mock[check_answers_page]
   private val mcc        = stubMessagesControllerComponents()
@@ -48,17 +44,11 @@ class CheckAnswersControllerSpec extends ControllerSpec {
 
   private val controller = new CheckAnswersController(mockAuthAction, mcc, repository, page)
 
-  private val pptReference = PptReference("XAPPT000123456")
-  private val isUkAddress  = IsUkAddress(Some(true))
-
-  private val enrolmentDetails =
-    UserEnrolmentDetails(pptReference = Some(pptReference), isUkAddress = Some(isUkAddress))
-
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[UserEnrolmentDetails])(any(), any())).thenReturn(HtmlFormat.raw("CYA Page"))
     when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-      Future.successful(Some(enrolmentDetails))
+      Future.successful(Some(userEnrolmentDetails))
     )
   }
 
@@ -71,7 +61,7 @@ class CheckAnswersControllerSpec extends ControllerSpec {
     "display the check answers page" when {
       "user is authorised" in {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(Some(enrolmentDetails.copy(postcode = Some(Postcode("LS1 1AA")))))
+          Future.successful(Some(userEnrolmentDetails))
         )
         authorizedUser()
         val result = controller.displayPage()(getRequest())
@@ -80,16 +70,6 @@ class CheckAnswersControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "CYA Page"
       }
 
-      "user is authorised and cache is empty" in {
-        authorizedUser()
-        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
-          Future.successful(None)
-        )
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe "CYA Page"
-      }
     }
     "throw a RuntimeException" when {
       "user is not authorised" in {
@@ -101,6 +81,19 @@ class CheckAnswersControllerSpec extends ControllerSpec {
     }
 
     "redirect to next page " when {
+
+      "answers are not complete" in {
+        when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+          Future.successful(Some(UserEnrolmentDetails()))
+        )
+        authorizedUser()
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(routes.PptReferenceController.displayPage().url)
+      }
+
       "page is submitted" in {
 
         authorizedUser()

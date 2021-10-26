@@ -21,7 +21,7 @@ import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, DateData}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
   REGISTERED_SOCIETY,
@@ -38,7 +38,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   VerificationStatus
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  UserEnrolmentDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest,
   JourneyRequest
@@ -50,6 +53,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 import java.time.{ZoneOffset, ZonedDateTime}
+
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
+  IsUkAddress,
+  Postcode,
+  PptReference,
+  RegistrationDate
+}
 
 import scala.language.implicitConversions
 
@@ -291,5 +301,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                         businessRegisteredAddress = Some(testBusinessAddress),
                         incorporationDetails = Some(verificationFailedIncorporationDetails)
     )
+
+  protected val userEnrolmentDetails = UserEnrolmentDetails(
+    pptReference = Some(PptReference("XAPPT000123456")),
+    isUkAddress = Some(IsUkAddress(Some(true))),
+    postcode = Some(Postcode("AB1 2BC")),
+    registrationDate =
+      Some(RegistrationDate(DateData("1", "2", "2021")))
+  )
 
 }

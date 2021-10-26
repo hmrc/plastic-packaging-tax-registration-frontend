@@ -18,35 +18,21 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.enrolment
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
-import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.Call
+import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
-  IsUkAddress,
-  Postcode,
-  PptReference,
-  RegistrationDate
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.IsUkAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.check_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class CheckAnswersViewSpec extends UnitViewSpec with Matchers {
+class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
 
   private val page = instanceOf[check_answers_page]
 
   private def createView(answers: UserEnrolmentDetails = UserEnrolmentDetails()): Document =
     page(answers)(journeyRequest, messages)
-
-  val completeAnswers = UserEnrolmentDetails(pptReference = Some(PptReference("PPT_REF")),
-                                             isUkAddress = Some(IsUkAddress(Some(true))),
-                                             postcode = Some(Postcode("AB1 2BC")),
-                                             registrationDate =
-                                               Some(RegistrationDate(DateData("1", "2", "2021")))
-  )
 
   "Check Answers View with no answers" should {
 
@@ -114,11 +100,11 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
   "Check Answers View for Uk registered organisation" should {
 
-    val view = createView(completeAnswers)
+    val view = createView(userEnrolmentDetails)
     "display 'PPT reference' row" in {
       val row = getSummaryRow(view, 0)
       row must haveSummaryKey(messages("enrolment.checkAnswers.pptReference"))
-      row must haveSummaryValue("PPT_REF")
+      row must haveSummaryValue("XAPPT000123456")
       row must haveSummaryActionsTexts("site.link.change", "enrolment.checkAnswers.pptReference")
       row must haveSummaryActionsHref(routes.PptReferenceController.displayPage())
     }
@@ -153,11 +139,11 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
   "Check Answers View for non-Uk registered organisation" should {
 
-    val view = createView(completeAnswers.copy(isUkAddress = Some(IsUkAddress(Some(false)))))
+    val view = createView(userEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(false)))))
     "display 'PPT reference' row" in {
       val row = getSummaryRow(view, 0)
       row must haveSummaryKey(messages("enrolment.checkAnswers.pptReference"))
-      row must haveSummaryValue("PPT_REF")
+      row must haveSummaryValue("XAPPT000123456")
       row must haveSummaryActionsTexts("site.link.change", "enrolment.checkAnswers.pptReference")
       row must haveSummaryActionsHref(routes.PptReferenceController.displayPage())
     }
@@ -194,7 +180,5 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers {
     page.f(UserEnrolmentDetails())(request, messages)
     page.render(UserEnrolmentDetails(), request, messages)
   }
-
-  "Check Answers View with no answers" should {}
 
 }
