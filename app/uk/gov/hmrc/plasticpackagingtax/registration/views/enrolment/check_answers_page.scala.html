@@ -34,7 +34,8 @@
 
 @govukLayout(
     title = Title("enrolment.checkAnswers.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationDateController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationDateController.displayPage(), messages("site.back.hiddenText"))),
+    siteHeaderLink = pptRoutes.PptReferenceController.displayPage()) {
 
     @pageHeading(messages("enrolment.checkAnswers.title"))
 

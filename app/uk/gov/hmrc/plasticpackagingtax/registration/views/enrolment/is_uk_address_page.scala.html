@@ -36,7 +36,8 @@
 
 @govukLayout(
   title = Title("enrolment.isUkAddress.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.PptReferenceController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.PptReferenceController.displayPage(), messages("site.back.hiddenText"))),
+  siteHeaderLink = pptRoutes.PptReferenceController.displayPage()) {
 
     @errorSummary(form.errors)
 

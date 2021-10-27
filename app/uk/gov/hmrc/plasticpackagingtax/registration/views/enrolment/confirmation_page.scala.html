@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.{routes => pptRoutes}
 
 @this(
     govukLayout: main_template,
@@ -29,7 +30,7 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("enrolment.confirmation.title")) {
+@govukLayout(title = Title("enrolment.confirmation.title"), siteHeaderLink = pptRoutes.PptReferenceController.displayPage()) {
 
   @govukPanel(Panel(
     title = Text(messages("enrolment.confirmation.title"))

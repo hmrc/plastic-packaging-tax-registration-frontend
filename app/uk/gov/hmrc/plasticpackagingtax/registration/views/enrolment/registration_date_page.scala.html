@@ -37,7 +37,8 @@
 
 @govukLayout(
   title = Title("enrolment.registrationDate.title"),
-  backButton = Some(BackButton(messages("site.back"), previousPage, messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), previousPage, messages("site.back.hiddenText"))),
+  siteHeaderLink = pptRoutes.PptReferenceController.displayPage()) {
     @if(form.errors.nonEmpty) {
         @errorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("date" -> "date.day")))
     }

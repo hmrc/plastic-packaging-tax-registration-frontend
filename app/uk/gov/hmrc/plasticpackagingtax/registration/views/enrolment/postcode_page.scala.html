@@ -35,7 +35,9 @@
 
 @govukLayout(
   title = Title("enrolment.postcode.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.IsUkAddressController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.IsUkAddressController.displayPage(), messages("site.back.hiddenText"))),
+  siteHeaderLink = pptRoutes.PptReferenceController.displayPage()
+) {
 
     @errorSummary(form.errors)
 
