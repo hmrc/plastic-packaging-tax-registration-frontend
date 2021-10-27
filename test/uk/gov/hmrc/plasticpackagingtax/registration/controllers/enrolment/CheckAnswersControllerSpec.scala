@@ -25,6 +25,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.RegistrationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
+  EnrolmentFailureCode,
+  UserEnrolmentFailedResponse,
+  UserEnrolmentSuccessResponse
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
   UserDataRepository,
@@ -37,12 +43,18 @@ import scala.concurrent.Future
 
 class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
-  private val page       = mock[check_answers_page]
-  private val mcc        = stubMessagesControllerComponents()
-  private val mockCache  = mock[UserDataRepository]
-  private val repository = new UserEnrolmentDetailsRepository(mockCache)
+  private val page                               = mock[check_answers_page]
+  private val mcc                                = stubMessagesControllerComponents()
+  private val mockCache                          = mock[UserDataRepository]
+  private val repository                         = new UserEnrolmentDetailsRepository(mockCache)
+  private val mockEnrolmentRegistrationConnector = mock[RegistrationConnector]
 
-  private val controller = new CheckAnswersController(mockAuthAction, mcc, repository, page)
+  private val controller = new CheckAnswersController(mockAuthAction,
+                                                      mcc,
+                                                      repository,
+                                                      mockEnrolmentRegistrationConnector,
+                                                      page
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -94,16 +106,37 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
         redirectLocation(result) mustBe Some(routes.PptReferenceController.displayPage().url)
       }
 
-      "page is submitted" in {
+      "page is submitted" when {
 
-        authorizedUser()
-        val result =
-          controller.submit()(FakeRequest("POST", ""))
+        "verification failed enrolment verification " in {
+          authorizedUser()
+          when(mockEnrolmentRegistrationConnector.enrol(any())(any())).thenReturn(
+            Future.successful(
+              UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.VerificationFailed)
+            )
+          )
+          val result =
+            controller.submit()(FakeRequest("POST", ""))
 
-        status(result) mustBe SEE_OTHER
+          status(result) mustBe SEE_OTHER
 
-        // TODO - redirect to confirmation or error page
-        redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+          redirectLocation(result) mustBe Some(
+            routes.NotableErrorController.enrolmentVerificationFailurePage().url
+          )
+        }
+
+        "successful enrolment verification " in {
+          authorizedUser()
+          when(mockEnrolmentRegistrationConnector.enrol(any())(any())).thenReturn(
+            Future.successful(UserEnrolmentSuccessResponse("XPPT000123456"))
+          )
+          val result =
+            controller.submit()(FakeRequest("POST", ""))
+
+          status(result) mustBe SEE_OTHER
+
+          redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
+        }
 
       }
     }

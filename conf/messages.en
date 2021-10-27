@@ -349,3 +349,7 @@ enrolment.confirmation.whatHappensNext.detail.2 = If you have a {0} you can view
 enrolment.confirmation.whatHappensNext.detail.2.link.text = BTA account
 enrolment.confirmation.whatHappensNext.detail.3 = {0} (takes 30 seconds).
 enrolment.confirmation.whatHappensNext.detail.3.link.text = What did you think of this service?
+
+enrolment.not.verified.title = Sorry, your business could not be verified
+enrolment.not.verified.detail1 = The information you provided does not match the details we have about your business.
+enrolment.not.verified.detail2 = Try again
