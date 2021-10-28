@@ -99,3 +99,6 @@ POST       /enrolment-check-answers     uk.gov.hmrc.plasticpackagingtax.registra
 GET        /enrolment-confirmation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.ConfirmationController.displayPage()
 
 GET        /enrolment-not-verified     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentVerificationFailurePage()
+
+GET        /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.displayPage()
+POST        /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.submit()

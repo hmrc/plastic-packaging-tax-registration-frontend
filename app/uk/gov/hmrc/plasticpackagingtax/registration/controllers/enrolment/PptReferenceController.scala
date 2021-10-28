@@ -56,7 +56,7 @@ class PptReferenceController @Inject() (
             Future.successful(BadRequest(page(formWithErrors))),
           pptReference =>
             cache.update(data => data.copy(pptReference = Some(pptReference))).map {
-              _ => Redirect(routes.IsUkAddressController.displayPage())
+              _ => Redirect(routes.VerifyOrganisationController.displayPage())
             }
         )
     }
