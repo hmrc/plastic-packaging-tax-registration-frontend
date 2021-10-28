@@ -20,7 +20,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{EnrolmentFailureCode, UserEnrolmentFailedResponse, UserEnrolmentSuccessResponse}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
+  EnrolmentFailureCode,
+  UserEnrolmentFailedResponse,
+  UserEnrolmentSuccessResponse
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
