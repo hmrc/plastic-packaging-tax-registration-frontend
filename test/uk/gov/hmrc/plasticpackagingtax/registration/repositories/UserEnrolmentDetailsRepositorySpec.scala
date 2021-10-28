@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
-import java.util.concurrent.TimeUnit
-
 import base.PptTestData
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -40,6 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
 
@@ -114,6 +113,13 @@ class UserEnrolmentDetailsRepositorySpec
           UserEnrolmentDetails(Some(PptReference("new-reference")), None, None)
       }
 
+    }
+
+    "add data to cache and delete it" in {
+
+      await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
+
+      await(userEnrolmentDetailsRepository.delete()) mustBe ()
     }
 
     "return new details when no data found" in {

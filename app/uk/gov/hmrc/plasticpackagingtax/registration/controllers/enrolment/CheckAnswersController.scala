@@ -57,6 +57,7 @@ class CheckAnswersController @Inject() (
       for {
         answers <- cache.get()
         result  <- handleEnrolment(answers)
+        _       <- cache.delete()
       } yield result
     }
 
