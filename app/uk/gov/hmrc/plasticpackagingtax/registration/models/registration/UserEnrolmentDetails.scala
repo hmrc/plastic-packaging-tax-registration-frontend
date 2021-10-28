@@ -38,9 +38,9 @@ case class UserEnrolmentDetails(
     ) || postcode.isDefined)
 
   def toUserEnrolmentRequest: UserEnrolmentRequest =
-    UserEnrolmentRequest(pptReference = pptReference.get.toString,
+    UserEnrolmentRequest(pptReference = pptReference.map(_.value).getOrElse(""),
                          registrationDate = registrationDate.get.value.asLocalDate,
-                         postcode = Some(postcode.get.toString)
+                         postcode = Some(postcode.map(_.value).getOrElse(""))
     )
 
 }

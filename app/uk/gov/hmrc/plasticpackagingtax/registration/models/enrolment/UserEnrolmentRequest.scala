@@ -24,7 +24,7 @@ case class UserEnrolmentRequest(
   pptReference: String,
   registrationDate: LocalDate,
   postcode: Option[String] = None
-) {}
+)
 
 object UserEnrolmentRequest {
   implicit val format: OFormat[UserEnrolmentRequest] = Json.format[UserEnrolmentRequest]

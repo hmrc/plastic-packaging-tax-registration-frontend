@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment
 
 import com.kenshoo.play.metrics.Metrics
 import play.api.http.Status
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer

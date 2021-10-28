@@ -42,8 +42,9 @@ object UserEnrolmentFailedResponse {
 
 object EnrolmentFailureCode extends Enumeration {
   type EnrolmentFailureCode = Value
-  val Failed: Value             = Value
-  val VerificationFailed: Value = Value
+  val Failed: Value              = Value
+  val VerificationFailed: Value  = Value
+  val VerificationMissing: Value = Value
 
   implicit val format: Format[EnrolmentFailureCode] =
     Format(Reads.enumNameReads(EnrolmentFailureCode), Writes.enumNameWrites)

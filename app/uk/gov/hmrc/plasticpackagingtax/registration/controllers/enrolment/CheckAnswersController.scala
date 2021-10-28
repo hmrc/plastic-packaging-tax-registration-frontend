@@ -67,7 +67,7 @@ class CheckAnswersController @Inject() (
       case response @ UserEnrolmentSuccessResponse(_) =>
         Redirect(routes.ConfirmationController.displayPage())
       case UserEnrolmentFailedResponse(_, failureCode)
-          if failureCode == EnrolmentFailureCode.VerificationFailed =>
+          if failureCode == EnrolmentFailureCode.VerificationFailed || failureCode == EnrolmentFailureCode.VerificationMissing =>
         Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
     }
 
