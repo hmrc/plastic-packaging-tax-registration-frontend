@@ -25,28 +25,17 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
-import uk.gov.hmrc.http.BadRequestException
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.RegistrationConnector.UserEnrolmentTimer
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
-  EnrolmentFailureCode,
-  UserEnrolmentFailedResponse,
-  UserEnrolmentSuccessResponse
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment._
 
-class RegistrationConnectorISpec
+class UserEnrolmentConnectorISpec
     extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
 
-  lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
+  lazy val connector: UserEnrolmentConnector = app.injector.instanceOf[UserEnrolmentConnector]
 
   private val enrolmentUrl       = "/enrolment"
   private val pptReferenceNumber = "XPPT000123456789"
   private val successfulResponse = UserEnrolmentSuccessResponse(pptReferenceNumber)
-
-  private val verificationFailedResponse =
-    UserEnrolmentFailedResponse(pptReferenceNumber, EnrolmentFailureCode.VerificationFailed)
 
   "Registration Connector " when {
     "enrol " should {
@@ -61,37 +50,11 @@ class RegistrationConnectorISpec
             )
         )
 
-        val res = await(
-          connector.enrol(
-            UserEnrolmentDetails(pptReference = Some(PptReference(pptReferenceNumber)),
-                                 isUkAddress = Some(IsUkAddress(Some(true))),
-                                 postcode = Some(Postcode("AB1 2CD")),
-                                 registrationDate =
-                                   Some(RegistrationDate(DateData("01", "10", "2021")))
-            )
-          )
-        )
+        val res = await(connector.enrol(userEnrolmentDetails))
 
         res mustBe validResponse
         getTimer(UserEnrolmentTimer).getCount mustBe 1
       }
-
-//      "handle verification failed response" in {
-//
-//        val invalidResponse = verificationFailedResponse
-//
-//        stubFor(
-//          post(urlMatching(enrolmentUrl))
-//            .willReturn(
-//              aResponse().withStatus(BAD_REQUEST)
-//                withBody toJson(invalidResponse).toString
-//            )
-//        )
-//
-//        val res = await(connector.enrol(userEnrolmentDetails))
-//
-//        res mustBe invalidResponse
-//      }
 
       "handle an unexpected success response" in {
         val invalidResponse =

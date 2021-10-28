@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.RegistrationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
   EnrolmentFailureCode,
   UserEnrolmentFailedResponse,
@@ -43,18 +43,14 @@ import scala.concurrent.Future
 
 class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
-  private val page                               = mock[check_answers_page]
-  private val mcc                                = stubMessagesControllerComponents()
-  private val mockCache                          = mock[UserDataRepository]
-  private val repository                         = new UserEnrolmentDetailsRepository(mockCache)
-  private val mockEnrolmentRegistrationConnector = mock[RegistrationConnector]
+  private val page                       = mock[check_answers_page]
+  private val mcc                        = stubMessagesControllerComponents()
+  private val mockCache                  = mock[UserDataRepository]
+  private val repository                 = new UserEnrolmentDetailsRepository(mockCache)
+  private val mockUserEnrolmentConnector = mock[UserEnrolmentConnector]
 
-  private val controller = new CheckAnswersController(mockAuthAction,
-                                                      mcc,
-                                                      repository,
-                                                      mockEnrolmentRegistrationConnector,
-                                                      page
-  )
+  private val controller =
+    new CheckAnswersController(mockAuthAction, mcc, repository, mockUserEnrolmentConnector, page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -110,7 +106,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
         "verification failed enrolment verification " in {
           authorizedUser()
-          when(mockEnrolmentRegistrationConnector.enrol(any())(any())).thenReturn(
+          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
             Future.successful(
               UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.VerificationFailed)
             )
@@ -127,7 +123,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
 
         "successful enrolment verification " in {
           authorizedUser()
-          when(mockEnrolmentRegistrationConnector.enrol(any())(any())).thenReturn(
+          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
             Future.successful(UserEnrolmentSuccessResponse("XPPT000123456"))
           )
           val result =

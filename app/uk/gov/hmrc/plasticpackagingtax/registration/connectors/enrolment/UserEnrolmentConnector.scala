@@ -20,7 +20,7 @@ import com.kenshoo.play.metrics.Metrics
 import play.api.http.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.RegistrationConnector.UserEnrolmentTimer
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class RegistrationConnector @Inject() (
+class UserEnrolmentConnector @Inject() (
   httpClient: HttpClient,
   appConfig: AppConfig,
   metrics: Metrics
@@ -68,6 +68,6 @@ class RegistrationConnector @Inject() (
 
 }
 
-object RegistrationConnector {
+object UserEnrolmentConnector {
   val UserEnrolmentTimer = "ppt.user.enrolment.timer"
 }

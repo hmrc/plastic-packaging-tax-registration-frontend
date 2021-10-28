@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.RegistrationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
   EnrolmentFailureCode,
@@ -39,7 +39,7 @@ class CheckAnswersController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
   cache: UserEnrolmentDetailsRepository,
-  registrationConnector: RegistrationConnector,
+  userEnrolmentConnector: UserEnrolmentConnector,
   page: check_answers_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -63,7 +63,7 @@ class CheckAnswersController @Inject() (
   private def handleEnrolment(
     userEnrolmentDetails: UserEnrolmentDetails
   )(implicit hc: HeaderCarrier): Future[Result] =
-    registrationConnector.enrol(userEnrolmentDetails).map {
+    userEnrolmentConnector.enrol(userEnrolmentDetails).map {
       case response @ UserEnrolmentSuccessResponse(_) =>
         Redirect(routes.ConfirmationController.displayPage())
       case UserEnrolmentFailedResponse(_, failureCode)
