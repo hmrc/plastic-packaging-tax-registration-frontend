@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   PptReference,
   RegistrationDate
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.UserEnrolmentRequest
 
 case class UserEnrolmentDetails(
   pptReference: Option[PptReference] = None,
@@ -35,6 +36,12 @@ case class UserEnrolmentDetails(
     pptReference.isDefined && isUkAddress.isDefined && registrationDate.isDefined && (isUkAddress.exists(
       !_.requiresPostCode
     ) || postcode.isDefined)
+
+  def toUserEnrolmentRequest: UserEnrolmentRequest =
+    UserEnrolmentRequest(pptReference = pptReference.map(_.value).getOrElse(""),
+                         registrationDate = registrationDate.get.value.asLocalDate,
+                         postcode = Some(postcode.map(_.value).getOrElse(""))
+    )
 
 }
 

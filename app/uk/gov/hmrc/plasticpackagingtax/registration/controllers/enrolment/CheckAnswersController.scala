@@ -18,19 +18,28 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
+  EnrolmentFailureCode,
+  UserEnrolmentFailedResponse,
+  UserEnrolmentSuccessResponse
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckAnswersController @Inject() (
   authenticate: AuthAction,
   mcc: MessagesControllerComponents,
   cache: UserEnrolmentDetailsRepository,
+  userEnrolmentConnector: UserEnrolmentConnector,
   page: check_answers_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -45,10 +54,21 @@ class CheckAnswersController @Inject() (
 
   def submit(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      cache.get().map { answers =>
-        // TODO - post enrolment request and handle response
+      for {
+        answers <- cache.get()
+        result  <- handleEnrolment(answers)
+      } yield result
+    }
+
+  private def handleEnrolment(
+    userEnrolmentDetails: UserEnrolmentDetails
+  )(implicit hc: HeaderCarrier): Future[Result] =
+    userEnrolmentConnector.enrol(userEnrolmentDetails).map {
+      case response @ UserEnrolmentSuccessResponse(_) =>
         Redirect(routes.ConfirmationController.displayPage())
-      }
+      case UserEnrolmentFailedResponse(_, failureCode)
+          if failureCode == EnrolmentFailureCode.VerificationFailed || failureCode == EnrolmentFailureCode.VerificationMissing =>
+        Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
     }
 
 }
