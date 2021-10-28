@@ -43,6 +43,9 @@ class UserEnrolmentDetailsRepository @Inject() (userDataRepository: UserDataRepo
   )(implicit request: AuthenticatedRequest[Any]): Future[UserEnrolmentDetails] =
     get().flatMap(data => put(update(data)))
 
+  def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+    userDataRepository.deleteData[UserEnrolmentDetails](repositoryKey)
+
 }
 
 object UserEnrolmentDetailsRepository {

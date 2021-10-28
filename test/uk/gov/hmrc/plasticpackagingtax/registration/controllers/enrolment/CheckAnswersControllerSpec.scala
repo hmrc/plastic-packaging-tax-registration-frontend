@@ -58,6 +58,9 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
     when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
       Future.successful(Some(userEnrolmentDetails))
     )
+    when(mockCache.deleteData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
+      Future.successful(())
+    )
   }
 
   override protected def afterEach(): Unit = {

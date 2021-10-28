@@ -55,4 +55,9 @@ class UserDataRepository @Inject() (
     request: AuthenticatedRequest[Any]
   ): Future[Option[A]] = get[A](id)(DataKey(key))
 
+  def deleteData[A: Writes](
+    key: String
+  )(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+    delete[A](id)(DataKey(key))
+
 }

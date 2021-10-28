@@ -16,10 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
@@ -27,12 +25,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
   UserEnrolmentFailedResponse,
   UserEnrolmentSuccessResponse
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class CheckAnswersController @Inject() (
@@ -56,19 +54,16 @@ class CheckAnswersController @Inject() (
     authenticate.async { implicit request =>
       for {
         answers <- cache.get()
-        result  <- handleEnrolment(answers)
+        result <-
+          userEnrolmentConnector.enrol(answers).map {
+            case response @ UserEnrolmentSuccessResponse(_) =>
+              cache.delete()
+              Redirect(routes.ConfirmationController.displayPage())
+            case UserEnrolmentFailedResponse(_, failureCode)
+                if failureCode == EnrolmentFailureCode.VerificationFailed || failureCode == EnrolmentFailureCode.VerificationMissing =>
+              Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
+          }
       } yield result
-    }
-
-  private def handleEnrolment(
-    userEnrolmentDetails: UserEnrolmentDetails
-  )(implicit hc: HeaderCarrier): Future[Result] =
-    userEnrolmentConnector.enrol(userEnrolmentDetails).map {
-      case response @ UserEnrolmentSuccessResponse(_) =>
-        Redirect(routes.ConfirmationController.displayPage())
-      case UserEnrolmentFailedResponse(_, failureCode)
-          if failureCode == EnrolmentFailureCode.VerificationFailed || failureCode == EnrolmentFailureCode.VerificationMissing =>
-        Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
     }
 
 }

@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
-import java.util.concurrent.TimeUnit
-
 import base.PptTestData
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -32,6 +30,7 @@ import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
 
@@ -75,5 +74,13 @@ class UserDataRepositorySpec
       await(repository.getData[String]("some-key")) mustBe None
     }
 
+    "add data to cache and delete it" in {
+
+      implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+      await(repository.putData("testKey", "testData"))
+
+      val res = await(repository.deleteData[String]("testKey"))
+      res mustBe ()
+    }
   }
 }
