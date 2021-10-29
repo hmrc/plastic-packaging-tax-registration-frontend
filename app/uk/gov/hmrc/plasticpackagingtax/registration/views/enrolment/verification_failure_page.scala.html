@@ -14,19 +14,30 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
 
 @this(
-    errorTemplate: error_template
+        formHelper: FormWithCSRF,
+        govukLayout: main_template,
+        paragraphBody: paragraphBody,
+        pageHeading: pageHeading,
+        govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@errorTemplate(
-    pageTitle = "enrolment.not.verified.title",
-    heading = messages("enrolment.not.verified.title"),
-    messageFragments = List(
-        messages("enrolment.not.verified.detail1"),
-        messages("enrolment.not.verified.detail2")
-    )
-)
+@govukLayout(title = Title("enrolment.not.verified.title")) {
+
+    @formHelper(action = pptRoutes.CheckAnswersController.displayPage(), 'autoComplete -> "off") {
+
+        @pageHeading(messages("enrolment.not.verified.title"))
+
+        @paragraphBody(message = messages("enrolment.not.verified.detail1"))
+
+        @govukButton(Button(
+            content = Text(messages("site.button.tryAgain")),
+            attributes = Map("id" -> "submit", "name" -> "TryAgain")))
+    }
+}
