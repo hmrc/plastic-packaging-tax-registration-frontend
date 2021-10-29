@@ -46,7 +46,9 @@ class IsUkAddressViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.PptReferenceController.displayPage())
+      view.getElementById("back-link") must haveHref(
+        routes.VerifyOrganisationController.displayPage()
+      )
     }
 
     "display title" in {

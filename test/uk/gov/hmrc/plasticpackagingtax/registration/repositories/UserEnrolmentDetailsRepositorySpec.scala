@@ -119,7 +119,7 @@ class UserEnrolmentDetailsRepositorySpec
 
       await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
 
-      await(userEnrolmentDetailsRepository.delete()) mustBe ()
+      await(userEnrolmentDetailsRepository.delete()).mustBe(())
     }
 
     "return new details when no data found" in {

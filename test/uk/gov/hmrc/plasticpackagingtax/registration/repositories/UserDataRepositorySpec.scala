@@ -79,8 +79,7 @@ class UserDataRepositorySpec
       implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
       await(repository.putData("testKey", "testData"))
 
-      val res = await(repository.deleteData[String]("testKey"))
-      res mustBe ()
+      await(repository.deleteData[String]("testKey")).mustBe(())
     }
   }
 }

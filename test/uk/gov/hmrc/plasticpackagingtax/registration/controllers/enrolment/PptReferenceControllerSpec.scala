@@ -114,7 +114,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
         val result = controller.submit()(postRequestEncoded(pptReference))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IsUkAddressController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.VerifyOrganisationController.displayPage().url)
 
         verify(mockCache).putData(ArgumentMatchers.eq(UserEnrolmentDetailsRepository.repositoryKey),
                                   ArgumentMatchers.eq(enrolmentDetails)

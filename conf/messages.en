@@ -353,3 +353,7 @@ enrolment.confirmation.whatHappensNext.detail.3.link.text = What did you think o
 enrolment.not.verified.title = Sorry, your business could not be verified
 enrolment.not.verified.detail1 = The information you provided does not match the details we have about your business.
 enrolment.not.verified.detail2 = Try again
+
+verify.organisation.title = We need to ask some questions to verify the organisation
+verify.organisation.detail.1 = You will be asked to give details you many hold about the business.
+verify.organisation.detail.2 = We ask these questions to protect against malicious or fraudulent attempts to access the service.
