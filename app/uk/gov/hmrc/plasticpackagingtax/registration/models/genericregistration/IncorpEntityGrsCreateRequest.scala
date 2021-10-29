@@ -17,13 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Regime.{PPT, Regime}
 
 case class IncorpEntityGrsCreateRequest(
   continueUrl: String,
   optServiceName: Option[String] = None,
   deskProServiceId: String,
-  signOutUrl: String
-)
+  signOutUrl: String,
+  regime: Regime = PPT
+) extends GrsJourneyCreationRequest
 
 object IncorpEntityGrsCreateRequest {
 

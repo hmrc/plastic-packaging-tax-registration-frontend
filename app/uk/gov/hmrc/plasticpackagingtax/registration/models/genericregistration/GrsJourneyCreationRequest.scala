@@ -16,21 +16,22 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Regime.{PPT, Regime}
+import play.api.libs.json.{Format, Reads, Writes}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Regime.Regime
 
-case class PartnershipGrsCreateRequest(
-  continueUrl: String,
-  optServiceName: Option[String] = None,
-  deskProServiceId: String,
-  signOutUrl: String,
-  regime: Regime = PPT,
-  enableSautrCheck: Boolean = true
-) extends GrsJourneyCreationRequest
+object Regime extends Enumeration {
+  type Regime = Value
 
-object PartnershipGrsCreateRequest {
+  val PPT: genericregistration.Regime.Value = Value
 
-  implicit val format: OFormat[PartnershipGrsCreateRequest] =
-    Json.format[PartnershipGrsCreateRequest]
+  implicit val format: Format[Regime] = Format(Reads.enumNameReads(Regime), Writes.enumNameWrites)
+}
 
+trait GrsJourneyCreationRequest {
+  val continueUrl: String
+  val optServiceName: Option[String]
+  val deskProServiceId: String
+  val signOutUrl: String
+  val regime: Regime
 }

@@ -83,7 +83,7 @@ class OrganisationDetailsTypeController @Inject() (
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(OrgType.SOLE_TRADER)
                               if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            getSoleTraderRedirectUr()
+                            getSoleTraderRedirectUrl()
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(OrgType.REGISTERED_SOCIETY)
                               if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
@@ -105,7 +105,7 @@ class OrganisationDetailsTypeController @Inject() (
 
     }
 
-  private def getSoleTraderRedirectUr()(implicit
+  private def getSoleTraderRedirectUrl()(implicit
     request: JourneyRequest[AnyContent]
   ): Future[String] =
     soleTraderGrsConnector.createJourney(
