@@ -29,9 +29,9 @@ object Regime extends Enumeration {
 }
 
 trait GrsJourneyCreationRequest {
-  def continueUrl: String
-  def optServiceName: Option[String]
-  def deskProServiceId: String
-  def signOutUrl: String
-  def regime: Regime
+  val continueUrl: String
+  val optServiceName: Option[String]
+  val deskProServiceId: String
+  val signOutUrl: String
+  val regime: Regime
 }
