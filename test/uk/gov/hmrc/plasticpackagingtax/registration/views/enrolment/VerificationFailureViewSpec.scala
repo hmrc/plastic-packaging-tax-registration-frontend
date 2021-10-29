@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.verific
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class VerificationFailurePageSpec extends UnitViewSpec with Matchers {
+class VerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[verification_failure_page]
 
@@ -45,7 +45,10 @@ class VerificationFailurePageSpec extends UnitViewSpec with Matchers {
     "contain detail" in {
       val detail = view.select("p").text()
       detail must include(messages("enrolment.not.verified.detail1"))
-      detail must include(messages("enrolment.not.verified.detail2"))
+    }
+
+    "display 'Save and continue' button" in {
+      view.getElementById("submit").text() mustBe "Try again"
     }
   }
 
