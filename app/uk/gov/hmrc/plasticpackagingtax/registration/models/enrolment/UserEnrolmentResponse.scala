@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment
 
-import play.api.libs.json.{Format, Json, OFormat, Reads, Writes}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.EnrolmentFailureCode.EnrolmentFailureCode
+import play.api.libs.json.{Json, OFormat}
 
 trait UserEnrolmentResponse
 
 case class UserEnrolmentSuccessResponse(pptReference: String) extends UserEnrolmentResponse
 
-case class UserEnrolmentFailedResponse(pptReference: String, failureCode: EnrolmentFailureCode)
+case class UserEnrolmentFailedResponse(pptReference: String, failureCode: String)
     extends UserEnrolmentResponse
 
 object UserEnrolmentSuccessResponse {
@@ -40,13 +39,7 @@ object UserEnrolmentFailedResponse {
 
 }
 
-object EnrolmentFailureCode extends Enumeration {
-  type EnrolmentFailureCode = Value
-  val Failed: Value              = Value
-  val VerificationFailed: Value  = Value
-  val VerificationMissing: Value = Value
-
-  implicit val format: Format[EnrolmentFailureCode] =
-    Format(Reads.enumNameReads(EnrolmentFailureCode), Writes.enumNameWrites)
-
+object EnrolmentFailureCode {
+  val VerificationFailed  = "VerificationFailed"
+  val VerificationMissing = "VerificationMissing"
 }

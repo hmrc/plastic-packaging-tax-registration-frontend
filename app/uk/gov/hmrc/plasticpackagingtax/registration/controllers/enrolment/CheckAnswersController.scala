@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector
@@ -29,7 +30,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDe
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -56,12 +56,17 @@ class CheckAnswersController @Inject() (
         answers <- cache.get()
         result <-
           userEnrolmentConnector.enrol(answers).map {
-            case response @ UserEnrolmentSuccessResponse(_) =>
+            case _ @UserEnrolmentSuccessResponse(_) =>
               cache.delete()
               Redirect(routes.ConfirmationController.displayPage())
-            case UserEnrolmentFailedResponse(_, failureCode)
-                if failureCode == EnrolmentFailureCode.VerificationFailed || failureCode == EnrolmentFailureCode.VerificationMissing =>
-              Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
+            case UserEnrolmentFailedResponse(_, failureCode) =>
+              failureCode match {
+                case EnrolmentFailureCode.VerificationFailed |
+                    EnrolmentFailureCode.VerificationMissing =>
+                  Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
+
+                case code => throw new Exception(s"Enrolment failed with code $code")
+              }
           }
       } yield result
     }
