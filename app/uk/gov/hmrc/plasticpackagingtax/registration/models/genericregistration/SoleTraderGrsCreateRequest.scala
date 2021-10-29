@@ -17,14 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Regime.{PPT, Regime}
 
 case class SoleTraderGrsCreateRequest(
   continueUrl: String,
   optServiceName: Option[String] = None,
   deskProServiceId: String,
   signOutUrl: String,
+  regime: Regime = PPT,
   enableSautrCheck: Boolean = true
-)
+) extends GrsJourneyCreationRequest
 
 object SoleTraderGrsCreateRequest {
 
