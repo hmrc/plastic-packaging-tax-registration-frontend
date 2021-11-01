@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -44,7 +45,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyActio
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -72,28 +72,26 @@ class ContactDetailsEmailAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       EmailAddress.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[EmailAddress]) => {
-                println(formWithErrors.errors)
-                Future.successful(BadRequest(page(formWithErrors)))
-              },
-              emailAddress =>
-                request.user.identityData.credentials.map { creds =>
-                  updateRegistration(formData = emailAddress, credId = creds.providerId).flatMap {
-                    case Right(registration) =>
-                      FormAction.bindFromRequest match {
-                        case SaveAndContinue =>
-                          saveAndContinue(registration, creds.providerId)
-                        case _ =>
-                          Future(Redirect(routes.RegistrationController.displayPage()))
-                      }
-                    case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[EmailAddress]) =>
+            Future.successful(BadRequest(page(formWithErrors))),
+          emailAddress =>
+            request.user.identityData.credentials.map { creds =>
+              updateRegistration(formData = emailAddress, credId = creds.providerId).flatMap {
+                case Right(registration) =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      saveAndContinue(registration, creds.providerId)
+                    case _ =>
+                      Future(Redirect(routes.RegistrationController.displayPage()))
                   }
-                }.getOrElse(
-                  throw DownstreamServiceError(
-                    "Cannot find user credentials id",
-                    RegistrationException("Cannot find user credentials id")
-                  )
-                )
+                case Left(error) => throw error
+              }
+            }.getOrElse(
+              throw DownstreamServiceError("Cannot find user credentials id",
+                                           RegistrationException("Cannot find user credentials id")
+              )
+            )
         )
     }
 

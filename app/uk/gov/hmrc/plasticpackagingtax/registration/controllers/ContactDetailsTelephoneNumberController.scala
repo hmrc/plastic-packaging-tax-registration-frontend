@@ -57,21 +57,20 @@ class ContactDetailsTelephoneNumberController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       PhoneNumber.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[PhoneNumber]) => {
-                println(formWithErrors)
-                Future.successful(BadRequest(page(formWithErrors)))
-              },
-              phoneNumber =>
-                updateRegistration(phoneNumber).map {
-                  case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
-                      case _ =>
-                        Redirect(routes.RegistrationController.displayPage())
-                    }
-                  case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[PhoneNumber]) =>
+            Future.successful(BadRequest(page(formWithErrors))),
+          phoneNumber =>
+            updateRegistration(phoneNumber).map {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
+                  case _ =>
+                    Redirect(routes.RegistrationController.displayPage())
                 }
+              case Left(error) => throw error
+            }
         )
     }
 

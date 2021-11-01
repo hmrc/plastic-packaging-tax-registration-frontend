@@ -61,21 +61,19 @@ class ContactDetailsAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       Address.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[Address]) => {
-                println(formWithErrors.errors)
-                Future.successful(BadRequest(page(formWithErrors)))
-              },
-              address =>
-                updateRegistration(address).map {
-                  case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
-                      case _ =>
-                        Redirect(routes.RegistrationController.displayPage())
-                    }
-                  case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[Address]) => Future.successful(BadRequest(page(formWithErrors))),
+          address =>
+            updateRegistration(address).map {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+                  case _ =>
+                    Redirect(routes.RegistrationController.displayPage())
                 }
+              case Left(error) => throw error
+            }
         )
     }
 

@@ -49,12 +49,9 @@ object EmailVerificationStatusMapper {
 
 object EmailVerificationService {
 
-  def getPrimaryEmailStatus(registration: Registration): EmailVerificationStatus = {
-    val s = registration.primaryContactDetails.email.map(
+  def getPrimaryEmailStatus(registration: Registration): EmailVerificationStatus =
+    registration.primaryContactDetails.email.map(
       email => registration.metaData.getEmailStatus(email)
     ).getOrElse(EmailVerificationStatus.NOT_VERIFIED)
-    println("Status found: " + s)
-    s
-  }
 
 }
