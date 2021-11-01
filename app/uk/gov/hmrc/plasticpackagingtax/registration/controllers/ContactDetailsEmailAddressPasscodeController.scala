@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -41,7 +42,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyActio
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsEmailAddressPasscodeController @Inject() (
@@ -62,21 +62,20 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       EmailAddressPasscode.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[EmailAddressPasscode]) => {
-                println(formWithErrors.errors)
-                Future.successful(BadRequest(page(formWithErrors, None)))
-              },
-              emailAddressPasscode =>
-                FormAction.bindFromRequest match {
-                  case ContinueAction =>
-                    request.registration.primaryContactDetails.email match {
-                      case Some(email) => continue(emailAddressPasscode.value, email)
-                      case None        => throw RegistrationException("Failed to get email from the cache")
-                    }
-
-                  case _ =>
-                    Future(Redirect(routes.RegistrationController.displayPage()))
+        .fold(
+          (formWithErrors: Form[EmailAddressPasscode]) =>
+            Future.successful(BadRequest(page(formWithErrors, None))),
+          emailAddressPasscode =>
+            FormAction.bindFromRequest match {
+              case ContinueAction =>
+                request.registration.primaryContactDetails.email match {
+                  case Some(email) => continue(emailAddressPasscode.value, email)
+                  case None        => throw RegistrationException("Failed to get email from the cache")
                 }
+
+              case _ =>
+                Future(Redirect(routes.RegistrationController.displayPage()))
+            }
         )
     }
 
