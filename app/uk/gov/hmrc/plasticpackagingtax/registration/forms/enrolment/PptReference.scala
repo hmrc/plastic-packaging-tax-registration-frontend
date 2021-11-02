@@ -28,7 +28,7 @@ case class PptReference(value: String)
 object PptReference extends CommonFormValidators {
   implicit val format: OFormat[PptReference] = Json.format[PptReference]
 
-  private val PPT_REGEX = Pattern.compile("^X[A-Z]PPT000[0-9]{6}$")
+  private val PPT_REGEX = Pattern.compile("^X[A-Z]PPT000[0-9]{6}.$")
 
   private val mapping = Forms.mapping(
     "value" -> text()
