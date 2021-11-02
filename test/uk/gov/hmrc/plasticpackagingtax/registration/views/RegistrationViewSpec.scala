@@ -225,12 +225,45 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
 
       }
 
+      "Primary contact email not verified" when {
+
+        val registration =
+          aRegistration(withMetaData(MetaData()))
+
+        val view: Html =
+          createView(registration)
+
+        "Contact details" in {
+          val contactElement = view.getElementsByClass("app-task").get(PRIMARY_CONTACT_DETAILS)
+
+          header(contactElement) must include(
+            messages("registrationPage.task.contactDetails.heading")
+          )
+
+          sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.inProgress")
+          sectionLink(contactElement, 0) must haveHref(
+            routes.ContactDetailsFullNameController.displayPage()
+          )
+        }
+
+        "Review and send" in {
+          val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
+
+          header(reviewElement) must include(messages("registrationPage.task.review.heading"))
+
+          sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
+          sectionStatus(reviewElement, 0) mustBe messages("task.status.cannotStartYet")
+        }
+
+      }
+
       "All Sections completed" when {
 
+        val registrationCompletedMetaData =
+          aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completeRegistration =
-          aRegistration(
-            withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
-          )
+          aRegistration(withMetaData(registrationCompletedMetaData))
 
         val view: Html =
           createView(completeRegistration)
@@ -303,10 +336,11 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
       }
 
       "Check and Submit is 'In Progress'" in {
-        val inProgressRegistration = aRegistration(
-          withMetaData(MetaData(registrationReviewed = true, registrationCompleted = false))
-        )
-        val view: Html = createView(inProgressRegistration)
+
+        val inProgressMetaData =
+          aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = false)
+        val inProgressRegistration = aRegistration(withMetaData(inProgressMetaData))
+        val view: Html             = createView(inProgressRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
@@ -320,10 +354,11 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
       }
 
       "Check and Submit is 'Completed'" in {
-        val completedRegistration = aRegistration(
-          withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
-        )
-        val view: Html = createView(completedRegistration)
+
+        val completedMetaData =
+          aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
+        val completedRegistration = aRegistration(withMetaData(completedMetaData))
+        val view: Html            = createView(completedRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 

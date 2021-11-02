@@ -42,7 +42,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   TOO_MANY_ATTEMPTS
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  MetaData,
+  PrimaryContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -59,6 +62,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
                                                      journeyAction = mockJourneyAction,
                                                      emailVerificationConnector =
                                                        mockEmailVerificationConnector,
+                                                     registrationConnector =
+                                                       mockRegistrationConnector,
                                                      mcc = mcc,
                                                      page = page
     )
@@ -112,7 +117,11 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     forAll(Seq(continueFormAction, unKnownFormAction)) { formAction =>
       "return 200 (OK) for " + formAction._1 when {
         "user submits passcode returns complete" in {
-          val reg = aRegistration()
+          val email = "test2352356523332453@test.com"
+          val reg =
+            aRegistration(withPrimaryContactDetails(PrimaryContactDetails(email = Some(email))))
+          reg.metaData.emailVerified(email) mustBe false
+
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
@@ -125,9 +134,11 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
               redirectLocation(result) mustBe Some(
                 routes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url
               )
+              modifiedRegistration.metaData.emailVerified(email) mustBe true
             case "Unknown" =>
               redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
           }
+
           reset(mockRegistrationConnector)
         }
       }

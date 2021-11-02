@@ -23,6 +23,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   EmailVerificationConnector,
+  RegistrationConnector,
   ServiceError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
@@ -37,7 +38,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   JourneyStatus,
   TOO_MANY_ATTEMPTS
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
+  EmailStatus,
+  VerifyPasscodeRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -49,9 +54,10 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   emailVerificationConnector: EmailVerificationConnector,
+  override val registrationConnector: RegistrationConnector,
   page: email_address_passcode_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -88,9 +94,11 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
                         request.registration.primaryContactDetails.journeyId.getOrElse("")
     ).flatMap {
       case Right(COMPLETE) =>
-        Future(
-          Redirect(routes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage())
-        )
+        addVerifiedEmail(email) map {
+          case Right(_) =>
+            Redirect(routes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage())
+          case Left(error) => throw error
+        }
       case Right(INCORRECT_PASSCODE) =>
         Future.successful(
           BadRequest(
@@ -116,6 +124,14 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
           )
         )
       case Left(error) => throw error
+    }
+
+  private def addVerifiedEmail(email: String)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.copy(metaData = registration.metaData.add(Seq(EmailStatus(email, true, false))))
     }
 
   private def verifyEmailPasscode(passcode: String, email: String, journeyId: String)(implicit

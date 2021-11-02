@@ -71,8 +71,10 @@ class RegistrationSpec
 
     "be 'In Progress' " when {
       "All sections are complete and the user is reviewing the registration" in {
+        val registrationReviewedMetaData =
+          aRegistration().metaData.copy(registrationReviewed = true)
         val reviewedRegistration =
-          aRegistration(withMetaData(MetaData(registrationReviewed = true)))
+          aRegistration(withMetaData(registrationReviewedMetaData))
 
         reviewedRegistration.isRegistrationComplete mustBe false
         reviewedRegistration.numberOfCompletedSections mustBe 3
@@ -94,9 +96,9 @@ class RegistrationSpec
 
     "be 'Completed' " when {
       "All sections are complete" in {
-        val completeRegistration = aRegistration(
-          withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
-        )
+        val registrationCompletedMetaData =
+          aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
+        val completeRegistration = aRegistration(withMetaData(registrationCompletedMetaData))
 
         completeRegistration.isRegistrationComplete mustBe true
         completeRegistration.numberOfCompletedSections mustBe 4
