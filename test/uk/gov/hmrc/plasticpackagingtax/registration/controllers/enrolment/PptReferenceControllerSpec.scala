@@ -45,7 +45,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
 
   private val controller = new PptReferenceController(mockAuthAction, mcc, repository, page)
 
-  val pptReference     = PptReference("XAPPT000123456")
+  val pptReference     = PptReference("XAPPT0001234567")
   val enrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
 
   override protected def beforeEach(): Unit = {
