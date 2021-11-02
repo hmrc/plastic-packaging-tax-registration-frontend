@@ -17,12 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.EmailVerificationStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   EmailVerificationStatus,
   EmailVerificationStatusMapper
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationStatus.EmailVerificationStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 
 case class MetaData(
@@ -31,6 +31,9 @@ case class MetaData(
   verifiedEmails: Seq[EmailStatus] = Seq(),
   nrsDetails: Option[NrsDetails] = None
 ) {
+
+  def emailVerified(email: String): Boolean =
+    getEmailStatus(email) == EmailVerificationStatus.VERIFIED
 
   def getEmailStatus(email: String): EmailVerificationStatus =
     EmailVerificationStatusMapper.toMap(verifiedEmails).getOrElse(

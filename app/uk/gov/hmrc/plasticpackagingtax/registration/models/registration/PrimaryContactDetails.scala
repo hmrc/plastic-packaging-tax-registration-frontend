@@ -30,15 +30,17 @@ case class PrimaryContactDetails(
   address: Option[Address] = None
 ) {
 
-  def status: TaskStatus =
-    if (isCompleted) TaskStatus.Completed
+  def status(emailVerified: String => Boolean): TaskStatus =
+    if (isCompleted(emailVerified)) TaskStatus.Completed
     else if (isInProgress) TaskStatus.InProgress
     else TaskStatus.NotStarted
 
-  def isCompleted: Boolean =
-    name.isDefined && jobTitle.isDefined && email.isDefined && phoneNumber.isDefined && address.isDefined
+  private def isCompleted(emailVerified: String => Boolean): Boolean =
+    name.isDefined && jobTitle.isDefined && email.exists(
+      emailVerified
+    ) && phoneNumber.isDefined && address.isDefined
 
-  def isInProgress: Boolean =
+  private def isInProgress: Boolean =
     name.isDefined || jobTitle.isDefined || email.isDefined || phoneNumber.isDefined || address.isDefined
 
 }

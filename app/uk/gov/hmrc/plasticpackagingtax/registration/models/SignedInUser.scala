@@ -17,10 +17,20 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models
 
 import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationException
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
 
 case class SignedInUser(
   enrolments: Enrolments,
   identityData: IdentityData,
   features: Map[String, Boolean]
-)
+) {
+
+  val credId: String = identityData.credentials.map(_.providerId).getOrElse(
+    throw DownstreamServiceError("Cannot find user credentials id",
+                                 RegistrationException("Cannot find user credentials id")
+    )
+  )
+
+}

@@ -79,7 +79,7 @@ case class Registration(
     if (companyDetailsStatus != TaskStatus.Completed)
       TaskStatus.CannotStartYet
     else
-      this.primaryContactDetails.status
+      this.primaryContactDetails.status(metaData.emailVerified)
 
   def asCompleted(): Registration =
     this.copy(metaData = this.metaData.copy(registrationCompleted = true))

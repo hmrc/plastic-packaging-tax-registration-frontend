@@ -23,12 +23,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
 
+  val emailVerified: String => Boolean    = _ => true
+  val emailNotVerified: String => Boolean = _ => false
+
   "Primary Contact Details TaskStatus" should {
 
     "be NOT_STARTED " when {
       "primary contact details is empty" in {
         val contactDetails = PrimaryContactDetails()
-        contactDetails.status mustBe TaskStatus.NotStarted
+        contactDetails.status(emailVerified) mustBe TaskStatus.NotStarted
       }
     }
 
@@ -36,7 +39,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
       "primary contact details when only 'FullName' is complete" in {
         val contactDetails =
           PrimaryContactDetails(name = Some("firstName lastName"))
-        contactDetails.status mustBe TaskStatus.InProgress
+        contactDetails.status(emailVerified) mustBe TaskStatus.InProgress
       }
 
       "primary contact details when only 'FullName' and 'JobTitle' are complete" in {
@@ -44,7 +47,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                                      Some("firstName lastName"),
                                                    jobTitle = Some("Dev")
         )
-        contactDetails.status mustBe TaskStatus.InProgress
+        contactDetails.status(emailVerified) mustBe TaskStatus.InProgress
       }
 
       "primary contact details when only 'FullName', 'JobTitle' and 'Email' are complete" in {
@@ -53,7 +56,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                                    jobTitle = Some("Dev"),
                                                    email = Some("test@test.com")
         )
-        contactDetails.status mustBe TaskStatus.InProgress
+        contactDetails.status(emailVerified) mustBe TaskStatus.InProgress
       }
 
       "primary contact details when only 'FullName', 'JobTitle', 'Email' and 'phoneNumber' are complete" in {
@@ -63,12 +66,10 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                                    email = Some("test@test.com"),
                                                    phoneNumber = Some("0203 12345 678")
         )
-        contactDetails.status mustBe TaskStatus.InProgress
+        contactDetails.status(emailVerified) mustBe TaskStatus.InProgress
       }
-    }
 
-    "be COMPLETED " when {
-      "primary contact details are all filled in" in {
+      "primary contact details are all filled in but email not verified" in {
         val contactDetails =
           PrimaryContactDetails(name = Some("FirstName LastName"),
                                 jobTitle = Some("Developer"),
@@ -82,7 +83,26 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                   )
                                 )
           )
-        contactDetails.status mustBe TaskStatus.Completed
+        contactDetails.status(emailNotVerified) mustBe TaskStatus.InProgress
+      }
+    }
+
+    "be COMPLETED " when {
+      "primary contact details are all filled in and email verified" in {
+        val contactDetails =
+          PrimaryContactDetails(name = Some("FirstName LastName"),
+                                jobTitle = Some("Developer"),
+                                email = Some("test@test.com"),
+                                phoneNumber = Some("07712345678"),
+                                address = Some(
+                                  Address(addressLine1 = "first line",
+                                          addressLine2 = "second line",
+                                          townOrCity = "Leeds",
+                                          postCode = "LS1 8TY"
+                                  )
+                                )
+          )
+        contactDetails.status(emailVerified) mustBe TaskStatus.Completed
       }
     }
   }

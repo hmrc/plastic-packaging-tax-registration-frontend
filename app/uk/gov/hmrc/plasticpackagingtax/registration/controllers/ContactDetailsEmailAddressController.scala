@@ -76,22 +76,16 @@ class ContactDetailsEmailAddressController @Inject() (
           (formWithErrors: Form[EmailAddress]) =>
             Future.successful(BadRequest(page(formWithErrors))),
           emailAddress =>
-            request.user.identityData.credentials.map { creds =>
-              updateRegistration(formData = emailAddress, credId = creds.providerId).flatMap {
-                case Right(registration) =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      saveAndContinue(registration, creds.providerId)
-                    case _ =>
-                      Future(Redirect(routes.RegistrationController.displayPage()))
-                  }
-                case Left(error) => throw error
-              }
-            }.getOrElse(
-              throw DownstreamServiceError("Cannot find user credentials id",
-                                           RegistrationException("Cannot find user credentials id")
-              )
-            )
+            updateRegistration(formData = emailAddress, credId = request.user.credId).flatMap {
+              case Right(registration) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    saveAndContinue(registration, request.user.credId)
+                  case _ =>
+                    Future(Redirect(routes.RegistrationController.displayPage()))
+                }
+              case Left(error) => throw error
+            }
         )
     }
 
