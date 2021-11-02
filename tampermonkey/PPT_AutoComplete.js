@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.15
+// @version      14.16
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -442,7 +442,7 @@ const reviewRegistration = () => {
 
 const pptReference = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-ppt-reference')) {
-        document.getElementById('value').value = 'XMPPT000123456'
+        document.getElementById('value').value = 'XMPPT0001234567'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
