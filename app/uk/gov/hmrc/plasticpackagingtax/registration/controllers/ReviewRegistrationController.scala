@@ -24,16 +24,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
   REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
@@ -183,33 +178,9 @@ class ReviewRegistrationController @Inject() (
   }
 
   private def getSafeId(registration: Registration): String =
-    registration.organisationDetails.organisationType.flatMap {
-      case OrgType.SOLE_TRADER =>
-        registration.organisationDetails.soleTraderDetails.flatMap(
-          soleTraderDetails => soleTraderDetails.registration.registeredBusinessPartnerId
-        )
-      case OrgType.PARTNERSHIP =>
-        registration.organisationDetails.partnershipDetails.flatMap(
-          partnershipDetails =>
-            partnershipDetails.partnershipType match {
-              case GENERAL_PARTNERSHIP =>
-                partnershipDetails.generalPartnershipDetails.flatMap(
-                  generalPartnershipDetails =>
-                    generalPartnershipDetails.registration.registeredBusinessPartnerId
-                )
-              case SCOTTISH_PARTNERSHIP =>
-                partnershipDetails.scottishPartnershipDetails.flatMap(
-                  scottishPartnershipDetails =>
-                    scottishPartnershipDetails.registration.registeredBusinessPartnerId
-                )
-              case _ => throw new IllegalStateException("Illegal partnership type")
-            }
-        )
-      case _ =>
-        registration.organisationDetails.incorporationDetails.flatMap(
-          details => details.registration.registeredBusinessPartnerId
-        )
-    }.getOrElse(throw new IllegalStateException("Safe Id is required for a Subscription create"))
+    registration.organisationDetails.businessPartnerId.getOrElse(
+      throw new IllegalStateException("Safe Id is required for a Subscription create")
+    )
 
   private def getSoleTraderDetails()(implicit
     request: JourneyRequest[AnyContent]
