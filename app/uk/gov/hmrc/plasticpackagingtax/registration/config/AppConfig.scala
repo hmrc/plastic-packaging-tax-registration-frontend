@@ -107,9 +107,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val pptRegistrationUrl: String  = s"$pptServiceHost/registrations"
   lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
-  lazy val emailVerificationUrl        = s"$emailVerificationHost/email-verification/verify-email"
   lazy val pptEnrolmentUrl: String     = s"$pptServiceHost/enrolment"
-
   lazy val emailVerificationEnabled: Boolean =
     config.get[Boolean]("microservice.services.email-verification.enabled")
 
@@ -123,12 +121,21 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptSubscriptionCreateUrl(safeNumber: String): String =
     s"$pptSubscriptionsUrl/$safeNumber"
 
+
+  //KEEP
   def getEmailVerificationStatusUrl(credId: String): String =
     s"$emailVerificationHost/email-verification/verification-status/$credId"
 
   def getTestOnlyPasscodeUrl: String =
     s"$emailVerificationHost/test-only/passcodes"
 
+  // TODO remove
+  lazy val emailVerificationUrl        = s"$emailVerificationHost/email-verification/verify-email"
+
+  lazy val emailRequestPasscodeUrl        = s"$emailVerificationHost/email-verification/request-passcode"
+  lazy val emailVerifyPasscodeUrl        = s"$emailVerificationHost/email-verification/verify-passcode"
+
+  // TODO - remove
   def getSubmitPassscodeUrl(journeyId: String): String =
     s"$emailVerificationHost/email-verification/journey/$journeyId/passcode"
 

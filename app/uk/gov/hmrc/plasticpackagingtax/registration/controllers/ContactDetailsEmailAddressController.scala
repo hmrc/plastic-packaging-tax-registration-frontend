@@ -140,21 +140,26 @@ class ContactDetailsEmailAddressController @Inject() (
     else
       Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
 
-  private def createEmailVerification(credId: String, email: String)(implicit
-    hc: HeaderCarrier
-  ): Future[Either[ServiceError, String]] =
-    emailVerificationConnector.create(
-      CreateEmailVerificationRequest(credId = credId,
-                                     continueUrl =
-                                       "/register-for-plastic-packaging-tax/primary-contact-details",
-                                     origin = "ppt",
-                                     accessibilityStatementUrl = "/accessibility",
-                                     email = Email(address = email, enterUrl = "/start"),
-                                     backUrl = "/back",
-                                     pageTitle = "PPT Title",
-                                     deskproServiceName = "plastic-packaging-tax"
-      )
-    )
+//  private def createEmailVerification(credId: String, email: String)(implicit
+//    hc: HeaderCarrier
+//  ): Future[Either[ServiceError, String]] =
+//    emailVerificationConnector.create(
+//      CreateEmailVerificationRequest(credId = credId,
+//                                     continueUrl =
+//                                       "/register-for-plastic-packaging-tax/primary-contact-details",
+//                                     origin = "ppt",
+//                                     accessibilityStatementUrl = "/accessibility",
+//                                     email = Email(address = email, enterUrl = "/start"),
+//                                     backUrl = "/back",
+//                                     pageTitle = "PPT Title",
+//                                     deskproServiceName = "plastic-packaging-tax"
+//      )
+//    )
+
+  private def createEmailVerificationPasscode(email: String)(implicit
+                                                                     hc: HeaderCarrier
+  ): Future[Either[ServiceError, Unit]] =
+    emailVerificationConnector.createPasscode(PasscodeRequest(email))
 
   private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit
     hc: HeaderCarrier,
@@ -162,16 +167,9 @@ class ContactDetailsEmailAddressController @Inject() (
   ): Future[Result] =
     registration.primaryContactDetails.email match {
       case Some(emailAddress) =>
-        createEmailVerification(credId, emailAddress).flatMap {
-          case Right(verificationJourneyStartUrl) =>
-            updatedJourneyId(registration,
-                             verificationJourneyStartUrl.split("/").slice(0, 4).last
-            ).flatMap {
-              case Left(error) => throw error
-              case Right(registration) =>
+        createEmailVerificationPasscode(emailAddress).flatMap {
+          case Right(_) =>
                 Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
-            }
-
           case Left(error) => throw error
         }
       case None => throw RegistrationException("Failed to get email from the cache")

@@ -18,6 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification
 
 import play.api.libs.json.{Json, OFormat}
 
+case class PasscodeRequest(email: String, serviceName: String = "Plastic Packaging Tax", lang: String = "en")
+
+object PasscodeRequest{
+  implicit val format: OFormat[PasscodeRequest] =
+    Json.format[PasscodeRequest]
+}
+
 case class CreateEmailVerificationRequest(
   credId: String,
   continueUrl: String,

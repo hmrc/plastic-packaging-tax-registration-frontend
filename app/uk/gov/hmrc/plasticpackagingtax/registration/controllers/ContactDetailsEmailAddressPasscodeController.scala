@@ -102,6 +102,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
       case Right(INCORRECT_PASSCODE) =>
         Future.successful(
           BadRequest(
+            // TODO - translate
             page(EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
                  None
             )
@@ -113,11 +114,12 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
             routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
           ).withNewSession
         )
-      case Right(_) =>
+      case Right(other) =>
         Future.successful(
           BadRequest(
+            // TODO - translate
             page(EmailAddressPasscode.form().withError("journeyNotFound",
-                                                       "Passcode for email address is not found"
+                                                       s"Passcode for email address is not found - $other"
                  ),
                  None
             )
@@ -137,8 +139,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   private def verifyEmailPasscode(passcode: String, email: String, journeyId: String)(implicit
     hc: HeaderCarrier
   ): Future[Either[ServiceError, JourneyStatus]] =
-    emailVerificationConnector.verifyPasscode(
-      journeyId = journeyId,
+    emailVerificationConnector.verifyPasscode2(
       VerifyPasscodeRequest(passcode = passcode, email = email)
     )
 
