@@ -23,7 +23,6 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
   EmailVerificationConnector,
   RegistrationConnector,
   ServiceError
