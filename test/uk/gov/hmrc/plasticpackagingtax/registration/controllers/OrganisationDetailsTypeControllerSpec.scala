@@ -29,12 +29,13 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  CHARITY_OR_NOT_FOR_PROFIT,
+  CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY,
   OrgType,
   PARTNERSHIP,
   REGISTERED_SOCIETY,
   SOLE_TRADER,
+  TRUST,
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
@@ -120,13 +121,19 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           assertRedirectForOrgType(REGISTERED_SOCIETY, "http://test/redirect/reg-soc")
         }
 
-        "user submits organisation type: " + CHARITY_OR_NOT_FOR_PROFIT in {
-          assertRedirectForOrgType(CHARITY_OR_NOT_FOR_PROFIT,
+        "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
+          assertRedirectForOrgType(CHARITABLE_INCORPORATED_ORGANISATION,
                                    routes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
         }
         "user submits organisation type: " + OVERSEAS_COMPANY in {
           assertRedirectForOrgType(OVERSEAS_COMPANY,
+                                   routes.OrganisationTypeNotSupportedController.onPageLoad().url
+          )
+        }
+
+        "user submits organisation type: " + TRUST in {
+          assertRedirectForOrgType(TRUST,
                                    routes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
         }
@@ -273,9 +280,14 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         journeyNotSupportedPrivateBeta(PARTNERSHIP)
       }
 
-      "user submits form for charity or not for profit" in {
+      "user submits form for charity (CIO)" in {
 
-        journeyNotSupportedPrivateBeta(CHARITY_OR_NOT_FOR_PROFIT)
+        journeyNotSupportedPrivateBeta(CHARITABLE_INCORPORATED_ORGANISATION)
+      }
+
+      "user submits form for trust" in {
+
+        journeyNotSupportedPrivateBeta(TRUST)
       }
 
       "user submits form for overseas company" in {

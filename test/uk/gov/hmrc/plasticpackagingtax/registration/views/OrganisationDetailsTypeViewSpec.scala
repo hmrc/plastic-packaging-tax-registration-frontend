@@ -22,11 +22,13 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  CHARITY_OR_NOT_FOR_PROFIT,
+  CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY,
+  OrgType,
   PARTNERSHIP,
   REGISTERED_SOCIETY,
   SOLE_TRADER,
+  TRUST,
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType.form
@@ -75,24 +77,22 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      view.getElementById("answer").attr("value").text() mustBe UK_COMPANY.toString
-      view.getElementsByClass("govuk-label").first().text() mustBe OrgType.displayName(UK_COMPANY)
-      view.getElementById("answer-2").attr("value").text() mustBe SOLE_TRADER.toString
-      view.getElementsByClass("govuk-label").get(1).text() mustBe OrgType.displayName(SOLE_TRADER)
-      view.getElementById("answer-3").attr("value").text() mustBe PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(2).text() mustBe OrgType.displayName(PARTNERSHIP)
-      view.getElementById("answer-4").attr("value").text() mustBe REGISTERED_SOCIETY.toString
-      view.getElementsByClass("govuk-label").get(3).text() mustBe OrgType.displayName(
-        REGISTERED_SOCIETY
-      )
-      view.getElementById("answer-5").attr("value").text() mustBe CHARITY_OR_NOT_FOR_PROFIT.toString
-      view.getElementsByClass("govuk-label").get(4).text() mustBe OrgType.displayName(
-        CHARITY_OR_NOT_FOR_PROFIT
-      )
-      view.getElementById("answer-6").attr("value").text() mustBe OVERSEAS_COMPANY.toString
-      view.getElementsByClass("govuk-label").get(5).text() mustBe OrgType.displayName(
-        OVERSEAS_COMPANY
-      )
+      def radioInputMustBe(number: Int, orgType: OrgType) = {
+        view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr(
+          "value"
+        ).text() mustBe orgType.toString
+        view.getElementsByClass("govuk-label").get(number - 1).text() mustBe OrgType.displayName(
+          orgType
+        )
+      }
+
+      radioInputMustBe(1, UK_COMPANY)
+      radioInputMustBe(2, OVERSEAS_COMPANY)
+      radioInputMustBe(3, PARTNERSHIP)
+      radioInputMustBe(4, CHARITABLE_INCORPORATED_ORGANISATION)
+      radioInputMustBe(5, REGISTERED_SOCIETY)
+      radioInputMustBe(6, SOLE_TRADER)
+      radioInputMustBe(7, TRUST)
     }
 
     "display 'Save and continue' button" in {

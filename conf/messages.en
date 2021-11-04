@@ -225,14 +225,15 @@ organisationDetails.sectionHeader = Organisation details
 organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
 organisationDetails.basedInUk.empty.error = Choose an option
 
-organisationDetails.type.title = What is your organisation type?
+organisationDetails.type.title = What type of organisation do you want to register?
 organisationDetails.type.empty.error = Value must be selected
 
-organisationDetails.type.UkCompany = UK limited or unlimited company
+organisationDetails.type.UkCompany = UK limited company
 organisationDetails.type.SoleTrader = Sole trader
 organisationDetails.type.Partnership = Partnership
-organisationDetails.type.CharityOrNotForProfit = Charity, Not for Profit, Trust or Association
-organisationDetails.type.RegisteredSociety = Registered Society
+organisationDetails.type.CIO = Charitable incorporated organisation (CIO)
+organisationDetails.type.Trust = Trust
+organisationDetails.type.RegisteredSociety = Registered society
 organisationDetails.type.OverseasCompany = Overseas company
 
 partnership.type.title = What type of partnership are you registering?
