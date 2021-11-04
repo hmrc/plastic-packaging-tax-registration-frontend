@@ -17,6 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment
 
 import com.kenshoo.play.metrics.Metrics
+import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -25,7 +27,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnr
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -35,6 +36,8 @@ class UserEnrolmentConnector @Inject() (
   appConfig: AppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
+
+  private val logger = Logger(this.getClass)
 
   def enrol(
     payload: UserEnrolmentDetails
@@ -46,6 +49,9 @@ class UserEnrolmentConnector @Inject() (
       .andThen { case _ => timer.stop() }
       .map {
         enrolmentResponse =>
+          logger.info(
+            s"PPT enrol user for PPT reference [${payload.pptReference.getOrElse("")}] had response status [${enrolmentResponse.status}] payload [${enrolmentResponse.body}]"
+          )
           if (Status.isSuccessful(enrolmentResponse.status))
             Try(enrolmentResponse.json.as[UserEnrolmentSuccessResponse]) match {
               case Success(userEnrolmentSuccessResponse) => userEnrolmentSuccessResponse
