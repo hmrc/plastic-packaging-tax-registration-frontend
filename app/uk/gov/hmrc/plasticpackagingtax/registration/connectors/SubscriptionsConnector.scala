@@ -28,8 +28,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponseSuccess,
   SubscriptionStatusResponse
 }
-
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
+import play.api.libs.json.Json.toJson
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -40,32 +42,39 @@ class SubscriptionsConnector @Inject() (
   metrics: Metrics
 )(implicit ec: ExecutionContext) {
 
+  private val logger = Logger(this.getClass)
+
   def getSubscriptionStatus(
-    safeNumber: String
+    safeId: String
   )(implicit hc: HeaderCarrier): Future[SubscriptionStatusResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.status.timer").time()
-    httpClient.GET[SubscriptionStatusResponse](config.pptSubscriptionStatusUrl(safeNumber))
+    httpClient.GET[SubscriptionStatusResponse](config.pptSubscriptionStatusUrl(safeId))
       .andThen { case _ => timer.stop() }
       .andThen {
-        case Success(response) => response
+        case Success(response) =>
+          logger.info(
+            s"PPT get subscription status for safeId [$safeId] had response payload [${toJson(response)}]"
+          )
+          response
         case Failure(exception) =>
           throw new Exception(
-            s"Subscription Status with Safe ID [${safeNumber}] is currently unavailable due to [${exception.getMessage}]",
+            s"Subscription Status with Safe ID [${safeId}] is currently unavailable due to [${exception.getMessage}]",
             exception
           )
       }
   }
 
-  def submitSubscription(safeNumber: String, payload: Registration)(implicit
+  def submitSubscription(safeId: String, payload: Registration)(implicit
     hc: HeaderCarrier
   ): Future[SubscriptionCreateResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.submit.timer").time()
-    httpClient.POST[Registration, HttpResponse](config.pptSubscriptionCreateUrl(safeNumber),
-                                                payload
-    )
+    httpClient.POST[Registration, HttpResponse](config.pptSubscriptionCreateUrl(safeId), payload)
       .andThen { case _ => timer.stop() }
       .map {
         subscriptionResponse =>
+          logger.info(
+            s"PPT submit subscription for safeId [$safeId] had response status [${subscriptionResponse.status}] and payload [${subscriptionResponse.body}]"
+          )
           if (Status.isSuccessful(subscriptionResponse.status))
             Try(subscriptionResponse.json.as[SubscriptionCreateResponseSuccess]) match {
               case Success(successfulSubscription) => successfulSubscription
