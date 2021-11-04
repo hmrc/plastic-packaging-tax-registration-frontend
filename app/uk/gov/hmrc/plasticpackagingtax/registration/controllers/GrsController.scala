@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -79,20 +80,30 @@ class GrsController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
+  private val logger = Logger(this.getClass)
+
   def grsCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {
           case Right(registration) =>
-            registrationStatus(registration).map {
-              case STATUS_OK =>
-                Redirect(routes.RegistrationController.displayPage())
-              case BUSINESS_IDENTIFICATION_FAILED =>
-                Redirect(routes.NotableErrorController.grsFailure())
-              case BUSINESS_VERIFICATION_FAILED =>
-                Redirect(routes.NotableErrorController.businessVerificationFailure())
-              case DUPLICATE_SUBSCRIPTION =>
-                Redirect(routes.NotableErrorController.duplicateRegistration())
+            registrationStatus(registration).map { status =>
+              logger.info(
+                s"PPT GRS callback for journeyId [$journeyId] " +
+                  s"and organisation type [${registration.organisationDetails.organisationType.getOrElse("")}] " +
+                  s"had registration status [$status] " +
+                  s"and details [${registration.organisationDetails.registrationDetails.getOrElse("None")}]"
+              )
+              status match {
+                case STATUS_OK =>
+                  Redirect(routes.RegistrationController.displayPage())
+                case BUSINESS_IDENTIFICATION_FAILED =>
+                  Redirect(routes.NotableErrorController.grsFailure())
+                case BUSINESS_VERIFICATION_FAILED =>
+                  Redirect(routes.NotableErrorController.businessVerificationFailure())
+                case DUPLICATE_SUBSCRIPTION =>
+                  Redirect(routes.NotableErrorController.duplicateRegistration())
+              }
             }
           case Left(error) => throw error
         }

@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import com.kenshoo.play.metrics.Metrics
+import play.api.Logger
 import play.api.http.Status.CREATED
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -40,6 +41,8 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
 )(implicit ec: ExecutionContext) {
   type RedirectUrl = String
 
+  private val logger = Logger(this.getClass)
+
   def createJourney(
     payload: GrsCreateJourneyPayload
   )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] = {
@@ -48,7 +51,9 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
       .andThen { case _ => timerCtx.stop() }
       .map {
         case response @ HttpResponse(CREATED, _, _) =>
-          (response.json \ "journeyStartUrl").as[String]
+          val url = (response.json \ "journeyStartUrl").as[String]
+          logger.info(s"PPT starting GRS journey with url [$url]")
+          url
         case response =>
           throw new InternalServerException(
             s"Invalid response from GRS: Status: ${response.status} Body: ${response.body}"
