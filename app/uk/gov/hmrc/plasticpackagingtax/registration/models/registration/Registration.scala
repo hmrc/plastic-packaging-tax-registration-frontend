@@ -17,11 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class Registration(
   id: String,
   incorpJourneyId: Option[String] = None,
+  registrationType: Option[RegType] = None,
+  groupDetail: Option[GroupDetail] = None,
   liabilityDetails: LiabilityDetails = LiabilityDetails(),
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   organisationDetails: OrganisationDetails = OrganisationDetails(),
@@ -32,6 +35,8 @@ case class Registration(
   def toRegistration: Registration =
     Registration(id = this.id,
                  incorpJourneyId = this.incorpJourneyId,
+                 registrationType = this.registrationType,
+                 groupDetail = this.groupDetail,
                  liabilityDetails = this.liabilityDetails,
                  primaryContactDetails = this.primaryContactDetails,
                  organisationDetails = this.organisationDetails,
