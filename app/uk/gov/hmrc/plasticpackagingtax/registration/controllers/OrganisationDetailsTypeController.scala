@@ -77,32 +77,32 @@ class OrganisationDetailsTypeController @Inject() (
                   case Right(_) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        organisationType.answer match {
-                          case Some(OrgType.UK_COMPANY) =>
-                            getUkCompanyRedirectUrl()
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.SOLE_TRADER)
-                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            getSoleTraderRedirectUrl()
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.REGISTERED_SOCIETY)
-                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            getRegisteredSocietyRedirectUrl()
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.PARTNERSHIP)
-                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            Future(Redirect(routes.PartnershipTypeController.displayPage()))
-                          case _ =>
-                            Future(
-                              Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
-                            )
-                        }
+                        handleOrganisationType(organisationType)
                       case _ => Future(Redirect(routes.RegistrationController.displayPage()))
                     }
                   case Left(error) => throw error
                 }
         )
 
+    }
+
+  private def handleOrganisationType(
+    organisationType: OrganisationType
+  )(implicit request: JourneyRequest[AnyContent]) =
+    (organisationType.answer, request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta)) match {
+      case (Some(OrgType.UK_COMPANY), _) =>
+        getUkCompanyRedirectUrl()
+          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+      case (Some(OrgType.SOLE_TRADER), false) =>
+        getSoleTraderRedirectUrl()
+          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+      case (Some(OrgType.REGISTERED_SOCIETY), false) =>
+        getRegisteredSocietyRedirectUrl()
+          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+      case (Some(OrgType.PARTNERSHIP), false) =>
+        Future(Redirect(routes.PartnershipTypeController.displayPage()))
+      case _ =>
+        Future(Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad()))
     }
 
   private def getSoleTraderRedirectUrl()(implicit

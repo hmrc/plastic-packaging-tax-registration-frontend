@@ -34,6 +34,10 @@
 
 @(form: Form[OrganisationType])(implicit request: Request[_], messages: Messages)
 
+    @radioItem(orgType: OrgType) = @{
+        RadioItem(content = Text(displayName(orgType)), value = Some(orgType), checked = form("answer").value.contains(orgType.toString))
+    }
+
     @govukLayout(
         title = Title("organisationDetails.type.title"),
         backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
@@ -56,12 +60,13 @@
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = Seq(
-                    RadioItem(content = Text(displayName(UK_COMPANY)), value = Some(UK_COMPANY), checked = form("answer").value.contains(UK_COMPANY)),
-                    RadioItem(content = Text(displayName(SOLE_TRADER)), value = Some(SOLE_TRADER), checked = form("answer").value.contains(SOLE_TRADER)),
-                    RadioItem(content = Text(displayName(PARTNERSHIP)), value = Some(PARTNERSHIP), checked = form("answer").value.contains(PARTNERSHIP)),
-                    RadioItem(content = Text(displayName(REGISTERED_SOCIETY)), value = Some(REGISTERED_SOCIETY), checked = form("answer").value.contains(REGISTERED_SOCIETY)),
-                    RadioItem(content = Text(displayName(CHARITY_OR_NOT_FOR_PROFIT)), value = Some(CHARITY_OR_NOT_FOR_PROFIT), checked = form("answer").value.contains(CHARITY_OR_NOT_FOR_PROFIT)),
-                    RadioItem(content = Text(displayName(OVERSEAS_COMPANY)), value = Some(OVERSEAS_COMPANY), checked = form("answer").value.contains(OVERSEAS_COMPANY))
+                  radioItem(UK_COMPANY),
+                  radioItem(OVERSEAS_COMPANY),
+                  radioItem(PARTNERSHIP),
+                  radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
+                  radioItem(REGISTERED_SOCIETY),
+                  radioItem(SOLE_TRADER),
+                  radioItem(TRUST)
                 ),
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
