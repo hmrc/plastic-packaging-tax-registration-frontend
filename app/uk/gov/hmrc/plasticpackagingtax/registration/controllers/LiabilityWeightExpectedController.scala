@@ -16,18 +16,18 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityExpectedWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_expected_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,7 +38,7 @@ class LiabilityWeightExpectedController @Inject() (
   mcc: MessagesControllerComponents,
   page: liability_weight_expected_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -79,9 +79,14 @@ class LiabilityWeightExpectedController @Inject() (
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
-  private def nextPage(formData: LiabilityExpectedWeight): Result =
+  private def nextPage(
+    formData: LiabilityExpectedWeight
+  )(implicit req: JourneyRequest[AnyContent]): Result =
     if (formData.overLiabilityThreshold)
-      Redirect(routes.RegistrationController.displayPage())
+      if (isGroupRegistrationEnabled)
+        Redirect(routes.RegistrationTypeController.displayPage())
+      else
+        Redirect(routes.RegistrationController.displayPage())
     else
       Redirect(routes.NotLiableController.displayPage())
 

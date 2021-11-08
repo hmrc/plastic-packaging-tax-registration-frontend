@@ -58,6 +58,7 @@ class ReviewRegistrationController @Inject() (
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
   auditor: Auditor,
+  startRegistrationController: StartRegistrationController,
   reviewRegistrationPage: review_registration_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -87,6 +88,7 @@ class ReviewRegistrationController @Inject() (
   private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =
     Ok(
       reviewRegistrationPage(registration = request.registration,
+                             startLink = startRegistrationController.startLink,
                              soleTraderDetails = getSoleTraderDetails()
       )
     )
@@ -94,6 +96,7 @@ class ReviewRegistrationController @Inject() (
   private def partnershipReview()(implicit request: JourneyRequest[AnyContent]) =
     Ok(
       reviewRegistrationPage(registration = request.registration,
+                             startLink = startRegistrationController.startLink,
                              partnershipDetails = getPartnershipDetails()
       )
     )
@@ -101,6 +104,7 @@ class ReviewRegistrationController @Inject() (
   private def incorpEntityReview()(implicit request: JourneyRequest[AnyContent]) =
     Ok(
       reviewRegistrationPage(registration = request.registration,
+                             startLink = startRegistrationController.startLink,
                              incorporationDetails = getIncorporationDetails()
       )
     )

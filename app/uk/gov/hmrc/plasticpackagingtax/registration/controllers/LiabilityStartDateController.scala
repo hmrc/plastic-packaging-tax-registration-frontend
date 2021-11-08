@@ -25,12 +25,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityStartDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,18 +39,17 @@ class LiabilityStartDateController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: liability_start_date_page,
-  liabilityBacklinkHelper: LiabilityLinkHelper
+  page: liability_start_date_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.liabilityDetails.startDate match {
         case Some(data) =>
-          Ok(page(LiabilityStartDate.form().fill(data), liabilityBacklinkHelper.backLink))
+          Ok(page(LiabilityStartDate.form().fill(data), backLink))
         case _ =>
-          Ok(page(LiabilityStartDate.form(), liabilityBacklinkHelper.backLink))
+          Ok(page(LiabilityStartDate.form(), backLink))
       }
     }
 
@@ -62,13 +59,16 @@ class LiabilityStartDateController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[Date]) =>
-            Future.successful(BadRequest(page(formWithErrors, liabilityBacklinkHelper.backLink))),
+            Future.successful(BadRequest(page(formWithErrors, backLink))),
           liabilityStartDate =>
             updateRegistration(liabilityStartDate).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
+                    if (isGroupRegistrationEnabled)
+                      Redirect(routes.RegistrationTypeController.displayPage())
+                    else
+                      Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
                   case _ =>
                     Redirect(routes.RegistrationController.displayPage())
                 }
@@ -86,6 +86,19 @@ class LiabilityStartDateController @Inject() (
                                                                   model.liabilityDetails.weight
       )
       model.copy(liabilityDetails = updatedLiabilityDetails)
+    }
+
+  private def backLink()(implicit request: JourneyRequest[AnyContent]) =
+    request.registration.liabilityDetails.weight match {
+      case Some(weight) =>
+        weight.totalKg match {
+          case Some(totalKg) =>
+            if (totalKg < deMinimisKg)
+              routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+            else routes.LiabilityWeightController.displayPage()
+          case None => routes.RegistrationController.displayPage()
+        }
+      case None => routes.RegistrationController.displayPage()
     }
 
 }
