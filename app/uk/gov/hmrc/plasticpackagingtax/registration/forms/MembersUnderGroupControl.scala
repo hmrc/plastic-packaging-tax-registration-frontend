@@ -23,6 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 case class MembersUnderGroupControl(value: Option[Boolean])
 
 object MembersUnderGroupControl extends CommonFormValidators with CommonFormValues {
+
   implicit val format: OFormat[MembersUnderGroupControl] = Json.format[MembersUnderGroupControl]
 
   private val mapping = Forms.mapping(

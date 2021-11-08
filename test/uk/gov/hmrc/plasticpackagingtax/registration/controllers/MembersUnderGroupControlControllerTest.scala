@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
@@ -103,6 +103,15 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
+      }
+
+      "display a BAD REQUEST status" when {
+        "no selection is made" in {
+          authorizedUser()
+          val result = controller.submit()(postRequestEncoded(MembersUnderGroupControl(None)))
+
+          status(result) mustBe BAD_REQUEST
+        }
       }
 
       "user submits form and the registration update fails" in {
