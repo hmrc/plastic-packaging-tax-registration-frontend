@@ -29,22 +29,22 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_single_entity
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class RegistrationViewSpec extends UnitViewSpec with Matchers {
+class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
-  private val LIABILITY_DETAILS                   = 0
-  private val BUSINESS_DETAILS                    = 1
-  private val PRIMARY_CONTACT_DETAILS             = 2
-  private val CHECK_AND_SUBMIT                    = 3
-  private val registrationPage: registration_page = instanceOf[registration_page]
+  private val LIABILITY_DETAILS                            = 0
+  private val BUSINESS_DETAILS                             = 1
+  private val PRIMARY_CONTACT_DETAILS                      = 2
+  private val CHECK_AND_SUBMIT                             = 3
+  private val registrationPage: registration_single_entity = instanceOf[registration_single_entity]
 
   private def createView(registration: Registration = aRegistration()): Html =
     registrationPage(registration)
 
-  "Registration Page view" should {
+  "Registration Single Entity Page view" should {
 
     val view: Html = createView()
 
@@ -102,7 +102,8 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections
+                                   registration.numberOfCompletedSections,
+                                   4
           )
         }
 
@@ -172,7 +173,8 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections
+                                   registration.numberOfCompletedSections,
+                                   4
           )
         }
 
@@ -276,7 +278,8 @@ class RegistrationViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   completeRegistration.numberOfCompletedSections
+                                   completeRegistration.numberOfCompletedSections,
+                                   4
           )
         }
 

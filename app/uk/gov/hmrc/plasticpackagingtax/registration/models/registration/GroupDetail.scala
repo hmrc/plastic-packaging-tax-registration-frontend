@@ -17,11 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class GroupDetail(
   membersUnderGroupControl: Option[Boolean] = None
   // TODO: add group members here?
-)
+) {
+
+  def status: TaskStatus =
+    TaskStatus.NotStarted // TODO calculate status based on group members and "do you want to add another" answer
+}
 
 object GroupDetail {
   implicit val format: OFormat[GroupDetail] = Json.format[GroupDetail]
