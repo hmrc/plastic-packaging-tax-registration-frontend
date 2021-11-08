@@ -16,26 +16,32 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  registration_group,
+  registration_single_entity
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class RegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  registrationPage: registration_page
+  singleEntityPage: registration_single_entity,
+  groupPage: registration_group
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(registrationPage(request.registration))
+      if (request.registration.isGroup)
+        Ok(groupPage(request.registration))
+      else
+        Ok(singleEntityPage(request.registration))
     }
 
 }

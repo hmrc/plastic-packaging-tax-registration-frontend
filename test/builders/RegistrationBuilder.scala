@@ -19,6 +19,7 @@ package builders
 import java.util.UUID
 
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{PARTNERSHIP, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   Address,
   Date,
@@ -115,6 +116,9 @@ trait RegistrationBuilder {
 
   def withIncorpJourneyId(incorpJourneyId: Option[String]): RegistrationModifier =
     _.copy(incorpJourneyId = incorpJourneyId)
+
+  def withRegistrationType(regType: RegType): RegistrationModifier =
+    _.copy(registrationType = Some(regType))
 
   def withLiabilityDetails(liabilityDetails: LiabilityDetails): RegistrationModifier =
     _.copy(liabilityDetails = liabilityDetails)

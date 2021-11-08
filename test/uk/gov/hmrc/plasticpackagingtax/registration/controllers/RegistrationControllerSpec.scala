@@ -23,30 +23,37 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  registration_group,
+  registration_single_entity
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class RegistrationControllerSpec extends ControllerSpec {
 
   private val mcc              = stubMessagesControllerComponents()
-  private val registrationPage = mock[registration_page]
+  private val singleEntityPage = mock[registration_single_entity]
+  private val groupPage        = mock[registration_group]
 
   private val controller =
     new RegistrationController(authenticate = mockAuthAction,
                                mockJourneyAction,
                                mcc = mcc,
-                               registrationPage = registrationPage
+                               singleEntityPage = singleEntityPage,
+                               groupPage = groupPage
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(registrationPage.apply(any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Registration Page")
+    when(singleEntityPage.apply(any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Single Entity Page")
     )
+    when(groupPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Group Page"))
   }
 
   override protected def afterEach(): Unit = {
-    reset(registrationPage, mockRegistrationConnector, mockSubscriptionsConnector)
+    reset(singleEntityPage, mockRegistrationConnector, mockSubscriptionsConnector)
     super.afterEach()
   }
 
@@ -68,7 +75,7 @@ class RegistrationControllerSpec extends ControllerSpec {
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
-          contentAsString(result) mustBe "Registration Page"
+          contentAsString(result) mustBe "Single Entity Page"
         }
 
         "a 'businessPartnerId' does not exist" in {
@@ -76,9 +83,18 @@ class RegistrationControllerSpec extends ControllerSpec {
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
-          contentAsString(result) mustBe "Registration Page"
+          contentAsString(result) mustBe "Single Entity Page"
 
           verifyNoInteractions(mockSubscriptionsConnector)
+        }
+
+        "a group registration is being performed" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration().copy(registrationType = Some(RegType.GROUP)))
+          val result = controller.displayPage()(getRequest())
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe "Group Page"
         }
       }
     }
