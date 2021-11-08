@@ -234,6 +234,9 @@ organisationDetails.basedInUk.empty.error = Choose an option
 organisationDetails.type.title = What type of organisation do you want to register?
 organisationDetails.type.empty.error = Value must be selected
 
+organisationDetails.nominated.organisation.sectionHeader = Nominated organisation details
+organisationDetails.type.group.title = What type of organisation is the nominated organisation?
+
 organisationDetails.type.UkCompany = UK limited company
 organisationDetails.type.SoleTrader = Sole trader
 organisationDetails.type.Partnership = Partnership
@@ -241,6 +244,9 @@ organisationDetails.type.CIO = Charitable incorporated organisation (CIO)
 organisationDetails.type.Trust = Trust
 organisationDetails.type.RegisteredSociety = Registered society
 organisationDetails.type.OverseasCompany = Overseas company
+
+organisationDetails.type.GroupNominatedOverseasCompany = Non-UK company with a branch or place of business in the UK
+organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
 
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected

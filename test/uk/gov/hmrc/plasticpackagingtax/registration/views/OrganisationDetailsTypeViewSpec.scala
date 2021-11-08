@@ -41,12 +41,15 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[organisation_type]
 
-  private def createView(form: Form[OrganisationType] = OrganisationType.form()): Document =
-    page(form)(journeyRequest, messages)
+  private def createView(
+    form: Form[OrganisationType] = OrganisationType.form(),
+    isGroup: Boolean = false
+  ): Document =
+    page(form, isGroup)(journeyRequest, messages)
 
-  "Confirm Organisation Based In Uk View" should {
+  "Confirm Organisation Type View" should {
 
-    val view = createView()
+    implicit val view = createView()
 
     "contain timeout dialog function" in {
 
@@ -77,15 +80,6 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      def radioInputMustBe(number: Int, orgType: OrgType) = {
-        view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr(
-          "value"
-        ).text() mustBe orgType.toString
-        view.getElementsByClass("govuk-label").get(number - 1).text() mustBe OrgType.displayName(
-          orgType
-        )
-      }
-
       radioInputMustBe(1, UK_COMPANY)
       radioInputMustBe(2, OVERSEAS_COMPANY)
       radioInputMustBe(3, PARTNERSHIP)
@@ -93,6 +87,56 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       radioInputMustBe(5, REGISTERED_SOCIETY)
       radioInputMustBe(6, SOLE_TRADER)
       radioInputMustBe(7, TRUST)
+    }
+
+    "display 'Save and continue' button" in {
+
+      view must containElementWithID("submit")
+      view.getElementById("submit").text() mustBe "Save and continue"
+    }
+
+  }
+
+  "Confirm Organisation Type View for groups" should {
+
+    implicit val view = createView(isGroup = true)
+
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view) mustBe true
+    }
+
+    "display sign out link" in {
+
+      displaySignOutLink(view)
+    }
+
+    "display 'Back' button" in {
+
+      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
+    }
+
+    "display title" in {
+
+      view.select("title").text() must include(messages("organisationDetails.type.group.title"))
+    }
+
+    "display header" in {
+
+      view.getElementsByClass("govuk-caption-l").text() must include(
+        messages("organisationDetails.nominated.organisation.sectionHeader")
+      )
+    }
+
+    "display radio inputs" in {
+
+      radioInputMustBe(1, UK_COMPANY)
+      radioInputMustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupNominatedPartnership"))
+      radioInputMustBe(3, CHARITABLE_INCORPORATED_ORGANISATION)
+      radioInputMustBe(4,
+                       OVERSEAS_COMPANY,
+                       Some("organisationDetails.type.GroupNominatedOverseasCompany")
+      )
     }
 
     "display 'Save and continue' button" in {
@@ -131,8 +175,19 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), false)(request, messages)
+    page.render(form(), false, request, messages)
+  }
+
+  def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit
+    view: Document
+  ) = {
+    view.getElementById(s"answer${if (number == 1) "" else s"-$number"}").attr(
+      "value"
+    ).text() mustBe orgType.toString
+    view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
+      labelKey.getOrElse(s"organisationDetails.type.$orgType")
+    )
   }
 
 }
