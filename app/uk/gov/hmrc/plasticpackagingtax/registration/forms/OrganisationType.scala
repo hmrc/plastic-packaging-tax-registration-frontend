@@ -33,6 +33,7 @@ object OrgType extends Enumeration {
   val OVERSEAS_COMPANY: Value                     = Value("OverseasCompany")
   def withNameOpt(name: String): Option[Value]    = values.find(_.toString == name)
 
+  // TODO - move this to view(s)
   def displayName(orgType: OrgType)(implicit messages: Messages): String =
     messages(s"organisationDetails.type.$orgType")
 
