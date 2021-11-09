@@ -85,7 +85,7 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirects to check your answers page" when {
+    "redirects to task list page" when {
       "user submits answers" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())

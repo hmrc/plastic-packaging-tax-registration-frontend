@@ -26,6 +26,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.MembersUnderGroupControl
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.members_under_group_control_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -62,6 +63,17 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
         status(result) mustBe OK
       }
+
+      "user has previously selected an answer and display page method is invoked" in {
+        authorizedUser()
+        val registration =
+          aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true)))))
+        mockRegistrationFind(registration)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
     }
 
     "redirect to check your answers page" when {
@@ -75,7 +87,9 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
 
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          routes.CheckLiabilityDetailsAnswersController.displayPage().url
+        )
       }
     }
 

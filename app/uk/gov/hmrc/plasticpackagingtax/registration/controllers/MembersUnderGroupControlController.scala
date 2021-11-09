@@ -45,8 +45,20 @@ class MembersUnderGroupControlController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Ok(page(MembersUnderGroupControl.form()))
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.groupDetail match {
+        case Some(groupDetail) =>
+          Ok(
+            page(
+              MembersUnderGroupControl.form().fill(
+                MembersUnderGroupControl(
+                  Some(groupDetail.membersUnderGroupControl.getOrElse(false))
+                )
+              )
+            )
+          )
+        case _ => Ok(page(MembersUnderGroupControl.form()))
+      }
     }
 
   def submit(): Action[AnyContent] =
@@ -77,7 +89,7 @@ class MembersUnderGroupControlController @Inject() (
 
   private def nextPage(formData: MembersUnderGroupControl): Result =
     if (formData.value.getOrElse(false))
-      Redirect(routes.RegistrationController.displayPage())
+      Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
     else
       Redirect(routes.NotMembersUnderGroupControlController.displayPage())
 

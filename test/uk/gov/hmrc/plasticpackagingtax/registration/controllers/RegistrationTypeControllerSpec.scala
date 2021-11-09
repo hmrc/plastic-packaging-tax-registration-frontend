@@ -115,7 +115,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
         val result         = registrationTypeController.submit()(postJsonRequestEncoded(groupSelection: _*))
 
         redirectLocation(result) mustBe Some(
-          routes.CheckLiabilityDetailsAnswersController.displayPage().url
+          routes.MembersUnderGroupControlController.displayPage().url
         )
 
         val expectedRegistration = initialRegistration.copy(registrationType = Some(GROUP))

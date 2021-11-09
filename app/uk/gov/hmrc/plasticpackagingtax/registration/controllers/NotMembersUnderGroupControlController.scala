@@ -34,7 +34,7 @@ class NotMembersUnderGroupControlController @Inject() (
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       Ok(page())
     }
 
