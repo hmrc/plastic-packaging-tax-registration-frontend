@@ -25,12 +25,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,10 +39,9 @@ class LiabilityWeightController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: liability_weight_page,
-  liabilityLinkHelper: LiabilityLinkHelper
+  page: liability_weight_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -79,21 +76,24 @@ class LiabilityWeightController @Inject() (
     formData: LiabilityWeight
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
+      val updatedExpectToExceedThreshold =
+        if (formData.totalKg.getOrElse(0L) > deMinimisKg) None
+        else registration.liabilityDetails.expectToExceedThresholdWeight
       val updatedLiabilityDetails =
-        registration.liabilityDetails.copy(startDate = registration.liabilityDetails.startDate,
+        registration.liabilityDetails.copy(expectToExceedThresholdWeight =
+                                             updatedExpectToExceedThreshold,
                                            weight = Some(formData)
         )
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
-  private def handleSaveAndContinue(
-    formData: LiabilityWeight
-  )(implicit req: JourneyRequest[AnyContent]): Result =
+  private def handleSaveAndContinue(formData: LiabilityWeight): Result =
     formData.totalKg match {
       case Some(weight) =>
-        if (weight < 10000)
+        if (weight < deMinimisKg)
           Redirect(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-        else Redirect(liabilityLinkHelper.nextPage())
+        else
+          Redirect(routes.LiabilityStartDateController.displayPage())
       case None => BadRequest
     }
 

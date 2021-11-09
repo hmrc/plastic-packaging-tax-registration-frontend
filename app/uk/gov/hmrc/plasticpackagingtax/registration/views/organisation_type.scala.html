@@ -19,12 +19,10 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.displayName
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType._
 
 @this(
     formHelper: FormWithCSRF,
-    pageHeading: pageHeading,
     govukLayout: main_template,
     govukRadios : GovukRadios,
     sectionHeader: sectionHeader,
@@ -32,42 +30,65 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[OrganisationType])(implicit request: Request[_], messages: Messages)
+@(form: Form[OrganisationType], isGroup: Boolean)(implicit request: Request[_], messages: Messages)
+
+    @title = @{ if(isGroup) "organisationDetails.type.group.title" else "organisationDetails.type.title" }
+    @section = @{ if(isGroup) "organisationDetails.nominated.organisation.sectionHeader" else "organisationDetails.sectionHeader" }
+
+    @displayName(orgType: OrgType) = @{ messages(
+      orgType match {
+          case OVERSEAS_COMPANY if isGroup => "organisationDetails.type.GroupNominatedOverseasCompany"
+          case PARTNERSHIP if isGroup => "organisationDetails.type.GroupNominatedPartnership"
+          case _ => s"organisationDetails.type.$orgType"
+      }
+    )
+    }
 
     @radioItem(orgType: OrgType) = @{
         RadioItem(content = Text(displayName(orgType)), value = Some(orgType), checked = form("answer").value.contains(orgType.toString))
     }
 
+    @organisationRadios = @{
+      if(isGroup)
+          Seq(
+              radioItem(UK_COMPANY),
+              radioItem(PARTNERSHIP),
+              radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
+              radioItem(OVERSEAS_COMPANY)
+          )
+      else
+          Seq(
+              radioItem(UK_COMPANY),
+              radioItem(OVERSEAS_COMPANY),
+              radioItem(PARTNERSHIP),
+              radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
+              radioItem(REGISTERED_SOCIETY),
+              radioItem(SOLE_TRADER),
+              radioItem(TRUST)
+          )
+    }
+
     @govukLayout(
-        title = Title("organisationDetails.type.title"),
+        title = Title(title),
         backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 
-        @sectionHeader(messages("organisationDetails.sectionHeader"))
-        @pageHeading(messages("organisationDetails.type.title"))
+        @sectionHeader(messages(section))
 
         @formHelper(action = pptRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(messages("organisationDetails.type.title")),
-                        classes = "govuk-visually-hidden",
-                        isPageHeading = false
+                        content = Text(messages(title)),
+                        classes = gdsFieldsetPageHeading,
+                        isPageHeading = true
                     ))
                 )),
                 hint = None,
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
-                items = Seq(
-                  radioItem(UK_COMPANY),
-                  radioItem(OVERSEAS_COMPANY),
-                  radioItem(PARTNERSHIP),
-                  radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
-                  radioItem(REGISTERED_SOCIETY),
-                  radioItem(SOLE_TRADER),
-                  radioItem(TRUST)
-                ),
+                items = organisationRadios,
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
                 ))

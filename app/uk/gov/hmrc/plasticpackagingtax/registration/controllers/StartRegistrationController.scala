@@ -16,29 +16,32 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 
-import scala.concurrent.Future
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class StartRegistrationController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  liabilityLinkHelper: LiabilityLinkHelper
+  mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) {
 
   def startRegistration(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       if (request.registration.isStarted)
-        Future.successful(Redirect(routes.RegistrationController.displayPage()))
+        Redirect(routes.RegistrationController.displayPage())
       else
-        Future.successful(Redirect(liabilityLinkHelper.startPage()))
+        Redirect(startLink)
     }
+
+  def startLink(implicit request: JourneyRequest[AnyContent]): Call =
+    if (request.isFeatureFlagEnabled(Features.isPreLaunch))
+      routes.LiabilityWeightExpectedController.displayPage()
+    else routes.LiabilityWeightController.displayPage()
 
 }

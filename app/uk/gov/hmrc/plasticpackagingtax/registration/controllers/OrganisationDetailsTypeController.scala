@@ -62,8 +62,14 @@ class OrganisationDetailsTypeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
-          Future(Ok(page(OrganisationType.form().fill(OrganisationType(Some(data))))))
-        case _ => Future(Ok(page(OrganisationType.form())))
+          Future(
+            Ok(
+              page(OrganisationType.form().fill(OrganisationType(Some(data))),
+                   request.registration.isGroup
+              )
+            )
+          )
+        case _ => Future(Ok(page(OrganisationType.form(), request.registration.isGroup)))
       }
     }
 
@@ -71,17 +77,19 @@ class OrganisationDetailsTypeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       OrganisationType.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[OrganisationType]) => Future(BadRequest(page(formWithErrors))),
-              organisationType =>
-                updateRegistration(organisationType).flatMap {
-                  case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        handleOrganisationType(organisationType)
-                      case _ => Future(Redirect(routes.RegistrationController.displayPage()))
-                    }
-                  case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[OrganisationType]) =>
+            Future(BadRequest(page(formWithErrors, request.registration.isGroup))),
+          organisationType =>
+            updateRegistration(organisationType).flatMap {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    handleOrganisationType(organisationType)
+                  case _ => Future(Redirect(routes.RegistrationController.displayPage()))
                 }
+              case Left(error) => throw error
+            }
         )
 
     }
@@ -100,6 +108,7 @@ class OrganisationDetailsTypeController @Inject() (
         getRegisteredSocietyRedirectUrl()
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
+        // TODO - if this is a group registration then `Partnership` means `Limited liability partnership` so "partnership type" question not needed
         Future(Redirect(routes.PartnershipTypeController.displayPage()))
       case _ =>
         Future(Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad()))

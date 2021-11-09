@@ -14,12 +14,13 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.GROUP
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+
 @import java.time.format.DateTimeFormatter
 
 @this(
@@ -30,7 +31,7 @@
         pageHeading: pageHeading,
         saveAndContinue: saveAndContinue
 )
-@(registration: Registration, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration, backLink: Call, changeWeightLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 @govukLayout(
     title = Title("checkLiabilityDetailsAnswers.title"),
@@ -47,12 +48,17 @@
                             content = Text(messages("checkLiabilityDetailsAnswers.weight"))
                         ),
                         value = Value(
-                            content = Text(registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse(""))
+                            content = Text(
+                                if (registration.liabilityDetails.weight.isDefined)
+                                    registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse("")
+                                else
+                                    registration.liabilityDetails.expectedWeight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse("")
+                            )
                         ),
                         actions = Some(Actions(
                             items = Seq(
                                 ActionItem(
-                                    href = pptRoutes.LiabilityWeightController.displayPage().url,
+                                    href = changeWeightLink.url,
                                     content = Text(messages("site.link.change")),
                                     visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.weight"))
                                 )
@@ -108,10 +114,31 @@
                                 )
                             )
                         ))
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("checkLiabilityDetailsAnswers.registrationType"))
+                        ),
+                        value = Value(
+                            registration.registrationType match {
+                                case Some(GROUP) => Text(messages("registrationType.group"))
+                                case Some(SINGLE_ENTITY) => Text(messages("registrationType.singleEntity"))
+                                case _ => Empty
+                            }
+                        ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = pptRoutes.RegistrationTypeController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.registrationType"))
+                                )
+                            )
+                        ))
                     )
                 ).filterNot(_.value.content == Empty)
             )
         )
         @saveAndContinue()
     }
-}
+}@import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.SINGLE_ENTITY
