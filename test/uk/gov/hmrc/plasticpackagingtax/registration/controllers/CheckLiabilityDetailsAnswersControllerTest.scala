@@ -17,12 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.libs.json.JsObject
+import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
@@ -33,6 +35,8 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   private val page                            = mock[check_liability_details_answers_page]
   private val mcc                             = stubMessagesControllerComponents()
   private val mockStartRegistrationController = mock[StartRegistrationController]
+
+  private val startLiabilityLink = Call("GET", "/start-liability")
 
   private val controller =
     new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
@@ -48,7 +52,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     val registration = aRegistration()
     mockRegistrationFind(registration)
     given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
-    when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(false)
+    when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
   }
 
   override protected def afterEach(): Unit = {
@@ -77,6 +81,25 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
           status(result) mustBe OK
         }
       }
+
+    }
+
+    "set expected page links" when {
+
+      "group registration enabled" in {
+        authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+        verifyExpectedLinks(backLink = routes.RegistrationTypeController.displayPage().url,
+                            changeLiabilityLink = startLiabilityLink.url
+        )
+      }
+
+      "group registration not enabled" in {
+        authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> false))
+        verifyExpectedLinks(backLink = routes.LiabilityStartDateController.displayPage().url,
+                            changeLiabilityLink = startLiabilityLink.url
+        )
+      }
+
     }
 
     "return an error" when {
@@ -98,6 +121,22 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
         redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
       }
     }
+  }
+
+  private def verifyExpectedLinks(backLink: String, changeLiabilityLink: String): Unit = {
+    val result = controller.displayPage()(getRequest())
+
+    status(result) mustBe OK
+
+    val backLinkCaptor: ArgumentCaptor[Call]            = ArgumentCaptor.forClass(classOf[Call])
+    val changeLiabilityLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
+
+    verify(page).apply(any(), backLinkCaptor.capture(), changeLiabilityLinkCaptor.capture())(any(),
+                                                                                             any()
+    )
+
+    backLinkCaptor.getValue.url mustBe backLink
+    changeLiabilityLinkCaptor.getValue.url mustBe changeLiabilityLink
   }
 
 }
