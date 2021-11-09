@@ -18,11 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -34,7 +32,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (
   mcc: MessagesControllerComponents,
   startRegistrationController: StartRegistrationController,
   page: check_liability_details_answers_page
-) extends FrontendController(mcc) with I18nSupport {
+) extends LiabilityController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -47,8 +45,9 @@ class CheckLiabilityDetailsAnswersController @Inject() (
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
-    if (request.isFeatureFlagEnabled(Features.isGroupRegistrationEnabled))
+    if (isGroupRegistrationEnabled)
       routes.RegistrationTypeController.displayPage()
-    else routes.LiabilityStartDateController.displayPage()
+    else
+      routes.LiabilityStartDateController.displayPage()
 
 }
