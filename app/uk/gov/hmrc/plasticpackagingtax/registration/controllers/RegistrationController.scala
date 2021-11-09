@@ -38,6 +38,9 @@ class RegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
+      println("**********")
+      println(s"REG: ${request.registration}")
+      println("**********")
       if (request.registration.isGroup)
         Ok(groupPage(request.registration))
       else

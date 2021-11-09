@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
+package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
-case class GroupDetail(
-  membersUnderGroupControl: Option[Boolean] = None,
-  members: Seq[GroupMember] = Seq.empty
-) {
+case class OrganisationDetails(organisationType: Option[String] = None, organisationName: String)
 
-  def status: TaskStatus =
-    TaskStatus.NotStarted // TODO calculate status based on group members and "do you want to add another" answer
-}
-
-object GroupDetail {
-  implicit val format: OFormat[GroupDetail] = Json.format[GroupDetail]
+object OrganisationDetails {
+  implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
 }
