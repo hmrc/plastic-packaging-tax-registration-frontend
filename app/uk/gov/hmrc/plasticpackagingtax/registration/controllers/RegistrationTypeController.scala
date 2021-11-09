@@ -40,13 +40,11 @@ class RegistrationTypeController @Inject() (
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       request.registration.registrationType match {
         case Some(regType) =>
-          Future.successful(
-            Ok(page(RegistrationType.form().fill(RegistrationType(Some(regType))), backLink))
-          )
-        case _ => Future.successful(Ok(page(RegistrationType.form(), backLink)))
+          Ok(page(RegistrationType.form().fill(RegistrationType(Some(regType))), backLink))
+        case _ => Ok(page(RegistrationType.form(), backLink))
       }
     }
 
