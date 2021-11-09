@@ -28,6 +28,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -49,7 +50,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    val registration = aRegistration()
+    val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
     mockRegistrationFind(registration)
     given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
     when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
@@ -89,6 +90,19 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       "group registration enabled" in {
         authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
         verifyExpectedLinks(backLink = routes.RegistrationTypeController.displayPage().url,
+                            changeLiabilityLink = startLiabilityLink.url
+        )
+      }
+
+      "group registration enabled and group of organisation is selected" in {
+        authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+
+        val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)))
+        mockRegistrationFind(registration)
+        given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+        when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
+
+        verifyExpectedLinks(backLink = routes.MembersUnderGroupControlController.displayPage().url,
                             changeLiabilityLink = startLiabilityLink.url
         )
       }
