@@ -26,28 +26,28 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
-  private val page                = mock[check_liability_details_answers_page]
-  private val mcc                 = stubMessagesControllerComponents()
-  private val liabilityLinkHelper = mock[LiabilityLinkHelper]
+  private val page                            = mock[check_liability_details_answers_page]
+  private val mcc                             = stubMessagesControllerComponents()
+  private val mockStartRegistrationController = mock[StartRegistrationController]
 
   private val controller =
     new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
                                                mockJourneyAction,
                                                mcc = mcc,
-                                               page = page,
-                                               liabilityLinkHelper = liabilityLinkHelper
+                                               startRegistrationController =
+                                                 mockStartRegistrationController,
+                                               page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
     when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(false)
   }
 

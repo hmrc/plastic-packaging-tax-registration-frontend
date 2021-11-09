@@ -17,13 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
@@ -33,8 +29,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class StartRegistrationControllerSpec extends ControllerSpec {
 
-  private val mcc            = stubMessagesControllerComponents()
-  private val mockLinkHelper = mock[LiabilityLinkHelper]
+  private val mcc = stubMessagesControllerComponents()
 
   private val emptyRegistration = Registration("123")
 
@@ -44,7 +39,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
   )
 
   private val controller =
-    new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc, mockLinkHelper)
+    new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc)
 
   "StartRegistrationController" should {
     "redirect to liability weight capture page" when {
@@ -52,12 +47,12 @@ class StartRegistrationControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(emptyRegistration)
 
-        when(mockLinkHelper.startPage()(any())).thenReturn(Call("GET", "/start-url"))
-
         val result = controller.startRegistration()(getRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/start-url")
+        redirectLocation(result) mustBe Some(
+          routes.LiabilityWeightExpectedController.displayPage().url
+        )
       }
     }
     "redirect to task list page" when {

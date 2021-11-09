@@ -28,24 +28,21 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class LiabilityStartDateControllerTest extends ControllerSpec {
 
-  private val page                    = mock[liability_start_date_page]
-  private val mcc                     = stubMessagesControllerComponents()
-  private val liabilityBacklinkHelper = mock[LiabilityLinkHelper]
+  private val page = mock[liability_start_date_page]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
     new LiabilityStartDateController(authenticate = mockAuthAction,
                                      mockJourneyAction,
                                      mockRegistrationConnector,
                                      mcc = mcc,
-                                     page = page,
-                                     liabilityBacklinkHelper = liabilityBacklinkHelper
+                                     page = page
     )
 
   override protected def beforeEach(): Unit = {

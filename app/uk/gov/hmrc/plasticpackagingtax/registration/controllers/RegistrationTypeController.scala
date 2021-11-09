@@ -19,17 +19,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
-  Date,
-  LiabilityExpectedWeight,
-  RegistrationType
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegistrationType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_type_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

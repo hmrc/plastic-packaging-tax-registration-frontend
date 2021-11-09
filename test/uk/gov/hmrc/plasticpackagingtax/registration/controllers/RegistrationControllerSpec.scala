@@ -40,7 +40,7 @@ class RegistrationControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(registrationPage.apply(any())(any(), any())).thenReturn(
+    when(registrationPage.apply(any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Registration Page")
     )
   }

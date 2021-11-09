@@ -87,9 +87,7 @@ class LiabilityWeightController @Inject() (
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
-  private def handleSaveAndContinue(
-    formData: LiabilityWeight
-  )(implicit req: JourneyRequest[AnyContent]): Result =
+  private def handleSaveAndContinue(formData: LiabilityWeight): Result =
     formData.totalKg match {
       case Some(weight) =>
         if (weight < deMinimisKg)
