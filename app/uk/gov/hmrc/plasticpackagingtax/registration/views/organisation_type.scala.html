@@ -30,7 +30,7 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[OrganisationType], isGroup: Boolean)(implicit request: Request[_], messages: Messages)
+@(form: Form[OrganisationType], isGroup: Boolean, isGroupMember: Boolean)(implicit request: Request[_], messages: Messages)
 
     @title = @{ if(isGroup) "organisationDetails.type.group.title" else "organisationDetails.type.title" }
     @section = @{ if(isGroup) "organisationDetails.nominated.organisation.sectionHeader" else "organisationDetails.sectionHeader" }
@@ -50,6 +50,13 @@
 
     @organisationRadios = @{
       if(isGroup)
+          Seq(
+              radioItem(UK_COMPANY),
+              radioItem(PARTNERSHIP),
+              radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
+              radioItem(OVERSEAS_COMPANY)
+          )
+      else if(isGroupMember)
           Seq(
               radioItem(UK_COMPANY),
               radioItem(PARTNERSHIP),

@@ -102,3 +102,6 @@ GET        /enrolment-not-verified     uk.gov.hmrc.plasticpackagingtax.registrat
 
 GET        /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.displayPage()
 POST       /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.submit()
+
+GET        /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.displayPage()
+POST       /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.submit()

@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{Title, TaskSection}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
@@ -77,7 +78,7 @@ govukTag: GovukTag
         @task(4, "registrationPage.task.otherOrganisation.heading", Set(
             TaskSection(
                 title  = "registrationPage.task.otherOrganisation",
-                link   = pptRoutes.RegistrationController.displayPage(), //TODO
+                link   = groupRoutes.OrganisationDetailsTypeController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete && registration.isPrimaryContactDetailsComplete,
                 status = registration.otherOrganisationsInGroupStatus
             )

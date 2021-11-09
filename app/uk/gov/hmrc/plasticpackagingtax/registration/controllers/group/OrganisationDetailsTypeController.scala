@@ -14,38 +14,28 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
-import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorpEntityGrsCreateRequest,
-  SoleTraderGrsCreateRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorpEntityGrsCreateRequest, SoleTraderGrsCreateRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OrganisationDetailsTypeController @Inject() (
+class OrganisationDetailsTypeController @Inject()(
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   appConfig: AppConfig,
@@ -66,11 +56,11 @@ class OrganisationDetailsTypeController @Inject() (
             Ok(
               page(form = OrganisationType.form().fill(OrganisationType(Some(data))),
                    isGroup = request.registration.isGroup,
-                   isGroupMember = false
+                   isGroupMember = true
               )
             )
           )
-        case _ => Future(Ok(page(form = OrganisationType.form(), isGroup = request.registration.isGroup, isGroupMember = false)))
+        case _ => Future(Ok(page(form = OrganisationType.form(), isGroup = request.registration.isGroup, isGroupMember = true)))
       }
     }
 
@@ -80,14 +70,14 @@ class OrganisationDetailsTypeController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
-            Future(BadRequest(page(form = formWithErrors, isGroup = request.registration.isGroup, isGroupMember = false))),
+            Future(BadRequest(page(form = formWithErrors, isGroup = request.registration.isGroup, isGroupMember = true))),
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     handleOrganisationType(organisationType)
-                  case _ => Future(Redirect(routes.RegistrationController.displayPage()))
+                  case _ => Future(Redirect(pptRoutes.RegistrationController.displayPage()))
                 }
               case Left(error) => throw error
             }
@@ -110,9 +100,9 @@ class OrganisationDetailsTypeController @Inject() (
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
         // TODO - if this is a group registration then `Partnership` means `Limited liability partnership` so "partnership type" question not needed
-        Future(Redirect(routes.PartnershipTypeController.displayPage()))
+        Future(Redirect(pptRoutes.PartnershipTypeController.displayPage()))
       case _ =>
-        Future(Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad()))
+        Future(Redirect(pptRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
     }
 
   private def getSoleTraderRedirectUrl()(implicit
