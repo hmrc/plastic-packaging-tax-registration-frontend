@@ -24,14 +24,16 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
 
 object OrgType extends Enumeration {
   type OrgType = Value
-  val UK_COMPANY: Value                        = Value("UkCompany")
-  val SOLE_TRADER: Value                       = Value("SoleTrader")
-  val PARTNERSHIP: Value                       = Value("Partnership")
-  val REGISTERED_SOCIETY: Value                = Value("RegisteredSociety")
-  val CHARITY_OR_NOT_FOR_PROFIT: Value         = Value("CharityOrNotForProfit")
-  val OVERSEAS_COMPANY: Value                  = Value("OverseasCompany")
-  def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
+  val UK_COMPANY: Value                           = Value("UkCompany")
+  val SOLE_TRADER: Value                          = Value("SoleTrader")
+  val PARTNERSHIP: Value                          = Value("Partnership")
+  val REGISTERED_SOCIETY: Value                   = Value("RegisteredSociety")
+  val TRUST: Value                                = Value("Trust")
+  val CHARITABLE_INCORPORATED_ORGANISATION: Value = Value("CIO")
+  val OVERSEAS_COMPANY: Value                     = Value("OverseasCompany")
+  def withNameOpt(name: String): Option[Value]    = values.find(_.toString == name)
 
+  // TODO - move this to view(s)
   def displayName(orgType: OrgType)(implicit messages: Messages): String =
     messages(s"organisationDetails.type.$orgType")
 

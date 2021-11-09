@@ -104,4 +104,4 @@ GET        /enrolment-confirmation     uk.gov.hmrc.plasticpackagingtax.registrat
 GET        /enrolment-not-verified     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentVerificationFailurePage()
 
 GET        /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.displayPage()
-POST        /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.submit()
+POST       /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.submit()

@@ -42,10 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   TOO_MANY_ATTEMPTS
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  MetaData,
-  PrimaryContactDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

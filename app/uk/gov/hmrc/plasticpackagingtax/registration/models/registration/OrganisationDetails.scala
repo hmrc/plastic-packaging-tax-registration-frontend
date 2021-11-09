@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
+  IncorporationRegistrationDetails,
   PartnershipDetails,
   SoleTraderIncorporationDetails
 }
@@ -85,6 +86,19 @@ case class OrganisationDetails(
     case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorporationDetails.map(_.companyName)
     case Some(SOLE_TRADER)                           => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
     case _                                           => None
+  }
+
+  lazy val registrationDetails: Option[IncorporationRegistrationDetails] = organisationType match {
+    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorporationDetails.map(_.registration)
+    case Some(SOLE_TRADER)                           => soleTraderDetails.map(_.registration)
+    case Some(PARTNERSHIP) =>
+      partnershipDetails.flatMap(
+        details =>
+          details.generalPartnershipDetails.map(_.registration).orElse(
+            details.scottishPartnershipDetails.map(_.registration)
+          )
+      )
+    case _ => None
   }
 
 }

@@ -65,13 +65,19 @@ startPage.buttonName = Start now
 registrationPage.title = Register for Plastic Packaging Tax
 registrationPage.subheading.complete = Registration complete
 registrationPage.subheading.incomplete = Registration incomplete
-registrationPage.completedSections = You have completed {0} of 4 sections.
+registrationPage.completedSections = You have completed {0} of {1} sections.
 registrationPage.task.eligibility.heading = Eligibility check
 registrationPage.task.eligibility = Need to register
 registrationPage.task.organisation.heading = Organisation details
+registrationPage.task.organisation.heading.group = Nominated organisation details
 registrationPage.task.organisation = Organisation information
+registrationPage.task.organisation.group = Nominated organisation information
 registrationPage.task.contactDetails.heading = Contact details
+registrationPage.task.contactDetails.heading.group = Nominated organisation contact details
 registrationPage.task.contactDetails = Main contact
+registrationPage.task.contactDetails.group = Main contact
+registrationPage.task.otherOrganisation.heading = Other organisations in group
+registrationPage.task.otherOrganisation = Other organisations in the group
 registrationPage.task.review.heading = Review and send
 registrationPage.task.review = Submit registration
 
@@ -230,15 +236,22 @@ organisationDetails.sectionHeader = Organisation details
 organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
 organisationDetails.basedInUk.empty.error = Choose an option
 
-organisationDetails.type.title = What is your organisation type?
+organisationDetails.type.title = What type of organisation do you want to register?
 organisationDetails.type.empty.error = Value must be selected
 
-organisationDetails.type.UkCompany = UK limited or unlimited company
+organisationDetails.nominated.organisation.sectionHeader = Nominated organisation details
+organisationDetails.type.group.title = What type of organisation is the nominated organisation?
+
+organisationDetails.type.UkCompany = UK limited company
 organisationDetails.type.SoleTrader = Sole trader
 organisationDetails.type.Partnership = Partnership
-organisationDetails.type.CharityOrNotForProfit = Charity, Not for Profit, Trust or Association
-organisationDetails.type.RegisteredSociety = Registered Society
+organisationDetails.type.CIO = Charitable incorporated organisation (CIO)
+organisationDetails.type.Trust = Trust
+organisationDetails.type.RegisteredSociety = Registered society
 organisationDetails.type.OverseasCompany = Overseas company
+
+organisationDetails.type.GroupNominatedOverseasCompany = Non-UK company with a branch or place of business in the UK
+organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
 
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected

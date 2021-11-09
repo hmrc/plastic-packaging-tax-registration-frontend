@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{Title, TaskSection}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -22,51 +24,22 @@
 @this(
     govukLayout: main_template,
     pageHeading: pageHeading,
+    subHeading: subHeading,
     paragraphBody: paragraphBody,
     govukButton: GovukButton,
+    task: task,
     link: link,
     govukTag: GovukTag
 )
 
 @(registration: Registration, liabilityStartLink: Call)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@task(index: Int, title: String, sections: Set[TaskSection]) = {
-    <h2 class="app-task-list__section">
-        <span class="app-task-list__section-number">@{index}.</span>
-        @messages(title)
-    </h2>
-    <ul class="app-task-list__items">
-        @for(section <- sections) {
-            <li class="app-task-list__item">
-                <span class='app-task-list__task-name'>
-                  @if(section.showLink) {
-                      @link(text = messages(section.title), call = section.link)
-                  } else {
-                      @messages(section.title)
-                  }
-                </span>
-                @getTag(section.status)
-            </li>
-        }
-    </ul>
-}
-
-@getTag(status: TaskStatus) = {
-    @status match {
-        case TaskStatus.Completed  => {@govukTag(Tag(content = Text(messages("task.status.completed")),  classes = "govuk-tag app-task-list__task-completed"))}
-        case TaskStatus.InProgress => {@govukTag(Tag(content = Text(messages("task.status.inProgress")), classes = "govuk-tag govuk-tag--to-do app-task-list__task-completed govuk-tag--blue"))}
-        case TaskStatus.NotStarted => {@govukTag(Tag(content = Text(messages("task.status.notStarted")), classes = "govuk-tag govuk-tag--to-do app-task-list__task-completed govuk-tag--grey"))}
-        case _                     => {@govukTag(Tag(content = Text(messages("task.status.cannotStartYet")), classes = "govuk-tag govuk-tag--to-do app-task-list__task-completed govuk-tag--grey"))}
-    }
-}
-
-
 @govukLayout(title = Title("registrationPage.title")) {
 
     @pageHeading(messages("registrationPage.title"))
 
-    <h2 class="govuk-heading-s govuk-!-margin-bottom-2">@{if(registration.isRegistrationComplete) messages("registrationPage.subheading.complete")  else messages("registrationPage.subheading.incomplete") }</h2>
-    @paragraphBody(message = messages("registrationPage.completedSections", registration.numberOfCompletedSections), classes = "govuk-body govuk-!-margin-bottom-7")
+    @subHeading(if(registration.isRegistrationComplete) messages("registrationPage.subheading.complete")  else messages("registrationPage.subheading.incomplete"), classes = "govuk-heading-s govuk-!-margin-bottom-2")
+    @paragraphBody(message = messages("registrationPage.completedSections", registration.numberOfCompletedSections, registration.numberOfSections), classes = "govuk-body govuk-!-margin-bottom-7")
 
     <ol class="app-task-list">
 

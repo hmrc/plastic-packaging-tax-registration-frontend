@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  CHARITY_OR_NOT_FOR_PROFIT,
+  CHARITABLE_INCORPORATED_ORGANISATION,
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
@@ -44,8 +44,8 @@ class OrganisationTypeSpec extends AnyWordSpec with Matchers {
       }
 
       "'CHARITY_OR_NOT_FOR_PROFIT' is provided" in {
-        val organisationType = OrganisationType.apply(CHARITY_OR_NOT_FOR_PROFIT.toString)
-        organisationType.answer mustBe Some(CHARITY_OR_NOT_FOR_PROFIT)
+        val organisationType = OrganisationType.apply(CHARITABLE_INCORPORATED_ORGANISATION.toString)
+        organisationType.answer mustBe Some(CHARITABLE_INCORPORATED_ORGANISATION)
       }
 
       "invalid value is provided" in {

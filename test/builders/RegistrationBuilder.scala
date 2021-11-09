@@ -116,6 +116,9 @@ trait RegistrationBuilder {
   def withIncorpJourneyId(incorpJourneyId: Option[String]): RegistrationModifier =
     _.copy(incorpJourneyId = incorpJourneyId)
 
+  def withRegistrationType(regType: RegType): RegistrationModifier =
+    _.copy(registrationType = Some(regType))
+
   def withLiabilityDetails(liabilityDetails: LiabilityDetails): RegistrationModifier =
     _.copy(liabilityDetails = liabilityDetails)
 

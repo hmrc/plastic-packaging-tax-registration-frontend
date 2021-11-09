@@ -62,8 +62,14 @@ class OrganisationDetailsTypeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
-          Future(Ok(page(OrganisationType.form().fill(OrganisationType(Some(data))))))
-        case _ => Future(Ok(page(OrganisationType.form())))
+          Future(
+            Ok(
+              page(OrganisationType.form().fill(OrganisationType(Some(data))),
+                   request.registration.isGroup
+              )
+            )
+          )
+        case _ => Future(Ok(page(OrganisationType.form(), request.registration.isGroup)))
       }
     }
 
@@ -71,38 +77,41 @@ class OrganisationDetailsTypeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       OrganisationType.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[OrganisationType]) => Future(BadRequest(page(formWithErrors))),
-              organisationType =>
-                updateRegistration(organisationType).flatMap {
-                  case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        organisationType.answer match {
-                          case Some(OrgType.UK_COMPANY) =>
-                            getUkCompanyRedirectUrl()
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.SOLE_TRADER)
-                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            getSoleTraderRedirectUrl()
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.REGISTERED_SOCIETY)
-                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            getRegisteredSocietyRedirectUrl()
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(OrgType.PARTNERSHIP)
-                              if !request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta) =>
-                            Future(Redirect(routes.PartnershipTypeController.displayPage()))
-                          case _ =>
-                            Future(
-                              Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
-                            )
-                        }
-                      case _ => Future(Redirect(routes.RegistrationController.displayPage()))
-                    }
-                  case Left(error) => throw error
+        .fold(
+          (formWithErrors: Form[OrganisationType]) =>
+            Future(BadRequest(page(formWithErrors, request.registration.isGroup))),
+          organisationType =>
+            updateRegistration(organisationType).flatMap {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    handleOrganisationType(organisationType)
+                  case _ => Future(Redirect(routes.RegistrationController.displayPage()))
                 }
+              case Left(error) => throw error
+            }
         )
 
+    }
+
+  private def handleOrganisationType(
+    organisationType: OrganisationType
+  )(implicit request: JourneyRequest[AnyContent]) =
+    (organisationType.answer, request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta)) match {
+      case (Some(OrgType.UK_COMPANY), _) =>
+        getUkCompanyRedirectUrl()
+          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+      case (Some(OrgType.SOLE_TRADER), false) =>
+        getSoleTraderRedirectUrl()
+          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+      case (Some(OrgType.REGISTERED_SOCIETY), false) =>
+        getRegisteredSocietyRedirectUrl()
+          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+      case (Some(OrgType.PARTNERSHIP), false) =>
+        // TODO - if this is a group registration then `Partnership` means `Limited liability partnership` so "partnership type" question not needed
+        Future(Redirect(routes.PartnershipTypeController.displayPage()))
+      case _ =>
+        Future(Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad()))
     }
 
   private def getSoleTraderRedirectUrl()(implicit

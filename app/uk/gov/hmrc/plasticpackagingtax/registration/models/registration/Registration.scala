@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
@@ -60,11 +61,15 @@ case class Registration(
           isRegistrationComplete
     ).count(p => p)
 
+  def isGroup: Boolean = registrationType.contains(RegType.GROUP)
+
+  def numberOfSections: Int = if (isGroup) 5 else 4
+
   def isRegistrationComplete: Boolean =
     isCheckAndSubmitReady && metaData.registrationCompleted
 
   def isCheckAndSubmitReady: Boolean =
-    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete
+    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete && isOtherOrganisationsInGroupComplete
 
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
 
@@ -85,6 +90,15 @@ case class Registration(
       TaskStatus.CannotStartYet
     else
       this.primaryContactDetails.status(metaData.emailVerified)
+
+  def isOtherOrganisationsInGroupComplete: Boolean =
+    !isGroup || otherOrganisationsInGroupStatus == TaskStatus.Completed
+
+  def otherOrganisationsInGroupStatus: TaskStatus =
+    if (!isGroup || primaryContactDetailsStatus != TaskStatus.Completed)
+      TaskStatus.CannotStartYet
+    else
+      groupDetail.map(_.status).getOrElse(TaskStatus.NotStarted)
 
   def asCompleted(): Registration =
     this.copy(metaData = this.metaData.copy(registrationCompleted = true))

@@ -29,7 +29,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  CHARITY_OR_NOT_FOR_PROFIT,
+  CHARITABLE_INCORPORATED_ORGANISATION,
   PARTNERSHIP,
   REGISTERED_SOCIETY,
   SOLE_TRADER,
@@ -195,7 +195,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       "throw internal server exception when organisation type does not match" in {
         val registration = aRegistration(
           withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(CHARITY_OR_NOT_FOR_PROFIT))
+            OrganisationDetails(organisationType = Some(CHARITABLE_INCORPORATED_ORGANISATION))
           )
         )
         authorizedUser()

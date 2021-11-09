@@ -20,7 +20,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  CHARITY_OR_NOT_FOR_PROFIT,
+  CHARITABLE_INCORPORATED_ORGANISATION,
   OrgType,
   PARTNERSHIP,
   SOLE_TRADER,
@@ -111,7 +111,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
     "suggest business partner id absent" when {
       "organisation type is unsupported" in {
         OrganisationDetails(organisationType =
-          Some(CHARITY_OR_NOT_FOR_PROFIT)
+          Some(CHARITABLE_INCORPORATED_ORGANISATION)
         ).businessPartnerId mustBe None
       }
 
