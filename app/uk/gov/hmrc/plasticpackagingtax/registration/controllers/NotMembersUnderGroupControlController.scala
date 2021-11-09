@@ -40,7 +40,7 @@ class NotMembersUnderGroupControlController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction) {
-      Redirect(routes.RegistrationController.displayPage())
+      Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
     }
 
 }

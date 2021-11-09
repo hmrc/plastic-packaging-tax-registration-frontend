@@ -95,7 +95,9 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
           controller.submit()(FakeRequest("POST", ""))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          routes.CheckLiabilityDetailsAnswersController.displayPage().url
+        )
       }
     }
   }

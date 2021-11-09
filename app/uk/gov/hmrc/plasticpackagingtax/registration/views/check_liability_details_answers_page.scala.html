@@ -135,6 +135,31 @@
                                 )
                             )
                         ))
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("checkLiabilityDetailsAnswers.membersUnderGroupControl"))
+                        ),
+                        value = Value(
+                            registration.groupDetail match {
+                                case Some(group) =>
+                                  group.membersUnderGroupControl match {
+                                      case Some(true) =>Text(messages("general.true"))
+                                      case Some(false) => Text(messages("general.false"))
+                                      case _ => Empty
+                                  }
+                                case _ => Empty
+                            }
+                        ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = pptRoutes.RegistrationTypeController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.registrationType"))
+                                )
+                            )
+                        ))
                     )
                 ).filterNot(_.value.content == Empty)
             )

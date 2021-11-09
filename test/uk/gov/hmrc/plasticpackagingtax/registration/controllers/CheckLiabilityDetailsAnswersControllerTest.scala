@@ -99,10 +99,27 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)))
         mockRegistrationFind(registration)
-        given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+        given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(
+          HtmlFormat.empty
+        )
         when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
 
         verifyExpectedLinks(backLink = routes.MembersUnderGroupControlController.displayPage().url,
+                            changeLiabilityLink = startLiabilityLink.url
+        )
+      }
+
+      "group registration enabled with no reg type selected" in {
+        authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+
+        val registration = aRegistration(withRegistrationType(None))
+        mockRegistrationFind(registration)
+        given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(
+          HtmlFormat.empty
+        )
+        when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
+
+        verifyExpectedLinks(backLink = routes.RegistrationTypeController.displayPage().url,
                             changeLiabilityLink = startLiabilityLink.url
         )
       }
