@@ -14,32 +14,29 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{Title, TaskSection}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskSection, Title}
 
 @this(
-govukLayout: main_template,
-pageHeading: pageHeading,
-subHeading: subHeading,
-paragraphBody: paragraphBody,
-govukButton: GovukButton,
-task: task,
-link: link,
-liabilityLinkHelper: LiabilityLinkHelper,
-govukTag: GovukTag
+        govukLayout: main_template,
+        pageHeading: pageHeading,
+        subHeading: subHeading,
+        paragraphBody: paragraphBody,
+        govukButton: GovukButton,
+        task: task,
+        link: link,
+        govukTag: GovukTag
 )
 
-@(registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(registration: Registration, liabilityStartLink: Call)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(title = Title("registrationPage.title")) {
 
     @pageHeading(messages("registrationPage.title"))
 
-    @subHeading(if(registration.isRegistrationComplete) messages("registrationPage.subheading.complete")  else messages("registrationPage.subheading.incomplete"), classes = "govuk-heading-s govuk-!-margin-bottom-2")
+    @subHeading(if(registration.isRegistrationComplete) messages("registrationPage.subheading.complete") else messages("registrationPage.subheading.incomplete"), classes = "govuk-heading-s govuk-!-margin-bottom-2")
     @paragraphBody(message = messages("registrationPage.completedSections", registration.numberOfCompletedSections, registration.numberOfSections), classes = "govuk-body govuk-!-margin-bottom-7")
 
     <ol class="app-task-list">
@@ -47,8 +44,8 @@ govukTag: GovukTag
         <li class="app-task">
         @task(1, "registrationPage.task.eligibility.heading", Set(
             TaskSection(
-                title  = "registrationPage.task.eligibility",
-                link   = liabilityLinkHelper.startPage(),
+                title = "registrationPage.task.eligibility",
+                link = liabilityStartLink,
                 status = registration.liabilityDetailsStatus
             )
         ))
@@ -66,8 +63,8 @@ govukTag: GovukTag
         <li class="app-task">
         @task(3, "registrationPage.task.contactDetails.heading.group", Set(
             TaskSection(
-                title  = "registrationPage.task.contactDetails.group",
-                link   = pptRoutes.ContactDetailsFullNameController.displayPage(),
+                title = "registrationPage.task.contactDetails.group",
+                link = pptRoutes.ContactDetailsFullNameController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.primaryContactDetailsStatus
             )
@@ -76,8 +73,8 @@ govukTag: GovukTag
         <li class="app-task">
         @task(4, "registrationPage.task.otherOrganisation.heading", Set(
             TaskSection(
-                title  = "registrationPage.task.otherOrganisation",
-                link   = pptRoutes.RegistrationController.displayPage(), //TODO
+                title = "registrationPage.task.otherOrganisation",
+                link = pptRoutes.RegistrationController.displayPage(), //TODO
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete && registration.isPrimaryContactDetailsComplete,
                 status = registration.otherOrganisationsInGroupStatus
             )
@@ -86,8 +83,8 @@ govukTag: GovukTag
         <li class="app-task">
         @task(5, "registrationPage.task.review.heading", Set(
             TaskSection(
-                title  = "registrationPage.task.review",
-                link   = pptRoutes.ReviewRegistrationController.displayPage(),
+                title = "registrationPage.task.review",
+                link = pptRoutes.ReviewRegistrationController.displayPage(),
                 showLink = registration.isCheckAndSubmitReady,
                 status = registration.checkAndSubmitStatus
             )

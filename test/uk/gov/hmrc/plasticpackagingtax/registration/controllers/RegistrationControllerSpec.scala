@@ -49,7 +49,7 @@ class RegistrationControllerSpec extends ControllerSpec {
     when(singleEntityPage.apply(any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Single Entity Page")
     )
-    when(groupPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Group Page"))
+    when(groupPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Group Page"))
   }
 
   override protected def afterEach(): Unit = {

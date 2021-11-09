@@ -16,19 +16,18 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_page
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   registration_group,
   registration_single_entity
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class RegistrationController @Inject() (
@@ -41,11 +40,10 @@ class RegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(registrationPage(request.registration, startLink))
       if (request.registration.isGroup)
-        Ok(groupPage(request.registration))
+        Ok(groupPage(request.registration, startLink))
       else
-        Ok(singleEntityPage(request.registration))
+        Ok(singleEntityPage(request.registration, startLink))
     }
 
   private def startLink(implicit request: JourneyRequest[AnyContent]) =
