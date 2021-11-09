@@ -25,7 +25,12 @@ import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, MetaData, OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  LiabilityDetails,
+  MetaData,
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_group
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
