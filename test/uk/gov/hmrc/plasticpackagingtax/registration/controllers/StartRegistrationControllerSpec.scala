@@ -20,6 +20,7 @@ import base.unit.ControllerSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
@@ -42,17 +43,25 @@ class StartRegistrationControllerSpec extends ControllerSpec {
     new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc)
 
   "StartRegistrationController" should {
-    "redirect to liability weight capture page" when {
-      "no existing registration" in {
-        authorizedUser()
-        mockRegistrationFind(emptyRegistration)
+    "redirect to first liability check page" when {
+      "no existing registration" when {
+        "preLaunch" in {
+          authorizedUser(features = Map(Features.isPreLaunch -> true))
+          verifyRedirect(routes.LiabilityWeightExpectedController.displayPage().url)
+        }
+        "postLaunch" in {
+          authorizedUser(features = Map(Features.isPreLaunch -> false))
+          verifyRedirect(routes.LiabilityWeightController.displayPage().url)
+        }
 
-        val result = controller.startRegistration()(getRequest())
+        def verifyRedirect(pageUrl: String): Unit = {
+          mockRegistrationFind(emptyRegistration)
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.LiabilityWeightExpectedController.displayPage().url
-        )
+          val result = controller.startRegistration()(getRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(pageUrl)
+        }
       }
     }
     "redirect to task list page" when {

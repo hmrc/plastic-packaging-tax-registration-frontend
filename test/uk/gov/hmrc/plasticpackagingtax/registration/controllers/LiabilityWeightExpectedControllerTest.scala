@@ -25,6 +25,7 @@ import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityExpectedWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_expected_page
@@ -74,58 +75,77 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
-        "user submits the liability total weight" when {
+      "redirect and update registration for " + formAction._1 when {
+        "user selects 'no'" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate()
 
-          "and user selects 'no'" in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate()
+          val correctForm = Seq("answer" -> "no", formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-            val correctForm = Seq("answer" -> "no", formAction)
-            val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          status(result) mustBe SEE_OTHER
 
-            status(result) mustBe SEE_OTHER
+          modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
+            LiabilityExpectedWeight(Some(false), None)
+          )
 
-            modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
-              LiabilityExpectedWeight(Some(false), None)
-            )
-
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
-              case _ =>
-                redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
-            }
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
+            case _ =>
+              redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
           }
-
-          "and weight is greater than minimum weight" in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate()
-
-            val correctForm = Seq("answer" -> "yes", "totalKg" -> "10000", formAction)
-            val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-            status(result) mustBe SEE_OTHER
-
-            modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
-              LiabilityExpectedWeight(Some(true), Some(10000))
-            )
-
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe Some(
-                  routes.RegistrationController.displayPage().url
-                )
-              case _ =>
-                redirectLocation(result) mustBe Some(
-                  routes.RegistrationController.displayPage().url
-                )
-            }
-          }
-
         }
+
+        "group registration enabled and weight is greater than de minimis" in {
+          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> "yes", "totalKg" -> "10000", formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+          status(result) mustBe SEE_OTHER
+
+          modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
+            LiabilityExpectedWeight(Some(true), Some(10000))
+          )
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(
+                routes.RegistrationTypeController.displayPage().url
+              )
+            case _ =>
+              redirectLocation(result) mustBe Some(
+                routes.RegistrationTypeController.displayPage().url
+              )
+          }
+        }
+
+        "group registration not enabled and weight is greater than de minimis" in {
+          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> false))
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> "yes", "totalKg" -> "10000", formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+          status(result) mustBe SEE_OTHER
+
+          modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
+            LiabilityExpectedWeight(Some(true), Some(10000))
+          )
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+            case _ =>
+              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+          }
+        }
+
       }
     }
 

@@ -90,6 +90,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             status(result) mustBe SEE_OTHER
 
             modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
+            modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe None
 
             formAction._1 match {
               case "SaveAndContinue" =>
@@ -112,6 +113,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             status(result) mustBe SEE_OTHER
 
             modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
+            modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
 
             formAction._1 match {
               case "SaveAndContinue" =>

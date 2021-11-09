@@ -17,12 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verifyNoInteractions, when}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   registration_group,
@@ -96,6 +99,30 @@ class RegistrationControllerSpec extends ControllerSpec {
           status(result) mustBe OK
           contentAsString(result) mustBe "Group Page"
         }
+      }
+    }
+
+    "set liability start links" when {
+      mockRegistrationFind(aRegistration())
+      "preLaunch" in {
+        authorizedUser(features = Map(Features.isPreLaunch -> true))
+        verifyStartLink(routes.LiabilityWeightExpectedController.displayPage().url)
+      }
+      "postLaunch" in {
+        authorizedUser(features = Map(Features.isPreLaunch -> false))
+        verifyStartLink(routes.LiabilityWeightController.displayPage().url)
+      }
+
+      def verifyStartLink(startLink: String): Unit = {
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+
+        val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
+
+        verify(singleEntityPage).apply(any(), startLinkCaptor.capture())(any(), any())
+
+        startLinkCaptor.getValue.url mustBe startLink
       }
     }
 
