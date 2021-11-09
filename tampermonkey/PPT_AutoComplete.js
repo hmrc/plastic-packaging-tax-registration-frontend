@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.16
+// @version      14.17
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -351,6 +351,14 @@ const liabilityExpectedWeight = () => {
     }
 }
 
+const registrationType = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/registration-type')) {
+
+        document.getElementById('value').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const liabilityCheckYourAnswers = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/check-plastic-packaging-answers')) {
 
@@ -529,6 +537,7 @@ const completeJourney = () => {
     liabilityWeight()
     liabilityExpectedWeight()
     liabilityCheckYourAnswers()
+    registrationType()
 
     // Primary Contact Details
     primaryContactFullName()
