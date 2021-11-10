@@ -23,9 +23,8 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.groups.OrganisationListController
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
-import uk.gov.hmrc.plasticpackagingtax.registration.views.groups.html.organisation_list
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
 import uk.gov.hmrc.plasticpackagingtax.registration.{controllers => pptControllers}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -144,7 +143,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          pptControllers.groups.routes.OrganisationListController.displayPage().url // TODO fix redirect location
+          pptControllers.group.routes.OrganisationDetailsTypeController.displayPage().url
         )
       }
     }

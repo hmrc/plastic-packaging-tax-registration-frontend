@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.groups
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
@@ -26,11 +26,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.AddOrganisation
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.AddOrganisation.form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation.form
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.groups.html.organisation_list
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
 import uk.gov.hmrc.plasticpackagingtax.registration.{controllers => pptControllers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -49,11 +49,9 @@ class OrganisationListController @Inject() (
         Redirect(pptControllers.routes.RegistrationController.displayPage())
       )(
         detail =>
-          if (
-            detail.members.isEmpty || request.registration.organisationDetails.businessName.isEmpty
-          )
-            // TODO goto select member page
-            Redirect(pptControllers.routes.RegistrationController.displayPage())
+          if (detail.members.isEmpty)
+            // Must add at least one group member to use this page
+            Redirect(pptControllers.group.routes.OrganisationDetailsTypeController.displayPage())
           else
             Ok(
               page(form(),
@@ -79,8 +77,8 @@ class OrganisationListController @Inject() (
             case SaveAndContinue =>
               if (addOrganisation.answer.getOrElse(true))
                 Redirect(
-                  pptControllers.groups.routes.OrganisationListController.displayPage()
-                ) // TODO goto select member page
+                  pptControllers.group.routes.OrganisationDetailsTypeController.displayPage()
+                )
               else Redirect(pptControllers.routes.RegistrationController.displayPage())
             case _ => Redirect(pptControllers.routes.RegistrationController.displayPage())
           }

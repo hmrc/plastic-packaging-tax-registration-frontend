@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.groups
+package uk.gov.hmrc.plasticpackagingtax.registration.views.group
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.AddOrganisation
-import uk.gov.hmrc.plasticpackagingtax.registration.views.groups.html.organisation_list
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
 
 class OrganisationListSpec extends UnitViewSpec with Matchers {
 

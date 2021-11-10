@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.forms.groups
+package uk.gov.hmrc.plasticpackagingtax.registration.forms.group
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}

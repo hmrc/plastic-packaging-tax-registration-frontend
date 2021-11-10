@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.{controllers => pptControllers}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.AddOrganisation
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
@@ -43,7 +43,7 @@ govukSummaryList: GovukSummaryList
 @listofMembers = @{
 
   Seq(ListMember(name = nominatedOrganisation, subHeading = Some(messages("group.organisationList.nominatedOrganisation")))) ++ members.map(member =>
-    ListMember(name = member.businessName, remove = Some(pptControllers.groups.routes.OrganisationListController.submit()))  // TODO - remove links
+    ListMember(name = member.businessName, remove = Some(pptControllers.group.routes.OrganisationListController.submit()))  // TODO - remove links
   )
 }
 
@@ -57,7 +57,7 @@ govukSummaryList: GovukSummaryList
 
     @listMembers(listofMembers)
 
-    @formHelper(action = pptControllers.groups.routes.OrganisationListController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptControllers.group.routes.OrganisationListController.submit(), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
