@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
@@ -66,10 +67,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val contactDetailsPhoneNumberKey = 3
   private val contactDetailsEmailKey       = 4
 
-  private val liabilitySection                          = 0
-  private val liabilityWeightKey                        = 0
-  private val liabilityExpectToExceedThresholdWeightKey = 1
-  private val liabilityDateKey                          = 2
+  private val liabilitySection = 0
+
+  private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
   private def createView(
     reg: Registration = registration,
@@ -77,7 +77,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
     soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
     partnershipDetails: Option[PartnershipDetails] = None
   ): Document =
-    page(reg, ukCompanyDetails, soleTraderDetails)(journeyRequest, messages)
+    page(reg, liabilityStartLink, ukCompanyDetails, soleTraderDetails)(journeyRequest, messages)
 
   "Review registration View" should {
 
@@ -120,10 +120,12 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
           "govuk-summary-list__key"
         ).get(index)
+
       def getValueFor(section: Int, index: Int, view: Document = view) =
         view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
           "govuk-summary-list__value"
         ).get(index).text()
+
       def getChangeLinkFor(section: Int, index: Int, view: Document = view) =
         view.getElementsByClass("govuk-summary-list").get(section).getElementsByClass(
           "govuk-link"
@@ -300,259 +302,109 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         )
       }
 
-      "displaying liability details section with 'isPreLaunch' enabled and  expectToExceedThresholdWeight is true" in {
+      "displaying liability details section during preLaunch" in {
         val liabilityView =
-          page(registration =
-            aRegistration(
-              withLiabilityDetails(
-                LiabilityDetails(expectedWeight =
-                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(1000))),
-                                 isLiable = Some(true),
-                                 expectToExceedThresholdWeight = Some(true)
+          page(
+            registration =
+              aRegistration(
+                withLiabilityDetails(
+                  LiabilityDetails(
+                    expectedWeight =
+                      Some(LiabilityExpectedWeight(Some(true), totalKg = Some(11000))),
+                    isLiable = Some(true)
+                  )
                 )
-              )
-            )
+              ),
+            liabilityStartLink = liabilityStartLink
           )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> true)),
             messages = messages
           )
 
-        getKeyFor(liabilitySection, liabilityWeightKey, liabilityView) must containMessage(
+        getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
           "checkLiabilityDetailsAnswers.weight"
         )
-        getKeyFor(liabilitySection,
-                  liabilityExpectToExceedThresholdWeightKey,
-                  liabilityView
-        ) must containMessage("checkLiabilityDetailsAnswers.future.exceed")
-        getKeyFor(liabilitySection, liabilityDateKey, liabilityView) must containMessage(
+        getKeyFor(liabilitySection, 1, liabilityView) must containMessage(
           "checkLiabilityDetailsAnswers.future.liable"
         )
 
-        getValueFor(liabilitySection, liabilityWeightKey, liabilityView) mustBe "1000 kg"
-        getValueFor(liabilitySection,
-                    liabilityExpectToExceedThresholdWeightKey,
-                    liabilityView
-        ) mustBe "Yes"
-        getValueFor(liabilitySection, liabilityDateKey, liabilityView) mustBe "Yes"
+        getValueFor(liabilitySection, 0, liabilityView) mustBe "11000 kg"
+        getValueFor(liabilitySection, 1, liabilityView) mustBe "Yes"
 
-        getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightExpectedController.displayPage()
-        )
-        getChangeLinkFor(liabilitySection,
-                         liabilityExpectToExceedThresholdWeightKey,
-                         liabilityView
-        ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-        getChangeLinkFor(liabilitySection, liabilityDateKey, liabilityView) must haveHref(
-          routes.LiabilityWeightExpectedController.displayPage()
-        )
+        getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(liabilityStartLink)
+        getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(liabilityStartLink)
       }
 
-      "displaying liability details section with 'isPreLaunch' disabled and expectToExceedThresholdWeight is true" in {
+      "displaying liability details section during postLaunch when <10,000kg but expect to exceed" in {
         val liabilityView =
-          page(registration =
-            aRegistration(
-              withLiabilityDetails(
-                LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(1000))),
-                                 startDate = Some(Date(Some(1), Some(11), Some(2022))),
-                                 expectToExceedThresholdWeight = Some(true)
+          page(
+            registration =
+              aRegistration(
+                withLiabilityDetails(
+                  LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(1000))),
+                                   startDate = Some(Date(Some(1), Some(11), Some(2022))),
+                                   expectToExceedThresholdWeight = Some(true)
+                  )
                 )
-              )
-            )
+              ),
+            liabilityStartLink = liabilityStartLink
           )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
             messages = messages
           )
 
-        getKeyFor(liabilitySection, liabilityWeightKey, liabilityView) must containMessage(
+        getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
           "checkLiabilityDetailsAnswers.weight"
         )
-        getKeyFor(liabilitySection,
-                  liabilityExpectToExceedThresholdWeightKey,
-                  liabilityView
-        ) must containMessage("checkLiabilityDetailsAnswers.future.exceed")
-        getKeyFor(liabilitySection, liabilityDateKey, liabilityView) must containMessage(
+        getKeyFor(liabilitySection, 1, liabilityView) must containMessage(
+          "checkLiabilityDetailsAnswers.future.exceed"
+        )
+        getKeyFor(liabilitySection, 2, liabilityView) must containMessage(
           "checkLiabilityDetailsAnswers.date"
         )
 
-        getValueFor(liabilitySection, liabilityWeightKey, liabilityView) mustBe "1000 kg"
-        getValueFor(liabilitySection,
-                    liabilityExpectToExceedThresholdWeightKey,
-                    liabilityView
-        ) mustBe "Yes"
-        getValueFor(liabilitySection, liabilityDateKey, liabilityView) mustBe "01 Nov 2022"
+        getValueFor(liabilitySection, 0, liabilityView) mustBe "1000 kg"
+        getValueFor(liabilitySection, 1, liabilityView) mustBe "Yes"
+        getValueFor(liabilitySection, 2, liabilityView) mustBe "01 Nov 2022"
 
-        getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightController.displayPage()
+        getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(liabilityStartLink)
+        getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
+          routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
         )
-        getChangeLinkFor(liabilitySection,
-                         liabilityExpectToExceedThresholdWeightKey,
-                         liabilityView
-        ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-        getChangeLinkFor(liabilitySection, liabilityDateKey, liabilityView) must haveHref(
+        getChangeLinkFor(liabilitySection, 2, liabilityView) must haveHref(
           routes.LiabilityStartDateController.displayPage()
         )
       }
 
-      "displaying liability details section with 'isPreLaunch' disabled and expectToExceedThresholdWeight is None" in {
+      "displaying liability details section during postLaunch when >10,000kg" in {
         val liabilityView =
-          page(registration =
-            aRegistration(
-              withLiabilityDetails(
-                LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(10001))),
-                                 startDate = Some(Date(Some(1), Some(11), Some(2022))),
-                                 expectToExceedThresholdWeight = None
+          page(
+            registration =
+              aRegistration(
+                withLiabilityDetails(
+                  LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(11000))),
+                                   startDate = Some(Date(Some(1), Some(11), Some(2022))),
+                                   expectToExceedThresholdWeight = None
+                  )
                 )
-              )
-            )
+              ),
+            liabilityStartLink = liabilityStartLink
           )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
             messages = messages
           )
 
-        getKeyFor(liabilitySection, liabilityWeightKey, liabilityView) must containMessage(
+        getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
           "checkLiabilityDetailsAnswers.weight"
         )
         getKeyFor(liabilitySection, 1, liabilityView) must containMessage(
           "checkLiabilityDetailsAnswers.date"
         )
 
-        getValueFor(liabilitySection, liabilityWeightKey, liabilityView) mustBe "10001 kg"
+        getValueFor(liabilitySection, 0, liabilityView) mustBe "11000 kg"
         getValueFor(liabilitySection, 1, liabilityView) mustBe "01 Nov 2022"
 
-        getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightController.displayPage()
-        )
+        getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(liabilityStartLink)
         getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
           routes.LiabilityStartDateController.displayPage()
         )
-      }
-
-      "displaying liability details section with 'isPreLaunch' enabled and expectToExceedThresholdWeight is false" in {
-        val liabilityView =
-          page(registration =
-            aRegistration(
-              withLiabilityDetails(
-                LiabilityDetails(expectedWeight =
-                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(10001))),
-                                 isLiable = Some(true),
-                                 expectToExceedThresholdWeight = Some(false)
-                )
-              )
-            )
-          )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> true)),
-            messages = messages
-          )
-
-        getKeyFor(liabilitySection, liabilityWeightKey, liabilityView) must containMessage(
-          "checkLiabilityDetailsAnswers.weight"
-        )
-        getKeyFor(liabilitySection,
-                  liabilityExpectToExceedThresholdWeightKey,
-                  liabilityView
-        ) must containMessage("checkLiabilityDetailsAnswers.future.exceed")
-        getKeyFor(liabilitySection, liabilityDateKey, liabilityView) must containMessage(
-          "checkLiabilityDetailsAnswers.future.liable"
-        )
-        getValueFor(liabilitySection, liabilityWeightKey, liabilityView) mustBe "10001 kg"
-        getValueFor(liabilitySection,
-                    liabilityExpectToExceedThresholdWeightKey,
-                    liabilityView
-        ) mustBe "No"
-        getValueFor(liabilitySection, liabilityDateKey, liabilityView) mustBe "Yes"
-
-        getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightExpectedController.displayPage()
-        )
-        getChangeLinkFor(liabilitySection,
-                         liabilityExpectToExceedThresholdWeightKey,
-                         liabilityView
-        ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-        getChangeLinkFor(liabilitySection, liabilityDateKey, liabilityView) must haveHref(
-          routes.LiabilityWeightExpectedController.displayPage()
-        )
-      }
-
-      "displaying liability details section with 'isPreLaunch' enabled and isLiable is false" in {
-        val liabilityView =
-          page(registration =
-            aRegistration(
-              withLiabilityDetails(
-                LiabilityDetails(expectedWeight =
-                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(10001))),
-                                 isLiable = Some(false),
-                                 expectToExceedThresholdWeight = Some(false)
-                )
-              )
-            )
-          )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> true)),
-            messages = messages
-          )
-
-        getKeyFor(liabilitySection, liabilityWeightKey, liabilityView) must containMessage(
-          "checkLiabilityDetailsAnswers.weight"
-        )
-        getKeyFor(liabilitySection,
-                  liabilityExpectToExceedThresholdWeightKey,
-                  liabilityView
-        ) must containMessage("checkLiabilityDetailsAnswers.future.exceed")
-        getKeyFor(liabilitySection, liabilityDateKey, liabilityView) must containMessage(
-          "checkLiabilityDetailsAnswers.future.liable"
-        )
-        getValueFor(liabilitySection, liabilityWeightKey, liabilityView) mustBe "10001 kg"
-        getValueFor(liabilitySection,
-                    liabilityExpectToExceedThresholdWeightKey,
-                    liabilityView
-        ) mustBe "No"
-        getValueFor(liabilitySection, liabilityDateKey, liabilityView) mustBe "No"
-
-        getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightExpectedController.displayPage()
-        )
-        getChangeLinkFor(liabilitySection,
-                         liabilityExpectToExceedThresholdWeightKey,
-                         liabilityView
-        ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-        getChangeLinkFor(liabilitySection, liabilityDateKey, liabilityView) must haveHref(
-          routes.LiabilityWeightExpectedController.displayPage()
-        )
-      }
-
-      "displaying liability details section with 'isPreLaunch' enabled and isLiable is None" in {
-        val liabilityView =
-          page(registration =
-            aRegistration(
-              withLiabilityDetails(
-                LiabilityDetails(expectedWeight =
-                                   Some(LiabilityExpectedWeight(Some(true), totalKg = Some(10001))),
-                                 isLiable = None,
-                                 expectToExceedThresholdWeight = Some(false)
-                )
-              )
-            )
-          )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> true)),
-            messages = messages
-          )
-
-        getKeyFor(liabilitySection, liabilityWeightKey, liabilityView) must containMessage(
-          "checkLiabilityDetailsAnswers.weight"
-        )
-        getKeyFor(liabilitySection,
-                  liabilityExpectToExceedThresholdWeightKey,
-                  liabilityView
-        ) must containMessage("checkLiabilityDetailsAnswers.future.exceed")
-        getKeyFor(liabilitySection, liabilityDateKey, liabilityView) must containMessage(
-          "checkLiabilityDetailsAnswers.future.liable"
-        )
-        getValueFor(liabilitySection, liabilityWeightKey, liabilityView) mustBe "10001 kg"
-        getValueFor(liabilitySection,
-                    liabilityExpectToExceedThresholdWeightKey,
-                    liabilityView
-        ) mustBe "No"
-
-        getChangeLinkFor(liabilitySection, liabilityWeightKey, liabilityView) must haveHref(
-          routes.LiabilityWeightExpectedController.displayPage()
-        )
-        getChangeLinkFor(liabilitySection,
-                         liabilityExpectToExceedThresholdWeightKey,
-                         liabilityView
-        ) must haveHref(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
       }
     }
 
@@ -565,8 +417,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(registration, None, None, None)(journeyRequest, messages)
-    page.render(registration, None, None, None, journeyRequest, messages)
+    page.f(registration, liabilityStartLink, None, None, None)(journeyRequest, messages)
+    page.render(registration, liabilityStartLink, None, None, None, journeyRequest, messages)
   }
 
 }

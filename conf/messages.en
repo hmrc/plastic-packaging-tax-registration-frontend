@@ -128,6 +128,7 @@ checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
 checkLiabilityDetailsAnswers.check.label = Liability details
 checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
 checkLiabilityDetailsAnswers.future.liable = Liable for the Plastic Packaging Tax until at least 1 April 2022
+checkLiabilityDetailsAnswers.registrationType = What you want to register
 
 primaryContactDetails.sectionHeader = Contact details
 
@@ -226,6 +227,10 @@ confirmationPage.whatHappensNext.link = Go to your {0} to find out how to prepar
 confirmationPage.whatHappensNext.link.text = PPT account
 confirmationPage.exitSurvey.link = {0} (Takes 30 seconds)
 confirmationPage.exitSurvey.link.text = What did you think of this service?
+
+registrationType.title = What do you want to register?
+registrationType.singleEntity = A single organisation
+registrationType.group = A group of organisations
 
 organisationDetails.sectionHeader = Organisation details
 organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
