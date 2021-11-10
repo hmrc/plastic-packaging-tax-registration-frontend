@@ -383,3 +383,9 @@ group.membersUnderGroupControl.error.empty = Please select yes or no
 
 group.notMembersUnderGroupControl.title = You can’t apply as a group
 group.notMembersUnderGroupControl.detail = You can apply as a single organisation or partnership.
+
+organisationDetails.other.organisation.sectionHeader = Other organisations in the group
+organisationDetails.other.group.title = What type of organisation is the first one you want to add?
+organisationDetails.type.GroupOverseasCompany = Non-UK company with a branch or place of business in the UK
+organisationDetails.type.GroupOverseasCompanyNoBranchInUK = Non-UK company without a branch or place of business in the UK
+organisationDetails.type.GroupPartnership = Limited liability partnership

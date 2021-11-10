@@ -39,6 +39,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  GroupDetail,
   OrganisationDetails,
   UserEnrolmentDetails
 }
@@ -52,14 +53,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionStatusResponse
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
-import java.time.{ZoneOffset, ZonedDateTime}
 
+import java.time.{ZoneOffset, ZonedDateTime}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   IsUkAddress,
   Postcode,
   PptReference,
   RegistrationDate
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.AddressDetails
 
 import scala.language.implicitConversions
 
@@ -308,6 +310,17 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     postcode = Some(Postcode("AB1 2BC")),
     registrationDate =
       Some(RegistrationDate(DateData("1", "2", "2021")))
+  )
+
+  protected val groupDetails =
+    GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty)
+
+  protected val addressDetails = AddressDetails(addressLine1 = "Street1",
+                                                addressLine2 = "Street2",
+                                                addressLine3 = Some("Street3"),
+                                                addressLine4 = Some("Street4"),
+                                                postalCode = Some("T5 6TA"),
+                                                countryCode = "GB"
   )
 
 }

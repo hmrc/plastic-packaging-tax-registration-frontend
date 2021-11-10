@@ -111,3 +111,6 @@ POST        /group-same-control        uk.gov.hmrc.plasticpackagingtax.registrat
 
 GET        /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotMembersUnderGroupControlController.displayPage()
 POST       /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotMembersUnderGroupControlController.submit()
+
+GET        /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.displayPage()
+POST       /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.submit()
