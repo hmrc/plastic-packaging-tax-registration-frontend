@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType._
 
@@ -63,7 +64,7 @@
 
         @sectionHeader(messages("organisationDetails.other.organisation.sectionHeader"))
 
-        @formHelper(action = pptRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = groupRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
