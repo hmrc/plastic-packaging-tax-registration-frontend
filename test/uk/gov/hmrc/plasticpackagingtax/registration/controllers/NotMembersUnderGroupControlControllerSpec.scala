@@ -22,7 +22,6 @@ import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
@@ -68,26 +67,6 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
 
       "when form is submitted" in {
         authorizedUser()
-
-        val result = controller.submit()(postRequest(JsObject.empty))
-
-        status(result) mustBe SEE_OTHER
-      }
-    }
-
-    "return an error" when {
-
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
-    "redirects to task list page" when {
-      "user submits answers" in {
-        authorizedUser()
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 
@@ -98,6 +77,16 @@ class NotMembersUnderGroupControlControllerSpec extends ControllerSpec {
         redirectLocation(result) mustBe Some(
           routes.CheckLiabilityDetailsAnswersController.displayPage().url
         )
+      }
+    }
+
+    "return an error" when {
+
+      "user is not authorised" in {
+        unAuthorizedUser()
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
       }
     }
   }

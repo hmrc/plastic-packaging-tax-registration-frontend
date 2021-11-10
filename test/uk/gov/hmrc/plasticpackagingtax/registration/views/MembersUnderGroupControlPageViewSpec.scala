@@ -51,7 +51,9 @@ class MembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
+      view.getElementById("back-link") must haveHref(
+        routes.RegistrationTypeController.displayPage()
+      )
     }
 
     "display title" in {
