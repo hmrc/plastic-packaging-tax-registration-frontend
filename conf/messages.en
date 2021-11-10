@@ -13,6 +13,8 @@ site.button.acceptAndSend = Accept and send
 site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 site.link.change = Change
+site.link.remove = Remove
+site.link.remove.hidden = Remove {0} from the list
 site.button.continue = Continue
 site.button.tryAgain = Try again
 
@@ -199,6 +201,13 @@ primaryContactDetails.check.address = Contact address
 primaryContactDetails.check.phoneNumber = Phone number
 primaryContactDetails.check.email = Email address
 
+group.organisationList.sectionHeader = Other organisations in the group
+group.organisationList.title.multiple = You have added {0} organisations
+
+group.organisationList.nominatedOrganisation = Nominated organisation
+
+addOrganisation.add.heading = Do you need to add another organisation?
+addOrganisation.empty.error = Please select Yes or No
 reviewRegistration.organisationDetails.title = Review and send your registration
 reviewRegistration.organisationDetails.check.label = Registered organisation details
 reviewRegistration.organisationDetails.registeredBusinessAddress = Registered Business Address
