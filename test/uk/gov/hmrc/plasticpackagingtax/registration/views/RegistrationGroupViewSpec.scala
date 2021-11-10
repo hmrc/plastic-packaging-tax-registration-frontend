@@ -91,7 +91,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
       "Liability Details 'In Progress'" when {
 
-        val registration = aRegistration(withRegistrationType(GROUP),
+        val registration = aRegistration(withRegistrationType(Some(GROUP)),
                                          withLiabilityDetails(
                                            LiabilityDetails(weight =
                                                               Some(LiabilityWeight(Some(1000))),
@@ -178,7 +178,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
       "Organisation information and Primary Contact details not started" when {
 
-        val registration = aRegistration(withRegistrationType(GROUP),
+        val registration = aRegistration(withRegistrationType(Some(GROUP)),
                                          withLiabilityDetails(
                                            LiabilityDetails(
                                              weight = Some(LiabilityWeight(Some(1000))),
@@ -270,7 +270,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
       "Primary contact email not verified" when {
 
         val registration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(MetaData()))
+          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(MetaData()))
 
         val view: Html =
           createView(registration)
@@ -308,7 +308,9 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val registrationCompletedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completeRegistration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(registrationCompletedMetaData))
+          aRegistration(withRegistrationType(Some(GROUP)),
+                        withMetaData(registrationCompletedMetaData)
+          )
 
         val view: Html =
           createView(completeRegistration)
@@ -395,7 +397,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val inProgressMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = false)
         val inProgressRegistration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(inProgressMetaData))
+          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(inProgressMetaData))
         val view: Html = createView(inProgressRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
@@ -416,7 +418,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val completedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completedRegistration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(completedMetaData))
+          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(completedMetaData))
         val view: Html = createView(completedRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
