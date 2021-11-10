@@ -31,7 +31,9 @@ object OrgType extends Enumeration {
   val TRUST: Value                                = Value("Trust")
   val CHARITABLE_INCORPORATED_ORGANISATION: Value = Value("CIO")
   val OVERSEAS_COMPANY: Value                     = Value("OverseasCompany")
-  def withNameOpt(name: String): Option[Value]    = values.find(_.toString == name)
+  val OVERSEAS_COMPANY_NO_UK_BRANCH: Value        = Value("OverseasCompanyNoUKBranch")
+
+  def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
 
   // TODO - move this to view(s)
   def displayName(orgType: OrgType)(implicit messages: Messages): String =

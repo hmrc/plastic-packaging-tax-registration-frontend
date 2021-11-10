@@ -16,32 +16,31 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.not_members_under_group_control_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class StartRegistrationController @Inject() (
+class NotMembersUnderGroupControlController @Inject() (
   authenticate: AuthAction,
+  mcc: MessagesControllerComponents,
   journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents
-) extends FrontendController(mcc) {
+  page: not_members_under_group_control_page
+) extends FrontendController(mcc) with I18nSupport {
 
-  def startRegistration(): Action[AnyContent] =
+  def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      if (request.registration.isStarted)
-        Redirect(routes.RegistrationController.displayPage())
-      else
-        Redirect(startLink)
+      Ok(page())
     }
 
-  def startLink(implicit request: JourneyRequest[AnyContent]): Call =
-    if (request.isFeatureFlagEnabled(Features.isPreLaunch))
-      routes.LiabilityWeightExpectedController.displayPage()
-    else routes.LiabilityWeightController.displayPage()
+  def submit(): Action[AnyContent] =
+    (authenticate andThen journeyAction) {
+      Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
+    }
 
 }

@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
@@ -41,8 +42,10 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
   private val CHECK_AND_SUBMIT                             = 3
   private val registrationPage: registration_single_entity = instanceOf[registration_single_entity]
 
+  private val liabilityStartLink = Call("GET", "/liabilityStartLink")
+
   private def createView(registration: Registration = aRegistration()): Html =
-    registrationPage(registration)
+    registrationPage(registration, liabilityStartLink)
 
   "Registration Single Entity Page view" should {
 
@@ -115,9 +118,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
-          sectionLink(liabilityElement, 0) must haveHref(
-            routes.LiabilityWeightExpectedController.displayPage()
-          )
+          sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
         "Organisation details" in {
@@ -186,9 +187,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
-          sectionLink(liabilityElement, 0) must haveHref(
-            routes.LiabilityWeightExpectedController.displayPage()
-          )
+          sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
         "Organisation details" in {
@@ -291,9 +290,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
-          sectionLink(liabilityElement, 0) must haveHref(
-            routes.LiabilityWeightExpectedController.displayPage()
-          )
+          sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
         "Organisation details" in {
@@ -377,8 +374,8 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(aRegistration())(journeyRequest, messages)
-    registrationPage.render(aRegistration(), journeyRequest, messages)
+    registrationPage.f(aRegistration(), liabilityStartLink)(journeyRequest, messages)
+    registrationPage.render(aRegistration(), liabilityStartLink, journeyRequest, messages)
   }
 
 }

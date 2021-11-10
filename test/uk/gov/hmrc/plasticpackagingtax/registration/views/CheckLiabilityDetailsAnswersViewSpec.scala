@@ -38,6 +38,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   private val mockAppConfig = mock[AppConfig]
 
+  private val backLink         = Call("GET", "backLink")
+  private val changeWeightLink = Call("GET", "changeWeightLink")
+
   private val page = instanceOf[check_liability_details_answers_page]
 
   private val populatedRegistration   = aRegistration()
@@ -179,14 +182,8 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(populatedRegistration, routes.RegistrationController.displayPage())(journeyRequest,
-                                                                               messages
-    )
-    page.render(populatedRegistration,
-                routes.RegistrationController.displayPage(),
-                journeyRequest,
-                messages
-    )
+    page.f(populatedRegistration, backLink, changeWeightLink)(journeyRequest, messages)
+    page.render(populatedRegistration, backLink, changeWeightLink, journeyRequest, messages)
   }
 
   private def createView(preLaunch: Boolean, reg: Registration, backLink: Call)(implicit
@@ -195,7 +192,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     when(mockAppConfig.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(
       preLaunch
     )
-    page(reg, backLink)(request, messages(request))
+    page(reg, backLink, changeWeightLink)(request, messages(request))
   }
 
   private def assertSummaryRows(view: Document, rows: List[SummaryRowDetail]) = {

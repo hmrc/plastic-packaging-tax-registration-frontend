@@ -17,13 +17,10 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
@@ -33,8 +30,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class StartRegistrationControllerSpec extends ControllerSpec {
 
-  private val mcc            = stubMessagesControllerComponents()
-  private val mockLinkHelper = mock[LiabilityLinkHelper]
+  private val mcc = stubMessagesControllerComponents()
 
   private val emptyRegistration = Registration("123")
 
@@ -44,20 +40,28 @@ class StartRegistrationControllerSpec extends ControllerSpec {
   )
 
   private val controller =
-    new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc, mockLinkHelper)
+    new StartRegistrationController(mockAuthAction, mockJourneyAction, mcc)
 
   "StartRegistrationController" should {
-    "redirect to liability weight capture page" when {
-      "no existing registration" in {
-        authorizedUser()
-        mockRegistrationFind(emptyRegistration)
+    "redirect to first liability check page" when {
+      "no existing registration" when {
+        "preLaunch" in {
+          authorizedUser(features = Map(Features.isPreLaunch -> true))
+          verifyRedirect(routes.LiabilityWeightExpectedController.displayPage().url)
+        }
+        "postLaunch" in {
+          authorizedUser(features = Map(Features.isPreLaunch -> false))
+          verifyRedirect(routes.LiabilityWeightController.displayPage().url)
+        }
 
-        when(mockLinkHelper.startPage()(any())).thenReturn(Call("GET", "/start-url"))
+        def verifyRedirect(pageUrl: String): Unit = {
+          mockRegistrationFind(emptyRegistration)
 
-        val result = controller.startRegistration()(getRequest())
+          val result = controller.startRegistration()(getRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/start-url")
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(pageUrl)
+        }
       }
     }
     "redirect to task list page" when {

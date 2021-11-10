@@ -46,7 +46,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
     when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
     val registration = aRegistration(
-      withGroupDetails(
+      withGroupDetail(
         Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))
       )
     )

@@ -14,12 +14,13 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.{GROUP, SINGLE_ENTITY}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+
 @import java.time.format.DateTimeFormatter
 
 @this(
@@ -30,7 +31,7 @@
         pageHeading: pageHeading,
         saveAndContinue: saveAndContinue
 )
-@(registration: Registration, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration, backLink: Call, changeWeightLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 @govukLayout(
     title = Title("checkLiabilityDetailsAnswers.title"),
@@ -47,12 +48,17 @@
                             content = Text(messages("checkLiabilityDetailsAnswers.weight"))
                         ),
                         value = Value(
-                            content = Text(registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse(""))
+                            content = Text(
+                                if (registration.liabilityDetails.weight.isDefined)
+                                    registration.liabilityDetails.weight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse("")
+                                else
+                                    registration.liabilityDetails.expectedWeight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse("")
+                            )
                         ),
                         actions = Some(Actions(
                             items = Seq(
                                 ActionItem(
-                                    href = pptRoutes.LiabilityWeightController.displayPage().url,
+                                    href = changeWeightLink.url,
                                     content = Text(messages("site.link.change")),
                                     visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.weight"))
                                 )
@@ -64,12 +70,12 @@
                             content = Text(messages("checkLiabilityDetailsAnswers.future.exceed"))
                         ),
                         value = Value(
-                            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
-                              registration.liabilityDetails.expectToExceedThresholdWeight match {
-                                  case Some(true) => Text(messages("general.true"))
-                                  case Some(false) => Text(messages("general.false"))
-                                  case None => Empty
-                              }
+                            content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                                registration.liabilityDetails.expectToExceedThresholdWeight match {
+                                    case Some(true) => Text(messages("general.true"))
+                                    case Some(false) => Text(messages("general.false"))
+                                    case None => Empty
+                                }
                             } else {
                                 registration.liabilityDetails.expectToExceedThresholdWeight match {
                                     case Some(true) => Text(messages("general.true"))
@@ -93,7 +99,7 @@
                             content = Text(messages("checkLiabilityDetailsAnswers.date"))
                         ),
                         value = Value(
-                            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                            content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                                 Empty
                             } else {
                                 Text(registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
@@ -105,6 +111,52 @@
                                     href = pptRoutes.LiabilityStartDateController.displayPage().url,
                                     content = Text(messages("site.link.change")),
                                     visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.date"))
+                                )
+                            )
+                        ))
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("checkLiabilityDetailsAnswers.registrationType"))
+                        ),
+                        value = Value(
+                            registration.registrationType match {
+                                case Some(GROUP) => Text(messages("registrationType.group"))
+                                case Some(SINGLE_ENTITY) => Text(messages("registrationType.singleEntity"))
+                                case _ => Empty
+                            }
+                        ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = pptRoutes.RegistrationTypeController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.registrationType"))
+                                )
+                            )
+                        ))
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("checkLiabilityDetailsAnswers.membersUnderGroupControl"))
+                        ),
+                        value = Value(
+                            registration.groupDetail match {
+                                case Some(group) =>
+                                  group.membersUnderGroupControl match {
+                                      case Some(true) =>Text(messages("general.true"))
+                                      case Some(false) => Text(messages("general.false"))
+                                      case _ => Empty
+                                  }
+                                case _ => Empty
+                            }
+                        ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = pptRoutes.MembersUnderGroupControlController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("checkLiabilityDetailsAnswers.registrationType"))
                                 )
                             )
                         ))

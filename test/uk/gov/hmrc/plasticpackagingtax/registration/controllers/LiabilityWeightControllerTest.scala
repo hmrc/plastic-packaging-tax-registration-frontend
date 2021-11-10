@@ -19,40 +19,31 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{reset, when}
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class LiabilityWeightControllerTest extends ControllerSpec {
 
-  private val page                = mock[liability_weight_page]
-  private val mcc                 = stubMessagesControllerComponents()
-  private val liabilityLinkHelper = mock[LiabilityLinkHelper]
+  private val page = mock[liability_weight_page]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
     new LiabilityWeightController(authenticate = mockAuthAction,
                                   mockJourneyAction,
                                   mockRegistrationConnector,
                                   mcc = mcc,
-                                  page = page,
-                                  liabilityLinkHelper = liabilityLinkHelper
+                                  page = page
     )
-
-  def mockLiabilityLinkHelperNextPage(link: Call): OngoingStubbing[Call] =
-    when(liabilityLinkHelper.nextPage()(any()))
-      .thenReturn(link)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -92,7 +83,6 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             authorizedUser()
             mockRegistrationFind(aRegistration())
             mockRegistrationUpdate()
-            mockLiabilityLinkHelperNextPage(routes.LiabilityStartDateController.displayPage())
 
             val result =
               controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))
@@ -100,6 +90,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             status(result) mustBe SEE_OTHER
 
             modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
+            modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe None
 
             formAction._1 match {
               case "SaveAndContinue" =>
@@ -122,6 +113,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
             status(result) mustBe SEE_OTHER
 
             modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
+            modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
 
             formAction._1 match {
               case "SaveAndContinue" =>

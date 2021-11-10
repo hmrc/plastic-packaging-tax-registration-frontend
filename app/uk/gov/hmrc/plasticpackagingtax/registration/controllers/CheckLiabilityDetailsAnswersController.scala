@@ -17,12 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.check_liability_details_answers_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -32,18 +31,28 @@ class CheckLiabilityDetailsAnswersController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  page: check_liability_details_answers_page,
-  liabilityLinkHelper: LiabilityLinkHelper
-) extends FrontendController(mcc) with I18nSupport {
+  startRegistrationController: StartRegistrationController,
+  page: check_liability_details_answers_page
+) extends LiabilityController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration, liabilityLinkHelper.nextPage))
+      Ok(page(request.registration, backLink, startRegistrationController.startLink))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { _ =>
       Future.successful(Redirect(routes.RegistrationController.displayPage()))
     }
+
+  private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
+    if (isGroupRegistrationEnabled)
+      request.registration.registrationType match {
+        case Some(regType) if regType == RegType.GROUP =>
+          routes.MembersUnderGroupControlController.displayPage()
+        case _ => routes.RegistrationTypeController.displayPage()
+      }
+    else
+      routes.LiabilityStartDateController.displayPage()
 
 }

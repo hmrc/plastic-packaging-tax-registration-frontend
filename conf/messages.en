@@ -130,6 +130,8 @@ checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
 checkLiabilityDetailsAnswers.check.label = Liability details
 checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
 checkLiabilityDetailsAnswers.future.liable = Liable for the Plastic Packaging Tax until at least 1 April 2022
+checkLiabilityDetailsAnswers.registrationType = What you want to register
+checkLiabilityDetailsAnswers.membersUnderGroupControl = Group under same control
 
 primaryContactDetails.sectionHeader = Contact details
 
@@ -235,6 +237,10 @@ confirmationPage.whatHappensNext.link = Go to your {0} to find out how to prepar
 confirmationPage.whatHappensNext.link.text = PPT account
 confirmationPage.exitSurvey.link = {0} (Takes 30 seconds)
 confirmationPage.exitSurvey.link.text = What did you think of this service?
+
+registrationType.title = What do you want to register?
+registrationType.singleEntity = A single organisation
+registrationType.group = A group of organisations
 
 organisationDetails.sectionHeader = Organisation details
 organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
@@ -380,3 +386,15 @@ enrolment.not.verified.detail2 = Try again
 verify.organisation.title = We need to ask some questions to verify the organisation
 verify.organisation.detail.1 = You will be asked to give details you many hold about the business.
 verify.organisation.detail.2 = We ask these questions to protect against malicious or fraudulent attempts to access the service.
+
+group.membersUnderGroupControl.title = Are all the organisations in the group under the same control?
+group.membersUnderGroupControl.error.empty = Please select yes or no
+
+group.notMembersUnderGroupControl.title = You can’t apply as a group
+group.notMembersUnderGroupControl.detail = You can apply as a single organisation or partnership.
+
+organisationDetails.other.organisation.sectionHeader = Other organisations in the group
+organisationDetails.other.group.title = What type of organisation is the first one you want to add?
+organisationDetails.type.GroupOverseasCompany = Non-UK company with a branch or place of business in the UK
+organisationDetails.type.GroupOverseasCompanyNoBranchInUK = Non-UK company without a branch or place of business in the UK
+organisationDetails.type.GroupPartnership = Limited liability partnership

@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.GROUP
@@ -43,8 +44,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
   private val CHECK_AND_SUBMIT                     = 4
   private val registrationPage: registration_group = instanceOf[registration_group]
 
+  private val liabilityStartLink = Call("GET", "/liabilityStartLink")
+
   private def createView(registration: Registration = aRegistration()): Html =
-    registrationPage(registration)
+    registrationPage(registration, liabilityStartLink)
 
   "Registration Group Page view" should {
 
@@ -88,7 +91,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
       "Liability Details 'In Progress'" when {
 
-        val registration = aRegistration(withRegistrationType(GROUP),
+        val registration = aRegistration(withRegistrationType(Some(GROUP)),
                                          withLiabilityDetails(
                                            LiabilityDetails(weight =
                                                               Some(LiabilityWeight(Some(1000))),
@@ -120,9 +123,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
-          sectionLink(liabilityElement, 0) must haveHref(
-            routes.LiabilityWeightExpectedController.displayPage()
-          )
+          sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
         "Nominated organisation details" in {
@@ -177,7 +178,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
       "Organisation information and Primary Contact details not started" when {
 
-        val registration = aRegistration(withRegistrationType(GROUP),
+        val registration = aRegistration(withRegistrationType(Some(GROUP)),
                                          withLiabilityDetails(
                                            LiabilityDetails(
                                              weight = Some(LiabilityWeight(Some(1000))),
@@ -209,9 +210,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
-          sectionLink(liabilityElement, 0) must haveHref(
-            routes.LiabilityWeightExpectedController.displayPage()
-          )
+          sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
         "Nominated organisation details" in {
@@ -271,7 +270,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
       "Primary contact email not verified" when {
 
         val registration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(MetaData()))
+          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(MetaData()))
 
         val view: Html =
           createView(registration)
@@ -309,7 +308,9 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val registrationCompletedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completeRegistration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(registrationCompletedMetaData))
+          aRegistration(withRegistrationType(Some(GROUP)),
+                        withMetaData(registrationCompletedMetaData)
+          )
 
         val view: Html =
           createView(completeRegistration)
@@ -336,9 +337,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
           sectionStatus(liabilityElement, 0) mustBe messages("task.status.completed")
-          sectionLink(liabilityElement, 0) must haveHref(
-            routes.LiabilityWeightExpectedController.displayPage()
-          )
+          sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
         "Nominated organisation details" in {
@@ -398,7 +397,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val inProgressMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = false)
         val inProgressRegistration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(inProgressMetaData))
+          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(inProgressMetaData))
         val view: Html = createView(inProgressRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
@@ -419,7 +418,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val completedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completedRegistration =
-          aRegistration(withRegistrationType(GROUP), withMetaData(completedMetaData))
+          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(completedMetaData))
         val view: Html = createView(completedRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
@@ -438,8 +437,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(aRegistration())(journeyRequest, messages)
-    registrationPage.render(aRegistration(), journeyRequest, messages)
+    registrationPage.f(aRegistration(), liabilityStartLink)(journeyRequest, messages)
+    registrationPage.render(aRegistration(), liabilityStartLink, journeyRequest, messages)
   }
 
 }
