@@ -29,14 +29,24 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY, OVERSEAS_COMPANY_NO_UK_BRANCH, OrgType, PARTNERSHIP, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+  CHARITABLE_INCORPORATED_ORGANISATION,
+  OVERSEAS_COMPANY,
+  OVERSEAS_COMPANY_NO_UK_BRANCH,
+  OrgType,
+  PARTNERSHIP,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupMember, OrganisationDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  GroupMember,
+  OrganisationDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class OrganisationDetailsTypeControllerSpec extends ControllerSpec  {
+class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
   private val mcc  = stubMessagesControllerComponents()
 
@@ -110,10 +120,17 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec  {
       }
 
       def assertRedirectForOrgType(orgType: OrgType, redirectUrl: String): Unit = {
-        val groupDetails = GroupDetail(membersUnderGroupControl = Some(true), members = Seq(
-          GroupMember(customerIdentification1 = "", customerIdentification2 = None,
-            organisationDetails = Some(OrganisationDetails(orgType.toString, "")), addressDetails = addressDetails)
-        ))
+        val groupDetails = GroupDetail(membersUnderGroupControl = Some(true),
+                                       members = Seq(
+                                         GroupMember(customerIdentification1 = "",
+                                                     customerIdentification2 = None,
+                                                     organisationDetails = Some(
+                                                       OrganisationDetails(orgType.toString, "")
+                                                     ),
+                                                     addressDetails = addressDetails
+                                         )
+                                       )
+        )
         authorizedUser()
         mockRegistrationFind(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
         mockRegistrationUpdate()
