@@ -16,52 +16,49 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorpEntityGrsCreateRequest, SoleTraderGrsCreateRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  RegisteredSocietyGrsConnector,
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OrganisationDetailsTypeController @Inject()(
+class OrganisationDetailsTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  appConfig: AppConfig,
-  soleTraderGrsConnector: SoleTraderGrsConnector,
-  ukCompanyGrsConnector: UkCompanyGrsConnector,
-  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  override val appConfig: AppConfig,
+  override val soleTraderGrsConnector: SoleTraderGrsConnector,
+  override val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: organisation_type
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport
+    with OrganisationDetailsTypeHelper {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.organisationDetails.organisationType match {
-        case Some(data) =>
-          Future(
-            Ok(
-              page(form = OrganisationType.form().fill(OrganisationType(Some(data))),
-                   isGroup = request.registration.isGroup,
-                   isGroupMember = true
-              )
-            )
-          )
-        case _ => Future(Ok(page(form = OrganisationType.form(), isGroup = request.registration.isGroup, isGroupMember = true)))
-      }
+      Future(Ok(page(form = OrganisationType.form())))
     }
 
   def submit(): Action[AnyContent] =
@@ -70,7 +67,7 @@ class OrganisationDetailsTypeController @Inject()(
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
-            Future(BadRequest(page(form = formWithErrors, isGroup = request.registration.isGroup, isGroupMember = true))),
+            Future(BadRequest(page(form = formWithErrors))),
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
@@ -82,52 +79,7 @@ class OrganisationDetailsTypeController @Inject()(
               case Left(error) => throw error
             }
         )
-
     }
-
-  private def handleOrganisationType(
-    organisationType: OrganisationType
-  )(implicit request: JourneyRequest[AnyContent]) =
-    (organisationType.answer, request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta)) match {
-      case (Some(OrgType.UK_COMPANY), _) =>
-        getUkCompanyRedirectUrl()
-          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.SOLE_TRADER), false) =>
-        getSoleTraderRedirectUrl()
-          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.REGISTERED_SOCIETY), false) =>
-        getRegisteredSocietyRedirectUrl()
-          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.PARTNERSHIP), false) =>
-        // TODO - if this is a group registration then `Partnership` means `Limited liability partnership` so "partnership type" question not needed
-        Future(Redirect(pptRoutes.PartnershipTypeController.displayPage()))
-      case _ =>
-        Future(Redirect(pptRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
-    }
-
-  private def getSoleTraderRedirectUrl()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(appConfig.grsCallbackUrl,
-                                 Some(request2Messages(request)("service.name")),
-                                 appConfig.serviceIdentifier,
-                                 appConfig.externalSignOutLink
-      )
-    )
-
-  private def incorpEntityGrsCreateRequest(implicit request: Request[_]) =
-    IncorpEntityGrsCreateRequest(appConfig.grsCallbackUrl,
-                                 Some(request2Messages(request)("service.name")),
-                                 appConfig.serviceIdentifier,
-                                 appConfig.externalSignOutLink
-    )
-
-  private def getUkCompanyRedirectUrl()(implicit request: Request[_]): Future[String] =
-    ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
-
-  private def getRegisteredSocietyRedirectUrl()(implicit request: Request[_]): Future[String] =
-    registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
 
   private def updateRegistration(
     formData: OrganisationType

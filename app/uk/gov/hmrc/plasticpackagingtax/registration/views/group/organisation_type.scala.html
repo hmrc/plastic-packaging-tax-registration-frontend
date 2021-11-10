@@ -30,15 +30,13 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[OrganisationType], isGroup: Boolean)(implicit request: Request[_], messages: Messages)
-
-    @title = @{ if(isGroup) "organisationDetails.type.group.title" else "organisationDetails.type.title" }
-    @section = @{ if(isGroup) "organisationDetails.nominated.organisation.sectionHeader" else "organisationDetails.sectionHeader" }
+@(form: Form[OrganisationType])(implicit request: Request[_], messages: Messages)
 
     @displayName(orgType: OrgType) = @{ messages(
       orgType match {
-          case OVERSEAS_COMPANY if isGroup => "organisationDetails.type.GroupNominatedOverseasCompany"
-          case PARTNERSHIP if isGroup => "organisationDetails.type.GroupNominatedPartnership"
+          case OVERSEAS_COMPANY => "organisationDetails.type.GroupOverseasCompany"
+          case OVERSEAS_COMPANY_NO_UK_BRANCH => "organisationDetails.type.GroupOverseasCompanyNoBranchInUK"
+          case PARTNERSHIP  => "organisationDetails.type.GroupPartnership"
           case _ => s"organisationDetails.type.$orgType"
       }
     )
@@ -49,38 +47,28 @@
     }
 
     @organisationRadios = @{
-      if(isGroup)
           Seq(
               radioItem(UK_COMPANY),
               radioItem(PARTNERSHIP),
               radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
-              radioItem(OVERSEAS_COMPANY)
-          )
-      else
-          Seq(
-              radioItem(UK_COMPANY),
               radioItem(OVERSEAS_COMPANY),
-              radioItem(PARTNERSHIP),
-              radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
-              radioItem(REGISTERED_SOCIETY),
-              radioItem(SOLE_TRADER),
-              radioItem(TRUST)
+              radioItem(OVERSEAS_COMPANY_NO_UK_BRANCH)
           )
     }
 
     @govukLayout(
-        title = Title(title),
+        title = Title("organisationDetails.other.group.title"),
         backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 
-        @sectionHeader(messages(section))
+        @sectionHeader(messages("organisationDetails.other.organisation.sectionHeader"))
 
         @formHelper(action = pptRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(messages(title)),
+                        content = Text(messages("organisationDetails.other.group.title")),
                         classes = gdsFieldsetPageHeading,
                         isPageHeading = true
                     ))
