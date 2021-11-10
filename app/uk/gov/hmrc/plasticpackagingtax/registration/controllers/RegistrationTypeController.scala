@@ -60,10 +60,12 @@ class RegistrationTypeController @Inject() (
               registration => registration.copy(registrationType = registrationType.value)
             ).map {
               case Right(registration) =>
-                if (registration.registrationType.get == RegType.GROUP)
-                  Redirect(routes.MembersUnderGroupControlController.displayPage().url)
-                else
-                  Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
+                registration.registrationType match {
+                  case Some(regType) if regType == RegType.GROUP =>
+                    Redirect(routes.MembersUnderGroupControlController.displayPage().url)
+                  case _ =>
+                    Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
+                }
               case Left(error) => throw error
             }
         )
