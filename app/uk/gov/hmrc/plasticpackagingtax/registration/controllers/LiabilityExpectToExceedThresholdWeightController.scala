@@ -25,12 +25,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_expect_to_exceed_threshold_weight_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,10 +39,9 @@ class LiabilityExpectToExceedThresholdWeightController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: liability_expect_to_exceed_threshold_weight_page,
-  liabilityLinkHelper: LiabilityLinkHelper
+  page: liability_expect_to_exceed_threshold_weight_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
@@ -74,7 +71,7 @@ class LiabilityExpectToExceedThresholdWeightController @Inject() (
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     if (processMoreWeight.answer.getOrElse(false))
-                      Redirect(liabilityLinkHelper.nextPage)
+                      Redirect(routes.LiabilityStartDateController.displayPage())
                     else Redirect(routes.NotLiableController.displayPage())
                   case _ => Redirect(routes.RegistrationController.displayPage())
                 }

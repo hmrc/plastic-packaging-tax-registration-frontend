@@ -17,8 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -27,25 +28,24 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class LiabilityStartDateControllerTest extends ControllerSpec {
 
-  private val page                    = mock[liability_start_date_page]
-  private val mcc                     = stubMessagesControllerComponents()
-  private val liabilityBacklinkHelper = mock[LiabilityLinkHelper]
+  private val page = mock[liability_start_date_page]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
     new LiabilityStartDateController(authenticate = mockAuthAction,
                                      mockJourneyAction,
                                      mockRegistrationConnector,
                                      mcc = mcc,
-                                     page = page,
-                                     liabilityBacklinkHelper = liabilityBacklinkHelper
+                                     page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -86,28 +86,77 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
-        "user submits the liability start date" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
-          val result =
-            controller.submit()(postRequestEncoded(Date(Some(1), Some(6), Some(2022)), formAction))
-
-          status(result) mustBe SEE_OTHER
-
-          modifiedRegistration.liabilityDetails.startDate mustBe Some(
-            Date(Some(1), Some(6), Some(2022))
+    "set expected back links" when {
+      authorizedUser()
+      "weight above threshold" in {
+        mockRegistrationFind(
+          aRegistration(
+            withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(12000)))))
           )
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.CheckLiabilityDetailsAnswersController.displayPage().url
-              )
-            case _ =>
-              redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
-          }
+        )
+
+        verifyBackLink(routes.LiabilityWeightController.displayPage())
+      }
+      "weight below threshold" in {
+        mockRegistrationFind(
+          aRegistration(
+            withLiabilityDetails(LiabilityDetails(weight = Some(LiabilityWeight(Some(8000)))))
+          )
+        )
+
+        verifyBackLink(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
+      }
+
+      def verifyBackLink(backLink: Call): Unit = {
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+
+        val backLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
+
+        verify(page).apply(any(), backLinkCaptor.capture())(any(), any())
+        backLinkCaptor.getValue mustBe backLink
+      }
+
+    }
+
+    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
+      "update registration and redirect on " + formAction._1 when {
+        "groups enabled" in {
+          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+
+          verifyRegistrationUpdateAndRedirect(routes.RegistrationTypeController.displayPage().url,
+                                              routes.RegistrationController.displayPage().url
+          )(formAction)
+        }
+        "groups not enabled" in {
+          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> false))
+
+          verifyRegistrationUpdateAndRedirect(
+            routes.CheckLiabilityDetailsAnswersController.displayPage().url,
+            routes.RegistrationController.displayPage().url
+          )(formAction)
+        }
+      }
+
+      def verifyRegistrationUpdateAndRedirect(
+        saveAndContinueRedirectUrl: String,
+        saveAndComeBackLaterRedirectUrl: String
+      )(implicit formAction: (String, String)): Unit = {
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+
+        val result =
+          controller.submit()(postRequestEncoded(Date(Some(1), Some(6), Some(2022)), formAction))
+
+        status(result) mustBe SEE_OTHER
+
+        modifiedRegistration.liabilityDetails.startDate mustBe Some(
+          Date(Some(1), Some(6), Some(2022))
+        )
+        formAction._1 match {
+          case "SaveAndContinue" => redirectLocation(result) mustBe Some(saveAndContinueRedirectUrl)
+          case _                 => redirectLocation(result) mustBe Some(saveAndComeBackLaterRedirectUrl)
         }
       }
     }

@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import java.util.UUID
-
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -27,6 +25,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
+import play.api.mvc.Call
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
@@ -51,10 +50,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import java.util.UUID
+
 class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
-  private val mockReviewRegistrationPage    = mock[review_registration_page]
-  private val mockDuplicateSubscriptionPage = mock[duplicate_subscription_page]
-  private val mcc                           = stubMessagesControllerComponents()
+  private val mockReviewRegistrationPage      = mock[review_registration_page]
+  private val mockDuplicateSubscriptionPage   = mock[duplicate_subscription_page]
+  private val mcc                             = stubMessagesControllerComponents()
+  private val mockStartRegistrationController = mock[StartRegistrationController]
+  private val liabilityStartLink              = Call("GET", "/startRegistrationLink")
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,
@@ -64,7 +67,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
                                      subscriptionsConnector = mockSubscriptionsConnector,
                                      auditor = mockAuditor,
                                      reviewRegistrationPage = mockReviewRegistrationPage,
-                                     metrics = metricsMock
+                                     metrics = metricsMock,
+                                     startRegistrationController = mockStartRegistrationController
     )
 
   override protected def beforeEach(): Unit = {
@@ -72,10 +76,11 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
     val registration = aRegistration()
 
     mockRegistrationFind(registration)
-    given(mockReviewRegistrationPage.apply(any(), any(), any(), any())(any(), any())).willReturn(
-      HtmlFormat.empty
-    )
+    given(
+      mockReviewRegistrationPage.apply(any(), any(), any(), any(), any())(any(), any())
+    ).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockStartRegistrationController.startLink(any())).willReturn(liabilityStartLink)
   }
 
   override protected def afterEach(): Unit = {
@@ -114,6 +119,8 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
 
         status(result) mustBe OK
         verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(registration),
+                                                 liabilityStartLink =
+                                                   ArgumentMatchers.eq(liabilityStartLink),
                                                  incorporationDetails = ArgumentMatchers.eq(
                                                    registration.organisationDetails.incorporationDetails
                                                  ),

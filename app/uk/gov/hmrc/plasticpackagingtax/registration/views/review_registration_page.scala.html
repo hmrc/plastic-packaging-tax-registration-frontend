@@ -14,21 +14,16 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.SoleTraderIncorporationDetails
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.helpers.LiabilityLinkHelper
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-@import java.time.format.DateTimeFormatter
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorporationDetails, PartnershipDetails, SoleTraderIncorporationDetails}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+
+@import java.time.format.DateTimeFormatter
 
 @this(
     formHelper: FormWithCSRF,
@@ -37,12 +32,12 @@
     pageHeading: pageHeading,
     saveAndContinue: saveAndContinue,
     paragraphBody: paragraphBody,
-    liabilityLinkHelper: LiabilityLinkHelper,
     appConfig: AppConfig
 )
 
 @(
     registration: Registration,
+    liabilityStartLink: Call,
     incorporationDetails: Option[IncorporationDetails] = None,
     soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
     partnershipDetails: Option[PartnershipDetails] = None
@@ -93,6 +88,7 @@
         )))
     )
 }
+
 @expectToExceedThresholdWeightRow() = @{
     rowWithValue(
         key = "checkLiabilityDetailsAnswers.future.exceed",
@@ -128,7 +124,7 @@
                 Empty
             }
         ),
-        call = Some(liabilityLinkHelper.startPage())
+        call = Some(liabilityStartLink)
     )
 }
 
@@ -141,7 +137,7 @@
                 Text(registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
             }
         ),
-        call = Some(liabilityLinkHelper.startPage())
+        call = Some(liabilityStartLink)
     )
 }
 
@@ -157,6 +153,7 @@
         call = Some(pptRoutes.LiabilityStartDateController.displayPage())
     )
 }
+
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
