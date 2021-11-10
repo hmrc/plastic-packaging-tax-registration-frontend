@@ -129,6 +129,7 @@ checkLiabilityDetailsAnswers.check.label = Liability details
 checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
 checkLiabilityDetailsAnswers.future.liable = Liable for the Plastic Packaging Tax until at least 1 April 2022
 checkLiabilityDetailsAnswers.registrationType = What you want to register
+checkLiabilityDetailsAnswers.membersUnderGroupControl = Group under same control
 
 primaryContactDetails.sectionHeader = Contact details
 
@@ -376,3 +377,9 @@ enrolment.not.verified.detail2 = Try again
 verify.organisation.title = We need to ask some questions to verify the organisation
 verify.organisation.detail.1 = You will be asked to give details you many hold about the business.
 verify.organisation.detail.2 = We ask these questions to protect against malicious or fraudulent attempts to access the service.
+
+group.membersUnderGroupControl.title = Are all the organisations in the group under the same control?
+group.membersUnderGroupControl.error.empty = Please select yes or no
+
+group.notMembersUnderGroupControl.title = You can’t apply as a group
+group.notMembersUnderGroupControl.detail = You can apply as a single organisation or partnership.

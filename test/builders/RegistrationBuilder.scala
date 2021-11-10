@@ -150,4 +150,7 @@ trait RegistrationBuilder {
         )
       )
 
+  def withGroupDetail(groupDetail: Option[GroupDetail]): RegistrationModifier =
+    registration => registration.copy(groupDetail = groupDetail)
+
 }

@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegistrationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{RegType, RegistrationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_type_page
@@ -59,8 +59,13 @@ class RegistrationTypeController @Inject() (
             update(
               registration => registration.copy(registrationType = registrationType.value)
             ).map {
-              case Right(_) =>
-                Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
+              case Right(registration) =>
+                registration.registrationType match {
+                  case Some(regType) if regType == RegType.GROUP =>
+                    Redirect(routes.MembersUnderGroupControlController.displayPage().url)
+                  case _ =>
+                    Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage().url)
+                }
               case Left(error) => throw error
             }
         )
