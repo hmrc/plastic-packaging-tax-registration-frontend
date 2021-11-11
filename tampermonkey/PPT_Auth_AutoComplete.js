@@ -29,16 +29,16 @@ function pptPanel() {
 
     // create array of options to be added
     let text = [
+        "Uk Company Private Beta",
         "Pre-Launch",
         "Post-Launch",
-        "Uk Company Private Beta",
         "Pre-Launch Groups",
         "Post-Launch Groups"
     ];
     let value = [
+        "test.ukCompanyPrivateBeta@ppt.test",
         "test.preLaunch@ppt.test",
         "test.postLaunch@ppt.test",
-        "test.ukCompanyPrivateBeta@ppt.test",
         "test.preLaunchGroupRegistration@ppt.test",
         "test.postLaunchGroupRegistration@ppt.test"
     ]
