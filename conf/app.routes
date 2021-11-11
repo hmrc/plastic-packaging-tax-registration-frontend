@@ -69,6 +69,9 @@ POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controll
 
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationTypeNotSupportedController.onPageLoad()
 
+GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
+POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
+
 GET        /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.displayPage()
 POST       /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.submit()
 
