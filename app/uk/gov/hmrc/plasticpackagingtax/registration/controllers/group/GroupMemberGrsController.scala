@@ -41,12 +41,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-object RegistrationStatus extends Enumeration {
-  type RegistrationStatus = Value
-
-  val STATUS_OK: Value = Value
-}
-
 @Singleton
 class GroupMemberGrsController @Inject() (
   authenticate: AuthAction,

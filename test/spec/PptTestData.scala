@@ -342,12 +342,12 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                                 countryCode = "GB"
   )
 
-  protected val groupMemberDetailsUKCompany: GroupMember =
-    GroupMember(customerIdentification1 = testCompanyNumber,
-                customerIdentification2 = Some(testUtr),
-                organisationDetails =
-                  Some(groupOrganisationDetails(UK_COMPANY.toString, testCompanyName)),
-                testCompanyAddress.toGroupAddressDetails
-    )
+  protected val groupMemberDetailsUKCompany: GroupMember = GroupMember(
+    customerIdentification1 = testCompanyNumber,
+    customerIdentification2 = Some(testUtr),
+    organisationDetails =
+      Some(GroupOrgDetails(UK_COMPANY.toString, testCompanyName)),
+    addressDetails = testCompanyAddress.toGroupAddressDetails
+  )
 
 }

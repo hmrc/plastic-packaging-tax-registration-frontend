@@ -76,7 +76,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
         val memberDetails = getLastSavedRegistration.groupDetail.get.members.last
 
-        memberDetails mustBe groupMemberDetailsUKCompany
+        memberDetails.organisationDetails mustBe groupMemberDetailsUKCompany.organisationDetails
+        memberDetails.addressDetails mustBe groupMemberDetailsUKCompany.addressDetails
       }
     }
 
