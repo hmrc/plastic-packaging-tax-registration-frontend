@@ -93,7 +93,11 @@ class OrganisationDetailsTypeController @Inject() (
       val member = GroupMember(customerIdentification1 = "",
                                customerIdentification2 = None,
                                organisationDetails =
-                                 Some(OrganisationDetails(formData.answer.toString, "")),
+                                 Some(
+                                   OrganisationDetails(organisationType = formData.answer.toString,
+                                                       organisationName = ""
+                                   )
+                                 ),
                                addressDetails = AddressDetails("", "", None, None, None, "")
       )
       val members: Option[Seq[GroupMember]] = registration.groupDetail.map(_.members :+ member)
