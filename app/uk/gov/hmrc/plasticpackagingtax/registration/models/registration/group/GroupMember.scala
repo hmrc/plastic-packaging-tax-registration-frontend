@@ -19,12 +19,20 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
 
+import java.util.UUID
+
 case class GroupMember(
+  id: String = UUID.randomUUID().toString,
   customerIdentification1: String,
-  customerIdentification2: Option[String],
-  organisationDetails: Option[OrganisationDetails],
+  customerIdentification2: Option[String] = None,
+  organisationDetails: Option[OrganisationDetails] = None,
   addressDetails: AddressDetails
-)
+) {
+
+  lazy val businessName: String =
+    organisationDetails.map(_.organisationName).getOrElse("No business name")
+
+}
 
 object GroupMember {
   implicit val format: OFormat[GroupMember] = Json.format[GroupMember]

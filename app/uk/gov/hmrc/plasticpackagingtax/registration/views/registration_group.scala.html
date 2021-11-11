@@ -75,7 +75,7 @@
         @task(4, "registrationPage.task.otherOrganisation.heading", Set(
             TaskSection(
                 title = "registrationPage.task.otherOrganisation",
-                link = groupRoutes.OrganisationDetailsTypeController.displayPage(),
+                link = groupRoutes.OrganisationListController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete && registration.isPrimaryContactDetailsComplete,
                 status = registration.otherOrganisationsInGroupStatus
             )

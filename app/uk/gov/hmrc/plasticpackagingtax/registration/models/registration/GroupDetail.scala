@@ -28,7 +28,10 @@ case class GroupDetail(
 ) {
 
   def status: TaskStatus =
-    TaskStatus.NotStarted // TODO calculate status based on group members and "do you want to add another" answer
+    if (members.isEmpty)
+      TaskStatus.NotStarted
+    else TaskStatus.Completed
+
 }
 
 object GroupDetail {
