@@ -92,8 +92,16 @@ class GroupMemberGrsController @Inject() (
       result <- update { registration =>
         val updatedGroupDetails: GroupDetail = registration.groupDetail match {
           case Some(groupDetail) =>
-            val members: Seq[GroupMember] = groupDetail.members :+ addGroupMember(details, orgType)
-            groupDetail.copy(members = members, currentMemberOrganisationType = None)
+            val member = addGroupMember(details, orgType)
+            val isMemberAlreadyPresent: Boolean = groupDetail.members.exists(
+              m => m.customerIdentification1.equals(member.customerIdentification1)
+            )
+            if (!isMemberAlreadyPresent) {
+              val members: Seq[GroupMember] = groupDetail.members :+ member
+              groupDetail.copy(members = members, currentMemberOrganisationType = None)
+            } else
+              groupDetail
+
           case None => throw new InternalServerException(s"No group detail")
         }
         registration.copy(groupDetail = Some(updatedGroupDetails))

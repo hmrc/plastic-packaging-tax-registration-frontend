@@ -80,6 +80,31 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
       }
     }
 
+    "not store business enity information " when {
+      "registering UK Limited Company with same company number" in {
+        authorizedUser()
+        mockGetUkCompanyDetails(incorporationDetails)
+        val registration = aRegistration(
+          withGroupDetail(
+            Some(
+              GroupDetail(membersUnderGroupControl = Some(true),
+                          members = Seq(groupMember),
+                          currentMemberOrganisationType = Some(OrgType.UK_COMPANY)
+              )
+            )
+          )
+        )
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+
+        await(controller.grsCallback(registration.incorpJourneyId.get)(getRequest()))
+
+        val membersListSize: Int = getLastSavedRegistration.groupDetail.get.members.size
+
+        membersListSize mustBe 1
+      }
+    }
+
     "throw exception" when {
       "organisation type is invalid" in {
         authorizedUser()

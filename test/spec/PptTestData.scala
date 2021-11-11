@@ -318,7 +318,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
       Some(RegistrationDate(DateData("1", "2", "2021")))
   )
 
-  protected val groupMember = GroupMember(customerIdentification1 = "id1",
+  protected val groupMember = GroupMember(customerIdentification1 = testCompanyNumber,
                                           customerIdentification2 = Some("id2"),
                                           organisationDetails =
                                             Some(GroupOrgDetails("UkCompany", "Company Name")),
