@@ -18,7 +18,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Date,
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
@@ -46,6 +50,18 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
               LiabilityDetails(startDate = None, weight = Some(LiabilityWeight(Some(4000))))
             liabilityDetails.status mustBe TaskStatus.InProgress
           }
+
+          "and 'is liable' has been answered with false" in {
+            val liabilityDetails =
+              LiabilityDetails(isLiable = Some(false), weight = Some(LiabilityWeight(Some(12000))))
+            liabilityDetails.status mustBe TaskStatus.InProgress
+          }
+
+          "and weight is less than limit" in {
+            val liabilityDetails =
+              LiabilityDetails(isLiable = Some(true), weight = Some(LiabilityWeight(Some(1000))))
+            liabilityDetails.status mustBe TaskStatus.InProgress
+          }
         }
 
         "and 'isPreLaunch' flag is disabled" when {
@@ -67,18 +83,31 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
 
     "be COMPLETED " when {
       "and 'isPreLaunch' flag is enabled" when {
-        "and liability details are all filled in" in {
+        "and liability details are all correctly filled in" in {
           val liabilityDetails =
-            LiabilityDetails(isLiable = Some(false), weight = Some(LiabilityWeight(Some(4000))))
+            LiabilityDetails(startDate =
+                               Some(Date(Some(1), Some(5), Some(2022))),
+                             expectedWeight =
+                               Some(LiabilityExpectedWeight(Some(true), Some(10000))),
+                             isLiable = Some(true)
+            )
           liabilityDetails.status mustBe TaskStatus.Completed
         }
       }
 
       "and 'isPreLaunch' flag is disabled" when {
-        "and liability details are all filled in" in {
+        "and liability details are all correctly filled in for weight existing exceeding" in {
           val liabilityDetails = LiabilityDetails(startDate =
                                                     Some(Date(Some(1), Some(5), Some(2022))),
-                                                  weight = Some(LiabilityWeight(Some(4000)))
+                                                  weight = Some(LiabilityWeight(Some(10000)))
+          )
+          liabilityDetails.status mustBe TaskStatus.Completed
+        }
+        "and liability details are all correctly filled in for weight expected to exceed" in {
+          val liabilityDetails = LiabilityDetails(startDate =
+                                                    Some(Date(Some(1), Some(5), Some(2022))),
+                                                  weight = Some(LiabilityWeight(Some(1000))),
+                                                  expectToExceedThresholdWeight = Some(true)
           )
           liabilityDetails.status mustBe TaskStatus.Completed
         }

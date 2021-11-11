@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityExpectedWeight.weightThresholdKg
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
 import scala.util.Try
@@ -29,13 +29,14 @@ case class LiabilityExpectedWeight(
   totalKg: Option[Long]
 ) {
 
-  def overLiabilityThreshold: Boolean = totalKg.exists(_ >= weightThresholdKg)
+  def overLiabilityThreshold: Boolean =
+    totalKg.exists(_ >= LiabilityDetails.minimumLiabilityWeightKg)
+
 }
 
 object LiabilityExpectedWeight extends CommonFormValues {
   implicit val format: OFormat[LiabilityExpectedWeight] = Json.format[LiabilityExpectedWeight]
 
-  val weightThresholdKg         = 10000L
   val maxTotalKg                = 100000000 // one hundred million
   val answer                    = "answer"
   val totalKg                   = "totalKg"
@@ -53,7 +54,9 @@ object LiabilityExpectedWeight extends CommonFormValues {
     weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
 
   private val weightAboveThreshold: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= weightThresholdKg
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(
+      weight
+    ) >= LiabilityDetails.minimumLiabilityWeightKg
 
   private val weightWithinRange: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg

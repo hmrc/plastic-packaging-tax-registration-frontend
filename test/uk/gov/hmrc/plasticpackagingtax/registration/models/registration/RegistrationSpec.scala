@@ -20,7 +20,12 @@ import builders.RegistrationBuilder
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
+  Date,
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class RegistrationSpec
@@ -132,6 +137,59 @@ class RegistrationSpec
                        LiabilityDetails(weight = Some(LiabilityWeight(Some(12000))))
         ).isStarted mustBe true
       }
+    }
+  }
+
+  "Registration liability status" should {
+
+    val completedLiabilityDetails =
+      LiabilityDetails(startDate =
+                         Some(Date(Some(1), Some(5), Some(2022))),
+                       expectedWeight =
+                         Some(LiabilityExpectedWeight(Some(true), Some(10000))),
+                       isLiable = Some(true)
+      )
+    completedLiabilityDetails.isCompleted mustBe true
+
+    "be complete for single organisation registration with completed liability details" in {
+      Registration(id = "123",
+                   liabilityDetails =
+                     completedLiabilityDetails
+      ).liabilityDetailsStatus mustBe TaskStatus.Completed
+    }
+
+    "be in progress for single organisation registration with incomplete liability details" in {
+      Registration(id = "123",
+                   liabilityDetails =
+                     completedLiabilityDetails.copy(expectedWeight = None)
+      ).liabilityDetailsStatus mustBe TaskStatus.InProgress
+    }
+
+    "be complete for group registration with under group control set to 'true'" in {
+      Registration(id = "123",
+                   liabilityDetails =
+                     completedLiabilityDetails,
+                   registrationType = Some(GROUP),
+                   groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(true)))
+      ).liabilityDetailsStatus mustBe TaskStatus.Completed
+    }
+
+    "be in progress for group registration with under group control set to 'false'" in {
+      Registration(id = "123",
+                   liabilityDetails =
+                     completedLiabilityDetails,
+                   registrationType = Some(GROUP),
+                   groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(false)))
+      ).liabilityDetailsStatus mustBe TaskStatus.InProgress
+    }
+
+    "be in progress for group registration with under group control un-answered" in {
+      Registration(id = "123",
+                   liabilityDetails =
+                     completedLiabilityDetails,
+                   registrationType = Some(GROUP),
+                   groupDetail = Some(GroupDetail(membersUnderGroupControl = None))
+      ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
   }
 }

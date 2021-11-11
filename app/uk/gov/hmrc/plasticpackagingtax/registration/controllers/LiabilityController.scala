@@ -18,13 +18,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.mvc.{AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 abstract class LiabilityController(mcc: MessagesControllerComponents)
     extends FrontendController(mcc) {
 
-  protected val deMinimisKg = 10000
+  protected val deMinimisKg: Long = LiabilityDetails.minimumLiabilityWeightKg
 
   protected def isPreLaunch(implicit request: JourneyRequest[AnyContent]) =
     request.isFeatureFlagEnabled(Features.isPreLaunch)
