@@ -56,7 +56,7 @@ class GroupMemberGrsController @Inject() (
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {
           case Right(_) =>
-            Future.successful(Redirect(routes.OrganisationDetailsTypeController.displayPage()))
+            Future.successful(Redirect(routes.OrganisationListController.displayPage()))
           case Left(error) => throw error
         }
     }

@@ -63,9 +63,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
         val result = simulateLimitedCompanyCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.OrganisationDetailsTypeController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(routes.OrganisationListController.displayPage().url)
       }
 
     }
