@@ -57,9 +57,9 @@ class OrganisationListControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "Organisation list controller" should {
+  "Organisation list controller when displaying page" should {
 
-    "return 200" when {
+    "return 200 (Ok)" when {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
@@ -70,9 +70,9 @@ class OrganisationListControllerSpec extends ControllerSpec {
       }
     }
 
-    "return 303" when {
+    "return 303 (Re-direct to task list)" when {
 
-      "no group members exist" in {
+      "group details do not exist" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
         val result = controller.displayPage()(getRequest())
@@ -85,16 +85,22 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
     }
 
-    "return 400" when {
+    "return 303 (Re-direct to add first group member)" when {
 
-      "user does not make a selection" in {
+      "group member list is empty" in {
         authorizedUser()
+        val registration = aRegistration(
+          withGroupDetail(
+            Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty))
+          )
+        )
+        mockRegistrationFind(registration)
+        val result = controller.displayPage()(getRequest())
 
-        val correctForm = Seq("addOrganisation" -> "", saveAndContinueFormAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-        status(result) mustBe BAD_REQUEST
-
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          pptControllers.group.routes.OrganisationDetailsTypeController.displayPage().url
+        )
       }
 
     }
@@ -107,6 +113,24 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
         intercept[RuntimeException](status(result))
       }
+    }
+
+  }
+
+  "Organisation list controller when submitting answer" should {
+
+    "return 400 (Bad request)" when {
+
+      "user does not make a selection" in {
+        authorizedUser()
+
+        val correctForm = Seq("addOrganisation" -> "", saveAndContinueFormAction)
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) mustBe BAD_REQUEST
+
+      }
+
     }
 
     "redirects to registration page" when {
@@ -147,6 +171,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
         )
       }
     }
+
   }
 
 }
