@@ -25,12 +25,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  MetaData,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_group
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -94,7 +89,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(withRegistrationType(Some(GROUP)),
                                          withLiabilityDetails(
                                            LiabilityDetails(weight =
-                                                              Some(LiabilityWeight(Some(1000))),
+                                                              Some(LiabilityWeight(Some(10000))),
                                                             startDate = None
                                            )
                                          ),
@@ -179,9 +174,12 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
       "Organisation information and Primary Contact details not started" when {
 
         val registration = aRegistration(withRegistrationType(Some(GROUP)),
+                                         withGroupDetail(
+                                           Some(GroupDetail(membersUnderGroupControl = Some(true)))
+                                         ),
                                          withLiabilityDetails(
                                            LiabilityDetails(
-                                             weight = Some(LiabilityWeight(Some(1000))),
+                                             weight = Some(LiabilityWeight(Some(10000))),
                                              startDate = Some(Date(Some(1), Some(4), Some(2022)))
                                            )
                                          ),
@@ -270,7 +268,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
       "Primary contact email not verified" when {
 
         val registration =
-          aRegistration(withRegistrationType(Some(GROUP)), withMetaData(MetaData()))
+          aRegistration(withRegistrationType(Some(GROUP)),
+                        withMetaData(MetaData()),
+                        withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
+          )
 
         val view: Html =
           createView(registration)
@@ -309,7 +310,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completeRegistration =
           aRegistration(withRegistrationType(Some(GROUP)),
-                        withMetaData(registrationCompletedMetaData)
+                        withMetaData(registrationCompletedMetaData),
+                        withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
           )
 
         val view: Html =

@@ -28,9 +28,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityExpectedWeigh
   weightDecimalError,
   weightEmptyError,
   weightFormatError,
-  weightOutOfRangeError,
-  weightThresholdKg
+  weightOutOfRangeError
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 
 class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
 
@@ -48,7 +48,8 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
 
       "is exactly min allowed amount" in {
 
-        val input = Map(answer -> "yes", totalKg -> weightThresholdKg.toString)
+        val input =
+          Map(answer -> "yes", totalKg -> LiabilityDetails.minimumLiabilityWeightKg.toString)
 
         val form = LiabilityExpectedWeight.form().bind(input)
         form.errors.size mustBe 0
@@ -99,7 +100,8 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
 
       "contains total less than minimum allowed weight" in {
 
-        val input          = Map(answer -> "yes", totalKg -> (weightThresholdKg - 1).toString)
+        val input =
+          Map(answer -> "yes", totalKg -> (LiabilityDetails.minimumLiabilityWeightKg - 1).toString)
         val expectedErrors = Seq(FormError("totalKg", weightBelowThresholdError))
 
         testFailedValidationErrors(input, expectedErrors)

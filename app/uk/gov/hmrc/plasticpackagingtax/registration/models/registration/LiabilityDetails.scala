@@ -22,6 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   LiabilityExpectedWeight,
   LiabilityWeight
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails.minimumLiabilityWeightKg
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class LiabilityDetails(
@@ -32,8 +33,21 @@ case class LiabilityDetails(
   expectToExceedThresholdWeight: Option[Boolean] = None
 ) {
 
+  private def prelaunchCompleted: Boolean =
+    isLiable.contains(true) && expectedWeight.exists(
+      expectedWeight =>
+        expectedWeight.expectToExceedThresholdWeight.contains(
+          true
+        ) && expectedWeight.overLiabilityThreshold
+    )
+
+  private def postLaunchComplete: Boolean =
+    weight.flatMap(_.totalKg).exists(
+      _ >= minimumLiabilityWeightKg
+    ) || expectToExceedThresholdWeight.contains(true)
+
   def isCompleted: Boolean =
-    expectedWeight.isDefined || (weight.isDefined && (startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined))
+    startDate.nonEmpty && (prelaunchCompleted || postLaunchComplete)
 
   def isInProgress: Boolean =
     weight.isDefined || startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined
@@ -47,4 +61,6 @@ case class LiabilityDetails(
 
 object LiabilityDetails {
   implicit val format: OFormat[LiabilityDetails] = Json.format[LiabilityDetails]
+
+  val minimumLiabilityWeightKg: Long = 10000L
 }

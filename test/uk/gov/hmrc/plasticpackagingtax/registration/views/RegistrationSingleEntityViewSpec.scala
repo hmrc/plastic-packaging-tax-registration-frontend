@@ -158,7 +158,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
+            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
                              startDate = Some(Date(Some(1), Some(4), Some(2022)))
             )
           ),

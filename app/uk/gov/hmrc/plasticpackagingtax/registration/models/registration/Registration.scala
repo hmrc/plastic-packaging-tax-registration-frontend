@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.{GROUP, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class Registration(
@@ -81,7 +81,12 @@ case class Registration(
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
   def liabilityDetailsStatus: TaskStatus =
-    this.liabilityDetails.status
+    if (this.liabilityDetails.isCompleted && registrationType.contains(GROUP))
+      if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
+        TaskStatus.Completed
+      else TaskStatus.InProgress
+    else
+      this.liabilityDetails.status
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
 
