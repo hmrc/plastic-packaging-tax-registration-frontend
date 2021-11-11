@@ -27,6 +27,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
 
+  private val belowWeightThreshold = 9999
+  private val atWeightThreshold    = 10000
+  private val aboveWeightThreshold = 10001
+
   "Liability Details TaskStatus" should {
 
     "be NOT_STARTED " when {
@@ -47,19 +51,25 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
 
           "and only liability weight has been answered" in {
             val liabilityDetails =
-              LiabilityDetails(startDate = None, weight = Some(LiabilityWeight(Some(4000))))
+              LiabilityDetails(startDate = None,
+                               weight = Some(LiabilityWeight(Some(aboveWeightThreshold)))
+              )
             liabilityDetails.status mustBe TaskStatus.InProgress
           }
 
           "and 'is liable' has been answered with false" in {
             val liabilityDetails =
-              LiabilityDetails(isLiable = Some(false), weight = Some(LiabilityWeight(Some(12000))))
+              LiabilityDetails(isLiable = Some(false),
+                               weight = Some(LiabilityWeight(Some(aboveWeightThreshold)))
+              )
             liabilityDetails.status mustBe TaskStatus.InProgress
           }
 
           "and weight is less than limit" in {
             val liabilityDetails =
-              LiabilityDetails(isLiable = Some(true), weight = Some(LiabilityWeight(Some(1000))))
+              LiabilityDetails(isLiable = Some(true),
+                               weight = Some(LiabilityWeight(Some(belowWeightThreshold)))
+              )
             liabilityDetails.status mustBe TaskStatus.InProgress
           }
         }
@@ -73,7 +83,9 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
 
           "and only liability weight has been answered" in {
             val liabilityDetails =
-              LiabilityDetails(startDate = None, weight = Some(LiabilityWeight(Some(4000))))
+              LiabilityDetails(startDate = None,
+                               weight = Some(LiabilityWeight(Some(aboveWeightThreshold)))
+              )
             liabilityDetails.status mustBe TaskStatus.InProgress
           }
         }
@@ -88,7 +100,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
             LiabilityDetails(startDate =
                                Some(Date(Some(1), Some(5), Some(2022))),
                              expectedWeight =
-                               Some(LiabilityExpectedWeight(Some(true), Some(10000))),
+                               Some(LiabilityExpectedWeight(Some(true), Some(atWeightThreshold))),
                              isLiable = Some(true)
             )
           liabilityDetails.status mustBe TaskStatus.Completed
@@ -99,16 +111,18 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         "and liability details are all correctly filled in for weight existing exceeding" in {
           val liabilityDetails = LiabilityDetails(startDate =
                                                     Some(Date(Some(1), Some(5), Some(2022))),
-                                                  weight = Some(LiabilityWeight(Some(10000)))
+                                                  weight =
+                                                    Some(LiabilityWeight(Some(atWeightThreshold)))
           )
           liabilityDetails.status mustBe TaskStatus.Completed
         }
         "and liability details are all correctly filled in for weight expected to exceed" in {
-          val liabilityDetails = LiabilityDetails(startDate =
-                                                    Some(Date(Some(1), Some(5), Some(2022))),
-                                                  weight = Some(LiabilityWeight(Some(1000))),
-                                                  expectToExceedThresholdWeight = Some(true)
-          )
+          val liabilityDetails =
+            LiabilityDetails(startDate =
+                               Some(Date(Some(1), Some(5), Some(2022))),
+                             weight = Some(LiabilityWeight(Some(belowWeightThreshold))),
+                             expectToExceedThresholdWeight = Some(true)
+            )
           liabilityDetails.status mustBe TaskStatus.Completed
         }
       }
