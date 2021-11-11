@@ -68,12 +68,14 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
         Future(Redirect(pptRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
     }
 
+  def grsCallbackUrl(): String
+
   private def getSoleTraderRedirectUrl()(implicit
     request: JourneyRequest[AnyContent],
     headerCarrier: HeaderCarrier
   ): Future[String] =
     soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(appConfig.grsCallbackUrl,
+      SoleTraderGrsCreateRequest(grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.externalSignOutLink
@@ -81,7 +83,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
     )
 
   private def incorpEntityGrsCreateRequest(implicit request: Request[_]) =
-    IncorpEntityGrsCreateRequest(appConfig.grsCallbackUrl,
+    IncorpEntityGrsCreateRequest(grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.externalSignOutLink
