@@ -383,3 +383,6 @@ group.membersUnderGroupControl.error.empty = Please select yes or no
 
 group.notMembersUnderGroupControl.title = You can’t apply as a group
 group.notMembersUnderGroupControl.detail = You can apply as a single organisation or partnership.
+
+group.removeMember.title = Are you sure you want to remove {0} from the group?
+group.removeMember.error.empty = Please select Yes or No
