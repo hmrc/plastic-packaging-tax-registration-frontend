@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.groups
+package uk.gov.hmrc.plasticpackagingtax.registration.views.group
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.{NO, YES}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.RemoveMember
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.RemoveMember.form
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.groups.remove_group_member_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.remove_group_member_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 import java.util.UUID
@@ -54,8 +53,7 @@ class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
       view.getElementById("back-link") must haveHref(
-        // TODO: update back link
-        pptRoutes.RegistrationController.displayPage()
+        routes.OrganisationListController.displayPage()
       )
     }
 
@@ -96,8 +94,8 @@ class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form(), memberName, memberId)(journeyRequest, messages)
-    page.render(form(), memberName, memberId, journeyRequest, messages)
+    page.f(RemoveMember.form(), memberName, memberId)(journeyRequest, messages)
+    page.render(RemoveMember.form(), memberName, memberId, journeyRequest, messages)
   }
 
 }

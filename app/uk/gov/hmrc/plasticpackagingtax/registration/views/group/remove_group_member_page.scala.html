@@ -14,10 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.groups.{routes => pptGroupRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.{NO, YES}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.RemoveMember
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -38,13 +37,12 @@
 @removeMember = @{form("value")}
 
 @govukLayout(
-  title = Title("group.removeMember.title"),
-  // TODO: update back link
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText", memberName)))) {
+  title = Title("group.removeMember.title", memberName),
+  backButton = Some(BackButton(messages("site.back"), routes.OrganisationListController.displayPage(), messages("site.back.hiddenText", memberName)))) {
 
     @errorSummary(form.errors)
 
-    @formHelper(action = pptGroupRoutes.RemoveMemberController.submit(memberId), 'autoComplete -> "off") {
+    @formHelper(action = routes.RemoveMemberController.submit(memberId), 'autoComplete -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

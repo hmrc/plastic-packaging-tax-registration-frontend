@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.forms.groups
+package uk.gov.hmrc.plasticpackagingtax.registration.forms.group
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
-import play.api.libs.json.{Format, Reads, Writes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.{NO, YES}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType.emptyError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.RegType
 
 case class RemoveMember(value: Option[Boolean])
 

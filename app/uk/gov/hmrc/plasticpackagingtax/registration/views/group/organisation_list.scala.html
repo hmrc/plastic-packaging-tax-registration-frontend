@@ -43,7 +43,7 @@ govukSummaryList: GovukSummaryList
 @listofMembers = @{
 
   Seq(ListMember(name = nominatedOrganisation, subHeading = Some(messages("group.organisationList.nominatedOrganisation")))) ++ members.map(member =>
-    ListMember(name = member.businessName, remove = Some(pptControllers.group.routes.OrganisationListController.submit()))  // TODO - remove links
+    ListMember(name = member.businessName, remove = Some(pptControllers.group.routes.RemoveMemberController.submit(member.id)))
   )
 }
 

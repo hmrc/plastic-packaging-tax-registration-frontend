@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.groups
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.Logger
 import play.api.data.Form
@@ -22,11 +22,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.groups.RemoveMember
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.groups.remove_group_member_page
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.remove_group_member_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -49,7 +48,7 @@ class RemoveMemberController @Inject() (
       getGroupMemberName(groupMemberId) match {
         case Some(groupMemberName) => Ok(page(RemoveMember.form(), groupMemberName, groupMemberId))
         case _ =>
-          Redirect(pptRoutes.RegistrationController.displayPage()) // TODO: group members list
+          Redirect(routes.OrganisationListController.displayPage())
       }
 
     }
@@ -68,36 +67,28 @@ class RemoveMemberController @Inject() (
                   case Some(true) =>
                     removeGroupMember(groupMemberId).map {
                       case Right(_) =>
-                        Redirect(
-                          routes.RemoveMemberController.displayPage(groupMemberId)
-                        ) // TODO: group members list
-                      case _ =>
+                        Redirect(routes.OrganisationListController.displayPage())
+                      case Left(error) =>
                         logger.warn(
-                          s"Failed to remove group member [$groupMemberName] with id [$groupMemberId]"
+                          s"Failed to remove group member [$groupMemberName] with id [$groupMemberId] - ${error.getMessage}",
+                          error
                         )
-                        Redirect(
-                          routes.RemoveMemberController.displayPage(groupMemberId)
-                        ) // TODO: group members list
+                        Redirect(routes.OrganisationListController.displayPage())
                     }
                   case _ =>
-                    Future.successful(
-                      Redirect(
-                        routes.RemoveMemberController.displayPage(groupMemberId)
-                      ) // TODO: group members list
-                    )
+                    Future.successful(Redirect(routes.OrganisationListController.displayPage()))
                 }
             )
+        case _ => Future.successful(Redirect(routes.OrganisationListController.displayPage()))
       }
     }
 
   private def getGroupMemberName(
     groupMemberId: String
   )(implicit request: JourneyRequest[AnyContent]): Option[String] =
-    Some("Plastic Packaging Subsidiary")
-
-//    request.registration.groupDetail
-//      .flatMap(_.members.find(_.id == groupMemberId))
-//      .flatMap(_.organisationDetails.map(_.organisationName))
+    request.registration.groupDetail
+      .flatMap(_.members.find(_.id == groupMemberId))
+      .flatMap(_.organisationDetails.map(_.organisationName))
 
   private def removeGroupMember(
     groupMemberId: String

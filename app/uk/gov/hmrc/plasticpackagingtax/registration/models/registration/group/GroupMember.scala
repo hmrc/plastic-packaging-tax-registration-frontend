@@ -18,8 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
 
+import java.util.UUID
+
 case class GroupMember(
-  id: String,
+  id: String = UUID.randomUUID().toString,
   customerIdentification1: String,
   customerIdentification2: Option[String] = None,
   organisationDetails: Option[OrganisationDetails] = None,
