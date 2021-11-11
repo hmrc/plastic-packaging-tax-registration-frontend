@@ -45,8 +45,8 @@ case class IncorporationAddressDetails(
 
   def toPptAddress =
     this.premises match {
-      case Some(value) =>
-        Address(addressLine1 = value.trim,
+      case Some(premises) =>
+        Address(addressLine1 = premises.trim,
                 addressLine2 = this.address_line_1.getOrElse("").trim,
                 addressLine3 = Some(this.address_line_2.getOrElse("").trim),
                 townOrCity = this.locality.getOrElse("").trim,
@@ -62,8 +62,8 @@ case class IncorporationAddressDetails(
 
   def toGroupAddressDetails: AddressDetails =
     this.premises match {
-      case Some(value) =>
-        AddressDetails(addressLine1 = value.trim,
+      case Some(premises) =>
+        AddressDetails(addressLine1 = premises.trim,
                        addressLine2 = this.address_line_1.getOrElse("").trim,
                        addressLine3 = Some(this.address_line_2.getOrElse("").trim),
                        addressLine4 = Some(this.locality.getOrElse("").trim),
