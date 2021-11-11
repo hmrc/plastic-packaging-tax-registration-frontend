@@ -93,7 +93,7 @@ class GroupMemberGrsController @Inject() (
         val updatedGroupDetails: GroupDetail = registration.groupDetail match {
           case Some(value) =>
             val members: Seq[GroupMember] = value.members :+ addGroupMember(details, orgType)
-            value.copy(members = members)
+            value.copy(members = members, currentMemberOrganisationType = None)
           case None => throw new InternalServerException(s"No group detail")
         }
         registration.copy(groupDetail = Some(updatedGroupDetails))
