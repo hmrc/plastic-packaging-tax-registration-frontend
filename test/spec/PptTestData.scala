@@ -61,8 +61,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   PptReference,
   RegistrationDate
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.AddressDetails
-
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  AddressDetails,
+  GroupMember,
+  OrganisationDetails => groupOrganisationDetails
+}
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
@@ -322,5 +325,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                                 postalCode = Some("T5 6TA"),
                                                 countryCode = "GB"
   )
+
+  protected val groupMemberDetailsUKCompany: GroupMember =
+    GroupMember(customerIdentification1 = testCompanyNumber,
+                customerIdentification2 = Some(testUtr),
+                organisationDetails =
+                  Some(groupOrganisationDetails(UK_COMPANY.toString, testCompanyName)),
+                testCompanyAddress.toGroupAddressDetails
+    )
 
 }
