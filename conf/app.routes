@@ -69,9 +69,6 @@ POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controll
 
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.OrganisationTypeNotSupportedController.onPageLoad()
 
-GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
-POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
-
 GET        /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.displayPage()
 POST       /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.submit()
 
@@ -117,6 +114,9 @@ POST       /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registrati
 
 GET        /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.displayPage()
 POST       /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.submit()
+
+GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
+POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
 
 GET        /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.displayPage(memberId)
 POST       /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.submit(memberId)
