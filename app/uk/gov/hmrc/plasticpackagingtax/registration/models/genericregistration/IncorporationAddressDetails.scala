@@ -43,11 +43,8 @@ case class IncorporationAddressDetails(
     )
       .filter(_.nonEmpty).mkString("<br>")
 
-  def toPptAddress = {
-
-    val premises = if (this.premises.getOrElse("").nonEmpty) this.premises else None
-
-    premises match {
+  def toPptAddress =
+    this.premises match {
       case Some(value) =>
         Address(addressLine1 = value.trim,
                 addressLine2 = this.address_line_1.getOrElse("").trim,
@@ -62,11 +59,9 @@ case class IncorporationAddressDetails(
                 postCode = this.postal_code.getOrElse("").trim
         )
     }
-  }
 
-  def toGroupAddressDetails: AddressDetails = {
-    val premises: Option[String] = if (this.premises.getOrElse("").nonEmpty) this.premises else None
-    premises match {
+  def toGroupAddressDetails: AddressDetails =
+    this.premises match {
       case Some(value) =>
         AddressDetails(addressLine1 = value.trim,
                        addressLine2 = this.address_line_1.getOrElse("").trim,
@@ -83,7 +78,6 @@ case class IncorporationAddressDetails(
                        countryCode = this.country.getOrElse("GB")
         )
     }
-  }
 
 }
 

@@ -91,9 +91,9 @@ class GroupMemberGrsController @Inject() (
       details <- getDetails(journeyId)
       result <- update { registration =>
         val updatedGroupDetails: GroupDetail = registration.groupDetail match {
-          case Some(value) =>
-            val members: Seq[GroupMember] = value.members :+ addGroupMember(details, orgType)
-            value.copy(members = members, currentMemberOrganisationType = None)
+          case Some(groupDetail) =>
+            val members: Seq[GroupMember] = groupDetail.members :+ addGroupMember(details, orgType)
+            groupDetail.copy(members = members, currentMemberOrganisationType = None)
           case None => throw new InternalServerException(s"No group detail")
         }
         registration.copy(groupDetail = Some(updatedGroupDetails))

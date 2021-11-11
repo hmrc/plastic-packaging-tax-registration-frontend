@@ -52,8 +52,6 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
                                                                         Some("test town  "),
                                                                       care_of = Some("  test user"),
                                                                       postal_code = Some("AC1 23C"),
-                                                                      premises =
-                                                                        Some(""),
                                                                       country = Some("GB")
         )
         incorporationAddressDetails.toPptAddress.addressLine1 mustBe incorporationAddressDetails.address_line_1.get
@@ -76,6 +74,54 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
           incorporationAddressDetails.postal_code mustBe None
           incorporationAddressDetails.country mustBe None
         }
+      }
+    }
+
+    "convert to AddressDetails" when {
+      "premises is provided" in {
+        val incorporationAddressDetails = IncorporationAddressDetails(address_line_1 =
+                                                                        Some("test line 1"),
+                                                                      address_line_2 =
+                                                                        Some("test line 2   "),
+                                                                      locality =
+                                                                        Some("test town  "),
+                                                                      care_of = Some("  test user"),
+                                                                      postal_code = Some("AC1 23C"),
+                                                                      premises =
+                                                                        Some("Warehouse 1"),
+                                                                      country = Some("GB")
+        )
+        incorporationAddressDetails.toGroupAddressDetails.addressLine1 mustBe incorporationAddressDetails.premises.get
+        incorporationAddressDetails.toGroupAddressDetails.addressLine2 mustBe incorporationAddressDetails.address_line_1.get.trim
+        incorporationAddressDetails.toGroupAddressDetails.addressLine3.get mustBe incorporationAddressDetails.address_line_2.get.trim
+        incorporationAddressDetails.toGroupAddressDetails.addressLine4 mustBe Some(
+          incorporationAddressDetails.locality.get.trim
+        )
+        incorporationAddressDetails.toGroupAddressDetails.postalCode mustBe Some(
+          incorporationAddressDetails.postal_code.get
+        )
+      }
+
+      "premises not provided" in {
+        val incorporationAddressDetails = IncorporationAddressDetails(address_line_1 =
+                                                                        Some("test line 1"),
+                                                                      address_line_2 =
+                                                                        Some("test line 2   "),
+                                                                      locality =
+                                                                        Some("test town  "),
+                                                                      care_of = Some("  test user"),
+                                                                      postal_code = Some("AC1 23C"),
+                                                                      country = Some("GB")
+        )
+        incorporationAddressDetails.toGroupAddressDetails.addressLine1 mustBe incorporationAddressDetails.address_line_1.get
+        incorporationAddressDetails.toGroupAddressDetails.addressLine2 mustBe incorporationAddressDetails.address_line_2.get.trim
+        incorporationAddressDetails.toGroupAddressDetails.addressLine3 mustBe Some(
+          incorporationAddressDetails.locality.get.trim
+        )
+        incorporationAddressDetails.toGroupAddressDetails.addressLine4 mustBe None
+        incorporationAddressDetails.toGroupAddressDetails.postalCode mustBe Some(
+          incorporationAddressDetails.postal_code.get
+        )
       }
     }
   }

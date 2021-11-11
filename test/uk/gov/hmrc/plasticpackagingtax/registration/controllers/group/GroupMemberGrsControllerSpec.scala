@@ -26,6 +26,7 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   GroupDetail,
   OrganisationDetails,
@@ -72,10 +73,10 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
       "registering UK Limited Company group member" in {
         await(simulateLimitedCompanyCallback())
 
-        val memberDetails = getLastSavedRegistration.groupDetail.get.members.last
+        val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
 
-        memberDetails.organisationDetails mustBe groupMemberDetailsUKCompany.organisationDetails
-        memberDetails.addressDetails mustBe groupMemberDetailsUKCompany.addressDetails
+        memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
+        memberDetails.addressDetails mustBe incorporationDetails.companyAddress.toGroupAddressDetails
       }
     }
 
