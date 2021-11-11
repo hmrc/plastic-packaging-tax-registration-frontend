@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
+package uk.gov.hmrc.plasticpackagingtax.registration.views.model
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.Call
 
-case class GroupMember(
-  id: String,
-  customerIdentification1: String,
-  customerIdentification2: Option[String] = None,
-  organisationDetails: Option[OrganisationDetails] = None,
-  addressDetails: AddressDetails
-) {
-
-  lazy val businessName: String =
-    organisationDetails.map(_.organisationName).getOrElse("No business name")
-
-}
-
-object GroupMember {
-  implicit val format: OFormat[GroupMember] = Json.format[GroupMember]
-}
+case class ListMember(
+  name: String,
+  subHeading: Option[String] = None,
+  change: Option[Call] = None,
+  remove: Option[Call] = None
+)

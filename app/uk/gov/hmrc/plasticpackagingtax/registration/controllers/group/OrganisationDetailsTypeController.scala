@@ -14,20 +14,33 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeHelper
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  RegisteredSocietyGrsConnector,
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  AddressDetails,
+  GroupMember,
+  OrganisationDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation_type
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -50,18 +63,7 @@ class OrganisationDetailsTypeController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.organisationDetails.organisationType match {
-        case Some(data) =>
-          Future(
-            Ok(
-              page(form = OrganisationType.form().fill(OrganisationType(Some(data))),
-                   isGroup = request.registration.isGroup
-              )
-            )
-          )
-        case _ =>
-          Future(Ok(page(form = OrganisationType.form(), isGroup = request.registration.isGroup)))
-      }
+      Future(Ok(page(form = OrganisationType.form())))
     }
 
   def submit(): Action[AnyContent] =
@@ -70,28 +72,34 @@ class OrganisationDetailsTypeController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
-            Future(BadRequest(page(form = formWithErrors, isGroup = request.registration.isGroup))),
+            Future(BadRequest(page(form = formWithErrors))),
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     handleOrganisationType(organisationType)
-                  case _ => Future(Redirect(routes.RegistrationController.displayPage()))
+                  case _ => Future(Redirect(pptRoutes.RegistrationController.displayPage()))
                 }
               case Left(error) => throw error
             }
         )
-
     }
 
   private def updateRegistration(
     formData: OrganisationType
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedOrganisationDetails =
-        registration.organisationDetails.copy(organisationType = formData.answer)
-      registration.copy(organisationDetails = updatedOrganisationDetails)
+      val member = GroupMember(customerIdentification1 = "",
+                               customerIdentification2 = None,
+                               organisationDetails =
+                                 Some(OrganisationDetails(formData.answer.toString, "")),
+                               addressDetails = AddressDetails("", "", None, None, None, "")
+      )
+      val members: Option[Seq[GroupMember]] = registration.groupDetail.map(_.members :+ member)
+      val updatedGroupDetail =
+        registration.groupDetail.get.copy(members = members.get)
+      registration.copy(groupDetail = Some(updatedGroupDetail))
     }
 
 }
