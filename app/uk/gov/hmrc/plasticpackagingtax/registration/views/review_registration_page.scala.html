@@ -1,192 +1,44 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, OrgType}
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorporationDetails, PartnershipDetails, SoleTraderIncorporationDetails}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.review._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
-@import java.time.format.DateTimeFormatter
-
 @this(
-    formHelper: FormWithCSRF,
-    govukLayout: main_template,
-    govukSummaryList: GovukSummaryList,
-    pageHeading: pageHeading,
-    saveAndContinue: saveAndContinue,
-    paragraphBody: paragraphBody,
-    appConfig: AppConfig
+        formHelper: FormWithCSRF,
+        govukLayout: main_template,
+        govukSummaryList: GovukSummaryList,
+        pageHeading: pageHeading,
+        saveAndContinue: saveAndContinue,
+        paragraphBody: paragraphBody,
+        subHeading: subHeading,
+        appConfig: AppConfig,
+        liabilityDetails: liabilityDetails,
+        organisationDetails: organisationDetails,
+        primaryContactDetails: primaryContactDetails
 )
 
 @(
-    registration: Registration,
-    liabilityStartLink: Call,
-    incorporationDetails: Option[IncorporationDetails] = None,
-    soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
-    partnershipDetails: Option[PartnershipDetails] = None
+        registration: Registration,
+        liabilityStartLink: Call,
 )(implicit request: JourneyRequest[AnyContent], messages: Messages)
-
-@extractAddress(address: Address) = @{
-    Seq(address.addressLine1,
-    address.addressLine2,
-    address.addressLine3.getOrElse(""),
-    address.townOrCity,
-    address.postCode).filter(_.nonEmpty).mkString("<br>")
-}
-
-@row(key: String, value: Option[String] , call: Option[Call] = None) = @{
-    SummaryListRow(
-        key = Key(
-            content = Text(messages(key))
-            ),
-        value = Value(
-            content = HtmlContent(value.getOrElse(""))
-        ),
-        actions = call.flatMap(c => Some(Actions(
-        items = Seq(
-            ActionItem(
-                href = c.url,
-                content = Text(messages("site.link.change")),
-                visuallyHiddenText = Some(messages(key))
-                )
-            )
-    )))
-    )
-}
-
-@rowWithValue(key: String, value: Value , call: Option[Call] = None) = @{
-    SummaryListRow(
-        key = Key(
-            content = Text(messages(key))
-        ),
-        value = value,
-        actions = call.flatMap(c => Some(Actions(
-            items = Seq(
-                ActionItem(
-                    href = c.url,
-                    content = Text(messages("site.link.change")),
-                    visuallyHiddenText = Some(messages(key))
-                )
-            )
-        )))
-    )
-}
-
-@expectToExceedThresholdWeightRow() = @{
-    rowWithValue(
-        key = "checkLiabilityDetailsAnswers.future.exceed",
-        value = Value(
-            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
-                registration.liabilityDetails.expectToExceedThresholdWeight match {
-                    case Some(true) => Text(messages("general.true"))
-                    case Some(false) => Text(messages("general.false"))
-                    case None => Empty
-                }
-            } else {
-                registration.liabilityDetails.expectToExceedThresholdWeight match {
-                    case Some(true) => Text(messages("general.true"))
-                    case Some(false) => Text(messages("general.false"))
-                    case None => Empty
-                }
-            }
-        ),
-        Some(pptRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-    )
-}
-
-@liabilityIsPreLaunchRow() = @{
-    rowWithValue(key = "checkLiabilityDetailsAnswers.future.liable",
-        value = Value(
-            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
-                registration.liabilityDetails.isLiable match {
-                    case Some(true) => Text(messages("general.true"))
-                    case Some(false) => Text(messages("general.false"))
-                    case None => Text(messages("general.false"))
-                }
-            } else {
-                Empty
-            }
-        ),
-        call = Some(liabilityStartLink)
-    )
-}
-
-@liabilityWeightRow() = @{
-    rowWithValue(key = "checkLiabilityDetailsAnswers.weight",
-        value = Value(
-            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
-                Text(registration.liabilityDetails.expectedWeight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
-            } else {
-                Text(registration.liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
-            }
-        ),
-        call = Some(liabilityStartLink)
-    )
-}
-
-@liabilityLiableDateRow() = @{
-    rowWithValue(key = "checkLiabilityDetailsAnswers.date",
-        value = Value(
-            content = if (request.isFeatureFlagEnabled(Features.isPreLaunch)) {
-                Empty
-            } else {
-                Text(registration.liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
-            }
-        ),
-        call = Some(pptRoutes.LiabilityStartDateController.displayPage())
-    )
-}
-
-@ukCompanySummary() = @{
-    SummaryList(
-        rows = Seq(
-            row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(OrgType.displayName)),
-            row("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(incorporationDetails.get.companyNumber)),
-            row("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(incorporationDetails.get.ctutr))
-            ).filterNot(_.value.content == Empty)
-    )
-}
-
-@soleTraderSummary() = @{
-    SummaryList(
-        rows = Seq(
-            row("reviewRegistration.organisationDetails.soleTrader.firstName", Some(soleTraderDetails.get.firstName)),
-            row("reviewRegistration.organisationDetails.soleTrader.lastName", Some(soleTraderDetails.get.lastName)),
-            row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
-            row("reviewRegistration.organisationDetails.soleTrader.dob", Some(soleTraderDetails.get.dateOfBirth)),
-            row("reviewRegistration.organisationDetails.soleTrader.nino", Some(soleTraderDetails.get.nino))
-        ).filterNot(_.value.content == Empty)
-    )
-}
-
-@partnershipSummary() = @{
-    SummaryList(
-        rows = Seq(
-            row("reviewRegistration.organisationDetails.partnership.name", Some("TODO")),
-            row("reviewRegistration.organisationDetails.registeredBusinessAddress", registration.organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            row("reviewRegistration.organisationDetails.organisationType", registration.organisationDetails.organisationType.map(_.toString)),
-        ).filterNot(_.value.content == Empty)
-    )
-}
 
 @govukLayout(
     title = Title("reviewRegistration.organisationDetails.title"),
@@ -196,40 +48,13 @@
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
-    <h2 id="liability-details" class="govuk-heading-m">@messages("checkLiabilityDetailsAnswers.check.label")</h2>
-    @govukSummaryList(
-        SummaryList(
-            rows = Seq(
-                liabilityWeightRow(),
-                expectToExceedThresholdWeightRow,
-                liabilityIsPreLaunchRow,
-                liabilityLiableDateRow,
-            ).filterNot(_.value.content == Empty)
-        )
-    )
+        @liabilityDetails(registration.liabilityDetails, liabilityStartLink)
+        @organisationDetails(registration.organisationDetails)
+        @primaryContactDetails(registration.primaryContactDetails)
 
-    <h2 id="organisation-details" class="govuk-heading-m">
-        @messages("reviewRegistration.organisationDetails.check.label")</h2>
-    @govukSummaryList(
-        {if (incorporationDetails.isDefined) ukCompanySummary() else if (soleTraderDetails.isDefined) soleTraderSummary() else partnershipSummary()}
-    )
+        @subHeading(messages("reviewRegistration.sendYourApplication.title"))
+        @paragraphBody(messages("reviewRegistration.sendYourApplication.body"))
 
-    <h2 id="primary-contact-details" class="govuk-heading-m">@messages("primaryContactDetails.check.label")</h2>
-    @govukSummaryList(
-        SummaryList(
-            rows = Seq(
-                    row("primaryContactDetails.check.fullName", registration.primaryContactDetails.name, Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
-                    row("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
-                    row("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage())),
-                    row("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),
-                    row("primaryContactDetails.check.email", registration.primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage()))
-                ).filterNot(_.value.content == Empty)
-            )
-        )
-
-    <h2 id="send-your-application" class="govuk-heading-m">@messages("reviewRegistration.sendYourApplication.title")</h2>
-    @paragraphBody(messages("reviewRegistration.sendYourApplication.body"))
-
-    @saveAndContinue("site.button.acceptAndSend")
+        @saveAndContinue("site.button.acceptAndSend")
     }
 }

@@ -1,0 +1,40 @@
+@*
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
+
+@this(
+        subHeading: subHeading,
+        govukSummaryList: GovukSummaryList
+)
+
+@(primaryContactDetails: PrimaryContactDetails)(implicit request: JourneyRequest[_], messages: Messages)
+
+@subHeading(messages("primaryContactDetails.check.label"))
+@govukSummaryList(
+    SummaryList(
+        rows = Seq(
+            summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
+            summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
+            summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage())),
+            summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),
+            summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage()))
+        ).filterNot(_.value.content == Empty)
+    )
+)
