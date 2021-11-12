@@ -20,6 +20,7 @@ import com.typesafe.config.Config
 import play.api.ConfigLoader
 
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 case class AllowedUser(email: String, features: Map[String, Boolean] = Map.empty)
 
@@ -31,11 +32,14 @@ object AllowedUser {
   implicit val configLoader: ConfigLoader[Seq[AllowedUser]] =
     ConfigLoader(_.getConfigList).map(_.asScala.toList.map {
       config =>
-        val userEmail: String    = config.getString(email).trim
-        val featuresList: Config = config.getConfig(features)
-        val userFeatures: Map[String, Boolean] = featuresList.entrySet().asScala.map { entry =>
-          entry.getKey -> featuresList.getBoolean(entry.getKey)
-        }.toMap
+        val userEmail: String                 = config.getString(email).trim
+        val maybeFeaturesList: Option[Config] = Try(config.getConfig(features)).toOption
+        val userFeatures: Map[String, Boolean] = maybeFeaturesList.map(
+          featuresList =>
+            featuresList.entrySet().asScala.map { entry =>
+              entry.getKey -> featuresList.getBoolean(entry.getKey)
+            }.toMap
+        ).getOrElse(Map.empty)
 
         AllowedUser(userEmail, userFeatures)
     })
