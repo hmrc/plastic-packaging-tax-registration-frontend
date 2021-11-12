@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,11 +28,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationDetails,
-  PartnershipDetails,
-  SoleTraderIncorporationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
@@ -47,6 +41,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -88,24 +83,21 @@ class ReviewRegistrationController @Inject() (
   private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =
     Ok(
       reviewRegistrationPage(registration = request.registration,
-                             liabilityStartLink = startRegistrationController.startLink,
-                             soleTraderDetails = getSoleTraderDetails()
+                             liabilityStartLink = startRegistrationController.startLink
       )
     )
 
   private def partnershipReview()(implicit request: JourneyRequest[AnyContent]) =
     Ok(
       reviewRegistrationPage(registration = request.registration,
-                             liabilityStartLink = startRegistrationController.startLink,
-                             partnershipDetails = getPartnershipDetails()
+                             liabilityStartLink = startRegistrationController.startLink
       )
     )
 
   private def incorpEntityReview()(implicit request: JourneyRequest[AnyContent]) =
     Ok(
       reviewRegistrationPage(registration = request.registration,
-                             liabilityStartLink = startRegistrationController.startLink,
-                             incorporationDetails = getIncorporationDetails()
+                             liabilityStartLink = startRegistrationController.startLink
       )
     )
 
@@ -185,20 +177,5 @@ class ReviewRegistrationController @Inject() (
     registration.organisationDetails.businessPartnerId.getOrElse(
       throw new IllegalStateException("Safe Id is required for a Subscription create")
     )
-
-  private def getSoleTraderDetails()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Option[SoleTraderIncorporationDetails] =
-    request.registration.organisationDetails.soleTraderDetails
-
-  private def getPartnershipDetails()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Option[PartnershipDetails] =
-    request.registration.organisationDetails.partnershipDetails
-
-  private def getIncorporationDetails()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Option[IncorporationDetails] =
-    request.registration.organisationDetails.incorporationDetails
 
 }

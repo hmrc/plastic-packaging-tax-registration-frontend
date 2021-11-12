@@ -33,11 +33,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   LiabilityWeight,
   OrgType
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationDetails,
-  PartnershipDetails,
-  SoleTraderIncorporationDetails
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   OrganisationDetails,
@@ -71,17 +66,12 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
-  private def createView(
-    reg: Registration = registration,
-    ukCompanyDetails: Option[IncorporationDetails] = None,
-    soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
-    partnershipDetails: Option[PartnershipDetails] = None
-  ): Document =
-    page(reg, liabilityStartLink, ukCompanyDetails, soleTraderDetails)(journeyRequest, messages)
+  private def createView(reg: Registration = registration): Document =
+    page(reg, liabilityStartLink)(journeyRequest, messages)
 
   "Review registration View" should {
 
-    val view: Document = createView(ukCompanyDetails = Some(incorporationDetails))
+    val view: Document = createView(aRegistration())
 
     "contain timeout dialog function" in {
 
@@ -133,7 +123,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
 
       "displaying organisation details section for uk company" in {
 
-        val ukCompanyView: Document = createView(ukCompanyDetails = Some(incorporationDetails))
+        val ukCompanyRegistration   = aRegistration()
+        val ukCompanyView: Document = createView(ukCompanyRegistration)
 
         getKeyFor(organisationSection, organisationAddressKey, ukCompanyView) must containMessage(
           "reviewRegistration.organisationDetails.registeredBusinessAddress"
@@ -156,26 +147,26 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getValueFor(organisationSection,
                     organisationCnrKey,
                     ukCompanyView
-        ) mustBe incorporationDetails.companyNumber
+        ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
         getValueFor(organisationSection,
                     organisationUtrKey,
                     ukCompanyView
-        ) mustBe incorporationDetails.ctutr
+        ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
 
       }
 
       "displaying organisation details section for sole trader" in {
 
-        val soleTraderView = createView(
-          reg = aRegistration(
-            withOrganisationDetails(
-              OrganisationDetails(organisationType = Some(SOLE_TRADER),
-                                  businessRegisteredAddress = Some(testBusinessAddress)
-              )
+        val soleTraderRegistration = aRegistration(
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(SOLE_TRADER),
+                                businessRegisteredAddress = Some(testBusinessAddress),
+                                soleTraderDetails = Some(soleTraderIncorporationDetails),
+                                incorporationDetails = None
             )
-          ),
-          soleTraderDetails = Some(soleTraderIncorporationDetails)
+          )
         )
+        val soleTraderView = createView(soleTraderRegistration)
 
         getKeyFor(organisationSection, 0, soleTraderView) must containMessage(
           "reviewRegistration.organisationDetails.soleTrader.firstName"
@@ -201,11 +192,11 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getValueFor(organisationSection,
                     0,
                     soleTraderView
-        ) mustBe soleTraderIncorporationDetails.firstName
+        ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
         getValueFor(organisationSection,
                     1,
                     soleTraderView
-        ) mustBe soleTraderIncorporationDetails.lastName
+        ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
         getValueFor(organisationSection,
                     2,
                     soleTraderView
@@ -214,26 +205,26 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getValueFor(organisationSection,
                     4,
                     soleTraderView
-        ) mustBe soleTraderIncorporationDetails.dateOfBirth
+        ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth
         getValueFor(organisationSection,
                     5,
                     soleTraderView
-        ) mustBe soleTraderIncorporationDetails.nino
+        ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.nino
 
       }
 
       "displaying organisation details section for partnership" in {
 
-        val partnershipView = createView(
-          reg = aRegistration(
-            withOrganisationDetails(
-              OrganisationDetails(organisationType = Some(PARTNERSHIP),
-                                  businessRegisteredAddress = Some(testBusinessAddress)
-              )
+        val partnershipRegistration = aRegistration(
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                                businessRegisteredAddress = Some(testBusinessAddress),
+                                partnershipDetails = Some(partnershipDetails),
+                                incorporationDetails = None
             )
-          ),
-          partnershipDetails = Some(partnershipDetails)
+          )
         )
+        val partnershipView = createView(partnershipRegistration)
 
         getKeyFor(organisationSection, 0, partnershipView) must containMessage(
           "reviewRegistration.organisationDetails.partnership.name"
@@ -323,15 +314,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
         getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
           "checkLiabilityDetailsAnswers.weight"
         )
-        getKeyFor(liabilitySection, 1, liabilityView) must containMessage(
-          "checkLiabilityDetailsAnswers.future.liable"
-        )
 
         getValueFor(liabilitySection, 0, liabilityView) mustBe "11000 kg"
-        getValueFor(liabilitySection, 1, liabilityView) mustBe "Yes"
-
         getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(liabilityStartLink)
-        getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(liabilityStartLink)
       }
 
       "displaying liability details section during postLaunch when <10,000kg but expect to exceed" in {
@@ -417,8 +402,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(registration, liabilityStartLink, None, None, None)(journeyRequest, messages)
-    page.render(registration, liabilityStartLink, None, None, None, journeyRequest, messages)
+    page.f(registration, liabilityStartLink)(journeyRequest, messages)
+    page.render(registration, liabilityStartLink, journeyRequest, messages)
   }
 
 }

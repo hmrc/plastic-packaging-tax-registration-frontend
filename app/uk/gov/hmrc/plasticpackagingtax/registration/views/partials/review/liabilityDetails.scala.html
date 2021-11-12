@@ -1,0 +1,86 @@
+@*
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
+@import java.time.format.DateTimeFormatter
+
+@this(
+        subHeading: subHeading,
+        govukSummaryList: GovukSummaryList
+)
+
+@(liabilityDetails: LiabilityDetails, liabilityStartLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
+
+@liabilityWeightRow() = @{
+    summaryListRowWithValue(
+        key = "checkLiabilityDetailsAnswers.weight",
+        value = Value(
+            content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                Text(liabilityDetails.expectedWeight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            } else {
+                Text(liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
+            }
+        ),
+        call = Some(liabilityStartLink)
+    )
+}
+
+@expectToExceedThresholdWeightRow() = @{
+    summaryListRowWithValue(
+        key = "checkLiabilityDetailsAnswers.future.exceed",
+        value = Value(
+            content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                Empty
+            } else {
+                liabilityDetails.expectToExceedThresholdWeight match {
+                    case Some(true) => Text(messages("general.true"))
+                    case Some(false) => Text(messages("general.false"))
+                    case None => Empty
+                }
+            }
+        ),
+        call = Some(pptRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage())
+    )
+}
+
+@liabilityLiableDate() = @{
+    summaryListRowWithValue(
+        key = "checkLiabilityDetailsAnswers.date",
+        value = Value(
+            content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+                Empty
+            } else {
+                Text(liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
+            }
+        ),
+        call = Some(pptRoutes.LiabilityStartDateController.displayPage())
+    )
+}
+
+@subHeading(messages("checkLiabilityDetailsAnswers.check.label"))
+@govukSummaryList(
+    SummaryList(
+        rows = Seq[SummaryListRow](
+            liabilityWeightRow,
+            expectToExceedThresholdWeightRow,
+            liabilityLiableDate
+        ).filterNot(_.value.content == Empty)
+    )
+)
