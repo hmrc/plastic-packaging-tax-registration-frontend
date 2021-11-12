@@ -149,7 +149,7 @@ class GroupMemberGrsController @Inject() (
       val updatedGroupDetails: GroupDetail = registration.groupDetail match {
         case Some(groupDetail) =>
           val member: GroupMember = addGroupMember(details, orgType)
-          if (isMemberPresent(member.customerIdentification1, groupDetail, registration))
+          if (isMemberPresent(member, groupDetail, registration))
             groupDetail
           else {
             val members: Seq[GroupMember] = groupDetail.members :+ member
@@ -161,15 +161,13 @@ class GroupMemberGrsController @Inject() (
     }
 
   def isMemberPresent(
-    customerIdentification1: String,
+    member: GroupMember,
     groupDetail: GroupDetail,
     registration: Registration
   ): Boolean =
-    groupDetail.members.exists(
-      groupMember => groupMember.isMemberAlreadyPresent(customerIdentification1)
-    ) ||
+    groupDetail.members.exists(groupMember => groupMember.equals(member)) ||
       registration.organisationDetails.incorporationDetails.exists(
-        details => details.isGroupMemberSameAsNominated(customerIdentification1)
+        details => details.isGroupMemberSameAsNominated(member.customerIdentification1)
       )
 
 }
