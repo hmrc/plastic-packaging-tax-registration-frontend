@@ -31,7 +31,9 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[OrganisationType])(implicit request: Request[_], messages: Messages)
+@(form: Form[OrganisationType], isFirstMember: Boolean)(implicit request: Request[_], messages: Messages)
+
+    @title = @{ if(isFirstMember) "organisationDetails.other.group.title" else "organisationDetails.other.next.group.title" }
 
     @displayName(orgType: OrgType) = @{ messages(
       orgType match {
@@ -58,7 +60,7 @@
     }
 
     @govukLayout(
-        title = Title("organisationDetails.other.group.title"),
+        title = Title(title),
         backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 
@@ -69,7 +71,7 @@
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(messages("organisationDetails.other.group.title")),
+                        content = Text(messages(title)),
                         classes = gdsFieldsetPageHeading,
                         isPageHeading = true
                     ))

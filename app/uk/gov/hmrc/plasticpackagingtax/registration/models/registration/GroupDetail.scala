@@ -37,6 +37,7 @@ case class GroupDetail(
       groupMember => groupMember.customerIdentification1.equals(newMember.customerIdentification1)
     )
 
+  val isFirstMember: Boolean = members.isEmpty
 }
 
 object GroupDetail {

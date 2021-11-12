@@ -65,7 +65,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[OrganisationType]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[OrganisationType]], any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -80,6 +80,26 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "user is authorised and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "user is authorised and display page method for next group member" in {
+        authorizedUser()
+        mockRegistrationFind(
+          aRegistration(
+            withGroupDetail(
+              Some(
+                GroupDetail(membersUnderGroupControl = Some(true),
+                            members = Seq(groupMember),
+                            currentMemberOrganisationType = Some(UK_COMPANY)
+                )
+              )
+            )
+          )
+        )
         mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
