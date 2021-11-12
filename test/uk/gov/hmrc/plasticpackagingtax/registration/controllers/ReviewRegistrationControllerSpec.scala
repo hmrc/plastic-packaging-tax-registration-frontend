@@ -76,9 +76,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
     val registration = aRegistration()
 
     mockRegistrationFind(registration)
-    given(
-      mockReviewRegistrationPage.apply(any(), any(), any(), any(), any())(any(), any())
-    ).willReturn(HtmlFormat.empty)
+    given(mockReviewRegistrationPage.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     given(mockStartRegistrationController.startLink(any())).willReturn(liabilityStartLink)
   }
@@ -120,12 +118,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         status(result) mustBe OK
         verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(registration),
                                                  liabilityStartLink =
-                                                   ArgumentMatchers.eq(liabilityStartLink),
-                                                 incorporationDetails = ArgumentMatchers.eq(
-                                                   registration.organisationDetails.incorporationDetails
-                                                 ),
-                                                 soleTraderDetails = ArgumentMatchers.eq(null),
-                                                 partnershipDetails = ArgumentMatchers.eq(null)
+                                                   ArgumentMatchers.eq(liabilityStartLink)
         )(any(), any())
       }
 
