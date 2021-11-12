@@ -39,7 +39,7 @@ class GroupDetailSpec extends AnyWordSpec with Matchers {
             GroupMember(customerIdentification1 = "id1",
                         customerIdentification2 = Some("id2"),
                         organisationDetails =
-                          Some(OrganisationDetails("UkCompany", "Company Name")),
+                          Some(OrganisationDetails("UkCompany", "Company Name", Some("121212121"))),
                         addressDetails = AddressDetails("line1",
                                                         "line2",
                                                         Some("line3"),

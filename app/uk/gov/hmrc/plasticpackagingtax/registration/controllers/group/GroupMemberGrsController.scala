@@ -22,7 +22,13 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStatus.{
+  DUPLICATE_SUBSCRIPTION,
+  RegistrationStatus,
+  STATUS_OK
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
@@ -36,6 +42,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -47,6 +55,7 @@ class GroupMemberGrsController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   ukCompanyGrsConnector: UkCompanyGrsConnector,
+  subscriptionsConnector: SubscriptionsConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -55,11 +64,32 @@ class GroupMemberGrsController @Inject() (
     (authenticate andThen journeyAction).async {
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {
-          case Right(_) =>
-            Future.successful(Redirect(routes.OrganisationListController.displayPage()))
+          case Right(registration) =>
+            registrationStatus(registration).map {
+              case STATUS_OK => Redirect(routes.OrganisationListController.displayPage())
+              case DUPLICATE_SUBSCRIPTION =>
+                Redirect(pptRoutes.NotableErrorController.duplicateRegistration())
+            }
           case Left(error) => throw error
         }
     }
+
+  private def registrationStatus(
+    registration: Registration
+  )(implicit hc: HeaderCarrier): Future[RegistrationStatus] = {
+    val organisationDetails: Option[OrganisationDetails] =
+      registration.groupDetail.map(_.members.last).flatMap(_.organisationDetails)
+    val businessPartnerId: String = organisationDetails.flatMap(_.businessPartnerId).get
+    checkSubscriptionStatus(businessPartnerId).map {
+      case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
+      case _          => STATUS_OK
+    }
+  }
+
+  private def checkSubscriptionStatus(
+    businessPartnerId: String
+  )(implicit hc: HeaderCarrier): Future[SubscriptionStatus.Status] =
+    subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map(_.status)
 
   private def saveRegistrationDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
@@ -89,31 +119,39 @@ class GroupMemberGrsController @Inject() (
   ): Future[Either[ServiceError, Registration]] =
     for {
       details <- getDetails(journeyId)
-      result <- update { registration =>
-        val updatedGroupDetails: GroupDetail = registration.groupDetail match {
-          case Some(groupDetail) =>
-            val member = addGroupMember(details, orgType)
-            val isMemberAlreadyPresent: Boolean = groupDetail.members.exists(
-              m => m.customerIdentification1.equals(member.customerIdentification1)
-            )
-            if (!isMemberAlreadyPresent) {
-              val members: Seq[GroupMember] = groupDetail.members :+ member
-              groupDetail.copy(members = members, currentMemberOrganisationType = None)
-            } else
-              groupDetail
-
-          case None => throw new InternalServerException(s"No group detail")
-        }
-        registration.copy(groupDetail = Some(updatedGroupDetails))
-      }
+      result  <- updateGroupDetails(orgType, details)
     } yield result
 
   private def addGroupMember(details: IncorporationDetails, orgType: OrgType): GroupMember =
     GroupMember(customerIdentification1 = details.companyNumber,
                 customerIdentification2 = Some(details.ctutr),
                 organisationDetails =
-                  Some(OrganisationDetails(orgType.toString, details.companyName)),
+                  Some(
+                    OrganisationDetails(orgType.toString,
+                                        details.companyName,
+                                        details.registration.registeredBusinessPartnerId
+                    )
+                  ),
                 addressDetails = details.companyAddress.toGroupAddressDetails
     )
+
+  private def updateGroupDetails(orgType: OrgType, details: IncorporationDetails)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[_]
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      val updatedGroupDetails: GroupDetail = registration.groupDetail match {
+        case Some(groupDetail) =>
+          val member = addGroupMember(details, orgType)
+          if (!groupDetail.memberAlreadyPresent(member)) {
+            val members: Seq[GroupMember] = groupDetail.members :+ member
+            groupDetail.copy(members = members, currentMemberOrganisationType = None)
+          } else
+            groupDetail
+
+        case None => throw new InternalServerException(s"No group detail")
+      }
+      registration.copy(groupDetail = Some(updatedGroupDetails))
+    }
 
 }

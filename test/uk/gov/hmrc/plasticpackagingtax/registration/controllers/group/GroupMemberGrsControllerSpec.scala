@@ -25,6 +25,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -32,6 +33,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
+  NOT_SUBSCRIBED,
+  SUBSCRIBED
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class GroupMemberGrsControllerSpec extends ControllerSpec {
@@ -44,6 +50,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                                  mockJourneyAction,
                                  mockRegistrationConnector,
                                  mockUkCompanyGrsConnector,
+                                 mockSubscriptionsConnector,
                                  mcc
     )(ec)
 
@@ -59,6 +66,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
   )
 
   "group member incorpIdCallback " should {
+
+    mockGetSubscriptionStatus(SubscriptionStatusResponse(NOT_SUBSCRIBED, None))
+
     "redirect to the group member organisation details type controller page" when {
       "registering a UK Limited Company" in {
         val result = simulateLimitedCompanyCallback()
@@ -133,6 +143,23 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
         intercept[RuntimeException] {
           await(controller.grsCallback("uuid-id")(getRequest()))
+        }
+      }
+
+      "show duplicate subscription page" when {
+        "a subscription already exists for the group member" in {
+          authorizedUser()
+          mockGetUkCompanyDetails(incorporationDetails)
+          mockRegistrationFind(registeredLimitedCompany)
+          mockRegistrationUpdate()
+          mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
+
+          val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(
+            pptRoutes.NotableErrorController.duplicateRegistration().url
+          )
         }
       }
     }

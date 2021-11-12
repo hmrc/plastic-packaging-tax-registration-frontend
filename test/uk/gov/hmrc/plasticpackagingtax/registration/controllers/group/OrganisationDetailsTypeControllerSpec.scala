@@ -125,7 +125,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                          GroupMember(customerIdentification1 = "",
                                                      customerIdentification2 = None,
                                                      organisationDetails = Some(
-                                                       OrganisationDetails(orgType.toString, "")
+                                                       OrganisationDetails(orgType.toString,
+                                                                           "",
+                                                                           Some("")
+                                                       )
                                                      ),
                                                      addressDetails = addressDetails
                                          )
