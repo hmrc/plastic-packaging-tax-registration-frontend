@@ -32,11 +32,6 @@ case class GroupDetail(
       TaskStatus.NotStarted
     else TaskStatus.Completed
 
-  def memberAlreadyPresent(newMember: GroupMember): Boolean =
-    this.members.exists(
-      groupMember => groupMember.customerIdentification1.equals(newMember.customerIdentification1)
-    )
-
   val isFirstMember: Boolean = members.isEmpty
 }
 

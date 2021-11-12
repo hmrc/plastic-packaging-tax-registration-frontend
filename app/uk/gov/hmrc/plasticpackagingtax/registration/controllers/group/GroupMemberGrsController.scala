@@ -18,8 +18,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStatus.{
@@ -78,9 +78,15 @@ class GroupMemberGrsController @Inject() (
     registration: Registration
   )(implicit hc: HeaderCarrier): Future[RegistrationStatus] = {
     val organisationDetails: Option[OrganisationDetails] =
-      registration.groupDetail.map(_.members.last).flatMap(_.organisationDetails)
-    val businessPartnerId: String = organisationDetails.flatMap(_.businessPartnerId).get
-    checkSubscriptionStatus(businessPartnerId).map {
+      registration.groupDetail.flatMap(
+        _.members.lastOption.flatMap(member => member.organisationDetails)
+      )
+    val status: Future[SubscriptionStatus.Status] =
+      organisationDetails.flatMap(_.businessPartnerId) match {
+        case Some(businessPartnerId) => checkSubscriptionStatus(businessPartnerId)
+        case _                       => Future.successful(SubscriptionStatus.NOT_SUBSCRIBED)
+      }
+    status.map {
       case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
       case _          => STATUS_OK
     }
@@ -99,7 +105,7 @@ class GroupMemberGrsController @Inject() (
       request.registration.groupDetail.flatMap(_.currentMemberOrganisationType)
     orgType match {
       case Some(OrgType.UK_COMPANY) => updateUkCompanyDetails(journeyId, OrgType.UK_COMPANY)
-      case _                        => throw new InternalServerException(s"Invalid organisation type")
+      case _                        => throw new IllegalStateException(s"Invalid organisation type")
     }
   }
 
@@ -142,16 +148,28 @@ class GroupMemberGrsController @Inject() (
     update { registration =>
       val updatedGroupDetails: GroupDetail = registration.groupDetail match {
         case Some(groupDetail) =>
-          val member = addGroupMember(details, orgType)
-          if (!groupDetail.memberAlreadyPresent(member)) {
+          val member: GroupMember = addGroupMember(details, orgType)
+          if (isMemberPresent(member.customerIdentification1, groupDetail, registration))
+            groupDetail
+          else {
             val members: Seq[GroupMember] = groupDetail.members :+ member
             groupDetail.copy(members = members, currentMemberOrganisationType = None)
-          } else
-            groupDetail
-
-        case None => throw new InternalServerException(s"No group detail")
+          }
+        case None => throw new IllegalStateException(s"No group detail")
       }
       registration.copy(groupDetail = Some(updatedGroupDetails))
     }
+
+  def isMemberPresent(
+    customerIdentification1: String,
+    groupDetail: GroupDetail,
+    registration: Registration
+  ): Boolean =
+    groupDetail.members.exists(
+      groupMember => groupMember.isMemberAlreadyPresent(customerIdentification1)
+    ) ||
+      registration.organisationDetails.incorporationDetails.exists(
+        details => details.isGroupMemberSameAsNominated(customerIdentification1)
+      )
 
 }

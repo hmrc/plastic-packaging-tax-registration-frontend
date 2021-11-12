@@ -31,6 +31,9 @@ case class GroupMember(
   lazy val businessName: String =
     organisationDetails.map(_.organisationName).getOrElse("No business name")
 
+  def isMemberAlreadyPresent(customerId1: String): Boolean =
+    customerIdentification1.equals(customerId1)
+
 }
 
 object GroupMember {
