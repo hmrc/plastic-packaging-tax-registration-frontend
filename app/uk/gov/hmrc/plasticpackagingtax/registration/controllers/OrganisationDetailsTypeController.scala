@@ -94,4 +94,7 @@ class OrganisationDetailsTypeController @Inject() (
       registration.copy(organisationDetails = updatedOrganisationDetails)
     }
 
+  override def grsCallbackUrl(): String =
+    appConfig.grsCallbackUrl
+
 }

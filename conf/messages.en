@@ -400,6 +400,7 @@ group.removeMember.error.empty = Please select Yes or No
 
 organisationDetails.other.organisation.sectionHeader = Other organisations in the group
 organisationDetails.other.group.title = What type of organisation is the first one you want to add?
+organisationDetails.other.next.group.title = What type of organisation is the next one you want to add?
 organisationDetails.type.GroupOverseasCompany = Non-UK company with a branch or place of business in the UK
 organisationDetails.type.GroupOverseasCompanyNoBranchInUK = Non-UK company without a branch or place of business in the UK
 organisationDetails.type.GroupPartnership = Limited liability partnership

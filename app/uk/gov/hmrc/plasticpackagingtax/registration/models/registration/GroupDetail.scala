@@ -17,12 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class GroupDetail(
   membersUnderGroupControl: Option[Boolean] = None,
-  members: Seq[GroupMember] = Seq.empty
+  members: Seq[GroupMember] = Seq.empty,
+  currentMemberOrganisationType: Option[OrgType] = None
 ) {
 
   def status: TaskStatus =

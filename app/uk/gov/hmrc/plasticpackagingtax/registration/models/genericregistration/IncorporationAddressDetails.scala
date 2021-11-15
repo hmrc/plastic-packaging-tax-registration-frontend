@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.AddressDetails
 
 case class IncorporationAddressDetails(
   address_line_1: Option[String] = None,
@@ -42,13 +43,10 @@ case class IncorporationAddressDetails(
     )
       .filter(_.nonEmpty).mkString("<br>")
 
-  def toPptAddress = {
-
-    val premises = if (this.premises.getOrElse("").nonEmpty) this.premises else None
-
-    premises match {
-      case Some(value) =>
-        Address(addressLine1 = value.trim,
+  def toPptAddress =
+    this.premises match {
+      case Some(premises) =>
+        Address(addressLine1 = premises.trim,
                 addressLine2 = this.address_line_1.getOrElse("").trim,
                 addressLine3 = Some(this.address_line_2.getOrElse("").trim),
                 townOrCity = this.locality.getOrElse("").trim,
@@ -61,7 +59,25 @@ case class IncorporationAddressDetails(
                 postCode = this.postal_code.getOrElse("").trim
         )
     }
-  }
+
+  def toGroupAddressDetails: AddressDetails =
+    this.premises match {
+      case Some(premises) =>
+        AddressDetails(addressLine1 = premises.trim,
+                       addressLine2 = this.address_line_1.getOrElse("").trim,
+                       addressLine3 = Some(this.address_line_2.getOrElse("").trim),
+                       addressLine4 = Some(this.locality.getOrElse("").trim),
+                       postalCode = Some(this.postal_code.getOrElse("").trim),
+                       countryCode = this.country.getOrElse("GB")
+        )
+      case None =>
+        AddressDetails(addressLine1 = this.address_line_1.getOrElse("").trim,
+                       addressLine2 = this.address_line_2.getOrElse("").trim,
+                       addressLine3 = Some(this.locality.getOrElse("").trim),
+                       postalCode = Some(this.postal_code.getOrElse("").trim),
+                       countryCode = this.country.getOrElse("GB")
+        )
+    }
 
 }
 
