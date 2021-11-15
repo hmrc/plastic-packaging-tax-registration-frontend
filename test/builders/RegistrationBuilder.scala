@@ -18,7 +18,7 @@ package builders
 
 import java.util.UUID
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{PARTNERSHIP, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.{GROUP, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
   Address,
   Date,
@@ -151,6 +151,6 @@ trait RegistrationBuilder {
       )
 
   def withGroupDetail(groupDetail: Option[GroupDetail]): RegistrationModifier =
-    registration => registration.copy(groupDetail = groupDetail)
+    registration => registration.copy(registrationType = Some(GROUP), groupDetail = groupDetail)
 
 }

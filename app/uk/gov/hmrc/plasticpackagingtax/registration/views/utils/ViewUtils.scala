@@ -26,7 +26,10 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
   Key,
   SummaryListRow
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address => RegistrationAddress}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  AddressDetails => GroupMemberAddress
+}
 
 object ViewUtils {
 
@@ -70,12 +73,21 @@ object ViewUtils {
                    )
     )
 
-  def extractAddress(address: Address) =
+  def extractAddress(address: RegistrationAddress) =
     Seq(address.addressLine1,
         address.addressLine2,
         address.addressLine3.getOrElse(""),
         address.townOrCity,
         address.postCode
+    ).filter(_.nonEmpty).mkString("<br>")
+
+  def extractAddress(address: GroupMemberAddress) =
+    Seq(address.addressLine1,
+        address.addressLine2,
+        address.addressLine3.getOrElse(""),
+        address.addressLine4.getOrElse(""),
+        address.postalCode.getOrElse(""),
+        address.countryCode
     ).filter(_.nonEmpty).mkString("<br>")
 
 }
