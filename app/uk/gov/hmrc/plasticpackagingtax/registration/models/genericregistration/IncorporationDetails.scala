@@ -52,7 +52,12 @@ case class IncorporationDetails(
   businessVerificationStatus: String,
   companyAddress: IncorporationAddressDetails,
   override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails
+) extends RegistrationDetails {
+
+  def isGroupMemberSameAsNominated(customerIdentification1: String): Boolean =
+    companyNumber.equalsIgnoreCase(customerIdentification1)
+
+}
 
 object IncorporationDetails {
 

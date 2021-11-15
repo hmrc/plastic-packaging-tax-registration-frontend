@@ -31,6 +31,12 @@ case class GroupMember(
   lazy val businessName: String =
     organisationDetails.map(_.organisationName).getOrElse("No business name")
 
+  override def equals(o: Any): Boolean =
+    o match {
+      case o: GroupMember => o.customerIdentification1 == this.customerIdentification1
+      case _              => false
+    }
+
 }
 
 object GroupMember {

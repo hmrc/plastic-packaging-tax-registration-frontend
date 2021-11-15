@@ -161,7 +161,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
   private def aGroupMember(id: String) =
     GroupMember(id = id,
                 customerIdentification1 = "ABC",
-                organisationDetails = Some(OrganisationDetails("Limited Company", s"Company $id")),
+                organisationDetails =
+                  Some(OrganisationDetails("Limited Company", s"Company $id", Some("12313123"))),
                 addressDetails = AddressDetails(addressLine1 = "addressLine1",
                                                 addressLine2 = "addressLine2",
                                                 countryCode = "UK"

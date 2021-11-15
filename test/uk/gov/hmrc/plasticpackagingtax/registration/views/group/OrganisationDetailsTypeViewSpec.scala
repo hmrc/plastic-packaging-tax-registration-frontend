@@ -39,8 +39,11 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[organisation_type]
 
-  private def createView(form: Form[OrganisationType] = OrganisationType.form()): Document =
-    page(form)(journeyRequest, messages)
+  private def createView(
+    form: Form[OrganisationType] = OrganisationType.form(),
+    isFirstMember: Boolean = true
+  ): Document =
+    page(form = form, isFirstMember = isFirstMember)(journeyRequest, messages)
 
   "Confirm Organisation Type View" should {
 
@@ -64,6 +67,13 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(messages("organisationDetails.other.group.title"))
+    }
+
+    "display title for next group member" in {
+      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
+      view.select("title").text() must include(
+        messages("organisationDetails.other.next.group.title")
+      )
     }
 
     "display header" in {
@@ -103,6 +113,13 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(messages("organisationDetails.other.group.title"))
+    }
+
+    "display title for next group member" in {
+      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
+      view.select("title").text() must include(
+        messages("organisationDetails.other.next.group.title")
+      )
     }
 
     "display header" in {
@@ -160,8 +177,8 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(), true)(request, messages)
+    page.render(form(), isFirstMember = true, request, messages)
   }
 
   def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit

@@ -109,6 +109,8 @@ case class Registration(
     this.copy(metaData = this.metaData.copy(registrationCompleted = true))
 
   val isStarted: Boolean = liabilityDetails.status != TaskStatus.NotStarted
+
+  val isFirstGroupMember = groupDetail.exists(_.members.isEmpty)
 }
 
 object Registration {
