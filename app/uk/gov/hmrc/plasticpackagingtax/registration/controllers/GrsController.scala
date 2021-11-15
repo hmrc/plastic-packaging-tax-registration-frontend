@@ -24,31 +24,13 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStatus.{
-  BUSINESS_IDENTIFICATION_FAILED,
-  BUSINESS_VERIFICATION_FAILED,
-  DUPLICATE_SUBSCRIPTION,
-  RegistrationStatus,
-  STATUS_OK
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationStatus.{BUSINESS_IDENTIFICATION_FAILED, BUSINESS_VERIFICATION_FAILED, DUPLICATE_SUBSCRIPTION, RegistrationStatus, STATUS_OK}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  PartnershipTypeEnum,
-  SCOTTISH_PARTNERSHIP
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GeneralPartnershipDetails,
-  IncorporationDetails,
-  PartnershipDetails,
-  ScottishPartnershipDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Cacheable,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY, OVERSEAS_COMPANY_NO_UK_BRANCH, OrgType, REGISTERED_SOCIETY, SOLE_TRADER, TRUST}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{GENERAL_PARTNERSHIP, PartnershipTypeEnum, SCOTTISH_PARTNERSHIP}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{GeneralPartnershipDetails, IncorporationDetails, PartnershipDetails, ScottishPartnershipDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
@@ -81,6 +63,15 @@ class GrsController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   private val logger = Logger(this.getClass)
+
+  private val subscriptionOnlyPermittedOrgTypes: List[OrgType] = List(
+    SOLE_TRADER,
+    REGISTERED_SOCIETY,
+    TRUST,
+    CHARITABLE_INCORPORATED_ORGANISATION,
+    OVERSEAS_COMPANY,
+    OVERSEAS_COMPANY_NO_UK_BRANCH
+  )
 
   def grsCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
@@ -121,7 +112,12 @@ class GrsController @Inject() (
             case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
             case _          => STATUS_OK
           }
-        case None => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
+        case None =>
+          if (subscriptionOnlyPermittedOrgTypes.contains(registration.organisationDetails.organisationType)) {
+            Future.successful(STATUS_OK)
+          } else {
+            Future.successful(BUSINESS_IDENTIFICATION_FAILED)
+          }
       }
 
   private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(

@@ -23,21 +23,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  UK_COMPANY
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY, OVERSEAS_COMPANY_NO_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  EisError,
-  SubscriptionCreateResponseFailure,
-  SubscriptionCreateResponseSuccess
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{EisError, SubscriptionCreateResponseFailure, SubscriptionCreateResponseSuccess}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -173,9 +164,7 @@ class ReviewRegistrationController @Inject() (
     auditor.registrationSubmitted(registration)
   }
 
-  private def getSafeId(registration: Registration): String =
-    registration.organisationDetails.businessPartnerId.getOrElse(
-      throw new IllegalStateException("Safe Id is required for a Subscription create")
-    )
+  private def getSafeId(registration: Registration): Option[String] =
+    registration.organisationDetails.businessPartnerId
 
 }

@@ -64,11 +64,11 @@ class SubscriptionsConnector @Inject() (
       }
   }
 
-  def submitSubscription(safeId: String, payload: Registration)(implicit
-    hc: HeaderCarrier
+  def submitSubscription(safeId: Option[String], payload: Registration)(implicit
+                                                                        hc: HeaderCarrier
   ): Future[SubscriptionCreateResponse] = {
     val timer = metrics.defaultRegistry.timer("ppt.subscription.submit.timer").time()
-    httpClient.POST[Registration, HttpResponse](config.pptSubscriptionCreateUrl(safeId), payload)
+    httpClient.POST[Registration, HttpResponse](getSubscriptionUrl(safeId), payload)
       .andThen { case _ => timer.stop() }
       .map {
         subscriptionResponse =>
@@ -94,6 +94,11 @@ class SubscriptionsConnector @Inject() (
                 )
             }
       }
+  }
+
+  private def getSubscriptionUrl(safeId: Option[String]): String = safeId match {
+    case Some(safeId) => config.pptSubscriptionCreateUrl(safeId)
+    case _ => config.pptSubscriptionsUrl
   }
 
 }
