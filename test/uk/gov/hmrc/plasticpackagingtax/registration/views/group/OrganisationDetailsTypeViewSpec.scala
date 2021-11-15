@@ -43,7 +43,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     form: Form[OrganisationType] = OrganisationType.form(),
     isFirstMember: Boolean = true
   ): Document =
-    page(form, isFirstMember)(journeyRequest, messages)
+    page(form = form, isFirstMember = isFirstMember)(journeyRequest, messages)
 
   "Confirm Organisation Type View" should {
 
@@ -70,7 +70,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title for next group member" in {
-      val view: Document = createView(OrganisationType.form(), false)
+      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
       view.select("title").text() must include(
         messages("organisationDetails.other.next.group.title")
       )
@@ -116,7 +116,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title for next group member" in {
-      val view: Document = createView(OrganisationType.form(), false)
+      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
       view.select("title").text() must include(
         messages("organisationDetails.other.next.group.title")
       )
@@ -178,7 +178,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
   override def exerciseGeneratedRenderingMethods() = {
     page.f(form(), true)(request, messages)
-    page.render(form(), true, request, messages)
+    page.render(form(), isFirstMember = true, request, messages)
   }
 
   def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit

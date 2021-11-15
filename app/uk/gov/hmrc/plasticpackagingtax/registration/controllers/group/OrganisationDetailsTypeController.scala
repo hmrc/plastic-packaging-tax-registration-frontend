@@ -62,7 +62,7 @@ class OrganisationDetailsTypeController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      val isFirstMember: Boolean = request.registration.groupDetail.exists(_.isFirstMember)
+      val isFirstMember: Boolean = request.registration.isFirstGroupMember
       Future(Ok(page(form = OrganisationType.form(), isFirstMember)))
     }
 
@@ -73,11 +73,7 @@ class OrganisationDetailsTypeController @Inject() (
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
             Future(
-              BadRequest(
-                page(form = formWithErrors,
-                     request.registration.groupDetail.exists(_.isFirstMember)
-                )
-              )
+              BadRequest(page(form = formWithErrors, request.registration.isFirstGroupMember))
             ),
           organisationType =>
             updateRegistration(organisationType).flatMap {

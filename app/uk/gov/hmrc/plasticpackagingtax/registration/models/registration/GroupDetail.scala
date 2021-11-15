@@ -32,7 +32,6 @@ case class GroupDetail(
       TaskStatus.NotStarted
     else TaskStatus.Completed
 
-  val isFirstMember: Boolean = members.isEmpty
 }
 
 object GroupDetail {

@@ -125,9 +125,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
         await(controller.grsCallback(registeredLimitedCompany.incorpJourneyId.get)(getRequest()))
 
-        val membersListSize: Boolean = getLastSavedRegistration.groupDetail.get.members.isEmpty
+        val noGroupMembers: Boolean = getLastSavedRegistration.groupDetail.get.members.isEmpty
 
-        membersListSize mustBe true
+        noGroupMembers mustBe true
       }
     }
 
