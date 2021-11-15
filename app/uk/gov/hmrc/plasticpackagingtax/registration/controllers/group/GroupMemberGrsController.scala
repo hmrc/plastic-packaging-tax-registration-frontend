@@ -153,7 +153,7 @@ class GroupMemberGrsController @Inject() (
             groupDetail
           else {
             val members: Seq[GroupMember] = groupDetail.members :+ member
-            groupDetail.copy(members = members, currentMemberOrganisationType = None)
+            groupDetail.copy(members = members)
           }
         case None => throw new IllegalStateException(s"No group detail")
       }
@@ -165,7 +165,7 @@ class GroupMemberGrsController @Inject() (
     groupDetail: GroupDetail,
     registration: Registration
   ): Boolean =
-    groupDetail.members.exists(groupMember => groupMember.equals(member)) ||
+    groupDetail.members.contains(member) ||
       registration.organisationDetails.incorporationDetails.exists(
         details => details.isGroupMemberSameAsNominated(member.customerIdentification1)
       )
