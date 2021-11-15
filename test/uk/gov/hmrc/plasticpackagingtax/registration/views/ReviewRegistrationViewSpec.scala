@@ -123,7 +123,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                            organisationDetails = Some(
                                                              GroupMemberOrganisationDetails(
                                                                "Uk Limited",
-                                                               "Subsidiary 1"
+                                                               "Subsidiary 1",
+                                                               Some("XP00123")
                                                              )
                                                            ),
                                                            addressDetails =
@@ -137,7 +138,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                            organisationDetails = Some(
                                                              GroupMemberOrganisationDetails(
                                                                "Uk Limited",
-                                                               "Subsidiary 2"
+                                                               "Subsidiary 2",
+                                                               Some("XP00123")
                                                              )
                                                            ),
                                                            addressDetails =
