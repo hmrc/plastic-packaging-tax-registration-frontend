@@ -21,7 +21,10 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
+  routes => liabilityRoutes
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   Registration
@@ -47,11 +50,11 @@ class StartRegistrationControllerSpec extends ControllerSpec {
       "no existing registration" when {
         "preLaunch" in {
           authorizedUser(features = Map(Features.isPreLaunch -> true))
-          verifyRedirect(routes.LiabilityWeightExpectedController.displayPage().url)
+          verifyRedirect(liabilityRoutes.LiabilityWeightExpectedController.displayPage().url)
         }
         "postLaunch" in {
           authorizedUser(features = Map(Features.isPreLaunch -> false))
-          verifyRedirect(routes.LiabilityWeightController.displayPage().url)
+          verifyRedirect(liabilityRoutes.LiabilityWeightController.displayPage().url)
         }
 
         def verifyRedirect(pageUrl: String): Unit = {

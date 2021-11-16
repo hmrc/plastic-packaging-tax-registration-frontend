@@ -21,14 +21,21 @@ import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address, DateData}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
+  IsUkAddress,
+  Postcode,
+  PptReference,
+  RegistrationDate
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   PartnershipTypeEnum,
   SCOTTISH_PARTNERSHIP
@@ -38,13 +45,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   VerificationStatus
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  AddressDetails,
+  GroupMember,
+  OrganisationDetails => GroupOrgDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   GroupDetail,
   OrganisationDetails,
   UserEnrolmentDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  OrganisationDetails => GroupOrgDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest,
@@ -58,17 +67,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 import java.time.{ZoneOffset, ZonedDateTime}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
-  IsUkAddress,
-  Postcode,
-  PptReference,
-  RegistrationDate
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  AddressDetails,
-  GroupMember
-}
-
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {

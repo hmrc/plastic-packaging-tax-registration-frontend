@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models
 
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationException
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.RegistrationException
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
 
 case class SignedInUser(

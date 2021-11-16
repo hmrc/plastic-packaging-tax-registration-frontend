@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
-import base.{MockAuthAction, PptTestData}
 import base.unit.ControllerSpec
+import base.{MockAuthAction, PptTestData}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`

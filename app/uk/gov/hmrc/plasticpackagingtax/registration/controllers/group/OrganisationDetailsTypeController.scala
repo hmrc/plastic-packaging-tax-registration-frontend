@@ -32,7 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
   GroupDetail,

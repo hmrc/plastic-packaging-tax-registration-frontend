@@ -27,8 +27,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorpEntityGrsCreateRequest,
   SoleTraderGrsCreateRequest
@@ -63,9 +65,9 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
         // TODO - if this is a group registration then `Partnership` means `Limited liability partnership` so "partnership type" question not needed
-        Future(Redirect(pptRoutes.PartnershipTypeController.displayPage()))
+        Future(Redirect(organisationRoutes.PartnershipTypeController.displayPage()))
       case _ =>
-        Future(Redirect(pptRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
+        Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
     }
 
   def grsCallbackUrl(): String

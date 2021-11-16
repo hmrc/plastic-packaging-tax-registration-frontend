@@ -22,8 +22,13 @@ import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   MetaData,
@@ -200,7 +205,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(organisationElement, 0) must haveHref(
-            routes.OrganisationDetailsTypeController.displayPage()
+            organisationRoutes.OrganisationDetailsTypeController.displayPage()
           )
         }
 
@@ -244,7 +249,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
           sectionStatus(contactElement, 0) mustBe messages("task.status.inProgress")
           sectionLink(contactElement, 0) must haveHref(
-            routes.ContactDetailsFullNameController.displayPage()
+            contactRoutes.ContactDetailsFullNameController.displayPage()
           )
         }
 
@@ -303,7 +308,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
           sectionLink(organisationElement, 0) must haveHref(
-            routes.OrganisationDetailsTypeController.displayPage()
+            organisationRoutes.OrganisationDetailsTypeController.displayPage()
           )
         }
 
@@ -317,7 +322,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            routes.ContactDetailsFullNameController.displayPage()
+            contactRoutes.ContactDetailsFullNameController.displayPage()
           )
         }
 

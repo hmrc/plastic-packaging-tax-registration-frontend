@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.PartnershipTypeEnum.PartnershipTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.PartnershipTypeEnum
 
 case class PartnershipDetails(
   partnershipType: PartnershipTypeEnum,

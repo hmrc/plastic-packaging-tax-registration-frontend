@@ -26,7 +26,10 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
+  routes => liabilityRoutes
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   registration_group,
   registration_single_entity
@@ -106,11 +109,11 @@ class RegistrationControllerSpec extends ControllerSpec {
       mockRegistrationFind(aRegistration())
       "preLaunch" in {
         authorizedUser(features = Map(Features.isPreLaunch -> true))
-        verifyStartLink(routes.LiabilityWeightExpectedController.displayPage().url)
+        verifyStartLink(liabilityRoutes.LiabilityWeightExpectedController.displayPage().url)
       }
       "postLaunch" in {
         authorizedUser(features = Map(Features.isPreLaunch -> false))
-        verifyStartLink(routes.LiabilityWeightController.displayPage().url)
+        verifyStartLink(liabilityRoutes.LiabilityWeightController.displayPage().url)
       }
 
       def verifyStartLink(startLink: String): Unit = {

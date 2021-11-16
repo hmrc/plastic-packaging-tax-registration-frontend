@@ -1,0 +1,98 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+
+@this(
+  formHelper: FormWithCSRF,
+  govukLayout: main_template,
+  govukButton: GovukButton,
+  inputText: inputText,
+  govukFieldset: GovukFieldset,
+  govukInsetText: GovukInsetText,
+  sectionHeader: sectionHeader,
+  paragraphBody: paragraphBody,
+  saveButtons: saveButtons,
+  errorSummary: errorSummary
+)
+
+@(form: Form[Address])(implicit request: JourneyRequest[_], messages: Messages)
+
+@contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
+
+
+@fieldSetBody = {
+
+    @paragraphBody(messages("primaryContactDetails.address.hint"))
+
+    @inputText(
+        field    = form("addressLine1"),
+        labelKey  = "primaryContactDetails.address.addressLine1",
+        autocomplete = Some("address-line1")
+    )
+
+    @inputText(
+        field    = form("addressLine2"),
+        labelKey  = "primaryContactDetails.address.addressLine2",
+        autocomplete = Some("address-line2")
+    )
+
+    @inputText(
+        field    = form("addressLine3"),
+        labelKey  = "primaryContactDetails.address.addressLine3"
+    )
+
+    @inputText(
+        field    = form("townOrCity"),
+        labelKey  = "primaryContactDetails.address.townOrCity",
+        autocomplete = Some("address-level2")
+)
+
+    @inputText(
+        field    = form("postCode"),
+        labelKey  = "primaryContactDetails.address.postCode",
+        classes = Some("govuk-input govuk-input--width-5"),
+        autocomplete = Some("address-level2")
+    )
+}
+
+
+@govukLayout(
+  title = Title("primaryContactDetails.address.title", headingArg = contactName),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsConfirmAddressController.displayPage(), messages("site.back.hiddenText")))) {
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+
+    @formHelper(action = pptRoutes.ContactDetailsAddressController.submit(), 'autoComplete -> "off") {
+
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("primaryContactDetails.address.title", contactName)),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
+            html = fieldSetBody
+        ))
+
+        @saveButtons()
+    }
+}

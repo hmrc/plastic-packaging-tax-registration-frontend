@@ -26,6 +26,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   registration_single_entity
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
+  routes => liabilityRoutes
+}
 
 import javax.inject.{Inject, Singleton}
 
@@ -48,7 +51,7 @@ class RegistrationController @Inject() (
 
   private def startLink(implicit request: JourneyRequest[AnyContent]) =
     if (request.isFeatureFlagEnabled(Features.isPreLaunch))
-      routes.LiabilityWeightExpectedController.displayPage()
-    else routes.LiabilityWeightController.displayPage()
+      liabilityRoutes.LiabilityWeightExpectedController.displayPage()
+    else liabilityRoutes.LiabilityWeightController.displayPage()
 
 }

@@ -1,0 +1,71 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+
+@this(
+  govukLayout: main_template,
+  saveButtons: saveButtons,
+  govukInput: GovukInput,
+  govukInsetText: GovukInsetText,
+  sectionHeader: sectionHeader,
+  errorSummary: errorSummary,
+  paragraphBody: paragraphBody,
+  appConfig: AppConfig,
+  formHelper: FormWithCSRF,
+
+)
+@(form: Form[EmailAddress])(implicit request: JourneyRequest[_], messages: Messages)
+
+@emailAddressField = @{form("value")}
+@contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
+
+@errorMessages = @{
+    val errors = (form.errors).map(err => messages(err.message, err.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@govukLayout(
+  title = Title(headingKey = "primaryContactDetails.emailAddress.title", headingArgs = Some(List(contactName))),
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsJobTitleController.displayPage(), messages("site.back.hiddenText")))) {
+  @errorSummary(form.errors)
+
+  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+
+  @formHelper(action = pptRoutes.ContactDetailsEmailAddressController.submit(), 'autoComplete -> "off") {
+
+    @govukInput(
+        Input(
+            id = s"${emailAddressField.name}",
+            name = emailAddressField.name,
+            value = emailAddressField.value,
+            hint = Some(Hint(content = Text(messages("primaryContactDetails.emailAddress.hint")))),
+            inputType = "email",
+            label = Label(
+                isPageHeading = true,
+                classes = gdsLabelPageHeading,
+                content = Text(messages("primaryContactDetails.emailAddress.title", contactName))),
+                errorMessage = errorMessages)
+            )
+
+    @saveButtons()
+  }
+}

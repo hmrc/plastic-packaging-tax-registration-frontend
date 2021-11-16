@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.group
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.ConfirmAddress.{NO, YES}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.ConfirmAddress.{NO, YES}
 
 case class RemoveMember(value: Option[Boolean])
 

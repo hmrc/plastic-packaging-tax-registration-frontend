@@ -26,7 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
   Key,
   SummaryListRow
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Address => RegistrationAddress}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   AddressDetails => GroupMemberAddress
 }
@@ -73,7 +73,7 @@ object ViewUtils {
                    )
     )
 
-  def extractAddress(address: RegistrationAddress) =
+  def extractAddress(address: Address) =
     Seq(address.addressLine1,
         address.addressLine2,
         address.addressLine3.getOrElse(""),

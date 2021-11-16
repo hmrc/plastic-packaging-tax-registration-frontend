@@ -15,8 +15,11 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{TaskSection, Title}
 
 @this(
@@ -54,7 +57,7 @@
         @task(2, "registrationPage.task.organisation.heading", Set(
             TaskSection(
                 title = "registrationPage.task.organisation",
-                link = pptRoutes.OrganisationDetailsTypeController.displayPage(),
+                link = organisationRoutes.OrganisationDetailsTypeController.displayPage(),
                 showLink = registration.isLiabilityDetailsComplete,
                 status = registration.companyDetailsStatus
             )
@@ -64,7 +67,7 @@
         @task(3, "registrationPage.task.contactDetails.heading", Set(
             TaskSection(
                 title = "registrationPage.task.contactDetails",
-                link = pptRoutes.ContactDetailsFullNameController.displayPage(),
+                link = contactRoutes.ContactDetailsFullNameController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.primaryContactDetailsStatus
             )
