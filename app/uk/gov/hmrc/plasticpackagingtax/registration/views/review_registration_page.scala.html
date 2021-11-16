@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.GROUP
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -33,6 +34,7 @@
         appConfig: AppConfig,
         liabilityDetails: liabilityDetails,
         organisationDetails: organisationDetails,
+        groupMemberListDetails: groupMemberListDetails,
         primaryContactDetails: primaryContactDetails
 )
 
@@ -49,9 +51,13 @@
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
-        @liabilityDetails(registration.liabilityDetails, liabilityStartLink)
-        @organisationDetails(registration.organisationDetails)
+        @liabilityDetails(registration.liabilityDetails, liabilityStartLink, registration.registrationType, registration.groupDetail)
+        @organisationDetails(registration.organisationDetails, registration.registrationType)
         @primaryContactDetails(registration.primaryContactDetails)
+
+        @if(registration.registrationType.contains(GROUP)) {
+            @groupMemberListDetails(registration.groupDetail.get)
+        }
 
         @subHeading(messages("reviewRegistration.sendYourApplication.title"))
         @paragraphBody(messages("reviewRegistration.sendYourApplication.body"))

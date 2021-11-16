@@ -14,25 +14,27 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.{GROUP, RegType}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType
 
 @this(
         subHeading: subHeading,
         govukSummaryList: GovukSummaryList
 )
 
-@(organisationDetails: OrganisationDetails)(implicit request: JourneyRequest[_], messages: Messages)
+@(organisationDetails: OrganisationDetails, registrationType: Option[RegType])(implicit request: JourneyRequest[_], messages: Messages)
 
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
-            summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(extractAddress)),
             summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName)),
+            summaryListRow("reviewRegistration.organisationDetails.organisationName", organisationDetails.businessName),
             summaryListRow("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(organisationDetails.incorporationDetails.get.companyNumber)),
+            summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(extractAddress)),
             summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr))
         ).filterNot(_.value.content == Empty)
     )
@@ -61,7 +63,14 @@
     )
 }
 
-@subHeading(messages("reviewRegistration.organisationDetails.check.label"))
+@organisationSectionSubHeading() = @{
+    registrationType match {
+        case Some(GROUP) => subHeading(messages("reviewRegistration.organisationDetails.check.label.group"))
+        case _ => subHeading(messages("reviewRegistration.organisationDetails.check.label.singleEntity"))
+    }
+}
+
+@organisationSectionSubHeading()
 @govukSummaryList({
     if(organisationDetails.incorporationDetails.isDefined)
         ukCompanySummary()

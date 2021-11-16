@@ -33,9 +33,9 @@
         rows = Seq(
             summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
             summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
-            summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage())),
+            summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage())),
             summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),
-            summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage()))
+            summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage()))
         ).filterNot(_.value.content == Empty)
     )
 )

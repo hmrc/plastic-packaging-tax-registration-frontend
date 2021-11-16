@@ -16,10 +16,12 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.{GROUP, RegType, SINGLE_ENTITY}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, LiabilityDetails}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
+
 @import java.time.format.DateTimeFormatter
 
 @this(
@@ -27,7 +29,12 @@
         govukSummaryList: GovukSummaryList
 )
 
-@(liabilityDetails: LiabilityDetails, liabilityStartLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(
+        liabilityDetails: LiabilityDetails,
+        liabilityStartLink: Call,
+        registrationType: Option[RegType] = None,
+        groupDetails: Option[GroupDetail] = None
+)(implicit request: JourneyRequest[_], messages: Messages)
 
 @liabilityWeightRow() = @{
     summaryListRowWithValue(
@@ -61,7 +68,7 @@
     )
 }
 
-@liabilityLiableDate() = @{
+@liabilityLiableDateRow() = @{
     summaryListRowWithValue(
         key = "checkLiabilityDetailsAnswers.date",
         value = Value(
@@ -75,13 +82,33 @@
     )
 }
 
+@registrationTypeRow() = @{
+    summaryListRowWithValue(
+        key = "checkLiabilityDetailsAnswers.registrationType",
+        value = Value(
+            registrationType match {
+                case Some(regType) =>
+                    Text(
+                        regType match {
+                            case GROUP => messages("registrationType.group")
+                            case SINGLE_ENTITY => messages("registrationType.singleEntity")
+                        }
+                    )
+                case _ => Empty
+            }
+        ),
+        call = Some(pptRoutes.RegistrationTypeController.displayPage())
+    )
+}
+
 @subHeading(messages("checkLiabilityDetailsAnswers.check.label"))
 @govukSummaryList(
     SummaryList(
         rows = Seq[SummaryListRow](
             liabilityWeightRow,
             expectToExceedThresholdWeightRow,
-            liabilityLiableDate
+            liabilityLiableDateRow,
+            registrationTypeRow
         ).filterNot(_.value.content == Empty)
     )
 )

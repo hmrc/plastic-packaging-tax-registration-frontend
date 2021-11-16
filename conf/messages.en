@@ -129,7 +129,6 @@ checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
 checkLiabilityDetailsAnswers.check.label = Liability details
 checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
-checkLiabilityDetailsAnswers.future.liable = Liable for the Plastic Packaging Tax until at least 1 April 2022
 checkLiabilityDetailsAnswers.registrationType = What you want to register
 checkLiabilityDetailsAnswers.membersUnderGroupControl = Group under same control
 
@@ -196,7 +195,7 @@ primaryContactDetails.address.postCode.format.error = Enter a postcode in the co
 
 primaryContactDetails.check.meta.title = Check the main contact’s details
 primaryContactDetails.check.title = Check your answers
-primaryContactDetails.check.label = Primary contact details
+primaryContactDetails.check.label = Main contact details
 primaryContactDetails.check.fullName = Name
 primaryContactDetails.check.jobTitle = Job title
 primaryContactDetails.check.address = Contact address
@@ -211,11 +210,14 @@ group.organisationList.nominatedOrganisation = Nominated organisation
 addOrganisation.add.heading = Do you need to add another organisation?
 addOrganisation.empty.error = Please select Yes or No
 reviewRegistration.organisationDetails.title = Review and send your registration
-reviewRegistration.organisationDetails.check.label = Registered organisation details
-reviewRegistration.organisationDetails.registeredBusinessAddress = Registered Business Address
-reviewRegistration.organisationDetails.organisationType = Organisation Type
-reviewRegistration.organisationDetails.businessRegistrationNumber = Business Registration Number
-reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique Taxpayer Reference
+reviewRegistration.organisationDetails.check.label.singleEntity = Organisation details
+reviewRegistration.organisationDetails.check.label.group = Nominated organisation details
+reviewRegistration.organisationDetails.check.label.groupMembers = Organisations in the group
+reviewRegistration.organisationDetails.organisationType = Business type
+reviewRegistration.organisationDetails.organisationName = Business name
+reviewRegistration.organisationDetails.businessRegistrationNumber = Company registration number
+reviewRegistration.organisationDetails.registeredBusinessAddress = Registered business address
+reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique taxpayer reference
 reviewRegistration.sendYourApplication.title = Now send your application
 reviewRegistration.sendYourApplication.body = By submitting this registration you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
