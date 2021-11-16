@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
+import java.util.UUID
+
 import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -30,8 +32,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationRegistrationDetails,
   PartnershipGrsCreateRequest
 }
-
-import java.util.UUID
 
 class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
@@ -108,7 +108,7 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
   private def expectPartnershipIdentificationServiceToSuccessfullyCreateNewJourney() =
     stubFor(
-      post("/partnership-identification/api/general-partnership/journey")
+      post("/partnership-identification/api/general-partnership-journey")
         .willReturn(
           aResponse()
             .withStatus(Status.CREATED)
@@ -118,7 +118,7 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
   private def expectPartnershipIdentificationServiceToFailToCreateNewJourney(statusCode: Int) =
     stubFor(
-      post("/partnership-identification/api/general-partnership/journey")
+      post("/partnership-identification/api/general-partnership-journey")
         .willReturn(
           aResponse()
             .withStatus(statusCode)

@@ -73,7 +73,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "have 'generalPartnershipJourneyUrl' defined" in {
       validAppConfig.generalPartnershipJourneyUrl must be(
-        "http://localhost:9722/partnership-identification/api/general-partnership/journey"
+        "http://localhost:9722/partnership-identification/api/general-partnership-journey"
       )
     }
 
