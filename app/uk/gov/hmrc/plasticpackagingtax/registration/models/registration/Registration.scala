@@ -55,11 +55,19 @@ case class Registration(
       TaskStatus.CannotStartYet
 
   def numberOfCompletedSections: Int =
-    Array(isCompanyDetailsComplete,
-          isLiabilityDetailsComplete,
-          isPrimaryContactDetailsComplete,
-          isRegistrationComplete
-    ).count(p => p)
+    if (isGroup)
+      Array(isCompanyDetailsComplete,
+            isLiabilityDetailsComplete,
+            isPrimaryContactDetailsComplete,
+            isOtherOrganisationsInGroupComplete,
+            isRegistrationComplete
+      ).count(p => p)
+    else
+      Array(isCompanyDetailsComplete,
+            isLiabilityDetailsComplete,
+            isPrimaryContactDetailsComplete,
+            isRegistrationComplete
+      ).count(p => p)
 
   def isGroup: Boolean = registrationType.contains(RegType.GROUP)
 
