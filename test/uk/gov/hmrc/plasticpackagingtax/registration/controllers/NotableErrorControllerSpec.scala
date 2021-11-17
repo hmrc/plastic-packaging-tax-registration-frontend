@@ -23,12 +23,12 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolment_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.business_verification_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  business_verification_failure_page,
   duplicate_subscription_page,
-  enrolment_failure_page,
-  error_page,
-  grs_failure_page
+  error_page
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

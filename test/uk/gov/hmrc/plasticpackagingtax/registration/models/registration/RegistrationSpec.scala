@@ -20,9 +20,9 @@ import builders.RegistrationBuilder
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.GROUP
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
-  Date,
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
 }

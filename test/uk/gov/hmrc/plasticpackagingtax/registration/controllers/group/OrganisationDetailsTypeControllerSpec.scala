@@ -28,8 +28,11 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY,
   OVERSEAS_COMPANY_NO_UK_BRANCH,
@@ -37,7 +40,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
@@ -118,23 +121,26 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "user submits organisation type: " + PARTNERSHIP in {
           mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
           assertRedirectForOrgType(PARTNERSHIP,
-                                   pptRoutes.PartnershipTypeController.displayPage().url
+                                   organisationRoutes.PartnershipTypeController.displayPage().url
           )
         }
 
         "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
-          assertRedirectForOrgType(CHARITABLE_INCORPORATED_ORGANISATION,
-                                   pptRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+          assertRedirectForOrgType(
+            CHARITABLE_INCORPORATED_ORGANISATION,
+            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
         }
         "user submits organisation type: " + OVERSEAS_COMPANY in {
-          assertRedirectForOrgType(OVERSEAS_COMPANY,
-                                   pptRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+          assertRedirectForOrgType(
+            OVERSEAS_COMPANY,
+            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
         }
         "user submits organisation type: " + OVERSEAS_COMPANY_NO_UK_BRANCH in {
-          assertRedirectForOrgType(OVERSEAS_COMPANY_NO_UK_BRANCH,
-                                   pptRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+          assertRedirectForOrgType(
+            OVERSEAS_COMPANY_NO_UK_BRANCH,
+            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
         }
       }
@@ -168,7 +174,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           case "SaveAndContinue" =>
             redirectLocation(result) mustBe Some(redirectUrl)
           case _ =>
-            redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+            redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
         }
       }
 
@@ -265,11 +271,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         if (supported)
           redirectLocation(result) must not be Some(
-            pptRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
         else
           redirectLocation(result) mustBe Some(
-            pptRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
       }
 

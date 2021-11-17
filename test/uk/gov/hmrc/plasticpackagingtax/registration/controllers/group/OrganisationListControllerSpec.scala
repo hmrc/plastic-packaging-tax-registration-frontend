@@ -79,7 +79,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          pptControllers.routes.RegistrationController.displayPage().url
+          pptControllers.routes.TaskListController.displayPage().url
         )
       }
 
@@ -142,7 +142,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          pptControllers.routes.RegistrationController.displayPage().url
+          pptControllers.routes.TaskListController.displayPage().url
         )
       }
       "user selects save and come back later" in {
@@ -153,7 +153,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          pptControllers.routes.RegistrationController.displayPage().url
+          pptControllers.routes.TaskListController.displayPage().url
         )
       }
     }

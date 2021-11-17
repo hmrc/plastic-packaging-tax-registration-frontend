@@ -22,7 +22,7 @@ import play.api.mvc.Flash
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles._
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolment_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest

@@ -1,0 +1,101 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+
+@this(
+        govukLayout: main_template,
+        pageHeading: pageHeading,
+        paragraph: paragraph,
+        link: link,
+        govukInput: GovukInput,
+        sectionHeader: sectionHeader,
+        errorSummary: errorSummary,
+        formHelper: FormWithCSRF,
+        saveButtons: saveButtons,
+        govukInsetText: GovukInsetText,
+)
+@(form: Form[LiabilityWeight])(implicit request: Request[_], messages: Messages)
+
+@totalWeightField = @{
+    form("totalKg")
+}
+
+@errorMessages = @{
+    val errors = (form.errors).map(err => messages(err.message, err.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@pptWeightQuestion = {
+    @pageHeading(
+        text = messages("liabilityWeightPage.question")
+    )
+}
+
+@pptGuidanceLink = {
+    @link(
+        id = Some("guidance-link"),
+        newTab = true,
+        text = messages("liabilityWeightPage.guidance.description"),
+        call = Call(
+            method = "GET",
+            url = messages("liabilityWeightPage.guidance.href")
+        )
+    )
+}
+
+@pptWeightHelp = {
+    @paragraph(
+        content = Html(messages("liabilityWeightPage.info"))
+    )
+    @paragraph(
+        content = Html(messages("liabilityWeightPage.info2", pptGuidanceLink))
+    )
+}
+
+@govukLayout(title = Title("liabilityWeightPage.title")) {
+
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("liabilityWeightPage.sectionHeader"))
+
+    @pptWeightQuestion
+
+    @pptWeightHelp
+
+    @formHelper(action = pptRoutes.LiabilityWeightController.submit(), 'autoComplete -> "off") {
+        @govukInput(
+            Input(
+                id = s"${totalWeightField.name}",
+                name = totalWeightField.name,
+                value = totalWeightField.value,
+                hint = None,
+                label = Label(
+                    content = Text(messages("liabilityWeightPage.label"))
+                ),
+                errorMessage = errorMessages,
+                suffix = Some(PrefixOrSuffix(
+                    content = Text("kg")
+                )),
+                classes = "govuk-input--width-5"
+            )
+        )
+        @saveButtons()
+    }
+}

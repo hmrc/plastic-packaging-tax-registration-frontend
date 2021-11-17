@@ -20,12 +20,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolment_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.business_verification_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  business_verification_failure_page,
   duplicate_subscription_page,
-  enrolment_failure_page,
-  error_page,
-  grs_failure_page
+  error_page
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

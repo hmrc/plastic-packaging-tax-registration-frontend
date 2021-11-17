@@ -22,18 +22,22 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
+  routes => liabilityRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.{GROUP, SINGLE_ENTITY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
-  Date,
-  LiabilityExpectedWeight,
-  LiabilityWeight,
-  OrgType
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
@@ -79,7 +83,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
     }
 
     "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
+      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display meta title" in {
@@ -215,10 +219,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(liabilityStartLink)
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+                liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
               )
               getChangeLinkFor(liabilitySection, 2, liabilityView) must haveHref(
-                routes.LiabilityStartDateController.displayPage()
+                liabilityRoutes.LiabilityStartDateController.displayPage()
               )
             }
 
@@ -248,7 +252,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(liabilityStartLink)
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                routes.LiabilityStartDateController.displayPage()
+                liabilityRoutes.LiabilityStartDateController.displayPage()
               )
             }
 
@@ -412,19 +416,19 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             getValueFor(contactDetailsSection, 4) mustBe "2 Scala Street Soho London W1T 2HN"
 
             getChangeLinkFor(contactDetailsSection, 0) must haveHref(
-              routes.ContactDetailsFullNameController.displayPage()
+              contactRoutes.ContactDetailsFullNameController.displayPage()
             )
             getChangeLinkFor(contactDetailsSection, 1) must haveHref(
-              routes.ContactDetailsJobTitleController.displayPage()
+              contactRoutes.ContactDetailsJobTitleController.displayPage()
             )
             getChangeLinkFor(contactDetailsSection, 2) must haveHref(
-              routes.ContactDetailsEmailAddressController.displayPage()
+              contactRoutes.ContactDetailsEmailAddressController.displayPage()
             )
             getChangeLinkFor(contactDetailsSection, 3) must haveHref(
-              routes.ContactDetailsTelephoneNumberController.displayPage()
+              contactRoutes.ContactDetailsTelephoneNumberController.displayPage()
             )
             getChangeLinkFor(contactDetailsSection, 4) must haveHref(
-              routes.ContactDetailsConfirmAddressController.displayPage()
+              contactRoutes.ContactDetailsConfirmAddressController.displayPage()
             )
           }
 

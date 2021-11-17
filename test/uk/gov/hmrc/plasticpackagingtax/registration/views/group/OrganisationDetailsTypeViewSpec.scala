@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY,
   OVERSEAS_COMPANY_NO_UK_BRANCH,
@@ -29,8 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
   PARTNERSHIP,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType.form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -61,7 +60,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
+      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display title" in {
@@ -107,7 +106,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
+      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display title" in {
@@ -177,8 +176,8 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form(), true)(request, messages)
-    page.render(form(), isFirstMember = true, request, messages)
+    page.f(OrganisationType.form(), true)(request, messages)
+    page.render(OrganisationType.form(), isFirstMember = true, request, messages)
   }
 
   def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit

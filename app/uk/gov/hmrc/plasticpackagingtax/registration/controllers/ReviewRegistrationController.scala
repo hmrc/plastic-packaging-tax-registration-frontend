@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   REGISTERED_SOCIETY,
   SOLE_TRADER,
@@ -77,7 +77,7 @@ class ReviewRegistrationController @Inject() (
           }
         }
       else
-        Future(Redirect(routes.RegistrationController.displayPage()))
+        Future(Redirect(routes.TaskListController.displayPage()))
     }
 
   private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =

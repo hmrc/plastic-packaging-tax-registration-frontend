@@ -16,14 +16,16 @@
 
 package builders
 
-import java.util.UUID
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrgType.{PARTNERSHIP, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.RegType.{GROUP, RegType}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{
-  Address,
-  Date,
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
+  PARTNERSHIP,
+  UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
@@ -34,6 +36,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
+
+import java.util.UUID
 
 //noinspection ScalaStyle
 trait RegistrationBuilder {

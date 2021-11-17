@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{error_page}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.error_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest

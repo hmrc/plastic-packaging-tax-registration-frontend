@@ -32,7 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
   GroupDetail,
@@ -81,7 +81,7 @@ class OrganisationDetailsTypeController @Inject() (
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     handleOrganisationType(organisationType)
-                  case _ => Future(Redirect(pptRoutes.RegistrationController.displayPage()))
+                  case _ => Future(Redirect(pptRoutes.TaskListController.displayPage()))
                 }
               case Left(error) => throw error
             }
