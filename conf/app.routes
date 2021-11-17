@@ -5,7 +5,6 @@
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
 
 GET        /start                uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
-
 GET        /start-registration   uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartRegistrationController.startRegistration()
 
 # Liability
@@ -84,9 +83,6 @@ POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registratio
 # Others
 GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.TaskListController.displayPage()
 
-GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
-POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
-
 GET        /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.displayPage()
 POST       /review-registration     uk.gov.hmrc.plasticpackagingtax.registration.controllers.ReviewRegistrationController.submit()
 
@@ -104,6 +100,9 @@ GET        /security-signed-out     uk.gov.hmrc.plasticpackagingtax.registration
 GET        /unauthorised   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad()
 
 # Group Registrations
+GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
+POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
+
 GET        /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.displayPage(memberId)
 POST       /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.submit(memberId)
 
