@@ -23,7 +23,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolment_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.business_verification_failure_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{duplicate_subscription_page, error_page}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  duplicate_subscription_page,
+  error_page
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
