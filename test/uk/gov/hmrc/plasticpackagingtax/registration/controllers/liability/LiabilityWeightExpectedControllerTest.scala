@@ -141,13 +141,9 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
 
           formAction._1 match {
             case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
             case _ =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
         }
 

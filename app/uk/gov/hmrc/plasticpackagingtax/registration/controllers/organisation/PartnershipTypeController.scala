@@ -100,7 +100,7 @@ class PartnershipTypeController @Inject() (
                               Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
                             )
                         }
-                      case _ => Future(Redirect(commonRoutes.RegistrationController.displayPage()))
+                      case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
                     }
                   case Left(error) => throw error
                 }

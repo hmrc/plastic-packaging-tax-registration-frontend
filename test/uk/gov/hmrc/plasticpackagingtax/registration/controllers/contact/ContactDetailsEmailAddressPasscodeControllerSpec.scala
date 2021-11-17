@@ -135,9 +135,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
               )
               modifiedRegistration.metaData.emailVerified(email) mustBe true
             case "Unknown" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
 
           reset(mockRegistrationConnector)
@@ -158,9 +156,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
             case "Continue" =>
               status(result) mustBe BAD_REQUEST
             case "Unknown" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -179,9 +175,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
             case "Continue" =>
               status(result) mustBe SEE_OTHER
             case "Unknown" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -198,9 +192,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
             case "Continue" =>
               status(result) mustBe BAD_REQUEST
             case "Unknown" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
 
           reset(mockRegistrationConnector)
@@ -236,9 +228,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
             case "Continue" =>
               intercept[RegistrationException](status(result))
             case "Unknown" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
 
           reset(mockRegistrationConnector)
@@ -261,9 +251,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
             case "Continue" =>
               intercept[DownstreamServiceError](status(result))
             case "Unknown" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
 
           reset(mockRegistrationConnector)

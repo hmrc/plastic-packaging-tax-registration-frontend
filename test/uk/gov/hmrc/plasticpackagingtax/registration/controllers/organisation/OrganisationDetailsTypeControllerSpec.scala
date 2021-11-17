@@ -155,7 +155,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           case "SaveAndContinue" =>
             redirectLocation(result) mustBe Some(redirectUrl)
           case "SaveAndComeBackLater" =>
-            redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+            redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
         }
       }
 

@@ -31,7 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class StartRegistrationControllerSpec extends ControllerSpec {
+class StartTaskListControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -75,7 +75,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
         val result = controller.startRegistration()(getRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
       }
     }
   }

@@ -44,7 +44,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { _ =>
-      Future.successful(Redirect(commonRoutes.RegistrationController.displayPage()))
+      Future.successful(Redirect(commonRoutes.TaskListController.displayPage()))
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =

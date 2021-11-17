@@ -20,25 +20,25 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  registration_group,
-  registration_single_entity
-}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  task_list_group,
+  task_list_single_entity
+}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RegistrationController @Inject() (
+class TaskListController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  singleEntityPage: registration_single_entity,
-  groupPage: registration_group
+  singleEntityPage: task_list_single_entity,
+  groupPage: task_list_group
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

@@ -41,7 +41,7 @@ class ContactDetailsCheckAnswersController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction) { _ =>
-      Redirect(commonRoutes.RegistrationController.displayPage())
+      Redirect(commonRoutes.TaskListController.displayPage())
     }
 
 }

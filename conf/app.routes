@@ -82,7 +82,7 @@ GET        /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registratio
 POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsCheckAnswersController.submit()
 
 # Others
-GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.RegistrationController.displayPage()
+GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.TaskListController.displayPage()
 
 GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
 POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()

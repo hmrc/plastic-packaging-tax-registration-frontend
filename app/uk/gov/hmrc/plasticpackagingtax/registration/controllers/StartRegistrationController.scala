@@ -37,7 +37,7 @@ class StartRegistrationController @Inject() (
   def startRegistration(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       if (request.registration.isStarted)
-        Redirect(routes.RegistrationController.displayPage())
+        Redirect(routes.TaskListController.displayPage())
       else
         Redirect(startLink)
     }

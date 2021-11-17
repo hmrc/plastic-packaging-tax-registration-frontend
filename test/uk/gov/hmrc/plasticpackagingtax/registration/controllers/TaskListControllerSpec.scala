@@ -31,23 +31,23 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  registration_group,
-  registration_single_entity
+  task_list_group,
+  task_list_single_entity
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class RegistrationControllerSpec extends ControllerSpec {
+class TaskListControllerSpec extends ControllerSpec {
 
   private val mcc              = stubMessagesControllerComponents()
-  private val singleEntityPage = mock[registration_single_entity]
-  private val groupPage        = mock[registration_group]
+  private val singleEntityPage = mock[task_list_single_entity]
+  private val groupPage        = mock[task_list_group]
 
   private val controller =
-    new RegistrationController(authenticate = mockAuthAction,
-                               mockJourneyAction,
-                               mcc = mcc,
-                               singleEntityPage = singleEntityPage,
-                               groupPage = groupPage
+    new TaskListController(authenticate = mockAuthAction,
+                           mockJourneyAction,
+                           mcc = mcc,
+                           singleEntityPage = singleEntityPage,
+                           groupPage = groupPage
     )
 
   override protected def beforeEach(): Unit = {

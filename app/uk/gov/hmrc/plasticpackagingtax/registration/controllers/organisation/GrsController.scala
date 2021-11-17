@@ -97,7 +97,7 @@ class GrsController @Inject() (
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(commonRoutes.RegistrationController.displayPage())
+                  Redirect(commonRoutes.TaskListController.displayPage())
                 case BUSINESS_IDENTIFICATION_FAILED =>
                   Redirect(commonRoutes.NotableErrorController.grsFailure())
                 case BUSINESS_VERIFICATION_FAILED =>

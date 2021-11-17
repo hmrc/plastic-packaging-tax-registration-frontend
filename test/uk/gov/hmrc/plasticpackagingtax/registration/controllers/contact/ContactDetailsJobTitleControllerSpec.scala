@@ -96,9 +96,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
                 routes.ContactDetailsEmailAddressController.displayPage().url
               )
             case _ =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }

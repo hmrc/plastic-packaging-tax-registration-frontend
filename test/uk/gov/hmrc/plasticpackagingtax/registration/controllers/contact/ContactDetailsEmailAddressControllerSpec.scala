@@ -152,9 +152,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
                 routes.ContactDetailsTelephoneNumberController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -180,9 +178,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
                 routes.ContactDetailsTelephoneNumberController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -239,9 +235,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
                 routes.ContactDetailsEmailAddressPasscodeController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -274,13 +268,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           status(result) mustBe SEE_OTHER
           formAction._1 match {
             case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -302,9 +292,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
                 routes.ContactDetailsTelephoneNumberController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -346,9 +334,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
             case "SaveAndComeBackLater" =>
               val result =
                 controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }
@@ -402,9 +388,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
             case "SaveAndComeBackLater" =>
               val result =
                 controller.submit()(postRequestEncoded(EmailAddress("test2@test.com"), formAction))
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }

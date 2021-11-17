@@ -82,7 +82,7 @@ class ContactDetailsEmailAddressController @Inject() (
                   case SaveAndContinue =>
                     saveAndContinue(registration, request.user.credId)
                   case _ =>
-                    Future(Redirect(commonRoutes.RegistrationController.displayPage()))
+                    Future(Redirect(commonRoutes.TaskListController.displayPage()))
                 }
               case Left(error) => throw error
             }
@@ -135,7 +135,7 @@ class ContactDetailsEmailAddressController @Inject() (
         case NOT_VERIFIED =>
           handleNotVerifiedEmail(registration, credId)
         case LOCKED_OUT =>
-          Future(Redirect(commonRoutes.RegistrationController.displayPage()))
+          Future(Redirect(commonRoutes.TaskListController.displayPage()))
       }
     else
       Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))

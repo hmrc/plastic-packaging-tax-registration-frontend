@@ -83,7 +83,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
     }
 
     "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.RegistrationController.displayPage())
+      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display meta title" in {

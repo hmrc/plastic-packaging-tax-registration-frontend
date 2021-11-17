@@ -77,7 +77,7 @@ class ReviewRegistrationController @Inject() (
           }
         }
       else
-        Future(Redirect(routes.RegistrationController.displayPage()))
+        Future(Redirect(routes.TaskListController.displayPage()))
     }
 
   private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =

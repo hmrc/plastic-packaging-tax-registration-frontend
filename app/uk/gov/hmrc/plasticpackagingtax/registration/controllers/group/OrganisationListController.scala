@@ -46,7 +46,7 @@ class OrganisationListController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.groupDetail.fold(
-        Redirect(pptControllers.routes.RegistrationController.displayPage())
+        Redirect(pptControllers.routes.TaskListController.displayPage())
       )(
         detail =>
           if (detail.members.isEmpty)
@@ -79,8 +79,8 @@ class OrganisationListController @Inject() (
                 Redirect(
                   pptControllers.group.routes.OrganisationDetailsTypeController.displayPage()
                 )
-              else Redirect(pptControllers.routes.RegistrationController.displayPage())
-            case _ => Redirect(pptControllers.routes.RegistrationController.displayPage())
+              else Redirect(pptControllers.routes.TaskListController.displayPage())
+            case _ => Redirect(pptControllers.routes.TaskListController.displayPage())
           }
       )
 

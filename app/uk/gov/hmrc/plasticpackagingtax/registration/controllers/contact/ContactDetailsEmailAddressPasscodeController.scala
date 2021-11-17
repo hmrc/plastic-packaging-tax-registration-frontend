@@ -81,7 +81,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
                 }
 
               case _ =>
-                Future(Redirect(commonRoutes.RegistrationController.displayPage()))
+                Future(Redirect(commonRoutes.TaskListController.displayPage()))
             }
         )
     }

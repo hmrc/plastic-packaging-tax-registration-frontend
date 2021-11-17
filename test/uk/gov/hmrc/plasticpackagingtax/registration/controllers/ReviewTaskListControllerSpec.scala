@@ -53,7 +53,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.util.UUID
 
-class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
+class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
   private val mockReviewRegistrationPage      = mock[review_registration_page]
   private val mockDuplicateSubscriptionPage   = mock[duplicate_subscription_page]
   private val mcc                             = stubMessagesControllerComponents()
@@ -212,7 +212,7 @@ class ReviewRegistrationControllerSpec extends ControllerSpec with TableDrivenPr
         val result = controller.displayPage()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
       }
 
     }

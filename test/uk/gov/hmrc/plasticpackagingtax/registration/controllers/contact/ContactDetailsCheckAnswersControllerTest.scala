@@ -96,7 +96,7 @@ class ContactDetailsCheckAnswersControllerTest extends ControllerSpec {
           controller.submit()(FakeRequest("POST", ""))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
       }
     }
   }

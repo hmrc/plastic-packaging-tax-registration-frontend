@@ -71,7 +71,7 @@ class ContactDetailsAddressController @Inject() (
                   case SaveAndContinue =>
                     Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
                   case _ =>
-                    Redirect(commonRoutes.RegistrationController.displayPage())
+                    Redirect(commonRoutes.TaskListController.displayPage())
                 }
               case Left(error) => throw error
             }

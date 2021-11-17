@@ -138,7 +138,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
-        redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
       }
     }
   }

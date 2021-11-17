@@ -30,18 +30,18 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.registration_group
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_group
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
-  private val LIABILITY_DETAILS                    = 0
-  private val NOMINATED_BUSINESS_DETAILS           = 1
-  private val NOMINATED_PRIMARY_CONTACT_DETAILS    = 2
-  private val OTHER_BUSINESS_DETAILS               = 3
-  private val CHECK_AND_SUBMIT                     = 4
-  private val registrationPage: registration_group = instanceOf[registration_group]
+  private val LIABILITY_DETAILS                 = 0
+  private val NOMINATED_BUSINESS_DETAILS        = 1
+  private val NOMINATED_PRIMARY_CONTACT_DETAILS = 2
+  private val OTHER_BUSINESS_DETAILS            = 3
+  private val CHECK_AND_SUBMIT                  = 4
+  private val registrationPage: task_list_group = instanceOf[task_list_group]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 

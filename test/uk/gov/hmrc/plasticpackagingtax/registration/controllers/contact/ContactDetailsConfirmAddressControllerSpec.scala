@@ -247,9 +247,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
                 routes.ContactDetailsCheckAnswersController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
         }
 
@@ -274,9 +272,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
                 routes.ContactDetailsAddressController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
         }
       }

@@ -52,12 +52,12 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   "Check liability details answers View" should {
     val preLaunchView = createView(preLaunch = true,
                                    reg = populatedRegistration,
-                                   backLink = routes.RegistrationController.displayPage()
+                                   backLink = routes.TaskListController.displayPage()
     )
     val preLaunchViewWithEmptyRegistration =
       createView(preLaunch = true,
                  reg = unpopulatedRegistration,
-                 backLink = routes.RegistrationController.displayPage()
+                 backLink = routes.TaskListController.displayPage()
       )
 
     val postLaunchView = createView(preLaunch = false,
@@ -93,7 +93,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" when {
       "feature flag 'isPreLaunch' is enabled" in {
         preLaunchView.getElementById("back-link") must haveHref(
-          routes.RegistrationController.displayPage()
+          routes.TaskListController.displayPage()
         )
       }
 

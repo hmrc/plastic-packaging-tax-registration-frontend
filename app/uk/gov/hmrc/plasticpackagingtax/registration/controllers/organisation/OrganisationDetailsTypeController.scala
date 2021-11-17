@@ -78,7 +78,7 @@ class OrganisationDetailsTypeController @Inject() (
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     handleOrganisationType(organisationType)
-                  case _ => Future(Redirect(commonRoutes.RegistrationController.displayPage()))
+                  case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
                 }
               case Left(error) => throw error
             }

@@ -128,7 +128,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
           authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
 
           verifyRegistrationUpdateAndRedirect(routes.RegistrationTypeController.displayPage().url,
-                                              pptRoutes.RegistrationController.displayPage().url
+                                              pptRoutes.TaskListController.displayPage().url
           )(formAction)
         }
         "groups not enabled" in {
@@ -136,7 +136,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
 
           verifyRegistrationUpdateAndRedirect(
             routes.CheckLiabilityDetailsAnswersController.displayPage().url,
-            pptRoutes.RegistrationController.displayPage().url
+            pptRoutes.TaskListController.displayPage().url
           )(formAction)
         }
       }

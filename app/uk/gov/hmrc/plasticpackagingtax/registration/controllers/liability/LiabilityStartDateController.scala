@@ -72,7 +72,7 @@ class LiabilityStartDateController @Inject() (
                     else
                       Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
                   case _ =>
-                    Redirect(commonRoutes.RegistrationController.displayPage())
+                    Redirect(commonRoutes.TaskListController.displayPage())
                 }
               case Left(error) => throw error
             }
@@ -98,9 +98,9 @@ class LiabilityStartDateController @Inject() (
             if (totalKg < deMinimisKg)
               routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
             else routes.LiabilityWeightController.displayPage()
-          case None => commonRoutes.RegistrationController.displayPage()
+          case None => commonRoutes.TaskListController.displayPage()
         }
-      case None => commonRoutes.RegistrationController.displayPage()
+      case None => commonRoutes.TaskListController.displayPage()
     }
 
 }

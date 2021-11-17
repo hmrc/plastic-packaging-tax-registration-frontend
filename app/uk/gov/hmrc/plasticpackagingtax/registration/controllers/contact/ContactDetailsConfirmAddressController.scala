@@ -97,13 +97,13 @@ class ContactDetailsConfirmAddressController @Inject() (
                         if (confirmAddress.useRegisteredAddress.getOrElse(false))
                           Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
                         else Redirect(routes.ContactDetailsAddressController.displayPage())
-                      case _ => Redirect(commonRoutes.RegistrationController.displayPage())
+                      case _ => Redirect(commonRoutes.TaskListController.displayPage())
                     }
                   case Left(error) => throw error
                 }
             )
 
-        case _ => Future(Redirect(commonRoutes.RegistrationController.displayPage()))
+        case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
       }
     }
 

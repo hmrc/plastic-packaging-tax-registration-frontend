@@ -68,7 +68,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
                   case SaveAndContinue =>
                     Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
                   case _ =>
-                    Redirect(commonRoutes.RegistrationController.displayPage())
+                    Redirect(commonRoutes.TaskListController.displayPage())
                 }
               case Left(error) => throw error
             }

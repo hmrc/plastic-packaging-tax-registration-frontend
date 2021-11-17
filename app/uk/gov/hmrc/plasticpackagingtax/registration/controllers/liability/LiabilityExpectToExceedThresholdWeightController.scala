@@ -74,7 +74,7 @@ class LiabilityExpectToExceedThresholdWeightController @Inject() (
                     if (processMoreWeight.answer.getOrElse(false))
                       Redirect(routes.LiabilityStartDateController.displayPage())
                     else Redirect(routes.NotLiableController.displayPage())
-                  case _ => Redirect(commonRoutes.RegistrationController.displayPage())
+                  case _ => Redirect(commonRoutes.TaskListController.displayPage())
                 }
               case Left(error) => throw error
             }

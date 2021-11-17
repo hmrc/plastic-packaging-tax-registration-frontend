@@ -96,9 +96,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
                 routes.ContactDetailsConfirmAddressController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
           reset(mockRegistrationConnector)
         }

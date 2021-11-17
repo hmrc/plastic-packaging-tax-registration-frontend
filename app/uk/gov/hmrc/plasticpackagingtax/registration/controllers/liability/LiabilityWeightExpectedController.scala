@@ -87,7 +87,7 @@ class LiabilityWeightExpectedController @Inject() (
       if (isGroupRegistrationEnabled)
         Redirect(routes.RegistrationTypeController.displayPage())
       else
-        Redirect(commonRoutes.RegistrationController.displayPage())
+        Redirect(commonRoutes.TaskListController.displayPage())
     else
       Redirect(routes.NotLiableController.displayPage())
 

@@ -99,9 +99,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                   routes.LiabilityStartDateController.displayPage().url
                 )
               case _ =>
-                redirectLocation(result) mustBe Some(
-                  pptRoutes.RegistrationController.displayPage().url
-                )
+                redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
             }
           }
           "and weight is less than minimum weight" in {
@@ -122,9 +120,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
                   routes.LiabilityExpectToExceedThresholdWeightController.displayPage().url
                 )
               case _ =>
-                redirectLocation(result) mustBe Some(
-                  pptRoutes.RegistrationController.displayPage().url
-                )
+                redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
             }
           }
 

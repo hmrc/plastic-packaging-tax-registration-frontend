@@ -98,7 +98,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateLimitedCompanyCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -106,7 +106,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateSoleTraderCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -114,7 +114,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateRegisteredSocietyCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -122,7 +122,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateGeneralPartnershipCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -130,7 +130,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateScottishPartnershipCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.RegistrationController.displayPage().url)
+        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
     }

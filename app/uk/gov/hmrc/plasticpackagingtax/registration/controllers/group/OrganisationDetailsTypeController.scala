@@ -81,7 +81,7 @@ class OrganisationDetailsTypeController @Inject() (
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     handleOrganisationType(organisationType)
-                  case _ => Future(Redirect(pptRoutes.RegistrationController.displayPage()))
+                  case _ => Future(Redirect(pptRoutes.TaskListController.displayPage()))
                 }
               case Left(error) => throw error
             }

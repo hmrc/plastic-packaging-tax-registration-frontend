@@ -67,7 +67,7 @@ class ContactDetailsJobTitleController @Inject() (
                   case SaveAndContinue =>
                     Redirect(routes.ContactDetailsEmailAddressController.displayPage())
                   case _ =>
-                    Redirect(commonRoutes.RegistrationController.displayPage())
+                    Redirect(commonRoutes.TaskListController.displayPage())
                 }
               case Left(error) => throw error
             }

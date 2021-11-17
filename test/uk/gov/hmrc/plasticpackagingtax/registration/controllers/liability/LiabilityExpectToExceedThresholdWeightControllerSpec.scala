@@ -116,9 +116,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
                 routes.LiabilityStartDateController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
         }
 
@@ -139,9 +137,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
                 routes.LiabilityStartDateController.displayPage().url
               )
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
         }
 
@@ -161,9 +157,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
             case "SaveAndContinue" =>
               redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
             case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(
-                pptRoutes.RegistrationController.displayPage().url
-              )
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
           }
         }
       }

@@ -66,7 +66,7 @@ class LiabilityWeightController @Inject() (
                   case SaveAndContinue =>
                     handleSaveAndContinue(liabilityWeight)
                   case _ =>
-                    Redirect(commonRoutes.RegistrationController.displayPage())
+                    Redirect(commonRoutes.TaskListController.displayPage())
                 }
               case Left(error) => throw error
             }
