@@ -20,6 +20,7 @@ import builders.RegistrationBuilder
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
@@ -29,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class RegistrationSpec
-    extends AnyWordSpec with Matchers with MockitoSugar with RegistrationBuilder {
+    extends AnyWordSpec with Matchers with MockitoSugar with RegistrationBuilder with PptTestData {
 
   "Registration status" should {
     "be 'Cannot Start Yet' " when {
@@ -191,5 +192,79 @@ class RegistrationSpec
                    groupDetail = Some(GroupDetail(membersUnderGroupControl = None))
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
+  }
+
+  "Registration for single organisation number of completed sections" should {
+    "have the correct value " when {
+
+      "registration is complete" in {
+        val registrationCompletedMetaData =
+          aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
+        aRegistration(
+          withMetaData(registrationCompletedMetaData)
+        ).numberOfCompletedSections mustBe 4
+      }
+      "registration has not been completed" in {
+        aRegistration().numberOfCompletedSections mustBe 3
+      }
+      "registration does not have complete contact details" in {
+        aRegistration(
+          withPrimaryContactDetails(PrimaryContactDetails())
+        ).numberOfCompletedSections mustBe 2
+      }
+      "registration does not have complete contact or organisation details" in {
+        aRegistration(withPrimaryContactDetails(PrimaryContactDetails()),
+                      withOrganisationDetails(OrganisationDetails())
+        ).numberOfCompletedSections mustBe 1
+      }
+      "registration not started" in {
+        Registration("123").numberOfCompletedSections mustBe 0
+      }
+    }
+
+  }
+
+  "Registration for group organisation number of completed sections" should {
+    "have the correct value " when {
+
+      val groupDetails =
+        GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember))
+
+      "registration is complete" in {
+        val registrationCompletedMetaData =
+          aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
+        aRegistration(withRegistrationType(Some(GROUP)),
+                      withMetaData(registrationCompletedMetaData),
+                      withGroupDetail(Some(groupDetails))
+        ).numberOfCompletedSections mustBe 5
+      }
+      "registration has not been completed" in {
+        aRegistration(withRegistrationType(Some(GROUP)),
+                      withGroupDetail(Some(groupDetails))
+        ).numberOfCompletedSections mustBe 4
+      }
+      "registration does not have complete group members" in {
+        aRegistration(withRegistrationType(Some(GROUP)),
+                      withGroupDetail(Some(groupDetails.copy(members = Seq.empty)))
+        ).numberOfCompletedSections mustBe 3
+      }
+      "registration does not have complete group members or contact details" in {
+        aRegistration(withRegistrationType(Some(GROUP)),
+                      withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
+                      withPrimaryContactDetails(PrimaryContactDetails())
+        ).numberOfCompletedSections mustBe 2
+      }
+      "registration does not have complete group members, contact details or nominated organisation details" in {
+        aRegistration(withRegistrationType(Some(GROUP)),
+                      withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
+                      withPrimaryContactDetails(PrimaryContactDetails()),
+                      withOrganisationDetails(OrganisationDetails())
+        ).numberOfCompletedSections mustBe 1
+      }
+      "registration not started" in {
+        Registration("123", registrationType = Some(GROUP)).numberOfCompletedSections mustBe 0
+      }
+    }
+
   }
 }
