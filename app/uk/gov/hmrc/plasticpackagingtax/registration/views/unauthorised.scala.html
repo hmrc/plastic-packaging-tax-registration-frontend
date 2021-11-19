@@ -17,40 +17,30 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.StartController
 
 @this(
-  govukLayout: main_template,
-  pageHeading: pageHeading,
-  link: link,
-  config: AppConfig
+        govukLayout: main_template,
+        pageHeading: pageHeading,
+        paragraph: paragraph,
+        link: link,
+        config: AppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@helpSection = {
-  <p class="govuk-body">
-  @Html(messages("unauthorised.paragraph.1", link(
-      id = Some("register_for_ppt_link"),
-      text = messages("unauthorised.paragraph.1.link"),
-      call = Call("GET", StartController.displayStartPage().url)
-    )
-  ))
-  </p>
-    <p class="govuk-body">
-    @Html(messages("unauthorised.paragraph.2", link(
-    id = Some("find_out_about_ppt_link"),
+@contactHmrcLink = {
+@link(
+    id = Some("deskpro_link"),
     text = messages("unauthorised.paragraph.2.link"),
-    call = Call("GET", config.pptRegistrationInfoUrl)
-    )
-    ))
-</p>
+    call = Call("GET", config.contactHmrcUrl)
+)
 }
 
 @govukLayout(title = Title("unauthorised.heading")) {
 
-  @pageHeading(messages("unauthorised.heading"))
+    @pageHeading(messages("unauthorised.heading"))
 
-  @helpSection
+    @paragraph(content = Html(messages("unauthorised.paragraph.1")))
+    @paragraph(content = Html(messages("unauthorised.paragraph.2", contactHmrcLink)))
 
 }

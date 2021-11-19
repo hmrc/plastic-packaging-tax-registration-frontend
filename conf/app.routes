@@ -99,7 +99,7 @@ GET        /organisation-already-registered     uk.gov.hmrc.plasticpackagingtax.
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
 GET        /security-signed-out     uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
 
-GET        /unauthorised   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad()
+GET        /request-to-join-private-beta   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad()
 
 # Group Registrations
 GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
