@@ -74,6 +74,8 @@ POST       /main-contact-telephone    uk.gov.hmrc.plasticpackagingtax.registrati
 GET        /confirm-contact-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsConfirmAddressController.displayPage()
 POST       /confirm-contact-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsConfirmAddressController.submit()
 
+GET        /enter-contact-address-initialise    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.initialise()
+GET        /enter-contact-address-update    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.update(id: Option[String])
 GET        /enter-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.displayPage()
 POST       /enter-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.submit()
 

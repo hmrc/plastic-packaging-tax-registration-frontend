@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.config
+package uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup
 
-object Features {
-  val isPreLaunch: String                = "isPreLaunch"
-  val isUkCompanyPrivateBeta: String     = "ukCompanyPrivateBeta"
-  val isGroupRegistrationEnabled: String = "isGroupRegistrationEnabled"
-  val isAddressLookupEnabled: String     = "isAddressLookupEnabled"
+import play.api.libs.json.{Json, Reads}
+
+case class AddressLookupOnRamp(redirectUrl: String)
+
+object AddressLookupOnRamp {
+  implicit val rds: Reads[AddressLookupOnRamp] = Json.reads[AddressLookupOnRamp]
 }

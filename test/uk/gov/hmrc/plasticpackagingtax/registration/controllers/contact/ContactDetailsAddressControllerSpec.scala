@@ -17,29 +17,45 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
+  AddressLookupAddress,
+  AddressLookupConfirmation,
+  AddressLookupOnRamp,
+  MissingAddressIdException
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import scala.concurrent.Future
 
 class ContactDetailsAddressControllerSpec extends ControllerSpec {
   private val page = mock[address_page]
   private val mcc  = stubMessagesControllerComponents()
 
+  private val mockAddressLookupFrontendConnector: AddressLookupFrontendConnector =
+    mock[AddressLookupFrontendConnector]
+
   private val controller =
     new ContactDetailsAddressController(authenticate = mockAuthAction,
                                         mockJourneyAction,
                                         mockRegistrationConnector,
+                                        mockAddressLookupFrontendConnector,
+                                        config,
                                         mcc = mcc,
                                         page = page
     )
@@ -51,9 +67,31 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
             postCode = "LS3 3UJ"
     )
 
+  private val invalidLookupConfirmation = AddressLookupConfirmation(
+    "auditRef",
+    Some("id"),
+    AddressLookupAddress(lines = List.empty, postcode = None, country = None)
+  )
+
+  private val validLookupConfirmation = AddressLookupConfirmation("auditRef",
+                                                                  Some("id"),
+                                                                  AddressLookupAddress(
+                                                                    lines =
+                                                                      List(anAddress.addressLine1,
+                                                                           anAddress.addressLine2,
+                                                                           anAddress.townOrCity
+                                                                      ),
+                                                                    postcode =
+                                                                      Some(anAddress.postCode),
+                                                                    country = None
+                                                                  )
+  )
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Address]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[Address]])(any(), any())).thenReturn(
+      HtmlFormat.raw("Contact Address Page")
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -63,13 +101,14 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
 
   "Primary Contact Details Address Controller" should {
 
-    "return 200" when {
+    "display page" when {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+        contentAsString(result) mustBe "Contact Address Page"
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
@@ -86,11 +125,116 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+        contentAsString(result) mustBe "Contact Address Page"
+      }
+
+      "user has address lookup flag set and a registration already exists and display page method is invoked" in {
+        authorizedUser(features = Map(Features.isAddressLookupEnabled -> true))
+        mockRegistrationFind(
+          aRegistration(
+            withPrimaryContactDetails(
+              PrimaryContactDetails(address =
+                Some(anAddress)
+              )
+            )
+          )
+        )
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe "Contact Address Page"
+      }
+    }
+
+    "redirect to address lookup frontend" when {
+
+      "user has address lookup flag set and display page method is invoked with no existing address" in {
+        authorizedUser(features = Map(Features.isAddressLookupEnabled -> true))
+        when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
+          Future(AddressLookupOnRamp("/on-ramp"))
+        )
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some("/on-ramp")
+      }
+    }
+
+    "initialise" should {
+      "redirect to address lookup frontend" when {
+        "user has address lookup flag set" in {
+          authorizedUser(features = Map(Features.isAddressLookupEnabled -> true))
+          when(
+            mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())
+          ).thenReturn(Future(AddressLookupOnRamp("/on-ramp")))
+
+          val result = controller.initialise()(getRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some("/on-ramp")
+        }
+      }
+
+      "redirect to display page" when {
+        "user does not have address lookup flag set" in {
+          authorizedUser(features = Map(Features.isAddressLookupEnabled -> false))
+
+          val result = controller.initialise()(getRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsAddressController.displayPage().url
+          )
+        }
+      }
+    }
+
+    "update" should {
+      "throw an exception when called without an id" in {
+        authorizedUser()
+
+        val result = controller.update(None)(getRequest())
+
+        intercept[MissingAddressIdException](status(result))
+      }
+
+      "display an error when the returned address is incompatible with PPT address" in {
+        authorizedUser()
+
+        when(
+          mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq("invalid"))(any(),
+                                                                                        any()
+          )
+        ).thenReturn(Future(invalidLookupConfirmation))
+
+        val result = controller.update(Some("invalid"))(getRequest())
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "persist and redirect when compatible address is returned" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+
+        when(
+          mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq("valid"))(any(), any())
+        ).thenReturn(Future(validLookupConfirmation))
+
+        val result = controller.update(Some("valid"))(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.ContactDetailsCheckAnswersController.displayPage().url
+        )
+
+        modifiedRegistration.primaryContactDetails.address mustBe Some(anAddress)
       }
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (SEE_OTHER) for " + formAction._1 when {
         "user submits or saves the contact address" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())

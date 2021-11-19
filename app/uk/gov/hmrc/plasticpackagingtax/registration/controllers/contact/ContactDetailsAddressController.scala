@@ -16,9 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
+import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -27,6 +31,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
+  AddressLookupConfigV2,
+  AddressLookupOnRamp,
+  MissingAddressIdException
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
   PrimaryContactDetails,
@@ -36,7 +45,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyActio
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -44,17 +52,23 @@ class ContactDetailsAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
+  addressLookupFrontendConnector: AddressLookupFrontendConnector,
+  appConfig: AppConfig,
   mcc: MessagesControllerComponents,
   page: address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen journeyAction).async { implicit request =>
       request.registration.primaryContactDetails.address match {
         case Some(data) =>
-          Ok(page(Address.form().fill(data)))
-        case _ => Ok(page(Address.form()))
+          Future(Ok(page(Address.form().fill(data))))
+        case _ =>
+          if (request.isFeatureFlagEnabled(Features.isAddressLookupEnabled))
+            initialiseAddressLookup.map(onRamp => Redirect(onRamp.redirectUrl))
+          else
+            Future(Ok(page(Address.form())))
       }
     }
 
@@ -78,6 +92,34 @@ class ContactDetailsAddressController @Inject() (
         )
     }
 
+  def initialise(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      if (request.isFeatureFlagEnabled(Features.isAddressLookupEnabled))
+        initialiseAddressLookup.map(onRamp => Redirect(onRamp.redirectUrl))
+      else
+        Future(Redirect(routes.ContactDetailsAddressController.displayPage()))
+    }
+
+  def update(id: Option[String]): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      addressLookupFrontendConnector.getAddress(
+        id.getOrElse(throw new MissingAddressIdException)
+      ).flatMap {
+        confirmedAddress =>
+          val updatedAddress = Address(confirmedAddress)
+          // Address Lookup Service may return an address that is incompatible with PPT, so validate it again
+          Address.form.fillAndValidate(updatedAddress).fold(
+            (formWithErrors: Form[Address]) => Future.successful(BadRequest(page(formWithErrors))),
+            address =>
+              updateRegistration(Address(confirmedAddress)).map {
+                case Right(_) =>
+                  Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+                case Left(error) => throw error
+              }
+          )
+      }
+    }
+
   private def updateRegistration(
     formData: Address
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
@@ -87,5 +129,14 @@ class ContactDetailsAddressController @Inject() (
 
   private def updateAddress(address: Address, registration: Registration): PrimaryContactDetails =
     registration.primaryContactDetails.copy(address = Some(address))
+
+  private def initialiseAddressLookup(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext,
+    request: JourneyRequest[_]
+  ): Future[AddressLookupOnRamp] =
+    addressLookupFrontendConnector.initialiseJourney(
+      AddressLookupConfigV2(routes.ContactDetailsAddressController.update(None), appConfig)
+    )
 
 }

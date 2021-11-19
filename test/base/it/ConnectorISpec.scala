@@ -43,7 +43,9 @@ class ConnectorISpec
         "microservice.services.partnership-identification-frontend.host"         -> wireHost,
         "microservice.services.partnership-identification-frontend.port"         -> wirePort,
         "microservice.services.email-verification.host"                          -> wireHost,
-        "microservice.services.email-verification.port"                          -> wirePort
+        "microservice.services.email-verification.port"                          -> wirePort,
+        "microservice.services.address-lookup-frontend.host"                     -> wireHost,
+        "microservice.services.address-lookup-frontend.port"                     -> wirePort
     )
 
   override def fakeApplication(): Application = {

@@ -20,6 +20,7 @@ import play.api.data.Forms.{optional, text}
 import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.AddressLookupConfirmation
 
 case class Address(
   addressLine1: String,
@@ -31,6 +32,16 @@ case class Address(
 
 object Address extends CommonFormValidators {
   implicit val format: OFormat[Address] = Json.format[Address]
+
+  def apply(addressLookupConfirmation: AddressLookupConfirmation): Address = {
+    val lines = addressLookupConfirmation.extractAddressLines()
+    new Address(addressLine1 = lines._1,
+                addressLine2 = lines._2.getOrElse(""),
+                addressLine3 = lines._3,
+                townOrCity = lines._4,
+                postCode = addressLookupConfirmation.address.postcode.getOrElse("")
+    )
+  }
 
   private val validateAddressField: Int => String => Boolean =
     (length: Int) =>

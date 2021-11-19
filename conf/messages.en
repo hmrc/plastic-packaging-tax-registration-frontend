@@ -192,6 +192,7 @@ primaryContactDetails.address.townOrCity.format.error = Enter a town or city in 
 primaryContactDetails.address.postCode = Postcode
 primaryContactDetails.address.postCode.empty.error = Enter a postcode
 primaryContactDetails.address.postCode.format.error = Enter a postcode in the correct format. For example, AB1 2CD
+primaryContactDetails.address.lookup = Search for a new address
 
 primaryContactDetails.check.meta.title = Check the main contact’s details
 primaryContactDetails.check.title = Check your answers
