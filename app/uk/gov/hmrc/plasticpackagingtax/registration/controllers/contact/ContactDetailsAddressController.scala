@@ -132,8 +132,7 @@ class ContactDetailsAddressController @Inject() (
 
   private def initialiseAddressLookup(implicit
     hc: HeaderCarrier,
-    ec: ExecutionContext,
-    request: JourneyRequest[_]
+    ec: ExecutionContext
   ): Future[AddressLookupOnRamp] =
     addressLookupFrontendConnector.initialiseJourney(
       AddressLookupConfigV2(routes.ContactDetailsAddressController.update(None), appConfig)

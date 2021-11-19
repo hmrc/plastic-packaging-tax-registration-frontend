@@ -27,6 +27,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.{
   postCode,
   townOrCity
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
+  AddressLookupAddress,
+  AddressLookupConfirmation
+}
 
 class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
   "Address validation rules" should {
@@ -116,6 +120,44 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
           Seq(FormError(postCode, "primaryContactDetails.address.postCode.format.error"))
 
         testFailedValidationErrors(input, expectedErrors)
+      }
+    }
+
+    "be created from AddressLookupConfirmation" when {
+
+      def addressLookupConfirmation(lines: List[String], postcode: Option[String] = None) =
+        AddressLookupConfirmation(
+          auditRef = "ref",
+          id = Some("id"),
+          address = AddressLookupAddress(lines = lines, postcode = postcode, country = None)
+        )
+
+      "four address lines and a postcode are returned" in {
+        val address = Address(
+          addressLookupConfirmation(List("line1", "line2", "line3", "town"), Some("postCode"))
+        )
+        address.addressLine1 mustBe "line1"
+        address.addressLine2 mustBe "line2"
+        address.addressLine3 mustBe Some("line3")
+        address.townOrCity mustBe "town"
+        address.postCode mustBe "postCode"
+      }
+
+      "three address lines are returned" in {
+        val address = Address(addressLookupConfirmation(List("line1", "line2", "town")))
+        address.addressLine1 mustBe "line1"
+        address.addressLine2 mustBe "line2"
+        address.addressLine3 mustBe None
+        address.townOrCity mustBe "town"
+      }
+
+      "two address lines (and no postcode) are returned" in {
+        val address = Address(addressLookupConfirmation(List("line1", "town")))
+        address.addressLine1 mustBe "line1"
+        address.addressLine2 mustBe ""
+        address.addressLine3 mustBe None
+        address.townOrCity mustBe "town"
+        address.postCode mustBe ""
       }
     }
   }

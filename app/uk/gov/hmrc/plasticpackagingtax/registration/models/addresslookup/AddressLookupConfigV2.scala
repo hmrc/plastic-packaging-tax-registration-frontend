@@ -21,7 +21,6 @@ import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsFieldsetPageHeading
 
 case class AddressLookupConfigV2(version: Int = 2, options: JourneyOptions, labels: JourneyLabels)
@@ -30,8 +29,7 @@ object AddressLookupConfigV2 {
   implicit val format: OFormat[AddressLookupConfigV2] = Json.format[AddressLookupConfigV2]
 
   def apply(continue: Call, appConfig: AppConfig)(implicit
-    messagesApi: MessagesApi,
-    request: JourneyRequest[_]
+    messagesApi: MessagesApi
   ): AddressLookupConfigV2 = {
     val en: Messages = MessagesImpl(Lang("en"), messagesApi)
 
