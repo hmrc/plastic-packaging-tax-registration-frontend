@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.21
+// @version      14.22
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
 // @include      http*://*/identify-your-incorporated-business*
 // @include      http*://*/identify-your-sole-trader-business*
 // @include      http*://*/identify-your-partnership*
+// @include      http*://*/lookup-address/*
 // @grant GM_setValue
 // @grant GM_getValue
 // @updateURL    https://raw.githubusercontent.com/hmrc/plastic-packaging-tax-frontend/master/tampermonkey/PPT_AutoComplete.js
@@ -466,9 +467,52 @@ const primaryContactCheckYourAnswers = () => {
 const reviewRegistration = () => {
      if (currentPageIs('/register-for-plastic-packaging-tax/review-registration')) {
 
-         document.getElementsByClassName('govuk-button')[0].click()
-     }
- }
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+/*########################     ADDRESS LOOKUP PAGES     ########################## */
+const addressLookupLookup = () => {
+    if (currentPageIs('.*/lookup-address/.*/lookup')) {
+
+        if (window.location.host.includes("localhost")) {
+            document.getElementById("postcode").value = "ZZ1 1ZZ";
+        }
+        else{
+            document.getElementById("postcode").value = "WS1 2AB";
+        }
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const addressLookupChoose = () => {
+    if (currentPageIs('.*/lookup-address/.*/select')) {
+
+        document.getElementById('addressId').checked = true
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const addressLookupConfirm = () => {
+    if (currentPageIs('.*/lookup-address/.*/confirm')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const addressLookupEdit = () => {
+    if (currentPageIs('.*/lookup-address/.*/edit')) {
+
+        document.getElementById("line1").value = "Unit 42";
+        document.getElementById("line2").value = "West Industrial Estate";
+        document.getElementById("town").value = "Walsall";
+        document.getElementById("postcode").value = "WS1 2AB";
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 
 /*########################     PPT ENROLMENT PAGES     ########################## */
 
@@ -581,6 +625,12 @@ const completeJourney = () => {
 
     //review registration
     reviewRegistration()
+
+    // address lookup
+    addressLookupLookup()
+    addressLookupChoose()
+    addressLookupConfirm()
+    addressLookupEdit()
 
     //enrolment
     pptReference()
