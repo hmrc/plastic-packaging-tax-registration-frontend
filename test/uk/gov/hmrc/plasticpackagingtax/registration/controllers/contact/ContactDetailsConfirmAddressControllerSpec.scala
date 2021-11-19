@@ -211,7 +211,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
     def primaryContactAddressPopulatedSameAs(expected: IncorporationAddressDetails) {
       modifiedRegistration.primaryContactDetails.address.get.addressLine1 mustBe expected.premises.get
-      modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1.get
+      modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
       modifiedRegistration.primaryContactDetails.address.get.postCode mustBe expected.postal_code.get
@@ -220,7 +220,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
     def businessRegisteredAddressPopulatedSameAs(expected: IncorporationAddressDetails) {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine1 mustBe expected.premises.get
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.postCode mustBe expected.postal_code.get

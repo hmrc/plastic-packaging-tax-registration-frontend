@@ -137,7 +137,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
           addressLookupConfirmation(List("line1", "line2", "line3", "town"), Some("postCode"))
         )
         address.addressLine1 mustBe "line1"
-        address.addressLine2 mustBe "line2"
+        address.addressLine2 mustBe Some("line2")
         address.addressLine3 mustBe Some("line3")
         address.townOrCity mustBe "town"
         address.postCode mustBe "postCode"
@@ -146,7 +146,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
       "three address lines are returned" in {
         val address = Address(addressLookupConfirmation(List("line1", "line2", "town")))
         address.addressLine1 mustBe "line1"
-        address.addressLine2 mustBe "line2"
+        address.addressLine2 mustBe Some("line2")
         address.addressLine3 mustBe None
         address.townOrCity mustBe "town"
       }
@@ -154,7 +154,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
       "two address lines (and no postcode) are returned" in {
         val address = Address(addressLookupConfirmation(List("line1", "town")))
         address.addressLine1 mustBe "line1"
-        address.addressLine2 mustBe ""
+        address.addressLine2 mustBe None
         address.addressLine3 mustBe None
         address.townOrCity mustBe "town"
         address.postCode mustBe ""

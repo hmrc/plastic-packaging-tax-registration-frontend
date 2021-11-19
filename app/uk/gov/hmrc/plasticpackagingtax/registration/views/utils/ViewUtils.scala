@@ -75,7 +75,7 @@ object ViewUtils {
 
   def extractAddress(address: Address) =
     Seq(address.addressLine1,
-        address.addressLine2,
+        address.addressLine2.getOrElse(""),
         address.addressLine3.getOrElse(""),
         address.townOrCity,
         address.postCode

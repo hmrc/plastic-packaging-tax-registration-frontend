@@ -62,7 +62,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
 
   private val anAddress =
     Address(addressLine1 = "Address Line 1",
-            addressLine2 = "Address Line 2",
+            addressLine2 = Some("Address Line 2"),
             townOrCity = "townOrCity",
             postCode = "LS3 3UJ"
     )
@@ -77,9 +77,12 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
                                                                   Some("id"),
                                                                   AddressLookupAddress(
                                                                     lines =
-                                                                      List(anAddress.addressLine1,
-                                                                           anAddress.addressLine2,
-                                                                           anAddress.townOrCity
+                                                                      List(
+                                                                        anAddress.addressLine1,
+                                                                        anAddress.addressLine2.getOrElse(
+                                                                          ""
+                                                                        ),
+                                                                        anAddress.townOrCity
                                                                       ),
                                                                     postcode =
                                                                       Some(anAddress.postCode),
@@ -262,7 +265,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
         "user does not enter mandatory fields" in {
           authorizedUser()
           val invalidAddress =
-            Address(addressLine1 = "", addressLine2 = "", townOrCity = "", postCode = "")
+            Address(addressLine1 = "", townOrCity = "", postCode = "")
           val result =
             controller.submit()(postRequestEncoded(invalidAddress, formAction))
 
@@ -272,7 +275,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
         "user enters invalid data" in {
           authorizedUser()
           val invalidAddress = Address(addressLine1 = "Address Line 1",
-                                       addressLine2 = "Address Line ****",
+                                       addressLine2 = Some("Address Line ****"),
                                        townOrCity = "townOrCity",
                                        postCode = "LS3 3UJ"
           )
