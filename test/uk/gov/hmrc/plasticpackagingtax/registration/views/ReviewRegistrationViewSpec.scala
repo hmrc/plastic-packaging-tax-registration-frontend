@@ -59,15 +59,13 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
   private val page = instanceOf[review_registration_page]
 
-  private val registration = aRegistration()
-
   private val liabilitySection      = 0
   private val organisationSection   = 1
   private val contactDetailsSection = 2
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
-  private def createView(reg: Registration = registration): Document =
+  private def createView(reg: Registration): Document =
     page(reg, liabilityStartLink)(journeyRequest, messages)
 
   "Review registration View" should {
@@ -476,6 +474,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
   }
 
   override def exerciseGeneratedRenderingMethods() = {
+    val registration = aRegistration()
     page.f(registration, liabilityStartLink)(journeyRequest, messages)
     page.render(registration, liabilityStartLink, journeyRequest, messages)
   }

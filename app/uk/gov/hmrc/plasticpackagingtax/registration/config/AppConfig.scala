@@ -34,6 +34,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -50,6 +51,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     .getOptional[String]("platform.frontend.host")
     .getOrElse("http://localhost:8503")
 
+  def selfUrl(call: Call): String = s"$selfBaseUrl${call.url}"
+
   lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
 
   lazy val reportTechincalProblemUrl: String =
@@ -58,8 +61,11 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val loginUrl         = config.get[String]("urls.login")
   lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
 
-  lazy val externalSignOutLink =
-    s"$selfBaseUrl${routes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction).url}"
+  lazy val externalSignOutLink = selfUrl(
+    routes.SignOutController.signOut(
+      uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction
+    )
+  )
 
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
@@ -116,6 +122,15 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     config.get[Boolean]("microservice.services.email-verification.enabled")
 
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
+
+  lazy val addressLookupHost: String =
+    servicesConfig.baseUrl("address-lookup-frontend")
+
+  lazy val addressLookupInitUrl: String =
+    s"$addressLookupHost/api/init"
+
+  lazy val addressLookupConfirmedUrl: String =
+    s"$addressLookupHost/api/confirmed"
 
   def pptRegistrationUrl(id: String): String = s"$pptRegistrationUrl/$id"
 

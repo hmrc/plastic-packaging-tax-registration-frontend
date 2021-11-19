@@ -30,8 +30,9 @@
   govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
   paragraphBody: paragraphBody,
-  saveButtons: saveButtons,
-  errorSummary: errorSummary
+  saveButton: saveAndContinue,
+  errorSummary: errorSummary,
+  link: link
 )
 
 @(form: Form[Address])(implicit request: JourneyRequest[_], messages: Messages)
@@ -93,6 +94,11 @@
             html = fieldSetBody
         ))
 
-        @saveButtons()
+
+        <div class="govuk-button-group">
+            @saveButton()
+            @link(messages("primaryContactDetails.address.lookup"), pptRoutes.ContactDetailsAddressController.initialise())
+        </div>
+
     }
 }
