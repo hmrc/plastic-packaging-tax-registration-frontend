@@ -58,6 +58,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val reportTechincalProblemUrl: String =
     s"$contactBaseUrl/contact/report-technical-problem?service=$serviceIdentifier"
 
+  lazy val contactHmrcUrl: String =
+    s"$contactBaseUrl/contact/contact-hmrc?service=$serviceIdentifier"
+
   lazy val loginUrl         = config.get[String]("urls.login")
   lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
 
