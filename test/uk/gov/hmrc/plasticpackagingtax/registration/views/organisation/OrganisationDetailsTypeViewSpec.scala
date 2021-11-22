@@ -23,7 +23,8 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
-  OVERSEAS_COMPANY,
+  OVERSEAS_COMPANY_NO_UK_BRANCH,
+  OVERSEAS_COMPANY_UK_BRANCH,
   OrgType,
   PARTNERSHIP,
   REGISTERED_SOCIETY,
@@ -80,12 +81,13 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display radio inputs" in {
 
       radioInputMustBe(1, UK_COMPANY)
-      radioInputMustBe(2, OVERSEAS_COMPANY)
-      radioInputMustBe(3, PARTNERSHIP)
-      radioInputMustBe(4, CHARITABLE_INCORPORATED_ORGANISATION)
-      radioInputMustBe(5, REGISTERED_SOCIETY)
-      radioInputMustBe(6, SOLE_TRADER)
-      radioInputMustBe(7, TRUST)
+      radioInputMustBe(2, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputMustBe(3, OVERSEAS_COMPANY_NO_UK_BRANCH)
+      radioInputMustBe(4, PARTNERSHIP)
+      radioInputMustBe(5, CHARITABLE_INCORPORATED_ORGANISATION)
+      radioInputMustBe(6, REGISTERED_SOCIETY)
+      radioInputMustBe(7, SOLE_TRADER)
+      radioInputMustBe(8, TRUST)
     }
 
     "display 'Save and continue' button" in {
@@ -132,10 +134,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       radioInputMustBe(1, UK_COMPANY)
       radioInputMustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupNominatedPartnership"))
       radioInputMustBe(3, CHARITABLE_INCORPORATED_ORGANISATION)
-      radioInputMustBe(4,
-                       OVERSEAS_COMPANY,
-                       Some("organisationDetails.type.GroupNominatedOverseasCompany")
-      )
+      radioInputMustBe(4, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display 'Save and continue' button" in {

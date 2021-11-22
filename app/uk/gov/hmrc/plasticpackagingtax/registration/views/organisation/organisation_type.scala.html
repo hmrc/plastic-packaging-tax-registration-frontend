@@ -38,7 +38,6 @@
 
     @displayName(orgType: OrgType) = @{ messages(
       orgType match {
-          case OVERSEAS_COMPANY if isGroup => "organisationDetails.type.GroupNominatedOverseasCompany"
           case PARTNERSHIP if isGroup => "organisationDetails.type.GroupNominatedPartnership"
           case _ => s"organisationDetails.type.$orgType"
       }
@@ -55,12 +54,13 @@
               radioItem(UK_COMPANY),
               radioItem(PARTNERSHIP),
               radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
-              radioItem(OVERSEAS_COMPANY)
+              radioItem(OVERSEAS_COMPANY_UK_BRANCH)
           )
       else
           Seq(
               radioItem(UK_COMPANY),
-              radioItem(OVERSEAS_COMPANY),
+              radioItem(OVERSEAS_COMPANY_UK_BRANCH),
+              radioItem(OVERSEAS_COMPANY_NO_UK_BRANCH),
               radioItem(PARTNERSHIP),
               radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
               radioItem(REGISTERED_SOCIETY),

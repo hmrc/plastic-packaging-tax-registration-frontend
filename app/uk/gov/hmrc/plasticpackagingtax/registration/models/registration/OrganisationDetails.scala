@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
+  OVERSEAS_COMPANY_UK_BRANCH,
   OrgType,
   PARTNERSHIP,
   REGISTERED_SOCIETY,
@@ -65,7 +66,7 @@ case class OrganisationDetails(
 
   lazy val businessPartnerId: Option[String] =
     organisationType match {
-      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) =>
+      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
         incorporationDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
       case Some(SOLE_TRADER) =>
         soleTraderDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
@@ -83,9 +84,10 @@ case class OrganisationDetails(
     }
 
   lazy val businessName: Option[String] = organisationType match {
-    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorporationDetails.map(_.companyName)
-    case Some(SOLE_TRADER)                           => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
-    case _                                           => None
+    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+      incorporationDetails.map(_.companyName)
+    case Some(SOLE_TRADER) => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
+    case _                 => None
   }
 
   lazy val registrationDetails: Option[IncorporationRegistrationDetails] = organisationType match {

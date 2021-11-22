@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
+import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,7 +55,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.Subscri
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 object RegistrationStatus extends Enumeration {
@@ -149,7 +149,8 @@ class GrsController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     request.registration.organisationDetails.organisationType match {
-      case Some(OrgType.UK_COMPANY)         => updateUkCompanyDetails(journeyId)
+      case Some(OrgType.UK_COMPANY) | Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
+        updateUkCompanyDetails(journeyId)
       case Some(OrgType.REGISTERED_SOCIETY) => updateRegisteredSocietyDetails(journeyId)
       case Some(OrgType.SOLE_TRADER)        => updateSoleTraderDetails(journeyId)
       case Some(OrgType.PARTNERSHIP)        => updatePartnershipDetails(journeyId)

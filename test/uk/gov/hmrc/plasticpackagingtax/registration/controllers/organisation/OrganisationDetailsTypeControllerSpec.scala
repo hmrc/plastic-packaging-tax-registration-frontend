@@ -31,7 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
-  OVERSEAS_COMPANY,
+  OVERSEAS_COMPANY_UK_BRANCH,
   OrgType,
   PARTNERSHIP,
   REGISTERED_SOCIETY,
@@ -127,9 +127,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                    routes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
         }
-        "user submits organisation type: " + OVERSEAS_COMPANY in {
-          assertRedirectForOrgType(OVERSEAS_COMPANY,
-                                   routes.OrganisationTypeNotSupportedController.onPageLoad().url
+        "user submits organisation type: " + OVERSEAS_COMPANY_UK_BRANCH in {
+          mockUkCompanyCreateIncorpJourneyId("http://test/redirect/overseas-uk-company")
+          assertRedirectForOrgType(OVERSEAS_COMPANY_UK_BRANCH,
+                                   "http://test/redirect/overseas-uk-company"
           )
         }
 
@@ -293,7 +294,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       "user submits form for overseas company" in {
 
-        journeyNotSupportedPrivateBeta(OVERSEAS_COMPANY)
+        journeyNotSupportedPrivateBeta(OVERSEAS_COMPANY_UK_BRANCH)
       }
 
       def journeyNotSupportedPrivateBeta(orgType: OrgType.Value) =
