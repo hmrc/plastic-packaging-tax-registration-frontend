@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.Address
 
 case class Address(
   addressLine1: String,
-  addressLine2: String,
+  addressLine2: Option[String] = None,
   addressLine3: Option[String] = None,
   townOrCity: String,
   postCode: String
@@ -36,7 +36,7 @@ object Address extends CommonFormValidators {
   def apply(addressLookupConfirmation: AddressLookupConfirmation): Address = {
     val lines = addressLookupConfirmation.extractAddressLines()
     new Address(addressLine1 = lines._1,
-                addressLine2 = lines._2.getOrElse(""),
+                addressLine2 = lines._2,
                 addressLine3 = lines._3,
                 townOrCity = lines._4,
                 postCode = addressLookupConfirmation.address.postcode.getOrElse("")
@@ -59,10 +59,10 @@ object Address extends CommonFormValidators {
     addressLine1 -> text()
       .verifying(emptyError(addressLine1), isNonEmpty)
       .verifying(notValidError(addressLine1), validateAddressField(addressFieldMaxSize)),
-    addressLine2 ->
+    addressLine2 -> optional(
       text()
-        .verifying(emptyError(addressLine2), isNonEmpty)
-        .verifying(notValidError(addressLine2), validateAddressField(addressFieldMaxSize)),
+        .verifying(notValidError(addressLine2), validateAddressField(addressFieldMaxSize))
+    ),
     addressLine3 -> optional(
       text()
         .verifying(notValidError(addressLine3), validateAddressField(addressFieldMaxSize))

@@ -68,7 +68,8 @@ trait RegistrationBuilder {
                                                                address = Some(
                                                                  Address(addressLine1 =
                                                                            "2 Scala Street",
-                                                                         addressLine2 = "Soho",
+                                                                         addressLine2 =
+                                                                           Some("Soho"),
                                                                          townOrCity = "London",
                                                                          postCode = "W1T 2HN"
                                                                  )
@@ -80,7 +81,7 @@ trait RegistrationBuilder {
                                                              Some(
                                                                Address(addressLine1 =
                                                                          "2 Scala Street",
-                                                                       addressLine2 = "Soho",
+                                                                       addressLine2 = Some("Soho"),
                                                                        townOrCity = "London",
                                                                        postCode = "W1T 2HN"
                                                                )

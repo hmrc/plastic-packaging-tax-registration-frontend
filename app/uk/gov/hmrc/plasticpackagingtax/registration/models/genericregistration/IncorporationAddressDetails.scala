@@ -47,14 +47,14 @@ case class IncorporationAddressDetails(
     this.premises match {
       case Some(premises) =>
         Address(addressLine1 = premises.trim,
-                addressLine2 = this.address_line_1.getOrElse("").trim,
-                addressLine3 = Some(this.address_line_2.getOrElse("").trim),
+                addressLine2 = this.address_line_1.map(_.trim),
+                addressLine3 = this.address_line_2.map(_.trim),
                 townOrCity = this.locality.getOrElse("").trim,
                 postCode = this.postal_code.getOrElse("").trim
         )
       case None =>
         Address(addressLine1 = this.address_line_1.getOrElse("").trim,
-                addressLine2 = this.address_line_2.getOrElse("").trim,
+                addressLine2 = this.address_line_2.map(_.trim),
                 townOrCity = this.locality.getOrElse("").trim,
                 postCode = this.postal_code.getOrElse("").trim
         )
