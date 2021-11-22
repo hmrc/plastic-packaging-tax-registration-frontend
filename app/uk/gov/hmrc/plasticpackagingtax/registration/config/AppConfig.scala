@@ -53,7 +53,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def selfUrl(call: Call): String = s"$selfBaseUrl${call.url}"
 
-  lazy val contactBaseUrl = servicesConfig.baseUrl("contact-frontend")
+  lazy val contactBaseUrl = config
+    .getOptional[String]("platform.frontend.host")
+    .getOrElse("http://localhost:9250")
 
   lazy val reportTechincalProblemUrl: String =
     s"$contactBaseUrl/contact/report-technical-problem?service=$serviceIdentifier"
