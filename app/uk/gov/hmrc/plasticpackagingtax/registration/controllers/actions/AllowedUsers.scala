@@ -24,7 +24,9 @@ import javax.inject.Provider
 
 @ProvidedBy(classOf[AllowedUsersProvider])
 class AllowedUsers(users: Seq[AllowedUser]) {
-  def isAllowed(email: String): Boolean = users.isEmpty || users.exists(user => user.email == email)
+
+  def isAllowed(email: String): Boolean =
+    users.isEmpty || users.exists(user => user.email.equalsIgnoreCase(email))
 
   def getUserFeatures(email: String): Option[Map[String, Boolean]] =
     users.find(_.email == email).map(_.features)

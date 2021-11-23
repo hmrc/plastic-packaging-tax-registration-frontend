@@ -77,6 +77,19 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       ) mustBe Results.Ok
     }
 
+    "process request when use email number is allowed with different case" in {
+      val allowedEmail = "Amina@HMRC.co.uk"
+      val user         = PptTestData.newUser("123")
+      authorizedUser(user)
+
+      await(
+        createAuthAction(new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))).invokeBlock(
+          authRequest(Headers(), user),
+          okResponseGenerator
+        )
+      ) mustBe Results.Ok
+    }
+
     "redirect to unauthorised page when user email is not allowed" in {
       val user = PptTestData.newUser("123")
       authorizedUser(user)
