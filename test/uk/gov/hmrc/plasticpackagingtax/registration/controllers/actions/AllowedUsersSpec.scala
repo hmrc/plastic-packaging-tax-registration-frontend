@@ -34,12 +34,25 @@ class AllowedUsersSpec extends AnyWordSpec with Matchers with MockitoSugar {
       }
     }
     "has elements" should {
-      val emailAllowedList = new AllowedUsers(Seq(AllowedUser(email = testEmail1)))
+      val emailAllowedList = new AllowedUsers(
+        Seq(AllowedUser(email = testEmail1, features = Map("someFeature" -> true)))
+      )
       "allow listed email" in {
         emailAllowedList.isAllowed(testEmail1) mustBe true
+        val features = emailAllowedList.getUserFeatures(testEmail1).get
+        features.get("someFeature") mustBe Some(true)
+        features.get("someOtherFeature") mustBe None
+      }
+      "allow listed email with different case" in {
+        val email = testEmail1.toUpperCase
+        emailAllowedList.isAllowed(email) mustBe true
+        val features = emailAllowedList.getUserFeatures(email).get
+        features.get("someFeature") mustBe Some(true)
+        features.get("someOtherFeature") mustBe None
       }
       "disallow not listed email" in {
         emailAllowedList.isAllowed(testEmail2) mustBe false
+        emailAllowedList.getUserFeatures(testEmail2) mustBe None
       }
     }
   }
