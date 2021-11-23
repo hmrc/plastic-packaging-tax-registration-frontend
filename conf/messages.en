@@ -401,3 +401,8 @@ organisationDetails.other.organisation.sectionHeader = Other organisations in th
 organisationDetails.other.group.title = What type of organisation is the first one you want to add?
 organisationDetails.other.next.group.title = What type of organisation is the next one you want to add?
 organisationDetails.type.GroupPartnership = Limited liability partnership
+
+enrolment.referenceNumber.already.used.title = Your PPT reference number has already been used
+enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different Government Gateway.
+enrolment.referenceNumber.already.used.detail2 = To access the account for that PPT reference number you need to sign in with the Government Gateway it was linked to.
+enrolment.referenceNumber.already.used.button = Back to your business tax account

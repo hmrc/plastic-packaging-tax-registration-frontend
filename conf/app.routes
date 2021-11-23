@@ -131,3 +131,5 @@ GET        /enrolment-not-verified     uk.gov.hmrc.plasticpackagingtax.registrat
 GET        /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.displayPage()
 POST       /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.submit()
 
+GET        /enrolment-reference-number-already-used     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage()
+
