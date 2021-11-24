@@ -81,7 +81,10 @@ class ContactDetailsAddressController @Inject() (
         .fold(
           (formWithErrors: Form[Address]) =>
             Future.successful(BadRequest(page(formWithErrors, countryService.getAll()))),
-          address =>
+          _ => {
+            val address = Address.dataExtractor.bindFromRequest().value.getOrElse(
+              throw new IllegalStateException()
+            )
             updateRegistration(address).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
@@ -92,6 +95,7 @@ class ContactDetailsAddressController @Inject() (
                 }
               case Left(error) => throw error
             }
+          }
         )
     }
 

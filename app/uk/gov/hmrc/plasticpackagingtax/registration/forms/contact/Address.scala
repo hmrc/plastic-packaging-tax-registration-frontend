@@ -23,12 +23,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.AddressLookupConfirmation
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
-case class Country(code: String, name: String)
-
-object Country {
-  implicit val format: OFormat[Country] = Json.format[Country]
-}
-
 case class Address(
   addressLine1: String,
   addressLine2: Option[String] = None,
@@ -38,7 +32,7 @@ case class Address(
   countryCode: String = "GB"
 )
 
-object Address extends CommonFormValidators {
+object Address extends CommonFormValidators with AddressMapper {
   implicit val format: OFormat[Address] = Json.format[Address]
 
   def apply(addressLookupConfirmation: AddressLookupConfirmation): Address = {
@@ -80,8 +74,6 @@ object Address extends CommonFormValidators {
     townOrCity -> text()
       .verifying(emptyError(townOrCity), isNonEmpty)
       .verifying(notValidError(townOrCity), validateAddressField(addressFieldMaxSize)),
-    // TODO: we need to store a postcode if provided when country non-UK. Postcode is being lost for all non-UK
-    //       addresses at the moment.
     postCode -> mandatoryIfEqual("countryCode",
                                  "GB",
                                  text()
@@ -92,7 +84,7 @@ object Address extends CommonFormValidators {
                                    .verifying(notValidError(postCode), validatePostcode(10))
     ),
     countryCode -> text()
-  )(Address.apply)(Address.unapply)
+  )(formToModel)(modelToForm)
 
   def form(): Form[Address] = Form(mapping)
 

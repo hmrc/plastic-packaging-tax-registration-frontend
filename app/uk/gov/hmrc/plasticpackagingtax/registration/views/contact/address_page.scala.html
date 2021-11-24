@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, Country}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.countryCodeAutoComplete
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -37,7 +37,7 @@
   link: link,
   countryCodeAutoComplete: countryCodeAutoComplete
 )
-@(form: Form[Address], countryMap: Map[String, Country])(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[Address], countryMap: Map[String, String])(implicit request: JourneyRequest[_], messages: Messages)
 
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
 
@@ -79,12 +79,12 @@
       Select(
         id = "country-select",
         name = "countryCode",
-        items = countryMap.values.map { country =>
+        items = countryMap.map { countryEntry =>
             SelectItem(
-                value = Some(country.code),
-                text = country.name,
+                value = Some(countryEntry._1),
+                text = countryEntry._2,
                 selected = form("countryCode").value match {
-                    case Some(code) => code == country.code
+                    case Some(code) => code == countryEntry._1
                     case _ => false
                 }
             )

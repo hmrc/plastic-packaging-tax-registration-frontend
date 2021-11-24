@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.services
 
 import com.google.inject.Singleton
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Country
 
 import scala.collection.immutable.ListMap
 
@@ -31,28 +30,21 @@ object FcoCountry {
 @Singleton
 class CountryService {
 
-  implicit val countryOrdering: Ordering[Country] = Ordering.by(_.name)
-
   val countries = parseCountriesResource()
 
-  def getName(code: String) = countries(code).name
+  def getName(code: String): String = countries(code)
 
-  def getAll() = countries
+  def getAll(): Map[String, String] = countries
 
-  private def parseCountriesResource() = {
-
-    val permittedCountryCodes = Json.parse(
-      getClass.getResourceAsStream("/resources/permitted-country-codes.json")
-    ).as[Seq[String]]
+  private def parseCountriesResource(): Map[String, String] = {
 
     val countryMap = Json.parse(getClass.getResourceAsStream("/resources/countriesEN.json")).as[Map[
       String,
       FcoCountry
     ]]
       .map { entry =>
-        entry._1 -> Country(code = entry._1, name = entry._2.name)
+        entry._1 -> entry._2.name
       }
-      .filter(entry => permittedCountryCodes.contains(entry._1))
 
     ListMap(countryMap.toSeq.sortBy(_._2): _*)
   }
