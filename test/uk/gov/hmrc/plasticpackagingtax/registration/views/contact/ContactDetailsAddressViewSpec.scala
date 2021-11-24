@@ -95,6 +95,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       view must containElementWithID("addressLine3")
       view must containElementWithID("townOrCity")
       view must containElementWithID("postCode")
+      view must containElementWithID("countryCode")
     }
 
     "display 'Save and continue' button" in {
@@ -113,7 +114,8 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
                 addressLine2 = Some("Address Line 2"),
                 addressLine3 = Some("Address Line 3"),
                 townOrCity = "townOrCity",
-                postCode = Some("LS3 3UJ")
+                postCode = Some("LS3 3UJ"),
+                countryCode = "GB"
         )
 
       val form = Address
@@ -126,6 +128,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("addressLine3").attr("value") mustBe "Address Line 3"
       view.getElementById("townOrCity").attr("value") mustBe "townOrCity"
       view.getElementById("postCode").attr("value") mustBe "LS3 3UJ"
+      view.select("select#countryCode option[selected]").text() mustBe "United Kingdom"
     }
   }
   "display error" when {
@@ -137,7 +140,8 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
                 addressLine2 = None,
                 addressLine3 = None,
                 townOrCity = "",
-                postCode = Some("")
+                postCode = Some(""),
+                countryCode = ""
         )
 
       val form = Address
@@ -150,6 +154,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("addressLine1", "Enter address line 1")
       view must haveGovukFieldError("townOrCity", "Enter a town or city")
       view must haveGovukFieldError("postCode", "Enter a postcode")
+      view must haveGovukFieldError("countryCode", "Select a country")
     }
 
     "address fields are not valid" in {
