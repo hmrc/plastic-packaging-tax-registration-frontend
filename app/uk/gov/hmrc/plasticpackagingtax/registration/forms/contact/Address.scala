@@ -84,6 +84,7 @@ object Address extends CommonFormValidators with AddressMapper {
                                    .verifying(notValidError(postCode), validatePostcode(10))
     ),
     countryCode -> text()
+      .verifying(emptyError(countryCode), isNonEmpty)
   )(formToModel)(modelToForm)
 
   def form(): Form[Address] = Form(mapping)

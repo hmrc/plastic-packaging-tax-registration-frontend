@@ -77,26 +77,28 @@
 
     @govukSelect(
       Select(
-        id = "country-select",
+        id = "countryCode",
         name = "countryCode",
-        items = countryMap.map { countryEntry =>
-            SelectItem(
-                value = Some(countryEntry._1),
-                text = countryEntry._2,
-                selected = form("countryCode").value match {
-                    case Some(code) => code == countryEntry._1
-                    case _ => false
-                }
-            )
-        }.toSeq,
+        items =
+            Seq(SelectItem(value = None)) ++
+            countryMap.map { countryEntry =>
+                SelectItem(
+                    value = Some(countryEntry._1),
+                    text = countryEntry._2,
+                    selected = form("countryCode").value match {
+                        case Some(code) => code == countryEntry._1
+                        case _ => false
+                    }
+                )
+            }.toSeq,
         label = Label(
-            content = HtmlContent(messages("primaryContactDetails.address.country")),
+            content = HtmlContent(messages("primaryContactDetails.address.countryCode")),
             classes = "govuk-label govuk-label--s"
-        )
+        ),
+        errorMessage = form("countryCode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
       )
     )
     @countryCodeAutoComplete()
-
 }
 
 
