@@ -128,7 +128,7 @@ class ContactDetailsConfirmAddressController @Inject() (
             Address(addressLine1 = "2 Scala Street",
                     addressLine2 = Some("Soho"),
                     townOrCity = "London",
-                    postCode = "W1T 2HN"
+                    postCode = Some("W1T 2HN")
             )
         )
       case Some(PARTNERSHIP) =>
@@ -144,7 +144,7 @@ class ContactDetailsConfirmAddressController @Inject() (
                     addressLine2 = Some("Soho"),
                     townOrCity = "London",
                     postCode =
-                      partnershipDetails.generalPartnershipDetails.fold("W1T 2HN")(_.postcode)
+                      Some(partnershipDetails.generalPartnershipDetails.fold("W1T 2HN")(_.postcode))
             )
         )
       case _ => throw new InternalServerException(s"Company type not supported")

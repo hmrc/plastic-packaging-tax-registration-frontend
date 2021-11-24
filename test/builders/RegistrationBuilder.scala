@@ -71,7 +71,7 @@ trait RegistrationBuilder {
                                                                          addressLine2 =
                                                                            Some("Soho"),
                                                                          townOrCity = "London",
-                                                                         postCode = "W1T 2HN"
+                                                                         postCode = Some("W1T 2HN")
                                                                  )
                                                                ),
                                                                journeyId = Some("journey-id")
@@ -83,7 +83,7 @@ trait RegistrationBuilder {
                                                                          "2 Scala Street",
                                                                        addressLine2 = Some("Soho"),
                                                                        townOrCity = "London",
-                                                                       postCode = "W1T 2HN"
+                                                                       postCode = Some("W1T 2HN")
                                                                )
                                                              ),
                                                            incorporationDetails =

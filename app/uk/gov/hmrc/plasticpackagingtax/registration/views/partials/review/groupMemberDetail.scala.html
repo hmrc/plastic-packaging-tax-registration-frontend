@@ -17,11 +17,12 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
         subHeading: subHeading,
-        govukSummaryList: GovukSummaryList
+        govukSummaryList: GovukSummaryList,
+        viewUtils: ViewUtils
 )
 
 @(groupMember: GroupMember)(implicit request: JourneyRequest[_], messages: Messages)
@@ -29,8 +30,8 @@
 @govukSummaryList({
     SummaryList(
         rows = Seq(
-            summaryListRow("reviewRegistration.organisationDetails.organisationName", Some(groupMember.businessName)),
-            summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", Some(groupMember.addressDetails).map(extractAddress))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationName", Some(groupMember.businessName)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", Some(groupMember.addressDetails).map(viewUtils.extractAddress))
         ).filterNot(_.value.content == Empty)
     )
 })

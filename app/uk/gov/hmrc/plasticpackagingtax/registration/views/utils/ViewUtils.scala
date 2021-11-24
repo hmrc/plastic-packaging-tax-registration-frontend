@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views.utils
 
+import com.google.inject.{Inject, Singleton}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
@@ -30,8 +31,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   AddressDetails => GroupMemberAddress
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 
-object ViewUtils {
+@Singleton
+class ViewUtils @Inject() (countryService: CountryService) {
 
   def summaryListRow(key: String, value: Option[String], call: Option[Call] = None)(implicit
     messages: Messages
@@ -78,7 +81,8 @@ object ViewUtils {
         address.addressLine2.getOrElse(""),
         address.addressLine3.getOrElse(""),
         address.townOrCity,
-        address.postCode
+        address.postCode.getOrElse(""),
+        countryService.getName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
 
   def extractAddress(address: GroupMemberAddress) =
@@ -87,7 +91,7 @@ object ViewUtils {
         address.addressLine3.getOrElse(""),
         address.addressLine4.getOrElse(""),
         address.postalCode.getOrElse(""),
-        address.countryCode
+        countryService.getName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
 
 }

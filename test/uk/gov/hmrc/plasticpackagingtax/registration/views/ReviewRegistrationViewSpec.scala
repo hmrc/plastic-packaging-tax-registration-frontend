@@ -50,6 +50,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsPageHeading
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -57,7 +58,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
 
-  private val page = instanceOf[review_registration_page]
+  private val page           = instanceOf[review_registration_page]
+  private val countryService = instanceOf[CountryService]
 
   private val liabilitySection      = 0
   private val organisationSection   = 1
@@ -133,7 +135,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                              GroupMemberAddressDetails("1",
                                                                                        "New Street",
                                                                                        countryCode =
-                                                                                         "UK"
+                                                                                         "GB"
                                                              )
                                                ),
                                                GroupMember(customerIdentification1 = "DEF",
@@ -148,7 +150,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                              GroupMemberAddressDetails("2",
                                                                                        "New Street",
                                                                                        countryCode =
-                                                                                         "UK"
+                                                                                         "GB"
                                                              )
                                                )
                                  )
@@ -290,7 +292,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           3,
                           ukCompanyView
-              ) mustBe "2 Scala Street Soho London W1T 2HN"
+              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
               getValueFor(organisationSection,
                           4,
                           ukCompanyView
@@ -339,7 +341,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           2,
                           soleTraderView
-              ) mustBe "2 Scala Street Soho London W1T 2HN"
+              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
               getValueFor(organisationSection, 3, soleTraderView) mustBe SOLE_TRADER.toString
               getValueFor(organisationSection,
                           4,
@@ -377,7 +379,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           1,
                           partnershipView
-              ) mustBe "2 Scala Street Soho London W1T 2HN"
+              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
               getValueFor(organisationSection, 2, partnershipView) mustBe PARTNERSHIP.toString
             }
 
@@ -411,7 +413,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             getValueFor(contactDetailsSection,
                         3
             ) mustBe registration.primaryContactDetails.phoneNumber.get
-            getValueFor(contactDetailsSection, 4) mustBe "2 Scala Street Soho London W1T 2HN"
+            getValueFor(contactDetailsSection,
+                        4
+            ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
             getChangeLinkFor(contactDetailsSection, 0) must haveHref(
               contactRoutes.ContactDetailsFullNameController.displayPage()
@@ -456,7 +460,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                     groupMemberContent must include(member.organisationDetails.get.organisationName)
                     groupMemberContent must include(member.addressDetails.addressLine1)
                     groupMemberContent must include(member.addressDetails.addressLine2)
-                    groupMemberContent must include(member.addressDetails.countryCode)
+                    groupMemberContent must include(
+                      countryService.getName(member.addressDetails.countryCode)
+                    )
                 }
             }
           }

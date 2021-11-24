@@ -42,6 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -55,7 +56,8 @@ class ContactDetailsAddressController @Inject() (
   addressLookupFrontendConnector: AddressLookupFrontendConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
-  page: address_page
+  page: address_page,
+  countryService: CountryService
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -63,12 +65,12 @@ class ContactDetailsAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.primaryContactDetails.address match {
         case Some(data) =>
-          Future(Ok(page(Address.form().fill(data))))
+          Future(Ok(page(Address.form().fill(data), countryService.getAll())))
         case _ =>
           if (request.isFeatureFlagEnabled(Features.isAddressLookupEnabled))
             initialiseAddressLookup.map(onRamp => Redirect(onRamp.redirectUrl))
           else
-            Future(Ok(page(Address.form())))
+            Future(Ok(page(Address.form(), countryService.getAll())))
       }
     }
 
@@ -77,7 +79,8 @@ class ContactDetailsAddressController @Inject() (
       Address.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[Address]) => Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[Address]) =>
+            Future.successful(BadRequest(page(formWithErrors, countryService.getAll()))),
           address =>
             updateRegistration(address).map {
               case Right(_) =>
@@ -109,7 +112,8 @@ class ContactDetailsAddressController @Inject() (
           val updatedAddress = Address(confirmedAddress)
           // Address Lookup Service may return an address that is incompatible with PPT, so validate it again
           Address.form.fillAndValidate(updatedAddress).fold(
-            (formWithErrors: Form[Address]) => Future.successful(BadRequest(page(formWithErrors))),
+            (formWithErrors: Form[Address]) =>
+              Future.successful(BadRequest(page(formWithErrors, countryService.getAll()))),
             address =>
               updateRegistration(Address(confirmedAddress)).map {
                 case Right(_) =>

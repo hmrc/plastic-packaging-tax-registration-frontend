@@ -18,12 +18,15 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
         subHeading: subHeading,
-        govukSummaryList: GovukSummaryList
+        govukSummaryList: GovukSummaryList,
+        countryService: CountryService,
+        viewUtils: ViewUtils
 )
 
 @(organisationDetails: OrganisationDetails, registrationType: Option[RegType])(implicit request: JourneyRequest[_], messages: Messages)
@@ -31,11 +34,11 @@
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
-            summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName)),
-            summaryListRow("reviewRegistration.organisationDetails.organisationName", organisationDetails.businessName),
-            summaryListRow("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(organisationDetails.incorporationDetails.get.companyNumber)),
-            summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationName", organisationDetails.businessName),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(organisationDetails.incorporationDetails.get.companyNumber)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr))
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -43,12 +46,12 @@
 @soleTraderSummary() = @{
     SummaryList(
         rows = Seq(
-            summaryListRow("reviewRegistration.organisationDetails.soleTrader.firstName", Some(organisationDetails.soleTraderDetails.get.firstName)),
-            summaryListRow("reviewRegistration.organisationDetails.soleTrader.lastName", Some(organisationDetails.soleTraderDetails.get.lastName)),
-            summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString)),
-            summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth)),
-            summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.nino))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.firstName", Some(organisationDetails.soleTraderDetails.get.firstName)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.lastName", Some(organisationDetails.soleTraderDetails.get.lastName)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.nino))
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -56,9 +59,9 @@
 @partnershipSummary() = @{
     SummaryList(
         rows = Seq(
-            summaryListRow("reviewRegistration.organisationDetails.partnership.name", Some("TODO")),
-            summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(extractAddress)),
-            summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.partnership.name", Some("TODO")),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString)),
         ).filterNot(_.value.content == Empty)
     )
 }

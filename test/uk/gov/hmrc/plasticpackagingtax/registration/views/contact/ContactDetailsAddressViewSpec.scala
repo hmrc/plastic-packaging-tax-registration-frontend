@@ -22,16 +22,18 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[address_page]
+  private val page           = instanceOf[address_page]
+  private val countryService = instanceOf[CountryService]
 
   private def createView(form: Form[Address] = Address.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form, countryService.getAll())(journeyRequest, messages)
 
   "Address View" should {
 
@@ -111,7 +113,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
                 addressLine2 = Some("Address Line 2"),
                 addressLine3 = Some("Address Line 3"),
                 townOrCity = "townOrCity",
-                postCode = "LS3 3UJ"
+                postCode = Some("LS3 3UJ")
         )
 
       val form = Address
@@ -135,7 +137,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
                 addressLine2 = None,
                 addressLine3 = None,
                 townOrCity = "",
-                postCode = ""
+                postCode = Some("")
         )
 
       val form = Address
@@ -157,7 +159,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
                 addressLine2 = Some("Address Line 2*&%^"),
                 addressLine3 = Some("Address Line 3*&%^"),
                 townOrCity = "*&%^",
-                postCode = "*&%^"
+                postCode = Some("*&%^")
         )
 
       val form = Address
@@ -177,8 +179,8 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form())(journeyRequest, messages)
-    page.render(Address.form(), journeyRequest, messages)
+    page.f(Address.form(), countryService.getAll())(journeyRequest, messages)
+    page.render(Address.form(), countryService.getAll(), journeyRequest, messages)
   }
 
 }

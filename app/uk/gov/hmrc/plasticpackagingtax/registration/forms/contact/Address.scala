@@ -21,13 +21,21 @@ import play.api.data.{Form, Forms, Mapping}
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.AddressLookupConfirmation
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
+
+case class Country(code: String, name: String)
+
+object Country {
+  implicit val format: OFormat[Country] = Json.format[Country]
+}
 
 case class Address(
   addressLine1: String,
   addressLine2: Option[String] = None,
   addressLine3: Option[String] = None,
   townOrCity: String,
-  postCode: String
+  postCode: Option[String],
+  countryCode: String = "GB"
 )
 
 object Address extends CommonFormValidators {
@@ -39,7 +47,8 @@ object Address extends CommonFormValidators {
                 addressLine2 = lines._2,
                 addressLine3 = lines._3,
                 townOrCity = lines._4,
-                postCode = addressLookupConfirmation.address.postcode.getOrElse("")
+                postCode = addressLookupConfirmation.address.postcode,
+                countryCode = addressLookupConfirmation.address.country.map(_.code).getOrElse("GB")
     )
   }
 
@@ -54,6 +63,7 @@ object Address extends CommonFormValidators {
   val addressLine3 = "addressLine3"
   val townOrCity   = "townOrCity"
   val postCode     = "postCode"
+  val countryCode  = "countryCode"
 
   val mapping: Mapping[Address] = Forms.mapping(
     addressLine1 -> text()
@@ -70,10 +80,18 @@ object Address extends CommonFormValidators {
     townOrCity -> text()
       .verifying(emptyError(townOrCity), isNonEmpty)
       .verifying(notValidError(townOrCity), validateAddressField(addressFieldMaxSize)),
-    postCode -> text()
-      .transform[String](postCode => postCode.toUpperCase, postCode => postCode)
-      .verifying(emptyError(postCode), isNonEmpty)
-      .verifying(notValidError(postCode), validatePostcode(10))
+    // TODO: we need to store a postcode if provided when country non-UK. Postcode is being lost for all non-UK
+    //       addresses at the moment.
+    postCode -> mandatoryIfEqual("countryCode",
+                                 "GB",
+                                 text()
+                                   .transform[String](postCode => postCode.toUpperCase,
+                                                      postCode => postCode
+                                   )
+                                   .verifying(emptyError(postCode), isNonEmpty)
+                                   .verifying(notValidError(postCode), validatePostcode(10))
+    ),
+    countryCode -> text()
   )(Address.apply)(Address.unapply)
 
   def form(): Form[Address] = Form(mapping)
