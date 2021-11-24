@@ -16,21 +16,22 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   DUPLICATE_SUBSCRIPTION,
   RegistrationStatus,
   STATUS_OK
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
@@ -46,7 +47,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.Subscri
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -105,7 +105,9 @@ class GroupMemberGrsController @Inject() (
       request.registration.groupDetail.flatMap(_.currentMemberOrganisationType)
     orgType match {
       case Some(OrgType.UK_COMPANY) => updateUkCompanyDetails(journeyId, OrgType.UK_COMPANY)
-      case _                        => throw new IllegalStateException(s"Invalid organisation type")
+      case Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
+        updateUkCompanyDetails(journeyId, OrgType.OVERSEAS_COMPANY_UK_BRANCH)
+      case _ => throw new IllegalStateException(s"Invalid organisation type")
     }
   }
 
