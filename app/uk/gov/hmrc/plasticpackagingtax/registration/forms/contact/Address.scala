@@ -32,7 +32,7 @@ case class Address(
   countryCode: String = "GB"
 )
 
-object Address extends CommonFormValidators with AddressMapper {
+object Address extends CommonFormValidators {
   implicit val format: OFormat[Address] = Json.format[Address]
 
   def apply(addressLookupConfirmation: AddressLookupConfirmation): Address = {
@@ -85,7 +85,20 @@ object Address extends CommonFormValidators with AddressMapper {
     ),
     countryCode -> text()
       .verifying(emptyError(countryCode), isNonEmpty)
-  )(formToModel)(modelToForm)
+  )(Address.apply)(Address.unapply)
+
+  // Use this to unbind the form data from the request to get around the problem of conditional mandatoryIfEqual
+  // mapping not binding postcode
+  def dataExtractor(): Form[Address] =
+    Form(
+      Forms.mapping(addressLine1 -> Forms.text,
+                    addressLine2 -> optional(Forms.text),
+                    addressLine3 -> optional(Forms.text),
+                    townOrCity   -> Forms.text,
+                    postCode     -> optional(Forms.text),
+                    countryCode  -> Forms.text
+      )(Address.apply)(Address.unapply)
+    )
 
   def form(): Form[Address] = Form(mapping)
 
