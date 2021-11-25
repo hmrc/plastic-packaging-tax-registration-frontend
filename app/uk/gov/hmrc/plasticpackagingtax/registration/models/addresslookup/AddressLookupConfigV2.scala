@@ -55,7 +55,7 @@ case class JourneyOptions(
   serviceHref: String,
   showPhaseBanner: Boolean = true,
   pageHeadingStyle: String = gdsFieldsetPageHeading,
-  ukMode: Boolean = true,
+  ukMode: Boolean = false,
   disableTranslations: Boolean = true,
   includeHMRCBranding: Boolean = false
 )

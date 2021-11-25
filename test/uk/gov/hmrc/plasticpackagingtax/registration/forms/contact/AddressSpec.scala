@@ -24,6 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.{
   addressLine1,
   addressLine2,
   addressLine3,
+  countryCode,
   postCode,
   townOrCity
 }
@@ -43,7 +44,8 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
                         addressLine2 -> "Address Line 2",
                         addressLine3 -> "Address Line 3",
                         townOrCity   -> "Town or City",
-                        postCode     -> "LS4 1RH"
+                        postCode     -> "LS4 1RH",
+                        countryCode  -> "GB"
         )
 
         val form = Address.form().bind(input)
@@ -55,7 +57,8 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
         val input = Map(addressLine1 -> "Address Line 1 .'-&",
                         addressLine2 -> "Address Line 2 .'-&",
                         townOrCity   -> "Town or City .'-&",
-                        postCode     -> "LS4 1RH"
+                        postCode     -> "LS4 1RH",
+                        countryCode  -> "GB"
         )
 
         val form = Address.form().bind(input)
@@ -67,7 +70,8 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
         val input = Map(addressLine1 -> "Address Line 1 .'-&",
                         addressLine2 -> "Address Line 2 .'-&",
                         townOrCity   -> "Town or City .'-&",
-                        postCode     -> "ls4 1rh"
+                        postCode     -> "ls4 1rh",
+                        countryCode  -> "GB"
         )
 
         val form = Address.form().bind(input)
@@ -79,7 +83,8 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "mandatory fields provided with empty data" in {
 
-        val input = Map(addressLine1 -> "", townOrCity -> "", postCode -> "")
+        val input =
+          Map(addressLine1 -> "", townOrCity -> "", postCode -> "", countryCode -> "GB")
         val expectedErrors =
           Seq(FormError(addressLine1, "primaryContactDetails.address.addressLine1.empty.error"),
               FormError(townOrCity, "primaryContactDetails.address.townOrCity.empty.error"),
@@ -95,7 +100,8 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
                         addressLine2 -> "Address Line 2%%$%$%$%",
                         addressLine3 -> "Address Line 3**********",
                         townOrCity   -> "Town or City££$£$£$+",
-                        postCode     -> "LS4 1RH £$£$£$++---"
+                        postCode     -> "LS4 1RH £$£$£$++---",
+                        countryCode  -> "GB"
         )
         val expectedErrors =
           Seq(FormError(addressLine1, "primaryContactDetails.address.addressLine1.format.error"),
@@ -114,7 +120,8 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
                         addressLine2 -> "Address Line 2",
                         addressLine3 -> "Address Line 3",
                         townOrCity   -> "Town ",
-                        postCode     -> "LSA41RH"
+                        postCode     -> "LSA41RH",
+                        countryCode  -> "GB"
         )
         val expectedErrors =
           Seq(FormError(postCode, "primaryContactDetails.address.postCode.format.error"))
@@ -140,7 +147,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
         address.addressLine2 mustBe Some("line2")
         address.addressLine3 mustBe Some("line3")
         address.townOrCity mustBe "town"
-        address.postCode mustBe "postCode"
+        address.postCode mustBe Some("postCode")
       }
 
       "three address lines are returned" in {
@@ -157,7 +164,7 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
         address.addressLine2 mustBe None
         address.addressLine3 mustBe None
         address.townOrCity mustBe "town"
-        address.postCode mustBe ""
+        address.postCode mustBe None
       }
     }
   }

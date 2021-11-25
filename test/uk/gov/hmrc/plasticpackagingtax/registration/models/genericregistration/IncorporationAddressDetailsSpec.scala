@@ -41,7 +41,7 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
           _.trim
         )
         incorporationAddressDetails.toPptAddress.addressLine3.get mustBe incorporationAddressDetails.address_line_2.get.trim
-        incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code.get
+        incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code
         incorporationAddressDetails.toPptAddress.townOrCity mustBe incorporationAddressDetails.locality.get.trim
       }
 
@@ -61,7 +61,7 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers {
           _.trim
         )
         incorporationAddressDetails.toPptAddress.addressLine3 mustBe None
-        incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code.get
+        incorporationAddressDetails.toPptAddress.postCode mustBe incorporationAddressDetails.postal_code
         incorporationAddressDetails.toPptAddress.townOrCity mustBe incorporationAddressDetails.locality.get.trim
       }
 

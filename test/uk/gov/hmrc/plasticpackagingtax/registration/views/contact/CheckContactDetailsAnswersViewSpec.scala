@@ -44,7 +44,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                               Address(addressLine1 = "2 Scala Street",
                                       addressLine2 = Some("Soho"),
                                       townOrCity = "London",
-                                      postCode = "W1T 2HN"
+                                      postCode = Some("W1T 2HN")
                               )
                             )
       )
@@ -113,7 +113,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
       getValueFor(fullNameKey) mustBe "Jack Gatsby"
       getValueFor(jobTitleKey) mustBe registration.primaryContactDetails.jobTitle.get
-      getValueFor(addressKey) mustBe "2 Scala Street Soho London W1T 2HN"
+      getValueFor(addressKey) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
       getValueFor(phoneNumberKey) mustBe registration.primaryContactDetails.phoneNumber.get
       getValueFor(emailKey) mustBe registration.primaryContactDetails.email.get
 

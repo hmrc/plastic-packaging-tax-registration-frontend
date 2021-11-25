@@ -38,14 +38,17 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
   MissingAddressIdException
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
 class ContactDetailsAddressControllerSpec extends ControllerSpec {
-  private val page = mock[address_page]
-  private val mcc  = stubMessagesControllerComponents()
+
+  private val page           = mock[address_page]
+  private val mcc            = stubMessagesControllerComponents()
+  private val countryService = app.injector.instanceOf[CountryService]
 
   private val mockAddressLookupFrontendConnector: AddressLookupFrontendConnector =
     mock[AddressLookupFrontendConnector]
@@ -57,14 +60,15 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
                                         mockAddressLookupFrontendConnector,
                                         config,
                                         mcc = mcc,
-                                        page = page
+                                        page = page,
+                                        countryService = countryService
     )
 
   private val anAddress =
     Address(addressLine1 = "Address Line 1",
             addressLine2 = Some("Address Line 2"),
             townOrCity = "townOrCity",
-            postCode = "LS3 3UJ"
+            postCode = Some("LS3 3UJ")
     )
 
   private val invalidLookupConfirmation = AddressLookupConfirmation(
@@ -84,15 +88,14 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
                                                                         ),
                                                                         anAddress.townOrCity
                                                                       ),
-                                                                    postcode =
-                                                                      Some(anAddress.postCode),
+                                                                    postcode = anAddress.postCode,
                                                                     country = None
                                                                   )
   )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Address]])(any(), any())).thenReturn(
+    when(page.apply(any[Form[Address]], any())(any(), any())).thenReturn(
       HtmlFormat.raw("Contact Address Page")
     )
   }
@@ -265,7 +268,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
         "user does not enter mandatory fields" in {
           authorizedUser()
           val invalidAddress =
-            Address(addressLine1 = "", townOrCity = "", postCode = "")
+            Address(addressLine1 = "", townOrCity = "", postCode = Some(""))
           val result =
             controller.submit()(postRequestEncoded(invalidAddress, formAction))
 
@@ -277,7 +280,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
           val invalidAddress = Address(addressLine1 = "Address Line 1",
                                        addressLine2 = Some("Address Line ****"),
                                        townOrCity = "townOrCity",
-                                       postCode = "LS3 3UJ"
+                                       postCode = Some("LS3 3UJ")
           )
           val result = controller.submit()(postRequestEncoded(invalidAddress, formAction))
 

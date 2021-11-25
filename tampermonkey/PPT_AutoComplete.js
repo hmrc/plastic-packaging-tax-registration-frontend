@@ -453,6 +453,7 @@ const primaryContactAddress = () => {
          document.getElementById('addressLine2').value = 'Soho'
          document.getElementById('townOrCity').value = 'London'
          document.getElementById('postCode').value = 'W1T 2HN'
+         document.getElementById("countryCode-select").getElementsByTagName("option")[185].selected = "selected"
          document.getElementsByClassName('govuk-button')[0].click()
      }
  }

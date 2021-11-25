@@ -79,7 +79,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                   Address(addressLine1 = "first line",
                                           addressLine2 = Some("second line"),
                                           townOrCity = "Leeds",
-                                          postCode = "LS1 8TY"
+                                          postCode = Some("LS1 8TY")
                                   )
                                 )
           )
@@ -98,7 +98,7 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                   Address(addressLine1 = "first line",
                                           addressLine2 = Some("second line"),
                                           townOrCity = "Leeds",
-                                          postCode = "LS1 8TY"
+                                          postCode = Some("LS1 8TY")
                                   )
                                 )
           )

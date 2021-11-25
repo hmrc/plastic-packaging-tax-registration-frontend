@@ -14,60 +14,47 @@
  * limitations under the License.
  *@
 
-@import play.twirl.api.HtmlFormat
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, ConfirmAddress}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
-  formHelper: FormWithCSRF,
-  pageHeading: pageHeading,
-  govukLayout: main_template,
-  govukFieldset: GovukFieldset,
-  govukRadios : GovukRadios,
-  govukInsetText: GovukInsetText,
-  sectionHeader: sectionHeader,
-  paragraphBody: paragraphBody,
-  saveButtons: saveButtons,
-  errorSummary: errorSummary
+        formHelper: FormWithCSRF,
+        pageHeading: pageHeading,
+        govukLayout: main_template,
+        govukFieldset: GovukFieldset,
+        govukRadios: GovukRadios,
+        govukInsetText: GovukInsetText,
+        sectionHeader: sectionHeader,
+        paragraphBody: paragraphBody,
+        saveButtons: saveButtons,
+        errorSummary: errorSummary,
+        viewUtils: ViewUtils
 )
 
 @(form: Form[ConfirmAddress], businessAddress: Address)(implicit request: Request[_], messages: Messages)
 
-@extractAddress(address: Address) = @{
-    HtmlContent(
-        Seq(
-            Some(address.addressLine1),
-            address.addressLine2,
-            address.addressLine3,
-            Some(address.townOrCity),
-            Some(address.postCode)
-        ).flatten
-        .map(HtmlFormat.escape(_))
-        .mkString("<br>")
-    )
+@fieldSetBody = {
+@paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
+@govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
+@govukRadios(Radios(
+    hint = None,
+    idPrefix = Some(form("useRegisteredAddress").name),
+    name = form("useRegisteredAddress").name,
+    items = Seq(
+        RadioItem(content = HtmlContent(messages("general.true")), value = Some(ConfirmAddress.YES), checked = form("useRegisteredAddress").value.contains(ConfirmAddress.YES)),
+        RadioItem(content = HtmlContent(messages("general.false")), value = Some(ConfirmAddress.NO), checked = form("useRegisteredAddress").value.contains(ConfirmAddress.NO))
+    ),
+    classes = "govuk-radios",
+    errorMessage = form("useRegisteredAddress").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+))
 }
 
-    @fieldSetBody = {
-        @paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
-        @govukInsetText(InsetText(content = extractAddress(businessAddress)))
-        @govukRadios(Radios(
-            hint = None,
-            idPrefix = Some(form("useRegisteredAddress").name),
-            name = form("useRegisteredAddress").name,
-            items = Seq(
-                RadioItem(content = HtmlContent(messages("general.true")), value = Some(ConfirmAddress.YES), checked = form("useRegisteredAddress").value.contains(ConfirmAddress.YES)),
-                RadioItem(content = HtmlContent(messages("general.false")), value = Some(ConfirmAddress.NO), checked = form("useRegisteredAddress").value.contains(ConfirmAddress.NO))
-            ),
-            classes = "govuk-radios",
-            errorMessage = form("useRegisteredAddress").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-        ))
-    }
-
 @govukLayout(
-  title = Title("primaryContactDetails.confirmAddress.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
+    title = Title("primaryContactDetails.confirmAddress.title"),
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {

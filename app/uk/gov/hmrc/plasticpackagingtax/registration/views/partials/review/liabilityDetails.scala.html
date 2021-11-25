@@ -20,13 +20,14 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, LiabilityDetails}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @import java.time.format.DateTimeFormatter
 
 @this(
         subHeading: subHeading,
-        govukSummaryList: GovukSummaryList
+        govukSummaryList: GovukSummaryList,
+        viewUtils: ViewUtils
 )
 
 @(
@@ -37,7 +38,7 @@
 )(implicit request: JourneyRequest[_], messages: Messages)
 
 @liabilityWeightRow() = @{
-    summaryListRowWithValue(
+    viewUtils.summaryListRowWithValue(
         key = "checkLiabilityDetailsAnswers.weight",
         value = Value(
             content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
@@ -51,7 +52,7 @@
 }
 
 @expectToExceedThresholdWeightRow() = @{
-    summaryListRowWithValue(
+    viewUtils.summaryListRowWithValue(
         key = "checkLiabilityDetailsAnswers.future.exceed",
         value = Value(
             content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
@@ -69,7 +70,7 @@
 }
 
 @liabilityLiableDateRow() = @{
-    summaryListRowWithValue(
+    viewUtils.summaryListRowWithValue(
         key = "checkLiabilityDetailsAnswers.date",
         value = Value(
             content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
@@ -83,7 +84,7 @@
 }
 
 @registrationTypeRow() = @{
-    summaryListRowWithValue(
+    viewUtils.summaryListRowWithValue(
         key = "checkLiabilityDetailsAnswers.registrationType",
         value = Value(
             registrationType match {

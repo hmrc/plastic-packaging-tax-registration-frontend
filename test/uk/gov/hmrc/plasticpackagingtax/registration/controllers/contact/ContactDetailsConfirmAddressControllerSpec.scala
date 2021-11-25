@@ -128,7 +128,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           IncorporationAddressDetails(premises = Option("2 Scala Street"),
                                       address_line_1 = Some("Soho"),
                                       locality = Option("London"),
-                                      postal_code = Option("W1T 2HN")
+                                      postal_code = Option("W1T 2HN"),
+                                      country = Some("GB")
           )
         )
       }
@@ -152,7 +153,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           IncorporationAddressDetails(premises = Option("3 Scala Street"),
                                       address_line_1 = Some("Soho"),
                                       locality = Option("London"),
-                                      postal_code = Option(testPostcode)
+                                      postal_code = Option(testPostcode),
+                                      country = Some("GB")
           )
         )
       }
@@ -214,7 +216,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.primaryContactDetails.address.get.postCode mustBe expected.postal_code.get
+      modifiedRegistration.primaryContactDetails.address.get.postCode mustBe expected.postal_code
+      modifiedRegistration.primaryContactDetails.address.get.countryCode mustBe expected.country.get
       modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
     }
 
@@ -223,7 +226,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.postCode mustBe expected.postal_code.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.postCode mustBe expected.postal_code
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe expected.country.get
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>

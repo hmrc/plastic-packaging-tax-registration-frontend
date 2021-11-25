@@ -6,3 +6,16 @@ $hmrc-assets-path: "/register-for-plastic-packaging-tax/assets/lib/hmrc-frontend
 @import '_registration';
 @import '_returns';
 @import '_account';
+@import "location-autocomplete.min.css";
+
+// Fix for font mismatch in country auto-complete widget - copied from Address Lookup Frontend
+.autocomplete__menu {
+  font-family: "GDS Transport", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: #0b0c0c;
+}

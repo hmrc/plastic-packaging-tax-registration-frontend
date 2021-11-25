@@ -109,13 +109,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                                                  po_box = Some("123"),
                                                                  postal_code = Some("AA11AA"),
                                                                  premises = Some("1"),
-                                                                 country = Some("United Kingdom")
+                                                                 country = Some("GB")
   )
 
   protected val testBusinessAddress = Address(addressLine1 = "2 Scala Street",
                                               addressLine2 = Some("Soho"),
                                               townOrCity = "London",
-                                              postCode = "W1T 2HN"
+                                              postCode = Some("W1T 2HN")
   )
 
   protected val testUtr = "0123456789"

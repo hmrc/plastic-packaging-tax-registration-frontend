@@ -18,11 +18,12 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
         subHeading: subHeading,
-        govukSummaryList: GovukSummaryList
+        govukSummaryList: GovukSummaryList,
+        viewUtils: ViewUtils
 )
 
 @(primaryContactDetails: PrimaryContactDetails)(implicit request: JourneyRequest[_], messages: Messages)
@@ -31,11 +32,11 @@
 @govukSummaryList(
     SummaryList(
         rows = Seq(
-            summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
-            summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
-            summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage())),
-            summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),
-            summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage()))
+            viewUtils.summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, Some(pptRoutes.ContactDetailsFullNameController.displayPage())),
+            viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, Some(pptRoutes.ContactDetailsJobTitleController.displayPage())),
+            viewUtils.summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.ContactDetailsEmailAddressController.displayPage())),
+            viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, Some(pptRoutes.ContactDetailsTelephoneNumberController.displayPage())),
+            viewUtils.summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(viewUtils.extractAddress), Some(pptRoutes.ContactDetailsConfirmAddressController.displayPage()))
         ).filterNot(_.value.content == Empty)
     )
 )

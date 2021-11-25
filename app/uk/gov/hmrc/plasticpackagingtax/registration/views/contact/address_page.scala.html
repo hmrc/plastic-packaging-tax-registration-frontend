@@ -16,8 +16,9 @@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.countryCodeAutoComplete
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
@@ -26,19 +27,19 @@
   govukLayout: main_template,
   govukButton: GovukButton,
   inputText: inputText,
+  govukSelect: GovukSelect,
   govukFieldset: GovukFieldset,
   govukInsetText: GovukInsetText,
   sectionHeader: sectionHeader,
   paragraphBody: paragraphBody,
   saveButton: saveAndContinue,
   errorSummary: errorSummary,
-  link: link
+  link: link,
+  countryCodeAutoComplete: countryCodeAutoComplete
 )
-
-@(form: Form[Address])(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[Address], countryMap: Map[String, String])(implicit request: JourneyRequest[_], messages: Messages)
 
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
-
 
 @fieldSetBody = {
 
@@ -73,6 +74,31 @@
         classes = Some("govuk-input govuk-input--width-5"),
         autocomplete = Some("address-level2")
     )
+
+    @govukSelect(
+      Select(
+        id = "countryCode",
+        name = "countryCode",
+        items =
+            Seq(SelectItem(value = None)) ++
+            countryMap.map { countryEntry =>
+                SelectItem(
+                    value = Some(countryEntry._1),
+                    text = countryEntry._2,
+                    selected = form("countryCode").value match {
+                        case Some(code) => code == countryEntry._1
+                        case _ => false
+                    }
+                )
+            }.toSeq,
+        label = Label(
+            content = HtmlContent(messages("primaryContactDetails.address.countryCode")),
+            classes = "govuk-label govuk-label--s"
+        ),
+        errorMessage = form("countryCode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+      )
+    )
+    @countryCodeAutoComplete()
 }
 
 

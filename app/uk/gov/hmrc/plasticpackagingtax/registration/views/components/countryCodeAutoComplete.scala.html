@@ -1,0 +1,46 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@this()
+
+@()
+
+<script src='@controllers.routes.Assets.versioned("javascripts/location-autocomplete.min.js")'></script>
+
+@*
+Taken from address-lookup-frontend.
+Kept the comment about override the onConfirm function because it is still relevant.
+Comments are not rendered in browser.
+*@
+<script>
+        openregisterLocationPicker({
+            selectElement: document.getElementById("countryCode"),
+            name: 'countryAutocomplete',
+            defaultValue: '',
+            @*
+              TF-640: Had to override the onConfirm function to include custom validation for countries because null / undefined values are not handled by the Autocomplete form:
+              https://github.com/alphagov/accessible-autocomplete/issues/260
+              When this is fixed the custom validation / onConfirm bypass can be removed
+            *@
+            onConfirm: () => {
+                const matchingOption = Array.from(document.querySelectorAll("#countryCode-select > option")).find(function (c) {
+                    return c.text === document.getElementById("countryCode").value;
+                });
+                const countryCode = matchingOption ? matchingOption.value : undefined;
+                document.getElementById("countryCode-select").value = countryCode;
+            }
+        })
+</script>
