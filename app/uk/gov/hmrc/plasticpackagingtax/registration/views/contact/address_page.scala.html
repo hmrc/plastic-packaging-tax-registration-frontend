@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.countryCodeAutoComplete
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 
 @this(
   formHelper: FormWithCSRF,
@@ -123,7 +124,9 @@
 
         <div class="govuk-button-group">
             @saveButton()
-            @link(messages("primaryContactDetails.address.lookup"), pptRoutes.ContactDetailsAddressController.initialise())
+            @if(request.isFeatureFlagEnabled(Features.isAddressLookupEnabled)) {
+                @link(text = messages("primaryContactDetails.address.lookup"), call = pptRoutes.ContactDetailsAddressController.initialise(), id = Some("address-lookup-start"))
+            }
         </div>
 
     }

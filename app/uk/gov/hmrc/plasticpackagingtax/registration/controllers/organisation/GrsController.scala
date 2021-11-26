@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   BUSINESS_IDENTIFICATION_FAILED,
   BUSINESS_VERIFICATION_FAILED,
@@ -103,7 +104,12 @@ class GrsController @Inject() (
                 case BUSINESS_VERIFICATION_FAILED =>
                   Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
                 case DUPLICATE_SUBSCRIPTION =>
-                  Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
+                  if (registration.isGroup)
+                    Redirect(
+                      groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered()
+                    )
+                  else
+                    Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
               }
             }
           case Left(error) => throw error
@@ -149,7 +155,8 @@ class GrsController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     request.registration.organisationDetails.organisationType match {
-      case Some(OrgType.UK_COMPANY)         => updateUkCompanyDetails(journeyId)
+      case Some(OrgType.UK_COMPANY) | Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
+        updateUkCompanyDetails(journeyId)
       case Some(OrgType.REGISTERED_SOCIETY) => updateRegisteredSocietyDetails(journeyId)
       case Some(OrgType.SOLE_TRADER)        => updateSoleTraderDetails(journeyId)
       case Some(OrgType.PARTNERSHIP)        => updatePartnershipDetails(journeyId)

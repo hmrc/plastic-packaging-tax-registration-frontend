@@ -137,6 +137,23 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
           redirectLocation(result) mustBe Some(routes.ConfirmationController.displayPage().url)
         }
 
+        "ppt reference number is already enroled " in {
+          authorizedUser()
+          when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
+            Future.successful(
+              UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.GroupEnrolled)
+            )
+          )
+          val result =
+            controller.submit()(FakeRequest("POST", ""))
+
+          status(result) mustBe SEE_OTHER
+
+          redirectLocation(result) mustBe Some(
+            routes.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage().url
+          )
+        }
+
       }
     }
   }

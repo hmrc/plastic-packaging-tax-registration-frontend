@@ -28,9 +28,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
   SummaryListRow
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  AddressDetails => GroupMemberAddress
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 
 @Singleton
@@ -82,15 +79,6 @@ class ViewUtils @Inject() (countryService: CountryService) {
         address.addressLine3.getOrElse(""),
         address.townOrCity,
         address.postCode.getOrElse(""),
-        countryService.getName(address.countryCode)
-    ).filter(_.nonEmpty).mkString("<br>")
-
-  def extractAddress(address: GroupMemberAddress) =
-    Seq(address.addressLine1,
-        address.addressLine2,
-        address.addressLine3.getOrElse(""),
-        address.addressLine4.getOrElse(""),
-        address.postalCode.getOrElse(""),
         countryService.getName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
 

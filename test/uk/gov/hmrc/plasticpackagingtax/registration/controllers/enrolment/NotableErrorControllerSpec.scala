@@ -23,7 +23,10 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.verification_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.{
+  reference_number_already_used_failure_page,
+  verification_failure_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
@@ -32,16 +35,24 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   private val enrolmentVerificationFailurePage = mock[verification_failure_page]
 
+  private val enrolmentReferenceNumberAlreadyUsedFailurePage =
+    mock[reference_number_already_used_failure_page]
+
   private val controller =
     new NotableErrorController(authenticate = mockAuthAction,
                                mcc = mcc,
-                               verificationFailurePage = enrolmentVerificationFailurePage
+                               verificationFailurePage = enrolmentVerificationFailurePage,
+                               referenceNumberAlreadyUsedPage =
+                                 enrolmentReferenceNumberAlreadyUsedFailurePage
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(enrolmentVerificationFailurePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error business not verified content")
+    )
+    when(enrolmentReferenceNumberAlreadyUsedFailurePage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error ppt reference already been used content")
     )
   }
 
@@ -53,6 +64,14 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error business not verified content"
+    }
+
+    "present the ppt reference number already been used failure page" in {
+      authorizedUser()
+      val resp = controller.enrolmentReferenceNumberAlreadyUsedPage()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "error ppt reference already been used content"
     }
   }
 }

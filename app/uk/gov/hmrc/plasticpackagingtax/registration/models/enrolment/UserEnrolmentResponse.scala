@@ -42,4 +42,5 @@ object UserEnrolmentFailedResponse {
 object EnrolmentFailureCode {
   val VerificationFailed  = "VerificationFailed"
   val VerificationMissing = "VerificationMissing"
+  val GroupEnrolled       = "GroupEnrolled"
 }

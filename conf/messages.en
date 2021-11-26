@@ -262,9 +262,9 @@ organisationDetails.type.Partnership = Partnership
 organisationDetails.type.CIO = Charitable incorporated organisation (CIO)
 organisationDetails.type.Trust = Trust
 organisationDetails.type.RegisteredSociety = Registered society
-organisationDetails.type.OverseasCompany = Overseas company
+organisationDetails.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
+organisationDetails.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
 
-organisationDetails.type.GroupNominatedOverseasCompany = Non-UK company with a branch or place of business in the UK
 organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
 
 partnership.type.title = What type of partnership are you registering?
@@ -402,6 +402,15 @@ group.removeMember.error.empty = Please select Yes or No
 organisationDetails.other.organisation.sectionHeader = Other organisations in the group
 organisationDetails.other.group.title = What type of organisation is the first one you want to add?
 organisationDetails.other.next.group.title = What type of organisation is the next one you want to add?
-organisationDetails.type.GroupOverseasCompany = Non-UK company with a branch or place of business in the UK
-organisationDetails.type.GroupOverseasCompanyNoBranchInUK = Non-UK company without a branch or place of business in the UK
 organisationDetails.type.GroupPartnership = Limited liability partnership
+
+enrolment.referenceNumber.already.used.title = Your PPT reference number has already been used
+enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different Government Gateway.
+enrolment.referenceNumber.already.used.detail2 = To access the account for that PPT reference number you need to sign in with the Government Gateway it was linked to.
+enrolment.referenceNumber.already.used.button = Back to your business tax account
+
+nominated.organisation.already.registered.title = You cannot set up a new group
+nominated.organisation.already.registered.detail1 = {0} has already registered for PPT, either as a single organisation or as part of a group.
+nominated.organisation.already.registered.detail2 = To set up a new group, you'll need to de-register for PPT first.
+nominated.organisation.already.registered.detail3 = You could also set up a {0}.
+nominated.organisation.already.registered.detail3.link.text = new group with a different nominated organisation

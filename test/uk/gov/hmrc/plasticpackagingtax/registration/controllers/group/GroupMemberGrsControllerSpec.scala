@@ -18,14 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentCaptor, Mockito}
+import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
@@ -49,106 +51,159 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                                  mcc
     )(ec)
 
-  private val registeredLimitedCompany = aRegistration(
-    withGroupDetail(
-      Some(
-        GroupDetail(membersUnderGroupControl = Some(true),
-                    members = Seq.empty,
-                    currentMemberOrganisationType = Some(OrgType.UK_COMPANY)
+  private def registrationWithSelectedGroupMember(orgType: OrgType) =
+    aRegistration(
+      withGroupDetail(
+        Some(
+          GroupDetail(membersUnderGroupControl = Some(true),
+                      members = Seq.empty,
+                      currentMemberOrganisationType = Some(orgType)
+          )
         )
       )
     )
-  )
+
+  private val supportedOrgTypes   = Seq(OrgType.UK_COMPANY, OrgType.OVERSEAS_COMPANY_UK_BRANCH)
+  private val unsupportedOrgTypes = OrgType.values.filterNot(supportedOrgTypes.contains)
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    mockGetSubscriptionStatus(SubscriptionStatusResponse(NOT_SUBSCRIBED, None))
+  }
+
+  override protected def afterEach(): Unit = {
+    reset(mockUkCompanyGrsConnector, mockRegistrationConnector, mockSubscriptionsConnector)
+    super.afterEach()
+  }
 
   "group member incorpIdCallback " should {
 
-    mockGetSubscriptionStatus(SubscriptionStatusResponse(NOT_SUBSCRIBED, None))
+    forAll(supportedOrgTypes) { orgType =>
+      "redirect to the group member organisation details type controller page" when {
 
-    "redirect to the group member organisation details type controller page" when {
-      "registering a UK Limited Company" in {
-        val result = simulateLimitedCompanyCallback()
+        "registering a member " + orgType in {
+          val result =
+            simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.OrganisationListController.displayPage().url)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.OrganisationListController.displayPage().url)
+        }
       }
 
-    }
+      "store the returned business entity information" when {
+        "registering group member " + orgType in {
+          await(simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType)))
 
-    "store the returned business entity information" when {
-      "registering UK Limited Company group member" in {
-        await(simulateLimitedCompanyCallback())
+          val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
 
-        val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
+          memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
+          memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
+          memberDetails.addressDetails mustBe incorporationDetails.companyAddress.toPptAddress
+        }
 
-        memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
-        memberDetails.addressDetails mustBe incorporationDetails.companyAddress.toGroupAddressDetails
       }
-    }
 
-    "not store business enity information " when {
-      "registering UK Limited Company with same company number" in {
-        authorizedUser()
-        mockGetUkCompanyDetails(incorporationDetails)
-        val registration = aRegistration(
-          withGroupDetail(
-            Some(
-              GroupDetail(membersUnderGroupControl = Some(true),
-                          members = Seq(groupMember),
-                          currentMemberOrganisationType = Some(OrgType.UK_COMPANY)
-              )
+      "not store business enity information " when {
+        "registering with same company number " + orgType in {
+          authorizedUser()
+          mockGetUkCompanyDetails(incorporationDetails)
+          val registration = registrationWithSelectedGroupMember(orgType)
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+
+          await(controller.grsCallback(registration.incorpJourneyId.get)(getRequest()))
+
+          val membersListSize: Int = getLastSavedRegistration.groupDetail.get.members.size
+
+          membersListSize mustBe 1
+        }
+
+        "registering Company with same company number as Nominated organisation " + orgType in {
+          authorizedUser()
+          mockGetUkCompanyDetails(
+            IncorporationDetails("12345678",
+                                 testCompanyName,
+                                 testUtr,
+                                 testBusinessVerificationPassStatus,
+                                 testCompanyAddress,
+                                 incorporationRegistrationDetails
             )
           )
-        )
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
+          val registration = registrationWithSelectedGroupMember(orgType)
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
 
-        await(controller.grsCallback(registration.incorpJourneyId.get)(getRequest()))
+          await(controller.grsCallback(registration.incorpJourneyId.get)(getRequest()))
 
-        val membersListSize: Int = getLastSavedRegistration.groupDetail.get.members.size
+          val noGroupMembers: Boolean = getLastSavedRegistration.groupDetail.get.members.isEmpty
 
-        membersListSize mustBe 1
+          noGroupMembers mustBe true
+        }
       }
 
-      "registering UK Limited Company with same company number as Nominated organisation" in {
-        authorizedUser()
-        mockGetUkCompanyDetails(
-          IncorporationDetails("12345678",
-                               testCompanyName,
-                               testUtr,
-                               testBusinessVerificationPassStatus,
-                               testCompanyAddress,
-                               incorporationRegistrationDetails
+      "throw exception" when {
+
+        "DB registration update fails " + orgType in {
+          authorizedUser()
+          mockRegistrationFind(registrationWithSelectedGroupMember(orgType))
+          mockGetUkCompanyDetails(incorporationDetails)
+          mockRegistrationUpdateFailure()
+
+          intercept[DownstreamServiceError] {
+            await(controller.grsCallback("uuid-id")(getRequest()))
+          }
+        }
+
+        "GRS call fails " + orgType in {
+          authorizedUser()
+          mockRegistrationFind(registrationWithSelectedGroupMember(orgType))
+          mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
+
+          intercept[RuntimeException] {
+            await(controller.grsCallback("uuid-id")(getRequest()))
+          }
+        }
+
+      }
+
+      "show duplicate subscription page" when {
+        "a subscription already exists for the group member " + orgType in {
+          authorizedUser()
+          mockGetUkCompanyDetails(
+            IncorporationDetails("123467890",
+                                 testCompanyName,
+                                 testUtr,
+                                 testBusinessVerificationPassStatus,
+                                 testCompanyAddress,
+                                 incorporationRegistrationDetails
+            )
           )
-        )
-        mockRegistrationFind(registeredLimitedCompany)
-        mockRegistrationUpdate()
+          val registration = registrationWithSelectedGroupMember(orgType)
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+          mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
-        await(controller.grsCallback(registeredLimitedCompany.incorpJourneyId.get)(getRequest()))
+          val result =
+            controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
 
-        val noGroupMembers: Boolean = getLastSavedRegistration.groupDetail.get.members.isEmpty
-
-        noGroupMembers mustBe true
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(
+            pptRoutes.NotableErrorController.duplicateRegistration().url
+          )
+        }
       }
     }
 
     "throw exception" when {
-      "organisation type is invalid" in {
-        authorizedUser()
-        mockRegistrationFind(
-          aRegistration(
-            withGroupDetail(
-              Some(
-                GroupDetail(membersUnderGroupControl = Some(true),
-                            members = Seq.empty,
-                            currentMemberOrganisationType = Some(OrgType.TRUST)
-                )
-              )
-            )
-          )
-        )
+      forAll(unsupportedOrgTypes) { orgType =>
+        "invalid organisation type is selected " + orgType in {
 
-        intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
+          authorizedUser()
+          mockRegistrationFind(registrationWithSelectedGroupMember(orgType))
+
+          intercept[IllegalStateException] {
+            await(controller.grsCallback("uuid-id")(getRequest()))
+          }
         }
       }
 
@@ -161,56 +216,11 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
         }
       }
 
-      "DB registration update fails" in {
-        authorizedUser()
-        mockRegistrationFind(registeredLimitedCompany)
-        mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationUpdateFailure()
-
-        intercept[DownstreamServiceError] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
-        }
-      }
-
-      "GRS call fails" in {
-        authorizedUser()
-        mockRegistrationFind(registeredLimitedCompany)
-        mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
-
-        intercept[RuntimeException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
-        }
-      }
-
-      "show duplicate subscription page" when {
-        "a subscription already exists for the group member" in {
-          authorizedUser()
-          mockGetUkCompanyDetails(
-            IncorporationDetails("123467890",
-                                 testCompanyName,
-                                 testUtr,
-                                 testBusinessVerificationPassStatus,
-                                 testCompanyAddress,
-                                 incorporationRegistrationDetails
-            )
-          )
-          mockRegistrationFind(registeredLimitedCompany)
-          mockRegistrationUpdate()
-          mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
-
-          val result =
-            controller.grsCallback(registeredLimitedCompany.incorpJourneyId.get)(getRequest())
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(
-            pptRoutes.NotableErrorController.duplicateRegistration().url
-          )
-        }
-      }
     }
+
   }
 
-  private def simulateLimitedCompanyCallback() = {
+  private def simulateLimitedCompanyCallback(registration: Registration) = {
     authorizedUser()
     mockGetUkCompanyDetails(
       IncorporationDetails("123467890",
@@ -221,10 +231,10 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                            incorporationRegistrationDetails
       )
     )
-    mockRegistrationFind(registeredLimitedCompany)
+    mockRegistrationFind(registration)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registeredLimitedCompany.incorpJourneyId.get)(getRequest())
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def getLastSavedRegistration: Registration = {

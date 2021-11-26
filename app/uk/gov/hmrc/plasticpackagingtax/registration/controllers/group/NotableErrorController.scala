@@ -14,34 +14,28 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.{
-  reference_number_already_used_failure_page,
-  verification_failure_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.nominated_organisation_already_registered_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class NotableErrorController @Inject() (
   authenticate: AuthAction,
+  journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  verificationFailurePage: verification_failure_page,
-  referenceNumberAlreadyUsedPage: reference_number_already_used_failure_page
+  nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page
 ) extends FrontendController(mcc) with I18nSupport {
 
-  def enrolmentVerificationFailurePage(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Ok(verificationFailurePage())
-    }
-
-  def enrolmentReferenceNumberAlreadyUsedPage(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Ok(referenceNumberAlreadyUsedPage())
+  def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok(nominatedOrganisationAlreadyRegisteredPage())
     }
 
 }

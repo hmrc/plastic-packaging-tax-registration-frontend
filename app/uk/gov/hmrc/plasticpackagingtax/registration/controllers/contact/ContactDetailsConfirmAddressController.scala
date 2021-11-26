@@ -33,6 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, ConfirmAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
+  OVERSEAS_COMPANY_UK_BRANCH,
   PARTNERSHIP,
   REGISTERED_SOCIETY,
   SOLE_TRADER,
@@ -42,8 +43,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheab
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.confirm_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -109,7 +110,7 @@ class ContactDetailsConfirmAddressController @Inject() (
 
   private def getBusinessAddress(implicit request: JourneyRequest[AnyContent]): Address =
     request.registration.organisationDetails.organisationType match {
-      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) =>
+      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
         request.registration.organisationDetails.incorporationDetails.fold(
           throw DownstreamServiceError(
             "Failed to fetch incorporated details from cache",

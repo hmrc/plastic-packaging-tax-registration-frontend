@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
@@ -32,8 +33,11 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
   private val page           = instanceOf[address_page]
   private val countryService = instanceOf[CountryService]
 
-  private def createView(form: Form[Address] = Address.form()): Document =
-    page(form, countryService.getAll())(journeyRequest, messages)
+  private def createView(
+    form: Form[Address] = Address.form(),
+    userFeatureFlags: Map[String, Boolean] = Map.empty
+  ): Document =
+    page(form, countryService.getAll())(generateRequest(userFeatureFlags), messages)
 
   "Address View" should {
 
@@ -102,6 +106,22 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and continue"
+    }
+
+    "'search for new address' link" when {
+
+      "address lookup is disabled" in {
+        view must not(containElementWithID("address-lookup-start"))
+      }
+
+      "address lookup is enabled" in {
+        val view = createView(userFeatureFlags = Map(Features.isAddressLookupEnabled -> true))
+
+        view must containElementWithID("address-lookup-start")
+        view.getElementById("address-lookup-start").text() mustBe messages(
+          "primaryContactDetails.address.lookup"
+        )
+      }
     }
 
   }

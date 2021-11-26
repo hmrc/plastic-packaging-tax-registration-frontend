@@ -64,7 +64,8 @@ class CheckAnswersController @Inject() (
                 case EnrolmentFailureCode.VerificationFailed |
                     EnrolmentFailureCode.VerificationMissing =>
                   Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
-
+                case EnrolmentFailureCode.GroupEnrolled =>
+                  Redirect(routes.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage())
                 case code => throw new Exception(s"Enrolment failed with code $code")
               }
           }
