@@ -408,3 +408,9 @@ enrolment.referenceNumber.already.used.title = Your PPT reference number has alr
 enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different Government Gateway.
 enrolment.referenceNumber.already.used.detail2 = To access the account for that PPT reference number you need to sign in with the Government Gateway it was linked to.
 enrolment.referenceNumber.already.used.button = Back to your business tax account
+
+nominated.organisation.already.registered.title = You cannot set up a new group
+nominated.organisation.already.registered.detail1 = {0} has already registered for PPT, either as a single organisation or as part of a group.
+nominated.organisation.already.registered.detail2 = To set up a new group, you'll need to de-register for PPT first.
+nominated.organisation.already.registered.detail3 = You could also set up a {0}.
+nominated.organisation.already.registered.detail3.link.text = new group with a different nominated organisation

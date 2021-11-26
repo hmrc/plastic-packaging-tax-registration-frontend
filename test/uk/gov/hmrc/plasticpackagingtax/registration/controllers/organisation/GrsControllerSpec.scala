@@ -26,6 +26,8 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
@@ -327,6 +329,25 @@ class GrsControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
           pptRoutes.NotableErrorController.duplicateRegistration().url
+        )
+      }
+    }
+
+    "show nominated organisation already registered page" when {
+      "a ppt registration already exists for the organisation" in {
+        authorizedUser()
+        mockGetUkCompanyDetails(incorporationDetails)
+        val registeredCompanyForGroup =
+          registeredLimitedCompany.copy(registrationType = Some(RegType.GROUP))
+        mockRegistrationFind(registeredCompanyForGroup)
+        mockRegistrationUpdate()
+        mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
+
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered().url
         )
       }
     }

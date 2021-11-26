@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
-import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -25,6 +24,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   BUSINESS_IDENTIFICATION_FAILED,
   BUSINESS_VERIFICATION_FAILED,
@@ -55,6 +55,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.Subscri
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 object RegistrationStatus extends Enumeration {
@@ -103,7 +104,12 @@ class GrsController @Inject() (
                 case BUSINESS_VERIFICATION_FAILED =>
                   Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
                 case DUPLICATE_SUBSCRIPTION =>
-                  Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
+                  if (registration.isGroup)
+                    Redirect(
+                      groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered()
+                    )
+                  else
+                    Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
               }
             }
           case Left(error) => throw error
