@@ -133,3 +133,5 @@ POST       /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registrati
 
 GET        /enrolment-reference-number-already-used     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage()
 
+GET        /group-nominated-organisation-already-registered    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.nominatedOrganisationAlreadyRegistered()
+
