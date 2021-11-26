@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      14.22
+// @version      15.0
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -19,12 +19,27 @@
 (function() {
     'use strict'
     document.body.appendChild(setup())
+
+    setTimeout(function() {
+        if(getAutocomplete()){
+            completeJourney(false)
+        }
+    }, 100)
 })()
+
+function setAutocomplete(choice) {
+    GM_setValue("autoComplete", choice);
+}
+
+function getAutocomplete() {
+    return GM_getValue("autoComplete");
+}
 
 function setup() {
     var panel = document.createElement('div')
 
     panel.appendChild(createQuickButton())
+    panel.appendChild(createAutoCompleteCheckbox())
     panel.appendChild(createGRSFeatureFlagsLink())
     panel.appendChild(createSoleTraderGRSFeatureFlagsLink())
     panel.appendChild(createPartnershipGRSFeatureFlagsLink())
@@ -46,9 +61,30 @@ function createQuickButton() {
     button.style.position = 'absolute'
     button.style.top = '50px'
     button.innerHTML = 'Quick Submit'
-    button.onclick = () => completeJourney()
+    button.onclick = () => completeJourney(true)
 
     return button
+}
+
+function createAutoCompleteCheckbox() {
+
+    let chkBox = document.createElement('input')
+    chkBox.id='autoComplete'
+    chkBox.type = "checkbox"
+    chkBox.checked = getAutocomplete()
+
+    chkBox.onchange = function (e) { setAutocomplete(this.checked); };
+
+    let panel = document.createElement("div");
+    panel.appendChild(chkBox);
+    let span = document.createElement("span");
+    span.innerText = "Auto complete";
+    panel.appendChild(span);
+
+    panel.style.position = 'absolute'
+    panel.style.top = '100px'
+
+    return panel
 }
 
 function createGRSFeatureFlagsLink() {
@@ -67,7 +103,7 @@ function createGRSFeatureFlagsLink() {
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
-    a.style.top = "100px"
+    a.style.top = "150px"
 
     return a
 }
@@ -88,7 +124,7 @@ function createSoleTraderGRSFeatureFlagsLink() {
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
-    a.style.top = "150px"
+    a.style.top = "200px"
 
     return a
 }
@@ -109,7 +145,7 @@ function createPartnershipGRSFeatureFlagsLink() {
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
-    a.style.top = "200px"
+    a.style.top = "250px"
 
     return a
 }
@@ -175,7 +211,7 @@ const registrationPage = () => {
 const organisationType = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/organisation-type')) {
 
-		document.getElementById('answer').checked = true
+        document.getElementById('answer').checked = true
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -250,7 +286,7 @@ const grsCheckYourAnswers = () => {
 const grsStFirstLastName = () => {
     if (currentPageIs('/identify-your-sole-trader-business/.*/full-name')) {
         document.getElementById('first-name').value = 'James'
-		document.getElementById('last-name').value = 'Bond'
+        document.getElementById('last-name').value = 'Bond'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -258,9 +294,9 @@ const grsStFirstLastName = () => {
 
 const grsStDob = () => {
     if (currentPageIs('/identify-your-sole-trader-business/.*/date-of-birth')) {
-         document.getElementById('date-of-birth').value = '01'
-         document.getElementById('date-of-birth-month').value = '06'
-         document.getElementById('date-of-birth-year').value = '1977'
+        document.getElementById('date-of-birth').value = '01'
+        document.getElementById('date-of-birth-month').value = '06'
+        document.getElementById('date-of-birth-year').value = '1977'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -268,7 +304,7 @@ const grsStDob = () => {
 
 const grsStNino = () => {
     if (currentPageIs('/identify-your-sole-trader-business/.*/national-insurance-number')) {
-         document.getElementById('nino').value = 'SE123456C'
+        document.getElementById('nino').value = 'SE123456C'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -276,7 +312,7 @@ const grsStNino = () => {
 
 const grsStSaUtr = () => {
     if (currentPageIs('/identify-your-sole-trader-business/.*/sa-utr')) {
-         document.getElementById('sa-utr').value = '1234567890'
+        document.getElementById('sa-utr').value = '1234567890'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -431,42 +467,42 @@ const primaryContactEmailAddressPasscodeConfirmation = () => {
 }
 
 const primaryContactTelephoneNumber = () => {
-     if (currentPageIs('/register-for-plastic-packaging-tax/main-contact-telephone')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/main-contact-telephone')) {
 
-         document.getElementById('value').value = '07712345678'
-         document.getElementsByClassName('govuk-button')[0].click()
-     }
- }
+        document.getElementById('value').value = '07712345678'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
 const primaryContactConfirmAddress = () => {
-     if (currentPageIs('/register-for-plastic-packaging-tax/confirm-contact-address')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/confirm-contact-address')) {
 
-         document.getElementById('useRegisteredAddress-2').checked = true
-         document.getElementsByClassName('govuk-button')[0].click()
-     }
- }
+        document.getElementById('useRegisteredAddress-2').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
 const primaryContactAddress = () => {
-     if (currentPageIs('/register-for-plastic-packaging-tax/enter-contact-address')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/enter-contact-address')) {
 
-         document.getElementById('addressLine1').value = '2-3 Scala Street'
-         document.getElementById('addressLine2').value = 'Soho'
-         document.getElementById('townOrCity').value = 'London'
-         document.getElementById('postCode').value = 'W1T 2HN'
-         document.getElementById("countryCode-select").getElementsByTagName("option")[185].selected = "selected"
-         document.getElementsByClassName('govuk-button')[0].click()
-     }
- }
+        document.getElementById('addressLine1').value = '2-3 Scala Street'
+        document.getElementById('addressLine2').value = 'Soho'
+        document.getElementById('townOrCity').value = 'London'
+        document.getElementById('postCode').value = 'W1T 2HN'
+        document.getElementById("countryCode-select").getElementsByTagName("option")[185].selected = "selected"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
 const primaryContactCheckYourAnswers = () => {
-     if (currentPageIs('/register-for-plastic-packaging-tax/contact-check-answers')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/contact-check-answers')) {
 
-         document.getElementsByClassName('govuk-button')[0].click()
-     }
- }
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
 const reviewRegistration = () => {
-     if (currentPageIs('/register-for-plastic-packaging-tax/review-registration')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/review-registration')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -570,11 +606,14 @@ const verificationFailure = () => {
     }
 }
 /*########################     MAIN FUNCTION     ########################## */
-const completeJourney = () => {
+function completeJourney(manualJourney) {
 
     // main
     startPage()
-    registrationPage()
+
+    if(manualJourney){
+        registrationPage()
+    }
 
     // grs uk company pages
     grsUkLimitedFeatureFlags()
@@ -585,12 +624,12 @@ const completeJourney = () => {
     grsEnterUtr()
     grsCheckYourAnswers()
 
-	// grs sole trader pages
-	grsStFirstLastName()
-	grsStDob()
-	grsStNino()
+    // grs sole trader pages
+    grsStFirstLastName()
+    grsStDob()
+    grsStNino()
     grsStSaUtr()
-	grsStCheckYourAnswers()
+    grsStCheckYourAnswers()
 
     // grs partnership pages
     grsPartnershipUtr()
@@ -625,7 +664,9 @@ const completeJourney = () => {
     groupMemberOrganisation()
 
     //review registration
-    reviewRegistration()
+    if(manualJourney){
+        reviewRegistration()
+    }
 
     // address lookup
     addressLookupLookup()

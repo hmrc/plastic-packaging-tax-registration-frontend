@@ -28,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
@@ -41,7 +42,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
-  AddressDetails => GroupMemberAddressDetails,
   OrganisationDetails => GroupMemberOrganisationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -132,10 +132,11 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                              )
                                                            ),
                                                            addressDetails =
-                                                             GroupMemberAddressDetails("1",
-                                                                                       "New Street",
-                                                                                       countryCode =
-                                                                                         "GB"
+                                                             Address(addressLine1 = "1",
+                                                                     townOrCity = "New Street",
+                                                                     postCode = Some("AB12CD"),
+                                                                     countryCode =
+                                                                       "GB"
                                                              )
                                                ),
                                                GroupMember(customerIdentification1 = "DEF",
@@ -147,10 +148,11 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                              )
                                                            ),
                                                            addressDetails =
-                                                             GroupMemberAddressDetails("2",
-                                                                                       "New Street",
-                                                                                       countryCode =
-                                                                                         "GB"
+                                                             Address(addressLine1 = "2",
+                                                                     townOrCity = "New Street",
+                                                                     postCode = Some("AB12CD"),
+                                                                     countryCode =
+                                                                       "GB"
                                                              )
                                                )
                                  )
@@ -459,7 +461,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
                     groupMemberContent must include(member.organisationDetails.get.organisationName)
                     groupMemberContent must include(member.addressDetails.addressLine1)
-                    groupMemberContent must include(member.addressDetails.addressLine2)
+                    groupMemberContent must include(member.addressDetails.townOrCity)
+                    groupMemberContent must include(member.addressDetails.postCode.get)
                     groupMemberContent must include(
                       countryService.getName(member.addressDetails.countryCode)
                     )

@@ -16,6 +16,8 @@
 
 package spec
 
+import java.time.{ZoneOffset, ZonedDateTime}
+
 import base.PptTestData.testUserFeatures
 import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
@@ -46,7 +48,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  AddressDetails,
   GroupMember,
   OrganisationDetails => GroupOrgDetails
 }
@@ -66,7 +67,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
-import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
@@ -325,24 +325,24 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                                               Some(safeNumber)
                                               )
                                             ),
-                                          addressDetails = AddressDetails("line1",
-                                                                          "line2",
-                                                                          Some("line3"),
-                                                                          Some("line4"),
-                                                                          Some("AB12CD"),
-                                                                          "UK"
+                                          addressDetails = Address(addressLine1 = "line1",
+                                                                   addressLine2 = Some("lin2"),
+                                                                   addressLine3 = Some("line3"),
+                                                                   townOrCity = "line4",
+                                                                   postCode = Some("AB12CD"),
+                                                                   countryCode = "GB"
                                           )
   )
 
   protected val groupDetails =
     GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty)
 
-  protected val addressDetails = AddressDetails(addressLine1 = "Street1",
-                                                addressLine2 = "Street2",
-                                                addressLine3 = Some("Street3"),
-                                                addressLine4 = Some("Street4"),
-                                                postalCode = Some("T5 6TA"),
-                                                countryCode = "GB"
+  protected val addressDetails = Address(addressLine1 = "Street1",
+                                         addressLine2 = Some("Street2"),
+                                         addressLine3 = Some("Street3"),
+                                         townOrCity = "Street4",
+                                         postCode = Some("T5 6TA"),
+                                         countryCode = "GB"
   )
 
 }

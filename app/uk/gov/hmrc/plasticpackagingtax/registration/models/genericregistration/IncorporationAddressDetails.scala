@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.AddressDetails
 
 case class IncorporationAddressDetails(
   address_line_1: Option[String] = None,
@@ -57,25 +56,6 @@ case class IncorporationAddressDetails(
                 addressLine2 = this.address_line_2.map(_.trim),
                 townOrCity = this.locality.getOrElse("").trim,
                 postCode = this.postal_code.map(_.trim)
-        )
-    }
-
-  def toGroupAddressDetails: AddressDetails =
-    this.premises match {
-      case Some(premises) =>
-        AddressDetails(addressLine1 = premises.trim,
-                       addressLine2 = this.address_line_1.getOrElse("").trim,
-                       addressLine3 = Some(this.address_line_2.getOrElse("").trim),
-                       addressLine4 = Some(this.locality.getOrElse("").trim),
-                       postalCode = Some(this.postal_code.getOrElse("").trim),
-                       countryCode = this.country.getOrElse("GB")
-        )
-      case None =>
-        AddressDetails(addressLine1 = this.address_line_1.getOrElse("").trim,
-                       addressLine2 = this.address_line_2.getOrElse("").trim,
-                       addressLine3 = Some(this.locality.getOrElse("").trim),
-                       postalCode = Some(this.postal_code.getOrElse("").trim),
-                       countryCode = this.country.getOrElse("GB")
         )
     }
 
