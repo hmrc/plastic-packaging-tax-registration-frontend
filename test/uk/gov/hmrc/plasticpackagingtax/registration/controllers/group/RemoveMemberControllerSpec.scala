@@ -25,9 +25,9 @@ import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  AddressDetails,
   GroupMember,
   OrganisationDetails
 }
@@ -163,9 +163,10 @@ class RemoveMemberControllerSpec extends ControllerSpec {
                 customerIdentification1 = "ABC",
                 organisationDetails =
                   Some(OrganisationDetails("Limited Company", s"Company $id", Some("12313123"))),
-                addressDetails = AddressDetails(addressLine1 = "addressLine1",
-                                                addressLine2 = "addressLine2",
-                                                countryCode = "UK"
+                addressDetails = Address(addressLine1 = "addressLine1",
+                                         townOrCity = "addressLine2",
+                                         postCode = Some("postCode"),
+                                         countryCode = "UK"
                 )
     )
 

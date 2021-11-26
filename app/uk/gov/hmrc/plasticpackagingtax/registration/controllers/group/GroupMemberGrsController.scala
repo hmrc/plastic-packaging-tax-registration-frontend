@@ -140,7 +140,7 @@ class GroupMemberGrsController @Inject() (
                                         details.registration.registeredBusinessPartnerId
                     )
                   ),
-                addressDetails = details.companyAddress.toGroupAddressDetails
+                addressDetails = details.companyAddress.toPptAddress
     )
 
   private def updateGroupDetails(orgType: OrgType, details: IncorporationDetails)(implicit

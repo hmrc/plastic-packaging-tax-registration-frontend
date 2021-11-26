@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
@@ -40,12 +41,12 @@ class GroupDetailSpec extends AnyWordSpec with Matchers {
                         customerIdentification2 = Some("id2"),
                         organisationDetails =
                           Some(OrganisationDetails("UkCompany", "Company Name", Some("121212121"))),
-                        addressDetails = AddressDetails("line1",
-                                                        "line2",
-                                                        Some("line3"),
-                                                        Some("line4"),
-                                                        Some("AB12CD"),
-                                                        "UK"
+                        addressDetails = Address("line1",
+                                                 Some("line2"),
+                                                 Some("line3"),
+                                                 "line4",
+                                                 Some("AB12CD"),
+                                                 "UK"
                         )
             )
           )

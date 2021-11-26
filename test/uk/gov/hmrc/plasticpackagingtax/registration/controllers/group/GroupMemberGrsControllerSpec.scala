@@ -98,7 +98,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
           memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
           memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
-          memberDetails.addressDetails mustBe incorporationDetails.companyAddress.toGroupAddressDetails
+          memberDetails.addressDetails mustBe incorporationDetails.companyAddress.toPptAddress
         }
 
       }

@@ -17,15 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
-
 import java.util.UUID
+
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 
 case class GroupMember(
   id: String = UUID.randomUUID().toString,
   customerIdentification1: String,
   customerIdentification2: Option[String] = None,
   organisationDetails: Option[OrganisationDetails] = None,
-  addressDetails: AddressDetails
+  addressDetails: Address
 ) {
 
   lazy val businessName: String =
