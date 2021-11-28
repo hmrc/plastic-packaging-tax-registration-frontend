@@ -1,0 +1,53 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
+
+@this(
+        govukLayout: main_template,
+        pageHeading: pageHeading,
+        paragraphBody: paragraphBody,
+        paragraph: paragraph,
+        link:link
+)
+
+@(groupError: GroupError)(implicit request: JourneyRequest[_], messages: Messages)
+
+
+@errorDetails =@{
+  groupError.errorType match {
+      case GroupErrorType.MEMBER_IN_GROUP =>  messages("organisation.already.in.group.detail.member", groupError.memberName)
+      case GroupErrorType.MEMBER_IS_NOMINATED =>  messages("organisation.already.in.group.detail.nominated", groupError.memberName)
+  }
+}
+
+@govukLayout(title = Title("organisation.already.in.group.title", groupError.memberName)) {
+    @pageHeading(text = messages("organisation.already.in.group.title", groupError.memberName))
+    @paragraphBody(message = errorDetails)
+    @paragraph{
+        @link(
+            text = messages("site.button.saveAndContinue"),
+            call = groupRoutes.OrganisationListController.displayPage(),
+            classes = "govuk-button"
+        )
+    }
+
+}
