@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.0
+// @version      15.1
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -77,9 +77,10 @@ function createAutoCompleteCheckbox() {
 
     let panel = document.createElement("div");
     panel.appendChild(chkBox);
-    let span = document.createElement("span");
-    span.innerText = "Auto complete";
-    panel.appendChild(span);
+    let label = document.createElement("label");
+    label.innerText = "Auto complete";
+    label.setAttribute("for", "autoComplete");
+    panel.appendChild(label);
 
     panel.style.position = 'absolute'
     panel.style.top = '100px'
