@@ -30,7 +30,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
   RegistrationStatus,
   STATUS_OK
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
@@ -78,7 +77,7 @@ class GroupMemberGrsController @Inject() (
                   case Left(error) => throw error
                 }
               case DUPLICATE_SUBSCRIPTION =>
-                Future(Redirect(pptRoutes.NotableErrorController.duplicateRegistration()))
+                Future(Redirect(groupRoutes.NotableErrorController.groupMemberAlreadyRegistered()))
             }
           case Left(groupError) =>
             update(

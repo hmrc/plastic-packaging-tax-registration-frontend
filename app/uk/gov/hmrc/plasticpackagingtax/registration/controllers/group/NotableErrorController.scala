@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActi
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
+  group_member_already_registered_page,
   nominated_organisation_already_registered_page,
   organisation_already_in_group_page
 }
@@ -34,7 +35,8 @@ class NotableErrorController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
-  organisationAlreadyInGroupPage: organisation_already_in_group_page
+  organisationAlreadyInGroupPage: organisation_already_in_group_page,
+  groupMemberAlreadyRegisteredPage: group_member_already_registered_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =
@@ -48,6 +50,11 @@ class NotableErrorController @Inject() (
         case Some(groupError) => Ok(organisationAlreadyInGroupPage(groupError))
         case _                => Redirect(groupRoutes.OrganisationListController.displayPage())
       }
+    }
+
+  def groupMemberAlreadyRegistered(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok(groupMemberAlreadyRegisteredPage())
     }
 
 }
