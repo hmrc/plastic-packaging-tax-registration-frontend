@@ -209,8 +209,8 @@ class GroupMemberGrsController @Inject() (
         )
     )
 
-  private def groupMemberName(registration: Registration) =
-    registration.groupDetail.map(_.members.lastOption.get.businessName).getOrElse(
+  private def groupMemberName(registration: Registration): String =
+    registration.groupDetail.flatMap(_.members.lastOption.map(_.businessName)).getOrElse(
       "Your organisation"
     )
 
