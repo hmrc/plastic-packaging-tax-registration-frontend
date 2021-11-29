@@ -44,8 +44,8 @@ function setup() {
 
     panel.appendChild(createQuickButton())
     panel.appendChild(createAutoCompleteCheckbox("100px"))
-    panel.appendChild(createDropDown("journey", ["Single","Group"], "150px"))
-    panel.appendChild(createDropDown("orgType", ["UKCompany","OverseasUK"], "175px"))
+    panel.appendChild(createDropDown("Journey", ["Single","Group"], "125px"))
+    panel.appendChild(createDropDown("Organisation", ["UKCompany","OverseasUK"], "150px"))
     panel.appendChild(createGRSFeatureFlagsLink("200px"))
     panel.appendChild(createSoleTraderGRSFeatureFlagsLink("225px"))
     panel.appendChild(createPartnershipGRSFeatureFlagsLink("250px"))
@@ -74,15 +74,20 @@ function createQuickButton() {
 
 function createDropDown(name, options, position) {
     var panel = document.createElement("div");
+    panel.style.position = "absolute";
+    panel.style.top = position;
 
-    panel.appendChild(createQuickButton());
+    var id = "my" + name;
+
+    var label = document.createElement("label");
+    label.innerText = name + ":";
+    label.setAttribute("for", id);
+    panel.appendChild(label);
 
     // create and append select list
     var selectList = document.createElement("select");
-    selectList.style.position = "absolute"
-    selectList.style.top = position
-    selectList.id = "my" + name;
-    selectList.className = "govuk-!-display-none-print"
+    selectList.id = id;
+    selectList.className = "govuk-!-display-none-print";
     panel.appendChild(selectList);
 
     // create and append the options
@@ -253,8 +258,8 @@ const organisationType = () => {
 
         document.getElementById('answer').checked = true
 
-        if(optionSelected("orgType", "OverseasUK")){
-            if(optionSelected("journey", "Single")){
+        if(optionSelected("Organisation", "OverseasUK")){
+            if(optionSelected("Journey", "Single")){
                 document.getElementById('answer-2').checked = true
             } else {
                 document.getElementById('answer-4').checked = true
@@ -440,7 +445,7 @@ const liabilityExpectedWeight = () => {
 const registrationType = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/registration-type')) {
 
-        if(optionSelected("journey", "Single")){
+        if(optionSelected("Journey", "Single")){
             document.getElementById('value').checked = true
         } else {
             document.getElementById('value-2').checked = true
