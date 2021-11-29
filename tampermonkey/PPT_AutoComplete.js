@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.1
+// @version      15.2
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -35,14 +35,20 @@ function getAutocomplete() {
     return GM_getValue("autoComplete");
 }
 
+function optionSelected(option, value) {
+    return GM_getValue(option) == value;
+}
+
 function setup() {
     var panel = document.createElement('div')
 
     panel.appendChild(createQuickButton())
-    panel.appendChild(createAutoCompleteCheckbox())
-    panel.appendChild(createGRSFeatureFlagsLink())
-    panel.appendChild(createSoleTraderGRSFeatureFlagsLink())
-    panel.appendChild(createPartnershipGRSFeatureFlagsLink())
+    panel.appendChild(createAutoCompleteCheckbox("100px"))
+    panel.appendChild(createDropDown("journey", ["Single","Group"], "150px"))
+    panel.appendChild(createDropDown("orgType", ["UKCompany","OverseasUK"], "175px"))
+    panel.appendChild(createGRSFeatureFlagsLink("200px"))
+    panel.appendChild(createSoleTraderGRSFeatureFlagsLink("225px"))
+    panel.appendChild(createPartnershipGRSFeatureFlagsLink("250px"))
 
     return panel
 }
@@ -66,7 +72,40 @@ function createQuickButton() {
     return button
 }
 
-function createAutoCompleteCheckbox() {
+function createDropDown(name, options, position) {
+    var panel = document.createElement("div");
+
+    panel.appendChild(createQuickButton());
+
+    // create and append select list
+    var selectList = document.createElement("select");
+    selectList.style.position = "absolute"
+    selectList.style.top = position
+    selectList.id = "my" + name;
+    selectList.className = "govuk-!-display-none-print"
+    panel.appendChild(selectList);
+
+    // create and append the options
+    for (var i = 0; i < options.length; i++) {
+        var option = document.createElement("option");
+        option.value = options[i];
+        option.text = options[i];
+
+        if(GM_getValue(name) == options[i]){
+            option.selected = true;
+        }
+
+        selectList.appendChild(option);
+    }
+
+    selectList.onchange = function (e) {
+        GM_setValue(name, this.value);
+    };
+
+    return panel;
+}
+
+function createAutoCompleteCheckbox(position) {
 
     let chkBox = document.createElement('input')
     chkBox.id='autoComplete'
@@ -83,12 +122,12 @@ function createAutoCompleteCheckbox() {
     panel.appendChild(label);
 
     panel.style.position = 'absolute'
-    panel.style.top = '100px'
+    panel.style.top = position
 
     return panel
 }
 
-function createGRSFeatureFlagsLink() {
+function createGRSFeatureFlagsLink(position) {
 
     let a = document.createElement('a')
     a.id='grsFlags'
@@ -104,12 +143,12 @@ function createGRSFeatureFlagsLink() {
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
-    a.style.top = "150px"
+    a.style.top = position
 
     return a
 }
 
-function createSoleTraderGRSFeatureFlagsLink() {
+function createSoleTraderGRSFeatureFlagsLink(position) {
 
     let a = document.createElement('a')
     a.id='grsFlags'
@@ -125,7 +164,7 @@ function createSoleTraderGRSFeatureFlagsLink() {
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
     a.style.position = "absolute"
-    a.style.top = "200px"
+    a.style.top = position
 
     return a
 }
@@ -213,6 +252,15 @@ const organisationType = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/organisation-type')) {
 
         document.getElementById('answer').checked = true
+
+        if(optionSelected("orgType", "OverseasUK")){
+            if(optionSelected("journey", "Single")){
+                document.getElementById('answer-2').checked = true
+            } else {
+                document.getElementById('answer-4').checked = true
+            }
+        }
+
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -255,7 +303,7 @@ const grsPartnershipFeatureFlags = () => {
 /* ####################### GRS UK COMPANY */
 const grsCompanyNumber = () => {
     if (currentPageIs('/identify-your-incorporated-business/.*/company-number')) {
-        document.getElementById('companyNumber').value = '01234567'
+        document.getElementById('companyNumber').value = Math.floor(10000000 + Math.random() * 90000000)
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -392,7 +440,11 @@ const liabilityExpectedWeight = () => {
 const registrationType = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/registration-type')) {
 
-        document.getElementById('value').checked = true
+        if(optionSelected("journey", "Single")){
+            document.getElementById('value').checked = true
+        } else {
+            document.getElementById('value-2').checked = true
+        }
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
