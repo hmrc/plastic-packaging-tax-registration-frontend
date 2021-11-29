@@ -112,6 +112,7 @@ case class Registration(
   val isStarted: Boolean = liabilityDetails.status != TaskStatus.NotStarted
 
   val isFirstGroupMember = groupDetail.exists(_.members.isEmpty)
+
 }
 
 object Registration {

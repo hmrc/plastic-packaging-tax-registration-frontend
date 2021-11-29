@@ -26,8 +26,12 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IN_GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{
+  MEMBER_IN_GROUP,
+  MEMBER_IS_ALREADY_REGISTERED
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
+  group_member_already_registered_page,
   nominated_organisation_already_registered_page,
   organisation_already_in_group_page
 }
@@ -40,7 +44,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
   private val nominatedOrganisationAlreadyRegisteredPage =
     mock[nominated_organisation_already_registered_page]
 
-  private val organisationAlreadyInGroupPage = mock[organisation_already_in_group_page]
+  private val organisationAlreadyInGroupPage   = mock[organisation_already_in_group_page]
+  private val groupMemberAlreadyRegisteredPage = mock[group_member_already_registered_page]
 
   private val controller =
     new NotableErrorController(authenticate = mockAuthAction,
@@ -48,7 +53,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
                                mcc = mcc,
                                nominatedOrganisationAlreadyRegisteredPage =
                                  nominatedOrganisationAlreadyRegisteredPage,
-                               organisationAlreadyInGroupPage = organisationAlreadyInGroupPage
+                               organisationAlreadyInGroupPage = organisationAlreadyInGroupPage,
+                               groupMemberAlreadyRegisteredPage = groupMemberAlreadyRegisteredPage
     )
 
   override protected def beforeEach(): Unit = {
@@ -58,6 +64,9 @@ class NotableErrorControllerSpec extends ControllerSpec {
     )
     when(organisationAlreadyInGroupPage.apply(any())(any(), any())).thenReturn(
       HtmlFormat.raw("error organisation already in group")
+    )
+    when(groupMemberAlreadyRegisteredPage.apply(any())(any(), any())).thenReturn(
+      HtmlFormat.raw("error group member already registered")
     )
   }
 
@@ -99,6 +108,26 @@ class NotableErrorControllerSpec extends ControllerSpec {
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(groupRoutes.OrganisationListController.displayPage().url)
       }
+    }
+  }
+
+  "NotableErrorController groupMemberAlreadyRegistered" should {
+
+    "present group member already been registered page" in {
+      authorizedUser()
+      val registration = aRegistration(
+        withGroupDetail(
+          Some(
+            GroupDetail(groupError = Some(GroupError(MEMBER_IS_ALREADY_REGISTERED, "Member Name")))
+          )
+        )
+      )
+      mockRegistrationFind(registration)
+
+      val resp = controller.groupMemberAlreadyRegistered()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "error group member already registered"
     }
   }
 }

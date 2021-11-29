@@ -25,7 +25,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
@@ -225,7 +224,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(
-            pptRoutes.NotableErrorController.duplicateRegistration().url
+            routes.NotableErrorController.groupMemberAlreadyRegistered().url
           )
         }
       }

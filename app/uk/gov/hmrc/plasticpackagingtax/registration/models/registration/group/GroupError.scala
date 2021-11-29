@@ -21,8 +21,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.Gr
 
 object GroupErrorType extends Enumeration {
   type GroupErrorType = Value
-  val MEMBER_IN_GROUP: Value     = Value("MEMBER_IN_GROUP")
-  val MEMBER_IS_NOMINATED: Value = Value("MEMBER_IS_NOMINATED")
+  val MEMBER_IN_GROUP: Value              = Value("MEMBER_IN_GROUP")
+  val MEMBER_IS_NOMINATED: Value          = Value("MEMBER_IS_NOMINATED")
+  val MEMBER_IS_ALREADY_REGISTERED: Value = Value("MEMBER_IS_ALREADY_REGISTERED")
 
   implicit def value(errorType: GroupErrorType): String = errorType.toString
 

@@ -16,30 +16,35 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
 
 @this(
         govukLayout: main_template,
         pageHeading: pageHeading,
         paragraphBody: paragraphBody,
+        paragraph: paragraph,
         link:link
 )
 
-@()(implicit request: JourneyRequest[_], messages: Messages)
 
-@govukLayout(title = Title("nominated.organisation.already.registered.title")) {
-    @pageHeading(text = messages("nominated.organisation.already.registered.title"))
+@(groupError: GroupError)(implicit request: JourneyRequest[_], messages: Messages)
+
+@organisationName = @{groupError.memberName}
+
+@govukLayout(title = Title("group.member.already.registered.title", organisationName)) {
+    @pageHeading(text = messages("group.member.already.registered.title", organisationName))
     @paragraphBody(
-        message = messages("nominated.organisation.already.registered.detail1",
-            request.registration.organisationDetails.businessName.getOrElse("Your organisation")
+        message = messages("group.member.already.registered.detail1",organisationName)
+    )
+    @paragraphBody(
+        message = messages("group.member.already.registered.detail2",organisationName))
+    @paragraph{
+        @link(
+            text = messages("site.button.saveAndContinue"),
+            call = groupRoutes.OrganisationListController.displayPage(),
+            classes = "govuk-button"
         )
-    )
-    @paragraphBody(
-        message = messages("nominated.organisation.already.registered.detail2"))
-
-    @paragraphBody(
-        message = messages("nominated.organisation.already.registered.detail3",
-            link(text = messages("nominated.organisation.already.registered.detail3.link.text"), call = pptRoutes.OrganisationDetailsTypeController.displayPage()))
-    )
+    }
 }
