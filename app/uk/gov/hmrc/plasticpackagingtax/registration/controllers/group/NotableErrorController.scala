@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
@@ -28,6 +27,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
   organisation_already_in_group_page
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
@@ -54,7 +55,10 @@ class NotableErrorController @Inject() (
 
   def groupMemberAlreadyRegistered(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(groupMemberAlreadyRegisteredPage())
+      request.registration.groupDetail.flatMap(_.groupError) match {
+        case Some(groupError) => Ok(groupMemberAlreadyRegisteredPage(groupError))
+        case _                => Redirect(groupRoutes.OrganisationListController.displayPage())
+      }
     }
 
 }

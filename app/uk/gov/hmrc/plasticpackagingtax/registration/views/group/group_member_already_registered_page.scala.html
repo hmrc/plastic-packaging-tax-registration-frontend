@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
 
 @this(
         govukLayout: main_template,
@@ -28,9 +29,9 @@
 )
 
 
-@()(implicit request: JourneyRequest[_], messages: Messages)
+@(groupError: GroupError)(implicit request: JourneyRequest[_], messages: Messages)
 
-@organisationName = @{request.registration.organisationDetails.businessName.getOrElse("Your organisation")}
+@organisationName = @{groupError.memberName}
 
 @govukLayout(title = Title("group.member.already.registered.title", organisationName)) {
     @pageHeading(text = messages("group.member.already.registered.title", organisationName))

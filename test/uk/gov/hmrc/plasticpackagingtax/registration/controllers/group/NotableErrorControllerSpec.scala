@@ -26,7 +26,10 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IN_GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{
+  MEMBER_IN_GROUP,
+  MEMBER_IS_ALREADY_REGISTERED
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
   group_member_already_registered_page,
   nominated_organisation_already_registered_page,
@@ -62,7 +65,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(organisationAlreadyInGroupPage.apply(any())(any(), any())).thenReturn(
       HtmlFormat.raw("error organisation already in group")
     )
-    when(groupMemberAlreadyRegisteredPage.apply()(any(), any())).thenReturn(
+    when(groupMemberAlreadyRegisteredPage.apply(any())(any(), any())).thenReturn(
       HtmlFormat.raw("error group member already registered")
     )
   }
@@ -112,6 +115,15 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
     "present group member already been registered page" in {
       authorizedUser()
+      val registration = aRegistration(
+        withGroupDetail(
+          Some(
+            GroupDetail(groupError = Some(GroupError(MEMBER_IS_ALREADY_REGISTERED, "Member Name")))
+          )
+        )
+      )
+      mockRegistrationFind(registration)
+
       val resp = controller.groupMemberAlreadyRegistered()(getRequest())
 
       status(resp) mustBe OK

@@ -19,6 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.group
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IS_ALREADY_REGISTERED
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsPageBodyText
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.group_member_already_registered_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -29,7 +31,9 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
   private val page: group_member_already_registered_page =
     instanceOf[group_member_already_registered_page]
 
-  private def createView(): Html = page()(journeyRequest, messages)
+  private val groupError = GroupError(MEMBER_IS_ALREADY_REGISTERED, "Plastic Packaging Ltd")
+
+  private def createView(): Html = page(groupError)(journeyRequest, messages)
 
   "Group member Already Registered Page" should {
 
@@ -59,8 +63,8 @@ class GroupMemberAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f()(journeyRequest, messages)
-    page.render(journeyRequest, messages)
+    page.f(groupError)(journeyRequest, messages)
+    page.render(groupError, journeyRequest, messages)
   }
 
 }

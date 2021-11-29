@@ -39,6 +39,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.Gr
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupError,
+  GroupErrorType,
   GroupMember,
   OrganisationDetails
 }
@@ -77,15 +78,17 @@ class GroupMemberGrsController @Inject() (
                   case Left(error) => throw error
                 }
               case DUPLICATE_SUBSCRIPTION =>
-                Future(Redirect(groupRoutes.NotableErrorController.groupMemberAlreadyRegistered()))
+                val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED,
+                                            groupMemberName(registration)
+                )
+                updateWithGroupError(groupError).map(
+                  _ => Redirect(groupRoutes.NotableErrorController.groupMemberAlreadyRegistered())
+                )
             }
           case Left(groupError) =>
-            update(
-              registration =>
-                registration.copy(groupDetail =
-                  registration.groupDetail.map(_.copy(groupError = Some(groupError)))
-                )
-            ).map(_ => Redirect(groupRoutes.NotableErrorController.organisationAlreadyInGroup()))
+            updateWithGroupError(groupError).map(
+              _ => Redirect(groupRoutes.NotableErrorController.organisationAlreadyInGroup())
+            )
         }
     }
 
@@ -194,5 +197,21 @@ class GroupMemberGrsController @Inject() (
   private def save(
     registration: Registration
   )(implicit hc: HeaderCarrier, request: JourneyRequest[_]) = update(_ => registration)
+
+  private def updateWithGroupError(groupError: GroupError)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    update(
+      registration =>
+        registration.copy(groupDetail =
+          registration.groupDetail.map(_.copy(groupError = Some(groupError)))
+        )
+    )
+
+  private def groupMemberName(registration: Registration) =
+    registration.groupDetail.map(_.members.lastOption.get.businessName).getOrElse(
+      "Your organisation"
+    )
 
 }
