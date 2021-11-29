@@ -29,7 +29,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRo
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{
+  MEMBER_IN_GROUP,
+  MEMBER_IS_NOMINATED
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  GroupError,
+  GroupMember,
+  OrganisationDetails => GroupOrgDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   NOT_SUBSCRIBED,
@@ -51,12 +59,15 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                                  mcc
     )(ec)
 
-  private def registrationWithSelectedGroupMember(orgType: OrgType) =
+  private def registrationWithSelectedGroupMember(
+    orgType: OrgType,
+    existingMembers: Seq[GroupMember] = Seq.empty
+  ) =
     aRegistration(
       withGroupDetail(
         Some(
           GroupDetail(membersUnderGroupControl = Some(true),
-                      members = Seq.empty,
+                      members = existingMembers,
                       currentMemberOrganisationType = Some(orgType)
           )
         )
@@ -94,6 +105,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
         "registering group member " + orgType in {
           await(simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType)))
 
+          groupMemberSize(getLastSavedRegistration) mustBe 1
+
           val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
 
           memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
@@ -103,41 +116,65 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
       }
 
-      "not store business enity information " when {
+      "show error page and not store business entity information " when {
         "registering with same company number " + orgType in {
           authorizedUser()
-          mockGetUkCompanyDetails(incorporationDetails)
-          val registration = registrationWithSelectedGroupMember(orgType)
+          val detailsFromGrs =
+            incorporationDetails.copy(companyNumber = "22222", companyName = "Existing Company")
+          mockGetUkCompanyDetails(detailsFromGrs)
+          val existingMember = groupMember.copy(
+            customerIdentification1 = "22222",
+            organisationDetails =
+              Some(GroupOrgDetails("UkCompany", "Existing Company", Some(safeNumber)))
+          )
+          val registration = registrationWithSelectedGroupMember(orgType, Seq(existingMember))
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
-          await(controller.grsCallback(registration.incorpJourneyId.get)(getRequest()))
+          groupMemberSize(registration) mustBe 1
 
-          val membersListSize: Int = getLastSavedRegistration.groupDetail.get.members.size
+          val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
 
-          membersListSize mustBe 1
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(
+            routes.NotableErrorController.organisationAlreadyInGroup().url
+          )
+
+          groupMemberSize(getLastSavedRegistration) mustBe 1
+          groupError(getLastSavedRegistration) mustBe Some(
+            GroupError(MEMBER_IN_GROUP, "Existing Company")
+          )
         }
 
         "registering Company with same company number as Nominated organisation " + orgType in {
           authorizedUser()
-          mockGetUkCompanyDetails(
-            IncorporationDetails("12345678",
-                                 testCompanyName,
-                                 testUtr,
-                                 testBusinessVerificationPassStatus,
-                                 testCompanyAddress,
-                                 incorporationRegistrationDetails
-            )
-          )
+
           val registration = registrationWithSelectedGroupMember(orgType)
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
-          await(controller.grsCallback(registration.incorpJourneyId.get)(getRequest()))
+          groupMemberSize(registration) mustBe 0
 
-          val noGroupMembers: Boolean = getLastSavedRegistration.groupDetail.get.members.isEmpty
+          val detailsFromGrs = incorporationDetails.copy(
+            companyNumber = registration.organisationDetails.incorporationDetails.get.companyNumber,
+            companyName = registration.organisationDetails.incorporationDetails.get.companyName
+          )
+          mockGetUkCompanyDetails(detailsFromGrs)
 
-          noGroupMembers mustBe true
+          val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(
+            routes.NotableErrorController.organisationAlreadyInGroup().url
+          )
+
+          groupMemberSize(getLastSavedRegistration) mustBe 0
+          groupError(getLastSavedRegistration) mustBe Some(
+            GroupError(MEMBER_IS_NOMINATED,
+                       registration.organisationDetails.incorporationDetails.get.companyName
+            )
+          )
+
         }
       }
 
@@ -219,6 +256,12 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
     }
 
   }
+
+  private def groupMemberSize(registration: Registration): Int =
+    registration.groupDetail.map(_.members.size).getOrElse(0)
+
+  private def groupError(registration: Registration) =
+    registration.groupDetail.flatMap(_.groupError)
 
   private def simulateLimitedCompanyCallback(registration: Registration) = {
     authorizedUser()

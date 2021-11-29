@@ -16,26 +16,38 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
+import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.nominated_organisation_already_registered_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
+  nominated_organisation_already_registered_page,
+  organisation_already_in_group_page
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page
+  nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
+  organisationAlreadyInGroupPage: organisation_already_in_group_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok(nominatedOrganisationAlreadyRegisteredPage())
+    }
+
+  def organisationAlreadyInGroup(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.groupDetail.flatMap(_.groupError) match {
+        case Some(groupError) => Ok(organisationAlreadyInGroupPage(groupError))
+        case _                => Redirect(groupRoutes.OrganisationListController.displayPage())
+      }
     }
 
 }
