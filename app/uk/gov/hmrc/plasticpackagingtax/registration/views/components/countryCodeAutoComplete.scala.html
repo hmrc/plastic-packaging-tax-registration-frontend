@@ -27,9 +27,13 @@ Comments are not rendered in browser.
 *@
 <script>
         openregisterLocationPicker({
+            additionalSynonyms: [
+                { name: 'NI', code: 'country:GB' }
+            ],
             selectElement: document.getElementById("countryCode"),
             name: 'countryAutocomplete',
             defaultValue: '',
+            url: '@controllers.routes.Assets.versioned("/json/location-autocomplete-graph.json")',
             @*
               TF-640: Had to override the onConfirm function to include custom validation for countries because null / undefined values are not handled by the Autocomplete form:
               https://github.com/alphagov/accessible-autocomplete/issues/260
