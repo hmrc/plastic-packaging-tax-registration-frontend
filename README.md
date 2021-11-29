@@ -90,11 +90,17 @@ defines aliases for countries (see https://github.com/alphagov/govuk-country-and
 In order for this to work correctly and only offer country suggestions which actually exist in the associated country
 "select" element, the configuration file must be consistent with the list of countries which are supported.
 
-We have created the following shell script (which uses Scala Ammonite under the covers) to perform preparation of the suitable
+We have created a shell script (which uses Scala Ammonite under the covers) to perform preparation of a suitable
 alias config file based on the contents of the country lookup config file (see above).
 
-Run the following from the `/utils` subdirectory in order to generate this file. Please note that this command will fail
-if the target file (the 3rd parameter) already exists.
+Download the following file to the local `/utils` subdirectory:
+
+```
+https://github.com/alphagov/govuk-country-and-territory-autocomplete/blob/master/dist/location-autocomplete-graph.json
+```
+
+Run the following from the `/utils` subdirectory in order to generate a compatible alias config file. Please note that 
+this command will fail if the target file (the 3rd parameter) already exists.
 
 ```
 ./filter-country-lookup-config.sh ../conf/resources/countriesEN.json ../conf/resources/location-autocomplete-graph.json ../app/assets/json/location-autocomplete-graph.json
