@@ -419,6 +419,6 @@ organisation.already.in.group.title = {0} cannot be added to the group again
 organisation.already.in.group.detail.member = You’ve already added {0} to the group.
 organisation.already.in.group.detail.nominated = The nominated organisation {0} is already in the group.
 
-group.member.already.registered.title = You cannot add to the group
+group.member.already.registered.title = You cannot add {0} to the group
 group.member.already.registered.detail1 = {0} has already registered for PPT, so cannot be added to the group.
 group.member.already.registered.detail2 = {0} will need to de-register for PPT before you can add them to the group.
