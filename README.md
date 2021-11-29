@@ -103,7 +103,7 @@ Run the following from the `/utils` subdirectory in order to generate a compatib
 this command will fail if the target file (the 3rd parameter) already exists.
 
 ```
-./filter-country-lookup-config.sh ../conf/resources/countriesEN.json ../conf/resources/location-autocomplete-graph.json ../app/assets/json/location-autocomplete-graph.json
+./filter-country-lookup-config.sh ../conf/resources/countriesEN.json location-autocomplete-graph.json ../app/assets/json/location-autocomplete-graph.json
 ```
 
 You will need Scala development tools installed incl. Ammonite Scala scripting in order for this to run. See
