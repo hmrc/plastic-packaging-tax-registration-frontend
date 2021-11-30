@@ -41,14 +41,19 @@ function optionSelected(option, value) {
 
 function setup() {
     var panel = document.createElement('div')
+    panel.style.position = 'absolute'
+    panel.style.top = '50px'
+    panel.style.lineHeight = '200%'
 
     panel.appendChild(createQuickButton())
-    panel.appendChild(createAutoCompleteCheckbox("100px"))
-    panel.appendChild(createDropDown("Journey", ["Single","Group"], "125px"))
-    panel.appendChild(createDropDown("Organisation", ["UKCompany","OverseasUK"], "150px"))
-    panel.appendChild(createGRSFeatureFlagsLink("200px"))
-    panel.appendChild(createSoleTraderGRSFeatureFlagsLink("225px"))
-    panel.appendChild(createPartnershipGRSFeatureFlagsLink("250px"))
+    panel.appendChild(createAutoCompleteCheckbox())
+    panel.appendChild(createDropDown("Journey", ["Single","Group"]))
+    panel.appendChild(createDropDown("Organisation", ["UKCompany","OverseasUK"]))
+    panel.appendChild(createGRSFeatureFlagsLink())
+    panel.appendChild(document.createElement('br'))
+    panel.appendChild(createSoleTraderGRSFeatureFlagsLink())
+    panel.appendChild(document.createElement('br'))
+    panel.appendChild(createPartnershipGRSFeatureFlagsLink())
 
     return panel
 }
@@ -64,18 +69,14 @@ function createQuickButton() {
         button.classList.add('govuk-button','govuk-!-display-none-print')
     }
 
-    button.style.position = 'absolute'
-    button.style.top = '50px'
     button.innerHTML = 'Quick Submit'
     button.onclick = () => completeJourney(true)
 
     return button
 }
 
-function createDropDown(name, options, position) {
+function createDropDown(name, options) {
     var panel = document.createElement("div");
-    panel.style.position = "absolute";
-    panel.style.top = position;
 
     var id = "my" + name;
 
@@ -91,17 +92,16 @@ function createDropDown(name, options, position) {
     panel.appendChild(selectList);
 
     // create and append the options
-    for (var i = 0; i < options.length; i++) {
-        var option = document.createElement("option");
-        option.value = options[i];
-        option.text = options[i];
+    options.forEach(item => {
+            var option = document.createElement("option");
+            option.value = item;
+            option.text = item;
 
-        if(GM_getValue(name) == options[i]){
-            option.selected = true;
+            if(GM_getValue(name) == item) option.selected = true;
+
+            selectList.appendChild(option);
         }
-
-        selectList.appendChild(option);
-    }
+    )
 
     selectList.onchange = function (e) {
         GM_setValue(name, this.value);
@@ -110,7 +110,7 @@ function createDropDown(name, options, position) {
     return panel;
 }
 
-function createAutoCompleteCheckbox(position) {
+function createAutoCompleteCheckbox() {
 
     let chkBox = document.createElement('input')
     chkBox.id='autoComplete'
@@ -126,13 +126,10 @@ function createAutoCompleteCheckbox(position) {
     label.setAttribute("for", "autoComplete");
     panel.appendChild(label);
 
-    panel.style.position = 'absolute'
-    panel.style.top = position
-
     return panel
 }
 
-function createGRSFeatureFlagsLink(position) {
+function createGRSFeatureFlagsLink() {
 
     let a = document.createElement('a')
     a.id='grsFlags'
@@ -147,13 +144,11 @@ function createGRSFeatureFlagsLink(position) {
     a.innerText = 'GRS Flags Config'
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
-    a.style.position = "absolute"
-    a.style.top = position
 
     return a
 }
 
-function createSoleTraderGRSFeatureFlagsLink(position) {
+function createSoleTraderGRSFeatureFlagsLink() {
 
     let a = document.createElement('a')
     a.id='grsFlags'
@@ -168,8 +163,6 @@ function createSoleTraderGRSFeatureFlagsLink(position) {
     a.innerText = 'Sole Trader GRS Flags Config'
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
-    a.style.position = "absolute"
-    a.style.top = position
 
     return a
 }
@@ -189,8 +182,6 @@ function createPartnershipGRSFeatureFlagsLink() {
     a.innerText = 'Partnership GRS Flags Config'
 
     a.classList.add('govuk-link','govuk-link--no-visited-state')
-    a.style.position = "absolute"
-    a.style.top = "250px"
 
     return a
 }
