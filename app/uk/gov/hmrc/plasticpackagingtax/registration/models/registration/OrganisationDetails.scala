@@ -32,9 +32,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.Partnersh
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
-  IncorporationRegistrationDetails,
   PartnershipDetails,
-  SoleTraderIncorporationDetails
+  RegistrationDetails,
+  SoleTraderDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   SUBSCRIBED,
@@ -45,7 +45,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 case class OrganisationDetails(
   organisationType: Option[OrgType] = None,
   businessRegisteredAddress: Option[Address] = None,
-  soleTraderDetails: Option[SoleTraderIncorporationDetails] = None,
+  soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None,
   subscriptionStatus: Option[Status] = None
@@ -61,7 +61,7 @@ case class OrganisationDetails(
   lazy val businessVerificationFailed: Boolean =
     incorporationDetails.exists(
       details =>
-        details.registration.registrationStatus == "REGISTRATION_NOT_CALLED" && details.businessVerificationStatus == "FAIL"
+        details.registration.registrationStatus == "REGISTRATION_NOT_CALLED" && details.registration.verificationStatus == "FAIL"
     )
 
   lazy val businessPartnerId: Option[String] =
@@ -90,7 +90,7 @@ case class OrganisationDetails(
     case _                 => None
   }
 
-  lazy val registrationDetails: Option[IncorporationRegistrationDetails] = organisationType match {
+  lazy val registrationDetails: Option[RegistrationDetails] = organisationType match {
     case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorporationDetails.map(_.registration)
     case Some(SOLE_TRADER)                           => soleTraderDetails.map(_.registration)
     case Some(PARTNERSHIP) =>

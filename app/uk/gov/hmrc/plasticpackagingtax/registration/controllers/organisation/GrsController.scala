@@ -65,6 +65,7 @@ object RegistrationStatus extends Enumeration {
   val BUSINESS_IDENTIFICATION_FAILED: Value = Value
   val BUSINESS_VERIFICATION_FAILED: Value   = Value
   val DUPLICATE_SUBSCRIPTION: Value         = Value
+  val UNSUPPORTED_ORGANISATION: Value       = Value
 }
 
 @Singleton
@@ -128,7 +129,11 @@ class GrsController @Inject() (
             case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
             case _          => STATUS_OK
           }
-        case None => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
+        case None =>
+          val isSoleTrader =
+            registration.organisationDetails.organisationType.contains(OrgType.SOLE_TRADER)
+          if (!isSoleTrader) {}
+          Future.successful(BUSINESS_IDENTIFICATION_FAILED)
       }
 
   private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(

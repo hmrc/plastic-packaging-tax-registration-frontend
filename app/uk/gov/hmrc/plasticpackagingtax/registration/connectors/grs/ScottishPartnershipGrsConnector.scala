@@ -24,6 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.ScottishPartn
   GetDetailsTimer
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  GrsScottishPartnershipDetails,
   PartnershipGrsCreateRequest,
   ScottishPartnershipDetails
 }
@@ -39,7 +40,7 @@ class ScottishPartnershipGrsConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends GrsConnector[
       PartnershipGrsCreateRequest,
-      ScottishPartnershipDetails,
+      GrsScottishPartnershipDetails,
       ScottishPartnershipDetails
     ](httpClient,
       metrics,
@@ -50,9 +51,9 @@ class ScottishPartnershipGrsConnector @Inject() (
     ) {
 
   override def translateDetails(
-    scottishPartnershipDetails: ScottishPartnershipDetails
+    grsScottishPartnershipDetails: GrsScottishPartnershipDetails
   ): ScottishPartnershipDetails =
-    scottishPartnershipDetails
+    ScottishPartnershipDetails(grsScottishPartnershipDetails)
 
 }
 

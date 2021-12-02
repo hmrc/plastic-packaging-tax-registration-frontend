@@ -18,15 +18,42 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
 
+case class GrsGeneralPartnershipDetails(
+  sautr: String,
+  postcode: String,
+  override val identifiersMatch: Boolean,
+  override val businessVerification: GrsBusinessVerification,
+  override val registration: GrsRegistration
+) extends GrsResponse
+
+object GrsGeneralPartnershipDetails {
+
+  implicit val format: OFormat[GrsGeneralPartnershipDetails] =
+    Json.format[GrsGeneralPartnershipDetails]
+
+}
+
 case class GeneralPartnershipDetails(
   sautr: String,
   postcode: String,
-  override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails
+  override val registration: RegistrationDetails
+) extends HasRegistrationDetails
 
 object GeneralPartnershipDetails {
+  implicit val format: OFormat[GeneralPartnershipDetails] = Json.format[GeneralPartnershipDetails]
 
-  implicit val format: OFormat[GeneralPartnershipDetails] =
-    Json.format[GeneralPartnershipDetails]
+  def apply(grsGeneralPartnershipDetails: GrsGeneralPartnershipDetails): GeneralPartnershipDetails =
+    GeneralPartnershipDetails(sautr = grsGeneralPartnershipDetails.sautr,
+                              postcode = grsGeneralPartnershipDetails.postcode,
+                              registration = RegistrationDetails(
+                                identifiersMatch = grsGeneralPartnershipDetails.identifiersMatch,
+                                verificationStatus =
+                                  grsGeneralPartnershipDetails.businessVerification.verificationStatus,
+                                registrationStatus =
+                                  grsGeneralPartnershipDetails.registration.registrationStatus,
+                                registeredBusinessPartnerId =
+                                  grsGeneralPartnershipDetails.registration.registeredBusinessPartnerId
+                              )
+    )
 
 }

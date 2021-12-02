@@ -92,7 +92,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     "return 200" when {
 
       "user is authorised and display page method is invoked with uk company" in {
-        val registration = aRegistration(
+        val registration: Registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(UK_COMPANY),
                                 incorporationDetails =
@@ -100,10 +100,9 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                     IncorporationDetails(companyNumber = "123456",
                                                          companyName = "NewPlastics",
                                                          ctutr = "1890894",
-                                                         businessVerificationStatus = "PASS",
                                                          companyAddress = testCompanyAddress,
                                                          registration =
-                                                           incorporationRegistrationDetails
+                                                           registrationDetails
                                     )
                                   ),
                                 subscriptionStatus = Some(NOT_SUBSCRIBED)
