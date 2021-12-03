@@ -16,8 +16,6 @@
 
 package spec
 
-import java.time.{ZoneOffset, ZonedDateTime}
-
 import base.PptTestData.testUserFeatures
 import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
@@ -67,6 +65,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
+import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
@@ -139,6 +138,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val verificationFailedRegistrationDetails: RegistrationDetails =
     RegistrationDetails(identifiersMatch = true,
                         verificationStatus = Some("FAIL"),
+                        registrationStatus = "REGISTRATION_NOT_CALLED",
+                        registeredBusinessPartnerId = None
+    )
+
+  protected val identifiersUnmatchedRegistrationDetails: RegistrationDetails =
+    RegistrationDetails(identifiersMatch = false,
+                        verificationStatus = Some("UNCHALLENGED"),
                         registrationStatus = "REGISTRATION_NOT_CALLED",
                         registeredBusinessPartnerId = None
     )
