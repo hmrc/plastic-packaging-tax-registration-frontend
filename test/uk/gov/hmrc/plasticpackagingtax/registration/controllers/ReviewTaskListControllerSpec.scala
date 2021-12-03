@@ -102,7 +102,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                                          ctutr = "1890894",
                                                          companyAddress = testCompanyAddress,
                                                          registration =
-                                                           registrationDetails
+                                                           Some(registrationDetails)
                                     )
                                   ),
                                 subscriptionStatus = Some(NOT_SUBSCRIBED)
@@ -276,9 +276,9 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                 Some(
                   aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.copy(
                     registration =
-                      aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.registration.copy(
-                        registeredBusinessPartnerId = None
-                      )
+                      aCompletedUkCompanyRegistration.organisationDetails.incorporationDetails.get.registration.map {
+                        reg => reg.copy(registeredBusinessPartnerId = None)
+                      }
                   )
                 )
               )

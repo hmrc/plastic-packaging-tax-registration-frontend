@@ -25,14 +25,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GrsBusinessVerification,
-  GrsRegistration,
-  GrsScottishPartnershipDetails,
-  PartnershipGrsCreateRequest,
-  RegistrationDetails,
-  ScottishPartnershipDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 
 import java.util.UUID
 
@@ -80,8 +73,10 @@ class ScottishPartnershipGrsConnectorISpec extends ConnectorISpec with Injector 
                                                                       postcode = "AA1 1AA",
                                                                       identifiersMatch = true,
                                                                       businessVerification =
-                                                                        GrsBusinessVerification(
-                                                                          "PASS"
+                                                                        Some(
+                                                                          GrsBusinessVerification(
+                                                                            "PASS"
+                                                                          )
                                                                         ),
                                                                       registration =
                                                                         GrsRegistration(

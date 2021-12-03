@@ -96,13 +96,16 @@ trait RegistrationBuilder {
                                                                  companyAddress =
                                                                    IncorporationAddressDetails(),
                                                                  registration =
-                                                                   RegistrationDetails(
-                                                                     identifiersMatch = true,
-                                                                     verificationStatus = "PASS",
-                                                                     registrationStatus =
-                                                                       "REGISTERED",
-                                                                     registeredBusinessPartnerId =
-                                                                       Some("X00000123456789")
+                                                                   Some(
+                                                                     RegistrationDetails(
+                                                                       identifiersMatch = true,
+                                                                       verificationStatus =
+                                                                         Some("PASS"),
+                                                                       registrationStatus =
+                                                                         "REGISTERED",
+                                                                       registeredBusinessPartnerId =
+                                                                         Some("X00000123456789")
+                                                                     )
                                                                    )
                                                                )
                                                              ),

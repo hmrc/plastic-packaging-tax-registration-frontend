@@ -26,10 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
   PartnershipDetails,
@@ -58,49 +55,49 @@ case class OrganisationDetails(
 
   lazy val subscriptionCheckPassed: Boolean = subscriptionStatus.exists(!_.equals(SUBSCRIBED))
 
-  lazy val businessVerificationFailed: Boolean =
-    incorporationDetails.exists(
-      details =>
-        details.registration.registrationStatus == "REGISTRATION_NOT_CALLED" && details.registration.verificationStatus == "FAIL"
-    )
-
-  lazy val businessPartnerId: Option[String] =
-    organisationType match {
-      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-        incorporationDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
-      case Some(SOLE_TRADER) =>
-        soleTraderDetails.flatMap(details => details.registration.registeredBusinessPartnerId)
-      case Some(PARTNERSHIP) =>
-        partnershipDetails.flatMap { pd =>
-          pd.partnershipType match {
-            case GENERAL_PARTNERSHIP =>
-              partnershipDetails.get.generalPartnershipDetails.get.registration.registeredBusinessPartnerId
-            case SCOTTISH_PARTNERSHIP =>
-              partnershipDetails.get.scottishPartnershipDetails.get.registration.registeredBusinessPartnerId
-            case _ => None
-          }
+  lazy val grsRegistration: Option[RegistrationDetails] = organisationType match {
+    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+      incorporationDetails.flatMap(orgDetails => orgDetails.registration)
+    case Some(SOLE_TRADER) => soleTraderDetails.flatMap(orgDetails => orgDetails.registration)
+    case Some(PARTNERSHIP) =>
+      partnershipDetails.flatMap { partnershipDetails =>
+        partnershipDetails.partnershipType match {
+          case PartnershipTypeEnum.GENERAL_PARTNERSHIP =>
+            partnershipDetails.generalPartnershipDetails.flatMap { orgDetails =>
+              orgDetails.registration
+            }
+          case PartnershipTypeEnum.SCOTTISH_PARTNERSHIP =>
+            partnershipDetails.scottishPartnershipDetails.flatMap { orgDetails =>
+              orgDetails.registration
+            }
+          case _ => None
         }
-      case _ => None
-    }
+      }
+    case _ => None
+  }
+
+  lazy val identifiersMatch: Option[Boolean] = grsRegistration.map(reg => reg.identifiersMatch)
+
+  lazy val verificationStatus: Option[String] = grsRegistration.flatMap { reg =>
+    reg.verificationStatus
+  }
+
+  lazy val registrationStatus: Option[String] = grsRegistration.map { reg =>
+    reg.registrationStatus
+  }
+
+  lazy val businessPartnerId: Option[String] = grsRegistration.flatMap { reg =>
+    reg.registeredBusinessPartnerId
+  }
+
+  lazy val businessVerificationFailed: Boolean =
+    registrationStatus.contains("REGISTRATION_NOT_CALLED") && verificationStatus.contains("FAIL")
 
   lazy val businessName: Option[String] = organisationType match {
     case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
       incorporationDetails.map(_.companyName)
     case Some(SOLE_TRADER) => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
     case _                 => None
-  }
-
-  lazy val registrationDetails: Option[RegistrationDetails] = organisationType match {
-    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) => incorporationDetails.map(_.registration)
-    case Some(SOLE_TRADER)                           => soleTraderDetails.map(_.registration)
-    case Some(PARTNERSHIP) =>
-      partnershipDetails.flatMap(
-        details =>
-          details.generalPartnershipDetails.map(_.registration).orElse(
-            details.scottishPartnershipDetails.map(_.registration)
-          )
-      )
-    case _ => None
   }
 
 }

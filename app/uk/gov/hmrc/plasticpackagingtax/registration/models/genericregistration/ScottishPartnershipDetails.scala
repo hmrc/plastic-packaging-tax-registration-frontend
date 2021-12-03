@@ -22,7 +22,7 @@ case class GrsScottishPartnershipDetails(
   sautr: String,
   postcode: String,
   override val identifiersMatch: Boolean,
-  override val businessVerification: GrsBusinessVerification,
+  override val businessVerification: Option[GrsBusinessVerification],
   override val registration: GrsRegistration
 ) extends GrsResponse
 
@@ -36,7 +36,7 @@ object GrsScottishPartnershipDetails {
 case class ScottishPartnershipDetails(
   sautr: String,
   postcode: String,
-  override val registration: RegistrationDetails
+  override val registration: Option[RegistrationDetails]
 ) extends HasRegistrationDetails
 
 object ScottishPartnershipDetails {
@@ -47,14 +47,19 @@ object ScottishPartnershipDetails {
   ): ScottishPartnershipDetails =
     ScottishPartnershipDetails(sautr = grsScottishPartnershipDetails.sautr,
                                postcode = grsScottishPartnershipDetails.postcode,
-                               registration = RegistrationDetails(
-                                 identifiersMatch = grsScottishPartnershipDetails.identifiersMatch,
-                                 verificationStatus =
-                                   grsScottishPartnershipDetails.businessVerification.verificationStatus,
-                                 registrationStatus =
-                                   grsScottishPartnershipDetails.registration.registrationStatus,
-                                 registeredBusinessPartnerId =
-                                   grsScottishPartnershipDetails.registration.registeredBusinessPartnerId
+                               registration = Some(
+                                 RegistrationDetails(
+                                   identifiersMatch =
+                                     grsScottishPartnershipDetails.identifiersMatch,
+                                   verificationStatus =
+                                     grsScottishPartnershipDetails.businessVerification.map { bv =>
+                                       bv.verificationStatus
+                                     },
+                                   registrationStatus =
+                                     grsScottishPartnershipDetails.registration.registrationStatus,
+                                   registeredBusinessPartnerId =
+                                     grsScottishPartnershipDetails.registration.registeredBusinessPartnerId
+                                 )
                                )
     )
 

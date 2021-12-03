@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 case class RegistrationDetails(
   identifiersMatch: Boolean,
-  verificationStatus: String,
+  verificationStatus: Option[String],
   registrationStatus: String,
   registeredBusinessPartnerId: Option[String]
 )

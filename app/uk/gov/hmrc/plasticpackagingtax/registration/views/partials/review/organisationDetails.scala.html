@@ -50,7 +50,7 @@
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.lastName", Some(organisationDetails.soleTraderDetails.get.lastName)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth.getOrElse(""))),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.nino))
         ).filterNot(_.value.content == Empty)
     )

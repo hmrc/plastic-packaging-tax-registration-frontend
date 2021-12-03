@@ -124,21 +124,21 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected val registrationDetails: RegistrationDetails =
     RegistrationDetails(identifiersMatch = true,
-                        verificationStatus = "PASS",
+                        verificationStatus = Some("PASS"),
                         registrationStatus = "REGISTERED",
                         registeredBusinessPartnerId = Some(safeNumber)
     )
 
   protected val unregisteredRegistrationDetails: RegistrationDetails =
     RegistrationDetails(identifiersMatch = true,
-                        verificationStatus = "UNCHALLENGED",
+                        verificationStatus = Some("UNCHALLENGED"),
                         registrationStatus = "REGISTRATION_NOT_CALLED",
                         registeredBusinessPartnerId = None
     )
 
   protected val verificationFailedRegistrationDetails: RegistrationDetails =
     RegistrationDetails(identifiersMatch = true,
-                        verificationStatus = "FAIL",
+                        verificationStatus = Some("FAIL"),
                         registrationStatus = "REGISTRATION_NOT_CALLED",
                         registeredBusinessPartnerId = None
     )
@@ -148,7 +148,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          testCompanyName,
                          testUtr,
                          testCompanyAddress,
-                         registrationDetails
+                         Some(registrationDetails)
     )
 
   protected val grsRegistrationDetails: GrsRegistration =
@@ -161,7 +161,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
       companyProfile = GrsCompanyProfile(testCompanyNumber, testCompanyName, testCompanyAddress),
       ctutr = testUtr,
       identifiersMatch = true,
-      businessVerification = GrsBusinessVerification(testBusinessVerificationPassStatus),
+      businessVerification = Some(GrsBusinessVerification(testBusinessVerificationPassStatus)),
       registration = grsRegistrationDetails
     )
 
@@ -170,7 +170,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          testCompanyName,
                          testUtr,
                          testCompanyAddress,
-                         unregisteredRegistrationDetails
+                         Some(unregisteredRegistrationDetails)
     )
 
   protected val verificationFailedIncorporationDetails: IncorporationDetails =
@@ -178,25 +178,25 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          testCompanyName,
                          testUtr,
                          testCompanyAddress,
-                         verificationFailedRegistrationDetails
+                         Some(verificationFailedRegistrationDetails)
     )
 
   protected val unregisteredSoleTraderDetails: SoleTraderDetails =
     SoleTraderDetails(firstName = "Sole",
                       lastName = "Trader",
-                      dateOfBirth = "12/12/1960",
+                      dateOfBirth = Some("12/12/1960"),
                       nino = "1234",
                       sautr = Some("ABC"),
-                      registration = unregisteredRegistrationDetails
+                      registration = Some(unregisteredRegistrationDetails)
     )
 
   protected val soleTraderIncorporationDetails: SoleTraderDetails =
     SoleTraderDetails(testFirstName,
                       testLastName,
-                      testDob,
+                      Some(testDob),
                       testNino,
                       Some(testSatur),
-                      registrationDetails
+                      Some(registrationDetails)
     )
 
   protected val grsSoleTraderIncorporationDetails: GrsSoleTraderDetails =
@@ -206,28 +206,28 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          Some(testSatur),
                          identifiersMatch = true,
                          businessVerification =
-                           GrsBusinessVerification(testBusinessVerificationPassStatus),
+                           Some(GrsBusinessVerification(testBusinessVerificationPassStatus)),
                          registration = grsRegistrationDetails
     )
 
   protected val generalPartnershipDetails: GeneralPartnershipDetails =
-    GeneralPartnershipDetails(testSatur, testPostcode, registrationDetails)
+    GeneralPartnershipDetails(testSatur, testPostcode, Some(registrationDetails))
 
   protected val scottishPartnershipDetails: ScottishPartnershipDetails =
-    ScottishPartnershipDetails(testSatur, testPostcode, registrationDetails)
+    ScottishPartnershipDetails(testSatur, testPostcode, Some(registrationDetails))
 
   protected val partnershipDetails: PartnershipDetails =
-    PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
-                       generalPartnershipDetails = Some(
-                         GeneralPartnershipDetails(testSatur, testPostcode, registrationDetails)
-                       )
+    PartnershipDetails(
+      partnershipType = GENERAL_PARTNERSHIP,
+      generalPartnershipDetails =
+        Some(GeneralPartnershipDetails(testSatur, testPostcode, Some(registrationDetails)))
     )
 
   protected val partnershipDetailsWithScottishPartnership: PartnershipDetails =
-    PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
-                       scottishPartnershipDetails = Some(
-                         ScottishPartnershipDetails(testSatur, testPostcode, registrationDetails)
-                       )
+    PartnershipDetails(
+      partnershipType = SCOTTISH_PARTNERSHIP,
+      scottishPartnershipDetails =
+        Some(ScottishPartnershipDetails(testSatur, testPostcode, Some(registrationDetails)))
     )
 
   protected val subscriptionStatus: SubscriptionStatusResponse = SubscriptionStatusResponse(

@@ -22,7 +22,7 @@ case class GrsGeneralPartnershipDetails(
   sautr: String,
   postcode: String,
   override val identifiersMatch: Boolean,
-  override val businessVerification: GrsBusinessVerification,
+  override val businessVerification: Option[GrsBusinessVerification],
   override val registration: GrsRegistration
 ) extends GrsResponse
 
@@ -36,7 +36,7 @@ object GrsGeneralPartnershipDetails {
 case class GeneralPartnershipDetails(
   sautr: String,
   postcode: String,
-  override val registration: RegistrationDetails
+  override val registration: Option[RegistrationDetails]
 ) extends HasRegistrationDetails
 
 object GeneralPartnershipDetails {
@@ -45,14 +45,18 @@ object GeneralPartnershipDetails {
   def apply(grsGeneralPartnershipDetails: GrsGeneralPartnershipDetails): GeneralPartnershipDetails =
     GeneralPartnershipDetails(sautr = grsGeneralPartnershipDetails.sautr,
                               postcode = grsGeneralPartnershipDetails.postcode,
-                              registration = RegistrationDetails(
-                                identifiersMatch = grsGeneralPartnershipDetails.identifiersMatch,
-                                verificationStatus =
-                                  grsGeneralPartnershipDetails.businessVerification.verificationStatus,
-                                registrationStatus =
-                                  grsGeneralPartnershipDetails.registration.registrationStatus,
-                                registeredBusinessPartnerId =
-                                  grsGeneralPartnershipDetails.registration.registeredBusinessPartnerId
+                              registration = Some(
+                                RegistrationDetails(
+                                  identifiersMatch = grsGeneralPartnershipDetails.identifiersMatch,
+                                  verificationStatus =
+                                    grsGeneralPartnershipDetails.businessVerification.map { bv =>
+                                      bv.verificationStatus
+                                    },
+                                  registrationStatus =
+                                    grsGeneralPartnershipDetails.registration.registrationStatus,
+                                  registeredBusinessPartnerId =
+                                    grsGeneralPartnershipDetails.registration.registeredBusinessPartnerId
+                                )
                               )
     )
 

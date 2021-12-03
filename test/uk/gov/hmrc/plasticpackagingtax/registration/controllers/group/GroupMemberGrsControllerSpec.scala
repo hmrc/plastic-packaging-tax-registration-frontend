@@ -210,7 +210,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                                  testCompanyName,
                                  testUtr,
                                  testCompanyAddress,
-                                 registrationDetails
+                                 Some(registrationDetails)
             )
           )
           val registration = registrationWithSelectedGroupMember(orgType)
@@ -268,7 +268,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                            testCompanyName,
                            testUtr,
                            testCompanyAddress,
-                           registrationDetails
+                           Some(registrationDetails)
       )
     )
     mockRegistrationFind(registration)

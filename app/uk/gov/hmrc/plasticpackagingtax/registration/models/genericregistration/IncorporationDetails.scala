@@ -32,7 +32,7 @@ case class GrsIncorporationDetails(
   companyProfile: GrsCompanyProfile,
   ctutr: String,
   override val identifiersMatch: Boolean,
-  override val businessVerification: GrsBusinessVerification,
+  override val businessVerification: Option[GrsBusinessVerification],
   override val registration: GrsRegistration
 ) extends GrsResponse
 
@@ -45,7 +45,7 @@ case class IncorporationDetails(
   companyName: String,
   ctutr: String,
   companyAddress: IncorporationAddressDetails,
-  override val registration: RegistrationDetails
+  override val registration: Option[RegistrationDetails]
 ) extends HasRegistrationDetails {
 
   def isGroupMemberSameAsNominated(customerIdentification1: String): Boolean =
@@ -62,14 +62,19 @@ object IncorporationDetails {
                          grsIncorporationDetails.companyProfile.companyName,
                          grsIncorporationDetails.ctutr,
                          grsIncorporationDetails.companyProfile.unsanitisedCHROAddress,
-                         RegistrationDetails(identifiersMatch =
-                                               grsIncorporationDetails.identifiersMatch,
-                                             verificationStatus =
-                                               grsIncorporationDetails.businessVerification.verificationStatus,
-                                             registrationStatus =
-                                               grsIncorporationDetails.registration.registrationStatus,
-                                             registeredBusinessPartnerId =
-                                               grsIncorporationDetails.registration.registeredBusinessPartnerId
+                         Some(
+                           RegistrationDetails(
+                             identifiersMatch =
+                               grsIncorporationDetails.identifiersMatch,
+                             verificationStatus =
+                               grsIncorporationDetails.businessVerification.map { bv =>
+                                 bv.verificationStatus
+                               },
+                             registrationStatus =
+                               grsIncorporationDetails.registration.registrationStatus,
+                             registeredBusinessPartnerId =
+                               grsIncorporationDetails.registration.registeredBusinessPartnerId
+                           )
                          )
     )
 

@@ -30,7 +30,7 @@ case class GrsSoleTraderDetails(
   nino: String,
   sautr: Option[String],
   override val identifiersMatch: Boolean,
-  override val businessVerification: GrsBusinessVerification,
+  override val businessVerification: Option[GrsBusinessVerification],
   override val registration: GrsRegistration
 ) extends GrsResponse
 
@@ -41,10 +41,10 @@ object GrsSoleTraderDetails {
 case class SoleTraderDetails(
   firstName: String,
   lastName: String,
-  dateOfBirth: String,
+  dateOfBirth: Option[String],
   nino: String,
   sautr: Option[String],
-  override val registration: RegistrationDetails
+  override val registration: Option[RegistrationDetails]
 ) extends HasRegistrationDetails
 
 object SoleTraderDetails {
@@ -55,16 +55,21 @@ object SoleTraderDetails {
   def apply(grsSoleTraderDetails: GrsSoleTraderDetails): SoleTraderDetails =
     SoleTraderDetails(grsSoleTraderDetails.fullName.firstName,
                       grsSoleTraderDetails.fullName.lastName,
-                      grsSoleTraderDetails.dateOfBirth,
+                      Some(grsSoleTraderDetails.dateOfBirth),
                       grsSoleTraderDetails.nino,
                       grsSoleTraderDetails.sautr,
-                      RegistrationDetails(identifiersMatch = grsSoleTraderDetails.identifiersMatch,
-                                          verificationStatus =
-                                            grsSoleTraderDetails.businessVerification.verificationStatus,
-                                          registrationStatus =
-                                            grsSoleTraderDetails.registration.registrationStatus,
-                                          registeredBusinessPartnerId =
-                                            grsSoleTraderDetails.registration.registeredBusinessPartnerId
+                      Some(
+                        RegistrationDetails(
+                          identifiersMatch = grsSoleTraderDetails.identifiersMatch,
+                          verificationStatus =
+                            grsSoleTraderDetails.businessVerification.map { bv =>
+                              bv.verificationStatus
+                            },
+                          registrationStatus =
+                            grsSoleTraderDetails.registration.registrationStatus,
+                          registeredBusinessPartnerId =
+                            grsSoleTraderDetails.registration.registeredBusinessPartnerId
+                        )
                       )
     )
 

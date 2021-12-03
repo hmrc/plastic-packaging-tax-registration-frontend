@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 trait GrsResponse {
   val identifiersMatch: Boolean
-  val businessVerification: GrsBusinessVerification
+  val businessVerification: Option[GrsBusinessVerification]
   val registration: GrsRegistration
 }
 
