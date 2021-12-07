@@ -24,6 +24,7 @@ case class IncorpEntityGrsCreateRequest(
   optServiceName: Option[String] = None,
   deskProServiceId: String,
   signOutUrl: String,
+  accessibilityUrl: String,
   regime: Regime = PPT,
   businessVerificationCheck: Boolean = true
 ) extends GrsJourneyCreationRequest

@@ -100,7 +100,8 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       SoleTraderGrsCreateRequest(grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
-                                 appConfig.signOutLink
+                                 appConfig.signOutLink,
+                                 appConfig.accessibilityStatementServicePath
       )
     )
 
@@ -111,6 +112,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
+                                 appConfig.accessibilityStatementServicePath,
                                  businessVerificationCheck =
                                    businessVerificationCheck
     )
@@ -135,6 +137,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.signOutLink,
+                                  appConfig.accessibilityStatementServicePath,
                                   businessVerificationCheck =
                                     businessVerificationCheck
       ),

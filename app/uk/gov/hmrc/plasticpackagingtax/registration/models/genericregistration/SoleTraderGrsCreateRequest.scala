@@ -24,11 +24,10 @@ case class SoleTraderGrsCreateRequest(
   optServiceName: Option[String] = None,
   deskProServiceId: String,
   signOutUrl: String,
+  accessibilityUrl: String,
   regime: Regime = PPT,
   enableSautrCheck: Boolean = true,
-  businessVerificationCheck: Boolean = true,
-  accessibilityUrl: String =
-    "/accessibility-statement/plastic-packaging-tax" // TODO: what should this be set to?
+  businessVerificationCheck: Boolean = true
 ) extends GrsJourneyCreationRequest
 
 object SoleTraderGrsCreateRequest {
