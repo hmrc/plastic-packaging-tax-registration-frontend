@@ -21,6 +21,7 @@ import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   GeneralPartnershipDetails,
+  GrsGeneralPartnershipDetails,
   PartnershipGrsCreateRequest
 }
 
@@ -35,7 +36,7 @@ class GeneralPartnershipGrsConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends GrsConnector[
       PartnershipGrsCreateRequest,
-      GeneralPartnershipDetails,
+      GrsGeneralPartnershipDetails,
       GeneralPartnershipDetails
     ](httpClient,
       metrics,
@@ -46,9 +47,9 @@ class GeneralPartnershipGrsConnector @Inject() (
     ) {
 
   override def translateDetails(
-    generalPartnershipDetails: GeneralPartnershipDetails
+    grsGeneralPartnershipDetails: GrsGeneralPartnershipDetails
   ): GeneralPartnershipDetails =
-    generalPartnershipDetails
+    GeneralPartnershipDetails(grsGeneralPartnershipDetails)
 
 }
 

@@ -152,7 +152,9 @@ class GroupMemberGrsController @Inject() (
                   Some(
                     OrganisationDetails(orgType.toString,
                                         details.companyName,
-                                        details.registration.registeredBusinessPartnerId
+                                        details.registration.flatMap { reg =>
+                                          reg.registeredBusinessPartnerId
+                                        }
                     )
                   ),
                 addressDetails = details.companyAddress.toPptAddress

@@ -153,19 +153,29 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                               IncorporationDetails(companyNumber = "123",
                                                    companyName = "Test",
                                                    ctutr = "ABC",
-                                                   businessVerificationStatus = "PASS",
                                                    companyAddress = IncorporationAddressDetails(),
                                                    registration =
                                                      if (registered)
-                                                       IncorporationRegistrationDetails(
-                                                         registrationStatus = "REGISTERED",
-                                                         registeredBusinessPartnerId = Some("XP001")
+                                                       Some(
+                                                         RegistrationDetails(
+                                                           identifiersMatch = true,
+                                                           verificationStatus =
+                                                             Some("PASS"),
+                                                           registrationStatus = "REGISTERED",
+                                                           registeredBusinessPartnerId =
+                                                             Some("XP001")
+                                                         )
                                                        )
                                                      else
-                                                       IncorporationRegistrationDetails(
-                                                         registrationStatus =
-                                                           "REGISTRATION_NOT_CALLED",
-                                                         registeredBusinessPartnerId = None
+                                                       Some(
+                                                         RegistrationDetails(
+                                                           identifiersMatch = true,
+                                                           verificationStatus =
+                                                             Some("FAIL"),
+                                                           registrationStatus =
+                                                             "REGISTRATION_NOT_CALLED",
+                                                           registeredBusinessPartnerId = None
+                                                         )
                                                        )
                               )
                             ),
@@ -174,26 +184,36 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
       case SOLE_TRADER =>
         OrganisationDetails(organisationType = Some(SOLE_TRADER),
                             soleTraderDetails = Some(
-                              SoleTraderIncorporationDetails(firstName = "Alan",
-                                                             lastName = "Johnson",
-                                                             dateOfBirth = "12/12/1960",
-                                                             nino = "ABC123",
-                                                             sautr = Some("12345678"),
-                                                             registration =
-                                                               if (registered)
-                                                                 IncorporationRegistrationDetails(
-                                                                   registrationStatus =
-                                                                     "REGISTERED",
-                                                                   registeredBusinessPartnerId =
-                                                                     Some("XP001")
-                                                                 )
-                                                               else
-                                                                 IncorporationRegistrationDetails(
-                                                                   registrationStatus =
-                                                                     "REGISTRATION_NOT_CALLED",
-                                                                   registeredBusinessPartnerId =
-                                                                     None
-                                                                 )
+                              SoleTraderDetails(firstName = "Alan",
+                                                lastName = "Johnson",
+                                                dateOfBirth = Some("12/12/1960"),
+                                                nino = "ABC123",
+                                                sautr = Some("12345678"),
+                                                registration =
+                                                  if (registered)
+                                                    Some(
+                                                      RegistrationDetails(
+                                                        identifiersMatch = true,
+                                                        verificationStatus =
+                                                          Some("PASS"),
+                                                        registrationStatus =
+                                                          "REGISTERED",
+                                                        registeredBusinessPartnerId =
+                                                          Some("XP001")
+                                                      )
+                                                    )
+                                                  else
+                                                    Some(
+                                                      RegistrationDetails(
+                                                        identifiersMatch = true,
+                                                        verificationStatus =
+                                                          Some("FAIL"),
+                                                        registrationStatus =
+                                                          "REGISTRATION_NOT_CALLED",
+                                                        registeredBusinessPartnerId =
+                                                          None
+                                                      )
+                                                    )
                               )
                             ),
                             subscriptionStatus = subscriptionStatus
@@ -210,21 +230,39 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                                        GeneralPartnershipDetails(sautr = "12345678",
                                                                                  postcode =
                                                                                    "BD19 3BD",
-                                                                                 registration = if (
-                                                                                   registered
-                                                                                 )
-                                                                                   IncorporationRegistrationDetails(
-                                                                                     registrationStatus =
-                                                                                       "REGISTERED",
-                                                                                     registeredBusinessPartnerId =
-                                                                                       Some("XP001")
-                                                                                   )
-                                                                                 else
-                                                                                   IncorporationRegistrationDetails(
-                                                                                     registrationStatus = "REGISTRATION_NOT_CALLED",
-                                                                                     registeredBusinessPartnerId =
-                                                                                       None
-                                                                                   )
+                                                                                 registration =
+                                                                                   if (registered)
+                                                                                     Some(
+                                                                                       RegistrationDetails(
+                                                                                         identifiersMatch =
+                                                                                           true,
+                                                                                         verificationStatus =
+                                                                                           Some(
+                                                                                             "PASS"
+                                                                                           ),
+                                                                                         registrationStatus =
+                                                                                           "REGISTERED",
+                                                                                         registeredBusinessPartnerId =
+                                                                                           Some(
+                                                                                             "XP001"
+                                                                                           )
+                                                                                       )
+                                                                                     )
+                                                                                   else
+                                                                                     Some(
+                                                                                       RegistrationDetails(
+                                                                                         identifiersMatch =
+                                                                                           true,
+                                                                                         verificationStatus =
+                                                                                           Some(
+                                                                                             "FAIL"
+                                                                                           ),
+                                                                                         registrationStatus =
+                                                                                           "REGISTRATION_NOT_CALLED",
+                                                                                         registeredBusinessPartnerId =
+                                                                                           None
+                                                                                       )
+                                                                                     )
                                                        )
                                                      ),
                                                      scottishPartnershipDetails = None
@@ -245,16 +283,26 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                                          postcode = "BD19 3BD",
                                                          registration =
                                                            if (registered)
-                                                             IncorporationRegistrationDetails(
-                                                               registrationStatus = "REGISTERED",
-                                                               registeredBusinessPartnerId =
-                                                                 Some("XP001")
+                                                             Some(
+                                                               RegistrationDetails(
+                                                                 identifiersMatch = true,
+                                                                 verificationStatus =
+                                                                   Some("PASS"),
+                                                                 registrationStatus = "REGISTERED",
+                                                                 registeredBusinessPartnerId =
+                                                                   Some("XP001")
+                                                               )
                                                              )
                                                            else
-                                                             IncorporationRegistrationDetails(
-                                                               registrationStatus =
-                                                                 "REGISTRATION_NOT_CALLED",
-                                                               registeredBusinessPartnerId = None
+                                                             Some(
+                                                               RegistrationDetails(
+                                                                 identifiersMatch = true,
+                                                                 verificationStatus =
+                                                                   Some("FAIL"),
+                                                                 registrationStatus =
+                                                                   "REGISTRATION_NOT_CALLED",
+                                                                 registeredBusinessPartnerId = None
+                                                               )
                                                              )
                                                        )
                                                      )

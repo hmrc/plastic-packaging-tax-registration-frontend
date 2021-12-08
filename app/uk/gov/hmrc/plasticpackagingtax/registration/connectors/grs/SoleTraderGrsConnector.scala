@@ -21,8 +21,8 @@ import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   GrsSoleTraderDetails,
-  SoleTraderGrsCreateRequest,
-  SoleTraderIncorporationDetails
+  SoleTraderDetails,
+  SoleTraderGrsCreateRequest
 }
 
 import javax.inject.{Inject, Singleton}
@@ -34,11 +34,8 @@ class SoleTraderGrsConnector @Inject() (
   config: AppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
-    extends GrsConnector[
-      SoleTraderGrsCreateRequest,
-      GrsSoleTraderDetails,
-      SoleTraderIncorporationDetails
-    ](httpClient,
+    extends GrsConnector[SoleTraderGrsCreateRequest, GrsSoleTraderDetails, SoleTraderDetails](
+      httpClient,
       metrics,
       config.soleTraderJourneyUrl,
       config.soleTraderJourneyUrl,
@@ -46,9 +43,7 @@ class SoleTraderGrsConnector @Inject() (
       "ppt.soleTrader.incorpId.get.details.timer"
     ) {
 
-  override def translateDetails(
-    grsSoleTraderDetails: GrsSoleTraderDetails
-  ): SoleTraderIncorporationDetails =
-    SoleTraderIncorporationDetails(grsSoleTraderDetails)
+  override def translateDetails(grsSoleTraderDetails: GrsSoleTraderDetails): SoleTraderDetails =
+    SoleTraderDetails(grsSoleTraderDetails)
 
 }

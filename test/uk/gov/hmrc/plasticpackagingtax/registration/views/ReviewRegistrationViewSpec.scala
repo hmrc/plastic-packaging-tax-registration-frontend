@@ -348,7 +348,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           4,
                           soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth
+              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
               getValueFor(organisationSection,
                           5,
                           soleTraderView

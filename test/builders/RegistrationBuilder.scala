@@ -31,8 +31,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
   IncorporationDetails,
-  IncorporationRegistrationDetails,
-  PartnershipDetails
+  PartnershipDetails,
+  RegistrationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
@@ -93,16 +93,19 @@ trait RegistrationBuilder {
                                                                  companyName =
                                                                    "Plastic Packaging Ltd",
                                                                  ctutr = "1234567890",
-                                                                 businessVerificationStatus =
-                                                                   "PASS",
                                                                  companyAddress =
                                                                    IncorporationAddressDetails(),
                                                                  registration =
-                                                                   IncorporationRegistrationDetails(
-                                                                     registrationStatus =
-                                                                       "REGISTERED",
-                                                                     registeredBusinessPartnerId =
-                                                                       Some("X00000123456789")
+                                                                   Some(
+                                                                     RegistrationDetails(
+                                                                       identifiersMatch = true,
+                                                                       verificationStatus =
+                                                                         Some("PASS"),
+                                                                       registrationStatus =
+                                                                         "REGISTERED",
+                                                                       registeredBusinessPartnerId =
+                                                                         Some("X00000123456789")
+                                                                     )
                                                                    )
                                                                )
                                                              ),

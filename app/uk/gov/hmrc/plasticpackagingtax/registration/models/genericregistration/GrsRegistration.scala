@@ -16,16 +16,22 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
-import play.api.libs.json._
+import play.api.libs.json.{Json, OFormat}
 
-case class IncorporationRegistrationDetails(
-  registrationStatus: String,
-  registeredBusinessPartnerId: Option[String]
-)
+trait GrsResponse {
+  val identifiersMatch: Boolean
+  val businessVerification: Option[GrsBusinessVerification]
+  val registration: GrsRegistration
+}
 
-object IncorporationRegistrationDetails {
+case class GrsBusinessVerification(verificationStatus: String)
 
-  implicit val format: OFormat[IncorporationRegistrationDetails] =
-    Json.format[IncorporationRegistrationDetails]
+object GrsBusinessVerification {
+  implicit val format: OFormat[GrsBusinessVerification] = Json.format[GrsBusinessVerification]
+}
 
+case class GrsRegistration(registrationStatus: String, registeredBusinessPartnerId: Option[String])
+
+object GrsRegistration {
+  implicit val format: OFormat[GrsRegistration] = Json.format[GrsRegistration]
 }

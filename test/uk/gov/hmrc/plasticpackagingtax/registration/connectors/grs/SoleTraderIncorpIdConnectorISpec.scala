@@ -27,8 +27,8 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   GrsSoleTraderDetails,
-  SoleTraderGrsCreateRequest,
-  SoleTraderIncorporationDetails
+  SoleTraderDetails,
+  SoleTraderGrsCreateRequest
 }
 
 class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
@@ -106,7 +106,7 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
 
       val res = await(connector.getDetails(testJourneyId))
 
-      res mustBe SoleTraderIncorporationDetails(validResponse)
+      res mustBe SoleTraderDetails(validResponse)
       getTimer("ppt.soleTrader.incorpId.get.details.timer").getCount mustBe 1
     }
 

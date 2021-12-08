@@ -209,9 +209,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
             IncorporationDetails("123467890",
                                  testCompanyName,
                                  testUtr,
-                                 testBusinessVerificationPassStatus,
                                  testCompanyAddress,
-                                 incorporationRegistrationDetails
+                                 Some(registrationDetails)
             )
           )
           val registration = registrationWithSelectedGroupMember(orgType)
@@ -268,9 +267,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
       IncorporationDetails("123467890",
                            testCompanyName,
                            testUtr,
-                           testBusinessVerificationPassStatus,
                            testCompanyAddress,
-                           incorporationRegistrationDetails
+                           Some(registrationDetails)
       )
     )
     mockRegistrationFind(registration)

@@ -25,11 +25,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GeneralPartnershipDetails,
-  IncorporationRegistrationDetails,
-  PartnershipGrsCreateRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 
 import java.util.UUID
 
@@ -73,26 +69,32 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
   "get details" should {
     val journeyId = UUID.randomUUID().toString
-    val expectedGeneralPartnershipDetails = GeneralPartnershipDetails(sautr = "1234567890",
-                                                                      postcode = "AA1 1AA",
-                                                                      registration =
-                                                                        IncorporationRegistrationDetails(
-                                                                          registrationStatus =
-                                                                            "REGISTERED",
-                                                                          registeredBusinessPartnerId =
-                                                                            Some("123")
+    val grsGeneralPartnershipDetails = GrsGeneralPartnershipDetails(sautr = "1234567890",
+                                                                    postcode = "AA1 1AA",
+                                                                    identifiersMatch = true,
+                                                                    businessVerification =
+                                                                      Some(
+                                                                        GrsBusinessVerification(
+                                                                          "PASS"
                                                                         )
+                                                                      ),
+                                                                    registration =
+                                                                      GrsRegistration(
+                                                                        registrationStatus =
+                                                                          "REGISTERED",
+                                                                        registeredBusinessPartnerId =
+                                                                          Some("123")
+                                                                      )
     )
 
     "obtain partnership details from the partnership identification service" in {
-      expectPartnershipIdentificationServiceToReturnPartnershipDetails(
-        journeyId,
-        expectedGeneralPartnershipDetails
+      expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId,
+                                                                       grsGeneralPartnershipDetails
       )
 
       val actualPartnershipDetails = await(connector.getDetails(journeyId))
 
-      actualPartnershipDetails mustBe expectedGeneralPartnershipDetails
+      actualPartnershipDetails mustBe GeneralPartnershipDetails(grsGeneralPartnershipDetails)
     }
 
     "throw exception" when {
@@ -127,7 +129,7 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
   private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
     journeyId: String,
-    generalPartnershipDetails: GeneralPartnershipDetails
+    generalPartnershipDetails: GrsGeneralPartnershipDetails
   ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")

@@ -16,8 +16,6 @@
 
 package spec
 
-import java.time.{ZoneOffset, ZonedDateTime}
-
 import base.PptTestData.testUserFeatures
 import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
@@ -67,6 +65,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 }
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
+import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
@@ -122,68 +121,88 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected val testBusinessVerificationPassStatus = "PASS"
 
-  protected val incorporationRegistrationDetails: IncorporationRegistrationDetails =
-    IncorporationRegistrationDetails(registeredBusinessPartnerId =
-                                       Some(safeNumber),
-                                     registrationStatus = "REGISTERED"
+  protected val registrationDetails: RegistrationDetails =
+    RegistrationDetails(identifiersMatch = true,
+                        verificationStatus = Some("PASS"),
+                        registrationStatus = "REGISTERED",
+                        registeredBusinessPartnerId = Some(safeNumber)
     )
 
-  protected val unregisteredIncorporationRegistrationDetails: IncorporationRegistrationDetails =
-    IncorporationRegistrationDetails(registeredBusinessPartnerId = None,
-                                     registrationStatus = "REGISTRATION_NOT_CALLED"
+  protected val unregisteredRegistrationDetails: RegistrationDetails =
+    RegistrationDetails(identifiersMatch = true,
+                        verificationStatus = Some("UNCHALLENGED"),
+                        registrationStatus = "REGISTRATION_NOT_CALLED",
+                        registeredBusinessPartnerId = None
+    )
+
+  protected val verificationFailedRegistrationDetails: RegistrationDetails =
+    RegistrationDetails(identifiersMatch = true,
+                        verificationStatus = Some("FAIL"),
+                        registrationStatus = "REGISTRATION_NOT_CALLED",
+                        registeredBusinessPartnerId = None
+    )
+
+  protected val identifiersUnmatchedRegistrationDetails: RegistrationDetails =
+    RegistrationDetails(identifiersMatch = false,
+                        verificationStatus = Some("UNCHALLENGED"),
+                        registrationStatus = "REGISTRATION_NOT_CALLED",
+                        registeredBusinessPartnerId = None
     )
 
   protected val incorporationDetails: IncorporationDetails =
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
                          testUtr,
-                         testBusinessVerificationPassStatus,
                          testCompanyAddress,
-                         incorporationRegistrationDetails
+                         Some(registrationDetails)
+    )
+
+  protected val grsRegistrationDetails: GrsRegistration =
+    GrsRegistration(registrationStatus = "REGISTERED",
+                    registeredBusinessPartnerId = Some(safeNumber)
     )
 
   protected val grsIncorporationDetails: GrsIncorporationDetails =
     GrsIncorporationDetails(
-      GrsCompanyProfile(testCompanyNumber, testCompanyName, testCompanyAddress),
-      testUtr,
-      GrsBusinessVerification(testBusinessVerificationPassStatus),
-      incorporationRegistrationDetails
+      companyProfile = GrsCompanyProfile(testCompanyNumber, testCompanyName, testCompanyAddress),
+      ctutr = testUtr,
+      identifiersMatch = true,
+      businessVerification = Some(GrsBusinessVerification(testBusinessVerificationPassStatus)),
+      registration = grsRegistrationDetails
     )
 
   protected val unregisteredIncorporationDetails: IncorporationDetails =
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
                          testUtr,
-                         testBusinessVerificationPassStatus,
                          testCompanyAddress,
-                         unregisteredIncorporationRegistrationDetails
+                         Some(unregisteredRegistrationDetails)
     )
 
   protected val verificationFailedIncorporationDetails: IncorporationDetails =
     IncorporationDetails(testCompanyNumber,
                          testCompanyName,
                          testUtr,
-                         "FAIL",
                          testCompanyAddress,
-                         unregisteredIncorporationRegistrationDetails
+                         Some(verificationFailedRegistrationDetails)
     )
 
-  protected val unregisteredSoleTraderDetails: SoleTraderIncorporationDetails =
-    SoleTraderIncorporationDetails(firstName = "Sole",
-                                   lastName = "Trader",
-                                   dateOfBirth = "12/12/1960",
-                                   nino = "1234",
-                                   sautr = Some("ABC"),
-                                   registration = unregisteredIncorporationRegistrationDetails
+  protected val unregisteredSoleTraderDetails: SoleTraderDetails =
+    SoleTraderDetails(firstName = "Sole",
+                      lastName = "Trader",
+                      dateOfBirth = Some("12/12/1960"),
+                      nino = "1234",
+                      sautr = Some("ABC"),
+                      registration = Some(unregisteredRegistrationDetails)
     )
 
-  protected val soleTraderIncorporationDetails: SoleTraderIncorporationDetails =
-    SoleTraderIncorporationDetails(testFirstName,
-                                   testLastName,
-                                   testDob,
-                                   testNino,
-                                   Some(testSatur),
-                                   incorporationRegistrationDetails
+  protected val soleTraderIncorporationDetails: SoleTraderDetails =
+    SoleTraderDetails(testFirstName,
+                      testLastName,
+                      Some(testDob),
+                      testNino,
+                      Some(testSatur),
+                      Some(registrationDetails)
     )
 
   protected val grsSoleTraderIncorporationDetails: GrsSoleTraderDetails =
@@ -191,33 +210,30 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          testDob,
                          testNino,
                          Some(testSatur),
-                         incorporationRegistrationDetails
+                         identifiersMatch = true,
+                         businessVerification =
+                           Some(GrsBusinessVerification(testBusinessVerificationPassStatus)),
+                         registration = grsRegistrationDetails
     )
 
   protected val generalPartnershipDetails: GeneralPartnershipDetails =
-    GeneralPartnershipDetails(testSatur, testPostcode, incorporationRegistrationDetails)
+    GeneralPartnershipDetails(testSatur, testPostcode, Some(registrationDetails))
 
   protected val scottishPartnershipDetails: ScottishPartnershipDetails =
-    ScottishPartnershipDetails(testSatur, testPostcode, incorporationRegistrationDetails)
+    ScottishPartnershipDetails(testSatur, testPostcode, Some(registrationDetails))
 
   protected val partnershipDetails: PartnershipDetails =
-    PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
-                       generalPartnershipDetails = Some(
-                         GeneralPartnershipDetails(testSatur,
-                                                   testPostcode,
-                                                   incorporationRegistrationDetails
-                         )
-                       )
+    PartnershipDetails(
+      partnershipType = GENERAL_PARTNERSHIP,
+      generalPartnershipDetails =
+        Some(GeneralPartnershipDetails(testSatur, testPostcode, Some(registrationDetails)))
     )
 
   protected val partnershipDetailsWithScottishPartnership: PartnershipDetails =
-    PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
-                       scottishPartnershipDetails = Some(
-                         ScottishPartnershipDetails(testSatur,
-                                                    testPostcode,
-                                                    incorporationRegistrationDetails
-                         )
-                       )
+    PartnershipDetails(
+      partnershipType = SCOTTISH_PARTNERSHIP,
+      scottishPartnershipDetails =
+        Some(ScottishPartnershipDetails(testSatur, testPostcode, Some(registrationDetails)))
     )
 
   protected val subscriptionStatus: SubscriptionStatusResponse = SubscriptionStatusResponse(

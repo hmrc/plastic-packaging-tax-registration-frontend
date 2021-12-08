@@ -28,18 +28,13 @@ object GrsCompanyProfile {
   implicit val format: OFormat[GrsCompanyProfile] = Json.format[GrsCompanyProfile]
 }
 
-case class GrsBusinessVerification(verificationStatus: String)
-
-object GrsBusinessVerification {
-  implicit val format: OFormat[GrsBusinessVerification] = Json.format[GrsBusinessVerification]
-}
-
 case class GrsIncorporationDetails(
   companyProfile: GrsCompanyProfile,
   ctutr: String,
-  businessVerification: GrsBusinessVerification,
-  registration: IncorporationRegistrationDetails
-)
+  override val identifiersMatch: Boolean,
+  override val businessVerification: Option[GrsBusinessVerification],
+  override val registration: GrsRegistration
+) extends GrsResponse
 
 object GrsIncorporationDetails {
   implicit val format: OFormat[GrsIncorporationDetails] = Json.format[GrsIncorporationDetails]
@@ -49,10 +44,9 @@ case class IncorporationDetails(
   companyNumber: String,
   companyName: String,
   ctutr: String,
-  businessVerificationStatus: String,
   companyAddress: IncorporationAddressDetails,
-  override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails {
+  override val registration: Option[RegistrationDetails]
+) extends HasRegistrationDetails {
 
   def isGroupMemberSameAsNominated(customerIdentification1: String): Boolean =
     companyNumber.equalsIgnoreCase(customerIdentification1)
@@ -67,9 +61,21 @@ object IncorporationDetails {
     IncorporationDetails(grsIncorporationDetails.companyProfile.companyNumber,
                          grsIncorporationDetails.companyProfile.companyName,
                          grsIncorporationDetails.ctutr,
-                         grsIncorporationDetails.businessVerification.verificationStatus,
                          grsIncorporationDetails.companyProfile.unsanitisedCHROAddress,
-                         grsIncorporationDetails.registration
+                         Some(
+                           RegistrationDetails(
+                             identifiersMatch =
+                               grsIncorporationDetails.identifiersMatch,
+                             verificationStatus =
+                               grsIncorporationDetails.businessVerification.map { bv =>
+                                 bv.verificationStatus
+                               },
+                             registrationStatus =
+                               grsIncorporationDetails.registration.registrationStatus,
+                             registeredBusinessPartnerId =
+                               grsIncorporationDetails.registration.registeredBusinessPartnerId
+                           )
+                         )
     )
 
 }

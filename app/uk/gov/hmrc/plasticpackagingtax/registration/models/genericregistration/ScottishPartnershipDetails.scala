@@ -18,15 +18,49 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json._
 
+case class GrsScottishPartnershipDetails(
+  sautr: String,
+  postcode: String,
+  override val identifiersMatch: Boolean,
+  override val businessVerification: Option[GrsBusinessVerification],
+  override val registration: GrsRegistration
+) extends GrsResponse
+
+object GrsScottishPartnershipDetails {
+
+  implicit val format: OFormat[GrsScottishPartnershipDetails] =
+    Json.format[GrsScottishPartnershipDetails]
+
+}
+
 case class ScottishPartnershipDetails(
   sautr: String,
   postcode: String,
-  override val registration: IncorporationRegistrationDetails
-) extends RegistrationDetails
+  override val registration: Option[RegistrationDetails]
+) extends HasRegistrationDetails
 
 object ScottishPartnershipDetails {
+  implicit val format: OFormat[ScottishPartnershipDetails] = Json.format[ScottishPartnershipDetails]
 
-  implicit val format: OFormat[ScottishPartnershipDetails] =
-    Json.format[ScottishPartnershipDetails]
+  def apply(
+    grsScottishPartnershipDetails: GrsScottishPartnershipDetails
+  ): ScottishPartnershipDetails =
+    ScottishPartnershipDetails(sautr = grsScottishPartnershipDetails.sautr,
+                               postcode = grsScottishPartnershipDetails.postcode,
+                               registration = Some(
+                                 RegistrationDetails(
+                                   identifiersMatch =
+                                     grsScottishPartnershipDetails.identifiersMatch,
+                                   verificationStatus =
+                                     grsScottishPartnershipDetails.businessVerification.map { bv =>
+                                       bv.verificationStatus
+                                     },
+                                   registrationStatus =
+                                     grsScottishPartnershipDetails.registration.registrationStatus,
+                                   registeredBusinessPartnerId =
+                                     grsScottishPartnershipDetails.registration.registeredBusinessPartnerId
+                                 )
+                               )
+    )
 
 }

@@ -25,15 +25,18 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   BUSINESS_IDENTIFICATION_FAILED,
   BUSINESS_VERIFICATION_FAILED,
   DUPLICATE_SUBSCRIPTION,
   RegistrationStatus,
-  STATUS_OK
+  STATUS_OK,
+  UNSUPPORTED_ORGANISATION
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   PartnershipTypeEnum,
@@ -43,6 +46,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   GeneralPartnershipDetails,
   IncorporationDetails,
   PartnershipDetails,
+  RegistrationDetails,
   ScottishPartnershipDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -65,6 +69,7 @@ object RegistrationStatus extends Enumeration {
   val BUSINESS_IDENTIFICATION_FAILED: Value = Value
   val BUSINESS_VERIFICATION_FAILED: Value   = Value
   val DUPLICATE_SUBSCRIPTION: Value         = Value
+  val UNSUPPORTED_ORGANISATION: Value       = Value
 }
 
 @Singleton
@@ -94,7 +99,7 @@ class GrsController @Inject() (
                 s"PPT GRS callback for journeyId [$journeyId] " +
                   s"and organisation type [${registration.organisationDetails.organisationType.getOrElse("")}] " +
                   s"had registration status [$status] " +
-                  s"and details [${registration.organisationDetails.registrationDetails.getOrElse("None")}]"
+                  s"and details [${registration.organisationDetails.grsRegistration.getOrElse("None")}]"
               )
               status match {
                 case STATUS_OK =>
@@ -110,6 +115,8 @@ class GrsController @Inject() (
                     )
                   else
                     Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
+                case UNSUPPORTED_ORGANISATION =>
+                  Redirect(orgRoutes.OrganisationTypeNotSupportedController.onPageLoad())
               }
             }
           case Left(error) => throw error
@@ -128,7 +135,19 @@ class GrsController @Inject() (
             case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
             case _          => STATUS_OK
           }
-        case None => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
+        case None =>
+          registration.organisationDetails.organisationType match {
+            case Some(SOLE_TRADER) => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
+            case _ =>
+              registration.organisationDetails.grsRegistration match {
+                case Some(
+                      RegistrationDetails(false, Some("UNCHALLENGED"), "REGISTRATION_NOT_CALLED", _)
+                    ) =>
+                  Future.successful(UNSUPPORTED_ORGANISATION)
+                case _ => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
+              }
+          }
+
       }
 
   private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(

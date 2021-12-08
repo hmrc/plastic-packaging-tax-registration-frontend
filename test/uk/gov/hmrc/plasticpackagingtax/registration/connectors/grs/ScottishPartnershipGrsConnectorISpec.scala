@@ -25,11 +25,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationRegistrationDetails,
-  PartnershipGrsCreateRequest,
-  ScottishPartnershipDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 
 import java.util.UUID
 
@@ -73,26 +69,32 @@ class ScottishPartnershipGrsConnectorISpec extends ConnectorISpec with Injector 
 
   "get details" should {
     val journeyId = UUID.randomUUID().toString
-    val expectedScottishPartnershipDetails = ScottishPartnershipDetails(sautr = "1234567890",
-                                                                        postcode = "AA1 1AA",
-                                                                        registration =
-                                                                          IncorporationRegistrationDetails(
-                                                                            registrationStatus =
-                                                                              "REGISTERED",
-                                                                            registeredBusinessPartnerId =
-                                                                              Some("123")
+    val grsScottishPartnershipDetails = GrsScottishPartnershipDetails(sautr = "1234567890",
+                                                                      postcode = "AA1 1AA",
+                                                                      identifiersMatch = true,
+                                                                      businessVerification =
+                                                                        Some(
+                                                                          GrsBusinessVerification(
+                                                                            "PASS"
                                                                           )
+                                                                        ),
+                                                                      registration =
+                                                                        GrsRegistration(
+                                                                          registrationStatus =
+                                                                            "REGISTERED",
+                                                                          registeredBusinessPartnerId =
+                                                                            Some("123")
+                                                                        )
     )
 
     "obtain partnership details from the partnership identification service" in {
-      expectPartnershipIdentificationServiceToReturnPartnershipDetails(
-        journeyId,
-        expectedScottishPartnershipDetails
+      expectPartnershipIdentificationServiceToReturnPartnershipDetails(journeyId,
+                                                                       grsScottishPartnershipDetails
       )
 
       val actualPartnershipDetails = await(connector.getDetails(journeyId))
 
-      actualPartnershipDetails mustBe expectedScottishPartnershipDetails
+      actualPartnershipDetails mustBe ScottishPartnershipDetails(grsScottishPartnershipDetails)
     }
 
     "throw exception" when {
@@ -127,14 +129,14 @@ class ScottishPartnershipGrsConnectorISpec extends ConnectorISpec with Injector 
 
   private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
     journeyId: String,
-    scottishPartnershipDetails: ScottishPartnershipDetails
+    grsScottishPartnershipDetails: GrsScottishPartnershipDetails
   ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")
         .willReturn(
           aResponse()
             .withStatus(Status.OK)
-            .withBody(Json.toJsObject(scottishPartnershipDetails).toString())
+            .withBody(Json.toJsObject(grsScottishPartnershipDetails).toString())
         )
     )
 
