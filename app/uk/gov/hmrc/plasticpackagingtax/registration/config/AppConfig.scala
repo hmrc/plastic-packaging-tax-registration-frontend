@@ -198,6 +198,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val businessAccountUrl: String = config.get[String]("urls.businessAccount")
 
   lazy val accessibilityStatementServicePath: String =
-    config.get[String]("accessibility-statement.service-path")
+    "/accessibility-statement" + config.get[String]("accessibility-statement.service-path")
 
 }
