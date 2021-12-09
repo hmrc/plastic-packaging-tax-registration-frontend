@@ -50,18 +50,19 @@ object LiabilityExpectedWeight extends CommonFormValues {
   val weightLeadingBlankSpaceError = "liabilityExpectedWeight.leadingBlankSpace.error"
 
   private val weightIsValidNumber: String => Boolean = weight =>
-    weight.isEmpty || Try(BigDecimal(weight.trim)).isSuccess
+    weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightIsWholeNumber: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight.trim) || Try(BigInt(weight.trim)).isSuccess
+  private val weightIsWholeNumber: String => Boolean = { weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
+  }
 
   private val weightAboveThreshold: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(
-      weight.trim
+      weight
     ) >= LiabilityDetails.minimumLiabilityWeightKg
 
   private val weightWithinRange: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight.trim) <= maxTotalKg
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
   private val weightHasNoLeadingBlankSpace: String => Boolean = weight =>
     weight == weight.stripLeading()
@@ -77,6 +78,9 @@ object LiabilityExpectedWeight extends CommonFormValues {
                                       .verifying(weightEmptyError, _.nonEmpty)
                                       .verifying(weightLeadingBlankSpaceError,
                                                  weightHasNoLeadingBlankSpace
+                                      )
+                                      .transform[String](weight => weight.stripLeading(),
+                                                         weight => weight
                                       )
                                       .verifying(weightFormatError, weightIsValidNumber)
                                       .verifying(weightDecimalError, weightIsWholeNumber)
