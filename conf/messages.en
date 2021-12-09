@@ -123,6 +123,7 @@ liabilityExpectedWeight.format.error = Amount must be entered as numbers only
 liabilityExpectedWeight.outOfRange.error = Amount cannot exceed 99,999,999 kgs
 liabilityExpectedWeight.empty.error = Enter an amount to continue
 liabilityExpectedWeight.decimal.error = Amount must not include decimal points
+liabilityExpectedWeight.leadingBlankSpace.error = Expected weight must not have leading spaces
 
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
