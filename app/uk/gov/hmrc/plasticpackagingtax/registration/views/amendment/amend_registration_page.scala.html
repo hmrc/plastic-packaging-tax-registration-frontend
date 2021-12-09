@@ -20,7 +20,8 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.review._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.primaryContactDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.review.{groupMemberListDetails, liabilityDetails, organisationDetails}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
 @this(
@@ -32,36 +33,28 @@
         paragraphBody: paragraphBody,
         subHeading: subHeading,
         appConfig: AppConfig,
-        liabilityDetails: liabilityDetails,
         organisationDetails: organisationDetails,
         groupMemberListDetails: groupMemberListDetails,
         primaryContactDetails: primaryContactDetails
 )
 
 @(
-        registration: Registration,
-        liabilityStartLink: Call,
+        registration: Registration
 )(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
-    title = Title("reviewRegistration.organisationDetails.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+    title = Title("amendRegistration.organisationDetails.title"),
+    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
 
-    @pageHeading(messages("reviewRegistration.organisationDetails.title"))
+    @pageHeading(messages("amendRegistration.organisationDetails.title"))
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
-        @liabilityDetails(registration.liabilityDetails, Some(liabilityStartLink), registration.registrationType, registration.groupDetail)
         @organisationDetails(registration.organisationDetails, registration.registrationType)
         @primaryContactDetails(registration.primaryContactDetails)
 
         @if(registration.registrationType.contains(GROUP)) {
             @groupMemberListDetails(registration.groupDetail.get)
         }
-
-        @subHeading(messages("reviewRegistration.sendYourApplication.title"))
-        @paragraphBody(messages("reviewRegistration.sendYourApplication.body"))
-
-        @saveAndContinue("site.button.acceptAndSend")
     }
 }

@@ -24,6 +24,7 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateResponseSuccess,
   SubscriptionStatusResponse
@@ -81,6 +82,38 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
         }
       }
     }
+
+    "calling 'getSubscription'" should {
+      val pptReference = "XMPPT0000000123"
+
+      "return a registration when call to backend is successful" in {
+        val activeRegistration = Registration(id = "123")
+        stubFor(
+          get(urlMatching(s"/subscriptions/$pptReference"))
+            .willReturn(
+              aResponse().withStatus(OK)
+                withBody (toJson(activeRegistration)(Registration.format).toString)
+            )
+        )
+
+        val res = await(connector.getSubscription(pptReference))
+
+        res mustBe activeRegistration
+        getTimer("ppt.subscription.get.timer").getCount mustBe 1
+      }
+
+      "throw an exeption when call to backend fails" in {
+        stubFor(
+          get(urlMatching(s"/subscriptions/$pptReference"))
+            .willReturn(aResponse().withStatus(Status.INTERNAL_SERVER_ERROR))
+        )
+
+        intercept[Exception] {
+          await(connector.getSubscription(pptReference))
+        }
+      }
+    }
+
     "calling 'submitSubscription'" should {
       val safeNumber = "123456789"
 

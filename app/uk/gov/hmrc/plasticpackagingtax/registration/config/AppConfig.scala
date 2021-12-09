@@ -32,11 +32,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesConfig) {
@@ -141,6 +142,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def pptSubscriptionStatusUrl(safeNumber: String): String =
     s"$pptSubscriptionsUrl/status/$safeNumber"
+
+  def pptSubscriptionGetUrl(pptReference: String): String =
+    s"$pptSubscriptionsUrl/$pptReference"
 
   def pptSubscriptionCreateUrl(safeNumber: String): String =
     s"$pptSubscriptionsUrl/$safeNumber"

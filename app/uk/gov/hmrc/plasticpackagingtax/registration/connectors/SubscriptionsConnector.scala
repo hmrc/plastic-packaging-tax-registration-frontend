@@ -64,6 +64,22 @@ class SubscriptionsConnector @Inject() (
       }
   }
 
+  def getSubscription(pptReference: String)(implicit hc: HeaderCarrier): Future[Registration] = {
+    val timer = metrics.defaultRegistry.timer("ppt.subscription.get.timer").time()
+    httpClient.GET[Registration](config.pptSubscriptionGetUrl(pptReference))
+      .andThen { case _ => timer.stop() }
+      .andThen {
+        case Success(registration) =>
+          logger.info(s"Successfully obtained PPT subscription for pptReference [$pptReference]")
+          registration
+        case Failure(exception) =>
+          throw new Exception(
+            s"Failed to obtain PPT subscription for pptReference [$pptReference] due to [${exception.getMessage}]",
+            exception
+          )
+      }
+  }
+
   def submitSubscription(safeId: String, payload: Registration)(implicit
     hc: HeaderCarrier
   ): Future[SubscriptionCreateResponse] = {

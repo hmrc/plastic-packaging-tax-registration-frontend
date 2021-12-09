@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.request
+package uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
-
-class AuthenticatedRequest[+A](request: Request[A], val user: SignedInUser)
-    extends WrappedRequest[A](request) {
-
-  def pptReference: Option[String] =
-    user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(
-      enrolment => enrolment.getIdentifier(PptEnrolment.Key)
-    ).map(id => id.value)
-
+object PptEnrolment {
+  val Identifier = "HMRC-PPT-ORG"
+  val Key        = "EtmpRegistrationNumber"
 }

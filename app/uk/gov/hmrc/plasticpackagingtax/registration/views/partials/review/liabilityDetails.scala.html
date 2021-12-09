@@ -32,7 +32,7 @@
 
 @(
         liabilityDetails: LiabilityDetails,
-        liabilityStartLink: Call,
+        liabilityStartLink: Option[Call] = None,
         registrationType: Option[RegType] = None,
         groupDetails: Option[GroupDetail] = None
 )(implicit request: JourneyRequest[_], messages: Messages)
@@ -47,7 +47,7 @@
                 Text(liabilityDetails.weight.map(_.totalKg.getOrElse(0) + " kg").getOrElse(""))
             }
         ),
-        call = Some(liabilityStartLink)
+        call = liabilityStartLink
     )
 }
 

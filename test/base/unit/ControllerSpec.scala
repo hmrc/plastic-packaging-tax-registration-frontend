@@ -70,6 +70,9 @@ trait ControllerSpec
   ): AuthenticatedRequest[AnyContentAsEmpty.type] =
     new AuthenticatedRequest(FakeRequest().withHeaders(headers), user)
 
+  def authRequest[A](fakeRequest: FakeRequest[A], user: SignedInUser) =
+    new AuthenticatedRequest(fakeRequest, user)
+
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
   protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
