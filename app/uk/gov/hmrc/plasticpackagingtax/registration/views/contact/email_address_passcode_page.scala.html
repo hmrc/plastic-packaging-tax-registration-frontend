@@ -55,7 +55,7 @@
 @hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.passcode.privacyNotice.link")</a>}
 
 @notReceivedPasscodeContent = {
-      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.summary"))
+      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.summary.detail"))
 
      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.summary.detail.2",
          link(text = messages("primaryContactDetails.emailAddress.passcode.summary.detail.link.text"), call = pptRoutes.ContactDetailsEmailAddressController.displayPage()),
