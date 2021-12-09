@@ -25,21 +25,26 @@ case class LiabilityWeight(totalKg: Option[Long]) {}
 object LiabilityWeight {
   implicit val format = Json.format[LiabilityWeight]
 
-  val maxTotalKg            = 100000000 // one hundred million
-  val minTotalKg            = 0
-  val totalKg               = "totalKg"
-  val weightEmptyError      = "liabilityWeight.empty.error"
-  val weightOutOfRangeError = "liabilityWeight.outOfRange.error"
+  val maxTotalKg                = 100000000 // one hundred million
+  val minTotalKg                = 0
+  val totalKg                   = "totalKg"
+  val weightEmptyError          = "liabilityWeight.empty.error"
+  val weightOutOfRangeError     = "liabilityWeight.outOfRange.error"
+  val weightBelowThresholdError = "liabilityWeight.below.threshold.error"
 
-  private val isWithinRange: Option[Long] => Boolean = weight =>
-    weight.exists(value => value >= minTotalKg && value <= maxTotalKg)
+  private val weightAboveThreshold: Option[Long] => Boolean = weight =>
+    weight.forall(value => value >= minTotalKg)
+
+  private val weightWithinRange: Option[Long] => Boolean = weight =>
+    weight.forall(value => value <= maxTotalKg)
 
   def form(): Form[LiabilityWeight] =
     Form(
       mapping(
         totalKg -> Forms.optional(longNumber())
           .verifying(weightEmptyError, _.nonEmpty)
-          .verifying(weightOutOfRangeError, isWithinRange)
+          .verifying(weightBelowThresholdError, weightAboveThreshold)
+          .verifying(weightOutOfRangeError, weightWithinRange)
       )(LiabilityWeight.apply)(LiabilityWeight.unapply)
     )
 

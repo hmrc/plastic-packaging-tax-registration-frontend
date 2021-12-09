@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWei
   maxTotalKg,
   minTotalKg,
   totalKg,
+  weightBelowThresholdError,
   weightEmptyError,
   weightOutOfRangeError
 }
@@ -79,7 +80,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
       "contains total less than minimum allowed weight" in {
 
         val input          = Map(totalKg -> (minTotalKg - 1).toString)
-        val expectedErrors = Seq(FormError("totalKg", weightOutOfRangeError))
+        val expectedErrors = Seq(FormError("totalKg", weightBelowThresholdError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
