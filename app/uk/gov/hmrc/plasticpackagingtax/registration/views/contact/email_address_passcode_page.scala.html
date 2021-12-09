@@ -30,7 +30,10 @@
   paragraphBody: paragraphBody,
   appConfig: AppConfig,
   formHelper: FormWithCSRF,
-  continueButton: continue
+  continueButton: continue,
+  pageHeading: pageHeading,
+  govukDetails: GovukDetails,
+  link : link
 )
 
 @(form: Form[EmailAddressPasscode], emailAddress: Option[String])(implicit request: Request[_], messages: Messages)
@@ -42,8 +45,24 @@
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
+@emailAddressValue = @{
+    emailAddress match {
+        case Some(value) => s"to ${value}"
+        case None => ""
+    }
+}
+
 @hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.passcode.privacyNotice.link")</a>}
 
+@notReceivedPasscodeContent = {
+      @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.summary"))
+
+     @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.summary.detail.2",
+         link(text = messages("primaryContactDetails.emailAddress.passcode.summary.detail.link.text"), call = pptRoutes.ContactDetailsEmailAddressController.displayPage()),
+         link(text = messages("primaryContactDetails.emailAddress.passcode.summary.detail.link.text.2"), call = pptRoutes.ContactDetailsEmailAddressController.displayPage())
+     ))
+
+}
 @govukLayout(
   title = Title("primaryContactDetails.emailAddress.passcode.title"),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressController.displayPage(), messages("site.back.hiddenText")))) {
@@ -52,6 +71,8 @@
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
   @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeController.submit(), 'autoComplete -> "off") {
+    @pageHeading(messages("primaryContactDetails.emailAddress.passcode.title"))
+    @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.detail", emailAddressValue), id = Some("email-address-passcode-confirmation-id"))
 
     @govukInput(
         Input(
@@ -60,11 +81,16 @@
             value = emailAddressPasscodeField.value,
             hint = Some(Hint(content = Text(messages("primaryContactDetails.emailAddress.passcode.hint")))),
             label = Label(
-                isPageHeading = true,
-                classes = gdsLabelPageHeading,
-                content = Text(messages("primaryContactDetails.emailAddress.passcode.title"))),
+                isPageHeading = false,
+                classes = gdsLabelSubHeading,
+                content = Text(messages("primaryContactDetails.emailAddress.passcode.label"))),
                 errorMessage = errorMessages)
             )
+
+      @govukDetails(Details(
+          summary = Text(messages("primaryContactDetails.emailAddress.passcode.summary")),
+          content = HtmlContent(notReceivedPasscodeContent)
+      ))
 
     @continueButton()
   }
