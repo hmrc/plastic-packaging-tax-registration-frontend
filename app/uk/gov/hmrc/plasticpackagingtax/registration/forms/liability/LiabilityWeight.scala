@@ -56,7 +56,7 @@ object LiabilityWeight {
           text()
             .verifying(weightEmptyError, _.nonEmpty)
             .verifying(weightLeadingBlankSpaceError, weightHasNoLeadingBlankSpace)
-            .transform[String](weight => weight.stripLeading(), weight => weight)
+            .transform[String](weight => weight.trim, weight => weight)
             .verifying(weightFormatError, weightIsValidNumber)
             .verifying(weightBelowThresholdError, weightAboveThreshold)
             .verifying(weightOutOfRangeError, weightWithinRange)
