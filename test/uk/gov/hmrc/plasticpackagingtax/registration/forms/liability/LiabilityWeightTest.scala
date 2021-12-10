@@ -26,8 +26,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWei
   weightBelowThresholdError,
   weightEmptyError,
   weightFormatError,
+  weightLeadingBlankSpaceError,
   weightOutOfRangeError
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 
 class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
@@ -90,6 +92,15 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
         val input          = Map(totalKg -> (maxTotalKg + 1).toString)
         val expectedErrors = Seq(FormError("totalKg", weightOutOfRangeError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains leading blank space" in {
+
+        val input =
+          Map(totalKg -> (" " + LiabilityDetails.minimumLiabilityWeightKg))
+        val expectedErrors = Seq(FormError("totalKg", weightLeadingBlankSpaceError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

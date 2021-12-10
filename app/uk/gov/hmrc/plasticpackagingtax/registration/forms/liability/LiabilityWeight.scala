@@ -28,13 +28,14 @@ case class LiabilityWeight(totalKg: Option[Long]) {}
 object LiabilityWeight {
   implicit val format = Json.format[LiabilityWeight]
 
-  val maxTotalKg                = 100000000 // one hundred million
-  val minTotalKg                = 0
-  val totalKg                   = "totalKg"
-  val weightEmptyError          = "liabilityWeight.empty.error"
-  val weightFormatError         = "liabilityWeight.format.error"
-  val weightOutOfRangeError     = "liabilityWeight.outOfRange.error"
-  val weightBelowThresholdError = "liabilityWeight.below.threshold.error"
+  val maxTotalKg                   = 100000000 // one hundred million
+  val minTotalKg                   = 0
+  val totalKg                      = "totalKg"
+  val weightEmptyError             = "liabilityWeight.empty.error"
+  val weightFormatError            = "liabilityWeight.format.error"
+  val weightOutOfRangeError        = "liabilityWeight.outOfRange.error"
+  val weightBelowThresholdError    = "liabilityWeight.below.threshold.error"
+  val weightLeadingBlankSpaceError = "liabilityWeight.leadingBlankSpace.error"
 
   private val weightIsValidNumber: String => Boolean = weight =>
     weight.isEmpty || Try(BigDecimal(weight)).isSuccess
@@ -45,12 +46,17 @@ object LiabilityWeight {
   private val weightAboveThreshold: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
 
+  private val weightHasNoLeadingBlankSpace: String => Boolean = weight =>
+    weight == weight.stripLeading()
+
   def form(): Form[LiabilityWeight] =
     Form(
       mapping(
         totalKg -> mandatory(
           text()
             .verifying(weightEmptyError, _.nonEmpty)
+            .verifying(weightLeadingBlankSpaceError, weightHasNoLeadingBlankSpace)
+            .transform[String](weight => weight.stripLeading(), weight => weight)
             .verifying(weightFormatError, weightIsValidNumber)
             .verifying(weightBelowThresholdError, weightAboveThreshold)
             .verifying(weightOutOfRangeError, weightWithinRange)
