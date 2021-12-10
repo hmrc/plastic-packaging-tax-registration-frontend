@@ -155,7 +155,14 @@ primaryContactDetails.emailAddress.format.error = Enter an email address in the 
 
 primaryContactDetails.emailAddress.passcode.title = Enter the code to confirm the email address
 primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK
+primaryContactDetails.emailAddress.passcode.label = Confirmation code
 primaryContactDetails.emailAddress.passcode.empty.error = Enter a passcode
+primaryContactDetails.emailAddress.passcode.detail = We have sent a code {0} to confirm your email address.
+primaryContactDetails.emailAddress.passcode.summary = I have not received an email
+primaryContactDetails.emailAddress.passcode.summary.detail = The email may take a few minutes to arrive. Its subject line is: 'Confirm your email address'.
+primaryContactDetails.emailAddress.passcode.summary.detail.2 = Check your spam or junk folder. If it has still not arrived, you can {0}.
+primaryContactDetails.emailAddress.passcode.summary.detail.link.text =  provide a different email address
+
 
 primaryContactDetails.emailAddress.passcode.confirmation.title = Email address confirmed
 primaryContactDetails.emailAddress.passcode.confirmation.detail = Your email address is now confirmed.

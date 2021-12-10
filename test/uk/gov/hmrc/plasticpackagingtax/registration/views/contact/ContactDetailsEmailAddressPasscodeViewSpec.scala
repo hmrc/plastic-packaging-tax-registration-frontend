@@ -80,10 +80,36 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
       )
     }
 
-    "display email address passcode question" in {
+    "display email address passcode label" in {
 
       view.getElementsByAttributeValueMatching("for", "value").text() must include(
+        messages("primaryContactDetails.emailAddress.passcode.label")
+      )
+    }
+
+    "display email address passcode question" in {
+
+      view.getElementsByClass("govuk-heading-l").text() must include(
         messages("primaryContactDetails.emailAddress.passcode.title")
+      )
+    }
+
+    "display email address passcode detail" in {
+
+      view.getElementsByClass("govuk-body").get(0).text() mustBe
+        messages("primaryContactDetails.emailAddress.passcode.detail", "to test@test.com")
+
+    }
+
+    "display email address passcode summary detail" in {
+      val summaryDetails = view.getElementsByClass("govuk-body")
+      summaryDetails.get(1).text() mustBe messages(
+        "primaryContactDetails.emailAddress.passcode.summary.detail"
+      )
+      summaryDetails.get(2).text() must include(
+        messages("primaryContactDetails.emailAddress.passcode.summary.detail.2",
+                 "provide a different email address"
+        )
       )
     }
 
