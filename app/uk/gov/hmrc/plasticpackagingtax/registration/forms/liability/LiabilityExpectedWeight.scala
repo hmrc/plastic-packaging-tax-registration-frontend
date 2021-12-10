@@ -52,9 +52,8 @@ object LiabilityExpectedWeight extends CommonFormValues {
   private val weightIsValidNumber: String => Boolean = weight =>
     weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightIsWholeNumber: String => Boolean = { weight =>
+  private val weightIsWholeNumber: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
-  }
 
   private val weightAboveThreshold: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(
@@ -97,9 +96,11 @@ object LiabilityExpectedWeight extends CommonFormValues {
       case _ => new LiabilityExpectedWeight(Some(false), None)
     }
 
-  def toForm(liabilityWeight: LiabilityExpectedWeight): Option[(Option[String], Option[String])] =
-    liabilityWeight.expectToExceedThresholdWeight match {
-      case Some(true) => Some((Some(YES), liabilityWeight.totalKg.map(_.toString)))
+  def toForm(
+    liabilityExpectedWeight: LiabilityExpectedWeight
+  ): Option[(Option[String], Option[String])] =
+    liabilityExpectedWeight.expectToExceedThresholdWeight match {
+      case Some(true) => Some((Some(YES), liabilityExpectedWeight.totalKg.map(_.toString)))
       case _          => Some((Some(NO), None))
     }
 
