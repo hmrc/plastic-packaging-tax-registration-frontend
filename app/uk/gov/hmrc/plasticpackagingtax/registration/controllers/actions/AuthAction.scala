@@ -22,12 +22,13 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{agentCode, _}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest,
   IdentityData
@@ -139,7 +140,7 @@ abstract class AuthActionBase @Inject() (
     email: String,
     allEnrolments: Enrolments
   ) =
-    if (checkAlreadyEnrolled && allEnrolments.getEnrolment("HMRC-PPT-ORG").isDefined)
+    if (checkAlreadyEnrolled && allEnrolments.getEnrolment(PptEnrolment.Identifier).isDefined)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
     else if (allowedUsers.isAllowed(email))
       block(

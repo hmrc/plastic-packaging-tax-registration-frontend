@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.request
+package base.unit
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
+import base.MockAuthAction
+import org.scalatest.wordspec.AnyWordSpecLike
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 
-class AuthenticatedRequest[+A](request: Request[A], val user: SignedInUser)
-    extends WrappedRequest[A](request) {
+import scala.concurrent.ExecutionContext
 
-  def pptReference: Option[String] =
-    user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(
-      enrolment => enrolment.getIdentifier(PptEnrolment.Key)
-    ).map(id => id.value)
+trait MockAmendmentJourneyAction
+    extends MockSubscriptionConnector with MockAuthAction with AnyWordSpecLike {
+
+  protected implicit val ec: ExecutionContext = ExecutionContext.global
+
+  protected val mockAmendmentJourneyAction: AmendmentJourneyAction =
+    new AmendmentJourneyAction(appConfig, mockSubscriptionConnector)(ExecutionContext.global)
 
 }

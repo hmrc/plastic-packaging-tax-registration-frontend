@@ -137,3 +137,6 @@ GET        /group-nominated-organisation-already-registered    uk.gov.hmrc.plast
 GET        /organisation-already-in-group    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.organisationAlreadyInGroup()
 GET        /group-organisation-already-registered    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.groupMemberAlreadyRegistered()
 
+# Registration Amendment
+
+GET        /amend-registration      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.displayPage()

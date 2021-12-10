@@ -25,6 +25,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 import scala.concurrent.Future
@@ -105,7 +106,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     "redirect to PPT account url when user already enrolled" in {
       when(appConfig.pptAccountUrl).thenReturn("/ppt-accounts-url")
       val user =
-        PptTestData.newUser("123").copy(enrolments = Enrolments(Set(Enrolment("HMRC-PPT-ORG"))))
+        PptTestData.newUser("123").copy(enrolments =
+          Enrolments(Set(Enrolment(PptEnrolment.Identifier)))
+        )
       authorizedUser(user)
 
       val result =

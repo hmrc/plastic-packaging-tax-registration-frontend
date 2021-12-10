@@ -52,6 +52,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   GroupDetail,
   OrganisationDetails,
+  Registration,
   UserEnrolmentDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{

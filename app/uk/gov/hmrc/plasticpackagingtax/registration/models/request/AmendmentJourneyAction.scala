@@ -16,23 +16,20 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
-import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyAction @Inject() (
-  registrationConnector: RegistrationConnector,
-  auditor: Auditor,
-  appConfig: AppConfig
+class AmendmentJourneyAction @Inject() (
+  appConfig: AppConfig,
+  subscriptionsConnector: SubscriptionsConnector
 )(implicit val exec: ExecutionContext)
     extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
@@ -44,10 +41,17 @@ class JourneyAction @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.user.identityData.internalId.filter(_.trim.nonEmpty) match {
-      case Some(id) =>
-        loadOrCreateRegistration(id).map {
-          case Right(reg)  => Right(new JourneyRequest[A](request, reg, appConfig))
-          case Left(error) => throw error
+      case Some(_) =>
+        request.pptReference match {
+          case Some(pptReference) =>
+            subscriptionsConnector.getSubscription(pptReference).map { registration =>
+              Right(new JourneyRequest[A](request, registration, appConfig))
+            }
+          case _ =>
+            logger.warn(
+              s"Denied attempt to access ${request.uri} since user ppt enrolment not present"
+            )
+            throw InsufficientEnrolments()
         }
       case None =>
         logger.warn(s"Denied attempt to access ${request.uri} since user internal id not present")
@@ -55,19 +59,6 @@ class JourneyAction @Inject() (
     }
   }
 
-  private def loadOrCreateRegistration[A](id: String)(implicit headerCarrier: HeaderCarrier) =
-    registrationConnector.find(id).flatMap {
-      case Right(reg) =>
-        reg
-          .map { r =>
-            Future.successful(Right(r))
-          }
-          .getOrElse {
-            auditor.newRegistrationStarted()
-            registrationConnector.create(Registration(id))
-          }
-      case Left(error) => Future.successful(Left(error))
-    }
-
   override protected def executionContext: ExecutionContext = exec
+
 }
