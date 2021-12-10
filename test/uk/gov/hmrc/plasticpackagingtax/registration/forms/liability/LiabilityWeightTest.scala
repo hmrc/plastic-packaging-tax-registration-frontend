@@ -19,7 +19,15 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight.{maxTotalKg, minTotalKg, totalKg, weightBelowThresholdError, weightEmptyError, weightFormatError, weightOutOfRangeError}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight.{
+  maxTotalKg,
+  minTotalKg,
+  totalKg,
+  weightBelowThresholdError,
+  weightEmptyError,
+  weightFormatError,
+  weightOutOfRangeError
+}
 
 class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
@@ -56,7 +64,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
       "provided with empty data" in {
 
-        val input          = Map.empty[String, String]
+        val input          = Map(totalKg -> "")
         val expectedErrors = Seq(FormError(totalKg, weightEmptyError))
 
         testFailedValidationErrors(input, expectedErrors)

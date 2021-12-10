@@ -17,8 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional, text}
+import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.Json
+import uk.gov.voa.play.form.ConditionalMappings.mandatory
 
 import scala.util.Try
 
@@ -38,9 +39,6 @@ object LiabilityWeight {
   private val weightIsValidNumber: String => Boolean = weight =>
     weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightIsWholeNumber: String => Boolean = weight =>
-    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
-
   private val weightWithinRange: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
@@ -50,18 +48,20 @@ object LiabilityWeight {
   def form(): Form[LiabilityWeight] =
     Form(
       mapping(
-        totalKg -> optional(text()
-          .verifying(weightEmptyError, _.nonEmpty)
-          .verifying(weightFormatError, weightIsValidNumber)
-          .verifying(weightBelowThresholdError, weightAboveThreshold)
-          .verifying(weightOutOfRangeError, weightWithinRange)
-      ))(LiabilityWeight.fromForm)(LiabilityWeight.toForm)
+        totalKg -> mandatory(
+          text()
+            .verifying(weightEmptyError, _.nonEmpty)
+            .verifying(weightFormatError, weightIsValidNumber)
+            .verifying(weightBelowThresholdError, weightAboveThreshold)
+            .verifying(weightOutOfRangeError, weightWithinRange)
+        )
+      )(LiabilityWeight.fromForm)(LiabilityWeight.toForm)
     )
 
   def fromForm(totalKg: Option[String]): LiabilityWeight =
     new LiabilityWeight(totalKg.map(BigInt(_).longValue()))
 
   def toForm(liabilityWeight: LiabilityWeight): Option[Option[String]] =
-        Some(liabilityWeight.totalKg.map(_.toString))
+    Some(liabilityWeight.totalKg.map(_.toString))
 
 }

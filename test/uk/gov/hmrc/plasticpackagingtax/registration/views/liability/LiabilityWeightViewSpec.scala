@@ -130,7 +130,7 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = LiabilityWeight
         .form()
-        .fillAndValidate(LiabilityWeight(None))
+        .bind(Map("totalKg" -> ""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
