@@ -19,14 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight.{
-  maxTotalKg,
-  minTotalKg,
-  totalKg,
-  weightBelowThresholdError,
-  weightEmptyError,
-  weightOutOfRangeError
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight.{maxTotalKg, minTotalKg, totalKg, weightBelowThresholdError, weightEmptyError, weightFormatError, weightOutOfRangeError}
 
 class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
@@ -72,7 +65,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map(totalKg -> "20A#")
-        val expectedErrors = Seq(FormError(totalKg, "error.number"))
+        val expectedErrors = Seq(FormError(totalKg, weightFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

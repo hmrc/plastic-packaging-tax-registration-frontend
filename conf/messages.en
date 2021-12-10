@@ -113,6 +113,7 @@ liabilityWeightPage.question = How much plastic packaging have you processed in 
 liabilityWeight.outOfRange.error = Weight must be 99,999,999kg or less
 liabilityWeight.empty.error = Enter the weight, in kilograms
 liabilityWeight.below.threshold.error = Weight must be 0kg or more
+liabilityWeight.format.error = Weight must be entered as numbers only
 
 liabilityExpectedWeightPage.sectionHeader = Eligibility check
 liabilityExpectedWeightPage.title = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?

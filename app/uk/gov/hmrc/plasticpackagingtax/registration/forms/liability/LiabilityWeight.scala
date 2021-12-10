@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
-import play.api.data.Forms.{longNumber, mapping}
-import play.api.data.{Form, Forms}
+import play.api.data.Form
+import play.api.data.Forms.{mapping, optional, text}
 import play.api.libs.json.Json
+
+import scala.util.Try
 
 case class LiabilityWeight(totalKg: Option[Long]) {}
 
@@ -29,23 +31,37 @@ object LiabilityWeight {
   val minTotalKg                = 0
   val totalKg                   = "totalKg"
   val weightEmptyError          = "liabilityWeight.empty.error"
+  val weightFormatError         = "liabilityWeight.format.error"
   val weightOutOfRangeError     = "liabilityWeight.outOfRange.error"
   val weightBelowThresholdError = "liabilityWeight.below.threshold.error"
 
-  private val weightAboveThreshold: Option[Long] => Boolean = weight =>
-    weight.forall(value => value >= minTotalKg)
+  private val weightIsValidNumber: String => Boolean = weight =>
+    weight.isEmpty || Try(BigDecimal(weight)).isSuccess
 
-  private val weightWithinRange: Option[Long] => Boolean = weight =>
-    weight.forall(value => value <= maxTotalKg)
+  private val weightIsWholeNumber: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
+
+  private val weightWithinRange: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
+
+  private val weightAboveThreshold: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
 
   def form(): Form[LiabilityWeight] =
     Form(
       mapping(
-        totalKg -> Forms.optional(longNumber())
+        totalKg -> optional(text()
           .verifying(weightEmptyError, _.nonEmpty)
+          .verifying(weightFormatError, weightIsValidNumber)
           .verifying(weightBelowThresholdError, weightAboveThreshold)
           .verifying(weightOutOfRangeError, weightWithinRange)
-      )(LiabilityWeight.apply)(LiabilityWeight.unapply)
+      ))(LiabilityWeight.fromForm)(LiabilityWeight.toForm)
     )
+
+  def fromForm(totalKg: Option[String]): LiabilityWeight =
+    new LiabilityWeight(totalKg.map(BigInt(_).longValue()))
+
+  def toForm(liabilityWeight: LiabilityWeight): Option[Option[String]] =
+        Some(liabilityWeight.totalKg.map(_.toString))
 
 }
