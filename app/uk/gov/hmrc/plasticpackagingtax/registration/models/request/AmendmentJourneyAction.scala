@@ -47,10 +47,14 @@ class AmendmentJourneyAction @Inject() (
             subscriptionsConnector.getSubscription(pptReference).map { registration =>
               Right(new JourneyRequest[A](request, registration, appConfig))
             }
-          case _ => throw InsufficientEnrolments()
+          case _ =>
+            logger.warn(
+              s"Denied attempt to access ${request.uri} since user ppt enrolment not present"
+            )
+            throw InsufficientEnrolments()
         }
       case None =>
-        logger.warn(s"Enrolment not present, throwing")
+        logger.warn(s"Denied attempt to access ${request.uri} since user internal id not present")
         throw InsufficientEnrolments()
     }
   }

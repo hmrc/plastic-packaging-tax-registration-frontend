@@ -50,7 +50,7 @@ class JourneyAction @Inject() (
           case Left(error) => throw error
         }
       case None =>
-        logger.warn(s"Enrolment not present, throwing")
+        logger.warn(s"Denied attempt to access ${request.uri} since user internal id not present")
         throw InsufficientEnrolments()
     }
   }
