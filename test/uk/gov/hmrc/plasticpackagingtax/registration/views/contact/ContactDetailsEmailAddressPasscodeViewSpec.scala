@@ -108,8 +108,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
       )
       summaryDetails.get(2).text() must include(
         messages("primaryContactDetails.emailAddress.passcode.summary.detail.2",
-                 "request a new code",
-                 "provide another email address"
+                 "provide a different email address"
         )
       )
     }
