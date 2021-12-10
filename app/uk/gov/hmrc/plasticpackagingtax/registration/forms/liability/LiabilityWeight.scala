@@ -47,7 +47,7 @@ object LiabilityWeight {
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
 
   private val weightHasNoLeadingBlankSpace: String => Boolean = weight =>
-    weight == weight.stripLeading()
+    weight.isEmpty || !weight.startsWith(" ")
 
   def form(): Form[LiabilityWeight] =
     Form(

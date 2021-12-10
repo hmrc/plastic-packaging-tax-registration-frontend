@@ -64,7 +64,7 @@ object LiabilityExpectedWeight extends CommonFormValues {
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
   private val weightHasNoLeadingBlankSpace: String => Boolean = weight =>
-    weight == weight.stripLeading()
+    weight.isEmpty || !weight.startsWith(" ")
 
   def form(): Form[LiabilityExpectedWeight] =
     Form(
