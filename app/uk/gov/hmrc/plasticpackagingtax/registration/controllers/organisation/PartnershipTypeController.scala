@@ -21,12 +21,31 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{GeneralPartnershipGrsConnector, ScottishPartnershipGrsConnector}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  GeneralPartnershipGrsConnector,
+  LimitedLiabilityPartnershipGrsConnector,
+  LimitedPartnershipGrsConnector,
+  ScottishLimitedPartnershipGrsConnector,
+  ScottishPartnershipGrsConnector
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{PartnershipDetails, PartnershipGrsCreateRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
+  GENERAL_PARTNERSHIP,
+  LIMITED_LIABILITY_PARTNERSHIP,
+  LIMITED_PARTNERSHIP,
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  PartnershipDetails,
+  PartnershipGrsCreateRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_type
@@ -42,6 +61,9 @@ class PartnershipTypeController @Inject() (
   appConfig: AppConfig,
   generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
   scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
+  limitedPartnershipGrsConnector: LimitedPartnershipGrsConnector,
+  scottishLimitedPartnershipGrsConnector: ScottishLimitedPartnershipGrsConnector,
+  limitedLiabilityPartnershipGrsConnector: LimitedLiabilityPartnershipGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partnership_type
@@ -126,34 +148,35 @@ class PartnershipTypeController @Inject() (
     )
 
   private def getLimitedPartnershipRedirectUrl()(implicit
-                                                  request: JourneyRequest[AnyContent]
+    request: JourneyRequest[AnyContent]
   ): Future[String] =
-    scottishPartnershipGrsConnector.createJourney(
+    limitedPartnershipGrsConnector.createJourney(
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-        Some(request2Messages(request)("service.name")),
-        appConfig.serviceIdentifier,
-        appConfig.externalSignOutLink
+                                  Some(request2Messages(request)("service.name")),
+                                  appConfig.serviceIdentifier,
+                                  appConfig.externalSignOutLink
       )
     )
 
   private def getScottishLimitedPartnershipRedirectUrl()(implicit
-                                                 request: JourneyRequest[AnyContent]
+    request: JourneyRequest[AnyContent]
   ): Future[String] =
-    scottishPartnershipGrsConnector.createJourney(
+    scottishLimitedPartnershipGrsConnector.createJourney(
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-        Some(request2Messages(request)("service.name")),
-        appConfig.serviceIdentifier,
-        appConfig.externalSignOutLink
+                                  Some(request2Messages(request)("service.name")),
+                                  appConfig.serviceIdentifier,
+                                  appConfig.externalSignOutLink
       )
     )
+
   private def getLimitedLiabilityPartnershipRedirectUrl()(implicit
-                                                 request: JourneyRequest[AnyContent]
+    request: JourneyRequest[AnyContent]
   ): Future[String] =
-    scottishPartnershipGrsConnector.createJourney(
+    limitedLiabilityPartnershipGrsConnector.createJourney(
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-        Some(request2Messages(request)("service.name")),
-        appConfig.serviceIdentifier,
-        appConfig.externalSignOutLink
+                                  Some(request2Messages(request)("service.name")),
+                                  appConfig.serviceIdentifier,
+                                  appConfig.externalSignOutLink
       )
     )
 

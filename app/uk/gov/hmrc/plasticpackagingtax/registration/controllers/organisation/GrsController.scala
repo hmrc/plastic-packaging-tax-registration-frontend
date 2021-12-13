@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
 import play.api.Logger
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -25,7 +26,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   BUSINESS_IDENTIFICATION_FAILED,
   BUSINESS_VERIFICATION_FAILED,
@@ -34,21 +34,19 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
   STATUS_OK,
   UNSUPPORTED_ORGANISATION
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
+  LIMITED_LIABILITY_PARTNERSHIP,
+  LIMITED_PARTNERSHIP,
   PartnershipTypeEnum,
+  SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GeneralPartnershipDetails,
-  IncorporationDetails,
-  PartnershipDetails,
-  RegistrationDetails,
-  ScottishPartnershipDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
   OrganisationDetails,
@@ -82,6 +80,7 @@ class GrsController @Inject() (
   registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
   scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
+  limitedPartnershipGrsConnector: LimitedPartnershipGrsConnector,
   subscriptionsConnector: SubscriptionsConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
@@ -243,6 +242,7 @@ class GrsController @Inject() (
                                                                 generalPartnershipDetails =
                                                                   Some(generalPartnershipDetails),
                                                                 scottishPartnershipDetails = None,
+                                                                limitedPartnershipDetails = None,
                                                                 GENERAL_PARTNERSHIP
                 )
                 registration.copy(incorpJourneyId = Some(journeyId),
@@ -259,7 +259,26 @@ class GrsController @Inject() (
                                                                 generalPartnershipDetails = None,
                                                                 scottishPartnershipDetails =
                                                                   Some(scottishPartnershipDetails),
+                                                                limitedPartnershipDetails = None,
                                                                 SCOTTISH_PARTNERSHIP
+                )
+                registration.copy(incorpJourneyId = Some(journeyId),
+                                  organisationDetails = updatedOrgDetails
+                )
+              }
+            } yield result
+          case LIMITED_PARTNERSHIP | LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
+            for {
+              limitedPartnershipDetails <- limitedPartnershipGrsConnector.getDetails(journeyId)
+              result <- update { registration =>
+                println(Json.toJson(limitedPartnershipDetails))
+                val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
+                                                                  registration.organisationDetails,
+                                                                generalPartnershipDetails = None,
+                                                                scottishPartnershipDetails = None,
+                                                                limitedPartnershipDetails =
+                                                                  Some(limitedPartnershipDetails),
+                                                                partnershipDetails.partnershipType
                 )
                 registration.copy(incorpJourneyId = Some(journeyId),
                                   organisationDetails = updatedOrgDetails
@@ -275,18 +294,21 @@ class GrsController @Inject() (
     organisationDetails: OrganisationDetails,
     generalPartnershipDetails: Option[GeneralPartnershipDetails],
     scottishPartnershipDetails: Option[ScottishPartnershipDetails],
+    limitedPartnershipDetails: Option[LimitedPartnershipDetails],
     partnershipTypeEnum: PartnershipTypeEnum
   ): OrganisationDetails = {
     val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
       PartnershipDetails(partnershipType = partnershipTypeEnum,
                          partnershipName = None,
                          generalPartnershipDetails = generalPartnershipDetails,
-                         scottishPartnershipDetails = scottishPartnershipDetails
+                         scottishPartnershipDetails = scottishPartnershipDetails,
+                         limitedPartnershipDetails = limitedPartnershipDetails
       )
     )(
       partnershipDetails =>
         partnershipDetails.copy(generalPartnershipDetails = generalPartnershipDetails,
-                                scottishPartnershipDetails = scottishPartnershipDetails
+                                scottishPartnershipDetails = scottishPartnershipDetails,
+                                limitedPartnershipDetails = limitedPartnershipDetails
         )
     )
     organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))

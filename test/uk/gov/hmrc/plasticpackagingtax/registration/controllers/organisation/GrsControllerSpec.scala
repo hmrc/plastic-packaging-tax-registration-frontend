@@ -60,6 +60,7 @@ class GrsControllerSpec extends ControllerSpec {
                       mockRegisteredSocietyGrsConnector,
                       mockGeneralPartnershipGrsConnector,
                       mockScottishPartnershipGrsConnector,
+                      mockLimitedPartnershipGrsConnector,
                       mockSubscriptionsConnector,
                       mcc
     )(ec)

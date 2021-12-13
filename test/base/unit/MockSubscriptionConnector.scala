@@ -18,18 +18,9 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
-import org.mockito.stubbing.OngoingStubbing
-import org.mockito.{ArgumentCaptor, Mockito}
-import org.scalatest.{BeforeAndAfterEach, Suite}
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  RegistrationConnector,
-  ServiceError,
-  SubscriptionsConnector
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 
 import scala.concurrent.Future
 

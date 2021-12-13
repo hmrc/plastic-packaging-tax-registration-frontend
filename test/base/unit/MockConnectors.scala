@@ -51,6 +51,9 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
   val mockScottishPartnershipGrsConnector: ScottishPartnershipGrsConnector =
     mock[ScottishPartnershipGrsConnector]
 
+  val mockLimitedPartnershipGrsConnector: LimitedPartnershipGrsConnector =
+    mock[LimitedPartnershipGrsConnector]
+
   val mockSubscriptionsConnector: SubscriptionsConnector         = mock[SubscriptionsConnector]
   val mockEmailVerificationConnector: EmailVerificationConnector = mock[EmailVerificationConnector]
 

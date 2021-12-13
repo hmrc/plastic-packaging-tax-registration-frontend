@@ -70,6 +70,12 @@ case class OrganisationDetails(
             partnershipDetails.scottishPartnershipDetails.flatMap { orgDetails =>
               orgDetails.registration
             }
+          case PartnershipTypeEnum.LIMITED_PARTNERSHIP |
+              PartnershipTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP |
+              PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP =>
+            partnershipDetails.limitedPartnershipDetails.flatMap { orgDetails =>
+              orgDetails.registration
+            }
           case _ => None
         }
       }

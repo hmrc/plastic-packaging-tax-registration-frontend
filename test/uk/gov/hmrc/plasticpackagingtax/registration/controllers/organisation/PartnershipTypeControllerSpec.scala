@@ -48,6 +48,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
                                                    mockGeneralPartnershipGrsConnector,
                                                  scottishPartnershipGrsConnector =
                                                    mockScottishPartnershipGrsConnector,
+                                                 limitedPartnershipGrsConnector =
+                                                   mockLimitedPartnershipGrsConnector,
                                                  registrationConnector = mockRegistrationConnector,
                                                  mcc = mcc,
                                                  page = page
