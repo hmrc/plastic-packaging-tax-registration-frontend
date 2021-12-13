@@ -38,7 +38,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
     "return success" when {
 
-      "is within range of 1 thousand and 100 million" in {
+      "is within range of 0 and 99 999 999 million" in {
 
         val input = Map(totalKg -> "5555")
 

@@ -38,7 +38,7 @@ case class LiabilityExpectedWeight(
 object LiabilityExpectedWeight extends CommonFormValues {
   implicit val format: OFormat[LiabilityExpectedWeight] = Json.format[LiabilityExpectedWeight]
 
-  val maxTotalKg                   = 100000000 // one hundred million
+  val maxTotalKg                   = 99999999
   val answer                       = "answer"
   val totalKg                      = "totalKg"
   val answerError                  = "liabilityExpectedWeight.answer.empty.error"

@@ -28,7 +28,7 @@ case class LiabilityWeight(totalKg: Option[Long]) {}
 object LiabilityWeight {
   implicit val format = Json.format[LiabilityWeight]
 
-  val maxTotalKg                   = 100000000 // one hundred million
+  val maxTotalKg                   = 99999999
   val minTotalKg                   = 0
   val totalKg                      = "totalKg"
   val weightEmptyError             = "liabilityWeight.empty.error"
