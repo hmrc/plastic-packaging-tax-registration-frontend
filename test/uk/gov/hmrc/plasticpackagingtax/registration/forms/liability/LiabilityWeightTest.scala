@@ -24,6 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWei
   minTotalKg,
   totalKg,
   weightBelowThresholdError,
+  weightDecimalError,
   weightEmptyError,
   weightFormatError,
   weightLeadingBlankSpaceError,
@@ -76,6 +77,14 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
         val input          = Map(totalKg -> "20A#")
         val expectedErrors = Seq(FormError(totalKg, weightFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains decimal weight" in {
+
+        val input          = Map(totalKg -> "10000.1")
+        val expectedErrors = Seq(FormError(totalKg, weightDecimalError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

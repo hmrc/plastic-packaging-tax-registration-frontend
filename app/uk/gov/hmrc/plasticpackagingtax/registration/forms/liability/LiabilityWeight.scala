@@ -36,9 +36,13 @@ object LiabilityWeight {
   val weightOutOfRangeError        = "liabilityWeight.outOfRange.error"
   val weightBelowThresholdError    = "liabilityWeight.below.threshold.error"
   val weightLeadingBlankSpaceError = "liabilityWeight.leadingBlankSpace.error"
+  val weightDecimalError           = "liabilityWeight.decimal.error"
 
   private val weightIsValidNumber: String => Boolean = weight =>
     weight.isEmpty || Try(BigDecimal(weight)).isSuccess
+
+  private val weightIsWholeNumber: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
 
   private val weightWithinRange: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
@@ -58,6 +62,7 @@ object LiabilityWeight {
             .verifying(weightLeadingBlankSpaceError, weightHasNoLeadingBlankSpace)
             .transform[String](weight => weight.trim, weight => weight)
             .verifying(weightFormatError, weightIsValidNumber)
+            .verifying(weightDecimalError, weightIsWholeNumber)
             .verifying(weightBelowThresholdError, weightAboveThreshold)
             .verifying(weightOutOfRangeError, weightWithinRange)
         )

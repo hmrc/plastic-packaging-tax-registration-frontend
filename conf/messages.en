@@ -115,6 +115,7 @@ liabilityWeight.empty.error = Enter the weight, in kilograms
 liabilityWeight.below.threshold.error = Weight must be 0kg or more
 liabilityWeight.format.error = Weight must be entered as numbers only
 liabilityWeight.leadingBlankSpace.error = Weight must not have leading spaces
+liabilityWeight.decimal.error = Weight must not include decimals
 
 liabilityExpectedWeightPage.sectionHeader = Eligibility check
 liabilityExpectedWeightPage.title = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
