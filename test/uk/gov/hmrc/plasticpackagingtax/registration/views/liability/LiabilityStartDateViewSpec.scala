@@ -145,7 +145,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukFieldError("liability-start-date", "Enter the day")
       view must haveGovukFieldError("liability-start-date", "Enter the month")
-      view must haveGovukFieldError("liability-start-date", "year cannot be empty")
+      view must haveGovukFieldError("liability-start-date", "Enter the year")
     }
   }
 

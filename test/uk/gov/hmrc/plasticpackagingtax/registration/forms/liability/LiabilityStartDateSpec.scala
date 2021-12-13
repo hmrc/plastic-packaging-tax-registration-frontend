@@ -29,7 +29,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
   monthEmptyError,
   monthFormatError,
   monthOutOfRangeError,
-  year
+  year,
+  yearEmptyError,
+  yearFormatError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.{
   dateFormattingError,
@@ -62,7 +64,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
         val input = Map.empty[String, String]
         val expectedErrors =
-          Seq(FormError(year, dateEmptyError),
+          Seq(FormError(year, yearEmptyError),
               FormError(month, monthEmptyError),
               FormError(day, dayEmptyError)
           )
@@ -82,7 +84,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with month only" in {
 
       val input          = Map("month" -> "7")
-      val expectedErrors = Seq(FormError(year, dateEmptyError), FormError(day, dayEmptyError))
+      val expectedErrors = Seq(FormError(year, yearEmptyError), FormError(day, dayEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -90,7 +92,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with day only" in {
 
       val input          = Map("day" -> "13")
-      val expectedErrors = Seq(FormError(year, dateEmptyError), FormError(month, monthEmptyError))
+      val expectedErrors = Seq(FormError(year, yearEmptyError), FormError(month, monthEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -98,7 +100,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with no year" in {
 
       val input          = Map("month" -> "7", "day" -> "13")
-      val expectedErrors = Seq(FormError(year, dateEmptyError))
+      val expectedErrors = Seq(FormError(year, yearEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -124,7 +126,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map("year" -> "20A#", "month" -> "7", "day" -> "13")
-        val expectedErrors = Seq(FormError(year, "error.number"))
+        val expectedErrors = Seq(FormError(year, yearFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

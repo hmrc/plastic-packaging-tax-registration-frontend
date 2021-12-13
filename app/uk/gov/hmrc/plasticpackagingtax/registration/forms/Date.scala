@@ -49,6 +49,11 @@ object Date {
   val monthDecimalError    = "date.month.decimal.error"
   val monthOutOfRangeError = "date.month.outOfRange.error"
 
+  val yearEmptyError      = "date.year.empty.error"
+  val yearFormatError     = "date.year.format.error"
+  val yearDecimalError    = "date.year.decimal.error"
+  val yearOutOfRangeError = "date.year.outOfRange.error"
+
   private val dayIsWithinRange: Option[Int] => Boolean =
     day => !day.exists(d => d < 1 || d > 31)
 
@@ -76,7 +81,13 @@ object Date {
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
                                 int => int.map(_.toString)
         ).verifying(monthOutOfRangeError, monthIsWithinRange),
-      year -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty)
+      year -> Forms.optional(text()).verifying(yearEmptyError, _.nonEmpty).verifying(
+        yearFormatError,
+        isValidNumber
+      ).verifying(yearDecimalError, isWholeNumber)
+        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
+                                int => int.map(_.toString)
+        )
     )(Date.apply)(Date.unapply)
 
 }
