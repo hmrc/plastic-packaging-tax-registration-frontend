@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
-import play.api.data.{Forms, Mapping}
 import play.api.data.Forms.number
+import play.api.data.{Forms, Mapping}
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -36,12 +36,20 @@ object Date {
   val month = "month"
   val day   = "day"
 
-  val dateEmptyError = "date.empty.error"
+  val dateEmptyError     = "date.empty.error"
+  val dayOutOfRangeError = "date.day.outOfRange.error"
+
+  private val dayIsWithinRange: Option[Int] => Boolean =
+    day => !day.exists(d => d < 1 || d > 31)
 
   def mapping(): Mapping[Date] =
-    Forms.mapping(day   -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty),
-                  month -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty),
-                  year  -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty)
+    Forms.mapping(
+      day -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty).verifying(
+        dayOutOfRangeError,
+        dayIsWithinRange
+      ),
+      month -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty),
+      year  -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty)
     )(Date.apply)(Date.unapply)
 
 }

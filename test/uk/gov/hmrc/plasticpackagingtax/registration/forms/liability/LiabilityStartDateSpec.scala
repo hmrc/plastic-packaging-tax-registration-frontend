@@ -19,7 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{dateEmptyError, day, month, year}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
+  dateEmptyError,
+  day,
+  dayOutOfRangeError,
+  month,
+  year
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.{
   dateFormattingError,
   dateLowerLimit,
@@ -151,7 +157,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> "0")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("day", dayOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -159,7 +165,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is more than 31" in {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> "32")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("day", dayOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

@@ -33,6 +33,7 @@ timeoutDialog.signout.text = Sign out
 
 date.day = Day
 date.day.error = Enter a valid day
+date.day.outOfRange.error = Day must be a number between 1 and 31
 date.month = Month
 date.month.error = Enter a valid month
 date.year = Year
