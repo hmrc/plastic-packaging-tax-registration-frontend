@@ -24,6 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
   day,
   dayOutOfRangeError,
   month,
+  monthOutOfRangeError,
   year
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.{
@@ -130,7 +131,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map("year" -> "2003", "month" -> "0", "day" -> "13")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("month", monthOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -138,7 +139,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is more than 12" in {
 
         val input          = Map("year" -> "2003", "month" -> "13", "day" -> "13")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("month", monthOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

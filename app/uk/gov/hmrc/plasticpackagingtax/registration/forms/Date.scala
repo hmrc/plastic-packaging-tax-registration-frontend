@@ -36,11 +36,15 @@ object Date {
   val month = "month"
   val day   = "day"
 
-  val dateEmptyError     = "date.empty.error"
-  val dayOutOfRangeError = "date.day.outOfRange.error"
+  val dateEmptyError       = "date.empty.error"
+  val dayOutOfRangeError   = "date.day.outOfRange.error"
+  val monthOutOfRangeError = "date.month.outOfRange.error"
 
   private val dayIsWithinRange: Option[Int] => Boolean =
     day => !day.exists(d => d < 1 || d > 31)
+
+  private val monthIsWithinRange: Option[Int] => Boolean =
+    month => !month.exists(m => m < 1 || m > 12)
 
   def mapping(): Mapping[Date] =
     Forms.mapping(
@@ -48,8 +52,11 @@ object Date {
         dayOutOfRangeError,
         dayIsWithinRange
       ),
-      month -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty),
-      year  -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty)
+      month -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty).verifying(
+        monthOutOfRangeError,
+        monthIsWithinRange
+      ),
+      year -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty)
     )(Date.apply)(Date.unapply)
 
 }
