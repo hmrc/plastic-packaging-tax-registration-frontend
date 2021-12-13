@@ -37,11 +37,16 @@ object Date {
   val month = "month"
   val day   = "day"
 
-  val dateEmptyError       = "date.empty.error"
-  val dayEmptyError        = "date.day.empty.error"
-  val dayFormatError       = "date.day.format.error"
-  val dayDecimalError      = "date.day.decimal.error"
-  val dayOutOfRangeError   = "date.day.outOfRange.error"
+  val dateEmptyError = "date.empty.error"
+
+  val dayEmptyError      = "date.day.empty.error"
+  val dayFormatError     = "date.day.format.error"
+  val dayDecimalError    = "date.day.decimal.error"
+  val dayOutOfRangeError = "date.day.outOfRange.error"
+
+  val monthEmptyError      = "date.month.empty.error"
+  val monthFormatError     = "date.month.format.error"
+  val monthDecimalError    = "date.month.decimal.error"
   val monthOutOfRangeError = "date.month.outOfRange.error"
 
   private val dayIsWithinRange: Option[Int] => Boolean =
@@ -53,21 +58,24 @@ object Date {
   private val isValidNumber: Option[String] => Boolean = input =>
     input.isEmpty || input.forall(i => Try(BigDecimal(i)).isSuccess)
 
-  private val weightIsWholeNumber: Option[String] => Boolean = input =>
+  private val isWholeNumber: Option[String] => Boolean = input =>
     input.isEmpty || !isValidNumber(input) || input.forall(i => Try(BigInt(i)).isSuccess)
 
   def mapping(): Mapping[Date] =
     Forms.mapping(
       day -> Forms.optional(text()).verifying(dayEmptyError, _.nonEmpty).verifying(dayFormatError,
                                                                                    isValidNumber
-      ).verifying(dayDecimalError, weightIsWholeNumber)
+      ).verifying(dayDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
                                 int => int.map(_.toString)
         ).verifying(dayOutOfRangeError, dayIsWithinRange),
-      month -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty).verifying(
-        monthOutOfRangeError,
-        monthIsWithinRange
-      ),
+      month -> Forms.optional(text()).verifying(monthEmptyError, _.nonEmpty).verifying(
+        monthFormatError,
+        isValidNumber
+      ).verifying(monthDecimalError, isWholeNumber)
+        .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
+                                int => int.map(_.toString)
+        ).verifying(monthOutOfRangeError, monthIsWithinRange),
       year -> Forms.optional(number()).verifying(dateEmptyError, _.nonEmpty)
     )(Date.apply)(Date.unapply)
 

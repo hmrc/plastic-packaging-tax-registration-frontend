@@ -35,11 +35,16 @@ date.day = Day
 date.day.error = Enter a valid day
 date.day.empty.error = Enter the day
 date.day.format.error = Day must only contain numbers
-date.day..decimal.error = Day must not include decimals
+date.day.decimal.error = Day must not include decimals
 date.day.outOfRange.error = Day must be a number between 1 and 31
 date.month.outOfRange.error = Day must be a number between 1 and 12
 date.month = Month
 date.month.error = Enter a valid month
+date.month.empty.error = Enter the month
+date.month.format.error = Month must only contain numbers
+date.month.decimal.error = Month must not include decimals
+date.month.outOfRange.error = Month must be a number between 1 and 12
+
 date.year = Year
 date.year.error = Enter a valid year
 date.empty.error = Error: {0} cannot be empty

@@ -26,6 +26,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
   dayFormatError,
   dayOutOfRangeError,
   month,
+  monthEmptyError,
+  monthFormatError,
   monthOutOfRangeError,
   year
 }
@@ -61,7 +63,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
         val input = Map.empty[String, String]
         val expectedErrors =
           Seq(FormError(year, dateEmptyError),
-              FormError(month, dateEmptyError),
+              FormError(month, monthEmptyError),
               FormError(day, dayEmptyError)
           )
 
@@ -72,7 +74,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with year only" in {
 
       val input          = Map("year" -> "2003")
-      val expectedErrors = Seq(FormError(month, dateEmptyError), FormError(day, dayEmptyError))
+      val expectedErrors = Seq(FormError(month, monthEmptyError), FormError(day, dayEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -88,7 +90,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with day only" in {
 
       val input          = Map("day" -> "13")
-      val expectedErrors = Seq(FormError(year, dateEmptyError), FormError(month, dateEmptyError))
+      val expectedErrors = Seq(FormError(year, dateEmptyError), FormError(month, monthEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -104,7 +106,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with no month" in {
 
       val input          = Map("year" -> "2003", "day" -> "13")
-      val expectedErrors = Seq(FormError(month, dateEmptyError))
+      val expectedErrors = Seq(FormError(month, monthEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -149,7 +151,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map("year" -> "2003", "month" -> "C#", "day" -> "13")
-        val expectedErrors = Seq(FormError(month, "error.number"))
+        val expectedErrors = Seq(FormError(month, monthFormatError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
