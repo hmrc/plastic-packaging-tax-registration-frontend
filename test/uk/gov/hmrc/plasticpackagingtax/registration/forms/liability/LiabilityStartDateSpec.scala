@@ -22,14 +22,17 @@ import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
   dateEmptyError,
   day,
+  dayDecimalError,
   dayEmptyError,
   dayFormatError,
   dayOutOfRangeError,
   month,
+  monthDecimalError,
   monthEmptyError,
   monthFormatError,
   monthOutOfRangeError,
   year,
+  yearDecimalError,
   yearEmptyError,
   yearFormatError
 }
@@ -130,6 +133,14 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
         testFailedValidationErrors(input, expectedErrors)
       }
+
+      "contains decimal number" in {
+
+        val input          = Map("year" -> "2003.01", "month" -> "7", "day" -> "13")
+        val expectedErrors = Seq(FormError(year, yearDecimalError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
     }
 
     "provided with month" which {
@@ -154,6 +165,14 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
         val input          = Map("year" -> "2003", "month" -> "C#", "day" -> "13")
         val expectedErrors = Seq(FormError(month, monthFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains decimal number" in {
+
+        val input          = Map("year" -> "2003", "month" -> "7.6", "day" -> "13")
+        val expectedErrors = Seq(FormError(month, monthDecimalError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -189,6 +208,14 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> "C#")
         val expectedErrors = Seq(FormError(day, dayFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains decimal number" in {
+
+        val input          = Map("year" -> "2003", "month" -> "7", "day" -> "1.5")
+        val expectedErrors = Seq(FormError(day, dayDecimalError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
