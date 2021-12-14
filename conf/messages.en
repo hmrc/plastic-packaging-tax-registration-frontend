@@ -37,6 +37,7 @@ date.day.empty.error = Enter the day
 date.day.format.error = Day must only contain numbers
 date.day.decimal.error = Day must not include decimals
 date.day.outOfRange.error = Day must be a number between 1 and 31
+date.day.leadingBlankSpace.error = Day must not have leading spaces
 date.month.outOfRange.error = Day must be a number between 1 and 12
 date.month = Month
 date.month.error = Enter a valid month
@@ -44,12 +45,14 @@ date.month.empty.error = Enter the month
 date.month.format.error = Month must only contain numbers
 date.month.decimal.error = Month must not include decimals
 date.month.outOfRange.error = Month must be a number between 1 and 12
+date.month.leadingBlankSpace.error = Month must not have leading spaces
 
 date.year = Year
 date.year.error = Enter a valid year
 date.year.empty.error = Enter the year
 date.year.format.error = Year must only contain numbers
 date.year.decimal.error = Year must not include decimals
+date.year.leadingBlankSpace.error = Year must not have leading spaces
 date.empty.error = Error: {0} cannot be empty
 
 error.title = Sorry, there is a problem with the service
