@@ -142,19 +142,19 @@ GET        /group-organisation-already-registered    uk.gov.hmrc.plasticpackagin
 GET        /amend-registration          uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.displayPage()
 GET        /amend-registration-failed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.registrationUpdateFailed()
 
-GET        /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.contactName()
-POST       /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateContactName()
+GET        /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.contactName()
+POST       /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateContactName()
 
-GET        /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.jobTitle()
-POST       /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateJobTitle()
+GET        /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.jobTitle()
+POST       /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateJobTitle()
 
-GET        /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.email()
-POST       /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateEmail()
+GET        /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.email()
+POST       /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateEmail()
 
 # TODO: we need full email verification flow
 
-GET        /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.phoneNumber()
-POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updatePhoneNumber()
+GET        /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.phoneNumber()
+POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updatePhoneNumber()
 
-GET        /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.address()
-POST       /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateAddress()
+GET        /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.address()
+POST       /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateAddress()
