@@ -22,7 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.Partnersh
 case class PartnershipDetails(
   partnershipType: PartnershipTypeEnum,
   partnershipName: Option[String] = None,
-  incorporatedPartnershipDetails: Option[IncorporatedPartnershipDetails] = None
+  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
 )
 
 object PartnershipDetails {

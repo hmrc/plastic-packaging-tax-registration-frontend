@@ -69,11 +69,11 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     when(mockSoleTraderGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(soleTraderDetails))
 
-  def mockGetIncorporatedPartnershipDetails(
-    incorporatedPartnershipDetails: IncorporatedPartnershipDetails
-  ): OngoingStubbing[Future[IncorporatedPartnershipDetails]] =
+  def mockGetPartnershipBusinessDetails(
+    partnershipBusinessDetails: PartnershipBusinessDetails
+  ): OngoingStubbing[Future[PartnershipBusinessDetails]] =
     when(mockPartnershipGrsConnector.getDetails(any())(any(), any()))
-      .thenReturn(Future(incorporatedPartnershipDetails))
+      .thenReturn(Future(partnershipBusinessDetails))
 
   def mockGetSoleTraderDetailsFailure(ex: Exception): OngoingStubbing[Future[SoleTraderDetails]] =
     when(mockSoleTraderGrsConnector.getDetails(any())(any(), any()))
@@ -81,7 +81,7 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   def mockGetPartnershipDetailsFailure(
     ex: Exception
-  ): OngoingStubbing[Future[IncorporatedPartnershipDetails]] =
+  ): OngoingStubbing[Future[PartnershipBusinessDetails]] =
     when(mockPartnershipGrsConnector.getDetails(any())(any(), any()))
       .thenThrow(ex)
 

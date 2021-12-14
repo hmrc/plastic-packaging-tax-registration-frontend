@@ -37,7 +37,7 @@ class UkCompanyGrsConnector @Inject() (httpClient: HttpClient, config: AppConfig
       IncorporationDetails
     ](httpClient,
       metrics,
-      config.incorpLimitedCompanyJourneyUrl,
+      Some(config.incorpLimitedCompanyJourneyUrl),
       config.incorpDetailsUrl,
       "ppt.incorpId.create.journey.timer",
       "ppt.incorpId.get.details.timer"

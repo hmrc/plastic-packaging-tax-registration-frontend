@@ -199,7 +199,7 @@ class GrsControllerSpec extends ControllerSpec {
 
       "generalPartnership details are missing" in {
         authorizedUser()
-        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
+        mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
         mockRegistrationFind(
           unregisteredGeneralPartnership.copy(organisationDetails =
             unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails = None)
@@ -214,7 +214,7 @@ class GrsControllerSpec extends ControllerSpec {
 
       "scottishPartnership details are missing" in {
         authorizedUser()
-        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
+        mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
         mockRegistrationFind(
           unregisteredScottishPartnership.copy(organisationDetails =
@@ -367,7 +367,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private def simulateGeneralPartnershipCallback() = {
     authorizedUser()
-    mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
+    mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredGeneralPartnership)
     mockRegistrationUpdate()
 
@@ -376,7 +376,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private def simulateScottishPartnershipCallback() = {
     authorizedUser()
-    mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
+    mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredScottishPartnership)
     mockRegistrationUpdate()
 

@@ -74,23 +74,23 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
 
   "get details" should {
     val journeyId = UUID.randomUUID().toString
-    val grsGeneralPartnershipDetails = GrsIncorporatedPartnershipDetails(sautr = "1234567890",
-                                                                         postcode = "AA1 1AA",
-                                                                         identifiersMatch = true,
-                                                                         businessVerification =
-                                                                           Some(
-                                                                             GrsBusinessVerification(
-                                                                               "PASS"
-                                                                             )
-                                                                           ),
-                                                                         registration =
-                                                                           GrsRegistration(
-                                                                             registrationStatus =
-                                                                               "REGISTERED",
-                                                                             registeredBusinessPartnerId =
-                                                                               Some("123")
-                                                                           ),
-                                                                         companyProfile = None
+    val grsGeneralPartnershipDetails = GrsPartnershipBusinessDetails(sautr = "1234567890",
+                                                                     postcode = "AA1 1AA",
+                                                                     identifiersMatch = true,
+                                                                     businessVerification =
+                                                                       Some(
+                                                                         GrsBusinessVerification(
+                                                                           "PASS"
+                                                                         )
+                                                                       ),
+                                                                     registration =
+                                                                       GrsRegistration(
+                                                                         registrationStatus =
+                                                                           "REGISTERED",
+                                                                         registeredBusinessPartnerId =
+                                                                           Some("123")
+                                                                       ),
+                                                                     companyProfile = None
     )
 
     "obtain partnership details from the partnership identification service" in {
@@ -100,7 +100,7 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
 
       val actualPartnershipDetails = await(connector.getDetails(journeyId))
 
-      actualPartnershipDetails mustBe IncorporatedPartnershipDetails(grsGeneralPartnershipDetails)
+      actualPartnershipDetails mustBe PartnershipBusinessDetails(grsGeneralPartnershipDetails)
     }
 
     "throw exception" when {
@@ -135,14 +135,14 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
 
   private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
     journeyId: String,
-    grsIncorporatedPartnershipDetails: GrsIncorporatedPartnershipDetails
+    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
   ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")
         .willReturn(
           aResponse()
             .withStatus(Status.OK)
-            .withBody(Json.toJsObject(grsIncorporatedPartnershipDetails).toString())
+            .withBody(Json.toJsObject(grsPartnershipBusinessDetails).toString())
         )
     )
 

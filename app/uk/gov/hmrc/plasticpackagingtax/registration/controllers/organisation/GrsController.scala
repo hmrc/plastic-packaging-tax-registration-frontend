@@ -223,12 +223,12 @@ class GrsController @Inject() (
     request.registration.organisationDetails.partnershipDetails match {
       case Some(partnershipDetails) =>
         for {
-          incorporatedPartnershipDetails <- partnershipGrsConnector.getDetails(journeyId)
+          partnershipBusinessDetails <- partnershipGrsConnector.getDetails(journeyId)
           result <- update { registration =>
             val updatedOrgDetails = updatePartnershipDetails(organisationDetails =
                                                                registration.organisationDetails,
-                                                             incorporatedPartnershipDetails =
-                                                               Some(incorporatedPartnershipDetails),
+                                                             partnershipBusinessDetails =
+                                                               Some(partnershipBusinessDetails),
                                                              partnershipDetails.partnershipType
             )
             registration.copy(incorpJourneyId = Some(journeyId),
@@ -241,17 +241,17 @@ class GrsController @Inject() (
 
   private def updatePartnershipDetails(
     organisationDetails: OrganisationDetails,
-    incorporatedPartnershipDetails: Option[IncorporatedPartnershipDetails],
+    partnershipBusinessDetails: Option[PartnershipBusinessDetails],
     partnershipTypeEnum: PartnershipTypeEnum
   ): OrganisationDetails = {
     val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
       PartnershipDetails(partnershipType = partnershipTypeEnum,
                          partnershipName = None,
-                         incorporatedPartnershipDetails = incorporatedPartnershipDetails
+                         partnershipBusinessDetails = partnershipBusinessDetails
       )
     )(
       partnershipDetails =>
-        partnershipDetails.copy(incorporatedPartnershipDetails = incorporatedPartnershipDetails)
+        partnershipDetails.copy(partnershipBusinessDetails = partnershipBusinessDetails)
     )
     organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
   }

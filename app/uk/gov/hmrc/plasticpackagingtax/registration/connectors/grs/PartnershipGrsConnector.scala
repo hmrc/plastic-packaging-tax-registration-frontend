@@ -24,8 +24,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.GeneralPartne
   GetDetailsTimer
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GrsIncorporatedPartnershipDetails,
-  IncorporatedPartnershipDetails,
+  GrsPartnershipBusinessDetails,
+  PartnershipBusinessDetails,
   PartnershipGrsCreateRequest
 }
 
@@ -40,14 +40,20 @@ class PartnershipGrsConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends GrsConnector[
       PartnershipGrsCreateRequest,
-      GrsIncorporatedPartnershipDetails,
-      IncorporatedPartnershipDetails
-    ](httpClient, metrics, "", config.partnershipJourneyUrl, CreateJourneyTimer, GetDetailsTimer) {
+      GrsPartnershipBusinessDetails,
+      PartnershipBusinessDetails
+    ](httpClient,
+      metrics,
+      None,
+      config.partnershipJourneyUrl,
+      CreateJourneyTimer,
+      GetDetailsTimer
+    ) {
 
   def translateDetails(
-    grsIncorporatedPartnershipDetails: GrsIncorporatedPartnershipDetails
-  ): IncorporatedPartnershipDetails =
-    IncorporatedPartnershipDetails(grsIncorporatedPartnershipDetails)
+    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
+  ): PartnershipBusinessDetails =
+    PartnershipBusinessDetails(grsPartnershipBusinessDetails)
 
 }
 

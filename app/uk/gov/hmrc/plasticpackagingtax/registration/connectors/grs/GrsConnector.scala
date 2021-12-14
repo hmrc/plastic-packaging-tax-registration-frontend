@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResponse](
   httpClient: HttpClient,
   metrics: Metrics,
-  val grsCreateJourneyUrl: String,
+  val grsCreateJourneyUrl: Option[String],
   val grsGetDetailsUrl: String,
   createJourneyTimerTag: String,
   getJourneyDetailsTimerTag: String
@@ -46,7 +46,9 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
   def createJourney(
     payload: GrsCreateJourneyPayload
   )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] =
-    create(grsCreateJourneyUrl, payload)
+    create(grsCreateJourneyUrl.getOrElse(throw new IllegalStateException("No url is specified")),
+           payload
+    )
 
   def createJourney(payload: GrsCreateJourneyPayload, grsCreateJourneyUrl: String)(implicit
     wts: Writes[GrsCreateJourneyPayload],

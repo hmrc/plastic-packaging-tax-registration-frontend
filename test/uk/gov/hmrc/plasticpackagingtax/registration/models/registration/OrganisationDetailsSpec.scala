@@ -226,8 +226,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                   PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
                                                      partnershipName =
                                                        Some("Big Bad General Partners"),
-                                                     incorporatedPartnershipDetails = Some(
-                                                       IncorporatedPartnershipDetails(
+                                                     partnershipBusinessDetails = Some(
+                                                       PartnershipBusinessDetails(
                                                          sautr = "12345678",
                                                          postcode =
                                                            "BD19 3BD",
@@ -271,8 +271,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                   PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
                                                      partnershipName =
                                                        Some("Big Bad Scottish Partners"),
-                                                     incorporatedPartnershipDetails = Some(
-                                                       IncorporatedPartnershipDetails(
+                                                     partnershipBusinessDetails = Some(
+                                                       PartnershipBusinessDetails(
                                                          sautr = "12345678",
                                                          postcode = "BD19 3BD",
                                                          registration =
