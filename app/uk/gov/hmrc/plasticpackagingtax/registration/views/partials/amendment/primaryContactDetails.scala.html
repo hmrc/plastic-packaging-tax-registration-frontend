@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
@@ -30,11 +31,11 @@
 @govukSummaryList(
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, None),
-            viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, None),
-            viewUtils.summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, None),
-            viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, None),
-            viewUtils.summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(viewUtils.extractAddress), None)
+            viewUtils.summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, Some(pptRoutes.AmendRegistrationController.updateContactName())),
+            viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, Some(pptRoutes.AmendRegistrationController.updateJobTitle())),
+            viewUtils.summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.AmendRegistrationController.updateEmail())),
+            viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, Some(pptRoutes.AmendRegistrationController.updatePhoneNumber())),
+            viewUtils.summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(viewUtils.extractAddress), Some(pptRoutes.AmendRegistrationController.updateAddress()))
         ).filterNot(_.value.content == Empty)
     )
 )

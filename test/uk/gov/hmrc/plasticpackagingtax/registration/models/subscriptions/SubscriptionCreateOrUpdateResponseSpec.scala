@@ -20,7 +20,8 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class SubscriptionCreateResponseSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
+class SubscriptionCreateOrUpdateResponseSpec
+    extends AnyWordSpecLike with TableDrivenPropertyChecks {
 
   "EisError" should {
     "identify duplicate subscription errors" in {

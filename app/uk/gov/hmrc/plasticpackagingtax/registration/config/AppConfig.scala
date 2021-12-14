@@ -146,6 +146,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptSubscriptionGetUrl(pptReference: String): String =
     s"$pptSubscriptionsUrl/$pptReference"
 
+  def pptSubscriptionUpdateUrl(pptReference: String): String =
+    s"$pptSubscriptionsUrl/$pptReference"
+
   def pptSubscriptionCreateUrl(safeNumber: String): String =
     s"$pptSubscriptionsUrl/$safeNumber"
 

@@ -20,8 +20,8 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
@@ -33,11 +33,16 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
   private val page           = instanceOf[address_page]
   private val countryService = instanceOf[CountryService]
 
+  private val backLink   = Call("GET", "/back-link")
+  private val updateLink = Call("PUT", "/update")
+
   private def createView(
     form: Form[Address] = Address.form(),
     userFeatureFlags: Map[String, Boolean] = Map.empty
   ): Document =
-    page(form, countryService.getAll())(generateRequest(userFeatureFlags), messages)
+    page(form, countryService.getAll(), backLink, updateLink)(generateRequest(userFeatureFlags),
+                                                              messages
+    )
 
   "Address View" should {
 
@@ -57,9 +62,7 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsConfirmAddressController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -204,8 +207,14 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form(), countryService.getAll())(journeyRequest, messages)
-    page.render(Address.form(), countryService.getAll(), journeyRequest, messages)
+    page.f(Address.form(), countryService.getAll(), backLink, updateLink)(journeyRequest, messages)
+    page.render(Address.form(),
+                countryService.getAll(),
+                backLink,
+                updateLink,
+                journeyRequest,
+                messages
+    )
   }
 
 }

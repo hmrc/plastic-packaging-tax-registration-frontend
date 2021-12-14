@@ -20,17 +20,25 @@ import base.PptTestData.newUser
 import base.unit.MockAmendmentJourneyAction
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.mvc.{AnyContent, Result, Results}
 import play.api.test.Helpers.status
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments, InsufficientEnrolments}
+import uk.gov.hmrc.auth.core.{
+  Enrolment,
+  EnrolmentIdentifier,
+  Enrolments,
+  InsufficientEnrolments,
+  SessionRecordNotFound
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 
 import scala.concurrent.Future
 
-class AmendmentJourneyActionSpec extends MockAmendmentJourneyAction with DefaultAwaitTimeout {
+class AmendmentJourneyActionSpec
+    extends MockAmendmentJourneyAction with DefaultAwaitTimeout with BeforeAndAfterEach {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
@@ -41,24 +49,54 @@ class AmendmentJourneyActionSpec extends MockAmendmentJourneyAction with Default
 
   private val user = newUser()
 
-  "Amendment Journey Action" should {
-
-    "returns a JourneyRequest with a registration" in {
-      val request = new AuthenticatedRequest(
-        FakeRequest(),
-        user.copy(enrolments =
-          Enrolments(
-            Set(
-              new Enrolment(PptEnrolment.Identifier,
-                            Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
-                            "activated"
-              )
-            )
-          )
+  private val enrolledUser = user.copy(enrolments =
+    Enrolments(
+      Set(
+        new Enrolment(PptEnrolment.Identifier,
+                      Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
+                      "activated"
         )
       )
-      status(mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)) mustBe OK
-      requestCaptor.getValue.registration mustBe mockSubscription
+    )
+  )
+
+  private val registration = aRegistration()
+
+  override protected def beforeEach(): Unit = {
+    mockRegistrationAmendmentRepository.reset()
+    simulateGetSubscriptionSuccess(registration)
+  }
+
+  "Amendment Journey Action" should {
+
+    "return a JourneyRequest populated with a registration obtained via the Subscription Connector" when {
+
+      "no registration is cached against the user's session" in {
+        val request = new AuthenticatedRequest(
+          FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
+          enrolledUser
+        )
+
+        status(mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)) mustBe OK
+        requestCaptor.getValue.registration mustBe registration
+      }
+
+    }
+
+    "return a JourneyRequest populated with a cached registration" when {
+
+      "a registration is cached on the user's session" in {
+        val cachedRegistration = aRegistration().copy(id = "3453456")
+        mockRegistrationAmendmentRepository.put("123", cachedRegistration)
+        val request = new AuthenticatedRequest(
+          FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
+          enrolledUser
+        )
+
+        status(mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)) mustBe OK
+        requestCaptor.getValue.registration mustBe cachedRegistration
+      }
+
     }
 
     "throw InsufficientEnrolments exception" when {
@@ -68,6 +106,7 @@ class AmendmentJourneyActionSpec extends MockAmendmentJourneyAction with Default
           FakeRequest(),
           user.copy(identityData = user.identityData.copy(internalId = None))
         )
+
         intercept[InsufficientEnrolments] {
           mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)
         }
@@ -75,11 +114,25 @@ class AmendmentJourneyActionSpec extends MockAmendmentJourneyAction with Default
 
       "user does not have a ppt enrolment" in {
         val request = new AuthenticatedRequest(FakeRequest(), user)
+
         intercept[InsufficientEnrolments] {
           mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)
         }
       }
 
     }
+
+    "throw SessionRecordNotFound" when {
+
+      "no active session present" in {
+        val request = new AuthenticatedRequest(FakeRequest(), enrolledUser)
+
+        intercept[SessionRecordNotFound] {
+          mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)
+        }
+      }
+
+    }
   }
+
 }

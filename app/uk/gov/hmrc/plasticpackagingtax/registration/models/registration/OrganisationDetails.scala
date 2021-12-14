@@ -45,7 +45,8 @@ case class OrganisationDetails(
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None,
-  subscriptionStatus: Option[Status] = None
+  subscriptionStatus: Option[Status] = None,
+  regWithoutIDFlag: Option[Boolean] = None
 ) {
 
   def status: TaskStatus =

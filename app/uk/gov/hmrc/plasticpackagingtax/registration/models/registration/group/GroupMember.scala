@@ -26,7 +26,8 @@ case class GroupMember(
   customerIdentification1: String,
   customerIdentification2: Option[String] = None,
   organisationDetails: Option[OrganisationDetails] = None,
-  addressDetails: Address
+  addressDetails: Address,
+  regWithoutIDFlag: Option[Boolean] = None
 ) {
 
   lazy val businessName: String =

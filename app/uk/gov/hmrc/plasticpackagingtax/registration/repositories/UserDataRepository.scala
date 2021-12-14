@@ -51,13 +51,21 @@ class UserDataRepository @Inject() (
   ): Future[A] =
     put[A](id)(DataKey(key), data).map(_ => data)
 
+  def putData[A: Writes](id: String, key: String, data: A): Future[A] =
+    put[A](id)(DataKey(key), data).map(_ => data)
+
   def getData[A: Reads](key: String)(implicit
     request: AuthenticatedRequest[Any]
   ): Future[Option[A]] = get[A](id)(DataKey(key))
 
+  def getData[A: Reads](id: String, key: String): Future[Option[A]] = get[A](id)(DataKey(key))
+
   def deleteData[A: Writes](
     key: String
   )(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+    delete[A](id)(DataKey(key))
+
+  def deleteData[A: Writes](id: String, key: String): Future[Unit] =
     delete[A](id)(DataKey(key))
 
 }

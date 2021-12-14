@@ -48,8 +48,20 @@ class ContactDetailsFullNameController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.primaryContactDetails.name match {
-        case Some(data) => Ok(page(FullName.form().fill(FullName(data))))
-        case _          => Ok(page(FullName.form()))
+        case Some(data) =>
+          Ok(
+            page(FullName.form().fill(FullName(data)),
+                 commonRoutes.TaskListController.displayPage(),
+                 routes.ContactDetailsFullNameController.submit()
+            )
+          )
+        case _ =>
+          Ok(
+            page(FullName.form(),
+                 commonRoutes.TaskListController.displayPage(),
+                 routes.ContactDetailsFullNameController.submit()
+            )
+          )
       }
     }
 
@@ -58,7 +70,15 @@ class ContactDetailsFullNameController @Inject() (
       FullName.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[FullName]) => Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[FullName]) =>
+            Future.successful(
+              BadRequest(
+                page(formWithErrors,
+                     commonRoutes.TaskListController.displayPage(),
+                     routes.ContactDetailsFullNameController.submit()
+                )
+              )
+            ),
           fullName =>
             updateRegistration(fullName).map {
               case Right(_) =>

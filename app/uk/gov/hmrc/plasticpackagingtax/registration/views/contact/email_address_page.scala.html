@@ -33,7 +33,7 @@
   formHelper: FormWithCSRF,
 
 )
-@(form: Form[EmailAddress])(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[EmailAddress], backLink: Call, updateCall: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 @emailAddressField = @{form("value")}
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
@@ -45,12 +45,12 @@
 
 @govukLayout(
   title = Title(headingKey = "primaryContactDetails.emailAddress.title", headingArgs = Some(List(contactName))),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsJobTitleController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-  @formHelper(action = pptRoutes.ContactDetailsEmailAddressController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = updateCall, 'autoComplete -> "off") {
 
     @govukInput(
         Input(

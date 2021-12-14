@@ -139,4 +139,22 @@ GET        /group-organisation-already-registered    uk.gov.hmrc.plasticpackagin
 
 # Registration Amendment
 
-GET        /amend-registration      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.displayPage()
+GET        /amend-registration          uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.displayPage()
+GET        /amend-registration-failed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.registrationUpdateFailed()
+
+GET        /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.contactName()
+POST       /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateContactName()
+
+GET        /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.jobTitle()
+POST       /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateJobTitle()
+
+GET        /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.email()
+POST       /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateEmail()
+
+# TODO: we need full email verification flow
+
+GET        /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.phoneNumber()
+POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updatePhoneNumber()
+
+GET        /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.address()
+POST       /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.updateAddress()

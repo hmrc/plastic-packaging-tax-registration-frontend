@@ -32,7 +32,7 @@
   govukFieldset: GovukFieldset,
 )
 
-@(form: Form[PhoneNumber])(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[PhoneNumber], backLink: Call, updateCall: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 
 @phoneNumberField = @{form("value")}
@@ -57,12 +57,12 @@
 }
 @govukLayout(
   title = Title(headingKey = "primaryContactDetails.phoneNumber.title", headingArg = contactName),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-  @formHelper(action = pptRoutes.ContactDetailsTelephoneNumberController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = updateCall, 'autoComplete -> "off") {
 
       @govukFieldset(Fieldset(
           legend = Some(Legend(

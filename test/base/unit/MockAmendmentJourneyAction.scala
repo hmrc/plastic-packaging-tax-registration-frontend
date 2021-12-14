@@ -23,11 +23,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJour
 import scala.concurrent.ExecutionContext
 
 trait MockAmendmentJourneyAction
-    extends MockSubscriptionConnector with MockAuthAction with AnyWordSpecLike {
-
-  protected implicit val ec: ExecutionContext = ExecutionContext.global
+    extends MockSubscriptionConnector with MockRegistrationAmendmentRepository with MockAuthAction
+    with AnyWordSpecLike {
 
   protected val mockAmendmentJourneyAction: AmendmentJourneyAction =
-    new AmendmentJourneyAction(appConfig, mockSubscriptionConnector)(ExecutionContext.global)
+    new AmendmentJourneyAction(appConfig,
+                               mockSubscriptionConnector,
+                               mockRegistrationAmendmentRepository
+    )(ExecutionContext.global)
 
 }

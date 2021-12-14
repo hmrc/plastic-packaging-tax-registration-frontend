@@ -20,7 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.job_title_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -30,8 +30,11 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[job_title_page]
 
+  private val backLink   = Call("GET", "/back-link")
+  private val updateLink = Call("PUT", "/update")
+
   private def createView(form: Form[JobTitle] = JobTitle.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form, backLink, updateLink)(journeyRequest, messages)
 
   val contactName = journeyRequest.registration.primaryContactDetails.name.get
 
@@ -53,9 +56,7 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsFullNameController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title including contact name" in {
@@ -120,8 +121,8 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(JobTitle.form())(journeyRequest, messages)
-    page.render(JobTitle.form(), journeyRequest, messages)
+    page.f(JobTitle.form(), backLink, updateLink)(journeyRequest, messages)
+    page.render(JobTitle.form(), backLink, updateLink, journeyRequest, messages)
   }
 
 }
