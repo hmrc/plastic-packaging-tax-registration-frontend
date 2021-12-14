@@ -37,7 +37,7 @@ class SoleTraderGrsConnector @Inject() (
     extends GrsConnector[SoleTraderGrsCreateRequest, GrsSoleTraderDetails, SoleTraderDetails](
       httpClient,
       metrics,
-      config.soleTraderJourneyUrl,
+      Some(config.soleTraderJourneyUrl),
       config.soleTraderJourneyUrl,
       "ppt.soleTrader.incorpId.create.journey.timer",
       "ppt.soleTrader.incorpId.get.details.timer"

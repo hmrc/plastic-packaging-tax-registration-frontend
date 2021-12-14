@@ -119,7 +119,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           assertRedirectForOrgType(UK_COMPANY, "http://test/redirect/uk-company")
         }
         "user submits organisation type: " + PARTNERSHIP in {
-          mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
           assertRedirectForOrgType(PARTNERSHIP,
                                    organisationRoutes.PartnershipTypeController.displayPage().url
           )

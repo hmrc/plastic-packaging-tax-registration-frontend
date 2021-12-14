@@ -25,7 +25,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   BUSINESS_IDENTIFICATION_FAILED,
   BUSINESS_VERIFICATION_FAILED,
@@ -34,21 +33,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
   STATUS_OK,
   UNSUPPORTED_ORGANISATION
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  PartnershipTypeEnum,
-  SCOTTISH_PARTNERSHIP
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GeneralPartnershipDetails,
-  IncorporationDetails,
-  PartnershipDetails,
-  RegistrationDetails,
-  ScottishPartnershipDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.PartnershipTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
   OrganisationDetails,
@@ -80,8 +70,7 @@ class GrsController @Inject() (
   ukCompanyGrsConnector: UkCompanyGrsConnector,
   soleTraderGrsConnector: SoleTraderGrsConnector,
   registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
-  scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
   subscriptionsConnector: SubscriptionsConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
@@ -233,61 +222,36 @@ class GrsController @Inject() (
   ): Future[Either[ServiceError, Registration]] =
     request.registration.organisationDetails.partnershipDetails match {
       case Some(partnershipDetails) =>
-        partnershipDetails.partnershipType match {
-          case GENERAL_PARTNERSHIP =>
-            for {
-              generalPartnershipDetails <- generalPartnershipGrsConnector.getDetails(journeyId)
-              result <- update { registration =>
-                val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
-                                                                  registration.organisationDetails,
-                                                                generalPartnershipDetails =
-                                                                  Some(generalPartnershipDetails),
-                                                                scottishPartnershipDetails = None,
-                                                                GENERAL_PARTNERSHIP
-                )
-                registration.copy(incorpJourneyId = Some(journeyId),
-                                  organisationDetails = updatedOrgDetails
-                )
-              }
-            } yield result
-          case SCOTTISH_PARTNERSHIP =>
-            for {
-              scottishPartnershipDetails <- scottishPartnershipGrsConnector.getDetails(journeyId)
-              result <- update { registration =>
-                val updatedOrgDetails = mergePartnershipDetails(organisationDetails =
-                                                                  registration.organisationDetails,
-                                                                generalPartnershipDetails = None,
-                                                                scottishPartnershipDetails =
-                                                                  Some(scottishPartnershipDetails),
-                                                                SCOTTISH_PARTNERSHIP
-                )
-                registration.copy(incorpJourneyId = Some(journeyId),
-                                  organisationDetails = updatedOrgDetails
-                )
-              }
-            } yield result
-          case _ => throw new IllegalStateException("Unsupported partnership type")
-        }
+        for {
+          partnershipBusinessDetails <- partnershipGrsConnector.getDetails(journeyId)
+          result <- update { registration =>
+            val updatedOrgDetails = updatePartnershipDetails(organisationDetails =
+                                                               registration.organisationDetails,
+                                                             partnershipBusinessDetails =
+                                                               Some(partnershipBusinessDetails),
+                                                             partnershipDetails.partnershipType
+            )
+            registration.copy(incorpJourneyId = Some(journeyId),
+                              organisationDetails = updatedOrgDetails
+            )
+          }
+        } yield result
       case _ => throw new IllegalStateException("Missing partnership details")
     }
 
-  private def mergePartnershipDetails(
+  private def updatePartnershipDetails(
     organisationDetails: OrganisationDetails,
-    generalPartnershipDetails: Option[GeneralPartnershipDetails],
-    scottishPartnershipDetails: Option[ScottishPartnershipDetails],
+    partnershipBusinessDetails: Option[PartnershipBusinessDetails],
     partnershipTypeEnum: PartnershipTypeEnum
   ): OrganisationDetails = {
     val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
       PartnershipDetails(partnershipType = partnershipTypeEnum,
                          partnershipName = None,
-                         generalPartnershipDetails = generalPartnershipDetails,
-                         scottishPartnershipDetails = scottishPartnershipDetails
+                         partnershipBusinessDetails = partnershipBusinessDetails
       )
     )(
       partnershipDetails =>
-        partnershipDetails.copy(generalPartnershipDetails = generalPartnershipDetails,
-                                scottishPartnershipDetails = scottishPartnershipDetails
-        )
+        partnershipDetails.copy(partnershipBusinessDetails = partnershipBusinessDetails)
     )
     organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
   }

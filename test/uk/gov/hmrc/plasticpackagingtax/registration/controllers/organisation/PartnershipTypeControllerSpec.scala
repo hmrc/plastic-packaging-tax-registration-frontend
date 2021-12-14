@@ -30,6 +30,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRo
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
+  LIMITED_LIABILITY_PARTNERSHIP,
+  LIMITED_PARTNERSHIP,
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
@@ -44,10 +46,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   val controller = new PartnershipTypeController(authenticate = mockAuthAction,
                                                  journeyAction = mockJourneyAction,
                                                  appConfig = config,
-                                                 generalPartnershipGrsConnector =
-                                                   mockGeneralPartnershipGrsConnector,
-                                                 scottishPartnershipGrsConnector =
-                                                   mockScottishPartnershipGrsConnector,
+                                                 partnershipGrsConnector =
+                                                   mockPartnershipGrsConnector,
                                                  registrationConnector = mockRegistrationConnector,
                                                  mcc = mcc,
                                                  page = page
@@ -91,7 +91,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
-        mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
         val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndContinueFormAction)
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -116,63 +116,28 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirect to unsupported business entity type page" when {
-      "an unsupported partnership type was selected" in {
-        val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails)))
-
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-        mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
-
-        val correctForm =
-          Seq("answer" -> SCOTTISH_LIMITED_PARTNERSHIP.toString, saveAndContinueFormAction)
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-        redirectLocation(result) mustBe Some(
-          routes.OrganisationTypeNotSupportedController.onPageLoad().url
-        )
-      }
-    }
-
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "update registration with general partnership type for " + formAction._1 when {
-        "a supported partnership type was selected" in {
-
+      forAll(
+        Seq(GENERAL_PARTNERSHIP,
+            SCOTTISH_PARTNERSHIP,
+            SCOTTISH_LIMITED_PARTNERSHIP,
+            LIMITED_PARTNERSHIP,
+            LIMITED_LIABILITY_PARTNERSHIP
+        )
+      ) { partnershipType =>
+        s"update registration with $partnershipType type for " + formAction._1 in {
           val registration = aRegistration(withPartnershipDetails(None))
 
           authorizedUser()
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, formAction)
+          val correctForm = Seq("answer" -> partnershipType.toString, formAction)
           await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
 
           val expectedRegistration = registration.copy(organisationDetails =
             registration.organisationDetails.copy(partnershipDetails =
-              Some(PartnershipDetails(GENERAL_PARTNERSHIP))
-            )
-          )
-          verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
-        }
-      }
-
-      "update registration with scottish partnership type for " + formAction._1 when {
-        "a supported partnership type was selected" in {
-
-          val registration = aRegistration(withPartnershipDetails(None))
-
-          authorizedUser()
-          mockRegistrationFind(registration)
-          mockRegistrationUpdate()
-          mockCreateScottishPartnershipGrsJourneyCreation("http://test/redirect/partnership")
-
-          val correctForm = Seq("answer" -> SCOTTISH_PARTNERSHIP.toString, formAction)
-          await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
-
-          val expectedRegistration = registration.copy(organisationDetails =
-            registration.organisationDetails.copy(partnershipDetails =
-              Some(PartnershipDetails(SCOTTISH_PARTNERSHIP))
+              Some(PartnershipDetails(partnershipType))
             )
           )
           verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())

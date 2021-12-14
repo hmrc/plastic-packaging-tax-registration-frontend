@@ -19,45 +19,45 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 import com.kenshoo.play.metrics.Metrics
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.ScottishPartnershipGrsConnector.{
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.GeneralPartnershipGrsConnector.{
   CreateJourneyTimer,
   GetDetailsTimer
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GrsScottishPartnershipDetails,
-  PartnershipGrsCreateRequest,
-  ScottishPartnershipDetails
+  GrsPartnershipBusinessDetails,
+  PartnershipBusinessDetails,
+  PartnershipGrsCreateRequest
 }
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ScottishPartnershipGrsConnector @Inject() (
+class PartnershipGrsConnector @Inject() (
   httpClient: HttpClient,
   config: AppConfig,
   metrics: Metrics
 )(implicit ec: ExecutionContext)
     extends GrsConnector[
       PartnershipGrsCreateRequest,
-      GrsScottishPartnershipDetails,
-      ScottishPartnershipDetails
+      GrsPartnershipBusinessDetails,
+      PartnershipBusinessDetails
     ](httpClient,
       metrics,
-      config.scottishPartnershipJourneyUrl,
+      None,
       config.partnershipJourneyUrl,
       CreateJourneyTimer,
       GetDetailsTimer
     ) {
 
-  override def translateDetails(
-    grsScottishPartnershipDetails: GrsScottishPartnershipDetails
-  ): ScottishPartnershipDetails =
-    ScottishPartnershipDetails(grsScottishPartnershipDetails)
+  def translateDetails(
+    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
+  ): PartnershipBusinessDetails =
+    PartnershipBusinessDetails(grsPartnershipBusinessDetails)
 
 }
 
-object ScottishPartnershipGrsConnector {
-  val CreateJourneyTimer = "ppt.scottish.partnership.create.journey.timer"
-  val GetDetailsTimer    = "ppt.scottish.partnership.get.detail.timer"
+object GeneralPartnershipGrsConnector {
+  val CreateJourneyTimer = "ppt.partnership.create.journey.timer"
+  val GetDetailsTimer    = "ppt.partnership.get.details.timer"
 }
