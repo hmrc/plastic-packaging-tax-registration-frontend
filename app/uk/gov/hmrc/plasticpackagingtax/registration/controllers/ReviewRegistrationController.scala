@@ -36,8 +36,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyActio
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   EisError,
-  SubscriptionCreateResponseFailure,
-  SubscriptionCreateResponseSuccess
+  SubscriptionCreateOrUpdateResponseFailure,
+  SubscriptionCreateOrUpdateResponseSuccess
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -122,9 +122,16 @@ class ReviewRegistrationController @Inject() (
                                                 completedRegistrationWithUserHeaders
       )
         .map {
-          case successfulSubscription @ SubscriptionCreateResponseSuccess(_, _, _, _, _, _, _) =>
+          case successfulSubscription @ SubscriptionCreateOrUpdateResponseSuccess(_,
+                                                                                  _,
+                                                                                  _,
+                                                                                  _,
+                                                                                  _,
+                                                                                  _,
+                                                                                  _
+              ) =>
             handleSuccessfulSubscription(completedRegistration, successfulSubscription)
-          case SubscriptionCreateResponseFailure(failures) =>
+          case SubscriptionCreateOrUpdateResponseFailure(failures) =>
             handleFailedSubscription(completedRegistration, failures)
         }
         .recoverWith {
@@ -134,7 +141,7 @@ class ReviewRegistrationController @Inject() (
 
   private def handleSuccessfulSubscription(
     registration: Registration,
-    response: SubscriptionCreateResponseSuccess
+    response: SubscriptionCreateOrUpdateResponseSuccess
   )(implicit hc: HeaderCarrier): Result = {
     successSubmissionCounter.inc()
     val updatedMetadata = registration.metaData.copy(nrsDetails =
@@ -143,7 +150,7 @@ class ReviewRegistrationController @Inject() (
     auditor.registrationSubmitted(registration.copy(metaData = updatedMetadata),
                                   Some(response.pptReference)
     )
-    if (response.enrolmentInitiatedSuccessfully)
+    if (response.enrolmentInitiatedSuccessfully.contains(true))
       Redirect(routes.ConfirmationController.displayPage())
         .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
     else

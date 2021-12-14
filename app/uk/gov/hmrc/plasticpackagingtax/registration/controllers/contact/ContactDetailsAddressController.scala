@@ -65,12 +65,28 @@ class ContactDetailsAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.primaryContactDetails.address match {
         case Some(data) =>
-          Future(Ok(page(Address.form().fill(data), countryService.getAll())))
+          Future(
+            Ok(
+              page(Address.form().fill(data),
+                   countryService.getAll(),
+                   routes.ContactDetailsConfirmAddressController.displayPage(),
+                   routes.ContactDetailsAddressController.submit()
+              )
+            )
+          )
         case _ =>
           if (request.isFeatureFlagEnabled(Features.isAddressLookupEnabled))
             initialiseAddressLookup.map(onRamp => Redirect(onRamp.redirectUrl))
           else
-            Future(Ok(page(Address.form(), countryService.getAll())))
+            Future(
+              Ok(
+                page(Address.form(),
+                     countryService.getAll(),
+                     routes.ContactDetailsConfirmAddressController.displayPage(),
+                     routes.ContactDetailsAddressController.submit()
+                )
+              )
+            )
       }
     }
 
@@ -80,7 +96,15 @@ class ContactDetailsAddressController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[Address]) =>
-            Future.successful(BadRequest(page(formWithErrors, countryService.getAll()))),
+            Future.successful(
+              BadRequest(
+                page(formWithErrors,
+                     countryService.getAll(),
+                     routes.ContactDetailsConfirmAddressController.displayPage(),
+                     routes.ContactDetailsAddressController.submit()
+                )
+              )
+            ),
           _ => {
             val address = Address.dataExtractor.bindFromRequest().value.getOrElse(
               throw new IllegalStateException()
@@ -117,7 +141,15 @@ class ContactDetailsAddressController @Inject() (
           // Address Lookup Service may return an address that is incompatible with PPT, so validate it again
           Address.form.fillAndValidate(updatedAddress).fold(
             (formWithErrors: Form[Address]) =>
-              Future.successful(BadRequest(page(formWithErrors, countryService.getAll()))),
+              Future.successful(
+                BadRequest(
+                  page(formWithErrors,
+                       countryService.getAll(),
+                       routes.ContactDetailsConfirmAddressController.displayPage(),
+                       routes.ContactDetailsAddressController.submit()
+                  )
+                )
+              ),
             address =>
               updateRegistration(Address(confirmedAddress)).map {
                 case Right(_) =>

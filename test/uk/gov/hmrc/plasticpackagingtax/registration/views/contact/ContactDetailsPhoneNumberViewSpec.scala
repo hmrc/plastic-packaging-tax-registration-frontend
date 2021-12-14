@@ -20,7 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.phone_number_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -30,8 +30,11 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[phone_number_page]
 
+  private val backLink   = Call("GET", "/back-link")
+  private val updateLink = Call("PUT", "/update")
+
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form, backLink, updateLink)(journeyRequest, messages)
 
   "Phone Number View" should {
 
@@ -51,9 +54,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsEmailAddressController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -122,8 +123,8 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PhoneNumber.form())(journeyRequest, messages)
-    page.render(PhoneNumber.form(), journeyRequest, messages)
+    page.f(PhoneNumber.form(), backLink, updateLink)(journeyRequest, messages)
+    page.render(PhoneNumber.form(), backLink, updateLink, journeyRequest, messages)
   }
 
 }

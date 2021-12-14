@@ -29,7 +29,7 @@
   errorSummary: errorSummary,
   formHelper: FormWithCSRF
 )
-@(form: Form[JobTitle])(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[JobTitle], backLink: Call, updateCall: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 @jobTitleField = @{form("value")}
 
@@ -37,12 +37,12 @@
 
 @govukLayout(
   title = Title(headingKey = "primaryContactDetails.jobTitlePage.title", headingArg = contactName),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsFullNameController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-  @formHelper(action = pptRoutes.ContactDetailsJobTitleController.submit(), 'autoComplete -> "off") {
+  @formHelper(action = updateCall, 'autoComplete -> "off") {
 
     @govukInput(
         Input(

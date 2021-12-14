@@ -49,8 +49,19 @@ class ContactDetailsJobTitleController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.primaryContactDetails.jobTitle match {
         case Some(data) =>
-          Ok(page(JobTitle.form().fill(JobTitle(data))))
-        case _ => Ok(page(JobTitle.form()))
+          Ok(
+            page(JobTitle.form().fill(JobTitle(data)),
+                 routes.ContactDetailsFullNameController.displayPage(),
+                 routes.ContactDetailsJobTitleController.submit()
+            )
+          )
+        case _ =>
+          Ok(
+            page(JobTitle.form(),
+                 routes.ContactDetailsFullNameController.displayPage(),
+                 routes.ContactDetailsJobTitleController.submit()
+            )
+          )
       }
     }
 
@@ -59,7 +70,15 @@ class ContactDetailsJobTitleController @Inject() (
       JobTitle.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[JobTitle]) => Future.successful(BadRequest(page(formWithErrors))),
+          (formWithErrors: Form[JobTitle]) =>
+            Future.successful(
+              BadRequest(
+                page(formWithErrors,
+                     routes.ContactDetailsFullNameController.displayPage(),
+                     routes.ContactDetailsJobTitleController.submit()
+                )
+              )
+            ),
           jobTitle =>
             updateRegistration(jobTitle).map {
               case Right(_) =>

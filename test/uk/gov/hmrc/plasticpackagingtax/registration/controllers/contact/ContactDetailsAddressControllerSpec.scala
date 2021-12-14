@@ -95,7 +95,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Address]], any())(any(), any())).thenReturn(
+    when(page.apply(any[Form[Address]], any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Contact Address Page")
     )
   }

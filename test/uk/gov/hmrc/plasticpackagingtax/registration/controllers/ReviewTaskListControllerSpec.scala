@@ -42,7 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   EisError,
-  SubscriptionCreateResponseFailure
+  SubscriptionCreateOrUpdateResponseFailure
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   duplicate_subscription_page,
@@ -176,7 +176,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           val completedRegistration =
             registration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
           mockRegistrationFind(completedRegistration)
-          mockSubscriptionSubmit(subscriptionCreate)
+          mockSubscriptionSubmit(subscriptionCreateOrUpdate)
 
           val result = controller.submit()(postRequest(JsObject.empty))
           submissionCount += 1
@@ -261,7 +261,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
               )
             )
         mockRegistrationFind(registrationWithMissingBusinessPartnerId)
-        mockSubscriptionSubmit(subscriptionCreate)
+        mockSubscriptionSubmit(subscriptionCreateOrUpdate)
 
         val result = controller.submit()(postRequest(JsObject.empty))
 
@@ -275,14 +275,16 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val completedRegistration = aCompletedUkCompanyRegistration
         mockRegistrationFind(completedRegistration)
-        mockSubscriptionSubmit(subscriptionCreate)
+        mockSubscriptionSubmit(subscriptionCreateOrUpdate)
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
         val completedRegistrationWithNrsDetail = completedRegistration.copy(metaData =
           aCompletedUkCompanyRegistration.metaData.copy(nrsDetails =
             Some(
-              NrsDetails(nrSubsmissionId = subscriptionCreate.nrsSubmissionId, failureReason = None)
+              NrsDetails(nrSubsmissionId = subscriptionCreateOrUpdate.nrsSubmissionId,
+                         failureReason = None
+              )
             )
           )
         )
@@ -328,7 +330,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         authorizedUser()
         mockRegistrationFind(registration)
         mockSubscriptionSubmitFailure(
-          SubscriptionCreateResponseFailure(
+          SubscriptionCreateOrUpdateResponseFailure(
             List(
               EisError("INVALID_SAFEID",
                        "The remote endpoint has indicated that the SAFEID provided is invalid."
@@ -362,7 +364,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         authorizedUser()
         mockRegistrationFind(registration)
         mockSubscriptionSubmitFailure(
-          SubscriptionCreateResponseFailure(
+          SubscriptionCreateOrUpdateResponseFailure(
             List(
               EisError("ACTIVE_SUBSCRIPTION_EXISTS",
                        "The remote endpoint has indicated that Business Partner already has active subscription for this regime."

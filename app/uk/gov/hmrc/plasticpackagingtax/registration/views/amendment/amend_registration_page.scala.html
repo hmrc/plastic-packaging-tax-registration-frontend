@@ -46,7 +46,7 @@
     title = Title("amendRegistration.organisationDetails.title"),
     backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
 
-    @pageHeading(messages("amendRegistration.organisationDetails.title"))
+    @pageHeading(s"${messages("amendRegistration.organisationDetails.title")} - ${request.pptReference.getOrElse("<missing ppt reference>")}")
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 

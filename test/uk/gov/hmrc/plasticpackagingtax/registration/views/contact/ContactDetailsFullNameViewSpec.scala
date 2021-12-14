@@ -20,7 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName.allowedChars
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.full_name_page
@@ -31,8 +31,11 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[full_name_page]
 
+  private val backLink   = Call("GET", "/back-link")
+  private val updateLink = Call("PUT", "/update")
+
   private def createView(form: Form[FullName] = FullName.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form, backLink, updateLink)(journeyRequest, messages)
 
   "Primary Contact Details Full Name View" should {
 
@@ -52,7 +55,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
+      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -151,8 +154,8 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(FullName.form())(request, messages)
-    page.render(FullName.form(), request, messages)
+    page.f(FullName.form(), backLink, updateLink)(request, messages)
+    page.render(FullName.form(), backLink, updateLink, request, messages)
   }
 
 }

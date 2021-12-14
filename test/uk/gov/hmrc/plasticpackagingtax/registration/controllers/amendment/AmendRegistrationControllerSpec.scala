@@ -17,34 +17,46 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import base.PptTestData.newUser
-import base.unit.MockAmendmentJourneyAction
+import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.OK
 import play.api.mvc.{AnyContentAsEmpty, Request}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.amend_registration_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.amend_error_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
-class AmendRegistrationControllerTest
-    extends MockAmendmentJourneyAction with Matchers with DefaultAwaitTimeout {
+class AmendRegistrationControllerSpec
+    extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {
 
-  private val mcc  = stubMessagesControllerComponents()
-  private val page = mock[amend_registration_page]
+  private val mcc = stubMessagesControllerComponents()
 
-  when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("registration amendment"))
+  private val amendRegistrationPage      = mock[amend_registration_page]
+  private val amendRegistrationErrorPage = mock[amend_error_page]
+
+  when(amendRegistrationPage.apply(any())(any(), any())).thenReturn(
+    HtmlFormat.raw("registration amendment")
+  )
+
+  when(amendRegistrationErrorPage.apply()(any(), any())).thenReturn(
+    HtmlFormat.raw("registration amendment error")
+  )
 
   private val controller =
     new AmendRegistrationController(mockAuthAllowEnrolmentAction,
                                     mcc,
                                     mockAmendmentJourneyAction,
-                                    page
+                                    amendRegistrationPage,
+                                    amendRegistrationErrorPage
     )
 
   private def authorisedUserWithPptSubscription() =
@@ -61,6 +73,13 @@ class AmendRegistrationControllerTest
       )
     )
 
+  private val populatedRegistration = aRegistration()
+
+  override protected def beforeEach(): Unit = {
+    mockRegistrationAmendmentRepository.reset()
+    simulateGetSubscriptionSuccess(populatedRegistration)
+  }
+
   "Amend Registration Controller" should {
 
     "display the amend registration page" when {
@@ -75,6 +94,15 @@ class AmendRegistrationControllerTest
       }
     }
 
+    "display the amend error page" in {
+      authorizedUser()
+
+      val resp = controller.registrationUpdateFailed()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "registration amendment error"
+    }
+
     "throw exception" when {
       "unauthenticated user attempts to access the amendment page" in {
         unAuthorizedUser()
@@ -86,7 +114,7 @@ class AmendRegistrationControllerTest
         }
       }
 
-      "user is authenticated but attempt to retrieve registration fails" in {
+      "user is authenticated but attempt to retrieve registration via connector fails" in {
         authorisedUserWithPptSubscription()
         simulateGetSubscriptionFailure()
 
@@ -99,7 +127,7 @@ class AmendRegistrationControllerTest
     }
   }
 
-  private def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession(session).withCSRFToken
+  private def getRequest(): Request[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

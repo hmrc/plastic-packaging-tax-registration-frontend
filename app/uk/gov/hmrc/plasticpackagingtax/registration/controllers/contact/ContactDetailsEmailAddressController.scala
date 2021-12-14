@@ -63,8 +63,19 @@ class ContactDetailsEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.primaryContactDetails.email match {
         case Some(data) =>
-          Ok(page(EmailAddress.form().fill(EmailAddress(data))))
-        case _ => Ok(page(EmailAddress.form()))
+          Ok(
+            page(EmailAddress.form().fill(EmailAddress(data)),
+                 routes.ContactDetailsJobTitleController.displayPage(),
+                 routes.ContactDetailsEmailAddressController.submit()
+            )
+          )
+        case _ =>
+          Ok(
+            page(EmailAddress.form(),
+                 routes.ContactDetailsJobTitleController.displayPage(),
+                 routes.ContactDetailsEmailAddressController.submit()
+            )
+          )
       }
     }
 
@@ -74,7 +85,14 @@ class ContactDetailsEmailAddressController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[EmailAddress]) =>
-            Future.successful(BadRequest(page(formWithErrors))),
+            Future.successful(
+              BadRequest(
+                page(formWithErrors,
+                     routes.ContactDetailsJobTitleController.displayPage(),
+                     routes.ContactDetailsEmailAddressController.submit()
+                )
+              )
+            ),
           emailAddress =>
             updateRegistration(formData = emailAddress, credId = request.user.credId).flatMap {
               case Right(registration) =>

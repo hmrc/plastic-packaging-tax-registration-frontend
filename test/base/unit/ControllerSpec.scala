@@ -36,7 +36,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   Unknown
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AmendmentJourneyAction,
+  AuthenticatedRequest
+}
 
 import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,19 +79,22 @@ trait ControllerSpec
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
   protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
-    postRequest
+    postRequest()
       .withJsonBody(body)
       .withHeaders(testUserHeaders.toSeq: _*)
       .withCSRFToken
 
-  private def postRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("POST", "")
+  private def postRequest(sessionId: String = "123"): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("POST", "")
+      .withSession((AmendmentJourneyAction.SessionId, sessionId))
 
   protected def postRequestEncoded(
     form: AnyRef,
-    formAction: (String, String) = saveAndContinueFormAction
+    formAction: (String, String) = saveAndContinueFormAction,
+    sessionId: String = "123"
   ): Request[AnyContentAsFormUrlEncoded] = {
     val bodyForm: Seq[(String, String)] = getTuples(form) :+ formAction
-    postRequest
+    postRequest(sessionId)
       .withFormUrlEncodedBody(bodyForm: _*)
       .withCSRFToken
   }
@@ -109,7 +115,7 @@ trait ControllerSpec
   protected def postJsonRequestEncoded(
     body: (String, String)*
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequest
+    postRequest()
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
 

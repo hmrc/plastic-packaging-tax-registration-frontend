@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_page
@@ -30,8 +31,11 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[email_address_page]
 
+  private val backLink   = Call("GET", "/back-link")
+  private val updateLink = Call("PUT", "/update")
+
   private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form, backLink, updateLink)(journeyRequest, messages)
 
   private val mainContact = journeyRequest.registration.primaryContactDetails.name.get
 
@@ -53,9 +57,7 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsJobTitleController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -139,8 +141,8 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddress.form())(journeyRequest, messages)
-    page.render(EmailAddress.form(), journeyRequest, messages)
+    page.f(EmailAddress.form(), backLink, updateLink)(journeyRequest, messages)
+    page.render(EmailAddress.form(), backLink, updateLink, journeyRequest, messages)
   }
 
 }

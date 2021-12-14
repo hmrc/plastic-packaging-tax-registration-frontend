@@ -23,9 +23,9 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  SubscriptionCreateResponse,
-  SubscriptionCreateResponseFailure,
-  SubscriptionCreateResponseSuccess,
+  SubscriptionCreateOrUpdateResponse,
+  SubscriptionCreateOrUpdateResponseFailure,
+  SubscriptionCreateOrUpdateResponseSuccess,
   SubscriptionStatusResponse
 }
 import javax.inject.{Inject, Singleton}
@@ -80,19 +80,24 @@ class SubscriptionsConnector @Inject() (
       }
   }
 
-  def submitSubscription(safeId: String, payload: Registration)(implicit
+  def updateSubscription(pptReference: String, registration: Registration)(implicit
     hc: HeaderCarrier
-  ): Future[SubscriptionCreateResponse] = {
-    val timer = metrics.defaultRegistry.timer("ppt.subscription.submit.timer").time()
-    httpClient.POST[Registration, HttpResponse](config.pptSubscriptionCreateUrl(safeId), payload)
+  ): Future[SubscriptionCreateOrUpdateResponse] = {
+    val timer = metrics.defaultRegistry.timer("ppt.subscription.update.timer").time()
+    httpClient.PUT[Registration, HttpResponse](config.pptSubscriptionUpdateUrl(pptReference),
+                                               registration
+    )
       .andThen { case _ => timer.stop() }
       .map {
-        subscriptionResponse =>
+        updateSubscriptionResponse =>
           logger.info(
-            s"PPT submit subscription for safeId [$safeId] had response status [${subscriptionResponse.status}] and payload [${subscriptionResponse.body}]"
+            s"PPT update subscription for pptReference [$pptReference] had response status " +
+              s"[${updateSubscriptionResponse.status}] and payload [${updateSubscriptionResponse.body}]"
           )
-          if (Status.isSuccessful(subscriptionResponse.status))
-            Try(subscriptionResponse.json.as[SubscriptionCreateResponseSuccess]) match {
+          if (Status.isSuccessful(updateSubscriptionResponse.status))
+            Try(
+              updateSubscriptionResponse.json.as[SubscriptionCreateOrUpdateResponseSuccess]
+            ) match {
               case Success(successfulSubscription) => successfulSubscription
               case Failure(e) =>
                 throw new IllegalStateException(
@@ -101,7 +106,47 @@ class SubscriptionsConnector @Inject() (
                 )
             }
           else
-            Try(subscriptionResponse.json.as[SubscriptionCreateResponseFailure]) match {
+            Try(
+              updateSubscriptionResponse.json.as[SubscriptionCreateOrUpdateResponseFailure]
+            ) match {
+              case Success(failedSubscription) => failedSubscription
+              case Failure(e) =>
+                logger.warn("Failed to update subscription - invalid response payload received")
+                throw new IllegalStateException(
+                  s"Unexpected failed subscription response - ${e.getMessage}",
+                  e
+                )
+            }
+      }
+  }
+
+  def submitSubscription(safeId: String, payload: Registration)(implicit
+    hc: HeaderCarrier
+  ): Future[SubscriptionCreateOrUpdateResponse] = {
+    val timer = metrics.defaultRegistry.timer("ppt.subscription.submit.timer").time()
+    httpClient.POST[Registration, HttpResponse](config.pptSubscriptionCreateUrl(safeId), payload)
+      .andThen { case _ => timer.stop() }
+      .map {
+        createSubscriptionResponse =>
+          logger.info(
+            s"PPT submit subscription for safeId [$safeId] had response status " +
+              s"[${createSubscriptionResponse.status}] and payload [${createSubscriptionResponse.body}]"
+          )
+          if (Status.isSuccessful(createSubscriptionResponse.status))
+            Try(
+              createSubscriptionResponse.json.as[SubscriptionCreateOrUpdateResponseSuccess]
+            ) match {
+              case Success(successfulSubscription) => successfulSubscription
+              case Failure(e) =>
+                throw new IllegalStateException(
+                  s"Unexpected successful subscription response - ${e.getMessage}",
+                  e
+                )
+            }
+          else
+            Try(
+              createSubscriptionResponse.json.as[SubscriptionCreateOrUpdateResponseFailure]
+            ) match {
               case Success(failedSubscription) => failedSubscription
               case Failure(e) =>
                 throw new IllegalStateException(

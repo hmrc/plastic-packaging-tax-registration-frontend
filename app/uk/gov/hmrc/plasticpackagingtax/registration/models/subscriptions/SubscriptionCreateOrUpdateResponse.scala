@@ -21,22 +21,22 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.EisErro
 
 import java.time.ZonedDateTime
 
-trait SubscriptionCreateResponse
+trait SubscriptionCreateOrUpdateResponse
 
-case class SubscriptionCreateResponseSuccess(
+case class SubscriptionCreateOrUpdateResponseSuccess(
   pptReference: String,
   processingDate: ZonedDateTime,
   formBundleNumber: String,
   nrsNotifiedSuccessfully: Boolean,
   nrsSubmissionId: Option[String],
   nrsFailureReason: Option[String],
-  enrolmentInitiatedSuccessfully: Boolean
-) extends SubscriptionCreateResponse
+  enrolmentInitiatedSuccessfully: Option[Boolean]
+) extends SubscriptionCreateOrUpdateResponse
 
-object SubscriptionCreateResponseSuccess {
+object SubscriptionCreateOrUpdateResponseSuccess {
 
-  implicit val format: OFormat[SubscriptionCreateResponseSuccess] =
-    Json.format[SubscriptionCreateResponseSuccess]
+  implicit val format: OFormat[SubscriptionCreateOrUpdateResponseSuccess] =
+    Json.format[SubscriptionCreateOrUpdateResponseSuccess]
 
 }
 
@@ -57,12 +57,12 @@ object EisError {
 
 }
 
-case class SubscriptionCreateResponseFailure(failures: Seq[EisError])
-    extends SubscriptionCreateResponse
+case class SubscriptionCreateOrUpdateResponseFailure(failures: Seq[EisError])
+    extends SubscriptionCreateOrUpdateResponse
 
-object SubscriptionCreateResponseFailure {
+object SubscriptionCreateOrUpdateResponseFailure {
 
-  implicit val format: OFormat[SubscriptionCreateResponseFailure] =
-    Json.format[SubscriptionCreateResponseFailure]
+  implicit val format: OFormat[SubscriptionCreateOrUpdateResponseFailure] =
+    Json.format[SubscriptionCreateOrUpdateResponseFailure]
 
 }

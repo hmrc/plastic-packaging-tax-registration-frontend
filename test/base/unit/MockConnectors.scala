@@ -26,9 +26,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  SubscriptionCreateResponse,
-  SubscriptionCreateResponseFailure,
-  SubscriptionCreateResponseSuccess,
+  SubscriptionCreateOrUpdateResponse,
+  SubscriptionCreateOrUpdateResponseFailure,
+  SubscriptionCreateOrUpdateResponseSuccess,
   SubscriptionStatusResponse
 }
 
@@ -143,22 +143,22 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     )
 
   protected def mockSubscriptionSubmit(
-    subscription: SubscriptionCreateResponseSuccess
-  ): OngoingStubbing[Future[SubscriptionCreateResponse]] =
+    subscription: SubscriptionCreateOrUpdateResponseSuccess
+  ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(
       Future.successful(subscription)
     )
 
   protected def mockSubscriptionSubmitFailure(
     ex: Exception
-  ): OngoingStubbing[Future[SubscriptionCreateResponse]] =
+  ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(
       Future.failed(ex)
     )
 
   protected def mockSubscriptionSubmitFailure(
-    failureResponse: SubscriptionCreateResponseFailure
-  ): OngoingStubbing[Future[SubscriptionCreateResponse]] =
+    failureResponse: SubscriptionCreateOrUpdateResponseFailure
+  ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionsConnector.submitSubscription(any(), any())(any())).thenReturn(
       Future.successful(failureResponse)
     )

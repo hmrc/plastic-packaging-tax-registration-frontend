@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
 import base.Injector
 import base.it.ConnectorISpec
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put, urlMatching}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
@@ -26,7 +26,7 @@ import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  SubscriptionCreateResponseSuccess,
+  SubscriptionCreateOrUpdateResponseSuccess,
   SubscriptionStatusResponse
 }
 
@@ -118,12 +118,14 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
       val safeNumber = "123456789"
 
       "handle a 200 response" in {
-        val validResponse = subscriptionCreate
+        val validResponse = subscriptionCreateOrUpdate
         stubFor(
           post(urlMatching(s"/subscriptions/$safeNumber"))
             .willReturn(
               aResponse().withStatus(OK)
-                withBody toJson(validResponse)(SubscriptionCreateResponseSuccess.format).toString
+                withBody toJson(validResponse)(
+                  SubscriptionCreateOrUpdateResponseSuccess.format
+                ).toString
             )
         )
 
@@ -173,6 +175,71 @@ class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with Scal
 
         intercept[Exception] {
           await(connector.submitSubscription(safeNumber, aRegistration()))
+        }
+      }
+    }
+
+    "calling 'updateSubscription'" should {
+      val pptReference = "XMPPT0000000123"
+
+      "handle a 200 response" in {
+        val validResponse = subscriptionCreateOrUpdate
+        stubFor(
+          put(urlMatching(s"/subscriptions/$pptReference"))
+            .willReturn(
+              aResponse().withStatus(OK)
+                withBody toJson(validResponse)(
+                  SubscriptionCreateOrUpdateResponseSuccess.format
+                ).toString
+            )
+        )
+
+        val res = await(connector.updateSubscription(pptReference, aRegistration()))
+
+        res mustBe validResponse
+        getTimer("ppt.subscription.update.timer").getCount mustBe 1
+      }
+
+      "handle an unexpected success response" in {
+        val invalidResponse =
+          Map("invalidKey1" -> "invalidValue1", "invalidKey2" -> "invalidValue2")
+        stubFor(
+          put(urlMatching(s"/subscriptions/$pptReference"))
+            .willReturn(
+              aResponse().withStatus(OK)
+                withBody (toJson(invalidResponse).toString)
+            )
+        )
+
+        intercept[IllegalStateException] {
+          await(connector.updateSubscription(pptReference, aRegistration()))
+        }
+      }
+
+      "handle an unexpected failed response" in {
+        val invalidResponse =
+          Map("invalidKey1" -> "invalidValue1", "invalidKey2" -> "invalidValue2")
+        stubFor(
+          put(urlMatching(s"/subscriptions/$pptReference"))
+            .willReturn(
+              aResponse().withStatus(BAD_REQUEST)
+                withBody (toJson(invalidResponse).toString)
+            )
+        )
+
+        intercept[IllegalStateException] {
+          await(connector.updateSubscription(pptReference, aRegistration()))
+        }
+      }
+
+      "handle when an exception is thrown" in {
+        stubFor(
+          put(urlMatching(s"/subscriptions/$pptReference"))
+            .willReturn(aResponse().withStatus(Status.INTERNAL_SERVER_ERROR))
+        )
+
+        intercept[Exception] {
+          await(connector.updateSubscription(pptReference, aRegistration()))
         }
       }
     }

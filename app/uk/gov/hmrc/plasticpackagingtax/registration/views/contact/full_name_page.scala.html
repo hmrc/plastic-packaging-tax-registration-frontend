@@ -31,18 +31,18 @@
   errorSummary: errorSummary
 )
 
-@(form: Form[FullName])(implicit request: Request[_], messages: Messages)
+@(form: Form[FullName], backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
 
 @fullNameField = @{form("value")}
 
 @govukLayout(
   title = Title("primaryContactDetails.fullNamePage.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
-    @formHelper(action = contactRoutes.ContactDetailsFullNameController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = updateCall, 'autoComplete -> "off") {
 
         @govukInput(Input(
             id    = fullNameField.name,

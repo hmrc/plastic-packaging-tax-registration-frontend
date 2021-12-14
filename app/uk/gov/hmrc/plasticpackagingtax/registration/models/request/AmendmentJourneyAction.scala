@@ -18,10 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result}
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.auth.core.{InsufficientEnrolments, SessionRecordNotFound}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction.SessionId
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.RegistrationAmendmentRepository
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -29,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AmendmentJourneyAction @Inject() (
   appConfig: AppConfig,
-  subscriptionsConnector: SubscriptionsConnector
+  subscriptionsConnector: SubscriptionsConnector,
+  registrationAmendmentRepository: RegistrationAmendmentRepository
 )(implicit val exec: ExecutionContext)
     extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
 
@@ -44,8 +48,26 @@ class AmendmentJourneyAction @Inject() (
       case Some(_) =>
         request.pptReference match {
           case Some(pptReference) =>
-            subscriptionsConnector.getSubscription(pptReference).map { registration =>
-              Right(new JourneyRequest[A](request, registration, appConfig))
+            request.session.get(SessionId) match {
+              case Some(sessionId) =>
+                registrationAmendmentRepository.get(sessionId).flatMap {
+                  case Some(registration) =>
+                    Future.successful(
+                      Right(new JourneyRequest[A](request, registration, appConfig))
+                    )
+                  case _ =>
+                    subscriptionsConnector.getSubscription(pptReference).flatMap { registration =>
+                      registrationAmendmentRepository.put(sessionId, registration).map {
+                        registration =>
+                          Right(new JourneyRequest[A](request, registration, appConfig))
+                      }
+                    }
+                }
+              case _ =>
+                logger.warn(
+                  s"Denied attempt to access ${request.uri} since no user session present"
+                )
+                throw SessionRecordNotFound()
             }
           case _ =>
             logger.warn(
@@ -59,6 +81,19 @@ class AmendmentJourneyAction @Inject() (
     }
   }
 
-  override protected def executionContext: ExecutionContext = exec
+  def updateRegistration(
+    updateFunction: Registration => Registration
+  )(implicit request: AuthenticatedRequest[Any], headerCarrier: HeaderCarrier) =
+    registrationAmendmentRepository.update(updateFunction).flatMap { registration =>
+      subscriptionsConnector.updateSubscription(
+        request.pptReference.getOrElse(throw new IllegalStateException("Missing PPT enrolment")),
+        registration
+      )
+    }
 
+  override protected def executionContext: ExecutionContext = exec
+}
+
+object AmendmentJourneyAction {
+  val SessionId = "sessionId"
 }
