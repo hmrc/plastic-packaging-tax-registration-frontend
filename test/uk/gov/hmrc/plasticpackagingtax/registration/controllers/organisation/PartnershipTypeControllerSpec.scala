@@ -44,12 +44,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   val controller = new PartnershipTypeController(authenticate = mockAuthAction,
                                                  journeyAction = mockJourneyAction,
                                                  appConfig = config,
-                                                 generalPartnershipGrsConnector =
-                                                   mockGeneralPartnershipGrsConnector,
-                                                 scottishPartnershipGrsConnector =
-                                                   mockScottishPartnershipGrsConnector,
-                                                 limitedPartnershipGrsConnector =
-                                                   mockLimitedPartnershipGrsConnector,
+                                                 partnershipGrsConnector =
+                                                   mockPartnershipGrsConnector,
                                                  registrationConnector = mockRegistrationConnector,
                                                  mcc = mcc,
                                                  page = page
@@ -93,7 +89,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
-        mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
         val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndContinueFormAction)
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -125,7 +121,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
-        mockCreateGeneralPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
         val correctForm =
           Seq("answer" -> SCOTTISH_LIMITED_PARTNERSHIP.toString, saveAndContinueFormAction)
@@ -167,7 +163,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
-          mockCreateScottishPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
           val correctForm = Seq("answer" -> SCOTTISH_PARTNERSHIP.toString, formAction)
           await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))

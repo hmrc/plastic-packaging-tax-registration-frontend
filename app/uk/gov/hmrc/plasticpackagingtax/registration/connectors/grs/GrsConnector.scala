@@ -45,10 +45,34 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
 
   def createJourney(
     payload: GrsCreateJourneyPayload
-  )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] = {
-    val timerCtx = metrics.defaultRegistry.timer(createJourneyTimerTag).time()
-    httpClient.POST[GrsCreateJourneyPayload, HttpResponse](grsCreateJourneyUrl, payload)
+  )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] =
+    create(grsCreateJourneyUrl, payload)
+
+  def createJourney(
+    payload: GrsCreateJourneyPayload,
+    grsCreateJourneyUrlForPartnership: String
+  )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] =
+    create(grsCreateJourneyUrlForPartnership, payload)
+
+  def getDetails(
+    journeyId: String
+  )(implicit rds: HttpReads[GrsResponse], hc: HeaderCarrier): Future[TranslatedResponse] = {
+    val timerCtx = metrics.defaultRegistry.timer(getJourneyDetailsTimerTag).time()
+    httpClient.GET[GrsResponse](s"$grsGetDetailsUrl/$journeyId").map(translateDetails(_))
       .andThen { case _ => timerCtx.stop() }
+  }
+
+  def translateDetails(grsResponse: GrsResponse): TranslatedResponse
+
+  private def create(url: String, payload: GrsCreateJourneyPayload)(implicit
+    wts: Writes[GrsCreateJourneyPayload],
+    hc: HeaderCarrier
+  ): Future[RedirectUrl] = {
+    val timerCtx = metrics.defaultRegistry.timer(createJourneyTimerTag).time()
+    httpClient.POST[GrsCreateJourneyPayload, HttpResponse](url, payload)
+      .andThen {
+        case _ => timerCtx.stop()
+      }
       .map {
         case response @ HttpResponse(CREATED, _, _) =>
           val url = (response.json \ "journeyStartUrl").as[String]
@@ -61,13 +85,4 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
       }
   }
 
-  def getDetails(
-    journeyId: String
-  )(implicit rds: HttpReads[GrsResponse], hc: HeaderCarrier): Future[TranslatedResponse] = {
-    val timerCtx = metrics.defaultRegistry.timer(getJourneyDetailsTimerTag).time()
-    httpClient.GET[GrsResponse](s"$grsGetDetailsUrl/$journeyId").map(translateDetails(_))
-      .andThen { case _ => timerCtx.stop() }
-  }
-
-  def translateDetails(grsResponse: GrsResponse): TranslatedResponse
 }

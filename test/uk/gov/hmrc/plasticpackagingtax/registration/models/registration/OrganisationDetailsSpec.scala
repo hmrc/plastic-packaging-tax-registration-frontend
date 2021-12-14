@@ -226,46 +226,41 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                   PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
                                                      partnershipName =
                                                        Some("Big Bad General Partners"),
-                                                     generalPartnershipDetails = Some(
-                                                       GeneralPartnershipDetails(sautr = "12345678",
-                                                                                 postcode =
-                                                                                   "BD19 3BD",
-                                                                                 registration =
-                                                                                   if (registered)
-                                                                                     Some(
-                                                                                       RegistrationDetails(
-                                                                                         identifiersMatch =
-                                                                                           true,
-                                                                                         verificationStatus =
-                                                                                           Some(
-                                                                                             "PASS"
-                                                                                           ),
-                                                                                         registrationStatus =
-                                                                                           "REGISTERED",
-                                                                                         registeredBusinessPartnerId =
-                                                                                           Some(
-                                                                                             "XP001"
-                                                                                           )
-                                                                                       )
-                                                                                     )
-                                                                                   else
-                                                                                     Some(
-                                                                                       RegistrationDetails(
-                                                                                         identifiersMatch =
-                                                                                           true,
-                                                                                         verificationStatus =
-                                                                                           Some(
-                                                                                             "FAIL"
-                                                                                           ),
-                                                                                         registrationStatus =
-                                                                                           "REGISTRATION_NOT_CALLED",
-                                                                                         registeredBusinessPartnerId =
-                                                                                           None
-                                                                                       )
-                                                                                     )
+                                                     incorporatedPartnershipDetails = Some(
+                                                       IncorporatedPartnershipDetails(
+                                                         sautr = "12345678",
+                                                         postcode =
+                                                           "BD19 3BD",
+                                                         registration =
+                                                           if (registered)
+                                                             Some(
+                                                               RegistrationDetails(
+                                                                 identifiersMatch =
+                                                                   true,
+                                                                 verificationStatus =
+                                                                   Some("PASS"),
+                                                                 registrationStatus =
+                                                                   "REGISTERED",
+                                                                 registeredBusinessPartnerId =
+                                                                   Some("XP001")
+                                                               )
+                                                             )
+                                                           else
+                                                             Some(
+                                                               RegistrationDetails(
+                                                                 identifiersMatch =
+                                                                   true,
+                                                                 verificationStatus =
+                                                                   Some("FAIL"),
+                                                                 registrationStatus =
+                                                                   "REGISTRATION_NOT_CALLED",
+                                                                 registeredBusinessPartnerId =
+                                                                   None
+                                                               )
+                                                             ),
+                                                         companyProfile = None
                                                        )
-                                                     ),
-                                                     scottishPartnershipDetails = None
+                                                     )
                                   )
                                 ),
                                 subscriptionStatus = subscriptionStatus
@@ -276,9 +271,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                   PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
                                                      partnershipName =
                                                        Some("Big Bad Scottish Partners"),
-                                                     generalPartnershipDetails = None,
-                                                     scottishPartnershipDetails = Some(
-                                                       ScottishPartnershipDetails(
+                                                     incorporatedPartnershipDetails = Some(
+                                                       IncorporatedPartnershipDetails(
                                                          sautr = "12345678",
                                                          postcode = "BD19 3BD",
                                                          registration =
@@ -303,7 +297,8 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                                                                    "REGISTRATION_NOT_CALLED",
                                                                  registeredBusinessPartnerId = None
                                                                )
-                                                             )
+                                                             ),
+                                                         companyProfile = None
                                                        )
                                                      )
                                   )

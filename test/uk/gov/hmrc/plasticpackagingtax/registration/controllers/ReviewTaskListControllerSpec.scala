@@ -152,7 +152,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
-        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
 
         val result = controller.displayPage()(getRequest())
 

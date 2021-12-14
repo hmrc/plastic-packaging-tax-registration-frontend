@@ -17,51 +17,34 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
 import com.kenshoo.play.metrics.Metrics
-import play.api.Logger
-import play.api.http.Status.CREATED
-import play.api.libs.json.Writes
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{
-  HeaderCarrier,
-  HttpClient,
-  HttpReads,
-  HttpResponse,
-  InternalServerException
-}
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.ScottishPartnershipGrsConnector.{
-  CreateJourneyTimer,
-  GetDetailsTimer
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  GrsLimitedPartnershipDetails,
-  LimitedPartnershipDetails,
-  PartnershipGrsCreateRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.GeneralPartnershipGrsConnector.{CreateJourneyTimer, GetDetailsTimer}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{GrsIncorporatedPartnershipDetails, IncorporatedPartnershipDetails, PartnershipGrsCreateRequest}
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
-abstract class PartnershipGrsConnector(
+@Singleton
+class PartnershipGrsConnector @Inject() (
   httpClient: HttpClient,
   config: AppConfig,
-  metrics: Metrics,
-  override val grsCreateJourneyUrl: String
+  metrics: Metrics
 )(implicit ec: ExecutionContext)
     extends GrsConnector[
       PartnershipGrsCreateRequest,
-      GrsLimitedPartnershipDetails,
-      LimitedPartnershipDetails
-    ](httpClient,
-      metrics,
-      grsCreateJourneyUrl,
-      config.partnershipJourneyUrl,
-      CreateJourneyTimer,
-      GetDetailsTimer
-    ) {
+      GrsIncorporatedPartnershipDetails,
+      IncorporatedPartnershipDetails
+    ](httpClient, metrics, "", config.partnershipJourneyUrl, CreateJourneyTimer, GetDetailsTimer) {
 
   def translateDetails(
-    grsLimitedPartnershipDetails: GrsLimitedPartnershipDetails
-  ): LimitedPartnershipDetails =
-    LimitedPartnershipDetails(grsLimitedPartnershipDetails)
+    grsIncorporatedPartnershipDetails: GrsIncorporatedPartnershipDetails
+  ): IncorporatedPartnershipDetails =
+    IncorporatedPartnershipDetails(grsIncorporatedPartnershipDetails)
 
+}
+
+object GeneralPartnershipGrsConnector {
+  val CreateJourneyTimer = "ppt.partnership.create.journey.timer"
+  val GetDetailsTimer    = "ppt.partnership.get.details.timer"
 }

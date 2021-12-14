@@ -58,9 +58,7 @@ class GrsControllerSpec extends ControllerSpec {
                       mockUkCompanyGrsConnector,
                       mockSoleTraderGrsConnector,
                       mockRegisteredSocietyGrsConnector,
-                      mockGeneralPartnershipGrsConnector,
-                      mockScottishPartnershipGrsConnector,
-                      mockLimitedPartnershipGrsConnector,
+                      mockPartnershipGrsConnector,
                       mockSubscriptionsConnector,
                       mcc
     )(ec)
@@ -203,7 +201,7 @@ class GrsControllerSpec extends ControllerSpec {
 
       "generalPartnership details are missing" in {
         authorizedUser()
-        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
         mockRegistrationFind(
           unregisteredGeneralPartnership.copy(organisationDetails =
             unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails = None)
@@ -218,7 +216,7 @@ class GrsControllerSpec extends ControllerSpec {
 
       "unsupported generalPartnership type" in {
         authorizedUser()
-        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetailsWithRegisteredNotCalled)
         mockRegistrationFind(
           unregisteredGeneralPartnership.copy(organisationDetails =
             unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails =
@@ -239,7 +237,7 @@ class GrsControllerSpec extends ControllerSpec {
 
       "scottishPartnership details are missing" in {
         authorizedUser()
-        mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
 
         mockRegistrationFind(
           unregisteredScottishPartnership.copy(organisationDetails =
@@ -255,7 +253,7 @@ class GrsControllerSpec extends ControllerSpec {
 
       "unsupported scottishPartnership type" in {
         authorizedUser()
-        mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetailsWithRegisteredNotCalled)
         mockRegistrationFind(
           unregisteredScottishPartnership.copy(organisationDetails =
             unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails =
@@ -413,7 +411,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private def simulateGeneralPartnershipCallback() = {
     authorizedUser()
-    mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+    mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
     mockRegistrationFind(unregisteredGeneralPartnership)
     mockRegistrationUpdate()
 
@@ -422,7 +420,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private def simulateScottishPartnershipCallback() = {
     authorizedUser()
-    mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+    mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
     mockRegistrationFind(unregisteredScottishPartnership)
     mockRegistrationUpdate()
 

@@ -21,13 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
-  GeneralPartnershipGrsConnector,
-  LimitedLiabilityPartnershipGrsConnector,
-  LimitedPartnershipGrsConnector,
-  ScottishLimitedPartnershipGrsConnector,
-  ScottishPartnershipGrsConnector
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.PartnershipGrsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
@@ -59,11 +53,7 @@ class PartnershipTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   appConfig: AppConfig,
-  generalPartnershipGrsConnector: GeneralPartnershipGrsConnector,
-  scottishPartnershipGrsConnector: ScottishPartnershipGrsConnector,
-  limitedPartnershipGrsConnector: LimitedPartnershipGrsConnector,
-  scottishLimitedPartnershipGrsConnector: ScottishLimitedPartnershipGrsConnector,
-  limitedLiabilityPartnershipGrsConnector: LimitedLiabilityPartnershipGrsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partnership_type
@@ -99,19 +89,19 @@ class PartnershipTypeController @Inject() (
                       case SaveAndContinue =>
                         partnershipType.answer match {
                           case Some(GENERAL_PARTNERSHIP) =>
-                            getGeneralPartnershipRedirectUrl()
+                            getRedirectUrl(appConfig.generalPartnershipJourneyUrl)
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(SCOTTISH_PARTNERSHIP) =>
-                            getScottishPartnershipRedirectUrl()
+                            getRedirectUrl(appConfig.scottishPartnershipJourneyUrl)
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(LIMITED_PARTNERSHIP) =>
-                            getLimitedPartnershipRedirectUrl()
+                            getRedirectUrl(appConfig.limitedPartnershipJourneyUrl)
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                            getScottishLimitedPartnershipRedirectUrl()
+                            getRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl)
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-                            getLimitedLiabilityPartnershipRedirectUrl()
+                            getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl)
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case _ =>
                             Future(
@@ -125,59 +115,16 @@ class PartnershipTypeController @Inject() (
         )
     }
 
-  private def getGeneralPartnershipRedirectUrl()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    generalPartnershipGrsConnector.createJourney(
+  private def getRedirectUrl(
+    url: String
+  )(implicit request: JourneyRequest[AnyContent]): Future[String] =
+    partnershipGrsConnector.createJourney(
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.externalSignOutLink
-      )
-    )
-
-  private def getScottishPartnershipRedirectUrl()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    scottishPartnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.externalSignOutLink
-      )
-    )
-
-  private def getLimitedPartnershipRedirectUrl()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    limitedPartnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.externalSignOutLink
-      )
-    )
-
-  private def getScottishLimitedPartnershipRedirectUrl()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    scottishLimitedPartnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.externalSignOutLink
-      )
-    )
-
-  private def getLimitedLiabilityPartnershipRedirectUrl()(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    limitedLiabilityPartnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.externalSignOutLink
-      )
+      ),
+      url
     )
 
   private def updateRegistration(
@@ -209,3 +156,5 @@ class PartnershipTypeController @Inject() (
     }
 
 }
+
+

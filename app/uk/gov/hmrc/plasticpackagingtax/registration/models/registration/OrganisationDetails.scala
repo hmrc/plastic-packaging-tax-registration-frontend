@@ -62,18 +62,10 @@ case class OrganisationDetails(
     case Some(PARTNERSHIP) =>
       partnershipDetails.flatMap { partnershipDetails =>
         partnershipDetails.partnershipType match {
-          case PartnershipTypeEnum.GENERAL_PARTNERSHIP =>
-            partnershipDetails.generalPartnershipDetails.flatMap { orgDetails =>
-              orgDetails.registration
-            }
-          case PartnershipTypeEnum.SCOTTISH_PARTNERSHIP =>
-            partnershipDetails.scottishPartnershipDetails.flatMap { orgDetails =>
-              orgDetails.registration
-            }
           case PartnershipTypeEnum.LIMITED_PARTNERSHIP |
-              PartnershipTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP |
-              PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP =>
-            partnershipDetails.limitedPartnershipDetails.flatMap { orgDetails =>
+              PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
+              PartnershipTypeEnum.SCOTTISH_PARTNERSHIP | PartnershipTypeEnum.GENERAL_PARTNERSHIP =>
+            partnershipDetails.incorporatedPartnershipDetails.flatMap { orgDetails =>
               orgDetails.registration
             }
           case _ => None

@@ -25,12 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  SubscriptionCreateResponse,
-  SubscriptionCreateResponseFailure,
-  SubscriptionCreateResponseSuccess,
-  SubscriptionStatusResponse
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{SubscriptionCreateResponse, SubscriptionCreateResponseFailure, SubscriptionCreateResponseSuccess, SubscriptionStatusResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,14 +40,8 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   val mockSoleTraderGrsConnector: SoleTraderGrsConnector = mock[SoleTraderGrsConnector]
 
-  val mockGeneralPartnershipGrsConnector: GeneralPartnershipGrsConnector =
-    mock[GeneralPartnershipGrsConnector]
-
-  val mockScottishPartnershipGrsConnector: ScottishPartnershipGrsConnector =
-    mock[ScottishPartnershipGrsConnector]
-
-  val mockLimitedPartnershipGrsConnector: LimitedPartnershipGrsConnector =
-    mock[LimitedPartnershipGrsConnector]
+  val mockPartnershipGrsConnector: PartnershipGrsConnector =
+    mock[PartnershipGrsConnector]
 
   val mockSubscriptionsConnector: SubscriptionsConnector         = mock[SubscriptionsConnector]
   val mockEmailVerificationConnector: EmailVerificationConnector = mock[EmailVerificationConnector]
@@ -75,17 +64,11 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     when(mockSoleTraderGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(soleTraderDetails))
 
-  def mockGetGeneralPartnershipDetails(
-    generalPartnershipDetails: GeneralPartnershipDetails
-  ): OngoingStubbing[Future[GeneralPartnershipDetails]] =
-    when(mockGeneralPartnershipGrsConnector.getDetails(any())(any(), any()))
-      .thenReturn(Future(generalPartnershipDetails))
-
-  def mockGetScottishPartnershipDetails(
-    scottishPartnershipDetails: ScottishPartnershipDetails
-  ): OngoingStubbing[Future[ScottishPartnershipDetails]] =
-    when(mockScottishPartnershipGrsConnector.getDetails(any())(any(), any()))
-      .thenReturn(Future(scottishPartnershipDetails))
+  def mockGetIncorporatedPartnershipDetails(
+                                             incorporatedPartnershipDetails: IncorporatedPartnershipDetails
+  ): OngoingStubbing[Future[IncorporatedPartnershipDetails]] =
+    when(mockPartnershipGrsConnector.getDetails(any())(any(), any()))
+      .thenReturn(Future(incorporatedPartnershipDetails))
 
   def mockGetSoleTraderDetailsFailure(ex: Exception): OngoingStubbing[Future[SoleTraderDetails]] =
     when(mockSoleTraderGrsConnector.getDetails(any())(any(), any()))
@@ -93,8 +76,8 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   def mockGetPartnershipDetailsFailure(
     ex: Exception
-  ): OngoingStubbing[Future[GeneralPartnershipDetails]] =
-    when(mockGeneralPartnershipGrsConnector.getDetails(any())(any(), any()))
+  ): OngoingStubbing[Future[IncorporatedPartnershipDetails]] =
+    when(mockPartnershipGrsConnector.getDetails(any())(any(), any()))
       .thenThrow(ex)
 
   def mockGetUkCompanyDetailsFailure(ex: Exception): OngoingStubbing[Future[IncorporationDetails]] =
@@ -106,21 +89,12 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest])(any(), any())
     ).thenReturn(Future.successful(redirectUrl))
 
-  def mockCreateGeneralPartnershipGrsJourneyCreation(
+  def mockCreatePartnershipGrsJourneyCreation(
     redirectUrl: String
   ): OngoingStubbing[Future[String]] =
     when(
-      mockGeneralPartnershipGrsConnector.createJourney(any[PartnershipGrsCreateRequest])(any(),
-                                                                                         any()
-      )
-    ).thenReturn(Future.successful(redirectUrl))
-
-  def mockCreateScottishPartnershipGrsJourneyCreation(
-    redirectUrl: String
-  ): OngoingStubbing[Future[String]] =
-    when(
-      mockScottishPartnershipGrsConnector.createJourney(any[PartnershipGrsCreateRequest])(any(),
-                                                                                          any()
+      mockPartnershipGrsConnector.createJourney(any[PartnershipGrsCreateRequest], any[String])(any(),
+        any()
       )
     ).thenReturn(Future.successful(redirectUrl))
 
