@@ -38,6 +38,7 @@ date.day.format.error = Day must only contain numbers
 date.day.decimal.error = Day must not include decimals
 date.day.outOfRange.error = Day must be a number between 1 and 31
 date.day.leadingBlankSpace.error = Day must not have leading spaces
+date.day.trailingBlankSpace.error = Day must not have trailing spaces
 date.month.outOfRange.error = Day must be a number between 1 and 12
 date.month = Month
 date.month.error = Enter a valid month
@@ -46,6 +47,7 @@ date.month.format.error = Month must only contain numbers
 date.month.decimal.error = Month must not include decimals
 date.month.outOfRange.error = Month must be a number between 1 and 12
 date.month.leadingBlankSpace.error = Month must not have leading spaces
+date.month.trailingBlankSpace.error = Month must not have trailing spaces
 
 date.year = Year
 date.year.error = Enter a valid year
@@ -53,6 +55,7 @@ date.year.empty.error = Enter the year
 date.year.format.error = Year must only contain numbers
 date.year.decimal.error = Year must not include decimals
 date.year.leadingBlankSpace.error = Year must not have leading spaces
+date.year.trailingBlankSpace.error = Year must not have trailing spaces
 date.empty.error = Error: {0} cannot be empty
 
 error.title = Sorry, there is a problem with the service
@@ -131,6 +134,7 @@ liabilityWeight.empty.error = Enter the weight, in kilograms
 liabilityWeight.below.threshold.error = Weight must be 0kg or more
 liabilityWeight.format.error = Weight must be entered as numbers only
 liabilityWeight.leadingBlankSpace.error = Weight must not have leading spaces
+liabilityWeight.trailingBlankSpace.error = Weight must not have trailing spaces
 liabilityWeight.decimal.error = Weight must not include decimals
 
 liabilityExpectedWeightPage.sectionHeader = Eligibility check
@@ -144,6 +148,7 @@ liabilityExpectedWeight.outOfRange.error = Expected weight must be 99,999,999kg 
 liabilityExpectedWeight.empty.error = Enter the expected weight, in kilograms
 liabilityExpectedWeight.decimal.error = Expected weight must not include decimals
 liabilityExpectedWeight.leadingBlankSpace.error = Expected weight must not have leading spaces
+liabilityExpectedWeight.trailingBlankSpace.error = Expected weight must not have trailing spaces
 
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date

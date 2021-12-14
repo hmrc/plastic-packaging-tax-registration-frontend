@@ -39,23 +39,26 @@ object Date {
 
   val dateEmptyError = "date.empty.error"
 
-  val dayEmptyError             = "date.day.empty.error"
-  val dayFormatError            = "date.day.format.error"
-  val dayDecimalError           = "date.day.decimal.error"
-  val dayOutOfRangeError        = "date.day.outOfRange.error"
-  val dayLeadingBlankSpaceError = "date.day.leadingBlankSpace.error"
+  val dayEmptyError              = "date.day.empty.error"
+  val dayFormatError             = "date.day.format.error"
+  val dayDecimalError            = "date.day.decimal.error"
+  val dayOutOfRangeError         = "date.day.outOfRange.error"
+  val dayLeadingBlankSpaceError  = "date.day.leadingBlankSpace.error"
+  val dayTrailingBlankSpaceError = "date.day.trailingBlankSpace.error"
 
-  val monthEmptyError             = "date.month.empty.error"
-  val monthFormatError            = "date.month.format.error"
-  val monthDecimalError           = "date.month.decimal.error"
-  val monthOutOfRangeError        = "date.month.outOfRange.error"
-  val monthLeadingBlankSpaceError = "date.month.leadingBlankSpace.error"
+  val monthEmptyError              = "date.month.empty.error"
+  val monthFormatError             = "date.month.format.error"
+  val monthDecimalError            = "date.month.decimal.error"
+  val monthOutOfRangeError         = "date.month.outOfRange.error"
+  val monthLeadingBlankSpaceError  = "date.month.leadingBlankSpace.error"
+  val monthTrailingBlankSpaceError = "date.month.trailingBlankSpace.error"
 
-  val yearEmptyError             = "date.year.empty.error"
-  val yearFormatError            = "date.year.format.error"
-  val yearDecimalError           = "date.year.decimal.error"
-  val yearOutOfRangeError        = "date.year.outOfRange.error"
-  val yearLeadingBlankSpaceError = "date.year.leadingBlankSpace.error"
+  val yearEmptyError              = "date.year.empty.error"
+  val yearFormatError             = "date.year.format.error"
+  val yearDecimalError            = "date.year.decimal.error"
+  val yearOutOfRangeError         = "date.year.outOfRange.error"
+  val yearLeadingBlankSpaceError  = "date.year.leadingBlankSpace.error"
+  val yearTrailingBlankSpaceError = "date.year.trailingBlankSpace.error"
 
   private val dayIsWithinRange: Option[Int] => Boolean =
     day => !day.exists(d => d < 1 || d > 31)
@@ -72,35 +75,38 @@ object Date {
   private val hasNoLeadingBlankSpace: Option[String] => Boolean = input =>
     input.isEmpty || input.forall(i => !i.startsWith(" "))
 
+  private val hasNoTrailingBlankSpace: Option[String] => Boolean = input =>
+    input.isEmpty || input.forall(i => !i.endsWith(" "))
+
   def mapping(): Mapping[Date] =
     Forms.mapping(
       day -> Forms.optional(text()).verifying(dayEmptyError, _.nonEmpty).verifying(
         dayLeadingBlankSpaceError,
         hasNoLeadingBlankSpace
-      ).transform[Option[String]](input => input.map(_.trim), input => input).verifying(
-        dayFormatError,
-        isValidNumber
-      ).verifying(dayDecimalError, isWholeNumber)
+      ).verifying(dayTrailingBlankSpaceError, hasNoTrailingBlankSpace).transform[Option[String]](
+        input => input.map(_.trim),
+        input => input
+      ).verifying(dayFormatError, isValidNumber).verifying(dayDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
                                 int => int.map(_.toString)
         ).verifying(dayOutOfRangeError, dayIsWithinRange),
       month -> Forms.optional(text()).verifying(monthEmptyError, _.nonEmpty).verifying(
         monthLeadingBlankSpaceError,
         hasNoLeadingBlankSpace
-      ).transform[Option[String]](input => input.map(_.trim), input => input).verifying(
-        monthFormatError,
-        isValidNumber
-      ).verifying(monthDecimalError, isWholeNumber)
+      ).verifying(monthTrailingBlankSpaceError, hasNoTrailingBlankSpace).transform[Option[String]](
+        input => input.map(_.trim),
+        input => input
+      ).verifying(monthFormatError, isValidNumber).verifying(monthDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
                                 int => int.map(_.toString)
         ).verifying(monthOutOfRangeError, monthIsWithinRange),
       year -> Forms.optional(text()).verifying(yearEmptyError, _.nonEmpty).verifying(
         yearLeadingBlankSpaceError,
         hasNoLeadingBlankSpace
-      ).transform[Option[String]](input => input.map(_.trim), input => input).verifying(
-        yearFormatError,
-        isValidNumber
-      ).verifying(yearDecimalError, isWholeNumber)
+      ).verifying(yearTrailingBlankSpaceError, hasNoTrailingBlankSpace).transform[Option[String]](
+        input => input.map(_.trim),
+        input => input
+      ).verifying(yearFormatError, isValidNumber).verifying(yearDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
                                 int => int.map(_.toString)
         )

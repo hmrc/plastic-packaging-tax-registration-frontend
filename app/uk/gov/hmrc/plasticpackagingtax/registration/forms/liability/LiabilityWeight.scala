@@ -28,15 +28,16 @@ case class LiabilityWeight(totalKg: Option[Long]) {}
 object LiabilityWeight {
   implicit val format = Json.format[LiabilityWeight]
 
-  val maxTotalKg                   = 99999999
-  val minTotalKg                   = 0
-  val totalKg                      = "totalKg"
-  val weightEmptyError             = "liabilityWeight.empty.error"
-  val weightFormatError            = "liabilityWeight.format.error"
-  val weightOutOfRangeError        = "liabilityWeight.outOfRange.error"
-  val weightBelowThresholdError    = "liabilityWeight.below.threshold.error"
-  val weightLeadingBlankSpaceError = "liabilityWeight.leadingBlankSpace.error"
-  val weightDecimalError           = "liabilityWeight.decimal.error"
+  val maxTotalKg                    = 99999999
+  val minTotalKg                    = 0
+  val totalKg                       = "totalKg"
+  val weightEmptyError              = "liabilityWeight.empty.error"
+  val weightFormatError             = "liabilityWeight.format.error"
+  val weightOutOfRangeError         = "liabilityWeight.outOfRange.error"
+  val weightBelowThresholdError     = "liabilityWeight.below.threshold.error"
+  val weightLeadingBlankSpaceError  = "liabilityWeight.leadingBlankSpace.error"
+  val weightTrailingBlankSpaceError = "liabilityWeight.trailingBlankSpace.error"
+  val weightDecimalError            = "liabilityWeight.decimal.error"
 
   private val weightIsValidNumber: String => Boolean = weight =>
     weight.isEmpty || Try(BigDecimal(weight)).isSuccess
@@ -53,6 +54,9 @@ object LiabilityWeight {
   private val weightHasNoLeadingBlankSpace: String => Boolean = weight =>
     weight.isEmpty || !weight.startsWith(" ")
 
+  private val weightHasNoTrailingBlankSpace: String => Boolean = weight =>
+    weight.isEmpty || !weight.endsWith(" ")
+
   def form(): Form[LiabilityWeight] =
     Form(
       mapping(
@@ -60,6 +64,7 @@ object LiabilityWeight {
           text()
             .verifying(weightEmptyError, _.nonEmpty)
             .verifying(weightLeadingBlankSpaceError, weightHasNoLeadingBlankSpace)
+            .verifying(weightTrailingBlankSpaceError, weightHasNoTrailingBlankSpace)
             .transform[String](weight => weight.trim, weight => weight)
             .verifying(weightFormatError, weightIsValidNumber)
             .verifying(weightDecimalError, weightIsWholeNumber)

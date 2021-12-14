@@ -26,17 +26,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
   dayFormatError,
   dayLeadingBlankSpaceError,
   dayOutOfRangeError,
+  dayTrailingBlankSpaceError,
   month,
   monthDecimalError,
   monthEmptyError,
   monthFormatError,
   monthLeadingBlankSpaceError,
   monthOutOfRangeError,
+  monthTrailingBlankSpaceError,
   year,
   yearDecimalError,
   yearEmptyError,
   yearFormatError,
-  yearLeadingBlankSpaceError
+  yearLeadingBlankSpaceError,
+  yearTrailingBlankSpaceError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.{
   dateFormattingError,
@@ -151,6 +154,14 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
         testFailedValidationErrors(input, expectedErrors)
       }
+
+      "contains trailing blank space" in {
+
+        val input          = Map("year" -> "2003 ", "month" -> "7", "day" -> "13")
+        val expectedErrors = Seq(FormError(year, yearTrailingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
     }
 
     "provided with month" which {
@@ -190,6 +201,13 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains leading blank space" in {
         val input          = Map("year" -> "2003", "month" -> "   7", "day" -> "13")
         val expectedErrors = Seq(FormError(month, monthLeadingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains trailing blank space" in {
+        val input          = Map("year" -> "2003", "month" -> " 7 ", "day" -> "13")
+        val expectedErrors = Seq(FormError(month, monthTrailingBlankSpaceError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -241,6 +259,14 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> " 13")
         val expectedErrors = Seq(FormError(day, dayLeadingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains trailing blank space" in {
+
+        val input          = Map("year" -> "2003", "month" -> "7", "day" -> "13  ")
+        val expectedErrors = Seq(FormError(day, dayTrailingBlankSpaceError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
