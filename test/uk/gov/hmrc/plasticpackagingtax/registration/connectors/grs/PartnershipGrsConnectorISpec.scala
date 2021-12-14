@@ -24,17 +24,21 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 
 import java.util.UUID
 
-class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
 
-  val connector: GeneralPartnershipGrsConnector =
-    app.injector.instanceOf[GeneralPartnershipGrsConnector]
+  val connector: PartnershipGrsConnector =
+    app.injector.instanceOf[PartnershipGrsConnector]
 
   val testJourneyStartUrl = "/identify-your-partnership/uuid-id/sa-utr"
+
+  val partnershipBaseUrl           = "http://localhost:20001/partnership-identification/api"
+  val generalPartnershipJourneyUrl = s"$partnershipBaseUrl/general-partnership-journey"
 
   "create journey" should {
     expectPartnershipIdentificationServiceToSuccessfullyCreateNewJourney()
@@ -42,7 +46,8 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
     "obtain a journey id from the partnership identification service" when {
       "journey creation successful" in {
-        val result = await(connector.createJourney(createJourneyRequest))
+        val result =
+          await(connector.createJourney(createJourneyRequest, generalPartnershipJourneyUrl))
 
         result mustBe testJourneyStartUrl
       }
@@ -51,7 +56,7 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
     "be timed" in {
       val timerCount = getTimer(GeneralPartnershipGrsConnector.CreateJourneyTimer).getCount
 
-      await(connector.createJourney(createJourneyRequest))
+      await(connector.createJourney(createJourneyRequest, generalPartnershipJourneyUrl))
 
       getTimer(GeneralPartnershipGrsConnector.CreateJourneyTimer).getCount mustBe (timerCount + 1)
     }
@@ -61,7 +66,7 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
         expectPartnershipIdentificationServiceToFailToCreateNewJourney(Status.INTERNAL_SERVER_ERROR)
 
         intercept[Exception] {
-          await(connector.createJourney(createJourneyRequest))
+          await(connector.createJourney(createJourneyRequest, generalPartnershipJourneyUrl))
         }
       }
     }
@@ -69,22 +74,23 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
   "get details" should {
     val journeyId = UUID.randomUUID().toString
-    val grsGeneralPartnershipDetails = GrsGeneralPartnershipDetails(sautr = "1234567890",
-                                                                    postcode = "AA1 1AA",
-                                                                    identifiersMatch = true,
-                                                                    businessVerification =
-                                                                      Some(
-                                                                        GrsBusinessVerification(
-                                                                          "PASS"
-                                                                        )
-                                                                      ),
-                                                                    registration =
-                                                                      GrsRegistration(
-                                                                        registrationStatus =
-                                                                          "REGISTERED",
-                                                                        registeredBusinessPartnerId =
-                                                                          Some("123")
-                                                                      )
+    val grsGeneralPartnershipDetails = GrsPartnershipBusinessDetails(sautr = "1234567890",
+                                                                     postcode = "AA1 1AA",
+                                                                     identifiersMatch = true,
+                                                                     businessVerification =
+                                                                       Some(
+                                                                         GrsBusinessVerification(
+                                                                           "PASS"
+                                                                         )
+                                                                       ),
+                                                                     registration =
+                                                                       GrsRegistration(
+                                                                         registrationStatus =
+                                                                           "REGISTERED",
+                                                                         registeredBusinessPartnerId =
+                                                                           Some("123")
+                                                                       ),
+                                                                     companyProfile = None
     )
 
     "obtain partnership details from the partnership identification service" in {
@@ -94,7 +100,7 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
       val actualPartnershipDetails = await(connector.getDetails(journeyId))
 
-      actualPartnershipDetails mustBe GeneralPartnershipDetails(grsGeneralPartnershipDetails)
+      actualPartnershipDetails mustBe PartnershipBusinessDetails(grsGeneralPartnershipDetails)
     }
 
     "throw exception" when {
@@ -129,14 +135,14 @@ class GeneralPartnershipGrsConnectorISpec extends ConnectorISpec with Injector w
 
   private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
     journeyId: String,
-    generalPartnershipDetails: GrsGeneralPartnershipDetails
+    grsPartnershipBusinessDetails: GrsPartnershipBusinessDetails
   ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")
         .willReturn(
           aResponse()
             .withStatus(Status.OK)
-            .withBody(Json.toJsObject(generalPartnershipDetails).toString())
+            .withBody(Json.toJsObject(grsPartnershipBusinessDetails).toString())
         )
     )
 

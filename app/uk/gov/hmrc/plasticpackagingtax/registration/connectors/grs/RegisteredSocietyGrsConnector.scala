@@ -40,7 +40,7 @@ class RegisteredSocietyGrsConnector @Inject() (
       IncorporationDetails
     ](httpClient,
       metrics,
-      config.incorpRegistedSocietyJourneyUrl,
+      Some(config.incorpRegistedSocietyJourneyUrl),
       config.incorpDetailsUrl,
       "ppt.regsoc.create.journey.timer",
       "ppt.regsoc.get.details.timer"

@@ -216,24 +216,44 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          registration = grsRegistrationDetails
     )
 
-  protected val generalPartnershipDetails: GeneralPartnershipDetails =
-    GeneralPartnershipDetails(testSatur, testPostcode, Some(registrationDetails))
+  protected val partnershipBusinessDetails: PartnershipBusinessDetails =
+    PartnershipBusinessDetails(testSatur, testPostcode, None, Some(registrationDetails))
 
-  protected val scottishPartnershipDetails: ScottishPartnershipDetails =
-    ScottishPartnershipDetails(testSatur, testPostcode, Some(registrationDetails))
+  protected val partnershipBusinessDetailsWithRegisteredNotCalled: PartnershipBusinessDetails =
+    PartnershipBusinessDetails(testSatur, testPostcode, None, Some(unregisteredRegistrationDetails))
+
+  protected val partnershipBusinessDetailsWithCompanyProfile: PartnershipBusinessDetails =
+    PartnershipBusinessDetails(testSatur,
+                               testPostcode,
+                               Some(companyProfile),
+                               Some(registrationDetails)
+    )
+
+  protected val companyProfile: CompanyProfile =
+    CompanyProfile(testCompanyName, testCompanyNumber, testCompanyAddress)
 
   protected val partnershipDetails: PartnershipDetails =
-    PartnershipDetails(
-      partnershipType = GENERAL_PARTNERSHIP,
-      generalPartnershipDetails =
-        Some(GeneralPartnershipDetails(testSatur, testPostcode, Some(registrationDetails)))
+    PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
+                       partnershipBusinessDetails =
+                         Some(
+                           PartnershipBusinessDetails(testSatur,
+                                                      testPostcode,
+                                                      None,
+                                                      Some(registrationDetails)
+                           )
+                         )
     )
 
   protected val partnershipDetailsWithScottishPartnership: PartnershipDetails =
-    PartnershipDetails(
-      partnershipType = SCOTTISH_PARTNERSHIP,
-      scottishPartnershipDetails =
-        Some(ScottishPartnershipDetails(testSatur, testPostcode, Some(registrationDetails)))
+    PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
+                       partnershipBusinessDetails =
+                         Some(
+                           PartnershipBusinessDetails(testSatur,
+                                                      testPostcode,
+                                                      None,
+                                                      Some(registrationDetails)
+                           )
+                         )
     )
 
   protected val subscriptionStatus: SubscriptionStatusResponse = SubscriptionStatusResponse(

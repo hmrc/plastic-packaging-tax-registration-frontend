@@ -93,6 +93,14 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val partnershipJourneyUrl         = s"$partnershipBaseUrl/journey"
   lazy val generalPartnershipJourneyUrl  = s"$partnershipBaseUrl/general-partnership-journey"
   lazy val scottishPartnershipJourneyUrl = s"$partnershipBaseUrl/scottish-partnership-journey"
+  lazy val limitedPartnershipJourneyUrl  = s"$partnershipBaseUrl/limited-partnership-journey"
+
+  lazy val scottishLimitedPartnershipJourneyUrl =
+    s"$partnershipBaseUrl/scottish-limited-partnership-journey"
+
+  lazy val limitedLiabilityPartnershipJourneyUrl =
+    s"$partnershipBaseUrl/limited-liability-partnership-journey"
+
   // Define other partnership URLs here?
 
   lazy val grsCallbackUrl: String = config.get[String]("urls.grsCallback")

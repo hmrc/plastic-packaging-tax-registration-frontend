@@ -31,8 +31,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRo
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -58,8 +56,7 @@ class GrsControllerSpec extends ControllerSpec {
                       mockUkCompanyGrsConnector,
                       mockSoleTraderGrsConnector,
                       mockRegisteredSocietyGrsConnector,
-                      mockGeneralPartnershipGrsConnector,
-                      mockScottishPartnershipGrsConnector,
+                      mockPartnershipGrsConnector,
                       mockSubscriptionsConnector,
                       mcc
     )(ec)
@@ -202,7 +199,7 @@ class GrsControllerSpec extends ControllerSpec {
 
       "generalPartnership details are missing" in {
         authorizedUser()
-        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+        mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
         mockRegistrationFind(
           unregisteredGeneralPartnership.copy(organisationDetails =
             unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails = None)
@@ -215,55 +212,13 @@ class GrsControllerSpec extends ControllerSpec {
         }
       }
 
-      "unsupported generalPartnership type" in {
-        authorizedUser()
-        mockGetGeneralPartnershipDetails(generalPartnershipDetails)
-        mockRegistrationFind(
-          unregisteredGeneralPartnership.copy(organisationDetails =
-            unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails =
-              Some(
-                unregisteredGeneralPartnership.organisationDetails.partnershipDetails.get.copy(
-                  partnershipType = SCOTTISH_LIMITED_PARTNERSHIP
-                )
-              )
-            )
-          )
-        )
-        mockRegistrationUpdate()
-
-        intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
-        }
-      }
-
       "scottishPartnership details are missing" in {
         authorizedUser()
-        mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+        mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
         mockRegistrationFind(
           unregisteredScottishPartnership.copy(organisationDetails =
             unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails = None)
-          )
-        )
-        mockRegistrationUpdate()
-
-        intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
-        }
-      }
-
-      "unsupported scottishPartnership type" in {
-        authorizedUser()
-        mockGetScottishPartnershipDetails(scottishPartnershipDetails)
-        mockRegistrationFind(
-          unregisteredScottishPartnership.copy(organisationDetails =
-            unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails =
-              Some(
-                unregisteredScottishPartnership.organisationDetails.partnershipDetails.get.copy(
-                  partnershipType = LIMITED_PARTNERSHIP
-                )
-              )
-            )
           )
         )
         mockRegistrationUpdate()
@@ -412,7 +367,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private def simulateGeneralPartnershipCallback() = {
     authorizedUser()
-    mockGetGeneralPartnershipDetails(generalPartnershipDetails)
+    mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredGeneralPartnership)
     mockRegistrationUpdate()
 
@@ -421,7 +376,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private def simulateScottishPartnershipCallback() = {
     authorizedUser()
-    mockGetScottishPartnershipDetails(scottishPartnershipDetails)
+    mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredScottishPartnership)
     mockRegistrationUpdate()
 
