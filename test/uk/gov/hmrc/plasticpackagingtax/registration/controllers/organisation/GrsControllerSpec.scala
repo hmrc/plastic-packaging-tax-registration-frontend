@@ -214,27 +214,6 @@ class GrsControllerSpec extends ControllerSpec {
         }
       }
 
-      "unsupported generalPartnership type" in {
-        authorizedUser()
-        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetailsWithRegisteredNotCalled)
-        mockRegistrationFind(
-          unregisteredGeneralPartnership.copy(organisationDetails =
-            unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails =
-              Some(
-                unregisteredGeneralPartnership.organisationDetails.partnershipDetails.get.copy(
-                  partnershipType = SCOTTISH_LIMITED_PARTNERSHIP
-                )
-              )
-            )
-          )
-        )
-        mockRegistrationUpdate()
-
-        intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
-        }
-      }
-
       "scottishPartnership details are missing" in {
         authorizedUser()
         mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetails)
@@ -242,27 +221,6 @@ class GrsControllerSpec extends ControllerSpec {
         mockRegistrationFind(
           unregisteredScottishPartnership.copy(organisationDetails =
             unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails = None)
-          )
-        )
-        mockRegistrationUpdate()
-
-        intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
-        }
-      }
-
-      "unsupported scottishPartnership type" in {
-        authorizedUser()
-        mockGetIncorporatedPartnershipDetails(incorporatedPartnershipDetailsWithRegisteredNotCalled)
-        mockRegistrationFind(
-          unregisteredScottishPartnership.copy(organisationDetails =
-            unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails =
-              Some(
-                unregisteredScottishPartnership.organisationDetails.partnershipDetails.get.copy(
-                  partnershipType = LIMITED_PARTNERSHIP
-                )
-              )
-            )
           )
         )
         mockRegistrationUpdate()

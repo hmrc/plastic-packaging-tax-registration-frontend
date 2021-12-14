@@ -36,7 +36,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
@@ -242,28 +241,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val result = controller.displayPage()(getRequest())
 
         intercept[Exception](status(result))
-      }
-
-      "submit unsupported partnership type" in {
-        authorizedUser()
-        val unsupportedPartnershipTypeRegistration =
-          aCompletedGeneralPartnershipRegistration
-            .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
-            .copy(organisationDetails =
-              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(partnershipDetails =
-                Some(
-                  aCompletedGeneralPartnershipRegistration.organisationDetails.partnershipDetails.get.copy(
-                    partnershipType = LIMITED_LIABILITY_PARTNERSHIP
-                  )
-                )
-              )
-            )
-        mockRegistrationFind(unsupportedPartnershipTypeRegistration)
-        mockSubscriptionSubmit(subscriptionCreate)
-
-        val result = controller.submit()(postRequest(JsObject.empty))
-
-        intercept[IllegalStateException](status(result))
       }
 
       "submit registration with missing business partner id" in {

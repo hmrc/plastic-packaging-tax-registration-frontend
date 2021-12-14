@@ -25,7 +25,12 @@ import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{SubscriptionCreateResponse, SubscriptionCreateResponseFailure, SubscriptionCreateResponseSuccess, SubscriptionStatusResponse}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  SubscriptionCreateResponse,
+  SubscriptionCreateResponseFailure,
+  SubscriptionCreateResponseSuccess,
+  SubscriptionStatusResponse
+}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -65,7 +70,7 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       .thenReturn(Future(soleTraderDetails))
 
   def mockGetIncorporatedPartnershipDetails(
-                                             incorporatedPartnershipDetails: IncorporatedPartnershipDetails
+    incorporatedPartnershipDetails: IncorporatedPartnershipDetails
   ): OngoingStubbing[Future[IncorporatedPartnershipDetails]] =
     when(mockPartnershipGrsConnector.getDetails(any())(any(), any()))
       .thenReturn(Future(incorporatedPartnershipDetails))
@@ -93,7 +98,8 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
     redirectUrl: String
   ): OngoingStubbing[Future[String]] =
     when(
-      mockPartnershipGrsConnector.createJourney(any[PartnershipGrsCreateRequest], any[String])(any(),
+      mockPartnershipGrsConnector.createJourney(any[PartnershipGrsCreateRequest], any[String])(
+        any(),
         any()
       )
     ).thenReturn(Future.successful(redirectUrl))

@@ -30,7 +30,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRo
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
@@ -111,25 +110,6 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-      }
-    }
-
-    "redirect to unsupported business entity type page" when {
-      "an unsupported partnership type was selected" in {
-        val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails)))
-
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-
-        val correctForm =
-          Seq("answer" -> SCOTTISH_LIMITED_PARTNERSHIP.toString, saveAndContinueFormAction)
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-        redirectLocation(result) mustBe Some(
-          routes.OrganisationTypeNotSupportedController.onPageLoad().url
-        )
       }
     }
 

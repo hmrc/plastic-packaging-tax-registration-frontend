@@ -48,11 +48,11 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
   )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] =
     create(grsCreateJourneyUrl, payload)
 
-  def createJourney(
-    payload: GrsCreateJourneyPayload,
-    grsCreateJourneyUrlForPartnership: String
-  )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] =
-    create(grsCreateJourneyUrlForPartnership, payload)
+  def createJourney(payload: GrsCreateJourneyPayload, grsCreateJourneyUrl: String)(implicit
+    wts: Writes[GrsCreateJourneyPayload],
+    hc: HeaderCarrier
+  ): Future[RedirectUrl] =
+    create(grsCreateJourneyUrl, payload)
 
   def getDetails(
     journeyId: String

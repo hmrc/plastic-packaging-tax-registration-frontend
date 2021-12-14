@@ -37,14 +37,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{ro
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  PartnershipTypeEnum,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.PartnershipTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
@@ -229,27 +222,20 @@ class GrsController @Inject() (
   ): Future[Either[ServiceError, Registration]] =
     request.registration.organisationDetails.partnershipDetails match {
       case Some(partnershipDetails) =>
-        partnershipDetails.partnershipType match {
-          case LIMITED_PARTNERSHIP | LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP |
-              SCOTTISH_PARTNERSHIP | GENERAL_PARTNERSHIP =>
-            for {
-              incorporatedPartnershipDetails <- partnershipGrsConnector.getDetails(journeyId)
-              result <- update { registration =>
-                val updatedOrgDetails = updatePartnershipDetails(organisationDetails =
-                                                                   registration.organisationDetails,
-                                                                 incorporatedPartnershipDetails =
-                                                                   Some(
-                                                                     incorporatedPartnershipDetails
-                                                                   ),
-                                                                 partnershipDetails.partnershipType
-                )
-                registration.copy(incorpJourneyId = Some(journeyId),
-                                  organisationDetails = updatedOrgDetails
-                )
-              }
-            } yield result
-          case _ => throw new IllegalStateException("Unsupported partnership type")
-        }
+        for {
+          incorporatedPartnershipDetails <- partnershipGrsConnector.getDetails(journeyId)
+          result <- update { registration =>
+            val updatedOrgDetails = updatePartnershipDetails(organisationDetails =
+                                                               registration.organisationDetails,
+                                                             incorporatedPartnershipDetails =
+                                                               Some(incorporatedPartnershipDetails),
+                                                             partnershipDetails.partnershipType
+            )
+            registration.copy(incorpJourneyId = Some(journeyId),
+                              organisationDetails = updatedOrgDetails
+            )
+          }
+        } yield result
       case _ => throw new IllegalStateException("Missing partnership details")
     }
 

@@ -24,6 +24,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 
@@ -36,7 +37,7 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
 
   val testJourneyStartUrl = "/identify-your-partnership/uuid-id/sa-utr"
 
-  val partnershipBaseUrl = "/partnership-identification/api"
+  val partnershipBaseUrl           = "http://localhost:20001/partnership-identification/api"
   val generalPartnershipJourneyUrl = s"$partnershipBaseUrl/general-partnership-journey"
 
   "create journey" should {
@@ -45,7 +46,8 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
 
     "obtain a journey id from the partnership identification service" when {
       "journey creation successful" in {
-        val result = await(connector.createJourney(createJourneyRequest, generalPartnershipJourneyUrl))
+        val result =
+          await(connector.createJourney(createJourneyRequest, generalPartnershipJourneyUrl))
 
         result mustBe testJourneyStartUrl
       }
@@ -73,22 +75,22 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
   "get details" should {
     val journeyId = UUID.randomUUID().toString
     val grsGeneralPartnershipDetails = GrsIncorporatedPartnershipDetails(sautr = "1234567890",
-                                                                    postcode = "AA1 1AA",
-                                                                    identifiersMatch = true,
-                                                                    businessVerification =
-                                                                      Some(
-                                                                        GrsBusinessVerification(
-                                                                          "PASS"
-                                                                        )
-                                                                      ),
-                                                                    registration =
-                                                                      GrsRegistration(
-                                                                        registrationStatus =
-                                                                          "REGISTERED",
-                                                                        registeredBusinessPartnerId =
-                                                                          Some("123")
-                                                                      ),
-      companyProfile = None
+                                                                         postcode = "AA1 1AA",
+                                                                         identifiersMatch = true,
+                                                                         businessVerification =
+                                                                           Some(
+                                                                             GrsBusinessVerification(
+                                                                               "PASS"
+                                                                             )
+                                                                           ),
+                                                                         registration =
+                                                                           GrsRegistration(
+                                                                             registrationStatus =
+                                                                               "REGISTERED",
+                                                                             registeredBusinessPartnerId =
+                                                                               Some("123")
+                                                                           ),
+                                                                         companyProfile = None
     )
 
     "obtain partnership details from the partnership identification service" in {
@@ -124,7 +126,7 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
 
   private def expectPartnershipIdentificationServiceToFailToCreateNewJourney(statusCode: Int) =
     stubFor(
-      post(generalPartnershipJourneyUrl)
+      post("/partnership-identification/api/general-partnership-journey")
         .willReturn(
           aResponse()
             .withStatus(statusCode)
@@ -132,8 +134,8 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
     )
 
   private def expectPartnershipIdentificationServiceToReturnPartnershipDetails(
-                                                                                journeyId: String,
-                                                                                grsIncorporatedPartnershipDetails: GrsIncorporatedPartnershipDetails
+    journeyId: String,
+    grsIncorporatedPartnershipDetails: GrsIncorporatedPartnershipDetails
   ) =
     stubFor(
       WireMock.get(s"/partnership-identification/api/journey/$journeyId")

@@ -52,7 +52,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   GroupDetail,
   OrganisationDetails,
-  Registration,
   UserEnrolmentDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
@@ -220,13 +219,23 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val incorporatedPartnershipDetails: IncorporatedPartnershipDetails =
     IncorporatedPartnershipDetails(testSatur, testPostcode, None, Some(registrationDetails))
 
-  protected val incorporatedPartnershipDetailsWithRegisteredNotCalled: IncorporatedPartnershipDetails =
-    IncorporatedPartnershipDetails(testSatur, testPostcode, None, Some(unregisteredRegistrationDetails))
+  protected val incorporatedPartnershipDetailsWithRegisteredNotCalled
+    : IncorporatedPartnershipDetails =
+    IncorporatedPartnershipDetails(testSatur,
+                                   testPostcode,
+                                   None,
+                                   Some(unregisteredRegistrationDetails)
+    )
 
   protected val incorporatedPartnershipDetailsWithCompanyProfile: IncorporatedPartnershipDetails =
-    IncorporatedPartnershipDetails(testSatur, testPostcode, Some(companyProfile), Some(registrationDetails))
+    IncorporatedPartnershipDetails(testSatur,
+                                   testPostcode,
+                                   Some(companyProfile),
+                                   Some(registrationDetails)
+    )
 
-  protected val companyProfile: CompanyProfile = CompanyProfile(testCompanyName, testCompanyNumber, testCompanyAddress)
+  protected val companyProfile: CompanyProfile =
+    CompanyProfile(testCompanyName, testCompanyNumber, testCompanyAddress)
 
   protected val partnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,

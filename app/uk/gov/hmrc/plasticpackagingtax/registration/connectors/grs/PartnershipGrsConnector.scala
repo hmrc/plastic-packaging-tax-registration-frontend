@@ -19,8 +19,15 @@ package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 import com.kenshoo.play.metrics.Metrics
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.GeneralPartnershipGrsConnector.{CreateJourneyTimer, GetDetailsTimer}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{GrsIncorporatedPartnershipDetails, IncorporatedPartnershipDetails, PartnershipGrsCreateRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.GeneralPartnershipGrsConnector.{
+  CreateJourneyTimer,
+  GetDetailsTimer
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  GrsIncorporatedPartnershipDetails,
+  IncorporatedPartnershipDetails,
+  PartnershipGrsCreateRequest
+}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
