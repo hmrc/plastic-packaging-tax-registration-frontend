@@ -27,50 +27,60 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
   Key,
   SummaryListRow
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features.isUkCompanyPrivateBeta
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 
 @Singleton
 class ViewUtils @Inject() (countryService: CountryService) {
 
   def summaryListRow(key: String, value: Option[String], call: Option[Call] = None)(implicit
+    request: JourneyRequest[_],
     messages: Messages
   ): SummaryListRow =
     SummaryListRow(key = Key(content = Text(messages(key))),
                    value = Value(content = HtmlContent(value.getOrElse(""))),
-                   actions = call.flatMap(
-                     c =>
-                       Some(
-                         Actions(items =
-                           Seq(
-                             ActionItem(href = c.url,
-                                        content = Text(messages("site.link.change")),
-                                        visuallyHiddenText = Some(messages(key))
+                   actions =
+                     if (!request.isFeatureFlagEnabled(isUkCompanyPrivateBeta))
+                       call.flatMap(
+                         c =>
+                           Some(
+                             Actions(items =
+                               Seq(
+                                 ActionItem(href = c.url,
+                                            content = Text(messages("site.link.change")),
+                                            visuallyHiddenText = Some(messages(key))
+                                 )
+                               )
                              )
                            )
-                         )
                        )
-                   )
+                     else None
     )
 
   def summaryListRowWithValue(key: String, value: Value, call: Option[Call] = None)(implicit
+    request: JourneyRequest[_],
     messages: Messages
   ): SummaryListRow =
     SummaryListRow(key = Key(content = Text(messages(key))),
                    value = value,
-                   actions = call.flatMap(
-                     c =>
-                       Some(
-                         Actions(items =
-                           Seq(
-                             ActionItem(href = c.url,
-                                        content = Text(messages("site.link.change")),
-                                        visuallyHiddenText = Some(messages(key))
+                   actions =
+                     if (!request.isFeatureFlagEnabled(isUkCompanyPrivateBeta))
+                       call.flatMap(
+                         c =>
+                           Some(
+                             Actions(items =
+                               Seq(
+                                 ActionItem(href = c.url,
+                                            content = Text(messages("site.link.change")),
+                                            visuallyHiddenText = Some(messages(key))
+                                 )
+                               )
                              )
                            )
-                         )
                        )
-                   )
+                     else None
     )
 
   def extractAddress(address: Address) =

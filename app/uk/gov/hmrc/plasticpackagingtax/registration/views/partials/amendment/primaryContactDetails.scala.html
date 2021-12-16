@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 @this(
         subHeading: subHeading,
@@ -25,7 +26,8 @@
         viewUtils: ViewUtils
 )
 
-@(primaryContactDetails: PrimaryContactDetails)(implicit request: Request[_], messages: Messages)
+
+@(primaryContactDetails: PrimaryContactDetails)(implicit request: JourneyRequest[_], messages: Messages)
 
 @subHeading(messages("primaryContactDetails.check.label"))
 @govukSummaryList(
