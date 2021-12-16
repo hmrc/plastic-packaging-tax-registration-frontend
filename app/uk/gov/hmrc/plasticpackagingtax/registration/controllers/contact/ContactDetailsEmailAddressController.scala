@@ -63,19 +63,9 @@ class ContactDetailsEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.primaryContactDetails.email match {
         case Some(data) =>
-          Ok(
-            page(EmailAddress.form().fill(EmailAddress(data)),
-                 routes.ContactDetailsJobTitleController.displayPage(),
-                 routes.ContactDetailsEmailAddressController.submit()
-            )
-          )
+          Ok(buildEmailPage(EmailAddress.form().fill(EmailAddress(data))))
         case _ =>
-          Ok(
-            page(EmailAddress.form(),
-                 routes.ContactDetailsJobTitleController.displayPage(),
-                 routes.ContactDetailsEmailAddressController.submit()
-            )
-          )
+          Ok(buildEmailPage(EmailAddress.form()))
       }
     }
 
@@ -85,14 +75,7 @@ class ContactDetailsEmailAddressController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[EmailAddress]) =>
-            Future.successful(
-              BadRequest(
-                page(formWithErrors,
-                     routes.ContactDetailsJobTitleController.displayPage(),
-                     routes.ContactDetailsEmailAddressController.submit()
-                )
-              )
-            ),
+            Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           emailAddress =>
             updateRegistration(formData = emailAddress, credId = request.user.credId).flatMap {
               case Right(registration) =>
@@ -106,6 +89,14 @@ class ContactDetailsEmailAddressController @Inject() (
             }
         )
     }
+
+  private def buildEmailPage(
+    form: Form[EmailAddress]
+  )(implicit request: JourneyRequest[AnyContent]) =
+    page(form,
+         routes.ContactDetailsJobTitleController.displayPage(),
+         routes.ContactDetailsEmailAddressController.submit()
+    )
 
   private def updateRegistration(formData: EmailAddress, credId: String)(implicit
     request: JourneyRequest[AnyContent]
@@ -147,7 +138,7 @@ class ContactDetailsEmailAddressController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[Result] =
     if (appConfig.emailVerificationEnabled)
-      EmailVerificationService.getPrimaryEmailStatus(registration) match {
+      LocalEmailVerification.getPrimaryEmailStatus(registration) match {
         case VERIFIED =>
           Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
         case NOT_VERIFIED =>
@@ -186,7 +177,7 @@ class ContactDetailsEmailAddressController @Inject() (
                              verificationJourneyStartUrl.split("/").slice(0, 4).last
             ).flatMap {
               case Left(error) => throw error
-              case Right(registration) =>
+              case Right(_) =>
                 Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
             }
 

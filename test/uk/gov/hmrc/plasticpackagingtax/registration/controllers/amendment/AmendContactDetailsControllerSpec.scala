@@ -51,7 +51,6 @@ class AmendContactDetailsControllerSpec
 
   private val amendNamePage        = mock[full_name_page]
   private val amendJobTitlePage    = mock[job_title_page]
-  private val amendEmailPage       = mock[email_address_page]
   private val amendPhoneNumberPage = mock[phone_number_page]
   private val amendAddressPage     = mock[address_page]
 
@@ -61,10 +60,6 @@ class AmendContactDetailsControllerSpec
 
   when(amendJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("job title amendment")
-  )
-
-  when(amendEmailPage.apply(any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("email amendment")
   )
 
   when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
@@ -81,7 +76,6 @@ class AmendContactDetailsControllerSpec
                                       mockAmendmentJourneyAction,
                                       amendNamePage,
                                       amendJobTitlePage,
-                                      amendEmailPage,
                                       amendPhoneNumberPage,
                                       amendAddressPage,
                                       countryService
@@ -121,7 +115,6 @@ class AmendContactDetailsControllerSpec
                (req: Request[AnyContent]) => controller.jobTitle()(req),
                "job title amendment"
               ),
-              ("email", (req: Request[AnyContent]) => controller.email()(req), "email amendment"),
               ("phone number",
                (req: Request[AnyContent]) => controller.phoneNumber()(req),
                "phone number amendment"
@@ -187,13 +180,6 @@ class AmendContactDetailsControllerSpec
          (req: Request[AnyContent]) => controller.updateJobTitle()(req),
          (reg: Registration) => reg.primaryContactDetails.jobTitle mustBe Some("CEO"),
          "job title amendment"
-        ),
-        ("email",
-         () => EmailAddress("xxx"),
-         () => EmailAddress("john@ppt.com"),
-         (req: Request[AnyContent]) => controller.updateEmail()(req),
-         (reg: Registration) => reg.primaryContactDetails.email mustBe Some("john@ppt.com"),
-         "email amendment"
         ),
         ("phone number",
          () => PhoneNumber("xxx"),

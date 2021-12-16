@@ -148,10 +148,16 @@ POST       /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration
 GET        /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.jobTitle()
 POST       /amend-job-title      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateJobTitle()
 
-GET        /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.email()
-POST       /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateEmail()
+GET        /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendEmailAddressController.email()
+POST       /amend-email      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendEmailAddressController.updateEmail()
 
-# TODO: we need full email verification flow
+GET        /amend-confirm-email-code   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendEmailAddressController.emailVerificationCode()
+POST       /amend-confirm-email-code   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendEmailAddressController.checkEmailVerificationCode()
+
+GET        /amend-email-confirmed                       uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendEmailAddressController.emailVerified()
+GET        /amend-email-verification-too-many-attempts  uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendEmailAddressController.emailVerificationTooManyAttempts()
+
+GET        /amend-email-confirm-change  uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendEmailAddressController.confirmEmailUpdate()
 
 GET        /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.phoneNumber()
 POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updatePhoneNumber()

@@ -33,7 +33,7 @@
         rows = Seq(
             viewUtils.summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, Some(pptRoutes.AmendContactDetailsController.updateContactName())),
             viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, Some(pptRoutes.AmendContactDetailsController.updateJobTitle())),
-            viewUtils.summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.AmendContactDetailsController.updateEmail())),
+            viewUtils.summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, Some(pptRoutes.AmendEmailAddressController.updateEmail())),
             viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, Some(pptRoutes.AmendContactDetailsController.updatePhoneNumber())),
             viewUtils.summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(viewUtils.extractAddress), Some(pptRoutes.AmendContactDetailsController.updateAddress()))
         ).filterNot(_.value.content == Empty)
