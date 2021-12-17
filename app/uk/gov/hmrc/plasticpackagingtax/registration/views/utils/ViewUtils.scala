@@ -27,7 +27,9 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
   Key,
   SummaryListRow
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.config.Features.isUkCompanyPrivateBeta
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 
 @Singleton
@@ -81,5 +83,8 @@ class ViewUtils @Inject() (countryService: CountryService) {
         address.postCode.getOrElse(""),
         countryService.getName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
+
+  def showChangeLink(call: Call)(implicit journeyRequest: JourneyRequest[_]): Option[Call] =
+    if (!journeyRequest.isFeatureFlagEnabled(isUkCompanyPrivateBeta)) Some(call) else None
 
 }
