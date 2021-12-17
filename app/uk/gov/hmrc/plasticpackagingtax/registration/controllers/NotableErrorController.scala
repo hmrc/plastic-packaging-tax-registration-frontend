@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolment_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.business_verification_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.sole_trader_verification_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   duplicate_subscription_page,
   error_page
@@ -40,6 +41,7 @@ class NotableErrorController @Inject() (
   errorNoSavePage: enrolment_failure_page,
   grsFailurePage: grs_failure_page,
   businessVerificationFailurePage: business_verification_failure_page,
+  soleTraderVerificationFailurePage: sole_trader_verification_failure_page,
   duplicateSubscriptionPage: duplicate_subscription_page
 ) extends FrontendController(mcc) with I18nSupport {
 
@@ -56,6 +58,11 @@ class NotableErrorController @Inject() (
   def businessVerificationFailure(): Action[AnyContent] =
     authenticate { implicit request =>
       Ok(businessVerificationFailurePage())
+    }
+
+  def soleTraderVerificationFailure(): Action[AnyContent] =
+    authenticate { implicit request =>
+      Ok(soleTraderVerificationFailurePage())
     }
 
   def grsFailure(): Action[AnyContent] =
