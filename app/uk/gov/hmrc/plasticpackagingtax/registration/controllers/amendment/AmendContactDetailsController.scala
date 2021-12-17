@@ -17,23 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.data.Form
-import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
-  AuthenticatedRequest,
   JourneyRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.services.{
-  CountryService,
-  EmailVerificationService
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +42,7 @@ class AmendContactDetailsController @Inject() (
   addressPage: address_page,
   countryService: CountryService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends AmendmentController(mcc, amendmentJourneyAction) {
 
   def contactName(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
@@ -200,12 +193,5 @@ class AmendContactDetailsController @Inject() (
                 routes.AmendRegistrationController.displayPage(),
                 routes.AmendContactDetailsController.updateAddress()
     )
-
-  private def updateRegistration(
-    registrationAmendment: Registration => Registration
-  )(implicit request: AuthenticatedRequest[Any], hc: HeaderCarrier) =
-    amendmentJourneyAction.updateRegistration(registrationAmendment)
-      .map(_ => Redirect(routes.AmendRegistrationController.displayPage()))
-      .recover { case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed()) }
 
 }
