@@ -19,7 +19,28 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{dateEmptyError, day, month, year}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
+  day,
+  dayDecimalError,
+  dayEmptyError,
+  dayFormatError,
+  dayLeadingBlankSpaceError,
+  dayOutOfRangeError,
+  dayTrailingBlankSpaceError,
+  month,
+  monthDecimalError,
+  monthEmptyError,
+  monthFormatError,
+  monthLeadingBlankSpaceError,
+  monthOutOfRangeError,
+  monthTrailingBlankSpaceError,
+  year,
+  yearDecimalError,
+  yearEmptyError,
+  yearFormatError,
+  yearLeadingBlankSpaceError,
+  yearTrailingBlankSpaceError
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.{
   dateFormattingError,
   dateLowerLimit,
@@ -51,9 +72,9 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
         val input = Map.empty[String, String]
         val expectedErrors =
-          Seq(FormError(year, dateEmptyError),
-              FormError(month, dateEmptyError),
-              FormError(day, dateEmptyError)
+          Seq(FormError(year, yearEmptyError),
+              FormError(month, monthEmptyError),
+              FormError(day, dayEmptyError)
           )
 
         testFailedValidationErrors(input, expectedErrors)
@@ -63,7 +84,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with year only" in {
 
       val input          = Map("year" -> "2003")
-      val expectedErrors = Seq(FormError(month, dateEmptyError), FormError(day, dateEmptyError))
+      val expectedErrors = Seq(FormError(month, monthEmptyError), FormError(day, dayEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -71,7 +92,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with month only" in {
 
       val input          = Map("month" -> "7")
-      val expectedErrors = Seq(FormError(year, dateEmptyError), FormError(day, dateEmptyError))
+      val expectedErrors = Seq(FormError(year, yearEmptyError), FormError(day, dayEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -79,7 +100,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with day only" in {
 
       val input          = Map("day" -> "13")
-      val expectedErrors = Seq(FormError(year, dateEmptyError), FormError(month, dateEmptyError))
+      val expectedErrors = Seq(FormError(year, yearEmptyError), FormError(month, monthEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -87,7 +108,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with no year" in {
 
       val input          = Map("month" -> "7", "day" -> "13")
-      val expectedErrors = Seq(FormError(year, dateEmptyError))
+      val expectedErrors = Seq(FormError(year, yearEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -95,7 +116,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with no month" in {
 
       val input          = Map("year" -> "2003", "day" -> "13")
-      val expectedErrors = Seq(FormError(month, dateEmptyError))
+      val expectedErrors = Seq(FormError(month, monthEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -103,7 +124,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "provided with no day" in {
 
       val input          = Map("year" -> "2003", "month" -> "7")
-      val expectedErrors = Seq(FormError(day, dateEmptyError))
+      val expectedErrors = Seq(FormError(day, dayEmptyError))
 
       testFailedValidationErrors(input, expectedErrors)
     }
@@ -113,7 +134,31 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map("year" -> "20A#", "month" -> "7", "day" -> "13")
-        val expectedErrors = Seq(FormError(year, "error.number"))
+        val expectedErrors = Seq(FormError(year, yearFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains decimal number" in {
+
+        val input          = Map("year" -> "2003.01", "month" -> "7", "day" -> "13")
+        val expectedErrors = Seq(FormError(year, yearDecimalError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains leading blank space" in {
+
+        val input          = Map("year" -> " 2003", "month" -> "7", "day" -> "13")
+        val expectedErrors = Seq(FormError(year, yearLeadingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains trailing blank space" in {
+
+        val input          = Map("year" -> "2003 ", "month" -> "7", "day" -> "13")
+        val expectedErrors = Seq(FormError(year, yearTrailingBlankSpaceError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -124,7 +169,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map("year" -> "2003", "month" -> "0", "day" -> "13")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("month", monthOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -132,7 +177,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is more than 12" in {
 
         val input          = Map("year" -> "2003", "month" -> "13", "day" -> "13")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("month", monthOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -140,7 +185,29 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map("year" -> "2003", "month" -> "C#", "day" -> "13")
-        val expectedErrors = Seq(FormError(month, "error.number"))
+        val expectedErrors = Seq(FormError(month, monthFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains decimal number" in {
+
+        val input          = Map("year" -> "2003", "month" -> "7.6", "day" -> "13")
+        val expectedErrors = Seq(FormError(month, monthDecimalError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains leading blank space" in {
+        val input          = Map("year" -> "2003", "month" -> "   7", "day" -> "13")
+        val expectedErrors = Seq(FormError(month, monthLeadingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains trailing blank space" in {
+        val input          = Map("year" -> "2003", "month" -> " 7 ", "day" -> "13")
+        val expectedErrors = Seq(FormError(month, monthTrailingBlankSpaceError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -151,7 +218,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> "0")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("day", dayOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -159,7 +226,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "is more than 31" in {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> "32")
-        val expectedErrors = Seq(FormError("", dateFormattingError))
+        val expectedErrors = Seq(FormError("day", dayOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -175,7 +242,31 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> "C#")
-        val expectedErrors = Seq(FormError(day, "error.number"))
+        val expectedErrors = Seq(FormError(day, dayFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains decimal number" in {
+
+        val input          = Map("year" -> "2003", "month" -> "7", "day" -> "1.5")
+        val expectedErrors = Seq(FormError(day, dayDecimalError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains leading blank space" in {
+
+        val input          = Map("year" -> "2003", "month" -> "7", "day" -> " 13")
+        val expectedErrors = Seq(FormError(day, dayLeadingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains trailing blank space" in {
+
+        val input          = Map("year" -> "2003", "month" -> "7", "day" -> "13  ")
+        val expectedErrors = Seq(FormError(day, dayTrailingBlankSpaceError))
 
         testFailedValidationErrors(input, expectedErrors)
       }

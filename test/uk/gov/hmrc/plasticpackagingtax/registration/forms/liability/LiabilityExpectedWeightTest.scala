@@ -28,7 +28,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExp
   weightDecimalError,
   weightEmptyError,
   weightFormatError,
-  weightOutOfRangeError
+  weightLeadingBlankSpaceError,
+  weightOutOfRangeError,
+  weightTrailingBlankSpaceError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 
@@ -38,7 +40,7 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
 
     "return success" when {
 
-      "is within range of 10 thousand and 100 million" in {
+      "is within range of 10 thousand and 99 999 999" in {
 
         val input = Map(answer -> "yes", totalKg -> "15000")
 
@@ -114,6 +116,24 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
 
         testFailedValidationErrors(input, expectedErrors)
       }
+
+      "contains leading blank space" in {
+
+        val input =
+          Map(answer -> "yes", totalKg -> (" " + LiabilityDetails.minimumLiabilityWeightKg))
+        val expectedErrors = Seq(FormError("totalKg", weightLeadingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains trailing blank space" in {
+
+        val input =
+          Map(answer -> "yes", totalKg -> (LiabilityDetails.minimumLiabilityWeightKg + " "))
+        val expectedErrors = Seq(FormError("totalKg", weightTrailingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
     }
   }
 
@@ -123,6 +143,7 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
   ): Unit = {
     val form = LiabilityExpectedWeight.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
+    form.errors.size must equal(1)
   }
 
 }

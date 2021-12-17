@@ -38,15 +38,17 @@ case class LiabilityExpectedWeight(
 object LiabilityExpectedWeight extends CommonFormValues {
   implicit val format: OFormat[LiabilityExpectedWeight] = Json.format[LiabilityExpectedWeight]
 
-  val maxTotalKg                = 100000000 // one hundred million
-  val answer                    = "answer"
-  val totalKg                   = "totalKg"
-  val answerError               = "liabilityExpectedWeight.answer.empty.error"
-  val weightEmptyError          = "liabilityExpectedWeight.empty.error"
-  val weightBelowThresholdError = "liabilityExpectedWeight.below.threshold.error"
-  val weightOutOfRangeError     = "liabilityExpectedWeight.outOfRange.error"
-  val weightFormatError         = "liabilityExpectedWeight.format.error"
-  val weightDecimalError        = "liabilityExpectedWeight.decimal.error"
+  val maxTotalKg                    = 99999999
+  val answer                        = "answer"
+  val totalKg                       = "totalKg"
+  val answerError                   = "liabilityExpectedWeight.answer.empty.error"
+  val weightEmptyError              = "liabilityExpectedWeight.empty.error"
+  val weightBelowThresholdError     = "liabilityExpectedWeight.below.threshold.error"
+  val weightOutOfRangeError         = "liabilityExpectedWeight.outOfRange.error"
+  val weightFormatError             = "liabilityExpectedWeight.format.error"
+  val weightDecimalError            = "liabilityExpectedWeight.decimal.error"
+  val weightLeadingBlankSpaceError  = "liabilityExpectedWeight.leadingBlankSpace.error"
+  val weightTrailingBlankSpaceError = "liabilityExpectedWeight.trailingBlankSpace.error"
 
   private val weightIsValidNumber: String => Boolean = weight =>
     weight.isEmpty || Try(BigDecimal(weight)).isSuccess
@@ -62,6 +64,12 @@ object LiabilityExpectedWeight extends CommonFormValues {
   private val weightWithinRange: String => Boolean = weight =>
     weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
 
+  private val weightHasNoLeadingBlankSpace: String => Boolean = weight =>
+    weight.isEmpty || !weight.startsWith(" ")
+
+  private val weightHasNoTrailingBlankSpace: String => Boolean = weight =>
+    weight.isEmpty || !weight.endsWith(" ")
+
   def form(): Form[LiabilityExpectedWeight] =
     Form(
       mapping(
@@ -71,6 +79,12 @@ object LiabilityExpectedWeight extends CommonFormValues {
                                     YES,
                                     text()
                                       .verifying(weightEmptyError, _.nonEmpty)
+                                      .verifying(weightLeadingBlankSpaceError,
+                                                 weightHasNoLeadingBlankSpace
+                                      ).verifying(weightTrailingBlankSpaceError,
+                                                  weightHasNoTrailingBlankSpace
+                                      )
+                                      .transform[String](weight => weight.trim, weight => weight)
                                       .verifying(weightFormatError, weightIsValidNumber)
                                       .verifying(weightDecimalError, weightIsWholeNumber)
                                       .verifying(weightBelowThresholdError, weightAboveThreshold)
@@ -86,9 +100,11 @@ object LiabilityExpectedWeight extends CommonFormValues {
       case _ => new LiabilityExpectedWeight(Some(false), None)
     }
 
-  def toForm(liabilityWeight: LiabilityExpectedWeight): Option[(Option[String], Option[String])] =
-    liabilityWeight.expectToExceedThresholdWeight match {
-      case Some(true) => Some((Some(YES), liabilityWeight.totalKg.map(_.toString)))
+  def toForm(
+    liabilityExpectedWeight: LiabilityExpectedWeight
+  ): Option[(Option[String], Option[String])] =
+    liabilityExpectedWeight.expectToExceedThresholdWeight match {
+      case Some(true) => Some((Some(YES), liabilityExpectedWeight.totalKg.map(_.toString)))
       case _          => Some((Some(NO), None))
     }
 

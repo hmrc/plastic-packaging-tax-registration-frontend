@@ -16,31 +16,68 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
-import play.api.data.Forms.{longNumber, mapping}
-import play.api.data.{Form, Forms}
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.Json
+import uk.gov.voa.play.form.ConditionalMappings.mandatory
+
+import scala.util.Try
 
 case class LiabilityWeight(totalKg: Option[Long]) {}
 
 object LiabilityWeight {
   implicit val format = Json.format[LiabilityWeight]
 
-  val maxTotalKg            = 100000000 // one hundred million
-  val minTotalKg            = 0
-  val totalKg               = "totalKg"
-  val weightEmptyError      = "liabilityWeight.empty.error"
-  val weightOutOfRangeError = "liabilityWeight.outOfRange.error"
+  val maxTotalKg                    = 99999999
+  val minTotalKg                    = 0
+  val totalKg                       = "totalKg"
+  val weightEmptyError              = "liabilityWeight.empty.error"
+  val weightFormatError             = "liabilityWeight.format.error"
+  val weightOutOfRangeError         = "liabilityWeight.outOfRange.error"
+  val weightBelowThresholdError     = "liabilityWeight.below.threshold.error"
+  val weightLeadingBlankSpaceError  = "liabilityWeight.leadingBlankSpace.error"
+  val weightTrailingBlankSpaceError = "liabilityWeight.trailingBlankSpace.error"
+  val weightDecimalError            = "liabilityWeight.decimal.error"
 
-  private val isWithinRange: Option[Long] => Boolean = weight =>
-    weight.exists(value => value >= minTotalKg && value <= maxTotalKg)
+  private val weightIsValidNumber: String => Boolean = weight =>
+    weight.isEmpty || Try(BigDecimal(weight)).isSuccess
+
+  private val weightIsWholeNumber: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || Try(BigInt(weight)).isSuccess
+
+  private val weightWithinRange: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) <= maxTotalKg
+
+  private val weightAboveThreshold: String => Boolean = weight =>
+    weight.isEmpty || !weightIsValidNumber(weight) || BigDecimal(weight) >= minTotalKg
+
+  private val weightHasNoLeadingBlankSpace: String => Boolean = weight =>
+    weight.isEmpty || !weight.startsWith(" ")
+
+  private val weightHasNoTrailingBlankSpace: String => Boolean = weight =>
+    weight.isEmpty || !weight.endsWith(" ")
 
   def form(): Form[LiabilityWeight] =
     Form(
       mapping(
-        totalKg -> Forms.optional(longNumber())
-          .verifying(weightEmptyError, _.nonEmpty)
-          .verifying(weightOutOfRangeError, isWithinRange)
-      )(LiabilityWeight.apply)(LiabilityWeight.unapply)
+        totalKg -> mandatory(
+          text()
+            .verifying(weightEmptyError, _.nonEmpty)
+            .verifying(weightLeadingBlankSpaceError, weightHasNoLeadingBlankSpace)
+            .verifying(weightTrailingBlankSpaceError, weightHasNoTrailingBlankSpace)
+            .transform[String](weight => weight.trim, weight => weight)
+            .verifying(weightFormatError, weightIsValidNumber)
+            .verifying(weightDecimalError, weightIsWholeNumber)
+            .verifying(weightBelowThresholdError, weightAboveThreshold)
+            .verifying(weightOutOfRangeError, weightWithinRange)
+        )
+      )(LiabilityWeight.fromForm)(LiabilityWeight.toForm)
     )
+
+  def fromForm(totalKg: Option[String]): LiabilityWeight =
+    new LiabilityWeight(totalKg.map(BigInt(_).longValue()))
+
+  def toForm(liabilityWeight: LiabilityWeight): Option[Option[String]] =
+    Some(liabilityWeight.totalKg.map(_.toString))
 
 }

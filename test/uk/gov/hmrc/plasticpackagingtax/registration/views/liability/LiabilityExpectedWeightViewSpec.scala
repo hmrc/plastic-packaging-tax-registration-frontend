@@ -118,7 +118,7 @@ class LiabilityExpectedWeightViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("totalKg", "Enter an amount to continue")
+      view must haveGovukFieldError("totalKg", "Enter the expected weight, in kilograms")
     }
   }
 

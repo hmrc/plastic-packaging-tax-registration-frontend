@@ -23,9 +23,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWei
   maxTotalKg,
   minTotalKg,
   totalKg,
+  weightBelowThresholdError,
+  weightDecimalError,
   weightEmptyError,
-  weightOutOfRangeError
+  weightFormatError,
+  weightLeadingBlankSpaceError,
+  weightOutOfRangeError,
+  weightTrailingBlankSpaceError
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 
 class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
@@ -33,7 +39,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
     "return success" when {
 
-      "is within range of 1 thousand and 100 million" in {
+      "is within range of 0 and 99 999 999 million" in {
 
         val input = Map(totalKg -> "5555")
 
@@ -62,7 +68,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
       "provided with empty data" in {
 
-        val input          = Map.empty[String, String]
+        val input          = Map(totalKg -> "")
         val expectedErrors = Seq(FormError(totalKg, weightEmptyError))
 
         testFailedValidationErrors(input, expectedErrors)
@@ -71,7 +77,15 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map(totalKg -> "20A#")
-        val expectedErrors = Seq(FormError(totalKg, "error.number"))
+        val expectedErrors = Seq(FormError(totalKg, weightFormatError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains decimal weight" in {
+
+        val input          = Map(totalKg -> "10000.1")
+        val expectedErrors = Seq(FormError(totalKg, weightDecimalError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -79,7 +93,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
       "contains total less than minimum allowed weight" in {
 
         val input          = Map(totalKg -> (minTotalKg - 1).toString)
-        val expectedErrors = Seq(FormError("totalKg", weightOutOfRangeError))
+        val expectedErrors = Seq(FormError("totalKg", weightBelowThresholdError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -88,6 +102,24 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
         val input          = Map(totalKg -> (maxTotalKg + 1).toString)
         val expectedErrors = Seq(FormError("totalKg", weightOutOfRangeError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains leading blank space" in {
+
+        val input =
+          Map(totalKg -> (" " + LiabilityDetails.minimumLiabilityWeightKg))
+        val expectedErrors = Seq(FormError("totalKg", weightLeadingBlankSpaceError))
+
+        testFailedValidationErrors(input, expectedErrors)
+      }
+
+      "contains trailing blank space" in {
+
+        val input =
+          Map(totalKg -> (LiabilityDetails.minimumLiabilityWeightKg + " "))
+        val expectedErrors = Seq(FormError("totalKg", weightTrailingBlankSpaceError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
