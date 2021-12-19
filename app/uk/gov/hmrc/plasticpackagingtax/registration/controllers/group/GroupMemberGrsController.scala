@@ -74,7 +74,8 @@ class GroupMemberGrsController @Inject() (
             registrationStatus(registration).flatMap {
               case STATUS_OK =>
                 save(registration).map {
-                  case Right(_)    => Redirect(routes.OrganisationListController.displayPage())
+                  case Right(_) =>
+                    Redirect(groupRoutes.ConfirmGroupMemberBusinessAddressController.displayPage())
                   case Left(error) => throw error
                 }
               case DUPLICATE_SUBSCRIPTION =>
@@ -212,8 +213,6 @@ class GroupMemberGrsController @Inject() (
     )
 
   private def groupMemberName(registration: Registration): String =
-    registration.groupDetail.flatMap(_.members.lastOption.map(_.businessName)).getOrElse(
-      "Your organisation"
-    )
+    registration.groupDetail.flatMap(_.businessName).getOrElse("Your organisation")
 
 }

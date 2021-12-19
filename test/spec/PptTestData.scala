@@ -29,17 +29,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   PptReference,
   RegistrationDate
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  PartnershipTypeEnum,
-  SCOTTISH_PARTNERSHIP
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
@@ -90,7 +81,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  protected val testCompanyName   = "Example Limited"
+  protected val testCompanyName   = "Example Limite"
   protected val testCompanyNumber = "123456789"
   protected val testFirstName     = "John"
   protected val testLastName      = "Rambo"
@@ -256,6 +247,20 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          )
     )
 
+  protected def partnershipDetailsWithBusinessAddress(
+    partnershipTypeEnum: PartnershipTypeEnum
+  ): PartnershipDetails =
+    PartnershipDetails(partnershipType = partnershipTypeEnum,
+                       partnershipBusinessDetails =
+                         Some(
+                           PartnershipBusinessDetails(testSatur,
+                                                      testPostcode,
+                                                      companyProfile = Some(companyProfile),
+                                                      Some(registrationDetails)
+                           )
+                         )
+    )
+
   protected val subscriptionStatus: SubscriptionStatusResponse = SubscriptionStatusResponse(
     status = SubscriptionStatus.NOT_SUBSCRIBED,
     pptReference = Some("XXPPTP123456789")
@@ -356,7 +361,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                           customerIdentification2 = Some("id2"),
                                           organisationDetails =
                                             Some(
-                                              GroupOrgDetails("UkCompany",
+                                              GroupOrgDetails(UK_COMPANY.toString,
                                                               "Company Name",
                                                               Some(safeNumber)
                                               )
@@ -380,5 +385,10 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                          postCode = Some("T5 6TA"),
                                          countryCode = "GB"
   )
+
+  protected def groupMemberForOrganisationType(organisationType: OrgType) =
+    groupMember.copy(organisationDetails =
+      Some(GroupOrgDetails(organisationType.toString, "Company Name", Some(safeNumber)))
+    )
 
 }

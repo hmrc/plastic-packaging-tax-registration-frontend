@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 
 case class CompanyProfile(
   companyNumber: String,
@@ -49,7 +50,12 @@ case class PartnershipBusinessDetails(
   postcode: String,
   companyProfile: Option[CompanyProfile],
   override val registration: Option[RegistrationDetails]
-) extends HasRegistrationDetails
+) extends HasRegistrationDetails {
+
+  def companyName: Option[String] = companyProfile.map(_.companyName)
+
+  def companyAddress: Option[Address] = companyProfile.map(_.companyAddress.toPptAddress)
+}
 
 object PartnershipBusinessDetails {
 

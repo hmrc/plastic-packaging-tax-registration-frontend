@@ -158,3 +158,7 @@ POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration
 
 GET        /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.address()
 POST       /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateAddress()
+
+GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
+
+GET        /group-confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ConfirmGroupMemberBusinessAddressController.displayPage()
