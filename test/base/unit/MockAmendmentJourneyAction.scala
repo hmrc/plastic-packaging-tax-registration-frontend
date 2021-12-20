@@ -29,7 +29,7 @@ trait MockAmendmentJourneyAction
   protected val mockAmendmentJourneyAction: AmendmentJourneyAction =
     new AmendmentJourneyAction(appConfig,
                                mockSubscriptionConnector,
-                               mockRegistrationAmendmentRepository
+                               inMemoryRegistrationAmendmentRepository
     )(ExecutionContext.global)
 
 }

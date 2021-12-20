@@ -20,7 +20,7 @@ import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -51,7 +51,6 @@ class AmendContactDetailsControllerSpec
 
   private val amendNamePage        = mock[full_name_page]
   private val amendJobTitlePage    = mock[job_title_page]
-  private val amendEmailPage       = mock[email_address_page]
   private val amendPhoneNumberPage = mock[phone_number_page]
   private val amendAddressPage     = mock[address_page]
 
@@ -61,10 +60,6 @@ class AmendContactDetailsControllerSpec
 
   when(amendJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("job title amendment")
-  )
-
-  when(amendEmailPage.apply(any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("email amendment")
   )
 
   when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
@@ -81,7 +76,6 @@ class AmendContactDetailsControllerSpec
                                       mockAmendmentJourneyAction,
                                       amendNamePage,
                                       amendJobTitlePage,
-                                      amendEmailPage,
                                       amendPhoneNumberPage,
                                       amendAddressPage,
                                       countryService
@@ -104,7 +98,8 @@ class AmendContactDetailsControllerSpec
   private val populatedRegistration = aRegistration()
 
   override protected def beforeEach(): Unit = {
-    mockRegistrationAmendmentRepository.reset()
+    inMemoryRegistrationAmendmentRepository.reset()
+    reset(mockSubscriptionConnector)
     simulateGetSubscriptionSuccess(populatedRegistration)
   }
 
@@ -121,7 +116,6 @@ class AmendContactDetailsControllerSpec
                (req: Request[AnyContent]) => controller.jobTitle()(req),
                "job title amendment"
               ),
-              ("email", (req: Request[AnyContent]) => controller.email()(req), "email amendment"),
               ("phone number",
                (req: Request[AnyContent]) => controller.phoneNumber()(req),
                "phone number amendment"
@@ -188,13 +182,6 @@ class AmendContactDetailsControllerSpec
          (reg: Registration) => reg.primaryContactDetails.jobTitle mustBe Some("CEO"),
          "job title amendment"
         ),
-        ("email",
-         () => EmailAddress("xxx"),
-         () => EmailAddress("john@ppt.com"),
-         (req: Request[AnyContent]) => controller.updateEmail()(req),
-         (reg: Registration) => reg.primaryContactDetails.email mustBe Some("john@ppt.com"),
-         "email amendment"
-        ),
         ("phone number",
          () => PhoneNumber("xxx"),
          () => PhoneNumber("07123 123456"),
@@ -224,7 +211,7 @@ class AmendContactDetailsControllerSpec
           s"supplied $testName fails validation" in {
             val registration = aRegistration()
             authorisedUserWithPptSubscription()
-            mockRegistrationAmendmentRepository.put("123", registration)
+            inMemoryRegistrationAmendmentRepository.put("123", registration)
 
             val resp = call(postRequestEncoded(form = createInvalidForm(), sessionId = "123"))
 
@@ -247,9 +234,9 @@ class AmendContactDetailsControllerSpec
           s"$testName updated" in {
             val registration = aRegistration()
             authorisedUserWithPptSubscription()
-            mockRegistrationAmendmentRepository.put("123", registration)
+            inMemoryRegistrationAmendmentRepository.put("123", registration)
 
-            val resp = await(call(postRequestEncoded(form = createValidForm(), sessionId = "123")))
+            await(call(postRequestEncoded(form = createValidForm(), sessionId = "123")))
 
             val registrationCaptor: ArgumentCaptor[Registration] =
               ArgumentCaptor.forClass(classOf[Registration])

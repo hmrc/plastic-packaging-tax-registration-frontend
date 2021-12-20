@@ -65,8 +65,7 @@ class InMemoryRegistrationAmendmentRepository()(implicit ec: ExecutionContext)
 
 trait MockRegistrationAmendmentRepository extends RegistrationBuilder with MockitoSugar {
 
-  protected val mockRegistrationAmendmentRepository = new InMemoryRegistrationAmendmentRepository()(
-    ExecutionContext.global
-  )
+  protected val inMemoryRegistrationAmendmentRepository =
+    new InMemoryRegistrationAmendmentRepository()(ExecutionContext.global)
 
 }

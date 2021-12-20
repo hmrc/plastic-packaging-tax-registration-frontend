@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
@@ -30,11 +31,14 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
   private val page = instanceOf[email_address_passcode_page]
 
+  private val backLink   = Call("GET", "/back")
+  private val updateCall = Call("GET", "/update")
+
   private def createView(
     form: Form[EmailAddressPasscode] = EmailAddressPasscode.form(),
     emailAddress: String = "test@test.com"
   ): Document =
-    page(form, Some(emailAddress))(journeyRequest, messages)
+    page(form, Some(emailAddress), backLink, updateCall)(journeyRequest, messages)
 
   "Email Address Passcode View" should {
 
@@ -54,9 +58,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsEmailAddressController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -154,8 +156,16 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddressPasscode.form(), Some("test@test.com"))(request, messages)
-    page.render(EmailAddressPasscode.form(), Some("test@test.com"), request, messages)
+    page.f(EmailAddressPasscode.form(), Some("test@test.com"), backLink, updateCall)(request,
+                                                                                     messages
+    )
+    page.render(EmailAddressPasscode.form(),
+                Some("test@test.com"),
+                backLink,
+                updateCall,
+                request,
+                messages
+    )
   }
 
 }

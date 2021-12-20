@@ -17,20 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.data.Form
-import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
-  AuthenticatedRequest,
   JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,12 +38,11 @@ class AmendContactDetailsController @Inject() (
   amendmentJourneyAction: AmendmentJourneyAction,
   contactNamePage: full_name_page,
   jobTitlePage: job_title_page,
-  emailPage: email_address_page,
   phoneNumberPage: phone_number_page,
   addressPage: address_page,
   countryService: CountryService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends AmendmentController(mcc, amendmentJourneyAction) {
 
   def contactName(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
@@ -125,46 +120,6 @@ class AmendContactDetailsController @Inject() (
                  routes.AmendContactDetailsController.updateJobTitle()
     )
 
-  def email(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
-      request.registration.primaryContactDetails.email match {
-        case Some(email) =>
-          Ok(buildEmailPage(EmailAddress.form().fill(EmailAddress(email))))
-        case _ =>
-          Ok(buildEmailPage(EmailAddress.form()))
-      }
-    }
-
-  def updateEmail(): Action[AnyContent] = {
-
-    def updateEmail(updatedEmail: String): Registration => Registration = {
-      registration: Registration =>
-        registration.copy(primaryContactDetails =
-          registration.primaryContactDetails.copy(email = Some(updatedEmail))
-        )
-    }
-
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      EmailAddress.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[EmailAddress]) =>
-            Future.successful(BadRequest(buildEmailPage(formWithErrors))),
-          email => updateRegistration(updateEmail(email.value))
-        )
-    }
-  }
-
-  private def buildEmailPage(
-    form: Form[EmailAddress]
-  )(implicit request: JourneyRequest[AnyContent]) =
-    emailPage(form,
-              routes.AmendRegistrationController.displayPage(),
-              routes.AmendContactDetailsController.updateEmail()
-    )
-
-  // TODO: we need the full email verification flow in here
-
   def phoneNumber(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       request.registration.primaryContactDetails.phoneNumber match {
@@ -238,12 +193,5 @@ class AmendContactDetailsController @Inject() (
                 routes.AmendRegistrationController.displayPage(),
                 routes.AmendContactDetailsController.updateAddress()
     )
-
-  private def updateRegistration(
-    registrationAmendment: Registration => Registration
-  )(implicit request: AuthenticatedRequest[Any], hc: HeaderCarrier) =
-    amendmentJourneyAction.updateRegistration(registrationAmendment)
-      .map(_ => Redirect(routes.AmendRegistrationController.displayPage()))
-      .recover { case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed()) }
 
 }

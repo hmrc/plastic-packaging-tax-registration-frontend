@@ -47,7 +47,7 @@ object EmailVerificationStatusMapper {
 
 }
 
-object EmailVerificationService {
+object LocalEmailVerification {
 
   def getPrimaryEmailStatus(registration: Registration): EmailVerificationStatus =
     registration.primaryContactDetails.email.map(

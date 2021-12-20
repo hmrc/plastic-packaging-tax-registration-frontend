@@ -16,15 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
-import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.amend_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.amend_error_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AmendRegistrationController @Inject() (
@@ -33,7 +32,8 @@ class AmendRegistrationController @Inject() (
   amendmentJourneyAction: AmendmentJourneyAction,
   amendRegistrationPage: amend_registration_page,
   amendErrorPage: amend_error_page
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends AmendmentController(mcc, amendmentJourneyAction) {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>

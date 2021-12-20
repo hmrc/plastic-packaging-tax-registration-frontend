@@ -62,7 +62,11 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(EmailAddressPasscode.form(), request.registration.primaryContactDetails.email))
+      Ok(
+        buildEmailPasscodePage(EmailAddressPasscode.form(),
+                               request.registration.primaryContactDetails.email
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =
@@ -71,7 +75,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[EmailAddressPasscode]) =>
-            Future.successful(BadRequest(page(formWithErrors, None))),
+            Future.successful(BadRequest(buildEmailPasscodePage(formWithErrors, None))),
           emailAddressPasscode =>
             FormAction.bindFromRequest match {
               case ContinueAction =>
@@ -103,8 +107,9 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
       case Right(INCORRECT_PASSCODE) =>
         Future.successful(
           BadRequest(
-            page(EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
-                 None
+            buildEmailPasscodePage(
+              EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
+              None
             )
           )
         )
@@ -117,15 +122,25 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
       case Right(_) =>
         Future.successful(
           BadRequest(
-            page(EmailAddressPasscode.form().withError("journeyNotFound",
-                                                       "Passcode for email address is not found"
-                 ),
-                 None
+            buildEmailPasscodePage(
+              EmailAddressPasscode.form().withError("journeyNotFound",
+                                                    "Passcode for email address is not found"
+              ),
+              None
             )
           )
         )
       case Left(error) => throw error
     }
+
+  private def buildEmailPasscodePage(form: Form[EmailAddressPasscode], email: Option[String])(
+    implicit request: JourneyRequest[AnyContent]
+  ) =
+    page(form,
+         email,
+         routes.ContactDetailsEmailAddressController.displayPage(),
+         routes.ContactDetailsEmailAddressPasscodeController.submit()
+    )
 
   private def addVerifiedEmail(email: String)(implicit
     hc: HeaderCarrier,

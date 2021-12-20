@@ -31,19 +31,19 @@
   formHelper: FormWithCSRF,
   continueButton: continue
 )
-@()(implicit request: Request[_], messages: Messages)
+@(backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
 
 @hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice.link")</a>}
 
 @govukLayout(
   title = Title("primaryContactDetails.emailAddress.passcode.confirmation.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsEmailAddressPasscodeController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
 
     @sectionHeader(messages("primaryContactDetails.sectionHeader"))
 
     @pageHeading(messages("primaryContactDetails.emailAddress.passcode.confirmation.title"))
 
-    @formHelper(action = pptRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = updateCall, 'autoComplete -> "off") {
 
         @paragraphBody(message = messages("primaryContactDetails.emailAddress.passcode.confirmation.detail"), id = Some("email-address-passcode-confirmation-id"))
 
