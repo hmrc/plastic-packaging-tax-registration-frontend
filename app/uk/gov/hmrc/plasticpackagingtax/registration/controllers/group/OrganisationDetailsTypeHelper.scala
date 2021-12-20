@@ -72,7 +72,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       case (Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH), false) =>
         getUkCompanyRedirectUrl(businessVerificationCheck)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.SOLE_TRADER), _) =>
+      case (Some(OrgType.SOLE_TRADER), false) =>
         getSoleTraderRedirectUrl()
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.REGISTERED_SOCIETY), false) =>
