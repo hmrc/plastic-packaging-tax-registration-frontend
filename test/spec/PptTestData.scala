@@ -213,15 +213,11 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val partnershipBusinessDetailsWithRegisteredNotCalled: PartnershipBusinessDetails =
     PartnershipBusinessDetails(testSatur, testPostcode, None, Some(unregisteredRegistrationDetails))
 
-  protected val partnershipBusinessDetailsWithCompanyProfile: PartnershipBusinessDetails =
-    PartnershipBusinessDetails(testSatur,
-                               testPostcode,
-                               Some(companyProfile),
-                               Some(registrationDetails)
-    )
-
   protected val companyProfile: CompanyProfile =
-    CompanyProfile(testCompanyName, testCompanyNumber, testCompanyAddress)
+    CompanyProfile(companyName = testCompanyName,
+                   companyNumber = testCompanyNumber,
+                   companyAddress = testCompanyAddress
+    )
 
   protected val partnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
@@ -322,6 +318,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     OrganisationDetails(organisationType = Some(PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         partnershipDetails = Some(partnershipDetailsWithScottishPartnership)
+    )
+
+  protected def registeredLimitedLiabilityhPartnershipOrgDetails(): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        partnershipDetails =
+                          Some(partnershipDetailsWithBusinessAddress(LIMITED_LIABILITY_PARTNERSHIP))
     )
 
   protected def unregisteredUkCompanyOrgDetails(): OrganisationDetails =

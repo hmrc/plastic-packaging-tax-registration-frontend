@@ -32,7 +32,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorporationDetails,
+  PartnershipBusinessDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{
   MEMBER_IN_GROUP,
   MEMBER_IS_NOMINATED
@@ -62,6 +65,7 @@ class GroupMemberGrsController @Inject() (
   override val registrationConnector: RegistrationConnector,
   ukCompanyGrsConnector: UkCompanyGrsConnector,
   subscriptionsConnector: SubscriptionsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -123,9 +127,11 @@ class GroupMemberGrsController @Inject() (
     val orgType: Option[OrgType] =
       request.registration.groupDetail.flatMap(_.currentMemberOrganisationType)
     orgType match {
-      case Some(OrgType.UK_COMPANY) => updateUkCompanyDetails(journeyId, OrgType.UK_COMPANY)
-      case Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
-        updateUkCompanyDetails(journeyId, OrgType.OVERSEAS_COMPANY_UK_BRANCH)
+      case Some(value)
+          if value == OrgType.UK_COMPANY | value == OrgType.OVERSEAS_COMPANY_UK_BRANCH =>
+        updateUkCompanyDetails(journeyId, value)
+      case Some(OrgType.PARTNERSHIP) =>
+        updatePartnershipDetails(journeyId, OrgType.PARTNERSHIP)
       case _ => throw new IllegalStateException(s"Invalid organisation type")
     }
   }
@@ -136,6 +142,16 @@ class GroupMemberGrsController @Inject() (
   ): Future[Either[GroupError, Registration]] =
     updateGroupMemberDetails(journeyId, orgType, ukCompanyGrsConnector.getDetails)
 
+  private def updatePartnershipDetails(journeyId: String, orgType: OrgType)(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[GroupError, Registration]] =
+    for {
+      details <- partnershipGrsConnector.getDetails(journeyId)
+      newMember = createGroupMember(details, orgType)
+      result    = updateGroupDetails(newMember)
+    } yield result
+
   private def updateGroupMemberDetails(
     journeyId: String,
     orgType: OrgType,
@@ -143,7 +159,8 @@ class GroupMemberGrsController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]): Future[Either[GroupError, Registration]] =
     for {
       details <- getDetails(journeyId)
-      result = updateGroupDetails(orgType, details)
+      newMember = createGroupMember(details, orgType)
+      result    = updateGroupDetails(newMember)
     } yield result
 
   private def createGroupMember(details: IncorporationDetails, orgType: OrgType): GroupMember =
@@ -161,12 +178,33 @@ class GroupMemberGrsController @Inject() (
                 addressDetails = details.companyAddress.toPptAddress
     )
 
-  private def updateGroupDetails(orgType: OrgType, details: IncorporationDetails)(implicit
-    request: JourneyRequest[_]
-  ): Either[GroupError, Registration] = {
+  private def createGroupMember(
+    details: PartnershipBusinessDetails,
+    orgType: OrgType
+  ): GroupMember = {
+    val companyProfile = details.companyProfile.fold(
+      throw new IllegalStateException("No Company Profile")
+    )(profile => profile)
+    GroupMember(customerIdentification1 = companyProfile.companyNumber,
+                customerIdentification2 = Some(details.sautr),
+                organisationDetails =
+                  Some(
+                    OrganisationDetails(orgType.toString,
+                                        companyProfile.companyName,
+                                        details.registration.flatMap { reg =>
+                                          reg.registeredBusinessPartnerId
+                                        }
+                    )
+                  ),
+                addressDetails = companyProfile.companyAddress.toPptAddress
+    )
+  }
 
-    val registration           = request.registration
-    val newMember: GroupMember = createGroupMember(details, orgType)
+  private def updateGroupDetails(
+    newMember: GroupMember
+  )(implicit request: JourneyRequest[_]): Either[GroupError, Registration] = {
+
+    val registration = request.registration
 
     registration.groupDetail match {
       case Some(groupDetail) =>
@@ -195,6 +233,9 @@ class GroupMemberGrsController @Inject() (
     groupDetail.members.contains(member) ||
       registration.organisationDetails.incorporationDetails.exists(
         details => details.isGroupMemberSameAsNominated(member.customerIdentification1)
+      ) ||
+      registration.organisationDetails.partnershipDetails.exists(
+        details => details.isGroupMemberSameAsNominatedPartnership(member.customerIdentification1)
       )
 
   private def save(

@@ -42,6 +42,11 @@ case class PartnershipDetails(
     case _ => None
   }
 
+  def isGroupMemberSameAsNominatedPartnership(customerIdentification1: String): Boolean =
+    partnershipBusinessDetails.exists(
+      _.isGroupMemberSameAsNominatedPartnership(customerIdentification1)
+    )
+
 }
 
 object PartnershipDetails {

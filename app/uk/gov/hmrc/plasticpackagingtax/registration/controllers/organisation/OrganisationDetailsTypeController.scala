@@ -41,6 +41,7 @@ class OrganisationDetailsTypeController @Inject() (
   override val appConfig: AppConfig,
   override val soleTraderGrsConnector: SoleTraderGrsConnector,
   override val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  override val partnershipGrsConnector: PartnershipGrsConnector,
   override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,

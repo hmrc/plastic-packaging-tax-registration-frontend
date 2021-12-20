@@ -55,6 +55,10 @@ case class PartnershipBusinessDetails(
   def companyName: Option[String] = companyProfile.map(_.companyName)
 
   def companyAddress: Option[Address] = companyProfile.map(_.companyAddress.toPptAddress)
+
+  def isGroupMemberSameAsNominatedPartnership(customerIdentification1: String): Boolean =
+    companyProfile.exists(_.companyNumber.equalsIgnoreCase(customerIdentification1))
+
 }
 
 object PartnershipBusinessDetails {
