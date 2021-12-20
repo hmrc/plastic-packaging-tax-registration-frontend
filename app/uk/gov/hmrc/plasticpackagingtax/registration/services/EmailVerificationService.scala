@@ -17,11 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
 import com.google.inject.Inject
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.EmailVerificationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,10 +29,8 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
   implicit ec: ExecutionContext
 ) {
 
-  def isEmailVerified(
-    email: String
-  )(implicit req: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[Boolean] =
-    emailVerificationConnector.getStatus(req.user.credId).map {
+  def isEmailVerified(email: String, credId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+    emailVerificationConnector.getStatus(credId).map {
       case Right(resp) =>
         resp.exists { emailStatuses =>
           emailStatuses.emails.exists {
@@ -45,11 +41,11 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
       case Left(ex) => throw ex
     }
 
-  def sendVerificationCode(
-    email: String
-  )(implicit req: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[String] =
+  def sendVerificationCode(email: String, credId: String)(implicit
+    hc: HeaderCarrier
+  ): Future[String] =
     emailVerificationConnector.create(
-      CreateEmailVerificationRequest(credId = req.user.credId,
+      CreateEmailVerificationRequest(credId = credId,
                                      continueUrl =
                                        "/register-for-plastic-packaging-tax/amend-registration",
                                      origin = "ppt",
@@ -60,7 +56,7 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
                                      deskproServiceName = "plastic-packaging-tax"
       )
     ).map {
-      case Right(resp) => resp.split("/").slice(0, 4).last // TODO: can we make this less 'brittle'?
+      case Right(resp) => resp.split("/").slice(0, 4).last
       case Left(ex)    => throw ex
     }
 

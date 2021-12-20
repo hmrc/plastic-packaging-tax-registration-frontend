@@ -20,7 +20,7 @@ import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -98,7 +98,8 @@ class AmendContactDetailsControllerSpec
   private val populatedRegistration = aRegistration()
 
   override protected def beforeEach(): Unit = {
-    mockRegistrationAmendmentRepository.reset()
+    inMemoryRegistrationAmendmentRepository.reset()
+    reset(mockSubscriptionConnector)
     simulateGetSubscriptionSuccess(populatedRegistration)
   }
 
@@ -210,7 +211,7 @@ class AmendContactDetailsControllerSpec
           s"supplied $testName fails validation" in {
             val registration = aRegistration()
             authorisedUserWithPptSubscription()
-            mockRegistrationAmendmentRepository.put("123", registration)
+            inMemoryRegistrationAmendmentRepository.put("123", registration)
 
             val resp = call(postRequestEncoded(form = createInvalidForm(), sessionId = "123"))
 
@@ -233,9 +234,9 @@ class AmendContactDetailsControllerSpec
           s"$testName updated" in {
             val registration = aRegistration()
             authorisedUserWithPptSubscription()
-            mockRegistrationAmendmentRepository.put("123", registration)
+            inMemoryRegistrationAmendmentRepository.put("123", registration)
 
-            val resp = await(call(postRequestEncoded(form = createValidForm(), sessionId = "123")))
+            await(call(postRequestEncoded(form = createValidForm(), sessionId = "123")))
 
             val registrationCaptor: ArgumentCaptor[Registration] =
               ArgumentCaptor.forClass(classOf[Registration])

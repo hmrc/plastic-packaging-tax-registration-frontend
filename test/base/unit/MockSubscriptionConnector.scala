@@ -22,25 +22,40 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  SubscriptionCreateOrUpdateResponse,
+  SubscriptionCreateOrUpdateResponseSuccess
+}
 
+import java.time.ZonedDateTime
 import scala.concurrent.Future
 
 trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
 
   protected val mockSubscriptionConnector: SubscriptionsConnector = mock[SubscriptionsConnector]
 
-  protected def simulateGetSubscriptionSuccess(registration: Registration) = {
-    reset(mockSubscriptionConnector)
+  protected def simulateUpdateSubscriptionSuccess() =
+    when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
+      Future.successful(
+        SubscriptionCreateOrUpdateResponseSuccess(pptReference = "XMPPT0000000123",
+                                                  processingDate = ZonedDateTime.now(),
+                                                  formBundleNumber = "ABC123",
+                                                  nrsNotifiedSuccessfully = true,
+                                                  nrsSubmissionId = Some("NRS123"),
+                                                  nrsFailureReason = None,
+                                                  enrolmentInitiatedSuccessfully = Some(true)
+        )
+      )
+    )
+
+  protected def simulateGetSubscriptionSuccess(registration: Registration) =
     when(mockSubscriptionConnector.getSubscription(any())(any())).thenReturn(
       Future.successful(registration)
     )
-  }
 
   protected def simulateGetSubscriptionFailure() =
-    reset(mockSubscriptionConnector)
-
-  when(mockSubscriptionConnector.getSubscription(any())(any())).thenThrow(
-    new IllegalStateException("BANG!")
-  )
+    when(mockSubscriptionConnector.getSubscription(any())(any())).thenThrow(
+      new IllegalStateException("BANG!")
+    )
 
 }

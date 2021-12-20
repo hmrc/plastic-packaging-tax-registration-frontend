@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,6 +40,8 @@ abstract class AmendmentController(
   )(implicit request: AuthenticatedRequest[Any], hc: HeaderCarrier) =
     amendmentJourneyAction.updateRegistration(registrationAmendment)
       .map(_ => Redirect(routes.AmendRegistrationController.displayPage()))
-      .recover { case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed()) }
+      .recover {
+        case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
+      }
 
 }

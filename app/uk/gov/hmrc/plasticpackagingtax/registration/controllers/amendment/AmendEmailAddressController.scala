@@ -68,10 +68,12 @@ class AmendEmailAddressController @Inject() (
             Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           email =>
             if (isEmailChanged(email.value))
-              emailVerificationService.isEmailVerified(email.value).flatMap {
+              emailVerificationService.isEmailVerified(email.value, request.user.credId).flatMap {
                 case true => updateRegistration(updateEmail(email.value))
                 case false =>
-                  emailVerificationService.sendVerificationCode(email.value).map { journeyId =>
+                  emailVerificationService.sendVerificationCode(email.value,
+                                                                request.user.credId
+                  ).map { journeyId =>
                     amendmentJourneyAction.updateLocalRegistration(
                       updateProspectiveEmail(journeyId, email.value)
                     )

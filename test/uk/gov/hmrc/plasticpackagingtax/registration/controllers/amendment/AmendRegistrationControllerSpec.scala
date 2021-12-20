@@ -76,7 +76,7 @@ class AmendRegistrationControllerSpec
   private val populatedRegistration = aRegistration()
 
   override protected def beforeEach(): Unit = {
-    mockRegistrationAmendmentRepository.reset()
+    inMemoryRegistrationAmendmentRepository.reset()
     simulateGetSubscriptionSuccess(populatedRegistration)
   }
 

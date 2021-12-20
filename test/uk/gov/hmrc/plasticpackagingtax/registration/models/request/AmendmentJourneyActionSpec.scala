@@ -63,7 +63,7 @@ class AmendmentJourneyActionSpec
   private val registration = aRegistration()
 
   override protected def beforeEach(): Unit = {
-    mockRegistrationAmendmentRepository.reset()
+    inMemoryRegistrationAmendmentRepository.reset()
     simulateGetSubscriptionSuccess(registration)
   }
 
@@ -87,7 +87,7 @@ class AmendmentJourneyActionSpec
 
       "a registration is cached on the user's session" in {
         val cachedRegistration = aRegistration().copy(id = "3453456")
-        mockRegistrationAmendmentRepository.put("123", cachedRegistration)
+        inMemoryRegistrationAmendmentRepository.put("123", cachedRegistration)
         val request = new AuthenticatedRequest(
           FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
           enrolledUser
