@@ -132,9 +132,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val emailVerificationUrl        = s"$emailVerificationHost/email-verification/verify-email"
   lazy val pptEnrolmentUrl: String     = s"$pptServiceHost/enrolment"
 
-  lazy val emailVerificationEnabled: Boolean =
-    config.get[Boolean]("microservice.services.email-verification.enabled")
-
   lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
 
   lazy val addressLookupHost: String =

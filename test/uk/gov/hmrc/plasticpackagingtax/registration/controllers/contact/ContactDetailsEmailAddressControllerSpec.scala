@@ -89,10 +89,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       Future(Left(error))
     )
 
-  def mockAppConfigEmailVerificationEnabled(enabled: Boolean): OngoingStubbing[Boolean] =
-    when(config.emailVerificationEnabled)
-      .thenReturn(enabled)
-
   def mockEmailVerificationCreate(
     dataToReturn: String
   ): OngoingStubbing[Future[Either[ServiceError, String]]] =
@@ -134,7 +130,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
               VerificationStatus(Seq(EmailStatus("test@test.com", verified = true, locked = false)))
@@ -164,7 +159,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(None)
 
           val result =
@@ -190,7 +184,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatusWithException(
             DownstreamServiceError("Failed to get status", new Exception())
           )
@@ -215,7 +208,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
               VerificationStatus(
@@ -253,7 +245,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
               VerificationStatus(
@@ -281,7 +272,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(false)
 
           val result =
             controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
@@ -310,7 +300,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
               VerificationStatus(
@@ -367,7 +356,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
               VerificationStatus(
@@ -406,7 +394,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           authorizedUserWithNoCredentials()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
-          mockAppConfigEmailVerificationEnabled(true)
           mockEmailVerificationGetStatus(
             Some(
               VerificationStatus(

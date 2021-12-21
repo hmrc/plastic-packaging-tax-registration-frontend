@@ -137,17 +137,14 @@ class ContactDetailsEmailAddressController @Inject() (
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Result] =
-    if (appConfig.emailVerificationEnabled)
-      LocalEmailVerification.getPrimaryEmailStatus(registration) match {
-        case VERIFIED =>
-          Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
-        case NOT_VERIFIED =>
-          handleNotVerifiedEmail(registration, credId)
-        case LOCKED_OUT =>
-          Future(Redirect(commonRoutes.TaskListController.displayPage()))
-      }
-    else
-      Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
+    LocalEmailVerification.getPrimaryEmailStatus(registration) match {
+      case VERIFIED =>
+        Future(Redirect(routes.ContactDetailsTelephoneNumberController.displayPage()))
+      case NOT_VERIFIED =>
+        handleNotVerifiedEmail(registration, credId)
+      case LOCKED_OUT =>
+        Future(Redirect(commonRoutes.TaskListController.displayPage()))
+    }
 
   private def createEmailVerification(credId: String, email: String)(implicit
     hc: HeaderCarrier
