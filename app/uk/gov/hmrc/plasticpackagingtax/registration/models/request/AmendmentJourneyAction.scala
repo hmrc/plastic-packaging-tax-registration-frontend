@@ -81,6 +81,11 @@ class AmendmentJourneyAction @Inject() (
     }
   }
 
+  def updateLocalRegistration(
+    updateFunction: Registration => Registration
+  )(implicit request: AuthenticatedRequest[Any]) =
+    registrationAmendmentRepository.update(updateFunction)
+
   def updateRegistration(
     updateFunction: Registration => Registration
   )(implicit request: AuthenticatedRequest[Any], headerCarrier: HeaderCarrier) =

@@ -26,8 +26,11 @@ case class PrimaryContactDetails(
   email: Option[String] = None,
   phoneNumber: Option[String] = None,
   useRegisteredAddress: Option[Boolean] = None,
+  address: Option[Address] = None,
+  // The following fields are used for email verification only
   journeyId: Option[String] = None,
-  address: Option[Address] = None
+  prospectiveEmail: Option[String] =
+    None // Not mirrored in back end since only used during registration amendment
 ) {
 
   def status(emailVerified: String => Boolean): TaskStatus =

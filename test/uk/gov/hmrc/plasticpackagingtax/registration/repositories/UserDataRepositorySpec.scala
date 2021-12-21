@@ -59,12 +59,19 @@ class UserDataRepositorySpec
 
   "UserDataRepository" should {
 
-    "add data to cache and return it" in {
+    "add data to cache and return it" when {
+      "explicit id used" in {
+        val id = "123"
+        await(repository.putData(id, "testKey", "testData"))
 
-      implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
-      await(repository.putData("testKey", "testData"))
+        await(repository.getData[String](id, "testKey")) mustBe Some("testData")
+      }
+      "user's session id used as id" in {
+        implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+        await(repository.putData("testKey", "testData"))
 
-      await(repository.getData[String]("testKey")) mustBe Some("testData")
+        await(repository.getData[String]("testKey")) mustBe Some("testData")
+      }
     }
 
     "return None when no data found" in {
@@ -74,12 +81,20 @@ class UserDataRepositorySpec
       await(repository.getData[String]("some-key")) mustBe None
     }
 
-    "add data to cache and delete it" in {
+    "add data to cache and delete it" when {
+      "explicit id used" in {
+        val id                                          = "123"
+        implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+        await(repository.putData(id, "testKey", "testData"))
 
-      implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
-      await(repository.putData("testKey", "testData"))
+        await(repository.deleteData[String](id, "testKey")).mustBe(())
+      }
+      "user's session id used as id" in {
+        implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+        await(repository.putData("testKey", "testData"))
 
-      await(repository.deleteData[String]("testKey")).mustBe(())
+        await(repository.deleteData[String]("testKey")).mustBe(())
+      }
     }
   }
 }

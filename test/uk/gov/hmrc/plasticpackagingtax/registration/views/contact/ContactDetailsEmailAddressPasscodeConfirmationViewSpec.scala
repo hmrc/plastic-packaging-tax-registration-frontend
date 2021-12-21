@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.contact
 
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -26,9 +27,12 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
   private val page = instanceOf[email_address_passcode_confirmation_page]
 
+  private val backLink   = Call("GET", "/back")
+  private val updateCall = Call("GET", "/update")
+
   "Email Address Passcode Confirmation View" should {
 
-    val view = page()(request = journeyRequest, messages = messages)
+    val view = page(backLink, updateCall)(request = journeyRequest, messages = messages)
 
     "contain timeout dialog function" in {
 
@@ -50,6 +54,11 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
       )
     }
 
+    "display 'Back' button" in {
+
+      view.getElementById("back-link") must haveHref(backLink.url)
+    }
+
     "display 'Continue' button" in {
       view.getElementById("submit").text() mustBe "Continue"
     }
@@ -57,8 +66,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f()(request, messages)
-    page.render(request, messages)
+    page.f(backLink, updateCall)(request, messages)
+    page.render(backLink, updateCall, request, messages)
   }
 
 }
