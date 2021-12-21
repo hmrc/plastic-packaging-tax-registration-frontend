@@ -37,6 +37,25 @@ class IncorpEntityGrsCreateRequestSpec extends AnyWordSpec with Matchers {
       (json \ "deskProServiceId").as[String] mustBe "c"
       (json \ "signOutUrl").as[String] mustBe "d"
       (json \ "regime").as[String] mustBe "PPT"
+      (json \ "businessVerificationCheck").as[Boolean] mustBe true
+    }
+
+    "Convert to and from json with businessVerificationCheck as false" in {
+      val grsCreateJourneyRequest = IncorpEntityGrsCreateRequest(continueUrl = "a",
+                                                                 optServiceName = Some("b"),
+                                                                 deskProServiceId = "c",
+                                                                 signOutUrl = "d",
+                                                                 businessVerificationCheck = false
+      )
+
+      val json = Json.toJson(grsCreateJourneyRequest)
+
+      (json \ "continueUrl").as[String] mustBe "a"
+      (json \ "optServiceName").as[String] mustBe "b"
+      (json \ "deskProServiceId").as[String] mustBe "c"
+      (json \ "signOutUrl").as[String] mustBe "d"
+      (json \ "regime").as[String] mustBe "PPT"
+      (json \ "businessVerificationCheck").as[Boolean] mustBe false
     }
   }
 }
