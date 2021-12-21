@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  PartnershipGrsConnector,
   RegisteredSocietyGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
@@ -52,6 +53,7 @@ class OrganisationDetailsTypeController @Inject() (
   override val appConfig: AppConfig,
   override val soleTraderGrsConnector: SoleTraderGrsConnector,
   override val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  override val partnershipGrsConnector: PartnershipGrsConnector,
   override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,

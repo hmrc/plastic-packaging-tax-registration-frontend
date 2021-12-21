@@ -96,7 +96,9 @@ case class OrganisationDetails(
     case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
       incorporationDetails.map(_.companyName)
     case Some(SOLE_TRADER) => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
-    case _                 => None
+    case Some(PARTNERSHIP) =>
+      partnershipDetails.flatMap(_.partnershipOrCompanyName)
+    case _ => None
   }
 
   def withBusinessRegisteredAddress(): OrganisationDetails = {

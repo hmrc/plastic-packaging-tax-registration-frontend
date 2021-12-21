@@ -103,7 +103,9 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateLimitedCompanyCallback(incorporationDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          orgRoutes.ConfirmBusinessAddressController.displayPage().url
+        )
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -111,7 +113,9 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateSoleTraderCallback(soleTraderDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          orgRoutes.ConfirmBusinessAddressController.displayPage().url
+        )
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -119,7 +123,9 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateRegisteredSocietyCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          orgRoutes.ConfirmBusinessAddressController.displayPage().url
+        )
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -127,7 +133,9 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateGeneralPartnershipCallback(partnershipBusinessDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          orgRoutes.ConfirmBusinessAddressController.displayPage().url
+        )
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -135,7 +143,9 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateScottishPartnershipCallback(partnershipBusinessDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          orgRoutes.ConfirmBusinessAddressController.displayPage().url
+        )
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
     }

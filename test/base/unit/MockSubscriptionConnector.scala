@@ -18,14 +18,11 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  SubscriptionCreateOrUpdateResponse,
-  SubscriptionCreateOrUpdateResponseSuccess
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionCreateOrUpdateResponseSuccess
 
 import java.time.ZonedDateTime
 import scala.concurrent.Future
