@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  PartnershipGrsConnector,
   RegisteredSocietyGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
@@ -30,12 +31,19 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.PartnershipTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  OrgType,
+  OrganisationType,
+  PartnershipTypeEnum
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorpEntityGrsCreateRequest,
+  PartnershipDetails,
+  PartnershipGrsCreateRequest,
   SoleTraderGrsCreateRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,6 +52,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
 
   def soleTraderGrsConnector: SoleTraderGrsConnector
   def ukCompanyGrsConnector: UkCompanyGrsConnector
+  def partnershipGrsConnector: PartnershipGrsConnector
   def registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
   def registrationConnector: RegistrationConnector
   def appConfig: AppConfig
@@ -67,8 +76,13 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
         getRegisteredSocietyRedirectUrl()
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
-        // TODO - if this is a group registration then `Partnership` means `Limited liability partnership` so "partnership type" question not needed
-        Future(Redirect(organisationRoutes.PartnershipTypeController.displayPage()))
+        if (request.registration.isGroup) {
+          updateRegistration(PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
+          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl).map(
+            journeyStartUrl => SeeOther(journeyStartUrl).addingToSession()
+          )
+        } else
+          Future(Redirect(organisationRoutes.PartnershipTypeController.displayPage()))
       case _ =>
         Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
     }
@@ -105,5 +119,43 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
     headerCarrier: HeaderCarrier
   ): Future[String] =
     registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
+
+  private def getRedirectUrl(
+    url: String
+  )(implicit request: JourneyRequest[AnyContent], headerCarrier: HeaderCarrier): Future[String] =
+    partnershipGrsConnector.createJourney(
+      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
+                                  Some(request2Messages(request)("service.name")),
+                                  appConfig.serviceIdentifier,
+                                  appConfig.externalSignOutLink
+      ),
+      url
+    )
+
+  private def updateRegistration(partnershipType: PartnershipTypeEnum)(implicit
+    req: JourneyRequest[AnyContent],
+    headerCarrier: HeaderCarrier,
+    executionContext: ExecutionContext
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.organisationDetails.partnershipDetails match {
+        case Some(_) =>
+          registration.copy(organisationDetails =
+            registration.organisationDetails.copy(partnershipDetails =
+              Some(
+                registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
+                  partnershipType
+                )
+              )
+            )
+          )
+        case _ =>
+          registration.copy(organisationDetails =
+            registration.organisationDetails.copy(partnershipDetails =
+              Some(PartnershipDetails(partnershipType = partnershipType))
+            )
+          )
+      }
+    }
 
 }

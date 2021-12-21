@@ -32,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY_NO_UK_BRANCH,
@@ -41,7 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   OrganisationDetails
@@ -63,7 +64,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                           registeredSocietyGrsConnector =
                                             mockRegisteredSocietyGrsConnector,
                                           soleTraderGrsConnector = mockSoleTraderGrsConnector,
-                                          appConfig = config
+                                          appConfig = config,
+                                          partnershipGrsConnector = mockPartnershipGrsConnector
     )
 
   override protected def beforeEach(): Unit = {
@@ -118,10 +120,29 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
           assertRedirectForOrgType(UK_COMPANY, "http://test/redirect/uk-company")
         }
-        "user submits organisation type: " + PARTNERSHIP in {
+        "group user submits organisation type: " + PARTNERSHIP in {
+          val registration: Registration =
+            aRegistration(withRegistrationType(Some(RegType.GROUP)))
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          assertRedirectForOrgType(PARTNERSHIP,
-                                   organisationRoutes.PartnershipTypeController.displayPage().url
+          redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+        }
+        "user submits organisation type: " + PARTNERSHIP in {
+          val registration: Registration =
+            aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          redirectLocation(result) mustBe Some(
+            organisationRoutes.PartnershipTypeController.displayPage().url
           )
         }
 

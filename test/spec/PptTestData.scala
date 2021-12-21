@@ -29,17 +29,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   PptReference,
   RegistrationDate
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  PartnershipTypeEnum,
-  SCOTTISH_PARTNERSHIP
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
@@ -222,15 +213,11 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val partnershipBusinessDetailsWithRegisteredNotCalled: PartnershipBusinessDetails =
     PartnershipBusinessDetails(testSatur, testPostcode, None, Some(unregisteredRegistrationDetails))
 
-  protected val partnershipBusinessDetailsWithCompanyProfile: PartnershipBusinessDetails =
-    PartnershipBusinessDetails(testSatur,
-                               testPostcode,
-                               Some(companyProfile),
-                               Some(registrationDetails)
-    )
-
   protected val companyProfile: CompanyProfile =
-    CompanyProfile(testCompanyName, testCompanyNumber, testCompanyAddress)
+    CompanyProfile(companyName = testCompanyName,
+                   companyNumber = testCompanyNumber,
+                   companyAddress = testCompanyAddress
+    )
 
   protected val partnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
@@ -251,6 +238,20 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                            PartnershipBusinessDetails(testSatur,
                                                       testPostcode,
                                                       None,
+                                                      Some(registrationDetails)
+                           )
+                         )
+    )
+
+  protected def partnershipDetailsWithBusinessAddress(
+    partnershipTypeEnum: PartnershipTypeEnum
+  ): PartnershipDetails =
+    PartnershipDetails(partnershipType = partnershipTypeEnum,
+                       partnershipBusinessDetails =
+                         Some(
+                           PartnershipBusinessDetails(testSatur,
+                                                      testPostcode,
+                                                      companyProfile = Some(companyProfile),
                                                       Some(registrationDetails)
                            )
                          )
@@ -319,6 +320,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                         partnershipDetails = Some(partnershipDetailsWithScottishPartnership)
     )
 
+  protected def registeredLimitedLiabilityhPartnershipOrgDetails(): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                        businessRegisteredAddress = Some(testBusinessAddress),
+                        partnershipDetails =
+                          Some(partnershipDetailsWithBusinessAddress(LIMITED_LIABILITY_PARTNERSHIP))
+    )
+
   protected def unregisteredUkCompanyOrgDetails(): OrganisationDetails =
     OrganisationDetails(organisationType = Some(UK_COMPANY),
                         businessRegisteredAddress = Some(testBusinessAddress),
@@ -356,7 +364,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                           customerIdentification2 = Some("id2"),
                                           organisationDetails =
                                             Some(
-                                              GroupOrgDetails("UkCompany",
+                                              GroupOrgDetails(UK_COMPANY.toString,
                                                               "Company Name",
                                                               Some(safeNumber)
                                               )
@@ -380,5 +388,10 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                          postCode = Some("T5 6TA"),
                                          countryCode = "GB"
   )
+
+  protected def groupMemberForOrganisationType(organisationType: OrgType) =
+    groupMember.copy(organisationDetails =
+      Some(GroupOrgDetails(organisationType.toString, "Company Name", Some(safeNumber)))
+    )
 
 }

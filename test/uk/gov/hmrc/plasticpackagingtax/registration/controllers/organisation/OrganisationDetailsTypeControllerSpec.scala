@@ -58,7 +58,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                           registeredSocietyGrsConnector =
                                             mockRegisteredSocietyGrsConnector,
                                           soleTraderGrsConnector = mockSoleTraderGrsConnector,
-                                          appConfig = config
+                                          appConfig = config,
+                                          partnershipGrsConnector = mockPartnershipGrsConnector
     )
 
   override protected def beforeEach(): Unit = {

@@ -23,7 +23,6 @@ import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
