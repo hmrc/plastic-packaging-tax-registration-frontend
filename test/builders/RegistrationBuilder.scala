@@ -147,8 +147,14 @@ trait RegistrationBuilder {
   def withUserHeaders(headers: Map[String, String]): RegistrationModifier =
     _.copy(userHeaders = Some(headers))
 
-  def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier =
-    _.copy(organisationDetails = organisationDetails)
+  def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier = {
+    reg =>
+      val updatedRegistration = reg.copy(organisationDetails = organisationDetails)
+      if (updatedRegistration.organisationDetails.businessRegisteredAddress.isEmpty)
+        updatedRegistration.populateBusinessRegisteredAddress()
+      else
+        updatedRegistration
+  }
 
   def withPartnershipDetails(partnershipDetails: Option[PartnershipDetails]): RegistrationModifier =
     registration =>

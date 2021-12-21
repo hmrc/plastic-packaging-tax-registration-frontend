@@ -99,6 +99,37 @@ case class OrganisationDetails(
     case _                 => None
   }
 
+  def withBusinessRegisteredAddress(): OrganisationDetails = {
+    val businessAddress = organisationType match {
+      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+        incorporationDetails.map(
+          incorporationDetails => incorporationDetails.companyAddress.toPptAddress
+        )
+      case Some(SOLE_TRADER) =>
+        // TODO : temporary while we're working out where to get it from
+        Some(
+          Address(addressLine1 = "2 Scala Street",
+                  addressLine2 = Some("Soho"),
+                  townOrCity = "London",
+                  postCode = Some("W1T 2HN")
+          )
+        )
+      case Some(PARTNERSHIP) =>
+        // TODO : temporary while we're working out where to get it from
+        Some(
+          Address(addressLine1 = "3 Scala Street",
+                  addressLine2 = Some("Soho"),
+                  townOrCity = "London",
+                  postCode = partnershipDetails.flatMap(
+                    pd => pd.partnershipBusinessDetails.map(pbd => pbd.postcode)
+                  )
+          )
+        )
+      case _ => None
+    }
+    this.copy(businessRegisteredAddress = businessAddress)
+  }
+
 }
 
 object OrganisationDetails {

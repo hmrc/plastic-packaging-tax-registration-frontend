@@ -21,7 +21,6 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest

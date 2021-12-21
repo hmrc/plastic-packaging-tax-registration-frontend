@@ -125,7 +125,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(SOLE_TRADER),
-                                soleTraderDetails = Some(soleTraderIncorporationDetails),
+                                soleTraderDetails = Some(soleTraderDetails),
                                 subscriptionStatus = Some(NOT_SUBSCRIBED)
             )
           )

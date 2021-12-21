@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
-import play.api.data.Forms.{number, text}
+import play.api.data.Forms.text
 import play.api.data.{Forms, Mapping}
 import play.api.libs.json.Json
 

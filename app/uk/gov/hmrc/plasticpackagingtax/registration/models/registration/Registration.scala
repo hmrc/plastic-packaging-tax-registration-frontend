@@ -113,6 +113,9 @@ case class Registration(
 
   val isFirstGroupMember = groupDetail.exists(_.members.isEmpty)
 
+  def populateBusinessRegisteredAddress(): Registration =
+    this.copy(organisationDetails = this.organisationDetails.withBusinessRegisteredAddress())
+
 }
 
 object Registration {
