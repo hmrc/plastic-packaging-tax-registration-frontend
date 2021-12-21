@@ -123,15 +123,26 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           orgType match {
             case PARTNERSHIP =>
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
+              groupMemberSize(getLastSavedRegistration) mustBe 1
+
+              val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
+              val partnershipDetailsWithCompanyProfile =
+                partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
+              memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
+              memberDetails.organisationDetails.get.organisationName mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyName
+              memberDetails.addressDetails mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress.toPptAddress
             case _ =>
               await(simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType)))
+              await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
+              groupMemberSize(getLastSavedRegistration) mustBe 1
+
+              val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
+
+              memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
+              memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
+              memberDetails.addressDetails mustBe incorporationDetails.companyAddress.toPptAddress
           }
 
-          groupMemberSize(getLastSavedRegistration) mustBe 1
-
-          val memberDetails: GroupMember = getLastSavedRegistration.groupDetail.get.members.last
-
-          memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
         }
 
       }

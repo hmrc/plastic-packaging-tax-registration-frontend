@@ -32,7 +32,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.conf
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmGroupMemberBusinessAddressController @Inject() (
@@ -41,25 +40,22 @@ class ConfirmGroupMemberBusinessAddressController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: confirm_business_address
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       val businessAddress = getBusinessAddress(request)
       businessAddress match {
         case Some(value) =>
-          Future(
-            Ok(
-              page(value,
-                   request.registration.groupDetail.flatMap(_.businessName).getOrElse(
-                     "your organisation"
-                   ),
-                   routes.OrganisationListController.displayPage().url
-              )
+          Ok(
+            page(value,
+                 request.registration.groupDetail.flatMap(_.businessName).getOrElse(
+                   "your organisation"
+                 ),
+                 routes.OrganisationListController.displayPage().url
             )
           )
-        case _ => Future.successful(Redirect(routes.OrganisationListController.displayPage()))
+        case _ => Redirect(routes.OrganisationListController.displayPage())
       }
 
     }

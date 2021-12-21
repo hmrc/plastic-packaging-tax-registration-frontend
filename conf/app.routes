@@ -37,18 +37,15 @@ POST       /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registrati
 # Organisation Details
 GET        /grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.GrsController.grsCallback(journeyId)
 
-GET        /group-member-grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.GroupMemberGrsController.grsCallback(journeyId)
-
 GET        /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPage()
 POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submit()
-
-GET        /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.displayPage()
-POST       /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.submit()
 
 GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.displayPage()
 POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.submit()
 
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationTypeNotSupportedController.onPageLoad()
+
+GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
 
 # Primary Contact Details
 GET        /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsFullNameController.displayPage()
@@ -102,11 +99,18 @@ GET        /security-signed-out     uk.gov.hmrc.plasticpackagingtax.registration
 GET        /request-to-join-private-beta   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad()
 
 # Group Registrations
+GET        /group-member-grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.GroupMemberGrsController.grsCallback(journeyId)
+
+GET        /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.displayPage()
+POST       /group-member-organisation        uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.submit()
+
 GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
 POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
 
 GET        /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.displayPage(memberId)
 POST       /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.submit(memberId)
+
+GET        /group-confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ConfirmGroupMemberBusinessAddressController.displayPage()
 
 # Manual User Enrolment
 GET        /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
@@ -165,6 +169,3 @@ POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration
 GET        /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.address()
 POST       /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateAddress()
 
-GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
-
-GET        /group-confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ConfirmGroupMemberBusinessAddressController.displayPage()

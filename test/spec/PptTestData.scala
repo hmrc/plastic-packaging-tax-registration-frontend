@@ -81,7 +81,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  protected val testCompanyName   = "Example Limite"
+  protected val testCompanyName   = "Example Limited"
   protected val testCompanyNumber = "123456789"
   protected val testFirstName     = "John"
   protected val testLastName      = "Rambo"
