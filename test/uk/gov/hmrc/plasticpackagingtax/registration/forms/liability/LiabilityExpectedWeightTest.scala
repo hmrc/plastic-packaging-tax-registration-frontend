@@ -28,9 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExp
   weightDecimalError,
   weightEmptyError,
   weightFormatError,
-  weightLeadingBlankSpaceError,
-  weightOutOfRangeError,
-  weightTrailingBlankSpaceError
+  weightOutOfRangeError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 
@@ -121,18 +119,17 @@ class LiabilityExpectedWeightTest extends AnyWordSpec with Matchers {
 
         val input =
           Map(answer -> "yes", totalKg -> (" " + LiabilityDetails.minimumLiabilityWeightKg))
-        val expectedErrors = Seq(FormError("totalKg", weightLeadingBlankSpaceError))
 
-        testFailedValidationErrors(input, expectedErrors)
+        val form = LiabilityExpectedWeight.form().bind(input)
+        form.errors.size mustBe 0
       }
 
       "contains trailing blank space" in {
 
         val input =
           Map(answer -> "yes", totalKg -> (LiabilityDetails.minimumLiabilityWeightKg + " "))
-        val expectedErrors = Seq(FormError("totalKg", weightTrailingBlankSpaceError))
-
-        testFailedValidationErrors(input, expectedErrors)
+        val form = LiabilityExpectedWeight.form().bind(input)
+        form.errors.size mustBe 0
       }
     }
   }
