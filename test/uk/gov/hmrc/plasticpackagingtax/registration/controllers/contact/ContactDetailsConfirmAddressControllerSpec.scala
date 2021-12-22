@@ -26,7 +26,6 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, ConfirmAddress}
@@ -113,9 +112,10 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(SOLE_TRADER),
-                                soleTraderDetails = Some(soleTraderIncorporationDetails)
+                                soleTraderDetails = Some(soleTraderDetails)
             )
-          )
+          ),
+          withRegisteredBusinessAddress(testBusinessAddress)
         )
         authorizedUser()
         mockRegistrationFind(registration)
@@ -124,14 +124,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        businessRegisteredAddressPopulatedSameAs(
-          IncorporationAddressDetails(premises = Option("2 Scala Street"),
-                                      address_line_1 = Some("Soho"),
-                                      locality = Option("London"),
-                                      postal_code = Option("W1T 2HN"),
-                                      country = Some("GB")
-          )
-        )
       }
 
       "display page method is invoked for partnership" in {
@@ -140,7 +132,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
                                 partnershipDetails = Some(partnershipDetails)
             )
-          )
+          ),
+          withRegisteredBusinessAddress(testBusinessAddress)
         )
         authorizedUser()
         mockRegistrationFind(registration)
@@ -149,14 +142,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        businessRegisteredAddressPopulatedSameAs(
-          IncorporationAddressDetails(premises = Option("3 Scala Street"),
-                                      address_line_1 = Some("Soho"),
-                                      locality = Option("London"),
-                                      postal_code = Option(testPostcode),
-                                      country = Some("GB")
-          )
-        )
       }
 
       "display page method is invoked for uk company" in {
@@ -174,7 +159,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        businessRegisteredAddressPopulatedSameAs(incorporationDetails.companyAddress)
       }
 
       "display page method is invoked for registered society" in {
@@ -192,10 +176,9 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        businessRegisteredAddressPopulatedSameAs(incorporationDetails.companyAddress)
       }
 
-      "throw internal server exception when organisation type does not match" in {
+      "throw IllegalStateException when business registered address is missing" in {
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(CHARITABLE_INCORPORATED_ORGANISATION))
@@ -207,7 +190,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         val result = controller.displayPage()(getRequest())
 
-        intercept[InternalServerException](status(result))
+        intercept[IllegalStateException](status(result))
       }
     }
 
@@ -301,16 +284,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           intercept[RuntimeException](status(result))
         }
 
-        "user display page and update to business address fails" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
-          mockRegistrationUpdateFailure()
-
-          val result = controller.displayPage()(getRequest())
-
-          intercept[DownstreamServiceError](status(result))
-        }
-
         "user display page and get uk company details fails" in {
           val registration = aRegistration(
             withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
@@ -320,19 +293,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           val result = controller.displayPage()(getRequest())
 
-          intercept[DownstreamServiceError](status(result))
-        }
-
-        "user display page and get sole trader details fails" in {
-          val registration = aRegistration(
-            withOrganisationDetails(OrganisationDetails(organisationType = Some(SOLE_TRADER)))
-          )
-          authorizedUser()
-          mockRegistrationFind(registration)
-
-          val result = controller.displayPage()(getRequest())
-
-          intercept[DownstreamServiceError](status(result))
+          intercept[IllegalStateException](status(result))
         }
 
         "user submits form and the registration update fails" in {

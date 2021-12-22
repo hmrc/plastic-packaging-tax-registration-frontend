@@ -101,6 +101,17 @@ case class OrganisationDetails(
     case _ => None
   }
 
+  def withBusinessRegisteredAddress(): OrganisationDetails = {
+    val businessAddress = organisationType match {
+      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+        incorporationDetails.map(
+          incorporationDetails => incorporationDetails.companyAddress.toPptAddress
+        )
+      case _ => None
+    }
+    this.copy(businessRegisteredAddress = businessAddress)
+  }
+
 }
 
 object OrganisationDetails {

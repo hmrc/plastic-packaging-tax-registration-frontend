@@ -21,7 +21,6 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
@@ -111,20 +110,13 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("submit").text() mustBe "Save and continue"
     }
 
-    "'search for new address' link" when {
+    "'search for new address' link" in {
+      val view = createView()
 
-      "address lookup is disabled" in {
-        view must not(containElementWithID("address-lookup-start"))
-      }
-
-      "address lookup is enabled" in {
-        val view = createView(userFeatureFlags = Map(Features.isAddressLookupEnabled -> true))
-
-        view must containElementWithID("address-lookup-start")
-        view.getElementById("address-lookup-start").text() mustBe messages(
-          "primaryContactDetails.address.lookup"
-        )
-      }
+      view must containElementWithID("address-lookup-start")
+      view.getElementById("address-lookup-start").text() mustBe messages(
+        "primaryContactDetails.address.lookup"
+      )
     }
 
   }

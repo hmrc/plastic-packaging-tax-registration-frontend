@@ -125,7 +125,7 @@ trait RegistrationBuilder {
     _.copy(incorpJourneyId = incorpJourneyId)
 
   def withRegistrationType(registrationType: Option[RegType]): RegistrationModifier =
-    registration => registration.copy(registrationType = registrationType)
+    _.copy(registrationType = registrationType)
 
   def withLiabilityDetails(liabilityDetails: LiabilityDetails): RegistrationModifier =
     _.copy(liabilityDetails = liabilityDetails)
@@ -147,18 +147,30 @@ trait RegistrationBuilder {
   def withUserHeaders(headers: Map[String, String]): RegistrationModifier =
     _.copy(userHeaders = Some(headers))
 
-  def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier =
-    _.copy(organisationDetails = organisationDetails)
+  def withOrganisationDetails(organisationDetails: OrganisationDetails): RegistrationModifier = {
+    reg =>
+      val updatedRegistration = reg.copy(organisationDetails = organisationDetails)
+      if (updatedRegistration.organisationDetails.businessRegisteredAddress.isEmpty)
+        updatedRegistration.populateBusinessRegisteredAddress()
+      else
+        updatedRegistration
+  }
+
+  def withRegisteredBusinessAddress(businessAddress: Address): RegistrationModifier =
+    reg =>
+      reg.copy(organisationDetails =
+        reg.organisationDetails.copy(businessRegisteredAddress = Some(businessAddress))
+      )
 
   def withPartnershipDetails(partnershipDetails: Option[PartnershipDetails]): RegistrationModifier =
-    registration =>
-      registration.copy(organisationDetails =
-        registration.organisationDetails.copy(organisationType = Some(PARTNERSHIP),
-                                              partnershipDetails = partnershipDetails
+    reg =>
+      reg.copy(organisationDetails =
+        reg.organisationDetails.copy(organisationType = Some(PARTNERSHIP),
+                                     partnershipDetails = partnershipDetails
         )
       )
 
   def withGroupDetail(groupDetail: Option[GroupDetail]): RegistrationModifier =
-    registration => registration.copy(registrationType = Some(GROUP), groupDetail = groupDetail)
+    _.copy(registrationType = Some(GROUP), groupDetail = groupDetail)
 
 }

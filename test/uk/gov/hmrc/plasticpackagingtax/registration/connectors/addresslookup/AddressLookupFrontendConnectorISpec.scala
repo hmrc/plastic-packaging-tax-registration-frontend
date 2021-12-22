@@ -33,7 +33,14 @@ class AddressLookupFrontendConnectorISpec extends ConnectorISpec with Injector w
   val initialiseRequest = AddressLookupConfigV2(
     options =
       JourneyOptions(continueUrl = "/continue", signOutHref = "/signout", serviceHref = "/service"),
-    labels = JourneyLabels(en = LanguageLabels(appLevelLabels = AppLevelLabels(navTitle = "Title")))
+    labels = JourneyLabels(en =
+      LanguageLabels(appLevelLabels = AppLevelLabels(navTitle = "Title"),
+                     selectPageLabels = SelectPageLabels("Select address", "Select address"),
+                     lookupPageLabels = LookupPageLabels("Lookup address", "Lookup address"),
+                     confirmPageLabels = ConfirmPageLabels("Confirm address", "Confirm address"),
+                     editPageLabels = EditPageLabels("Edit address", "Edit address")
+      )
+    )
   )
 
   "address lookup" should {

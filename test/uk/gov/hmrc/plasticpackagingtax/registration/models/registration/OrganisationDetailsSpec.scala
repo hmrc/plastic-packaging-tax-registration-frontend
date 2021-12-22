@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.libs.json.Json
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OrgType,
@@ -310,4 +311,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
       case _ => fail("Unsupported organisation type")
     }
 
+  "should serialise to json as expected" in {
+    println(Json.toJson(createOrg(UK_COMPANY, None, false)).toString)
+  }
 }

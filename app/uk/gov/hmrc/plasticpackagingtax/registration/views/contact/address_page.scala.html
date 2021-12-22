@@ -124,9 +124,7 @@
 
         <div class="govuk-button-group">
             @saveButton()
-            @if(request.isFeatureFlagEnabled(Features.isAddressLookupEnabled)) {
-                @link(text = messages("primaryContactDetails.address.lookup"), call = pptRoutes.ContactDetailsAddressController.initialise(), id = Some("address-lookup-start"))
-            }
+            @link(text = messages("primaryContactDetails.address.lookup"), call = pptRoutes.ContactDetailsAddressController.initialise(), id = Some("address-lookup-start"))
         </div>
 
     }

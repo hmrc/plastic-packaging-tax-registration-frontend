@@ -33,6 +33,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.Partnersh
   GENERAL_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorporationDetails,
+  PartnershipBusinessDetails,
+  SoleTraderDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
@@ -93,9 +98,9 @@ class GrsControllerSpec extends ControllerSpec {
 
     mockGetSubscriptionStatus(SubscriptionStatusResponse(NOT_SUBSCRIBED, None))
 
-    "redirect to the registration page" when {
+    "redirect to the task list page" when {
       "registering a UK Limited Company" in {
-        val result = simulateLimitedCompanyCallback()
+        val result = simulateLimitedCompanyCallback(incorporationDetails)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -105,7 +110,7 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "registering a Sole Trader" in {
-        val result = simulateSoleTraderCallback()
+        val result = simulateSoleTraderCallback(soleTraderDetails)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -125,7 +130,7 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "registering a GeneralPartnership" in {
-        val result = simulateGeneralPartnershipCallback()
+        val result = simulateGeneralPartnershipCallback(partnershipBusinessDetails)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -135,7 +140,7 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "registering a ScottishPartnership" in {
-        val result = simulateScottishPartnershipCallback()
+        val result = simulateScottishPartnershipCallback(partnershipBusinessDetails)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -147,23 +152,26 @@ class GrsControllerSpec extends ControllerSpec {
 
     "store the returned business entity information" when {
       "registering a UK Limited Company" in {
-        await(simulateLimitedCompanyCallback())
+        await(simulateLimitedCompanyCallback(incorporationDetails))
 
         val organisationDetails = getLastSavedRegistration.organisationDetails
 
         organisationDetails.incorporationDetails mustBe Some(incorporationDetails)
         organisationDetails.soleTraderDetails mustBe None
         organisationDetails.partnershipDetails mustBe None
+        organisationDetails.businessRegisteredAddress mustBe Some(
+          incorporationDetails.companyAddress.toPptAddress
+        )
 
         organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
 
       "registering a Sole Trader" in {
-        await(simulateSoleTraderCallback())
+        await(simulateSoleTraderCallback(soleTraderDetails))
 
         val organisationDetails = getLastSavedRegistration.organisationDetails
 
-        organisationDetails.soleTraderDetails mustBe Some(soleTraderIncorporationDetails)
+        organisationDetails.soleTraderDetails mustBe Some(soleTraderDetails)
         organisationDetails.incorporationDetails mustBe None
         organisationDetails.partnershipDetails mustBe None
 
@@ -171,7 +179,7 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "registering a GeneralPartnership" in {
-        await(simulateGeneralPartnershipCallback())
+        await(simulateGeneralPartnershipCallback(partnershipBusinessDetails))
 
         val organisationDetails = getLastSavedRegistration.organisationDetails
 
@@ -183,7 +191,7 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "registering a ScottishPartnership" in {
-        await(simulateScottishPartnershipCallback())
+        await(simulateScottishPartnershipCallback(partnershipBusinessDetails))
 
         val organisationDetails = getLastSavedRegistration.organisationDetails
 
@@ -330,7 +338,7 @@ class GrsControllerSpec extends ControllerSpec {
     }
   }
 
-  private def simulateLimitedCompanyCallback() = {
+  private def simulateLimitedCompanyCallback(incorporationDetails: IncorporationDetails) = {
     authorizedUser()
     mockGetUkCompanyDetails(incorporationDetails)
     mockRegistrationFind(unregisteredLimitedCompany)
@@ -366,16 +374,18 @@ class GrsControllerSpec extends ControllerSpec {
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def simulateSoleTraderCallback() = {
+  private def simulateSoleTraderCallback(soleTraderDetails: SoleTraderDetails) = {
     authorizedUser()
-    mockGetSoleTraderDetails(soleTraderIncorporationDetails)
+    mockGetSoleTraderDetails(soleTraderDetails)
     mockRegistrationFind(unregisteredSoleTrader)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def simulateGeneralPartnershipCallback() = {
+  private def simulateGeneralPartnershipCallback(
+    partnershipBusinessDetails: PartnershipBusinessDetails
+  ) = {
     authorizedUser()
     mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredGeneralPartnership)
@@ -384,7 +394,9 @@ class GrsControllerSpec extends ControllerSpec {
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def simulateScottishPartnershipCallback() = {
+  private def simulateScottishPartnershipCallback(
+    partnershipBusinessDetails: PartnershipBusinessDetails
+  ) = {
     authorizedUser()
     mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredScottishPartnership)

@@ -307,7 +307,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               val soleTraderRegistration = registration.copy(organisationDetails =
                 OrganisationDetails(organisationType = Some(SOLE_TRADER),
                                     businessRegisteredAddress = Some(testBusinessAddress),
-                                    soleTraderDetails = Some(soleTraderIncorporationDetails),
+                                    soleTraderDetails = Some(soleTraderDetails),
                                     incorporationDetails = None
                 )
               )

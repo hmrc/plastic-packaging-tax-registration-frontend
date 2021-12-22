@@ -187,7 +187,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                       registration = Some(unregisteredRegistrationDetails)
     )
 
-  protected val soleTraderIncorporationDetails: SoleTraderDetails =
+  protected val soleTraderDetails: SoleTraderDetails =
     SoleTraderDetails(testFirstName,
                       testLastName,
                       Some(testDob),
@@ -305,7 +305,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected def registeredSoleTraderOrgDetails(): OrganisationDetails =
     OrganisationDetails(organisationType = Some(SOLE_TRADER),
                         businessRegisteredAddress = Some(testBusinessAddress),
-                        soleTraderDetails = Some(soleTraderIncorporationDetails)
+                        soleTraderDetails = Some(soleTraderDetails)
     )
 
   protected def registeredGeneralPartnershipOrgDetails(): OrganisationDetails =

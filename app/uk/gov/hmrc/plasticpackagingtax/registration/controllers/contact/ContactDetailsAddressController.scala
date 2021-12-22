@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
@@ -29,10 +27,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
+  AddressLookupIntegration,
+  routes => commonRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
-  AddressLookupConfigV2,
   AddressLookupOnRamp,
   MissingAddressIdException
 }
@@ -46,6 +46,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -59,7 +60,7 @@ class ContactDetailsAddressController @Inject() (
   page: address_page,
   countryService: CountryService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with AddressLookupIntegration with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
@@ -75,18 +76,7 @@ class ContactDetailsAddressController @Inject() (
             )
           )
         case _ =>
-          if (request.isFeatureFlagEnabled(Features.isAddressLookupEnabled))
-            initialiseAddressLookup.map(onRamp => Redirect(onRamp.redirectUrl))
-          else
-            Future(
-              Ok(
-                page(Address.form(),
-                     countryService.getAll(),
-                     routes.ContactDetailsConfirmAddressController.displayPage(),
-                     routes.ContactDetailsAddressController.submit()
-                )
-              )
-            )
+          initialiseAddressLookup().map(onRamp => Redirect(onRamp.redirectUrl))
       }
     }
 
@@ -125,11 +115,18 @@ class ContactDetailsAddressController @Inject() (
 
   def initialise(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      if (request.isFeatureFlagEnabled(Features.isAddressLookupEnabled))
-        initialiseAddressLookup.map(onRamp => Redirect(onRamp.redirectUrl))
-      else
-        Future(Redirect(routes.ContactDetailsAddressController.displayPage()))
+      initialiseAddressLookup().map(onRamp => Redirect(onRamp.redirectUrl))
     }
+
+  private def initialiseAddressLookup()(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[AddressLookupOnRamp] =
+    initialiseAddressLookup(addressLookupFrontendConnector,
+                            appConfig,
+                            routes.ContactDetailsAddressController.update(None),
+                            "addressLookup.contact",
+                            request.registration.primaryContactDetails.name
+    )
 
   def update(id: Option[String]): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
@@ -169,13 +166,5 @@ class ContactDetailsAddressController @Inject() (
 
   private def updateAddress(address: Address, registration: Registration): PrimaryContactDetails =
     registration.primaryContactDetails.copy(address = Some(address))
-
-  private def initialiseAddressLookup(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[AddressLookupOnRamp] =
-    addressLookupFrontendConnector.initialiseJourney(
-      AddressLookupConfigV2(routes.ContactDetailsAddressController.update(None), appConfig)
-    )
 
 }
