@@ -57,17 +57,20 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
   def registrationConnector: RegistrationConnector
   def appConfig: AppConfig
 
-  protected def handleOrganisationType(organisationType: OrganisationType)(implicit
+  protected def handleOrganisationType(
+    organisationType: OrganisationType,
+    businessVerificationCheck: Boolean = true
+  )(implicit
     request: JourneyRequest[AnyContent],
     executionContext: ExecutionContext,
     headerCarrier: HeaderCarrier
   ) =
     (organisationType.answer, request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta)) match {
       case (Some(OrgType.UK_COMPANY), _) =>
-        getUkCompanyRedirectUrl()
+        getUkCompanyRedirectUrl(businessVerificationCheck)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH), false) =>
-        getUkCompanyRedirectUrl()
+        getUkCompanyRedirectUrl(businessVerificationCheck)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.SOLE_TRADER), false) =>
         getSoleTraderRedirectUrl()
@@ -78,9 +81,9 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       case (Some(OrgType.PARTNERSHIP), false) =>
         if (request.registration.isGroup) {
           updateRegistration(PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
-          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl).map(
-            journeyStartUrl => SeeOther(journeyStartUrl).addingToSession()
-          )
+          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                         businessVerificationCheck
+          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
         } else
           Future(Redirect(organisationRoutes.PartnershipTypeController.displayPage()))
       case _ =>
@@ -101,33 +104,39 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       )
     )
 
-  private def incorpEntityGrsCreateRequest(implicit request: Request[_]) =
+  private def incorpEntityGrsCreateRequest(
+    businessVerificationCheck: Boolean = true
+  )(implicit request: Request[_]) =
     IncorpEntityGrsCreateRequest(grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
-                                 appConfig.externalSignOutLink
+                                 appConfig.externalSignOutLink,
+                                 businessVerificationCheck =
+                                   businessVerificationCheck
     )
 
-  private def getUkCompanyRedirectUrl()(implicit
-    request: Request[_],
-    headerCarrier: HeaderCarrier
-  ): Future[String] =
-    ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
+  private def getUkCompanyRedirectUrl(
+    businessVerificationCheck: Boolean
+  )(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
+    ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest(businessVerificationCheck))
 
   private def getRegisteredSocietyRedirectUrl()(implicit
     request: Request[_],
     headerCarrier: HeaderCarrier
   ): Future[String] =
-    registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest)
+    registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest())
 
-  private def getRedirectUrl(
-    url: String
-  )(implicit request: JourneyRequest[AnyContent], headerCarrier: HeaderCarrier): Future[String] =
+  private def getRedirectUrl(url: String, businessVerificationCheck: Boolean)(implicit
+    request: JourneyRequest[AnyContent],
+    headerCarrier: HeaderCarrier
+  ): Future[String] =
     partnershipGrsConnector.createJourney(
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
-                                  appConfig.externalSignOutLink
+                                  appConfig.externalSignOutLink,
+                                  businessVerificationCheck =
+                                    businessVerificationCheck
       ),
       url
     )

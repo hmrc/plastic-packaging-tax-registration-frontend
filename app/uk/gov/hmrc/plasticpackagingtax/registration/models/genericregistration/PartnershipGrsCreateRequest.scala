@@ -25,7 +25,8 @@ case class PartnershipGrsCreateRequest(
   deskProServiceId: String,
   signOutUrl: String,
   regime: Regime = PPT,
-  enableSautrCheck: Boolean = true
+  enableSautrCheck: Boolean = true,
+  businessVerificationCheck: Boolean = true
 ) extends GrsJourneyCreationRequest
 
 object PartnershipGrsCreateRequest {
