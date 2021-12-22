@@ -20,26 +20,18 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
+  dateDecimalError,
   day,
-  dayDecimalError,
   dayEmptyError,
   dayFormatError,
-  dayLeadingBlankSpaceError,
   dayOutOfRangeError,
-  dayTrailingBlankSpaceError,
   month,
-  monthDecimalError,
   monthEmptyError,
   monthFormatError,
-  monthLeadingBlankSpaceError,
   monthOutOfRangeError,
-  monthTrailingBlankSpaceError,
   year,
-  yearDecimalError,
   yearEmptyError,
-  yearFormatError,
-  yearLeadingBlankSpaceError,
-  yearTrailingBlankSpaceError
+  yearFormatError
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.{
   dateFormattingError,
@@ -55,7 +47,7 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
       "is exactly one year after tax liability starts (01-04-2022)" in {
 
-        val date = dateLowerLimit.plusYears(1)
+        val date = dateLowerLimit.minusYears(1)
         val input = Map("year" -> date.getYear.toString,
                         "month" -> date.getMonthValue.toString,
                         "day"   -> date.getDayOfMonth.toString
@@ -142,25 +134,23 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains decimal number" in {
 
         val input          = Map("year" -> "2003.01", "month" -> "7", "day" -> "13")
-        val expectedErrors = Seq(FormError(year, yearDecimalError))
+        val expectedErrors = Seq(FormError(year, dateDecimalError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains leading blank space" in {
 
-        val input          = Map("year" -> " 2003", "month" -> "7", "day" -> "13")
-        val expectedErrors = Seq(FormError(year, yearLeadingBlankSpaceError))
-
-        testFailedValidationErrors(input, expectedErrors)
+        val input = Map("year" -> " 2021", "month" -> "7", "day" -> "13")
+        val form  = LiabilityStartDate.form().bind(input)
+        form.errors.size mustBe 0
       }
 
       "contains trailing blank space" in {
 
-        val input          = Map("year" -> "2003 ", "month" -> "7", "day" -> "13")
-        val expectedErrors = Seq(FormError(year, yearTrailingBlankSpaceError))
-
-        testFailedValidationErrors(input, expectedErrors)
+        val input = Map("year" -> "2021 ", "month" -> "7", "day" -> "13")
+        val form  = LiabilityStartDate.form().bind(input)
+        form.errors.size mustBe 0
       }
     }
 
@@ -193,23 +183,21 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains decimal number" in {
 
         val input          = Map("year" -> "2003", "month" -> "7.6", "day" -> "13")
-        val expectedErrors = Seq(FormError(month, monthDecimalError))
+        val expectedErrors = Seq(FormError(month, dateDecimalError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains leading blank space" in {
-        val input          = Map("year" -> "2003", "month" -> "   7", "day" -> "13")
-        val expectedErrors = Seq(FormError(month, monthLeadingBlankSpaceError))
-
-        testFailedValidationErrors(input, expectedErrors)
+        val input = Map("year" -> "2021", "month" -> "   7", "day" -> "13")
+        val form  = LiabilityStartDate.form().bind(input)
+        form.errors.size mustBe 0
       }
 
       "contains trailing blank space" in {
-        val input          = Map("year" -> "2003", "month" -> " 7 ", "day" -> "13")
-        val expectedErrors = Seq(FormError(month, monthTrailingBlankSpaceError))
-
-        testFailedValidationErrors(input, expectedErrors)
+        val input = Map("year" -> "2021", "month" -> " 7 ", "day" -> "13")
+        val form  = LiabilityStartDate.form().bind(input)
+        form.errors.size mustBe 0
       }
     }
 
@@ -250,33 +238,34 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       "contains decimal number" in {
 
         val input          = Map("year" -> "2003", "month" -> "7", "day" -> "1.5")
-        val expectedErrors = Seq(FormError(day, dayDecimalError))
+        val expectedErrors = Seq(FormError(day, dateDecimalError))
 
         testFailedValidationErrors(input, expectedErrors)
       }
 
       "contains leading blank space" in {
 
-        val input          = Map("year" -> "2003", "month" -> "7", "day" -> " 13")
-        val expectedErrors = Seq(FormError(day, dayLeadingBlankSpaceError))
-
-        testFailedValidationErrors(input, expectedErrors)
+        val input = Map("year" -> "2021", "month" -> "7", "day" -> " 13")
+        val form  = LiabilityStartDate.form().bind(input)
+        form.errors.size mustBe 0
       }
 
       "contains trailing blank space" in {
 
-        val input          = Map("year" -> "2003", "month" -> "7", "day" -> "13  ")
-        val expectedErrors = Seq(FormError(day, dayTrailingBlankSpaceError))
-
-        testFailedValidationErrors(input, expectedErrors)
+        val input = Map("year" -> "2021", "month" -> "7", "day" -> "13  ")
+        val form  = LiabilityStartDate.form().bind(input)
+        form.errors.size mustBe 0
       }
     }
 
     "provided with date" which {
 
       "is 2022-03-31 (before PPT tax)" in {
-
-        val input          = Map("year" -> "1999", "month" -> "12", "day" -> "31")
+        val date = dateLowerLimit.plusYears(1)
+        val input = Map("year" -> date.getYear.toString,
+                        "month" -> date.getMonthValue.toString,
+                        "day"   -> date.getDayOfMonth.toString
+        )
         val expectedErrors = Seq(FormError("", dateOutOfRangeError))
 
         testFailedValidationErrors(input, expectedErrors)

@@ -27,11 +27,7 @@ object LiabilityStartDate {
   val dateFormattingError = "liabilityStartDate.formatting.error"
   val dateOutOfRangeError = "liabilityStartDate.outOfRange.error"
 
-  val dateLowerLimit: LocalDate = LocalDate.of(2022, 4, 1)
-
-  private val dateUpperLimit =
-    if (LocalDate.now().isAfter(dateLowerLimit)) LocalDate.now().plusYears(1)
-    else dateLowerLimit.plusYears(1)
+  val dateLowerLimit: LocalDate = LocalDate.now()
 
   private val isDateFormatValid: Date => Boolean = date =>
     Try(LocalDate.parse(date.toString)).isSuccess
@@ -39,10 +35,7 @@ object LiabilityStartDate {
   private val isDateInRange: Date => Boolean = date =>
     (LocalDate.parse(date.toString).isEqual(dateLowerLimit) || LocalDate.parse(
       date.toString
-    ).isAfter(dateLowerLimit)) &&
-      (LocalDate.parse(date.toString).isEqual(dateUpperLimit) || LocalDate.parse(
-        date.toString
-      ).isBefore(dateUpperLimit))
+    ).isBefore(dateLowerLimit))
 
   def form(): Form[Date] =
     Form(
