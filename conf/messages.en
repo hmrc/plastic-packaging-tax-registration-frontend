@@ -462,10 +462,10 @@ company.confirmAddress.title = Confirm the company address for {0}
 
 missing.organisationName = your organisation
 
-addressLookup.business.select.title = What is the business address for {0}?
-addressLookup.business.select.heading = What is the business address for {0}?
-addressLookup.contact.select.title = What is {0}’s business address?
-addressLookup.contact.select.heading = What is {0}’s business address?
+addressLookup.business.select.title = Select the business address for {0}?
+addressLookup.business.select.heading = Select the business address for {0}?
+addressLookup.contact.select.title = Select {0}’s business address?
+addressLookup.contact.select.heading = Select {0}’s business address?
 
 addressLookup.business.lookup.title = What is the business address for {0}?
 addressLookup.business.lookup.heading = What is the business address for {0}?
