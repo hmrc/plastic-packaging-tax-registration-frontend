@@ -46,6 +46,7 @@ POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controll
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationTypeNotSupportedController.onPageLoad()
 
 GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
+GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.alfCallback(id: Option[String])
 
 # Primary Contact Details
 GET        /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsFullNameController.displayPage()

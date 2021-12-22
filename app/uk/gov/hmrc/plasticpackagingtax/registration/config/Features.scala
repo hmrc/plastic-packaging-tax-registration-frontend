@@ -20,5 +20,4 @@ object Features {
   val isPreLaunch: String                = "isPreLaunch"
   val isUkCompanyPrivateBeta: String     = "ukCompanyPrivateBeta"
   val isGroupRegistrationEnabled: String = "isGroupRegistrationEnabled"
-  val isAddressLookupEnabled: String     = "isAddressLookupEnabled"
 }

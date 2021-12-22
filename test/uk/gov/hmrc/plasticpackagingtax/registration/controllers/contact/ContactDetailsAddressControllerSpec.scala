@@ -26,7 +26,6 @@ import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
@@ -98,6 +97,9 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
     when(page.apply(any[Form[Address]], any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Contact Address Page")
     )
+    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
+      Future(AddressLookupOnRamp("/on-ramp"))
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -109,15 +111,7 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
 
     "display page" when {
 
-      "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Contact Address Page"
-      }
-
-      "user is authorised, a registration already exists and display page method is invoked" in {
+      "user is authorised and registration exists with a primary contact address" in {
         authorizedUser()
         mockRegistrationFind(
           aRegistration(
@@ -134,31 +128,12 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Contact Address Page"
       }
 
-      "user has address lookup flag set and a registration already exists and display page method is invoked" in {
-        authorizedUser(features = Map(Features.isAddressLookupEnabled -> true))
-        mockRegistrationFind(
-          aRegistration(
-            withPrimaryContactDetails(
-              PrimaryContactDetails(address =
-                Some(anAddress)
-              )
-            )
-          )
-        )
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe "Contact Address Page"
-      }
     }
 
     "redirect to address lookup frontend" when {
 
-      "user has address lookup flag set and display page method is invoked with no existing address" in {
-        authorizedUser(features = Map(Features.isAddressLookupEnabled -> true))
-        when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
-          Future(AddressLookupOnRamp("/on-ramp"))
-        )
+      "display page method is invoked with no existing address" in {
+        authorizedUser()
 
         val result = controller.displayPage()(getRequest())
 
@@ -168,31 +143,13 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec {
     }
 
     "initialise" should {
-      "redirect to address lookup frontend" when {
-        "user has address lookup flag set" in {
-          authorizedUser(features = Map(Features.isAddressLookupEnabled -> true))
-          when(
-            mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())
-          ).thenReturn(Future(AddressLookupOnRamp("/on-ramp")))
+      "redirect to address lookup frontend" in {
+        authorizedUser()
 
-          val result = controller.initialise()(getRequest())
+        val result = controller.initialise()(getRequest())
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some("/on-ramp")
-        }
-      }
-
-      "redirect to display page" when {
-        "user does not have address lookup flag set" in {
-          authorizedUser(features = Map(Features.isAddressLookupEnabled -> false))
-
-          val result = controller.initialise()(getRequest())
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(
-            routes.ContactDetailsAddressController.displayPage().url
-          )
-        }
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some("/on-ramp")
       }
     }
 

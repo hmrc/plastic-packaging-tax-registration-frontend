@@ -125,7 +125,7 @@ trait RegistrationBuilder {
     _.copy(incorpJourneyId = incorpJourneyId)
 
   def withRegistrationType(registrationType: Option[RegType]): RegistrationModifier =
-    registration => registration.copy(registrationType = registrationType)
+    _.copy(registrationType = registrationType)
 
   def withLiabilityDetails(liabilityDetails: LiabilityDetails): RegistrationModifier =
     _.copy(liabilityDetails = liabilityDetails)
@@ -156,15 +156,21 @@ trait RegistrationBuilder {
         updatedRegistration
   }
 
+  def withRegisteredBusinessAddress(businessAddress: Address): RegistrationModifier =
+    reg =>
+      reg.copy(organisationDetails =
+        reg.organisationDetails.copy(businessRegisteredAddress = Some(businessAddress))
+      )
+
   def withPartnershipDetails(partnershipDetails: Option[PartnershipDetails]): RegistrationModifier =
-    registration =>
-      registration.copy(organisationDetails =
-        registration.organisationDetails.copy(organisationType = Some(PARTNERSHIP),
-                                              partnershipDetails = partnershipDetails
+    reg =>
+      reg.copy(organisationDetails =
+        reg.organisationDetails.copy(organisationType = Some(PARTNERSHIP),
+                                     partnershipDetails = partnershipDetails
         )
       )
 
   def withGroupDetail(groupDetail: Option[GroupDetail]): RegistrationModifier =
-    registration => registration.copy(registrationType = Some(GROUP), groupDetail = groupDetail)
+    _.copy(registrationType = Some(GROUP), groupDetail = groupDetail)
 
 }

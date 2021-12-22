@@ -18,60 +18,82 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  OVERSEAS_COMPANY_UK_BRANCH,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  UK_COMPANY
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
+  AddressLookupIntegration,
+  routes => commonRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
+  addressLookupFrontendConnector: AddressLookupFrontendConnector,
+  appConfig: AppConfig,
   mcc: MessagesControllerComponents,
   page: confirm_business_address
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with AddressLookupIntegration with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      val businessAddress = getBusinessAddress(request)
-      businessAddress match {
-        case Some(value) =>
-          Ok(
-            page(
-              value,
-              request.registration.organisationDetails.businessName.getOrElse("your organisation"),
-              commonRoutes.TaskListController.displayPage().url
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.organisationDetails.businessRegisteredAddress match {
+        case Some(registeredBusinessAddress) if isAddressValid(registeredBusinessAddress) =>
+          Future.successful(
+            Ok(
+              page(registeredBusinessAddress,
+                   request.registration.organisationDetails.businessName.getOrElse(
+                     "your organisation"
+                   ),
+                   commonRoutes.TaskListController.displayPage().url
+              )
             )
           )
-        case _ => Redirect(commonRoutes.TaskListController.displayPage())
+        case _ =>
+          initialiseAddressLookup(addressLookupFrontendConnector,
+                                  appConfig,
+                                  routes.ConfirmBusinessAddressController.alfCallback(None),
+                                  "addressLookup.business",
+                                  request.registration.organisationDetails.businessName
+          ).map(onRamp => Redirect(onRamp.redirectUrl))
       }
 
     }
 
-  private def getBusinessAddress(implicit request: JourneyRequest[AnyContent]): Option[Address] =
-    request.registration.organisationDetails.organisationType match {
-      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-        request.registration.organisationDetails.incorporationDetails.map(
-          _.companyAddress.toPptAddress
-        )
-      case Some(PARTNERSHIP) =>
-        request.registration.organisationDetails.partnershipDetails.flatMap(
-          _.partnershipOrCompanyAddress
-        )
-      case _ => None
+  private def isAddressValid(address: Address) =
+    Address.form().fillAndValidate(address).errors.isEmpty
+
+  def alfCallback(id: Option[String]): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      addressLookupFrontendConnector.getAddress(
+        id.getOrElse(throw new MissingAddressIdException)
+      ).flatMap {
+        // TODO: consider re-validating here as we do for contact address. The code there suggests that ALF might return
+        //       an address which we consider invalid. Need to check this out!
+        confirmedAddress =>
+          update { reg =>
+            reg.copy(organisationDetails =
+              reg.organisationDetails.copy(businessRegisteredAddress =
+                Some(Address(confirmedAddress))
+              )
+            )
+          }.map { _ =>
+            Redirect(commonRoutes.TaskListController.displayPage())
+          }
+      }
     }
 
 }

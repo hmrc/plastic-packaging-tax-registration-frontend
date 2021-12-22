@@ -459,3 +459,25 @@ group.member.already.registered.detail2 = {0} will need to de-register for PPT b
 amendRegistration.organisationDetails.title = Your PPT registration
 
 company.confirmAddress.title = Confirm the company address for {0}
+
+missing.organisationName = your organisation
+
+addressLookup.business.select.title = What is the business address for {0}?
+addressLookup.business.select.heading = What is the business address for {0}?
+addressLookup.contact.select.title = What is {0}’s business address?
+addressLookup.contact.select.heading = What is {0}’s business address?
+
+addressLookup.business.lookup.title = What is the business address for {0}?
+addressLookup.business.lookup.heading = What is the business address for {0}?
+addressLookup.contact.lookup.title = What is {0}’s business address?
+addressLookup.contact.lookup.heading = What is {0}’s business address?
+
+addressLookup.business.confirm.title = What is the business address for {0}?
+addressLookup.business.confirm.heading = What is the business address for {0}?
+addressLookup.contact.confirm.title = What is {0}’s business address?
+addressLookup.contact.confirm.heading = What is {0}’s business address?
+
+addressLookup.business.edit.title = What is the business address for {0}?
+addressLookup.business.edit.heading = What is the business address for {0}?
+addressLookup.contact.edit.title = What is {0}’s business address?
+addressLookup.contact.edit.heading = What is {0}’s business address?

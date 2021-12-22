@@ -162,7 +162,7 @@ class GrsController @Inject() (
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] = {
-    val updatedRegistration = request.registration.organisationDetails.organisationType match {
+    request.registration.organisationDetails.organisationType match {
       case Some(OrgType.UK_COMPANY) | Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
         updateUkCompanyDetails(journeyId)
       case Some(OrgType.REGISTERED_SOCIETY) => updateRegisteredSocietyDetails(journeyId)
@@ -170,11 +170,9 @@ class GrsController @Inject() (
       case Some(OrgType.PARTNERSHIP)        => updatePartnershipDetails(journeyId)
       case _                                => throw new InternalServerException(s"Invalid organisation type")
     }
-    updatedRegistration
-      .flatMap(
-        updatedRegistration => update(_ => updatedRegistration.populateBusinessRegisteredAddress())
-      )
-  }
+  }.flatMap(
+    updatedRegistration => update(_ => updatedRegistration.populateBusinessRegisteredAddress())
+  )
 
   private def updateUkCompanyDetails(
     journeyId: String

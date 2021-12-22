@@ -19,49 +19,65 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.json.JsObject
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  OVERSEAS_COMPANY_UK_BRANCH,
-  OrgType,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  PartnershipTypeEnum,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import scala.concurrent.Future
+
 class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
-  private val page = mock[confirm_business_address]
-  private val mcc  = stubMessagesControllerComponents()
+  private val page                               = mock[confirm_business_address]
+  private val mcc                                = stubMessagesControllerComponents()
+  private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
 
   private val controller =
     new ConfirmBusinessAddressController(authenticate = mockAuthAction,
-                                         mockJourneyAction,
-                                         mockRegistrationConnector,
+                                         journeyAction = mockJourneyAction,
+                                         registrationConnector = mockRegistrationConnector,
+                                         addressLookupFrontendConnector =
+                                           mockAddressLookupFrontendConnector,
+                                         appConfig,
                                          mcc = mcc,
                                          page = page
     )
 
+  private val alfAddress = AddressLookupConfirmation(auditRef = "auditRef",
+                                                     id = Some("123"),
+                                                     address = AddressLookupAddress(
+                                                       lines = List("addressLine1",
+                                                                    "addressLine2",
+                                                                    "addressLine3"
+                                                       ),
+                                                       postcode = Some("E17 1ER"),
+                                                       country = Some(
+                                                         AddressLookupCountry(code = "GB",
+                                                                              name =
+                                                                                "United Kingdom"
+                                                         )
+                                                       )
+                                                     )
+  )
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Address], any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Address], any(), any())(any(), any())).thenReturn(
+      HtmlFormat.raw("business registered address")
+    )
+    authorizedUser()
+    mockRegistrationUpdate()
+    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
+      Future(AddressLookupOnRamp("/on-ramp"))
+    )
+    when(mockAddressLookupFrontendConnector.getAddress(any())(any(), any())).thenReturn(
+      Future.successful(alfAddress)
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -71,118 +87,67 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
 
   "Confirm Company Address Controller" should {
 
-    "return 200" when {
+    "display registered business address when it is populated and valid" in {
+      mockRegistrationFind(aRegistration())
 
-      "user is authorised and display page method is invoked" in {
-        authorizedUser()
+      val resp = controller.displayPage()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "business registered address"
+    }
+
+    "redirect to address lookup frontend" when {
+      "registered business address is not present" in {
+        val registration = aRegistration()
         mockRegistrationFind(
-          aRegistration(
-            withOrganisationDetails(
-              OrganisationDetails(organisationType = Some(UK_COMPANY),
-                                  incorporationDetails = Some(incorporationDetails)
+          registration.copy(organisationDetails =
+            registration.organisationDetails.copy(businessRegisteredAddress = None)
+          )
+        )
+
+        val resp = controller.displayPage()(getRequest())
+
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some("/on-ramp")
+      }
+      "registered business address is invalid" in {
+        val registration = aRegistration()
+        mockRegistrationFind(
+          registration.copy(organisationDetails =
+            registration.organisationDetails.copy(businessRegisteredAddress =
+              registration.organisationDetails.businessRegisteredAddress.map(
+                _.copy(addressLine1 =
+                  "100 Really Long Street Name Which is Well in Excess of 35 characters"
+                )
               )
             )
           )
         )
-        mockRegistrationUpdate()
-        val result = controller.displayPage()(getRequest())
 
-        status(result) mustBe OK
+        val resp = controller.displayPage()(getRequest())
+
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some("/on-ramp")
       }
     }
 
-    "display company address" when {
+    "obtain address from address lookup and update registration and redirect to task list" when {
+      "control is returned from address lookup frontend" in {
+        val resp = controller.alfCallback(Some("123"))(getRequest())
 
-      forAll(
-        Seq(UK_COMPANY, SOLE_TRADER, REGISTERED_SOCIETY, OVERSEAS_COMPANY_UK_BRANCH, PARTNERSHIP)
-      ) { organisationType =>
-        "display address for " + organisationType when {
-          "return 200 " in {
-            organisationType match {
-              case UK_COMPANY | REGISTERED_SOCIETY | OVERSEAS_COMPANY_UK_BRANCH | PARTNERSHIP =>
-                mockRegistrationBusinessAddress(organisationType)
-                val result = controller.displayPage()(getRequest())
-                status(result) mustBe OK
-              case _ =>
-                mockRegistrationBusinessAddress(organisationType)
-                val result = controller.displayPage()(getRequest())
-                status(result) mustBe SEE_OTHER
-                redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-            }
-          }
-        }
-      }
-      forAll(
-        Seq(LIMITED_LIABILITY_PARTNERSHIP,
-            LIMITED_PARTNERSHIP,
-            GENERAL_PARTNERSHIP,
-            SCOTTISH_PARTNERSHIP,
-            SCOTTISH_LIMITED_PARTNERSHIP
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some(commonRoutes.TaskListController.displayPage().url)
+
+        modifiedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(
+          Address(alfAddress)
         )
-      ) { partnershipType =>
-        "display address for " + partnershipType when {
-          "return 200 " in {
-            partnershipType match {
-              case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP |
-                  SCOTTISH_LIMITED_PARTNERSHIP =>
-                mockRegistrationBusinessAddressForPartnership(partnershipType)
-                val result = controller.displayPage()(getRequest())
-                status(result) mustBe OK
-              case _ =>
-                mockRegistrationBusinessAddressForPartnership(partnershipType)
-                val result = controller.displayPage()(getRequest())
-                status(result) mustBe SEE_OTHER
-                redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-            }
-          }
-        }
+      }
+    }
+
+    "throw MissingAddressIdException if return from address lookup is missing a journey id" in {
+      intercept[MissingAddressIdException] {
+        await(controller.alfCallback(None)(getRequest()))
       }
     }
   }
-
-  private def mockRegistrationBusinessAddress(organisationType: OrgType) =
-    organisationType match {
-      case UK_COMPANY | REGISTERED_SOCIETY | OVERSEAS_COMPANY_UK_BRANCH =>
-        val registration = aRegistration(
-          withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(organisationType),
-                                incorporationDetails = Some(incorporationDetails)
-            )
-          )
-        )
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-      case PARTNERSHIP =>
-        val registration = aRegistration(
-          withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(organisationType),
-                                partnershipDetails =
-                                  Some(partnershipDetailsWithBusinessAddress(LIMITED_PARTNERSHIP))
-            )
-          )
-        )
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-      case _ => None
-    }
-
-  private def mockRegistrationBusinessAddressForPartnership(partnershipType: PartnershipTypeEnum) =
-    partnershipType match {
-      case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
-        val registration = aRegistration(
-          withOrganisationDetails(
-            OrganisationDetails(organisationType = Some(PARTNERSHIP),
-                                partnershipDetails =
-                                  Some(partnershipDetailsWithBusinessAddress(partnershipType))
-            )
-          )
-        )
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-      case _ => None
-    }
-
 }

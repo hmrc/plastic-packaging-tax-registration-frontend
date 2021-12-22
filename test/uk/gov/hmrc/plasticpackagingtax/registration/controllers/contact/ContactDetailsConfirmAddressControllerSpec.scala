@@ -114,7 +114,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             OrganisationDetails(organisationType = Some(SOLE_TRADER),
                                 soleTraderDetails = Some(soleTraderDetails)
             )
-          )
+          ),
+          withRegisteredBusinessAddress(testBusinessAddress)
         )
         authorizedUser()
         mockRegistrationFind(registration)
@@ -131,7 +132,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
                                 partnershipDetails = Some(partnershipDetails)
             )
-          )
+          ),
+          withRegisteredBusinessAddress(testBusinessAddress)
         )
         authorizedUser()
         mockRegistrationFind(registration)
