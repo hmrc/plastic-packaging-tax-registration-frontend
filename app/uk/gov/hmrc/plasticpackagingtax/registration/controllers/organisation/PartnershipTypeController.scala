@@ -122,7 +122,7 @@ class PartnershipTypeController @Inject() (
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
-                                  appConfig.externalSignOutLink
+                                  appConfig.signOutLink
       ),
       url
     )

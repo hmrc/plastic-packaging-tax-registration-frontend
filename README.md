@@ -22,6 +22,13 @@ sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE
 sm -s 
 ```
 
+It may be necessary (at least for a time after writing this [23/12/2021]) to specifically permit `localhost` as a permitted host for URLs passed to the Address Lookup Frontend. It can be done
+as follows:
+
+```
+--appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}'
+```
+
 * Run the microservice locally
 
 ```

@@ -17,9 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup
 
 import com.kenshoo.play.metrics.Metrics
+import play.api.Logger
+
 import javax.inject.{Inject, Singleton}
 import play.api.http.HeaderNames.LOCATION
 import play.api.http.Status.ACCEPTED
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -38,10 +41,18 @@ class AddressLookupFrontendConnector @Inject() (
   metrics: Metrics
 ) {
 
+  private val logger = Logger(this.getClass)
+
   def initialiseJourney(
     addressLookupRequest: AddressLookupConfigV2
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupOnRamp] = {
     val timer = metrics.defaultRegistry.timer("ppt.addresslookup.initialise.timer").time()
+
+    // TODO: remove once we have operational in non-local envs
+    logger.info(
+      s"Address Lookup initialisation request:\n${Json.prettyPrint(Json.toJson(addressLookupRequest))}"
+    )
+
     http.POST[AddressLookupConfigV2, HttpResponse](appConfig.addressLookupInitUrl,
                                                    addressLookupRequest
     ).andThen { case _ => timer.stop() }
