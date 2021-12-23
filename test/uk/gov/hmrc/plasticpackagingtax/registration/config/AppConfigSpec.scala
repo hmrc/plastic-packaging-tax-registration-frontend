@@ -66,8 +66,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
 
     "have 'soleTraderJourneyUrl' defined" in {
-      validAppConfig.soleTraderJourneyUrl must be(
-        "http://localhost:9717/sole-trader-identification/api/journey"
+      validAppConfig.soleTraderJourneyInitUrl must be(
+        "http://localhost:9717/sole-trader-identification/api/sole-trader-journey"
       )
     }
 

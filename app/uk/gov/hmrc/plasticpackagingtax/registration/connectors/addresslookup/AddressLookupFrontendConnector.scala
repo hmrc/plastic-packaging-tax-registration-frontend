@@ -41,18 +41,10 @@ class AddressLookupFrontendConnector @Inject() (
   metrics: Metrics
 ) {
 
-  private val logger = Logger(this.getClass)
-
   def initialiseJourney(
     addressLookupRequest: AddressLookupConfigV2
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AddressLookupOnRamp] = {
     val timer = metrics.defaultRegistry.timer("ppt.addresslookup.initialise.timer").time()
-
-    // TODO: remove once we have operational in non-local envs
-    logger.info(
-      s"Address Lookup initialisation request:\n${Json.prettyPrint(Json.toJson(addressLookupRequest))}"
-    )
-
     http.POST[AddressLookupConfigV2, HttpResponse](appConfig.addressLookupInitUrl,
                                                    addressLookupRequest
     ).andThen { case _ => timer.stop() }
