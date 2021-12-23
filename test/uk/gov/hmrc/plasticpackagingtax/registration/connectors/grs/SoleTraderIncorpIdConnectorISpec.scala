@@ -50,7 +50,7 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
         )
 
       stubFor(
-        post("/sole-trader-identification/api/journey")
+        post("/sole-trader-identification/api/sole-trader-journey")
           .willReturn(
             aResponse()
               .withStatus(Status.CREATED)
@@ -77,7 +77,7 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
         )
 
       stubFor(
-        post("/sole-trader-identification/api/journey")
+        post("/sole-trader-identification/api/sole-trader-journey")
           .willReturn(
             aResponse()
               .withStatus(Status.INTERNAL_SERVER_ERROR)

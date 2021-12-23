@@ -90,6 +90,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val soleTraderHost: String =
     servicesConfig.baseUrl("sole-trader-identification-frontend")
 
+  lazy val soleTraderJourneyInitUrl =
+    s"$soleTraderHost/sole-trader-identification/api/sole-trader-journey"
+
   lazy val soleTraderJourneyUrl = s"$soleTraderHost/sole-trader-identification/api/journey"
 
   lazy val partnershipHost: String =
