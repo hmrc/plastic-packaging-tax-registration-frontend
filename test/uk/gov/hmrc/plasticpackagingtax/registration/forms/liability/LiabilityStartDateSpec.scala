@@ -46,8 +46,8 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
     "is success" when {
 
       "is exactly one year after tax liability starts (01-04-2022)" in {
-
-        val date = dateLowerLimit.minusYears(1)
+//TODO need to change the test when we get the exact dates
+        val date = dateLowerLimit
         val input = Map("year" -> date.getYear.toString,
                         "month" -> date.getMonthValue.toString,
                         "day"   -> date.getDayOfMonth.toString
@@ -141,14 +141,14 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
       "contains leading blank space" in {
 
-        val input = Map("year" -> " 2021", "month" -> "7", "day" -> "13")
+        val input = Map("year" -> " 2022", "month" -> "4", "day" -> "1")
         val form  = LiabilityStartDate.form().bind(input)
         form.errors.size mustBe 0
       }
 
       "contains trailing blank space" in {
 
-        val input = Map("year" -> "2021 ", "month" -> "7", "day" -> "13")
+        val input = Map("year" -> "2022 ", "month" -> "4", "day" -> "1")
         val form  = LiabilityStartDate.form().bind(input)
         form.errors.size mustBe 0
       }
@@ -189,13 +189,13 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
       }
 
       "contains leading blank space" in {
-        val input = Map("year" -> "2021", "month" -> "   7", "day" -> "13")
+        val input = Map("year" -> "2022", "month" -> "   4", "day" -> "1")
         val form  = LiabilityStartDate.form().bind(input)
         form.errors.size mustBe 0
       }
 
       "contains trailing blank space" in {
-        val input = Map("year" -> "2021", "month" -> " 7 ", "day" -> "13")
+        val input = Map("year" -> "2022", "month" -> " 4 ", "day" -> "1")
         val form  = LiabilityStartDate.form().bind(input)
         form.errors.size mustBe 0
       }
@@ -245,14 +245,14 @@ class LiabilityStartDateSpec extends AnyWordSpec with Matchers {
 
       "contains leading blank space" in {
 
-        val input = Map("year" -> "2021", "month" -> "7", "day" -> " 13")
+        val input = Map("year" -> "2022", "month" -> "4", "day" -> " 1")
         val form  = LiabilityStartDate.form().bind(input)
         form.errors.size mustBe 0
       }
 
       "contains trailing blank space" in {
 
-        val input = Map("year" -> "2021", "month" -> "7", "day" -> "13  ")
+        val input = Map("year" -> "2022", "month" -> "4", "day" -> "1  ")
         val form  = LiabilityStartDate.form().bind(input)
         form.errors.size mustBe 0
       }
