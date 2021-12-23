@@ -97,7 +97,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       SoleTraderGrsCreateRequest(grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
-                                 appConfig.externalSignOutLink
+                                 appConfig.signOutLink
       )
     )
 
@@ -105,7 +105,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
     IncorpEntityGrsCreateRequest(grsCallbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
-                                 appConfig.externalSignOutLink
+                                 appConfig.signOutLink
     )
 
   private def getUkCompanyRedirectUrl()(implicit
@@ -127,7 +127,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
-                                  appConfig.externalSignOutLink
+                                  appConfig.signOutLink
       ),
       url
     )

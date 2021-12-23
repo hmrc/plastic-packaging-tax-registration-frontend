@@ -39,7 +39,7 @@ object AddressLookupConfigV2 {
     def getEntityName = entityName.getOrElse(en("missing.organisationName"))
 
     new AddressLookupConfigV2(options = JourneyOptions(continueUrl = appConfig.selfUrl(continue),
-                                                       signOutHref = appConfig.externalSignOutLink,
+                                                       signOutHref = appConfig.signOutLink,
                                                        serviceHref = appConfig.selfUrl(
                                                          commonRoutes.StartController.displayStartPage
                                                        )
