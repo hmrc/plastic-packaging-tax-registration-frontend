@@ -149,12 +149,12 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
         mockRegistrationUpdate()
 
         val result =
-          controller.submit()(postRequestEncoded(Date(Some(1), Some(6), Some(2022)), formAction))
+          controller.submit()(postRequestEncoded(Date(Some(1), Some(4), Some(2022)), formAction))
 
         status(result) mustBe SEE_OTHER
 
         modifiedRegistration.liabilityDetails.startDate mustBe Some(
-          Date(Some(1), Some(6), Some(2022))
+          Date(Some(1), Some(4), Some(2022))
         )
         formAction._1 match {
           case "SaveAndContinue" => redirectLocation(result) mustBe Some(saveAndContinueRedirectUrl)
@@ -167,7 +167,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
       "user submits invalid liability start date" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(Date(Some(1), Some(4), Some(1900)))))
+          controller.submit()(postRequest(Json.toJson(Date(Some(1), Some(3), Some(2012)))))
 
         status(result) mustBe BAD_REQUEST
       }

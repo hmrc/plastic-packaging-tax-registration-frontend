@@ -48,6 +48,7 @@ date.month.decimal.error = Month must not include decimals
 date.month.outOfRange.error = Month must be a number between 1 and 12
 date.month.leadingBlankSpace.error = Month must not have leading spaces
 date.month.trailingBlankSpace.error = Month must not have trailing spaces
+date.decimal.error = Date must be a real date
 
 date.year = Year
 date.year.error = Enter a valid year
@@ -112,7 +113,7 @@ liabilityStartDatePage.title = What is the date you first became liable?
 liabilityStartDatePage.hint = For example, 12 11 2007
 liabilityStartDatePage.question = What is the date you first became liable?
 liabilityStartDate.formatting.error = Liability start date - wrong format
-liabilityStartDate.outOfRange.error = Liability start date must be on or after 1 April 2022 and before 2 April 2023
+liabilityStartDate.outOfRange.error = Liability date must be today or in the past
 
 liabilityLiableDatePage.sectionHeader = Liability details
 liabilityLiableDatePage.title = What is your liability date?
