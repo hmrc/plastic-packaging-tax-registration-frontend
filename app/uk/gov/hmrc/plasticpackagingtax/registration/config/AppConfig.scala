@@ -52,6 +52,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     .getOptional[String]("platform.frontend.host")
     .getOrElse("http://localhost:8503")
 
+  def isRunningLocally() = !config.getOptional[String]("platform.frontend.host").isDefined
+
   def selfUrl(call: Call): String = s"$selfBaseUrl${call.url}"
 
   lazy val contactBaseUrl = config
@@ -67,11 +69,15 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val loginUrl         = config.get[String]("urls.login")
   lazy val loginContinueUrl = config.get[String]("urls.loginContinue")
 
-  lazy val externalSignOutLink = selfUrl(
-    routes.SignOutController.signOut(
+  lazy val signOutLink = {
+    val signOutUrl = routes.SignOutController.signOut(
       uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction
     )
-  )
+    if (isRunningLocally())
+      selfUrl(signOutUrl)
+    else // Use a relative link
+      signOutUrl.url
+  }
 
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
