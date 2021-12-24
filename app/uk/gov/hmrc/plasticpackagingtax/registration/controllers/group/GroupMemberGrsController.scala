@@ -79,7 +79,7 @@ class GroupMemberGrsController @Inject() (
               case STATUS_OK =>
                 save(registration).map {
                   case Right(_) =>
-                    Redirect(groupRoutes.ConfirmGroupMemberBusinessAddressController.displayPage())
+                    Redirect(groupRoutes.OrganisationListController.displayPage())
                   case Left(error) => throw error
                 }
               case DUPLICATE_SUBSCRIPTION =>

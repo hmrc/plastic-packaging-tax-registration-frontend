@@ -482,3 +482,5 @@ addressLookup.business.edit.title = What is the business address for {0}?
 addressLookup.business.edit.heading = What is the business address for {0}?
 addressLookup.contact.edit.title = What is {0}’s business address?
 addressLookup.contact.edit.heading = What is {0}’s business address?
+
+organisation.checkAnswers.title = Check your answers

@@ -277,10 +277,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.businessRegistrationNumber"
               )
               getKeyFor(organisationSection, 3, ukCompanyView) must containMessage(
-                "reviewRegistration.organisationDetails.registeredBusinessAddress"
+                "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
               )
               getKeyFor(organisationSection, 4, ukCompanyView) must containMessage(
-                "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
+                "reviewRegistration.organisationDetails.registeredBusinessAddress"
               )
 
               getValueFor(organisationSection, 0) mustBe OrgType.displayName(UK_COMPANY)
@@ -294,11 +294,11 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           3,
                           ukCompanyView
-              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
               getValueFor(organisationSection,
                           4,
                           ukCompanyView
-              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
+              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
             }
 

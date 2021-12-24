@@ -308,7 +308,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           sectionName(organisationElement, 0) mustBe messages("registrationPage.task.organisation")
           sectionStatus(organisationElement, 0) mustBe messages("task.status.completed")
           sectionLink(organisationElement, 0) must haveHref(
-            organisationRoutes.OrganisationDetailsTypeController.displayPage()
+            organisationRoutes.CheckAnswersController.displayPage()
           )
         }
 
