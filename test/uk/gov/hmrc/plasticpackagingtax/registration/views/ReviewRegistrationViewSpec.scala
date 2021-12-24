@@ -332,7 +332,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.registeredBusinessAddress"
               )
 
-              getValueFor(organisationSection, 0, soleTraderView) mustBe SOLE_TRADER.toString
+              getValueFor(organisationSection, 0, soleTraderView) mustBe OrgType.displayName(
+                OrgType.SOLE_TRADER
+              )
               getValueFor(organisationSection,
                           1,
                           soleTraderView

@@ -47,7 +47,7 @@
 @soleTraderSummary() = @{
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString), Some(orgRoutes.OrganisationDetailsTypeController.displayPage())),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName), Some(orgRoutes.OrganisationDetailsTypeController.displayPage())),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.firstName", Some(organisationDetails.soleTraderDetails.get.firstName)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.lastName", Some(organisationDetails.soleTraderDetails.get.lastName)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth.getOrElse(""))),

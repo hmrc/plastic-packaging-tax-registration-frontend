@@ -22,6 +22,7 @@ import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.test.FakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
@@ -142,7 +143,9 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           )
 
           getValueFor(0, ukCompanyView) mustBe OrgType.displayName(UK_COMPANY)
-          getValueFor(1, ukCompanyView) mustBe ukCompanyRegistration.organisationDetails.businessName.get
+          getValueFor(1,
+                      ukCompanyView
+          ) mustBe ukCompanyRegistration.organisationDetails.businessName.get
           getValueFor(2,
                       ukCompanyView
           ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
@@ -151,6 +154,9 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
           getValueFor(4, ukCompanyView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
+          getChangeLinkFor(0, ukCompanyView) must haveHref(
+            routes.OrganisationDetailsTypeController.displayPage()
+          )
         }
 
         "registering sole trader" in {
@@ -189,7 +195,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
             "reviewRegistration.organisationDetails.registeredBusinessAddress"
           )
 
-          getValueFor(0, soleTraderView) mustBe SOLE_TRADER.toString
+          getValueFor(0, soleTraderView) mustBe OrgType.displayName(OrgType.SOLE_TRADER)
           getValueFor(1,
                       soleTraderView
           ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
@@ -204,6 +210,9 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.nino
           getValueFor(5, soleTraderView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
+          getChangeLinkFor(0, soleTraderView) must haveHref(
+            routes.OrganisationDetailsTypeController.displayPage()
+          )
         }
 
         "registering partnership" in {
@@ -235,6 +244,10 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           getValueFor(0, partnershipView) mustBe PARTNERSHIP.toString
           getValueFor(1, partnershipView) mustBe "TODO"
           getValueFor(2, partnershipView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+
+          getChangeLinkFor(0, partnershipView) must haveHref(
+            routes.OrganisationDetailsTypeController.displayPage()
+          )
         }
 
       }
