@@ -16,21 +16,35 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views.organisation
 
+import base.PptTestData
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityExpectedWeight, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupMember, OrganisationDetails => GroupMemberOrganisationDetails}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, LiabilityDetails, OrganisationDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
+  PARTNERSHIP,
+  SOLE_TRADER,
+  UK_COMPANY
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  GroupMember,
+  OrganisationDetails => GroupMemberOrganisationDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  GroupDetail,
+  OrganisationDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AuthenticatedRequest,
+  JourneyRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.check_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 @ViewTest
 class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
@@ -42,71 +56,71 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
 
   val registrations =
     Table(("Registration Type", "Registration"),
-      (SINGLE_ENTITY, aRegistration()),
-      (GROUP,
-        aRegistration(
-          withGroupDetail(
-            Some(
-              GroupDetail(membersUnderGroupControl = Some(true),
-                members = Seq(GroupMember(customerIdentification1 = "ABC",
-                  organisationDetails = Some(
-                    GroupMemberOrganisationDetails(
-                      "Uk Limited",
-                      "Subsidiary 1",
-                      Some("XP00123")
-                    )
-                  ),
-                  addressDetails =
-                    Address(addressLine1 = "1",
-                      townOrCity = "New Street",
-                      postCode = Some("AB12CD"),
-                      countryCode =
-                        "GB"
-                    )
-                ),
-                  GroupMember(customerIdentification1 = "DEF",
-                    organisationDetails = Some(
-                      GroupMemberOrganisationDetails(
-                        "Uk Limited",
-                        "Subsidiary 2",
-                        Some("XP00123")
-                      )
-                    ),
-                    addressDetails =
-                      Address(addressLine1 = "2",
-                        townOrCity = "New Street",
-                        postCode = Some("AB12CD"),
-                        countryCode =
-                          "GB"
-                      )
-                  )
-                )
-              )
-            )
+          (SINGLE_ENTITY, aRegistration()),
+          (GROUP,
+           aRegistration(
+             withGroupDetail(
+               Some(
+                 GroupDetail(membersUnderGroupControl = Some(true),
+                             members = Seq(GroupMember(customerIdentification1 = "ABC",
+                                                       organisationDetails = Some(
+                                                         GroupMemberOrganisationDetails(
+                                                           "Uk Limited",
+                                                           "Subsidiary 1",
+                                                           Some("XP00123")
+                                                         )
+                                                       ),
+                                                       addressDetails =
+                                                         Address(addressLine1 = "1",
+                                                                 townOrCity = "New Street",
+                                                                 postCode = Some("AB12CD"),
+                                                                 countryCode =
+                                                                   "GB"
+                                                         )
+                                           ),
+                                           GroupMember(customerIdentification1 = "DEF",
+                                                       organisationDetails = Some(
+                                                         GroupMemberOrganisationDetails(
+                                                           "Uk Limited",
+                                                           "Subsidiary 2",
+                                                           Some("XP00123")
+                                                         )
+                                                       ),
+                                                       addressDetails =
+                                                         Address(addressLine1 = "2",
+                                                                 townOrCity = "New Street",
+                                                                 postCode = Some("AB12CD"),
+                                                                 countryCode =
+                                                                   "GB"
+                                                         )
+                                           )
+                             )
+                 )
+               )
+             )
+           )
           )
-        )
-      )
     )
 
   forAll(registrations) { (registrationType, registration) =>
     s"registering a $registrationType" when {
-     "displaying organisation details section" when {
-       def getKeyFor(index: Int, view: Document = createView()) =
-         view.getElementsByClass("govuk-summary-list").get(0).getElementsByClass(
-           "govuk-summary-list__key"
-         ).get(index)
+      "displaying organisation details section" when {
+        def getKeyFor(index: Int, view: Document) =
+          view.getElementsByClass("govuk-summary-list").get(0).getElementsByClass(
+            "govuk-summary-list__key"
+          ).get(index)
 
-       def getValueFor(index: Int, view: Document = createView()) =
-         view.getElementsByClass("govuk-summary-list").get(0).getElementsByClass(
-           "govuk-summary-list__value"
-         ).get(index).text()
+        def getValueFor(index: Int, view: Document) =
+          view.getElementsByClass("govuk-summary-list").get(0).getElementsByClass(
+            "govuk-summary-list__value"
+          ).get(index).text()
 
-       def getChangeLinkFor(index: Int, view: Document = createView()) =
-         view.getElementsByClass("govuk-summary-list").get(0).getElementsByClass(
-           "govuk-link"
-         ).get(index)
+        def getChangeLinkFor(index: Int, view: Document) =
+          view.getElementsByClass("govuk-summary-list").get(0).getElementsByClass("govuk-link").get(
+            index
+          )
 
-       "registering uk company" in {
+        "registering uk company" in {
 
           val ukCompanyRegistration   = registration
           val ukCompanyView: Document = createView()
@@ -120,25 +134,22 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           getKeyFor(2, ukCompanyView) must containMessage(
             "reviewRegistration.organisationDetails.businessRegistrationNumber"
           )
-          getKeyFor( 3, ukCompanyView) must containMessage(
+          getKeyFor(3, ukCompanyView) must containMessage(
             "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
           )
-          getKeyFor( 4, ukCompanyView) must containMessage(
+          getKeyFor(4, ukCompanyView) must containMessage(
             "reviewRegistration.organisationDetails.registeredBusinessAddress"
           )
 
-          getValueFor(0) mustBe OrgType.displayName(UK_COMPANY)
-          getValueFor(1
-          ) mustBe ukCompanyRegistration.organisationDetails.businessName.get
+          getValueFor(0, ukCompanyView) mustBe OrgType.displayName(UK_COMPANY)
+          getValueFor(1, ukCompanyView) mustBe ukCompanyRegistration.organisationDetails.businessName.get
           getValueFor(2,
-            ukCompanyView
+                      ukCompanyView
           ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
           getValueFor(3,
-            ukCompanyView
+                      ukCompanyView
           ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
-          getValueFor(4,
-            ukCompanyView
-          ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+          getValueFor(4, ukCompanyView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
         }
 
@@ -146,73 +157,84 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
 
           val soleTraderRegistration = registration.copy(organisationDetails =
             OrganisationDetails(organisationType = Some(SOLE_TRADER),
-              businessRegisteredAddress = Some(testBusinessAddress),
-              soleTraderDetails = Some(soleTraderDetails),
-              incorporationDetails = None
+                                businessRegisteredAddress = Some(testBusinessAddress),
+                                soleTraderDetails = Some(soleTraderDetails),
+                                incorporationDetails = None
             )
           )
-          val soleTraderView = createView()
+          val journeyReq = new JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken,
+                                                                       PptTestData.newUser()
+                                              ),
+                                              soleTraderRegistration,
+                                              appConfig
+          )
+          val soleTraderView = page()(journeyReq, messages)
 
           getKeyFor(0, soleTraderView) must containMessage(
-            "reviewRegistration.organisationDetails.soleTrader.firstName"
-          )
-          getKeyFor(1, soleTraderView) must containMessage(
-            "reviewRegistration.organisationDetails.soleTrader.lastName"
-          )
-          getKeyFor(2, soleTraderView) must containMessage(
-            "reviewRegistration.organisationDetails.registeredBusinessAddress"
-          )
-          getKeyFor(3, soleTraderView) must containMessage(
             "reviewRegistration.organisationDetails.organisationType"
           )
-          getKeyFor(4, soleTraderView) must containMessage(
+          getKeyFor(1, soleTraderView) must containMessage(
+            "reviewRegistration.organisationDetails.soleTrader.firstName"
+          )
+          getKeyFor(2, soleTraderView) must containMessage(
+            "reviewRegistration.organisationDetails.soleTrader.lastName"
+          )
+          getKeyFor(3, soleTraderView) must containMessage(
             "reviewRegistration.organisationDetails.soleTrader.dob"
           )
-          getKeyFor(5, soleTraderView) must containMessage(
+          getKeyFor(4, soleTraderView) must containMessage(
             "reviewRegistration.organisationDetails.soleTrader.nino"
           )
+          getKeyFor(5, soleTraderView) must containMessage(
+            "reviewRegistration.organisationDetails.registeredBusinessAddress"
+          )
 
-          getValueFor(0,soleTraderView) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
+          getValueFor(0, soleTraderView) mustBe SOLE_TRADER.toString
           getValueFor(1,
-            soleTraderView
-          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
+                      soleTraderView
+          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
           getValueFor(2,
-            soleTraderView
-          ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
-          getValueFor(3, soleTraderView) mustBe SOLE_TRADER.toString
-          getValueFor(4,
-            soleTraderView
+                      soleTraderView
+          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
+          getValueFor(3,
+                      soleTraderView
           ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
-          getValueFor(5,
-            soleTraderView
+          getValueFor(4,
+                      soleTraderView
           ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.nino
+          getValueFor(5, soleTraderView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
         }
 
         "registering partnership" in {
-
-          val partnershipRegistration = registration.copy(organisationDetails =
+          val updatedRegistation = journeyRequest.registration.copy(organisationDetails =
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
-              businessRegisteredAddress = Some(testBusinessAddress),
-              partnershipDetails = Some(partnershipDetails),
-              incorporationDetails = None
+                                businessRegisteredAddress = Some(testBusinessAddress),
+                                partnershipDetails = Some(partnershipDetails),
+                                incorporationDetails = None
             )
           )
-          val partnershipView = createView()
+          val journeyReq = new JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken,
+                                                                       PptTestData.newUser()
+                                              ),
+                                              updatedRegistation,
+                                              appConfig
+          )
+          val partnershipView = page()(journeyReq, messages)
 
           getKeyFor(0, partnershipView) must containMessage(
-            "reviewRegistration.organisationDetails.partnership.name"
-          )
-          getKeyFor(1, partnershipView) must containMessage(
-            "reviewRegistration.organisationDetails.registeredBusinessAddress"
-          )
-          getKeyFor(2, partnershipView) must containMessage(
             "reviewRegistration.organisationDetails.organisationType"
           )
+          getKeyFor(1, partnershipView) must containMessage(
+            "reviewRegistration.organisationDetails.partnership.name"
+          )
+          getKeyFor(2, partnershipView) must containMessage(
+            "reviewRegistration.organisationDetails.registeredBusinessAddress"
+          )
 
-          getValueFor(0, partnershipView) mustBe "TODO"
-          getValueFor(1,partnershipView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
-          getValueFor(2, partnershipView) mustBe PARTNERSHIP.toString
+          getValueFor(0, partnershipView) mustBe PARTNERSHIP.toString
+          getValueFor(1, partnershipView) mustBe "TODO"
+          getValueFor(2, partnershipView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
         }
 
       }
