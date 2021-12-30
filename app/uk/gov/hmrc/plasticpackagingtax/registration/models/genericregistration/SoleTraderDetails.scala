@@ -27,8 +27,9 @@ object GrsFullname {
 case class GrsSoleTraderDetails(
   fullName: GrsFullname,
   dateOfBirth: String,
-  nino: String,
+  nino: Option[String],
   sautr: Option[String],
+  trn: Option[String],
   override val identifiersMatch: Boolean,
   override val businessVerification: Option[GrsBusinessVerification],
   override val registration: GrsRegistration
@@ -42,7 +43,7 @@ case class SoleTraderDetails(
   firstName: String,
   lastName: String,
   dateOfBirth: Option[String],
-  nino: String,
+  ninoOrTrn: String,
   sautr: Option[String],
   override val registration: Option[RegistrationDetails]
 ) extends HasRegistrationDetails
@@ -56,7 +57,11 @@ object SoleTraderDetails {
     SoleTraderDetails(grsSoleTraderDetails.fullName.firstName,
                       grsSoleTraderDetails.fullName.lastName,
                       Some(grsSoleTraderDetails.dateOfBirth),
-                      grsSoleTraderDetails.nino,
+                      grsSoleTraderDetails.nino.getOrElse(
+                        grsSoleTraderDetails.trn.getOrElse(
+                          throw new IllegalStateException("Nino or Trn is required")
+                        )
+                      ),
                       grsSoleTraderDetails.sautr,
                       Some(
                         RegistrationDetails(

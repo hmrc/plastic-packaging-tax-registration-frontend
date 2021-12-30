@@ -350,7 +350,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           4,
                           soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.nino
+              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
               getValueFor(organisationSection,
                           5,
                           soleTraderView

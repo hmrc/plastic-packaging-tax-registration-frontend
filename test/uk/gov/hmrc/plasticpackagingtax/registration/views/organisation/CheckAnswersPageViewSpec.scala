@@ -207,7 +207,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
           getValueFor(4,
                       soleTraderView
-          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.nino
+          ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
           getValueFor(5, soleTraderView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
           getChangeLinkFor(0, soleTraderView) must haveHref(
