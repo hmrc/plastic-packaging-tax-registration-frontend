@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -350,7 +350,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           4,
                           soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.nino
+              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
               getValueFor(organisationSection,
                           5,
                           soleTraderView

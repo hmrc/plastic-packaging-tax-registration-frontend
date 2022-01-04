@@ -51,7 +51,7 @@
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.firstName", Some(organisationDetails.soleTraderDetails.get.firstName)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.lastName", Some(organisationDetails.soleTraderDetails.get.lastName)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth.getOrElse(""))),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.nino)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.ninoOrTrn)),
                     viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
         ).filterNot(_.value.content == Empty)
     )
@@ -62,7 +62,7 @@
         rows = Seq(
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString), Some(orgRoutes.OrganisationDetailsTypeController.displayPage())),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.partnership.name", Some("TODO")),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
         ).filterNot(_.value.content == Empty)
     )
 }

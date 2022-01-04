@@ -188,7 +188,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                               SoleTraderDetails(firstName = "Alan",
                                                 lastName = "Johnson",
                                                 dateOfBirth = Some("12/12/1960"),
-                                                nino = "ABC123",
+                                                ninoOrTrn = "ABC123",
                                                 sautr = Some("12345678"),
                                                 registration =
                                                   if (registered)

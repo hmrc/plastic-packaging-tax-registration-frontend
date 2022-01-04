@@ -182,7 +182,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     SoleTraderDetails(firstName = "Sole",
                       lastName = "Trader",
                       dateOfBirth = Some("12/12/1960"),
-                      nino = "1234",
+                      ninoOrTrn = "1234",
                       sautr = Some("ABC"),
                       registration = Some(unregisteredRegistrationDetails)
     )
@@ -199,8 +199,9 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val grsSoleTraderIncorporationDetails: GrsSoleTraderDetails =
     GrsSoleTraderDetails(GrsFullname(testFirstName, testLastName),
                          testDob,
-                         testNino,
+                         Some(testNino),
                          Some(testSatur),
+                         None,
                          identifiersMatch = true,
                          businessVerification =
                            Some(GrsBusinessVerification(testBusinessVerificationPassStatus)),
