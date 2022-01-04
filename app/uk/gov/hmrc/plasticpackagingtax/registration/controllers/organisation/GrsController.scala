@@ -25,16 +25,26 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{BUSINESS_IDENTIFICATION_FAILED, BUSINESS_VERIFICATION_FAILED, DUPLICATE_SUBSCRIPTION, GRS_FAILED, RegistrationStatus, STATUS_OK, UNSUPPORTED_ORGANISATION}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
+  BUSINESS_VERIFICATION_FAILED,
+  DUPLICATE_SUBSCRIPTION,
   GRS_FAILED,
+  RegistrationStatus,
   SOLE_TRADER_VERIFICATION_FAILED,
+  STATUS_OK,
+  UNSUPPORTED_ORGANISATION
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.PartnershipTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Cacheable,
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
