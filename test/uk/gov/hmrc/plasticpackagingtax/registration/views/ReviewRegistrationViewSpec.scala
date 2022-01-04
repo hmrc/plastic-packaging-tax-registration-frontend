@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -320,7 +320,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.soleTrader.firstName"
               )
               getKeyFor(organisationSection, 2, soleTraderView) must containMessage(
-                "reviewRegistration.organisationDetails.soleTrader.firstName"
+                "reviewRegistration.organisationDetails.soleTrader.lastName"
               )
               getKeyFor(organisationSection, 3, soleTraderView) must containMessage(
                 "reviewRegistration.organisationDetails.soleTrader.dob"
@@ -352,7 +352,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                           soleTraderView
               ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
               getValueFor(organisationSection,
-                          4,
+                          5,
                           soleTraderView
               ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
@@ -373,10 +373,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.organisationType"
               )
               getKeyFor(organisationSection, 1, partnershipView) must containMessage(
-                "reviewRegistration.organisationDetails.organisationType"
+                "reviewRegistration.organisationDetails.partnership.name"
               )
               getKeyFor(organisationSection, 2, partnershipView) must containMessage(
-                "reviewRegistration.organisationDetails.partnership.name"
+                "reviewRegistration.organisationDetails.registeredBusinessAddress"
               )
 
               getValueFor(organisationSection, 0, partnershipView) mustBe PARTNERSHIP.toString
