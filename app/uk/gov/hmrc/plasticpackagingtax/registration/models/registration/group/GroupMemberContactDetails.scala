@@ -17,31 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
-import java.util.UUID
-
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 
-case class GroupMember(
-  id: String = UUID.randomUUID().toString,
-  customerIdentification1: String,
-  customerIdentification2: Option[String] = None,
-  organisationDetails: Option[OrganisationDetails] = None,
-  contactDetails: Option[GroupMemberContactDetails] = None,
-  addressDetails: Address,
-  regWithoutIDFlag: Option[Boolean] = None
-) {
+case class GroupMemberContactDetails(
+  firstName: String,
+  lastName: String,
+  phoneNumber: Option[String] = None,
+  email: Option[String] = None,
+  address: Option[Address] = None
+)
 
-  lazy val businessName: String =
-    organisationDetails.map(_.organisationName).getOrElse("No business name")
-
-  override def equals(o: Any): Boolean =
-    o match {
-      case o: GroupMember => o.customerIdentification1 == this.customerIdentification1
-      case _              => false
-    }
-
-}
-
-object GroupMember {
-  implicit val format: OFormat[GroupMember] = Json.format[GroupMember]
+object GroupMemberContactDetails {
+  implicit val format: OFormat[GroupMemberContactDetails] = Json.format[GroupMemberContactDetails]
 }

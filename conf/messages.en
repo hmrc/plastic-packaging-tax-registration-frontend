@@ -484,3 +484,8 @@ addressLookup.contact.edit.title = What is {0}’s business address?
 addressLookup.contact.edit.heading = What is {0}’s business address?
 
 organisation.checkAnswers.title = Check your answers
+
+contactDetails.member.firstName = First name
+contactDetails.member.lastName = Last name
+contactDetails.member.title = Who is the main contact for {0}?
+contactDetails.member.hint = This is the name of the person who will manage the company’s PPT account, receive updates about the account and submit returns.

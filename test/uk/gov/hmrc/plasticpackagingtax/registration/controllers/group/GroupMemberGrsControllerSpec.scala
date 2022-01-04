@@ -112,7 +112,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
               simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType))
           }
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.OrganisationListController.displayPage().url)
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsNameController.displayPage().url
+          )
         }
       }
 

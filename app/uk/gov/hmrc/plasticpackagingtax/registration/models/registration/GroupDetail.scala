@@ -37,6 +37,7 @@ case class GroupDetail(
     else TaskStatus.Completed
 
   val businessName: Option[String] = members.lastOption.map(_.businessName)
+
 }
 
 object GroupDetail {

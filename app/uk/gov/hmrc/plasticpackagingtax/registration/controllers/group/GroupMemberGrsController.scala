@@ -79,7 +79,7 @@ class GroupMemberGrsController @Inject() (
               case STATUS_OK =>
                 save(registration).map {
                   case Right(_) =>
-                    Redirect(groupRoutes.OrganisationListController.displayPage())
+                    Redirect(groupRoutes.ContactDetailsNameController.displayPage())
                   case Left(error) => throw error
                 }
               case DUPLICATE_SUBSCRIPTION =>
@@ -101,9 +101,7 @@ class GroupMemberGrsController @Inject() (
     registration: Registration
   )(implicit hc: HeaderCarrier): Future[RegistrationStatus] = {
     val organisationDetails: Option[OrganisationDetails] =
-      registration.groupDetail.flatMap(
-        _.members.lastOption.flatMap(member => member.organisationDetails)
-      )
+      registration.lastMember.flatMap(_.organisationDetails)
     val status: Future[SubscriptionStatus.Status] =
       organisationDetails.flatMap(_.businessPartnerId) match {
         case Some(businessPartnerId) => checkSubscriptionStatus(businessPartnerId)
