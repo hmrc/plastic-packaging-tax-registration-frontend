@@ -35,6 +35,12 @@
 
 @(registration: Registration, liabilityStartLink: Call)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
+@organisationDetaisLink = @{
+  if(registration.isCompanyDetailsComplete)
+    organisationRoutes.CheckAnswersController.displayPage()
+  else
+    organisationRoutes.OrganisationDetailsTypeController.displayPage()
+}
 @govukLayout(title = Title("registrationPage.title")) {
 
     @pageHeading(messages("registrationPage.title"))
@@ -57,7 +63,7 @@
         @task(2, "registrationPage.task.organisation.heading", Set(
             TaskSection(
                 title = "registrationPage.task.organisation",
-                link = organisationRoutes.OrganisationDetailsTypeController.displayPage(),
+                link = organisationDetaisLink,
                 showLink = registration.isLiabilityDetailsComplete,
                 status = registration.companyDetailsStatus
             )

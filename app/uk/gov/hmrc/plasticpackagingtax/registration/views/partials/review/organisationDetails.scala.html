@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 
 @this(
         subHeading: subHeading,
@@ -34,11 +35,11 @@
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName), Some(orgRoutes.OrganisationDetailsTypeController.displayPage())),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationName", organisationDetails.businessName),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(organisationDetails.incorporationDetails.get.companyNumber)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -46,12 +47,12 @@
 @soleTraderSummary() = @{
     SummaryList(
         rows = Seq(
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName), Some(orgRoutes.OrganisationDetailsTypeController.displayPage())),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.firstName", Some(organisationDetails.soleTraderDetails.get.firstName)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.lastName", Some(organisationDetails.soleTraderDetails.get.lastName)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth.getOrElse(""))),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.nino))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.nino)),
+                    viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -59,9 +60,9 @@
 @partnershipSummary() = @{
     SummaryList(
         rows = Seq(
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString), Some(orgRoutes.OrganisationDetailsTypeController.displayPage())),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.partnership.name", Some("TODO")),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
         ).filterNot(_.value.content == Empty)
     )
 }

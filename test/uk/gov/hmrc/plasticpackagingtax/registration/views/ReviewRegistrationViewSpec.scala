@@ -277,10 +277,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.businessRegistrationNumber"
               )
               getKeyFor(organisationSection, 3, ukCompanyView) must containMessage(
-                "reviewRegistration.organisationDetails.registeredBusinessAddress"
+                "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
               )
               getKeyFor(organisationSection, 4, ukCompanyView) must containMessage(
-                "reviewRegistration.organisationDetails.uniqueTaxpayerReference"
+                "reviewRegistration.organisationDetails.registeredBusinessAddress"
               )
 
               getValueFor(organisationSection, 0) mustBe OrgType.displayName(UK_COMPANY)
@@ -294,11 +294,11 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           3,
                           ukCompanyView
-              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
+              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
               getValueFor(organisationSection,
                           4,
                           ukCompanyView
-              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
+              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
             }
 
@@ -314,45 +314,47 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               val soleTraderView = createView(soleTraderRegistration)
 
               getKeyFor(organisationSection, 0, soleTraderView) must containMessage(
-                "reviewRegistration.organisationDetails.soleTrader.firstName"
-              )
-              getKeyFor(organisationSection, 1, soleTraderView) must containMessage(
-                "reviewRegistration.organisationDetails.soleTrader.lastName"
-              )
-              getKeyFor(organisationSection, 2, soleTraderView) must containMessage(
-                "reviewRegistration.organisationDetails.registeredBusinessAddress"
-              )
-              getKeyFor(organisationSection, 3, soleTraderView) must containMessage(
                 "reviewRegistration.organisationDetails.organisationType"
               )
-              getKeyFor(organisationSection, 4, soleTraderView) must containMessage(
+              getKeyFor(organisationSection, 1, soleTraderView) must containMessage(
+                "reviewRegistration.organisationDetails.soleTrader.firstName"
+              )
+              getKeyFor(organisationSection, 2, soleTraderView) must containMessage(
+                "reviewRegistration.organisationDetails.soleTrader.lastName"
+              )
+              getKeyFor(organisationSection, 3, soleTraderView) must containMessage(
                 "reviewRegistration.organisationDetails.soleTrader.dob"
               )
-              getKeyFor(organisationSection, 5, soleTraderView) must containMessage(
+              getKeyFor(organisationSection, 4, soleTraderView) must containMessage(
                 "reviewRegistration.organisationDetails.soleTrader.nino"
               )
+              getKeyFor(organisationSection, 5, soleTraderView) must containMessage(
+                "reviewRegistration.organisationDetails.registeredBusinessAddress"
+              )
 
-              getValueFor(organisationSection,
-                          0,
-                          soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
+              getValueFor(organisationSection, 0, soleTraderView) mustBe OrgType.displayName(
+                OrgType.SOLE_TRADER
+              )
               getValueFor(organisationSection,
                           1,
                           soleTraderView
-              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
+              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.firstName
               getValueFor(organisationSection,
                           2,
                           soleTraderView
-              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
-              getValueFor(organisationSection, 3, soleTraderView) mustBe SOLE_TRADER.toString
+              ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.lastName
               getValueFor(organisationSection,
-                          4,
+                          3,
                           soleTraderView
               ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.dateOfBirth.get
               getValueFor(organisationSection,
-                          5,
+                          4,
                           soleTraderView
               ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.nino
+              getValueFor(organisationSection,
+                          5,
+                          soleTraderView
+              ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
             }
 
@@ -368,21 +370,21 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               val partnershipView = createView(partnershipRegistration)
 
               getKeyFor(organisationSection, 0, partnershipView) must containMessage(
-                "reviewRegistration.organisationDetails.partnership.name"
-              )
-              getKeyFor(organisationSection, 1, partnershipView) must containMessage(
-                "reviewRegistration.organisationDetails.registeredBusinessAddress"
-              )
-              getKeyFor(organisationSection, 2, partnershipView) must containMessage(
                 "reviewRegistration.organisationDetails.organisationType"
               )
+              getKeyFor(organisationSection, 1, partnershipView) must containMessage(
+                "reviewRegistration.organisationDetails.partnership.name"
+              )
+              getKeyFor(organisationSection, 2, partnershipView) must containMessage(
+                "reviewRegistration.organisationDetails.registeredBusinessAddress"
+              )
 
-              getValueFor(organisationSection, 0, partnershipView) mustBe "TODO"
+              getValueFor(organisationSection, 0, partnershipView) mustBe PARTNERSHIP.toString
+              getValueFor(organisationSection, 1, partnershipView) mustBe "TODO"
               getValueFor(organisationSection,
-                          1,
+                          2,
                           partnershipView
               ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
-              getValueFor(organisationSection, 2, partnershipView) mustBe PARTNERSHIP.toString
             }
 
           }
