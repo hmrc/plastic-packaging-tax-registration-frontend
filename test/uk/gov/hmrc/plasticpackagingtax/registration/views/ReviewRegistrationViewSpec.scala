@@ -320,7 +320,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.soleTrader.firstName"
               )
               getKeyFor(organisationSection, 2, soleTraderView) must containMessage(
-                "reviewRegistration.organisationDetails.soleTrader.lastName"
+                "reviewRegistration.organisationDetails.soleTrader.firstName"
               )
               getKeyFor(organisationSection, 3, soleTraderView) must containMessage(
                 "reviewRegistration.organisationDetails.soleTrader.dob"
@@ -352,7 +352,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                           soleTraderView
               ) mustBe soleTraderRegistration.organisationDetails.soleTraderDetails.get.ninoOrTrn
               getValueFor(organisationSection,
-                          5,
+                          4,
                           soleTraderView
               ) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
@@ -373,10 +373,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 "reviewRegistration.organisationDetails.organisationType"
               )
               getKeyFor(organisationSection, 1, partnershipView) must containMessage(
-                "reviewRegistration.organisationDetails.partnership.name"
+                "reviewRegistration.organisationDetails.organisationType"
               )
               getKeyFor(organisationSection, 2, partnershipView) must containMessage(
-                "reviewRegistration.organisationDetails.registeredBusinessAddress"
+                "reviewRegistration.organisationDetails.partnership.name"
               )
 
               getValueFor(organisationSection, 0, partnershipView) mustBe PARTNERSHIP.toString
