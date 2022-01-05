@@ -46,6 +46,7 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
         SoleTraderGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
                                    deskProServiceId = "plastic-packaging-tax",
                                    signOutUrl = "/feedback/plastic-packaging-tax",
+                                   accessibilityUrl = "accessibilityUrl",
                                    optServiceName = Some("myService")
         )
 
@@ -73,6 +74,7 @@ class SoleTraderIncorpIdConnectorISpec extends ConnectorISpec with Injector with
         SoleTraderGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
                                    deskProServiceId = "plastic-packaging-tax",
                                    signOutUrl = "/feedback/plastic-packaging-tax",
+                                   accessibilityUrl = "accessibilityUrl",
                                    optServiceName = Some("myService")
         )
 

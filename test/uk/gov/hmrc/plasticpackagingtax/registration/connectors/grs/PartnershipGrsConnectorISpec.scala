@@ -160,6 +160,7 @@ class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with Sca
                                 optServiceName = Some("PPT"),
                                 deskProServiceId = "xxx",
                                 signOutUrl = "signoutUrl",
+                                accessibilityUrl = "accessibilityUrl",
                                 enableSautrCheck = true
     )
 

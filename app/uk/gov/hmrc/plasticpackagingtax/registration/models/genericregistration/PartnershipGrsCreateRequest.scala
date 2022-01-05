@@ -24,6 +24,7 @@ case class PartnershipGrsCreateRequest(
   optServiceName: Option[String] = None,
   deskProServiceId: String,
   signOutUrl: String,
+  accessibilityUrl: String,
   regime: Regime = PPT,
   enableSautrCheck: Boolean = true,
   businessVerificationCheck: Boolean = true
