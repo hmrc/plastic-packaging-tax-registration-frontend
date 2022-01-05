@@ -38,6 +38,7 @@ case class GroupDetail(
 
   val businessName: Option[String] = members.lastOption.map(_.businessName)
 
+  def updateMember(member: GroupMember): Seq[GroupMember] = members.init :+ member
 }
 
 object GroupDetail {

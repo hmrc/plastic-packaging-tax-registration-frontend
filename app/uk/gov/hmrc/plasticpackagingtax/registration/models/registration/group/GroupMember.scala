@@ -17,9 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
-import java.util.UUID
-
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+
+import java.util.UUID
 
 case class GroupMember(
   id: String = UUID.randomUUID().toString,
@@ -39,6 +39,24 @@ case class GroupMember(
       case o: GroupMember => o.customerIdentification1 == this.customerIdentification1
       case _              => false
     }
+
+  def withGroupMemberName(firstName: String, lastName: String): GroupMemberContactDetails =
+    contactDetails match {
+      case Some(contactDetail) =>
+        contactDetail.copy(firstName = firstName, lastName = lastName)
+      case _ =>
+        GroupMemberContactDetails(firstName = firstName, lastName = lastName)
+    }
+
+  def withGroupMemberEmail(email: String): GroupMemberContactDetails =
+    contactDetails.map(_.copy(email = Some(email))).getOrElse(
+      throw new IllegalStateException("No contact details found")
+    )
+
+  def withGroupMemberPhoneNumber(phoneNumber: String): GroupMemberContactDetails =
+    contactDetails.map(_.copy(phoneNumber = Some(phoneNumber))).getOrElse(
+      throw new IllegalStateException("No contact details found")
+    )
 
 }
 

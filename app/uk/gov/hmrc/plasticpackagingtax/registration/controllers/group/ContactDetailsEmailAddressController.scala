@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMemberContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
@@ -30,19 +30,19 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ContactDetailsNameController @Inject() (
+class ContactDetailsEmailAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: member_name_page
+  page: member_email_address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -51,18 +51,18 @@ class ContactDetailsNameController @Inject() (
       request.registration.lastMember.map(_.contactDetails match {
         case Some(details) =>
           Ok(
-            page(MemberName.form().fill(MemberName(details.firstName, details.lastName)),
-                 request.registration.lastMember.map(_.businessName).getOrElse("your organisation"),
-                 groupRoutes.OrganisationListController.displayPage(),
-                 groupRoutes.ContactDetailsNameController.submit()
+            page(EmailAddress.form().fill(EmailAddress(details.email.getOrElse(""))),
+                 request.registration.lastMember.flatMap(_.contactDetails.map(_.firstName)),
+                 groupRoutes.ContactDetailsNameController.displayPage(),
+                 groupRoutes.ContactDetailsEmailAddressController.submit()
             )
           )
         case _ =>
           Ok(
-            page(MemberName.form(),
-                 request.registration.lastMember.map(_.businessName).getOrElse("your organisation"),
-                 groupRoutes.OrganisationListController.displayPage(),
-                 groupRoutes.ContactDetailsNameController.submit()
+            page(EmailAddress.form(),
+                 request.registration.lastMember.flatMap(_.contactDetails.map(_.firstName)),
+                 groupRoutes.ContactDetailsNameController.displayPage(),
+                 groupRoutes.ContactDetailsEmailAddressController.submit()
             )
           )
       }).get
@@ -70,38 +70,34 @@ class ContactDetailsNameController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      MemberName.form()
+      EmailAddress.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[MemberName]) =>
+          (formWithErrors: Form[EmailAddress]) =>
             Future.successful(
               BadRequest(
                 page(formWithErrors,
-                     request.registration.lastMember.map(_.businessName).getOrElse(
-                       "your organisation"
-                     ),
-                     groupRoutes.OrganisationListController.displayPage(),
-                     groupRoutes.ContactDetailsNameController.submit()
+                     request.registration.lastMember.flatMap(_.contactDetails.map(_.firstName)),
+                     groupRoutes.ContactDetailsNameController.displayPage(),
+                     groupRoutes.ContactDetailsEmailAddressController.submit()
                 )
               )
             ),
-          memberName =>
-            updateRegistration(memberName).map {
+          emailAddress =>
+            updateRegistration(emailAddress).map {
               case Right(_) =>
-                Redirect(groupRoutes.ContactDetailsEmailAddressController.displayPage())
+                Redirect(groupRoutes.ContactDetailsTelephoneNumberController.displayPage())
               case Left(error) => throw error
             }
         )
     }
 
   private def updateRegistration(
-    formData: MemberName
+    formData: EmailAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val contactDetails: Option[GroupMemberContactDetails] =
-        registration.lastMember.map(
-          _.withGroupMemberName(firstName = formData.firstName, lastName = formData.lastName)
-        )
+        registration.lastMember.map(_.withGroupMemberEmail(email = formData.value))
       val detail: GroupDetail =
         registration.groupDetail.getOrElse(throw new IllegalStateException("No group detail"))
       registration.copy(groupDetail =

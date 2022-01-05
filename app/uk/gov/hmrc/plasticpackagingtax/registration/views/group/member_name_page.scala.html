@@ -34,7 +34,7 @@
 )
 
 
-@(form: Form[MemberName], backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[MemberName], organisationName: String, backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
 
 @firstNameField = @{form("firstName")}
 @lastNameField = @{form("lastName")}
@@ -66,7 +66,7 @@
 
 
 @govukLayout(
-    title = Title("contactDetails.member.title"),
+    title = Title("contactDetails.member.title", organisationName),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
@@ -74,7 +74,7 @@
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages("contactDetails.member.title")),
+                content = Text(messages("contactDetails.member.title", organisationName)),
                 classes = "govuk-fieldset__legend--l",
                 isPageHeading = true
             )),
