@@ -123,7 +123,7 @@ class PartnershipTypeController @Inject() (
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.signOutLink,
-                                  appConfig.accessibilityStatementServicePath
+                                  appConfig.grsAccessibilityStatementPath
       ),
       url
     )

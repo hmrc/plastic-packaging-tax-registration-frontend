@@ -101,7 +101,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
-                                 appConfig.accessibilityStatementServicePath
+                                 appConfig.grsAccessibilityStatementPath
       )
     )
 
@@ -112,7 +112,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
-                                 appConfig.accessibilityStatementServicePath,
+                                 appConfig.grsAccessibilityStatementPath,
                                  businessVerificationCheck =
                                    businessVerificationCheck
     )
@@ -137,7 +137,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.signOutLink,
-                                  appConfig.accessibilityStatementServicePath,
+                                  appConfig.grsAccessibilityStatementPath,
                                   businessVerificationCheck =
                                     businessVerificationCheck
       ),
