@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 case class Registration(
@@ -115,6 +116,8 @@ case class Registration(
 
   def populateBusinessRegisteredAddress(): Registration =
     this.copy(organisationDetails = this.organisationDetails.withBusinessRegisteredAddress())
+
+  val lastMember: Option[GroupMember] = groupDetail.flatMap(_.members.lastOption)
 
 }
 

@@ -38,6 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
+  GroupMemberContactDetails,
   OrganisationDetails => GroupOrgDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -370,6 +371,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                                               Some(safeNumber)
                                               )
                                             ),
+                                          contactDetails = Some(
+                                            GroupMemberContactDetails(phoneNumber = Some("077123"),
+                                                                      firstName = "Test",
+                                                                      lastName = "User",
+                                                                      email = Some("test@test.com")
+                                            )
+                                          ),
                                           addressDetails = Address(addressLine1 = "line1",
                                                                    addressLine2 = Some("lin2"),
                                                                    addressLine3 = Some("line3"),

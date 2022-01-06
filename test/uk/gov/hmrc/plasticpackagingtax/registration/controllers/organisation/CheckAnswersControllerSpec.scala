@@ -23,7 +23,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
