@@ -17,11 +17,13 @@
 package base.unit
 
 import builders.RegistrationBuilder
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
@@ -104,6 +106,17 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       )
     ).thenReturn(Future.successful(redirectUrl))
 
+  def lastPartnershipGrsJourneyCreation(): (PartnershipGrsCreateRequest, String) = {
+    val partnershipGrsCreateRequestCaptor: ArgumentCaptor[PartnershipGrsCreateRequest] =
+      ArgumentCaptor.forClass(classOf[PartnershipGrsCreateRequest])
+    val partnershipGrsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+    verify(mockPartnershipGrsConnector).createJourney(partnershipGrsCreateRequestCaptor.capture(),
+                                                      partnershipGrsUrlCaptor.capture()
+    )(any(), any())
+
+    (partnershipGrsCreateRequestCaptor.getValue, partnershipGrsUrlCaptor.getValue)
+  }
+
   def mockSoleTraderCreateIncorpJourneyIdException(): OngoingStubbing[Future[String]] =
     when(
       mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest])(any(), any())
@@ -165,7 +178,11 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockUkCompanyGrsConnector, mockSoleTraderGrsConnector, mockRegisteredSocietyGrsConnector)
+    reset(mockUkCompanyGrsConnector,
+          mockSoleTraderGrsConnector,
+          mockRegisteredSocietyGrsConnector,
+          mockPartnershipGrsConnector
+    )
   }
 
 }

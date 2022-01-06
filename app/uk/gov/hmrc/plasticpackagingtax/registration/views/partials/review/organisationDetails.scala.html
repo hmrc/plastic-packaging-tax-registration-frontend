@@ -67,7 +67,7 @@
     SummaryList(
         rows = Seq(
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString), organisationDetailsLink),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.partnership.name", Some("TODO")),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.partnership.name", organisationDetails.businessName),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
         ).filterNot(_.value.content == Empty)
     )

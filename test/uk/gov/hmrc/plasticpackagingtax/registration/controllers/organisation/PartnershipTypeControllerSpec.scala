@@ -56,6 +56,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any[Form[PartnershipType]])(any(), any())).thenReturn(HtmlFormat.empty)
+    mockCreatePartnershipGrsJourneyCreation("/partnership-grs-journey")
   }
 
   "Partnership Type Controller" should {
@@ -73,7 +74,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       }
 
       "previous partnership type in registration" in {
-        val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails)))
+        val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
 
         authorizedUser()
         mockRegistrationFind(registration)
@@ -85,24 +86,54 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     }
 
     "redirect to partnership GRS" when {
-      "a supported partnership type was selected" in {
-        val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails)))
+      forAll(
+        Seq((SCOTTISH_LIMITED_PARTNERSHIP, scottishPartnershipDetails),
+            (LIMITED_PARTNERSHIP, limitedPartnershipDetails),
+            (LIMITED_LIABILITY_PARTNERSHIP, llpPartnershipDetails)
+        )
+      ) { partnershipDetails =>
+        s"a ${partnershipDetails._1} type was selected" in {
+          val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-        mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
-        val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndContinueFormAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val correctForm =
+            Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+          redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+        }
+      }
+    }
+
+    "capture partnership name" when {
+      forAll(
+        Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails),
+            (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails)
+        )
+      ) { partnershipDetails =>
+        s"a ${partnershipDetails._1} type was selected" in {
+          val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
+
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+
+          val correctForm =
+            Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+          redirectLocation(result) mustBe Some(routes.PartnershipNameController.displayPage().url)
+        }
       }
     }
 
     "redirect to registration main page" when {
       "save and come back later button is used" in {
-        val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails)))
+        val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
 
         authorizedUser()
         mockRegistrationFind(registration)
