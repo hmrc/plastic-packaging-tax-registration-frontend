@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, sectionHeader}
@@ -25,7 +24,7 @@
 @this(
         formHelper: FormWithCSRF,
         govukLayout: main_template,
-        govukButton: GovukButton,
+        saveButtons: saveButtons,
         govukInput: GovukInput,
         govukFieldset: GovukFieldset,
         paragraph: paragraph,
@@ -41,7 +40,7 @@
 
 @fieldSetBody = {
 
-@paragraph(content = Html(messages("contactDetails.member.hint")))
+@paragraph(content = Html(messages("contactDetails.member.name.hint")))
 
 @govukInput(Input(
     id    = firstNameField.name,
@@ -66,7 +65,7 @@
 
 
 @govukLayout(
-    title = Title("contactDetails.member.title", organisationName),
+    title = Title("contactDetails.member.name.title", organisationName),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
@@ -74,13 +73,13 @@
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages("contactDetails.member.title", organisationName)),
+                content = Text(messages("contactDetails.member.name.title", organisationName)),
                 classes = "govuk-fieldset__legend--l",
                 isPageHeading = true
             )),
             html = fieldSetBody
         ))
 
-        @govukButton(Button(content = Text(messages("site.button.continue")), attributes = Map("id" -> "submit")))
+        @saveButtons()
     }
 }

@@ -20,7 +20,6 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -29,14 +28,10 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.ServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerificationStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-
-import scala.concurrent.Future
 
 class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 

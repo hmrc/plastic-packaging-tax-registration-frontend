@@ -45,12 +45,12 @@ object MemberName {
 
   def form(): Form[MemberName] = Form(mapping)
 
-  private def emptyError(field: String) = s"primaryContactDetails.fullNamePage.${field}.error.empty"
+  private def emptyError(field: String) = s"contactDetails.member.${field}.error.empty"
 
   private def lengthError(field: String) =
-    s"primaryContactDetails.fullNamePage.${field}.error.length"
+    s"contactDetails.member.${field}.error.length"
 
   private def nonAlphabeticError(field: String) =
-    s"primaryContactDetails.fullNamePage.${field}.error.specialCharacters"
+    s"contactDetails.member.${field}.error.specialCharacters"
 
 }
