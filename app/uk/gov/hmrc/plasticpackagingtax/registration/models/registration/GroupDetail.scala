@@ -37,6 +37,8 @@ case class GroupDetail(
     else TaskStatus.Completed
 
   val businessName: Option[String] = members.lastOption.map(_.businessName)
+
+  def updateMember(member: GroupMember): Seq[GroupMember] = members.init :+ member
 }
 
 object GroupDetail {

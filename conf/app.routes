@@ -116,6 +116,15 @@ POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registra
 GET        /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.displayPage(memberId)
 POST       /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.submit(memberId)
 
+GET        /member-or-partner-contact-name     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsNameController.displayPage()
+POST       /member-or-partner-contact-name     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsNameController.submit()
+
+GET        /member-or-partner-contact-email     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressController.displayPage()
+POST       /member-or-partner-contact-email     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressController.submit()
+
+GET        /member-or-partner-contact-telephone     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.displayPage()
+POST       /member-or-partner-contact-telephone     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.submit()
+
 # Manual User Enrolment
 GET        /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
 POST       /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.submit()

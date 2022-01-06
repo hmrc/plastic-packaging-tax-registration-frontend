@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.3
+// @version      15.4
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -270,6 +270,11 @@ const partnershipName = () => {
     }
 }
 
+const confirmBusinessAddress = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/confirm-address')) {
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 /*########################     GRS FUNCTIONS     ########################## */
 const grsUkLimitedFeatureFlags = () => {
     if (currentPageIs('/identify-your-incorporated-business/test-only/feature-switches')) {
@@ -481,6 +486,31 @@ const groupMemberOrganisation = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/group-member-organisation')) {
 
         document.getElementById('answer').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const groupMemberContactName = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-name')) {
+
+        document.getElementById('firstName').value = "James"
+        document.getElementById('lastName').value = "Sparrow"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const groupMemberContactEmailAddress = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-email')) {
+
+        document.getElementById('value').value = "test@test.com"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const groupMemberContactPhoneNumber = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-telephone')) {
+
+        document.getElementById('value').value = "07712345677"
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -697,6 +727,7 @@ function completeJourney(manualJourney) {
     // Business Details
     organisationType()
     partnershipName()
+    confirmBusinessAddress()
 
     // Liability Details
     liabilityLiableDate()
@@ -721,6 +752,9 @@ function completeJourney(manualJourney) {
     // groups
     groupOrganisationList()
     groupMemberOrganisation()
+    groupMemberContactName()
+    groupMemberContactEmailAddress()
+    groupMemberContactPhoneNumber()
 
     //review registration
     if(manualJourney){

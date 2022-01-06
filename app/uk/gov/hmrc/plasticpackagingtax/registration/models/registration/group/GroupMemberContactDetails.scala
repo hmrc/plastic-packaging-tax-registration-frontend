@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
+package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Regime.{PPT, Regime}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 
-case class PartnershipGrsCreateRequest(
-  continueUrl: String,
-  optServiceName: Option[String] = None,
-  deskProServiceId: String,
-  signOutUrl: String,
-  accessibilityUrl: String,
-  regime: Regime = PPT,
-  enableSautrCheck: Boolean = true,
-  businessVerificationCheck: Boolean = true
-) extends GrsJourneyCreationRequest
+case class GroupMemberContactDetails(
+  firstName: String,
+  lastName: String,
+  phoneNumber: Option[String] = None,
+  email: Option[String] = None,
+  address: Option[Address] = None
+) {
+  val groupMemberName = s"$firstName $lastName"
+}
 
-object PartnershipGrsCreateRequest {
-
-  implicit val format: OFormat[PartnershipGrsCreateRequest] =
-    Json.format[PartnershipGrsCreateRequest]
-
+object GroupMemberContactDetails {
+  implicit val format: OFormat[GroupMemberContactDetails] = Json.format[GroupMemberContactDetails]
 }

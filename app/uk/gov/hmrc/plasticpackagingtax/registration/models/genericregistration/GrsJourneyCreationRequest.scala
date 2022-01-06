@@ -34,4 +34,5 @@ trait GrsJourneyCreationRequest {
   val deskProServiceId: String
   val signOutUrl: String
   val regime: Regime
+  val accessibilityUrl: String
 }

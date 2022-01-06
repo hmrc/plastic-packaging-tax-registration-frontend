@@ -41,7 +41,8 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
       val testJourneyConfig =
         IncorpEntityGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
                                      deskProServiceId = "plastic-packaging-tax",
-                                     signOutUrl = "/feedback/plastic-packaging-tax"
+                                     signOutUrl = "/feedback/plastic-packaging-tax",
+                                     accessibilityUrl = "accessibilityUrl"
         )
       val testJourneyStartUrl  = "/identify-your-incorporated-business/uuid-id/company-number"
       val testDeskProServiceId = "plastic-packaging-tax"
@@ -69,7 +70,8 @@ class UkCompanyGrsConnectorISpec extends ConnectorISpec with Injector with Scala
       val testJourneyConfig =
         IncorpEntityGrsCreateRequest(continueUrl = "/plastic-packaging-tax/registration",
                                      deskProServiceId = "plastic-packaging-tax",
-                                     signOutUrl = "/feedback/plastic-packaging-tax"
+                                     signOutUrl = "/feedback/plastic-packaging-tax",
+                                     accessibilityUrl = "accessibilityUrl"
         )
 
       stubFor(

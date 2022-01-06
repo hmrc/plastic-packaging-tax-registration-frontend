@@ -488,3 +488,21 @@ addressLookup.contact.edit.title = What is {0}’s business address?
 addressLookup.contact.edit.heading = What is {0}’s business address?
 
 organisation.checkAnswers.title = Check your answers
+
+contactDetails.member.firstName = First name
+contactDetails.member.lastName = Last name
+contactDetails.member.name.title = Who is the main contact for {0}?
+contactDetails.member.name.hint = This is the name of the person who will manage the company’s PPT account, receive updates about the account and submit returns.
+contactDetails.member.firstName.error.empty = Enter first name
+contactDetails.member.firstName.error.length = First name cannot be more than 35 characters long
+contactDetails.member.firstName.error.specialCharacters = Enter first name in the correct format
+contactDetails.member.lastName.error.empty = Enter last name
+contactDetails.member.lastName.error.length = Last name cannot be more than 35 characters long
+contactDetails.member.lastName.error.specialCharacters = Enter last name in the correct format
+
+contactDetails.member.emailAddress.title = What is {0}’s email address?
+contactDetails.member.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
+
+contactDetails.member.phoneNumber.title = What is {0}’s telephone number?
+contactDetails.member.phoneNumber.caption = We’ll use this to contact you about your PPT account.
+contactDetails.member.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.

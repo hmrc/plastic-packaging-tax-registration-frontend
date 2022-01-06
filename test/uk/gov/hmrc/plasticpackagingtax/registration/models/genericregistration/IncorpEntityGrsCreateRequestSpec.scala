@@ -27,7 +27,8 @@ class IncorpEntityGrsCreateRequestSpec extends AnyWordSpec with Matchers {
       val grsCreateJourneyRequest = IncorpEntityGrsCreateRequest(continueUrl = "a",
                                                                  optServiceName = Some("b"),
                                                                  deskProServiceId = "c",
-                                                                 signOutUrl = "d"
+                                                                 signOutUrl = "d",
+                                                                 accessibilityUrl = "e"
       )
 
       val json = Json.toJson(grsCreateJourneyRequest)
@@ -45,6 +46,7 @@ class IncorpEntityGrsCreateRequestSpec extends AnyWordSpec with Matchers {
                                                                  optServiceName = Some("b"),
                                                                  deskProServiceId = "c",
                                                                  signOutUrl = "d",
+                                                                 accessibilityUrl = "e",
                                                                  businessVerificationCheck = false
       )
 
@@ -55,6 +57,7 @@ class IncorpEntityGrsCreateRequestSpec extends AnyWordSpec with Matchers {
       (json \ "deskProServiceId").as[String] mustBe "c"
       (json \ "signOutUrl").as[String] mustBe "d"
       (json \ "regime").as[String] mustBe "PPT"
+      (json \ "accessibilityUrl").as[String] mustBe "e"
       (json \ "businessVerificationCheck").as[Boolean] mustBe false
     }
   }
