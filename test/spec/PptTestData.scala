@@ -249,7 +249,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected val llpPartnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = LIMITED_LIABILITY_PARTNERSHIP,
-                       partnershipName = Some("LLP Partnership"),
+                       partnershipName = None,
                        partnershipBusinessDetails =
                          Some(
                            PartnershipBusinessDetails(testSatur,
@@ -262,7 +262,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected val limitedPartnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = LIMITED_PARTNERSHIP,
-                       partnershipName = Some("Limited Partnership"),
+                       partnershipName = None,
                        partnershipBusinessDetails =
                          Some(
                            PartnershipBusinessDetails(testSatur,
@@ -275,7 +275,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected val scottishLimitedPartnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = SCOTTISH_LIMITED_PARTNERSHIP,
-                       partnershipName = Some("Scottish Limited Partnership"),
+                       partnershipName = None,
                        partnershipBusinessDetails =
                          Some(
                            PartnershipBusinessDetails(testSatur,
