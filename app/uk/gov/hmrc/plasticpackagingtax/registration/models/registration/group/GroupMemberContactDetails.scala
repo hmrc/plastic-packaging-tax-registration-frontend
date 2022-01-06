@@ -25,7 +25,9 @@ case class GroupMemberContactDetails(
   phoneNumber: Option[String] = None,
   email: Option[String] = None,
   address: Option[Address] = None
-)
+) {
+  val groupMemberName = s"$firstName $lastName"
+}
 
 object GroupMemberContactDetails {
   implicit val format: OFormat[GroupMemberContactDetails] = Json.format[GroupMemberContactDetails]

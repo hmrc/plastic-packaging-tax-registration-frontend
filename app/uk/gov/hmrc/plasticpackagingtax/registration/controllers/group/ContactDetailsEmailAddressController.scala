@@ -52,7 +52,7 @@ class ContactDetailsEmailAddressController @Inject() (
         case Some(details) =>
           Ok(
             page(EmailAddress.form().fill(EmailAddress(details.email.getOrElse(""))),
-                 request.registration.lastMember.flatMap(_.contactDetails.map(_.firstName)),
+                 Some(details.groupMemberName),
                  groupRoutes.ContactDetailsNameController.displayPage(),
                  groupRoutes.ContactDetailsEmailAddressController.submit()
             )
@@ -60,7 +60,7 @@ class ContactDetailsEmailAddressController @Inject() (
         case _ =>
           Ok(
             page(EmailAddress.form(),
-                 request.registration.lastMember.flatMap(_.contactDetails.map(_.firstName)),
+                 None,
                  groupRoutes.ContactDetailsNameController.displayPage(),
                  groupRoutes.ContactDetailsEmailAddressController.submit()
             )
@@ -77,7 +77,9 @@ class ContactDetailsEmailAddressController @Inject() (
             Future.successful(
               BadRequest(
                 page(formWithErrors,
-                     request.registration.lastMember.flatMap(_.contactDetails.map(_.firstName)),
+                     request.registration.lastMember.flatMap(
+                       _.contactDetails.map(_.groupMemberName)
+                     ),
                      groupRoutes.ContactDetailsNameController.displayPage(),
                      groupRoutes.ContactDetailsEmailAddressController.submit()
                 )
