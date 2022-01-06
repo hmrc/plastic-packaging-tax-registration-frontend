@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.3
+// @version      15.4
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -256,6 +256,15 @@ const organisationType = () => {
                 document.getElementById('answer-4').checked = true
             }
         }
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const partnershipName = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partnership-name')) {
+
+        document.getElementById('value').value = 'Partners in Plastic'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -717,6 +726,7 @@ function completeJourney(manualJourney) {
 
     // Business Details
     organisationType()
+    partnershipName()
     confirmBusinessAddress()
 
     // Liability Details

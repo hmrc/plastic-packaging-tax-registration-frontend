@@ -363,7 +363,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               val partnershipRegistration = registration.copy(organisationDetails =
                 OrganisationDetails(organisationType = Some(PARTNERSHIP),
                                     businessRegisteredAddress = Some(testBusinessAddress),
-                                    partnershipDetails = Some(partnershipDetails),
+                                    partnershipDetails = Some(generalPartnershipDetails),
                                     incorporationDetails = None
                 )
               )
@@ -380,7 +380,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
 
               getValueFor(organisationSection, 0, partnershipView) mustBe PARTNERSHIP.toString
-              getValueFor(organisationSection, 1, partnershipView) mustBe "TODO"
+              getValueFor(organisationSection,
+                          1,
+                          partnershipView
+              ) mustBe generalPartnershipDetails.partnershipName.get
               getValueFor(organisationSection,
                           2,
                           partnershipView

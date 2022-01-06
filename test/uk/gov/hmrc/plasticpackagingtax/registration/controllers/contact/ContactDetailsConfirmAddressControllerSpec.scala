@@ -130,7 +130,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
-                                partnershipDetails = Some(partnershipDetails)
+                                partnershipDetails = Some(generalPartnershipDetails)
             )
           ),
           withRegisteredBusinessAddress(testBusinessAddress)
