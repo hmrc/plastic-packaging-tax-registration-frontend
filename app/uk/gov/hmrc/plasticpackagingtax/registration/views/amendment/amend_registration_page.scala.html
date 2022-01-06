@@ -50,7 +50,7 @@
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
-        @organisationDetails(registration.organisationDetails, registration.registrationType)
+        @organisationDetails(registration.organisationDetails, registration.registrationType, Some(false))
         @primaryContactDetails(registration.primaryContactDetails)
 
         @if(registration.registrationType.contains(GROUP)) {
