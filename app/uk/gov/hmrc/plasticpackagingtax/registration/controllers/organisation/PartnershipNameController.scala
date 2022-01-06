@@ -108,7 +108,8 @@ class PartnershipNameController @Inject() (
       PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
-                                  appConfig.signOutLink
+                                  appConfig.signOutLink,
+                                  appConfig.grsAccessibilityStatementPath
       ),
       url
     )
