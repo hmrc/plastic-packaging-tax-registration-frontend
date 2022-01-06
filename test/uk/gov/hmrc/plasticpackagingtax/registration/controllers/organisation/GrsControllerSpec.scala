@@ -183,7 +183,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         val organisationDetails = getLastSavedRegistration.organisationDetails
 
-        organisationDetails.partnershipDetails mustBe Some(partnershipDetails)
+        organisationDetails.partnershipDetails mustBe Some(generalPartnershipDetails)
         organisationDetails.incorporationDetails mustBe None
         organisationDetails.soleTraderDetails mustBe None
 
@@ -195,9 +195,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         val organisationDetails = getLastSavedRegistration.organisationDetails
 
-        organisationDetails.partnershipDetails mustBe Some(
-          partnershipDetailsWithScottishPartnership
-        )
+        organisationDetails.partnershipDetails mustBe Some(scottishPartnershipDetails)
         organisationDetails.incorporationDetails mustBe None
         organisationDetails.soleTraderDetails mustBe None
 

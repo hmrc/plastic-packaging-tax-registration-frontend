@@ -219,7 +219,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           val updatedRegistation = journeyRequest.registration.copy(organisationDetails =
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
                                 businessRegisteredAddress = Some(testBusinessAddress),
-                                partnershipDetails = Some(partnershipDetails),
+                                partnershipDetails = Some(generalPartnershipDetails),
                                 incorporationDetails = None
             )
           )

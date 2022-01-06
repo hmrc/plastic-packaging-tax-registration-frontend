@@ -220,7 +220,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                    companyAddress = testCompanyAddress
     )
 
-  protected val partnershipDetails: PartnershipDetails =
+  protected val generalPartnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
                        partnershipBusinessDetails =
                          Some(
@@ -232,8 +232,44 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                          )
     )
 
-  protected val partnershipDetailsWithScottishPartnership: PartnershipDetails =
+  protected val scottishPartnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
+                       partnershipBusinessDetails =
+                         Some(
+                           PartnershipBusinessDetails(testSatur,
+                                                      testPostcode,
+                                                      None,
+                                                      Some(registrationDetails)
+                           )
+                         )
+    )
+
+  protected val llpPartnershipDetails: PartnershipDetails =
+    PartnershipDetails(partnershipType = LIMITED_LIABILITY_PARTNERSHIP,
+                       partnershipBusinessDetails =
+                         Some(
+                           PartnershipBusinessDetails(testSatur,
+                                                      testPostcode,
+                                                      None,
+                                                      Some(registrationDetails)
+                           )
+                         )
+    )
+
+  protected val limitedPartnershipDetails: PartnershipDetails =
+    PartnershipDetails(partnershipType = LIMITED_PARTNERSHIP,
+                       partnershipBusinessDetails =
+                         Some(
+                           PartnershipBusinessDetails(testSatur,
+                                                      testPostcode,
+                                                      None,
+                                                      Some(registrationDetails)
+                           )
+                         )
+    )
+
+  protected val scottishLimitedPartnershipDetails: PartnershipDetails =
+    PartnershipDetails(partnershipType = SCOTTISH_LIMITED_PARTNERSHIP,
                        partnershipBusinessDetails =
                          Some(
                            PartnershipBusinessDetails(testSatur,
@@ -312,13 +348,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected def registeredGeneralPartnershipOrgDetails(): OrganisationDetails =
     OrganisationDetails(organisationType = Some(PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
-                        partnershipDetails = Some(partnershipDetails)
+                        partnershipDetails = Some(generalPartnershipDetails)
     )
 
   protected def registeredScottishPartnershipOrgDetails(): OrganisationDetails =
     OrganisationDetails(organisationType = Some(PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
-                        partnershipDetails = Some(partnershipDetailsWithScottishPartnership)
+                        partnershipDetails = Some(scottishPartnershipDetails)
     )
 
   protected def registeredLimitedLiabilityhPartnershipOrgDetails(): OrganisationDetails =

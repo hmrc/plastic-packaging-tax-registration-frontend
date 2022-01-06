@@ -310,6 +310,10 @@ partnership.type.LimitedPartnership = Limited partnership
 partnership.type.ScottishPartnership = Scottish partnership
 partnership.type.ScottishLimitedPartnership = Scottish limited partnership
 
+partnership.name.title = What's the name of the partnership?
+partnership.name.empty.error = Please enter your partnership name
+partnership.name.format.error = Please enter your partnership name in correct format
+
 unauthorised.heading = You are not registered for Plastic Packaging Tax
 unauthorised.paragraph.1 = The Plastic Packaging Tax (PPT) service will launch in April 2022, and is currently available to a limited number of people for their feedback.
 unauthorised.paragraph.2 = If you would like to provide your feedback too, you can {0}. We will respond to you within two working days.

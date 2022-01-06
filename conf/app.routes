@@ -43,6 +43,9 @@ POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.co
 GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.displayPage()
 POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.submit()
 
+GET        /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipNameController.displayPage()
+POST       /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipNameController.submit()
+
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationTypeNotSupportedController.onPageLoad()
 
 GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()

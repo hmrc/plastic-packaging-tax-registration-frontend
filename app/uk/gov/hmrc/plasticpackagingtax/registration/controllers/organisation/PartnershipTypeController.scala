@@ -88,12 +88,8 @@ class PartnershipTypeController @Inject() (
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
                         partnershipType.answer match {
-                          case Some(GENERAL_PARTNERSHIP) =>
-                            getRedirectUrl(appConfig.generalPartnershipJourneyUrl)
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(SCOTTISH_PARTNERSHIP) =>
-                            getRedirectUrl(appConfig.scottishPartnershipJourneyUrl)
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          case Some(GENERAL_PARTNERSHIP) | Some(SCOTTISH_PARTNERSHIP) =>
+                            Future(Redirect(routes.PartnershipNameController.displayPage().url))
                           case Some(LIMITED_PARTNERSHIP) =>
                             getRedirectUrl(appConfig.limitedPartnershipJourneyUrl)
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
