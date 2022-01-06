@@ -38,7 +38,7 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
     page(form, contactName, backLink, updateLink)(journeyRequest, messages)
 
-  "Phone Number View" should {
+  "Email Address View" should {
 
     val view = createView()
 
@@ -75,7 +75,7 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display phone number input box" in {
+    "display email address input box" in {
 
       view must containElementWithID("value")
     }
@@ -88,9 +88,9 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
   }
 
-  "Phone Number View when filled" should {
+  "Email Address View when filled" should {
 
-    "display data in phone number input box" in {
+    "display data in email address input box" in {
 
       val form = EmailAddress
         .form()

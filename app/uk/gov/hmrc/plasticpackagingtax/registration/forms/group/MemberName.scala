@@ -34,12 +34,12 @@ object MemberName {
     firstName ->
       text()
         .verifying(emptyError(firstName), _.trim.nonEmpty)
-        .verifying(lengthError(firstName), name => name.isEmpty || name.length <= 20)
+        .verifying(lengthError(firstName), name => name.isEmpty || name.length <= 35)
         .verifying(nonAlphabeticError(firstName), name => name.isEmpty || name.forall(_.isLetter)),
     lastName ->
       text()
         .verifying(emptyError(lastName), _.trim.nonEmpty)
-        .verifying(lengthError(lastName), name => name.isEmpty || name.length <= 20)
+        .verifying(lengthError(lastName), name => name.isEmpty || name.length <= 35)
         .verifying(nonAlphabeticError(lastName), name => name.isEmpty || name.forall(_.isLetter))
   )(MemberName.apply)(MemberName.unapply)
 

@@ -84,7 +84,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     forAll(Seq(saveAndContinueFormAction)) { formAction =>
       "return 303 (OK) for " + formAction._1 when {
-        "user submits the email" in {
+        "user submits the member name" in {
           authorizedUser()
           mockRegistrationFind(
             aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
@@ -97,9 +97,10 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
             )
 
           status(result) mustBe SEE_OTHER
-          modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email mustBe Some(
-            "test@test.com"
-          )
+          val contactDetails =
+            modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get
+          contactDetails.firstName mustBe "Test"
+          contactDetails.lastName mustBe "User"
           redirectLocation(result) mustBe Some(
             groupRoutes.ContactDetailsEmailAddressController.displayPage().url
           )
@@ -108,7 +109,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
     }
 
-    "return prepopulated form" when {
+    "return pre populated form" when {
 
       def pageForm: Form[MemberName] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[MemberName]])
@@ -131,7 +132,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid phone number" in {
+      "user submits invalid member name" in {
         authorizedUser()
         val result = controller.submit()(postRequest(Json.toJson(MemberName("$%^", "£$£¬"))))
 

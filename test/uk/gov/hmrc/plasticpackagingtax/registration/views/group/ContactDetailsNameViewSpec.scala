@@ -87,7 +87,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
   }
 
-  "Phone Number View when filled" should {
+  "Member name view when filled" should {
 
     "display data in first name and last name input box" in {
 

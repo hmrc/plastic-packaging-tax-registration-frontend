@@ -490,10 +490,10 @@ contactDetails.member.lastName = Last name
 contactDetails.member.name.title = Who is the main contact for {0}?
 contactDetails.member.name.hint = This is the name of the person who will manage the company’s PPT account, receive updates about the account and submit returns.
 contactDetails.member.firstName.error.empty = Enter first name
-contactDetails.member.firstName.error.length = First name cannot be more than 160 characters long
+contactDetails.member.firstName.error.length = First name cannot be more than 35 characters long
 contactDetails.member.firstName.error.specialCharacters = Enter first name in the correct format
 contactDetails.member.lastName.error.empty = Enter last name
-contactDetails.member.lastName.error.length = Last name cannot be more than 160 characters long
+contactDetails.member.lastName.error.length = Last name cannot be more than 35 characters long
 contactDetails.member.lastName.error.specialCharacters = Enter last name in the correct format
 
 contactDetails.member.emailAddress.title = What is {0}’s email address?

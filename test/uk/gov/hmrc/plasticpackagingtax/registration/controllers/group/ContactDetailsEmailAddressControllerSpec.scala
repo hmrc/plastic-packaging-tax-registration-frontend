@@ -127,7 +127,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     "return 400 (BAD_REQUEST)" when {
 
-      "user submits invalid phone number" in {
+      "user submits invalid email" in {
         authorizedUser()
         val result = controller.submit()(postRequest(Json.toJson(EmailAddress("$%^"))))
 

@@ -108,7 +108,7 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
     }
 
-    "return prepopulated form" when {
+    "return pre populated form" when {
 
       def pageForm: Form[PhoneNumber] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
