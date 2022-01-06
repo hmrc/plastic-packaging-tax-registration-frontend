@@ -242,7 +242,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           )
 
           getValueFor(0, partnershipView) mustBe PARTNERSHIP.toString
-          getValueFor(1, partnershipView) mustBe "TODO"
+          getValueFor(1, partnershipView) mustBe generalPartnershipDetails.partnershipName.get
           getValueFor(2, partnershipView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
           getChangeLinkFor(0, partnershipView) must haveHref(

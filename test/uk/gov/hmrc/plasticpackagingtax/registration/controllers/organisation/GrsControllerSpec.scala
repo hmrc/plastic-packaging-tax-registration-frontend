@@ -87,11 +87,15 @@ class GrsControllerSpec extends ControllerSpec {
   )
 
   private val unregisteredGeneralPartnership = aRegistration(
-    withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP))
+    withOrganisationDetails(
+      unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership"))
+    )
   )
 
   private val unregisteredScottishPartnership = aRegistration(
-    withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP))
+    withOrganisationDetails(
+      unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP, Some("Scottish Partnership"))
+    )
   )
 
   "GRS Callback" should {
