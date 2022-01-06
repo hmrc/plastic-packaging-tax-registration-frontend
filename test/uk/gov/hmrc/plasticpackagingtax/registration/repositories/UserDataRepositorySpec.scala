@@ -83,8 +83,7 @@ class UserDataRepositorySpec
 
     "add data to cache and delete it" when {
       "explicit id used" in {
-        val id                                          = "123"
-        implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+        val id = "123"
         await(repository.putData(id, "testKey", "testData"))
 
         await(repository.deleteData[String](id, "testKey")).mustBe(())

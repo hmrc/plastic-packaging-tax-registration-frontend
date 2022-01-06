@@ -17,12 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup
 
 import com.kenshoo.play.metrics.Metrics
-import play.api.Logger
-
-import javax.inject.{Inject, Singleton}
 import play.api.http.HeaderNames.LOCATION
 import play.api.http.Status.ACCEPTED
-import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -32,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
   AddressLookupOnRamp
 }
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

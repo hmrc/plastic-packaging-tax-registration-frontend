@@ -182,7 +182,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     SoleTraderDetails(firstName = "Sole",
                       lastName = "Trader",
                       dateOfBirth = Some("12/12/1960"),
-                      nino = "1234",
+                      ninoOrTrn = "1234",
                       sautr = Some("ABC"),
                       registration = Some(verificationFailedRegistrationDetails)
     )
