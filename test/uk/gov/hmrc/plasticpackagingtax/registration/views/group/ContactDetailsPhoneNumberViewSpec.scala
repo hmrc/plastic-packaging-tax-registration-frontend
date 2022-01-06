@@ -62,7 +62,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(
-        messages("primaryContactDetails.phoneNumber.title",
+        messages("contactDetails.member.phoneNumber.title",
                  contactName.getOrElse(messages("primaryContactDetails.phoneNumber.default"))
         )
       )
@@ -71,7 +71,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
     "display hint" in {
 
       view.getElementById("value-hint").text() must include(
-        messages("primaryContactDetails.phoneNumber.hint")
+        messages("contactDetails.member.phoneNumber.hint")
       )
     }
 

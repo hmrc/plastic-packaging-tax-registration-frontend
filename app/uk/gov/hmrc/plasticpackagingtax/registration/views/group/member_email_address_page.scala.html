@@ -44,7 +44,7 @@
 }
 
 @govukLayout(
-  title = Title(headingKey = "primaryContactDetails.emailAddress.title", headingArgs = Some(List(contactName))),
+  title = Title(headingKey = "contactDetails.member.emailAddress.title", headingArgs = Some(List(contactName))),
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
@@ -55,12 +55,12 @@
             id = s"${emailAddressField.name}",
             name = emailAddressField.name,
             value = emailAddressField.value,
-            hint = Some(Hint(content = Text(messages("primaryContactDetails.emailAddress.hint")))),
+            hint = Some(Hint(content = Text(messages("contactDetails.member.emailAddress.hint")))),
             inputType = "email",
             label = Label(
                 isPageHeading = true,
                 classes = gdsLabelPageHeading,
-                content = Text(messages("primaryContactDetails.emailAddress.title", contactName))),
+                content = Text(messages("contactDetails.member.emailAddress.title", contactName))),
                 errorMessage = errorMessages)
             )
 

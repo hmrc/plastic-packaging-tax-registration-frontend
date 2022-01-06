@@ -39,24 +39,24 @@
 @contactName = @{contact.getOrElse(messages("primaryContactDetails.fullName.default"))}
 
 @fieldsetBody = {
-    @paragraphBody(messages("primaryContactDetails.phoneNumber.caption"))
+    @paragraphBody(messages("contactDetails.member.phoneNumber.caption"))
     @govukInput(
         Input(
             id = s"${phoneNumberField.name}",
             name = phoneNumberField.name,
             value = phoneNumberField.value,
-            hint = Some(Hint(content = HtmlContent(Html( messages("primaryContactDetails.phoneNumber.hint"))))),
+            hint = Some(Hint(content = HtmlContent(Html( messages("contactDetails.member.phoneNumber.hint"))))),
             errorMessage = phoneNumberField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             autocomplete = Some("tel"),
             inputType = "tel",
             label = Label(
                 isPageHeading = false,
                 classes = s"govuk-label govuk-visually-hidden",
-                content = Text(messages("primaryContactDetails.phoneNumber.title"))))
+                content = Text(messages("contactDetails.member.phoneNumber.title"))))
     )
 }
 @govukLayout(
-  title = Title(headingKey = "primaryContactDetails.phoneNumber.title", headingArg = contactName),
+  title = Title(headingKey = "contactDetails.member.phoneNumber.title", headingArg = contactName),
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
@@ -64,7 +64,7 @@
 
       @govukFieldset(Fieldset(
           legend = Some(Legend(
-              content = Text(messages("primaryContactDetails.phoneNumber.title", contactName)),
+              content = Text(messages("contactDetails.member.phoneNumber.title", contactName)),
               classes = gdsFieldsetPageHeading,
               isPageHeading = true
           )),

@@ -60,6 +60,17 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return 200" when {
 
+      "user is authorised display page method is invoked" in {
+        authorizedUser()
+        val member = groupMember.copy(contactDetails = None)
+        mockRegistrationFind(
+          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
+        )
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
       "user is authorised, a registration already exists and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(

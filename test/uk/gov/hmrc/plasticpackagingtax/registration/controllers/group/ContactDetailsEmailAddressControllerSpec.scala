@@ -59,6 +59,16 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   "ContactDetailsEmailAddressController" should {
 
     "return 200" when {
+      "user is authorised display page method is invoked" in {
+        authorizedUser()
+        val member = groupMember.copy(contactDetails = None)
+        mockRegistrationFind(
+          aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
+        )
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
         authorizedUser()
@@ -95,7 +105,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       }
     }
 
-    "return prepopulated form" when {
+    "return pre populated form" when {
 
       def pageForm: Form[EmailAddress] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
