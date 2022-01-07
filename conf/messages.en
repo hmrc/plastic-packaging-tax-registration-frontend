@@ -356,6 +356,10 @@ businessEntityVerification.failure.title = Sorry, your business could not be ver
 businessEntityVerification.failure.heading = Sorry, your business could not be verified
 businessEntityVerification.failure.detail = You can try again after 24 hours.
 
+soleTraderEntityVerification.failure.title = Sorry, your business could not be verified
+soleTraderEntityVerification.failure.heading = Sorry, your business could not be verified
+soleTraderEntityVerification.failure.detail = You can try again after 24 hours.
+
 duplicateSubscription.title = Your organisation is already registered
 duplicateSubscription.detail = Someone in {0} has already registered for Plastic Packaging Tax (PPT).
 
@@ -378,6 +382,15 @@ corpTaxHelpline.telephone.outsideUK.detail = +44 151 268 0571
 corpTaxHelpline.openingTimes.title = Opening times:
 corpTaxHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 6pm
 corpTaxHelpline.openingTimes.detail.2 = Closed on weekends and bank holidays.
+
+selfAssessmentHelpline.intro = Contact the Self Assessment helpline if you have any questions.
+selfAssessmentHelpline.telephone.title = Telephone:
+selfAssessmentHelpline.telephone.detail = 0300 200 3410
+selfAssessmentHelpline.telephone.outsideUK.title = Outside UK:
+selfAssessmentHelpline.telephone.outsideUK.detail = +44 161 931 9070
+selfAssessmentHelpline.openingTimes.title = Opening times:
+selfAssessmentHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 6pm
+selfAssessmentHelpline.openingTimes.detail.2 = Closed on weekends and bank holidays.
 
 enrolment.failure.title = Sorry, there is a problem with the service
 enrolment.failure.heading = Sorry, there is a problem with the service.

@@ -26,10 +26,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
-  BUSINESS_IDENTIFICATION_FAILED,
   BUSINESS_VERIFICATION_FAILED,
   DUPLICATE_SUBSCRIPTION,
+  GRS_FAILED,
   RegistrationStatus,
+  SOLE_TRADER_VERIFICATION_FAILED,
   STATUS_OK,
   UNSUPPORTED_ORGANISATION
 }
@@ -55,11 +56,12 @@ import scala.concurrent.{ExecutionContext, Future}
 object RegistrationStatus extends Enumeration {
   type RegistrationStatus = Value
 
-  val STATUS_OK: Value                      = Value
-  val BUSINESS_IDENTIFICATION_FAILED: Value = Value
-  val BUSINESS_VERIFICATION_FAILED: Value   = Value
-  val DUPLICATE_SUBSCRIPTION: Value         = Value
-  val UNSUPPORTED_ORGANISATION: Value       = Value
+  val STATUS_OK: Value                       = Value
+  val GRS_FAILED: Value                      = Value
+  val BUSINESS_VERIFICATION_FAILED: Value    = Value
+  val SOLE_TRADER_VERIFICATION_FAILED: Value = Value
+  val DUPLICATE_SUBSCRIPTION: Value          = Value
+  val UNSUPPORTED_ORGANISATION: Value        = Value
 }
 
 @Singleton
@@ -93,10 +95,12 @@ class GrsController @Inject() (
               status match {
                 case STATUS_OK =>
                   Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
-                case BUSINESS_IDENTIFICATION_FAILED =>
+                case GRS_FAILED =>
                   Redirect(commonRoutes.NotableErrorController.grsFailure())
                 case BUSINESS_VERIFICATION_FAILED =>
                   Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
+                case SOLE_TRADER_VERIFICATION_FAILED =>
+                  Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
                 case DUPLICATE_SUBSCRIPTION =>
                   if (registration.isGroup)
                     Redirect(
@@ -116,7 +120,12 @@ class GrsController @Inject() (
     registration: Registration
   )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[RegistrationStatus] =
     if (registration.organisationDetails.businessVerificationFailed)
-      Future.successful(BUSINESS_VERIFICATION_FAILED)
+      registration.organisationDetails.organisationType match {
+        case Some(SOLE_TRADER) =>
+          Future.successful(SOLE_TRADER_VERIFICATION_FAILED)
+        case _ =>
+          Future.successful(BUSINESS_VERIFICATION_FAILED)
+      }
     else
       registration.organisationDetails.businessPartnerId match {
         case Some(businessPartnerId) =>
@@ -125,18 +134,13 @@ class GrsController @Inject() (
             case _          => STATUS_OK
           }
         case None =>
-          registration.organisationDetails.organisationType match {
-            case Some(SOLE_TRADER) => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
-            case _ =>
-              registration.organisationDetails.grsRegistration match {
-                case Some(
-                      RegistrationDetails(false, Some("UNCHALLENGED"), "REGISTRATION_NOT_CALLED", _)
-                    ) =>
-                  Future.successful(UNSUPPORTED_ORGANISATION)
-                case _ => Future.successful(BUSINESS_IDENTIFICATION_FAILED)
-              }
+          registration.organisationDetails.grsRegistration match {
+            case Some(
+                  RegistrationDetails(false, Some("UNCHALLENGED"), "REGISTRATION_NOT_CALLED", _)
+                ) =>
+              Future.successful(UNSUPPORTED_ORGANISATION)
+            case _ => Future.successful(GRS_FAILED)
           }
-
       }
 
   private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(

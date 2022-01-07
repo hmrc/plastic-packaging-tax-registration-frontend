@@ -70,9 +70,12 @@ class GrsControllerSpec extends ControllerSpec {
     withOrganisationDetails(unregisteredUkCompanyOrgDetails())
   )
 
-  private val verificationFailedLimitedCompany = aRegistration(
+  private val verificationFailedLimitedCompany: Registration = aRegistration(
     withOrganisationDetails(verificationFailedUkCompanyOrgDetails())
   )
+
+  private val verificationFailedSoleTrader: Registration =
+    aRegistration(withSoleTraderDetails(Some(verificationFailedSoleTraderDetails)))
 
   private val registeredLimitedCompany = aRegistration(
     withOrganisationDetails(registeredUkCompanyOrgDetails())
@@ -281,13 +284,23 @@ class GrsControllerSpec extends ControllerSpec {
     }
 
     "show verification error page" when {
-      "business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED " in {
+      "business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED" in {
         authorizedUser()
         val result = simulateBusinessVerificationFailureLimitedCompanyCallback()
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
           pptRoutes.NotableErrorController.businessVerificationFailure().url
+        )
+      }
+
+      "sole trader business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED" in {
+        authorizedUser()
+        val result = simulateBusinessVerificationFailureSoleTraderCallback()
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          pptRoutes.NotableErrorController.soleTraderVerificationFailure().url
         )
       }
     }
@@ -371,6 +384,15 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetUkCompanyDetails(verificationFailedIncorporationDetails)
     mockRegistrationFind(verificationFailedLimitedCompany)
+    mockRegistrationUpdate()
+
+    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+  }
+
+  private def simulateBusinessVerificationFailureSoleTraderCallback() = {
+    authorizedUser()
+    mockGetSoleTraderDetails(verificationFailedSoleTraderDetails)
+    mockRegistrationFind(verificationFailedSoleTrader)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())

@@ -98,6 +98,7 @@ GET        /enrolment-failed                    uk.gov.hmrc.plasticpackagingtax.
 GET        /grs-failed                          uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotableErrorController.grsFailure()
 GET        /business-not-verified               uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotableErrorController.businessVerificationFailure()
 GET        /organisation-already-registered     uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotableErrorController.duplicateRegistration()
+GET        /sole-trader-not-verified            uk.gov.hmrc.plasticpackagingtax.registration.controllers.NotableErrorController.soleTraderVerificationFailure()
 
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason)
 GET        /security-signed-out     uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()

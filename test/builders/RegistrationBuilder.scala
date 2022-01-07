@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
+  SOLE_TRADER,
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
@@ -32,7 +33,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationAddressDetails,
   IncorporationDetails,
   PartnershipDetails,
-  RegistrationDetails
+  RegistrationDetails,
+  SoleTraderDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
@@ -161,6 +163,15 @@ trait RegistrationBuilder {
       reg.copy(organisationDetails =
         reg.organisationDetails.copy(businessRegisteredAddress = Some(businessAddress))
       )
+
+  def withSoleTraderDetails(soleTraderDetails: Option[SoleTraderDetails]): RegistrationModifier = {
+    registration =>
+      registration.copy(organisationDetails =
+        registration.organisationDetails.copy(organisationType = Some(SOLE_TRADER),
+                                              soleTraderDetails = soleTraderDetails
+        )
+      )
+  }
 
   def withPartnershipDetails(partnershipDetails: Option[PartnershipDetails]): RegistrationModifier =
     reg =>

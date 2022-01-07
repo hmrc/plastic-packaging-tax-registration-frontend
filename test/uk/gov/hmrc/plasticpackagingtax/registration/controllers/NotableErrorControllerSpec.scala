@@ -26,6 +26,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolment_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.business_verification_failure_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.sole_trader_verification_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   duplicate_subscription_page,
   error_page
@@ -36,11 +37,12 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val errorPage                      = mock[error_page]
-  private val enrolmentFailurePage           = mock[enrolment_failure_page]
-  private val grsFailurePage                 = mock[grs_failure_page]
-  private val businessVerificationFailedPage = mock[business_verification_failure_page]
-  private val duplicateSubscriptionPage      = mock[duplicate_subscription_page]
+  private val errorPage                        = mock[error_page]
+  private val enrolmentFailurePage             = mock[enrolment_failure_page]
+  private val grsFailurePage                   = mock[grs_failure_page]
+  private val businessVerificationFailedPage   = mock[business_verification_failure_page]
+  private val soleTraderVerificationFailedPage = mock[sole_trader_verification_failure_page]
+  private val duplicateSubscriptionPage        = mock[duplicate_subscription_page]
 
   private val controller =
     new NotableErrorController(authenticate = mockAuthAction,
@@ -50,6 +52,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
                                errorNoSavePage = enrolmentFailurePage,
                                grsFailurePage = grsFailurePage,
                                businessVerificationFailurePage = businessVerificationFailedPage,
+                               soleTraderVerificationFailurePage = soleTraderVerificationFailedPage,
                                duplicateSubscriptionPage = duplicateSubscriptionPage
     )
 
@@ -62,6 +65,9 @@ class NotableErrorControllerSpec extends ControllerSpec {
     when(grsFailurePage.apply()(any(), any())).thenReturn(HtmlFormat.raw("grs failure content"))
     when(businessVerificationFailedPage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error business verification failed content")
+    )
+    when(soleTraderVerificationFailedPage.apply()(any(), any())).thenReturn(
+      HtmlFormat.raw("error sole trader verification failed content")
     )
     when(duplicateSubscriptionPage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("duplicate subscription content")
@@ -91,6 +97,14 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "error business verification failed content"
+    }
+
+    "present the sole trader verification failed page" in {
+      authorizedUser()
+      val resp = controller.soleTraderVerificationFailure()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "error sole trader verification failed content"
     }
 
     "present the grs failure page" in {
