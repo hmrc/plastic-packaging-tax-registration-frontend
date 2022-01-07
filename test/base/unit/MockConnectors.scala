@@ -23,7 +23,6 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._

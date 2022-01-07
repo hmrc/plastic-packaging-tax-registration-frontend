@@ -519,3 +519,12 @@ contactDetails.member.emailAddress.hint = We’ll only use this to send notifica
 contactDetails.member.phoneNumber.title = What is {0}’s telephone number?
 contactDetails.member.phoneNumber.caption = We’ll use this to contact you about your PPT account.
 contactDetails.member.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
+
+addressLookup.member.contact.lookup.title = What address do you want to use for {0}?
+addressLookup.member.contact.lookup.heading = What address do you want to use for {0}?
+
+addressLookup.member.contact.select.title = Select your address for {0}
+addressLookup.member.contact.select.heading = Select your address for {0}
+
+addressLookup.member.contact.confirm.title = Confirm your address for {0}
+addressLookup.member.contact.confirm.heading = Confirm your address for {0}

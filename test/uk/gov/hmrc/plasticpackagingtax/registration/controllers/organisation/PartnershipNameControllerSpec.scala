@@ -20,7 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{BAD_REQUEST, SEE_OTHER}
+import play.api.http.Status.BAD_REQUEST
 import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.SaveAndContinue

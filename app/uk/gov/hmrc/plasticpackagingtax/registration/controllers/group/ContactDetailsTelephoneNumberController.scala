@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
@@ -44,7 +45,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
   mcc: MessagesControllerComponents,
   page: member_phone_number_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with AddressLookupIntegration {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -85,10 +86,10 @@ class ContactDetailsTelephoneNumberController @Inject() (
                 )
               )
             ),
-          emailAddress =>
-            updateRegistration(emailAddress).map {
+          phoneNumber =>
+            updateRegistration(phoneNumber).map {
               case Right(_) =>
-                Redirect(groupRoutes.OrganisationListController.displayPage())
+                Redirect(groupRoutes.ConfirmContactAddressController.displayPage())
               case Left(error) => throw error
             }
         )

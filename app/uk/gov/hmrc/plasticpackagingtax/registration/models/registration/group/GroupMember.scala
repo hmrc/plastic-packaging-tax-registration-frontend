@@ -58,6 +58,11 @@ case class GroupMember(
       throw new IllegalStateException("No contact details found")
     )
 
+  def withGroupMemberAddress(address: Address): GroupMemberContactDetails =
+    contactDetails.map(_.copy(address = Some(address))).getOrElse(
+      throw new IllegalStateException("No contact details found")
+    )
+
 }
 
 object GroupMember {
