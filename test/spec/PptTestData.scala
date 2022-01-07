@@ -422,13 +422,33 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                             GroupMemberContactDetails(phoneNumber = Some("077123"),
                                                                       firstName = "Test",
                                                                       lastName = "User",
-                                                                      email = Some("test@test.com")
+                                                                      email = Some("test@test.com"),
+                                                                      address = Some(
+                                                                        Address(
+                                                                          addressLine1 =
+                                                                            "ContactAddressLine1",
+                                                                          addressLine2 = Some(
+                                                                            "ContactAddressLine2"
+                                                                          ),
+                                                                          addressLine3 = Some(
+                                                                            "ContactAddressLine3"
+                                                                          ),
+                                                                          townOrCity =
+                                                                            "ContactAddressLine4",
+                                                                          postCode = Some("EF34GH"),
+                                                                          countryCode = "GB"
+                                                                        )
+                                                                      )
                                             )
                                           ),
-                                          addressDetails = Address(addressLine1 = "line1",
-                                                                   addressLine2 = Some("lin2"),
-                                                                   addressLine3 = Some("line3"),
-                                                                   townOrCity = "line4",
+                                          addressDetails = Address(addressLine1 =
+                                                                     "BusinessAddressLine1",
+                                                                   addressLine2 =
+                                                                     Some("BusinessAddressLine2"),
+                                                                   addressLine3 =
+                                                                     Some("BusinessAddressLine3"),
+                                                                   townOrCity =
+                                                                     "BusinessAddressLine4",
                                                                    postCode = Some("AB12CD"),
                                                                    countryCode = "GB"
                                           )
