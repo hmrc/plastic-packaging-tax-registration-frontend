@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   task_list_group,
+  task_list_partnership,
   task_list_single_entity
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,13 +39,16 @@ class TaskListController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   singleEntityPage: task_list_single_entity,
-  groupPage: task_list_group
+  groupPage: task_list_group,
+  partnershipPage: task_list_partnership
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       if (request.registration.isGroup)
         Ok(groupPage(request.registration, startLink))
+      else if (request.registration.isPartnership)
+        Ok(partnershipPage(request.registration, startLink))
       else
         Ok(singleEntityPage(request.registration, startLink))
     }

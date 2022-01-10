@@ -22,11 +22,12 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class RegistrationSpec
@@ -267,4 +268,16 @@ class RegistrationSpec
     }
 
   }
+
+  "Registration for partnership organisation" should {
+
+    "identify partnerships from registration organisation type" in {
+      val aPartnershipRegistration = aRegistration(
+        withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP)))
+      )
+      aPartnershipRegistration.isPartnership mustBe true
+    }
+
+  }
+
 }
