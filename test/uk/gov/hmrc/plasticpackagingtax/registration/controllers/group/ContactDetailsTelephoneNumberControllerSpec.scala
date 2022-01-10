@@ -101,7 +101,7 @@ class ContactDetailsTelephoneNumberControllerSpec
             "077123"
           )
           redirectLocation(result) mustBe Some(
-            groupRoutes.ContactDetailsCheckAnswersController.displayPage().url
+            groupRoutes.ContactDetailsConfirmAddressController.displayPage().url
           )
           reset(mockRegistrationConnector)
         }

@@ -129,6 +129,9 @@ POST       /member-or-partner-contact-telephone     uk.gov.hmrc.plasticpackaging
 GET        /member-or-partner-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.displayPage()
 POST       /member-or-partner-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.submit()
 
+GET        /member-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.displayPage()
+GET        /member-contact-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.alfCallback(id: Option[String])
+
 # Manual User Enrolment
 GET        /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
 POST       /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.submit()

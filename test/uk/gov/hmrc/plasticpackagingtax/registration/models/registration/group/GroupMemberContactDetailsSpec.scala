@@ -19,9 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTestData {
 
@@ -76,6 +73,26 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
         )
         val result = member.withGroupMemberPhoneNumber("121212")
         result.phoneNumber mustBe Some("121212")
+      }
+      "with no contact details " in {
+        val member = groupMember.copy(contactDetails = None)
+        intercept[IllegalStateException] {
+          member.withGroupMemberPhoneNumber("0777123")
+        }
+      }
+    }
+    "update address " when {
+      "contact details exist " in {
+        val member = groupMember.copy(contactDetails =
+          Some(
+            GroupMemberContactDetails(firstName = "Test",
+                                      lastName = "User",
+                                      address = Some(addressDetails)
+            )
+          )
+        )
+        val result = member.withGroupMemberAddress(addressDetails.copy(postCode = Some("AA1 1AA")))
+        result.address.get.postCode mustBe Some("AA1 1AA")
       }
       "with no contact details " in {
         val member = groupMember.copy(contactDetails = None)

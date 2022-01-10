@@ -529,3 +529,12 @@ contactDetails.member.check.contact.name = Contact name
 contactDetails.member.check.contact.email = Contact email
 contactDetails.member.check.contact.phone = Phone number
 contactDetails.member.check.contact.address = Contact address
+
+addressLookup.member.contact.lookup.title = What address do you want to use for {0}?
+addressLookup.member.contact.lookup.heading = What address do you want to use for {0}?
+
+addressLookup.member.contact.select.title = Select your address for {0}
+addressLookup.member.contact.select.heading = Select your address for {0}
+
+addressLookup.member.contact.confirm.title = Confirm your address for {0}
+addressLookup.member.contact.confirm.heading = Confirm your address for {0}
