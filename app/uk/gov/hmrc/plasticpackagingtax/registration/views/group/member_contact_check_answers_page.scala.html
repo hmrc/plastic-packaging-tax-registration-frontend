@@ -50,7 +50,7 @@
                     viewUtils.summaryListRow("contactDetails.member.check.contact.name", groupMember.contactDetails.map(_.groupMemberName), Some(groupRoutes.ContactDetailsNameController.displayPage())),
                     viewUtils.summaryListRow("contactDetails.member.check.contact.email", groupMember.contactDetails.flatMap(_.email), Some(groupRoutes.ContactDetailsEmailAddressController.displayPage())),
                     viewUtils.summaryListRow("contactDetails.member.check.contact.phone", groupMember.contactDetails.flatMap(_.phoneNumber), Some(groupRoutes.ContactDetailsTelephoneNumberController.displayPage())),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), None), // TODO: add link when address capture facility available
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), Some(groupRoutes.ContactDetailsConfirmAddressController.displayPage()))
                 ).filterNot(_.value.content == Empty)
             )
         )

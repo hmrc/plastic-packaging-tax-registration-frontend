@@ -34,7 +34,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ConfirmContactAddressController @Inject() (
+class ContactDetailsConfirmAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
@@ -48,7 +48,7 @@ class ConfirmContactAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       initialiseAddressLookup(addressLookupFrontendConnector,
                               appConfig,
-                              routes.ConfirmContactAddressController.alfCallback(None),
+                              routes.ContactDetailsConfirmAddressController.alfCallback(None),
                               "addressLookup.member.contact",
                               request.registration.groupDetail.flatMap(_.businessName)
       ).map(onRamp => Redirect(onRamp.redirectUrl))
@@ -77,7 +77,7 @@ class ConfirmContactAddressController @Inject() (
               )
             )
           }.map { _ =>
-            Redirect(routes.OrganisationListController.displayPage())
+            Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
           }
       }
     }

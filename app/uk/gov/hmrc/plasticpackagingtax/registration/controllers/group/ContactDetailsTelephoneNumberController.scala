@@ -89,7 +89,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
           phoneNumber =>
             updateRegistration(phoneNumber).map {
               case Right(_) =>
-                Redirect(groupRoutes.ConfirmContactAddressController.displayPage())
+                Redirect(groupRoutes.ContactDetailsConfirmAddressController.displayPage())
               case Left(error) => throw error
             }
         )

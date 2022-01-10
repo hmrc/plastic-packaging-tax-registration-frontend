@@ -30,18 +30,18 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class ConfirmContactAddressControllerSpec extends ControllerSpec {
+class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
   private val mcc                                = stubMessagesControllerComponents()
   private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
 
   private val controller =
-    new ConfirmContactAddressController(authenticate = mockAuthAction,
-                                        journeyAction = mockJourneyAction,
-                                        registrationConnector = mockRegistrationConnector,
-                                        addressLookupFrontendConnector =
-                                          mockAddressLookupFrontendConnector,
-                                        appConfig,
-                                        mcc = mcc
+    new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
+                                               journeyAction = mockJourneyAction,
+                                               registrationConnector = mockRegistrationConnector,
+                                               addressLookupFrontendConnector =
+                                                 mockAddressLookupFrontendConnector,
+                                               appConfig,
+                                               mcc = mcc
     )
 
   private val alfAddress = AddressLookupConfirmation(auditRef = "auditRef",
@@ -98,7 +98,9 @@ class ConfirmContactAddressControllerSpec extends ControllerSpec {
         val resp = controller.alfCallback(Some("123"))(getRequest())
 
         status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(groupRoutes.OrganisationListController.displayPage().url)
+        redirectLocation(resp) mustBe Some(
+          groupRoutes.ContactDetailsCheckAnswersController.displayPage().url
+        )
 
         modifiedRegistration.lastMember.get.contactDetails.get.address mustBe Some(
           Address(alfAddress)
