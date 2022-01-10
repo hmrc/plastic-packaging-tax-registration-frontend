@@ -35,7 +35,7 @@
 
 @(registration: Registration, liabilityStartLink: Call)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@organisationDetaisLink = @{
+@organisationDetailsLink = @{
   if(registration.isCompanyDetailsComplete)
     organisationRoutes.CheckAnswersController.displayPage()
   else
@@ -60,10 +60,10 @@
         ))
         </li>
         <li class="app-task">
-        @task(2, "registrationPage.task.organisation.heading", Set(
+        @task(2, "registrationPage.task.organisation.heading.partnership", Set(
             TaskSection(
-                title = "registrationPage.task.organisation",
-                link = organisationDetaisLink,
+                title = "registrationPage.task.organisation.partnership",
+                link = organisationDetailsLink,
                 showLink = registration.isLiabilityDetailsComplete,
                 status = registration.companyDetailsStatus
             )
@@ -72,7 +72,13 @@
         <li class="app-task">
         @task(3, "registrationPage.task.contactDetails.heading.partnership", Set(
             TaskSection(
-                title = "registrationPage.task.contactDetails",
+                title = "registrationPage.task.contactDetails.partnership",
+                link = contactRoutes.ContactDetailsFullNameController.displayPage(),
+                showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
+                status = registration.primaryContactDetailsStatus
+            ),
+            TaskSection(
+                title = "registrationPage.task.contactDetails.partnership.otherPartners",
                 link = contactRoutes.ContactDetailsFullNameController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.primaryContactDetailsStatus
