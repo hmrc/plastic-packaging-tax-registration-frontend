@@ -85,10 +85,10 @@ class ContactDetailsTelephoneNumberController @Inject() (
                 )
               )
             ),
-          emailAddress =>
-            updateRegistration(emailAddress).map {
+          phoneNumber =>
+            updateRegistration(phoneNumber).map {
               case Right(_) =>
-                Redirect(groupRoutes.OrganisationListController.displayPage())
+                Redirect(groupRoutes.ContactDetailsCheckAnswersController.displayPage())
               case Left(error) => throw error
             }
         )

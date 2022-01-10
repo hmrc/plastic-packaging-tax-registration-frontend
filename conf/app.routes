@@ -126,6 +126,9 @@ POST       /member-or-partner-contact-email     uk.gov.hmrc.plasticpackagingtax.
 GET        /member-or-partner-contact-telephone     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.displayPage()
 POST       /member-or-partner-contact-telephone     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.submit()
 
+GET        /member-or-partner-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.displayPage()
+POST       /member-or-partner-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.submit()
+
 # Manual User Enrolment
 GET        /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
 POST       /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.submit()

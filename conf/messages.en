@@ -519,3 +519,13 @@ contactDetails.member.emailAddress.hint = We’ll only use this to send notifica
 contactDetails.member.phoneNumber.title = What is {0}’s telephone number?
 contactDetails.member.phoneNumber.caption = We’ll use this to contact you about your PPT account.
 contactDetails.member.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
+
+contactDetails.member.check.title = Check your answers
+contactDetails.member.check.orgType = Organisation type
+contactDetails.member.check.companyNumber = Company number
+contactDetails.member.check.orgName = Organisation name
+contactDetails.member.check.utr = Unique Taxpayer Reference
+contactDetails.member.check.contact.name = Contact name
+contactDetails.member.check.contact.email = Contact email
+contactDetails.member.check.contact.phone = Phone number
+contactDetails.member.check.contact.address = Contact address
