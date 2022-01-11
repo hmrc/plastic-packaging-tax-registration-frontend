@@ -16,14 +16,15 @@ This service integrates with the Generic Registration Service and Tax Enrolments
 sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r
 
 # For the above organisation types along with partnerships and sole traders use these profiles -
-sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r
+sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}'
 
 # confirm all services are running
 sm -s 
 ```
 
-It may be necessary (at least for a time after writing this [23/12/2021]) to specifically permit `localhost` as a permitted host for URLs passed to the Address Lookup Frontend. It can be done
-as follows:
+It is necessary (at least for a time after writing this [23/12/2021]) to specifically permit `localhost` as a permitted host for URLs passed to the Address Lookup Frontend.
+This is because the default application.conf for ALK does not allow list localhost.
+It can be done as follows:
 
 ```
 --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}'
