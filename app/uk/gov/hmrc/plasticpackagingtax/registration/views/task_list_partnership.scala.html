@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -37,10 +36,10 @@
 @(registration: Registration, liabilityStartLink: Call)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @organisationDetailsLink = @{
-    if(registration.isCompanyDetailsComplete)
-        organisationRoutes.CheckAnswersController.displayPage()
-    else
-        organisationRoutes.OrganisationDetailsTypeController.displayPage()
+  if(registration.isCompanyDetailsComplete)
+    organisationRoutes.CheckAnswersController.displayPage()
+  else
+    organisationRoutes.OrganisationDetailsTypeController.displayPage()
 }
 @govukLayout(title = Title("registrationPage.title")) {
 
@@ -61,9 +60,9 @@
         ))
         </li>
         <li class="app-task">
-        @task(2, "registrationPage.task.organisation.heading.group", Set(
+        @task(2, "registrationPage.task.organisation.heading.partnership", Set(
             TaskSection(
-                title = "registrationPage.task.organisation.group",
+                title = "registrationPage.task.organisation.partnership",
                 link = organisationDetailsLink,
                 showLink = registration.isLiabilityDetailsComplete,
                 status = registration.companyDetailsStatus
@@ -71,9 +70,15 @@
         ))
         </li>
         <li class="app-task">
-        @task(3, "registrationPage.task.contactDetails.heading.group", Set(
+        @task(3, "registrationPage.task.contactDetails.heading.partnership", Set(
             TaskSection(
-                title = "registrationPage.task.contactDetails.group",
+                title = "registrationPage.task.contactDetails.partnership",
+                link = contactRoutes.ContactDetailsFullNameController.displayPage(),
+                showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
+                status = registration.primaryContactDetailsStatus
+            ),
+            TaskSection(
+                title = "registrationPage.task.contactDetails.partnership.otherPartners",
                 link = contactRoutes.ContactDetailsFullNameController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.primaryContactDetailsStatus
@@ -81,17 +86,7 @@
         ))
         </li>
         <li class="app-task">
-        @task(4, "registrationPage.task.otherOrganisation.heading", Set(
-            TaskSection(
-                title = "registrationPage.task.otherOrganisation",
-                link = groupRoutes.OrganisationListController.displayPage(),
-                showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete && registration.isPrimaryContactDetailsComplete,
-                status = registration.otherOrganisationsInGroupStatus
-            )
-        ))
-        </li>
-        <li class="app-task">
-        @task(5, "registrationPage.task.review.heading", Set(
+        @task(4, "registrationPage.task.review.heading", Set(
             TaskSection(
                 title = "registrationPage.task.review",
                 link = pptRoutes.ReviewRegistrationController.displayPage(),
