@@ -42,6 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
+  GroupMemberContactDetails,
   OrganisationDetails => GroupMemberOrganisationDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -126,9 +127,25 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                  members = Seq(GroupMember(customerIdentification1 = "ABC",
                                                            organisationDetails = Some(
                                                              GroupMemberOrganisationDetails(
-                                                               "Uk Limited",
+                                                               "UkCompany",
                                                                "Subsidiary 1",
                                                                Some("XP00123")
+                                                             )
+                                                           ),
+                                                           contactDetails = Some(
+                                                             GroupMemberContactDetails(
+                                                               firstName = "Test",
+                                                               lastName = "User",
+                                                               phoneNumber = Some("077123"),
+                                                               email = Some("test@test.com"),
+                                                               address = Some(
+                                                                 Address(addressLine1 = "1",
+                                                                         townOrCity = "New Street",
+                                                                         postCode = Some("AB12CD"),
+                                                                         countryCode =
+                                                                           "GB"
+                                                                 )
+                                                               )
                                                              )
                                                            ),
                                                            addressDetails =
@@ -142,9 +159,25 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                GroupMember(customerIdentification1 = "DEF",
                                                            organisationDetails = Some(
                                                              GroupMemberOrganisationDetails(
-                                                               "Uk Limited",
+                                                               "UkCompany",
                                                                "Subsidiary 2",
                                                                Some("XP00123")
+                                                             )
+                                                           ),
+                                                           contactDetails = Some(
+                                                             GroupMemberContactDetails(
+                                                               firstName = "Test2",
+                                                               lastName = "User2",
+                                                               phoneNumber = Some("077124"),
+                                                               email = Some("test2@test.com"),
+                                                               address = Some(
+                                                                 Address(addressLine1 = "2",
+                                                                         townOrCity = "New Street",
+                                                                         postCode = Some("AB12CE"),
+                                                                         countryCode =
+                                                                           "GB"
+                                                                 )
+                                                               )
                                                              )
                                                            ),
                                                            addressDetails =
@@ -457,19 +490,38 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                     ).text() must include(member.businessName)
                     val groupMemberContent =
                       groupMembersView.getElementById(s"group-members-content-${idx + 1}").text()
+                    groupMemberContent must include(messages("reviewRegistration.member.orgName"))
+                    groupMemberContent must include(messages("reviewRegistration.member.orgType"))
                     groupMemberContent must include(
-                      messages("reviewRegistration.organisationDetails.organisationName")
+                      messages("reviewRegistration.member.companyNumber")
+                    )
+                    groupMemberContent must include(messages("reviewRegistration.member.utr"))
+                    groupMemberContent must include(
+                      messages("reviewRegistration.member.contact.name")
                     )
                     groupMemberContent must include(
-                      messages("reviewRegistration.organisationDetails.registeredBusinessAddress")
+                      messages("reviewRegistration.member.contact.email")
+                    )
+                    groupMemberContent must include(
+                      messages("reviewRegistration.member.contact.phone")
+                    )
+                    groupMemberContent must include(
+                      messages("reviewRegistration.member.contact.address")
                     )
 
                     groupMemberContent must include(member.organisationDetails.get.organisationName)
-                    groupMemberContent must include(member.addressDetails.addressLine1)
-                    groupMemberContent must include(member.addressDetails.townOrCity)
-                    groupMemberContent must include(member.addressDetails.postCode.get)
+                    groupMemberContent must include("UK limited company")
+                    groupMemberContent must include(member.contactDetails.get.groupMemberName)
+                    groupMemberContent must include(member.contactDetails.get.email.get)
+                    groupMemberContent must include(member.contactDetails.get.phoneNumber.get)
                     groupMemberContent must include(
-                      countryService.getName(member.addressDetails.countryCode)
+                      member.contactDetails.get.address.get.addressLine1
+                    )
+                    groupMemberContent must include(
+                      member.contactDetails.get.address.get.postCode.get
+                    )
+                    groupMemberContent must include(
+                      countryService.getName(member.contactDetails.get.address.get.countryCode)
                     )
                 }
             }
