@@ -264,6 +264,15 @@ reviewRegistration.organisationDetails.soleTrader.nino = National insurance numb
 
 reviewRegistration.organisationDetails.partnership.name = Partnership name
 
+reviewRegistration.member.orgType = Organisation type
+reviewRegistration.member.companyNumber = Company number
+reviewRegistration.member.orgName = Organisation name
+reviewRegistration.member.utr = Unique Taxpayer Reference
+reviewRegistration.member.contact.name = Contact name
+reviewRegistration.member.contact.email = Contact email
+reviewRegistration.member.contact.phone = Phone number
+reviewRegistration.member.contact.address = Contact address
+
 confirmationPage.title = Registration submitted
 confirmationPage.panel.body = Your Plastic Packaging Tax (PPT) registration number is {0}
 confirmationPage.panel.body.default = Your registration has already been submitted

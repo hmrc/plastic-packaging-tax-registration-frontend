@@ -26,7 +26,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_cont
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
@@ -35,8 +34,7 @@ class ContactDetailsCheckAnswersController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: member_contact_check_answers_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
