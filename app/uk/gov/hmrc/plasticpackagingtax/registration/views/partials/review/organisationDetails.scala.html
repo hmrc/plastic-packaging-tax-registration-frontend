@@ -30,21 +30,8 @@
         viewUtils: ViewUtils
 )
 
-@(organisationDetails: OrganisationDetails, registrationType: Option[RegType], showOrganisationTypeChangeLink: Option[Boolean] = None)(implicit request: JourneyRequest[_], messages: Messages)
+@(organisationDetails: OrganisationDetails, registrationType: Option[RegType], organisationDetailsLink: Option[Call] = None, addressChangeLink: Option[Call])(implicit request: JourneyRequest[_], messages: Messages)
 
-@organisationDetailsLink = @{
-    showOrganisationTypeChangeLink match {
-        case Some(false) => None
-        case _ => Some(orgRoutes.OrganisationDetailsTypeController.displayPage())
-    }
-}
-
-@addressChangeLink = @{
-    organisationDetails.isBusinessAddressFromGrs match {
-        case Some(true) => None
-        case _ => Some(orgRoutes.ConfirmBusinessAddressController.changeBusinessAddress())
-    }
-}
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(

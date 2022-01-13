@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -50,7 +51,7 @@
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
-        @organisationDetails(registration.organisationDetails, registration.registrationType, Some(false))
+        @organisationDetails(registration.organisationDetails, registration.registrationType, None, Some(amendRoutes.AmendOrganisationDetailsController.changeBusinessAddress()))
         @primaryContactDetails(registration.primaryContactDetails)
 
         @if(registration.registrationType.contains(GROUP)) {
