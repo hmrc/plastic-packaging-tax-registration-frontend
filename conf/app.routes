@@ -50,6 +50,7 @@ GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.regist
 
 GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
 GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.alfCallback(id: Option[String])
+GET        /edit-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.changeBusinessAddress()
 
 GET       /organisation-check-answers  uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.CheckAnswersController.displayPage()
 
