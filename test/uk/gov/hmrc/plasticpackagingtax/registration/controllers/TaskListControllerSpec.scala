@@ -30,8 +30,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   task_list_group,
+  task_list_partnership,
   task_list_single_entity
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -41,13 +44,15 @@ class TaskListControllerSpec extends ControllerSpec {
   private val mcc              = stubMessagesControllerComponents()
   private val singleEntityPage = mock[task_list_single_entity]
   private val groupPage        = mock[task_list_group]
+  private val partnershipPage  = mock[task_list_partnership]
 
   private val controller =
     new TaskListController(authenticate = mockAuthAction,
                            mockJourneyAction,
                            mcc = mcc,
                            singleEntityPage = singleEntityPage,
-                           groupPage = groupPage
+                           groupPage = groupPage,
+                           partnershipPage = partnershipPage
     )
 
   override protected def beforeEach(): Unit = {
@@ -56,6 +61,9 @@ class TaskListControllerSpec extends ControllerSpec {
       HtmlFormat.raw("Single Entity Page")
     )
     when(groupPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Group Page"))
+    when(partnershipPage.apply(any(), any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Partnership Page")
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -101,6 +109,22 @@ class TaskListControllerSpec extends ControllerSpec {
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Group Page"
+        }
+
+        "show partnership tasklist when a partnership registration is been preformed" in {
+          authorizedUser()
+          mockRegistrationFind(
+            aRegistration(
+              withOrganisationDetails(
+                OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP))
+              )
+            )
+          )
+
+          val result = controller.displayPage()(getRequest())
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe "Partnership Page"
         }
       }
     }
