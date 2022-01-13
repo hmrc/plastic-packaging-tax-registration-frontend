@@ -89,12 +89,7 @@ class OrganisationDetailsTypeController @Inject() (
             ),
           organisationType =>
             updateRegistration(organisationType).flatMap {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    handleOrganisationType(organisationType, false, memberId)
-                  case _ => Future(Redirect(pptRoutes.TaskListController.displayPage()))
-                }
+              case Right(_)    => handleOrganisationType(organisationType, false, memberId)
               case Left(error) => throw error
             }
         )

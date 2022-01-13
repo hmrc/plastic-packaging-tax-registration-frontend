@@ -84,13 +84,23 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
     "return 200" when {
 
-      "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate()
-        val result = controller.displayPageNewMember()(getRequest())
+      "user is authorised and display page method is invoked" when {
+        "adding new group member" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate()
+          val result = controller.displayPageNewMember()(getRequest())
 
-        status(result) mustBe OK
+          status(result) mustBe OK
+        }
+        "amending existing group member" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate()
+          val result = controller.displayPageAmendMember(groupMember.id)(getRequest())
+
+          status(result) mustBe OK
+        }
       }
 
       "user is authorised and display page method for next group member" in {
@@ -193,12 +203,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         modifiedRegistration.groupDetail.get.members.head.organisationDetails.get.organisationType mustBe orgType.toString
 
-        formAction._1 match {
-          case "SaveAndContinue" =>
-            redirectLocation(result) mustBe Some(redirectUrl)
-          case _ =>
-            redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-        }
+        redirectLocation(result) mustBe Some(redirectUrl)
       }
 
       "return 400 (BAD_REQUEST) for " + formAction._1 when {

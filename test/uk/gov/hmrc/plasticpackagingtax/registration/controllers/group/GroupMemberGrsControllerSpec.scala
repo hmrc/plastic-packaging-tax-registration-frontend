@@ -135,14 +135,14 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
               )
           }
           status(result) mustBe SEE_OTHER
-          stripMemberId(redirectLocation(result).get) mustBe stripMemberId(
-            routes.ContactDetailsNameController.displayPage(groupMember.id).url
-          )
+          redirectLocation(result).get mustBe routes.ContactDetailsNameController.displayPage(
+            groupMember.id
+          ).url
         }
       }
 
       "store the returned business entity information" when {
-        "registering group member " + orgType in {
+        s"registering a $orgType group member" in {
           orgType match {
             case PARTNERSHIP =>
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
@@ -170,8 +170,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
       }
 
-      "show error page and not store business entity information " when {
-        "registering with same company number " + orgType in {
+      "show error page and do not store business entity information" when {
+        s"registering a $orgType group member with same company number" in {
           authorizedUser()
           val existingMember = orgType match {
             case PARTNERSHIP =>
@@ -221,7 +221,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           )
         }
 
-        "registering Company with same company number as Nominated organisation " + orgType in {
+        s"registering a $orgType group member with the same company number as Nominated organisation" in {
           authorizedUser()
           var registration: Registration = registrationWithSelectedGroupMember(orgType)
 
@@ -421,7 +421,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
   ) = {
     authorizedUser()
     mockGetPartnershipBusinessDetails(
-      partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
+      partnershipBusinessDetails.copy(companyProfile =
+        Some(companyProfile.copy(companyNumber = "234234234"))
+      )
     )
     mockRegistrationFind(registration)
     mockRegistrationUpdate()
