@@ -47,7 +47,8 @@
     Seq(
         ListMember(
             name = nominatedOrganisation,
-            subHeading = Some(messages("group.organisationList.nominatedOrganisation"))
+            subHeading = Some(messages("group.organisationList.nominatedOrganisation")),
+            change = Some(pptControllers.organisation.routes.CheckAnswersController.displayPage())
         )) ++
             members.map(member =>
                 ListMember(
