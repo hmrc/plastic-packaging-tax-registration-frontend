@@ -113,5 +113,13 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         await(controller.alfCallback(None, groupMember.id)(getRequest()))
       }
     }
+
+    "throw IllegalStateException" when {
+      "group member cannot be found in registration" in {
+        intercept[IllegalStateException] {
+          await(controller.alfCallback(Some("123"), "XXX")(getRequest()))
+        }
+      }
+    }
   }
 }
