@@ -116,7 +116,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def groupMemberGrsCallbackUrl(groupMemberId: Option[String]): String =
     groupMemberId match {
-      case Some(groupMemberId) => s"${config.get[String]("urls.groupMemberGrsCallback")}/$groupMemberId"
+      case Some(groupMemberId) =>
+        s"${config.get[String]("urls.groupMemberGrsCallback")}/$groupMemberId"
       case None => config.get[String]("urls.groupMemberGrsCallback")
     }
 
