@@ -62,27 +62,37 @@ class OrganisationDetailsTypeController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport
     with OrganisationDetailsTypeHelper {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPageNewMember() = displayPage(None)
+
+  def displayPageAmendMember(memberId: String) = displayPage(Some(memberId))
+
+  private def displayPage(memberId: Option[String]): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val isFirstMember: Boolean = request.registration.isFirstGroupMember
-      Future(Ok(page(form = OrganisationType.form(), isFirstMember)))
+      Future(Ok(page(form = OrganisationType.form(), isFirstMember, memberId)))
     }
 
-  def submit(): Action[AnyContent] =
+  def submitNewMember() = submit(None)
+
+  def submitAmendMember(memberId: String) = submit(Some(memberId))
+
+  private def submit(memberId: Option[String]): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       OrganisationType.form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
             Future(
-              BadRequest(page(form = formWithErrors, request.registration.isFirstGroupMember))
+              BadRequest(
+                page(form = formWithErrors, request.registration.isFirstGroupMember, memberId)
+              )
             ),
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    handleOrganisationType(organisationType, false)
+                    handleOrganisationType(organisationType, false, memberId)
                   case _ => Future(Redirect(pptRoutes.TaskListController.displayPage()))
                 }
               case Left(error) => throw error
@@ -100,7 +110,7 @@ class OrganisationDetailsTypeController @Inject() (
       registration.copy(groupDetail = updatedGroupDetail)
     }
 
-  override def grsCallbackUrl(): String =
-    appConfig.groupMemberGrsCallbackUrl
+  override def grsCallbackUrl(organisationId: Option[String]): String =
+    appConfig.groupMemberGrsCallbackUrl(organisationId)
 
 }

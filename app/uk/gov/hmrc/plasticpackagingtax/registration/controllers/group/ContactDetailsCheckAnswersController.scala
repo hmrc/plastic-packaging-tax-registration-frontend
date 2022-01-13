@@ -38,11 +38,11 @@ class ContactDetailsCheckAnswersController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
         page(
-          request.registration.lastMember.getOrElse(
+          request.registration.groupDetail.flatMap(_.findGroupMember(memberId)).getOrElse(
             throw new IllegalStateException("Missing group member")
           )
         )

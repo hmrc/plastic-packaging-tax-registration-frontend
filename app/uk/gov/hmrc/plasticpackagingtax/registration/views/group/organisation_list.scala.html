@@ -24,27 +24,38 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 
 @this(
-formHelper: FormWithCSRF,
-govukLayout: main_template,
-sectionHeader: sectionHeader,
-pageHeading: pageHeading,
-listMembers: listMembers,
-govukRadios : GovukRadios,
-saveButtons: saveButtons,
-govukSummaryList: GovukSummaryList
+        formHelper: FormWithCSRF,
+        govukLayout: main_template,
+        sectionHeader: sectionHeader,
+        pageHeading: pageHeading,
+        listMembers: listMembers,
+        govukRadios: GovukRadios,
+        saveButtons: saveButtons,
+        govukSummaryList: GovukSummaryList
 )
 
 @(form: Form[AddOrganisation], nominatedOrganisation: String, members: Seq[GroupMember])(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @numOrganisations = @{
-    {members.size + 1}.toString
+    {
+        members.size + 1
+    }.toString
 }
 
 @listofMembers = @{
 
-  Seq(ListMember(name = nominatedOrganisation, subHeading = Some(messages("group.organisationList.nominatedOrganisation")))) ++ members.map(member =>
-    ListMember(name = member.businessName, remove = Some(pptControllers.group.routes.RemoveMemberController.submit(member.id)))
-  )
+    Seq(
+        ListMember(
+            name = nominatedOrganisation,
+            subHeading = Some(messages("group.organisationList.nominatedOrganisation"))
+        )) ++
+            members.map(member =>
+                ListMember(
+                    name = member.businessName,
+                    change = Some(pptControllers.group.routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
+                    remove = Some(pptControllers.group.routes.RemoveMemberController.submit(member.id))
+                )
+            )
 }
 
 @govukLayout(
@@ -78,7 +89,6 @@ govukSummaryList: GovukSummaryList
         ))
         @saveButtons()
     }
-
 
 
 }

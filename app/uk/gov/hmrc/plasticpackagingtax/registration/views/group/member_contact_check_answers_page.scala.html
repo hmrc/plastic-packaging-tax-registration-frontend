@@ -34,7 +34,7 @@
 
 @govukLayout(
     title = Title("contactDetails.member.check.title"),
-    backButton = Some(BackButton(messages("site.back"), groupRoutes.ContactDetailsTelephoneNumberController.displayPage, messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id), messages("site.back.hiddenText")))) {
 
     @pageHeading(messages("contactDetails.member.check.title"))
 
@@ -43,14 +43,14 @@
         @govukSummaryList(
             SummaryList(
                 rows = Seq(
-                    viewUtils.summaryListRow("contactDetails.member.check.orgType", groupMember.businessType, Some(groupRoutes.OrganisationDetailsTypeController.displayPage())),
+                    viewUtils.summaryListRow("contactDetails.member.check.orgType", groupMember.businessType, Some(groupRoutes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id))),
                     viewUtils.summaryListRow("contactDetails.member.check.companyNumber", Some(groupMember.customerIdentification1), None),
                     viewUtils.summaryListRow("contactDetails.member.check.orgName", Some(groupMember.businessName), None),
                     viewUtils.summaryListRow("contactDetails.member.check.utr", groupMember.customerIdentification2, None),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.name", groupMember.contactDetails.map(_.groupMemberName), Some(groupRoutes.ContactDetailsNameController.displayPage())),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.email", groupMember.contactDetails.flatMap(_.email), Some(groupRoutes.ContactDetailsEmailAddressController.displayPage())),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.phone", groupMember.contactDetails.flatMap(_.phoneNumber), Some(groupRoutes.ContactDetailsTelephoneNumberController.displayPage())),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), Some(groupRoutes.ContactDetailsConfirmAddressController.displayPage()))
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.name", groupMember.contactDetails.map(_.groupMemberName), Some(groupRoutes.ContactDetailsNameController.displayPage(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.email", groupMember.contactDetails.flatMap(_.email), Some(groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.phone", groupMember.contactDetails.flatMap(_.phoneNumber), Some(groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), Some(groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id)))
                 ).filterNot(_.value.content == Empty)
             )
         )

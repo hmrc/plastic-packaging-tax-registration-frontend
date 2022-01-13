@@ -25,8 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupInt
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMemberContactDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, GroupDetail}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -44,17 +43,19 @@ class ContactDetailsConfirmAddressController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with AddressLookupIntegration with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       initialiseAddressLookup(addressLookupFrontendConnector,
                               appConfig,
-                              routes.ContactDetailsConfirmAddressController.alfCallback(None),
+                              routes.ContactDetailsConfirmAddressController.alfCallback(None,
+                                                                                        memberId
+                              ),
                               "addressLookup.member.contact",
-                              request.registration.groupDetail.flatMap(_.businessName)
+                              request.registration.groupDetail.flatMap(_.businessName(memberId))
       ).map(onRamp => Redirect(onRamp.redirectUrl))
     }
 
-  def alfCallback(id: Option[String]): Action[AnyContent] =
+  def alfCallback(id: Option[String], memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       addressLookupFrontendConnector.getAddress(
         id.getOrElse(throw new MissingAddressIdException)
@@ -63,21 +64,24 @@ class ContactDetailsConfirmAddressController @Inject() (
         //       an address which we consider invalid. Need to check this out!
         confirmedAddress =>
           update { registration =>
-            val contactDetails: Option[GroupMemberContactDetails] =
-              registration.lastMember.map(_.withGroupMemberAddress(Address(confirmedAddress)))
-            val detail: GroupDetail =
-              registration.groupDetail.getOrElse(throw new IllegalStateException("No group detail"))
             registration.copy(groupDetail =
-              Some(
-                detail.copy(members =
-                  detail.updateMember(
-                    registration.lastMember.map(_.copy(contactDetails = contactDetails)).get
-                  )
+              registration.groupDetail.map(
+                _.withUpdatedOrNewMember(
+                  registration.findMember(memberId).map(
+                    _.withUpdatedGroupMemberAddress(Address(confirmedAddress))
+                  ).getOrElse(throw new IllegalStateException("Expected group member absent"))
                 )
               )
             )
-          }.map { _ =>
-            Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+          }.map {
+            case Right(registration) =>
+              Redirect(
+                routes.ContactDetailsCheckAnswersController.displayPage(
+                  registration.findMember(memberId).map(_.id).getOrElse(
+                    throw new IllegalStateException("Expected group member missing")
+                  )
+                )
+              )
           }
       }
     }

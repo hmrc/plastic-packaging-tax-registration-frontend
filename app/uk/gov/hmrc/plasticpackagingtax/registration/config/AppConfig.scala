@@ -114,7 +114,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val grsCallbackUrl: String = config.get[String]("urls.grsCallback")
 
-  lazy val groupMemberGrsCallbackUrl: String = config.get[String]("urls.groupMemberGrsCallback")
+  def groupMemberGrsCallbackUrl(groupMemberId: Option[String]): String =
+    groupMemberId.fold(config.get[String]("urls.groupMemberGrsCallback"))(
+      memberId => s"${config.get[String]("urls.groupMemberGrsCallback")}/$memberId"
+    )
 
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")

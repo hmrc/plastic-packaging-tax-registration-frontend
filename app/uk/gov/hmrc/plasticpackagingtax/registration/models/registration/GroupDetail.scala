@@ -36,9 +36,26 @@ case class GroupDetail(
       TaskStatus.NotStarted
     else TaskStatus.Completed
 
-  val businessName: Option[String] = members.lastOption.map(_.businessName)
+  def businessName(memberId: String): Option[String] = findGroupMember(memberId).map(_.businessName)
 
-  def updateMember(member: GroupMember): Seq[GroupMember] = members.init :+ member
+  def withUpdatedOrNewMember(member: GroupMember): GroupDetail =
+    this.copy(members = updateOrAddMember(member))
+
+  private def updateOrAddMember(member: GroupMember): Seq[GroupMember] = {
+    val updatedMembers = members.map {
+      case existingMember if existingMember.id == member.id => member
+      case existingMember                                   => existingMember
+    }
+
+    if (!updatedMembers.exists(_.id == member.id))
+      updatedMembers :+ member
+    else
+      updatedMembers
+  }
+
+  def findGroupMember(memberId: String): Option[GroupMember] = members.find(m => m.id == memberId)
+
+  lazy val latestMember: Option[GroupMember] = members.lastOption
 }
 
 object GroupDetail {

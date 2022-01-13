@@ -29,6 +29,7 @@ import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_phone_number_page
@@ -68,7 +69,7 @@ class ContactDetailsTelephoneNumberControllerSpec
         mockRegistrationFind(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -78,7 +79,7 @@ class ContactDetailsTelephoneNumberControllerSpec
         mockRegistrationFind(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -94,14 +95,14 @@ class ContactDetailsTelephoneNumberControllerSpec
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(postRequestEncoded(PhoneNumber("077123"), formAction))
+            controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123"), formAction))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber mustBe Some(
             "077123"
           )
           redirectLocation(result) mustBe Some(
-            groupRoutes.ContactDetailsConfirmAddressController.displayPage().url
+            groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id).url
           )
           reset(mockRegistrationConnector)
         }
@@ -122,7 +123,7 @@ class ContactDetailsTelephoneNumberControllerSpec
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.displayPage(groupMember.id)(getRequest()))
 
         pageForm.get.value mustBe "077123"
       }
@@ -132,7 +133,7 @@ class ContactDetailsTelephoneNumberControllerSpec
 
       "user submits invalid phone number" in {
         authorizedUser()
-        val result = controller.submit()(postRequest(Json.toJson(PhoneNumber("$%^"))))
+        val result = controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("$%^"))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -142,7 +143,7 @@ class ContactDetailsTelephoneNumberControllerSpec
 
       "user is not authorised" in {
         unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -151,16 +152,16 @@ class ContactDetailsTelephoneNumberControllerSpec
         authorizedUser()
         mockRegistrationUpdateFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(PhoneNumber("077123"))))
+          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
 
-        intercept[IllegalStateException](status(result))
+        intercept[DownstreamServiceError](status(result))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
         authorizedUser()
         mockRegistrationException()
         val result =
-          controller.submit()(postRequest(Json.toJson(PhoneNumber("077123"))))
+          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
 
         intercept[RuntimeException](status(result))
       }
