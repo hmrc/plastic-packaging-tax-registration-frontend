@@ -17,12 +17,13 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
@@ -125,6 +126,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                    Some(
                      GroupDetail(membersUnderGroupControl = Some(true),
                                  members = Seq(GroupMember(customerIdentification1 = "ABC",
+                                                           customerIdentification2 = Some("123"),
                                                            organisationDetails = Some(
                                                              GroupMemberOrganisationDetails(
                                                                "UkCompany",
@@ -157,11 +159,12 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                              )
                                                ),
                                                GroupMember(customerIdentification1 = "DEF",
+                                                           customerIdentification2 = Some("456"),
                                                            organisationDetails = Some(
                                                              GroupMemberOrganisationDetails(
                                                                "UkCompany",
                                                                "Subsidiary 2",
-                                                               Some("XP00123")
+                                                               Some("XP00456")
                                                              )
                                                            ),
                                                            contactDetails = Some(
@@ -488,40 +491,69 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                     groupMembersView.getElementById(
                       s"group-members-heading-${idx + 1}"
                     ).text() must include(member.businessName)
-                    val groupMemberContent =
-                      groupMembersView.getElementById(s"group-members-content-${idx + 1}").text()
-                    groupMemberContent must include(messages("reviewRegistration.member.orgName"))
-                    groupMemberContent must include(messages("reviewRegistration.member.orgType"))
-                    groupMemberContent must include(
-                      messages("reviewRegistration.member.companyNumber")
-                    )
-                    groupMemberContent must include(messages("reviewRegistration.member.utr"))
-                    groupMemberContent must include(
-                      messages("reviewRegistration.member.contact.name")
-                    )
-                    groupMemberContent must include(
-                      messages("reviewRegistration.member.contact.email")
-                    )
-                    groupMemberContent must include(
-                      messages("reviewRegistration.member.contact.phone")
-                    )
-                    groupMemberContent must include(
-                      messages("reviewRegistration.member.contact.address")
-                    )
 
-                    groupMemberContent must include(member.organisationDetails.get.organisationName)
-                    groupMemberContent must include("UK limited company")
-                    groupMemberContent must include(member.contactDetails.get.groupMemberName)
-                    groupMemberContent must include(member.contactDetails.get.email.get)
-                    groupMemberContent must include(member.contactDetails.get.phoneNumber.get)
-                    groupMemberContent must include(
-                      member.contactDetails.get.address.get.addressLine1
+                    val groupMemberRows =
+                      groupMembersView.select(s"div#group-members-content-${idx + 1} dl div")
+
+                    verifyRowContent(groupMemberRows.get(0),
+                                     messages("reviewRegistration.member.orgName"),
+                                     member.organisationDetails.get.organisationName,
+                                     None
                     )
-                    groupMemberContent must include(
-                      member.contactDetails.get.address.get.postCode.get
+                    verifyRowContent(groupMemberRows.get(1),
+                                     messages("reviewRegistration.member.orgType"),
+                                     "UK limited company",
+                                     Some(
+                                       groupRoutes.OrganisationDetailsTypeController.displayPageAmendMember(
+                                         member.id
+                                       )
+                                     )
                     )
-                    groupMemberContent must include(
-                      countryService.getName(member.contactDetails.get.address.get.countryCode)
+                    verifyRowContent(groupMemberRows.get(2),
+                                     messages("reviewRegistration.member.companyNumber"),
+                                     member.customerIdentification1,
+                                     None
+                    )
+                    verifyRowContent(groupMemberRows.get(3),
+                                     messages("reviewRegistration.member.utr"),
+                                     member.customerIdentification2.get,
+                                     None
+                    )
+                    verifyRowContent(groupMemberRows.get(4),
+                                     messages("reviewRegistration.member.contact.name"),
+                                     member.contactDetails.get.groupMemberName,
+                                     Some(
+                                       groupRoutes.ContactDetailsNameController.displayPage(
+                                         member.id
+                                       )
+                                     )
+                    )
+                    verifyRowContent(groupMemberRows.get(5),
+                                     messages("reviewRegistration.member.contact.email"),
+                                     member.contactDetails.get.email.get,
+                                     Some(
+                                       groupRoutes.ContactDetailsEmailAddressController.displayPage(
+                                         member.id
+                                       )
+                                     )
+                    )
+                    verifyRowContent(groupMemberRows.get(6),
+                                     messages("reviewRegistration.member.contact.phone"),
+                                     member.contactDetails.get.phoneNumber.get,
+                                     Some(
+                                       groupRoutes.ContactDetailsTelephoneNumberController.displayPage(
+                                         member.id
+                                       )
+                                     )
+                    )
+                    verifyRowContent(groupMemberRows.get(7),
+                                     messages("reviewRegistration.member.contact.address"),
+                                     member.contactDetails.get.address.get.addressLine1,
+                                     Some(
+                                       groupRoutes.ContactDetailsConfirmAddressController.displayPage(
+                                         member.id
+                                       )
+                                     )
                     )
                 }
             }
@@ -536,6 +568,21 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
       view.getElementsByClass("govuk-button").text() must include(
         messages("site.button.acceptAndSend")
       )
+    }
+  }
+
+  private def verifyRowContent(
+    row: Element,
+    label: String,
+    content: String,
+    changeLink: Option[Call]
+  ) = {
+    row.text() must include(label)
+    row.text() must include(content)
+
+    changeLink match {
+      case Some(changeLink) => row.select("a").get(0) must haveHref(changeLink.url)
+      case None             =>
     }
   }
 
