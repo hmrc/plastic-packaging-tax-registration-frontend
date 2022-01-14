@@ -45,11 +45,15 @@ class PartnershipOtherPartnersController @Inject() (
       if (request.registration.isPartnership) {
         val maybePartnershipDetails: Option[PartnershipDetails] =
           request.registration.organisationDetails.partnershipDetails
+
+        val nominatedPartnerName =
+          maybePartnershipDetails.get.partnershipName.get // TODO Unchecked gets
         val otherPartners = maybePartnershipDetails.flatMap { partnershipBusinessDetails =>
           partnershipBusinessDetails.otherPartners
+
         }.getOrElse(Seq.empty)
 
-        Ok(otherPartnersPage(otherPartners))
+        Ok(otherPartnersPage(otherPartners, nominatedPartnerName, otherPartners.size + 1))
 
       } else
         // This page is only available to partnerships

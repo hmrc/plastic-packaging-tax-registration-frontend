@@ -21,19 +21,36 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
   govukLayout: main_template,
   govukButton: GovukButton,
+  govukSummaryList: GovukSummaryList,
+  viewUtils: ViewUtils,
   pageHeading: pageHeading,
 )
 
-@(otherPartners: Seq[OtherPartner])(implicit request: Request[_], messages: Messages, flash: Flash)
+@(otherPartners: Seq[OtherPartner], nominatedPartnerName: String, numberOfPartners: Int)(implicit request: Request[_], messages: Messages, flash: Flash)
+
+@nominatedPartnerRow = @{
+    SummaryListRow(key = Key(content = Text(nominatedPartnerName)))
+}
+@otherPartnerRows = @{
+    nominatedPartnerRow +: otherPartners.map { partner =>
+        viewUtils.summaryListRow(partner.contactName.getOrElse(""), None, None)
+    }
+}
 
 @govukLayout(title = Title("partnerships.otherPartners.title"),
 backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
- @pageHeading(messages("partnerships.otherPartners.title"))
- <p>@otherPartners.size details of other partners currently added</p>
- <p>@otherPartners</p>
+
+ @pageHeading(messages("partnerships.otherPartners.title", numberOfPartners))
+ @govukSummaryList(
+    SummaryList(
+        rows = otherPartnerRows
+    )
+ )
+
  <p><a href="@partnershipRoutes.PartnershipOtherPartnerFullNameController.displayPage()">Add other partner details</a></p>
 }

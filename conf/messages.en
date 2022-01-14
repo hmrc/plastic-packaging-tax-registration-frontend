@@ -335,7 +335,7 @@ partnership.name.title = What's the name of the partnership?
 partnership.name.empty.error = Please enter your partnership name
 partnership.name.format.error = Please enter your partnership name in correct format
 
-partnerships.otherPartners.title=DETAILS OF OTHER PARTNERS
+partnerships.otherPartners.title=You have {0} partners in your partnership
 partnership.otherPartners.contactNamePage.title=Who is the main contact for {0}?
 partnership.otherPartners.contactJobTitlePage.title=What is {0}'s job title'?
 partnership.otherPartners.checkAnswers.contactName=Name
