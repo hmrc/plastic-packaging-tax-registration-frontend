@@ -54,7 +54,7 @@ class PartnershipOtherPartnerJobTitleController @Inject() (
         case Some(data) =>
           Ok(
             page(JobTitle.form().fill(JobTitle(data)),
-                 partnershipRoutes.PartnershipOtherPartnerFullNameController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerJobTitleController.submit(),
                  request.registration.inflightOtherPartner.flatMap(
                    _.contactName
@@ -64,7 +64,7 @@ class PartnershipOtherPartnerJobTitleController @Inject() (
         case _ =>
           Ok(
             page(JobTitle.form(),
-                 partnershipRoutes.PartnershipOtherPartnerFullNameController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerJobTitleController.submit(),
                  request.registration.inflightOtherPartner.flatMap(
                    _.contactName

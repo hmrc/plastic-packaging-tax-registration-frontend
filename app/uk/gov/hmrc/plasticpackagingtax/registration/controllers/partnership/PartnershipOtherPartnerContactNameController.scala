@@ -39,7 +39,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnershipOtherPartnerFullNameController @Inject() (
+class PartnershipOtherPartnerContactNameController @Inject()(
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
@@ -59,7 +59,7 @@ class PartnershipOtherPartnerFullNameController @Inject() (
           Ok(
             page(FullName.form().fill(FullName(data)),
                  partnershipRoutes.PartnershipOtherPartnersController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerFullNameController.submit(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
                  partnerShipName
             )
           )
@@ -67,7 +67,7 @@ class PartnershipOtherPartnerFullNameController @Inject() (
           Ok(
             page(FullName.form(),
                  partnershipRoutes.PartnershipOtherPartnersController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerFullNameController.submit(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
                  partnerShipName
             )
           )
@@ -88,7 +88,7 @@ class PartnershipOtherPartnerFullNameController @Inject() (
               BadRequest(
                 page(formWithErrors,
                      partnershipRoutes.PartnershipOtherPartnersController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerFullNameController.submit(),
+                     partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
                      partnerShipName
                 )
               )
@@ -101,7 +101,7 @@ class PartnershipOtherPartnerFullNameController @Inject() (
                     Redirect(routes.PartnershipOtherPartnerJobTitleController.displayPage())
                   case _ =>
                     Redirect(
-                      partnershipRoutes.PartnershipOtherPartnerFullNameController.displayPage()
+                      partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage()
                     )
                 }
               case Left(error) => throw error
