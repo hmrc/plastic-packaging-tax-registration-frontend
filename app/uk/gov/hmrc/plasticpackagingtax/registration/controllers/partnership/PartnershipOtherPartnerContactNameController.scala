@@ -39,7 +39,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnershipOtherPartnerContactNameController @Inject()(
+class PartnershipOtherPartnerContactNameController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
@@ -58,7 +58,7 @@ class PartnershipOtherPartnerContactNameController @Inject()(
         case Some(data) =>
           Ok(
             page(FullName.form().fill(FullName(data)),
-                 partnershipRoutes.PartnershipOtherPartnersController.displayPage(),
+                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
                  partnerShipName
             )
@@ -66,7 +66,7 @@ class PartnershipOtherPartnerContactNameController @Inject()(
         case None =>
           Ok(
             page(FullName.form(),
-                 partnershipRoutes.PartnershipOtherPartnersController.displayPage(),
+                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
                  partnerShipName
             )
@@ -87,7 +87,7 @@ class PartnershipOtherPartnerContactNameController @Inject()(
             Future.successful(
               BadRequest(
                 page(formWithErrors,
-                     partnershipRoutes.PartnershipOtherPartnersController.displayPage(),
+                     partnershipRoutes.PartnershipPartnersListController.displayPage(),
                      partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
                      partnerShipName
                 )

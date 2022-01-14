@@ -54,7 +54,7 @@ class PartnershipOtherPartnerCheckAnswersController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val x = updateRegistration.map { _ =>
-        val result: Result = Redirect(routes.PartnershipOtherPartnersController.displayPage())
+        val result: Result = Redirect(routes.PartnershipPartnersListController.displayPage())
         result
       }
       x

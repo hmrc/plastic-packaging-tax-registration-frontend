@@ -17,10 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.other_partners
@@ -30,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PartnershipOtherPartnersController @Inject() (
+class PartnershipPartnersListController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
@@ -43,8 +42,8 @@ class PartnershipOtherPartnersController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       if (request.registration.isPartnership)
         (for {
-          partnershipDetails: PartnershipDetails <- request.registration.organisationDetails.partnershipDetails
-          partnerName                            <- partnershipDetails.partnershipName
+          partnershipDetails <- request.registration.organisationDetails.partnershipDetails
+          partnerName        <- partnershipDetails.partnershipName
 
         } yield {
           val otherPartners = partnershipDetails.otherPartners.getOrElse(Seq.empty)
@@ -52,7 +51,6 @@ class PartnershipOtherPartnersController @Inject() (
 
         }).getOrElse(NotFound)
       else
-        // This page is only available to partnerships
         NotFound
     }
 
