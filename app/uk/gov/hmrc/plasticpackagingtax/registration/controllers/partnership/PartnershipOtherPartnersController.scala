@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
@@ -41,21 +41,17 @@ class PartnershipOtherPartnersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      // Access the in flight registration so that we can render current other partners
-      if (request.registration.isPartnership) {
-        val maybePartnershipDetails: Option[PartnershipDetails] =
-          request.registration.organisationDetails.partnershipDetails
+      if (request.registration.isPartnership)
+        (for {
+          partnershipDetails: PartnershipDetails <- request.registration.organisationDetails.partnershipDetails
+          partnerName                            <- partnershipDetails.partnershipName
 
-        val nominatedPartnerName =
-          maybePartnershipDetails.get.partnershipName.get // TODO Unchecked gets
-        val otherPartners = maybePartnershipDetails.flatMap { partnershipBusinessDetails =>
-          partnershipBusinessDetails.otherPartners
+        } yield {
+          val otherPartners = partnershipDetails.otherPartners.getOrElse(Seq.empty)
+          Ok(otherPartnersPage(otherPartners, partnerName, otherPartners.size + 1))
 
-        }.getOrElse(Seq.empty)
-
-        Ok(otherPartnersPage(otherPartners, nominatedPartnerName, otherPartners.size + 1))
-
-      } else
+        }).getOrElse(NotFound)
+      else
         // This page is only available to partnerships
         NotFound
     }
