@@ -46,7 +46,8 @@ case class OrganisationDetails(
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None,
   subscriptionStatus: Option[Status] = None,
-  regWithoutIDFlag: Option[Boolean] = None
+  regWithoutIDFlag: Option[Boolean] = None,
+  isBusinessAddressFromGrs: Option[Boolean] = None
 ) {
 
   def status: TaskStatus =
@@ -109,7 +110,9 @@ case class OrganisationDetails(
         )
       case _ => None
     }
-    this.copy(businessRegisteredAddress = businessAddress)
+    this.copy(businessRegisteredAddress = businessAddress,
+              isBusinessAddressFromGrs = Some(businessAddress.isDefined)
+    )
   }
 
 }

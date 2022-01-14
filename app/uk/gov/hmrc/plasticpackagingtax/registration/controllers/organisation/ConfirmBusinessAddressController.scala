@@ -17,7 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
@@ -29,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -63,15 +64,24 @@ class ConfirmBusinessAddressController @Inject() (
             )
           )
         case _ =>
-          initialiseAddressLookup(addressLookupFrontendConnector,
-                                  appConfig,
-                                  routes.ConfirmBusinessAddressController.alfCallback(None),
-                                  "addressLookup.business",
-                                  request.registration.organisationDetails.businessName
-          ).map(onRamp => Redirect(onRamp.redirectUrl))
+          initialiseAddressLookup(request)
       }
-
     }
+
+  def changeBusinessAddress(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      initialiseAddressLookup(request)
+    }
+
+  private def initialiseAddressLookup(
+    request: JourneyRequest[AnyContent]
+  )(implicit header: HeaderCarrier): Future[Result] =
+    initialiseAddressLookup(addressLookupFrontendConnector,
+                            appConfig,
+                            routes.ConfirmBusinessAddressController.alfCallback(None),
+                            "addressLookup.business",
+                            request.registration.organisationDetails.businessName
+    ).map(onRamp => Redirect(onRamp.redirectUrl))
 
   private def isAddressValid(address: Address) =
     Address.form().fillAndValidate(address).errors.isEmpty

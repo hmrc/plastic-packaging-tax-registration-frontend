@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
@@ -31,7 +32,12 @@
 
 
 @()(implicit request: JourneyRequest[_], messages: Messages)
-
+@addressChangeLink = @{
+    request.registration.organisationDetails.isBusinessAddressFromGrs match {
+        case Some(true) => None
+        case _ =>  Some(orgRoutes.ConfirmBusinessAddressController.changeBusinessAddress())
+    }
+}
 @govukLayout(
     title = Title("organisation.checkAnswers.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
@@ -39,7 +45,7 @@
     @pageHeading(messages("organisation.checkAnswers.title"))
 
     @formHelper(action = pptRoutes.TaskListController.displayPage(), 'autoComplete -> "off") {
-        @organisationDetails(request.registration.organisationDetails, request.registration.registrationType)
+        @organisationDetails(request.registration.organisationDetails, request.registration.registrationType, Some(orgRoutes.OrganisationDetailsTypeController.displayPage()), addressChangeLink)
         @saveButtons()
     }
 }

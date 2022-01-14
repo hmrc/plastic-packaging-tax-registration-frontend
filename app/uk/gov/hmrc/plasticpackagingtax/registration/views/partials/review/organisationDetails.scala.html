@@ -30,14 +30,8 @@
         viewUtils: ViewUtils
 )
 
-@(organisationDetails: OrganisationDetails, registrationType: Option[RegType], showOrganisationTypeChangeLink: Option[Boolean] = None)(implicit request: JourneyRequest[_], messages: Messages)
+@(organisationDetails: OrganisationDetails, registrationType: Option[RegType], organisationDetailsLink: Option[Call] = None, addressChangeLink: Option[Call])(implicit request: JourneyRequest[_], messages: Messages)
 
-@organisationDetailsLink = @{
-    showOrganisationTypeChangeLink match {
-        case Some(false) => None
-        case _ => Some(orgRoutes.OrganisationDetailsTypeController.displayPage())
-    }
-}
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
@@ -45,7 +39,7 @@
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationName", organisationDetails.businessName),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(organisationDetails.incorporationDetails.get.companyNumber)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress), addressChangeLink)
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -58,7 +52,7 @@
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.lastName", Some(organisationDetails.soleTraderDetails.get.lastName)),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.dob", Some(organisationDetails.soleTraderDetails.get.dateOfBirth.getOrElse(""))),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.soleTrader.nino", Some(organisationDetails.soleTraderDetails.get.ninoOrTrn)),
-                    viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
+                    viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress), addressChangeLink)
         ).filterNot(_.value.content == Empty)
     )
 }
@@ -68,7 +62,7 @@
         rows = Seq(
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(_.toString), organisationDetailsLink),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.partnership.name", organisationDetails.businessName),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress))
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress), addressChangeLink)
         ).filterNot(_.value.content == Empty)
     )
 }

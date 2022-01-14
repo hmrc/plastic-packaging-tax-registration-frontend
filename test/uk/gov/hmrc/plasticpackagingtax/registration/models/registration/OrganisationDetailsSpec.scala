@@ -20,10 +20,13 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
+import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
+  OVERSEAS_COMPANY_UK_BRANCH,
   OrgType,
   PARTNERSHIP,
+  REGISTERED_SOCIETY,
   SOLE_TRADER,
   UK_COMPANY
 }
@@ -42,7 +45,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.Subscri
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
-class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDrivenPropertyChecks {
+class OrganisationDetailsSpec
+    extends AnyWordSpec with Matchers with TableDrivenPropertyChecks with PptTestData {
 
   val registeredOrgs = Table("Organisation Details",
                              createOrg(UK_COMPANY, None, true),
@@ -139,6 +143,16 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
         )
       }
     }
+    "check if business address is returned from Grs" in {
+      forAll(registeredOrgs) { organisationDetails =>
+        val updatedOrganisationDetails = organisationDetails.withBusinessRegisteredAddress()
+        updatedOrganisationDetails.organisationType match {
+          case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+            updatedOrganisationDetails.isBusinessAddressFromGrs mustBe Some(true)
+          case _ => updatedOrganisationDetails.isBusinessAddressFromGrs mustBe Some(false)
+        }
+      }
+    }
   }
 
   private def createOrg(
@@ -154,7 +168,7 @@ class OrganisationDetailsSpec extends AnyWordSpec with Matchers with TableDriven
                               IncorporationDetails(companyNumber = "123",
                                                    companyName = "Test",
                                                    ctutr = "ABC",
-                                                   companyAddress = IncorporationAddressDetails(),
+                                                   companyAddress = testCompanyAddress,
                                                    registration =
                                                      if (registered)
                                                        Some(
