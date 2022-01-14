@@ -144,10 +144,21 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
       }
     }
 
+    "redirect to address lookup frontend" when {
+      "user wants to change business address" in {
+        mockRegistrationFind(aRegistration())
+
+        val resp = controller.changeBusinessAddress()(getRequest())
+
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some("/on-ramp")
+      }
+    }
     "throw MissingAddressIdException if return from address lookup is missing a journey id" in {
       intercept[MissingAddressIdException] {
         await(controller.alfCallback(None)(getRequest()))
       }
     }
+
   }
 }

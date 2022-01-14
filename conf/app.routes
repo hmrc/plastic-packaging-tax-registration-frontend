@@ -50,6 +50,7 @@ GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.regist
 
 GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
 GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.alfCallback(id: Option[String])
+GET        /edit-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.changeBusinessAddress()
 
 GET       /organisation-check-answers  uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.CheckAnswersController.displayPage()
 
@@ -169,6 +170,9 @@ GET        /enrolment-reference-number-already-used     uk.gov.hmrc.plasticpacka
 
 GET        /amend-registration          uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.displayPage()
 GET        /amend-registration-failed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.registrationUpdateFailed()
+
+GET        /amend-business-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.changeBusinessAddress()
+GET        /amend-registration-business-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.alfCallback(id: Option[String])
 
 GET        /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.contactName()
 POST       /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateContactName()
