@@ -329,6 +329,18 @@ partnership.name.title = What's the name of the partnership?
 partnership.name.empty.error = Please enter your partnership name
 partnership.name.format.error = Please enter your partnership name in correct format
 
+nominated.partner.type.SoleTrader = Sole trader
+nominated.partner.type.UkCompany = UK limited company
+nominated.partner.type.LimitedLiabilityPartnership = Limited liability partnership
+nominated.partner.type.ScottishPartnership = Scottish partnership
+nominated.partner.type.ScottishLimitedPartnership = Scottish limited partnership
+nominated.partner.type.CIO = Charitable Incorporated Organisation (CIO)
+nominated.partner.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
+nominated.partner.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
+
+nominated.partner.type.title = What type of organisation is the nominated partner?
+nominated.partner.name.empty.error = Please select an entity type from the options above
+
 unauthorised.heading = You are not registered for Plastic Packaging Tax
 unauthorised.paragraph.1 = The Plastic Packaging Tax (PPT) service will launch in April 2022, and is currently available to a limited number of people for their feedback.
 unauthorised.paragraph.2 = If you would like to provide your feedback too, you can {0}. We will respond to you within two working days.

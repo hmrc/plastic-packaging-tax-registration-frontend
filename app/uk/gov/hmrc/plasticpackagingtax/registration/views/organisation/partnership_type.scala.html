@@ -55,11 +55,11 @@
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = Seq(
-                    RadioItem(content = Text(displayName(GENERAL_PARTNERSHIP)), value = Some(GENERAL_PARTNERSHIP), checked = form("answer").value.contains(GENERAL_PARTNERSHIP)),
-                    RadioItem(content = Text(displayName(LIMITED_LIABILITY_PARTNERSHIP)), value = Some(LIMITED_LIABILITY_PARTNERSHIP), checked = form("answer").value.contains(LIMITED_LIABILITY_PARTNERSHIP)),
-                    RadioItem(content = Text(displayName(LIMITED_PARTNERSHIP)), value = Some(LIMITED_PARTNERSHIP.toString), checked = form("answer").value.contains(LIMITED_PARTNERSHIP)),
-                    RadioItem(content = Text(displayName(SCOTTISH_PARTNERSHIP)), value = Some(SCOTTISH_PARTNERSHIP), checked = form("answer").value.contains(SCOTTISH_PARTNERSHIP)),
-                    RadioItem(content = Text(displayName(SCOTTISH_LIMITED_PARTNERSHIP)), value = Some(SCOTTISH_LIMITED_PARTNERSHIP), checked = form("answer").value.contains(SCOTTISH_LIMITED_PARTNERSHIP))
+                    RadioItem(content = Text(displayName(GENERAL_PARTNERSHIP)), value = Some(GENERAL_PARTNERSHIP), checked = form("answer").value.contains(GENERAL_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(displayName(LIMITED_LIABILITY_PARTNERSHIP)), value = Some(LIMITED_LIABILITY_PARTNERSHIP), checked = form("answer").value.contains(LIMITED_LIABILITY_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(displayName(LIMITED_PARTNERSHIP)), value = Some(LIMITED_PARTNERSHIP.toString), checked = form("answer").value.contains(LIMITED_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(displayName(SCOTTISH_PARTNERSHIP)), value = Some(SCOTTISH_PARTNERSHIP), checked = form("answer").value.contains(SCOTTISH_PARTNERSHIP.toString)),
+                    RadioItem(content = Text(displayName(SCOTTISH_LIMITED_PARTNERSHIP)), value = Some(SCOTTISH_LIMITED_PARTNERSHIP), checked = form("answer").value.contains(SCOTTISH_LIMITED_PARTNERSHIP.toString))
                 ),
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
