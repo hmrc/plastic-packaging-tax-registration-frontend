@@ -107,13 +107,24 @@ class AmendOrganisationDetailsControllerSpec
       }
     }
 
-    "obtain address from address lookup and update registration and redirect to organisation list" when {
+    "obtain address from address lookup and update registration and redirect to amend registration page" when {
       "control is returned from address lookup frontend" in {
-
+        val registration = aRegistration()
+        authorisedUserWithPptSubscription()
+        inMemoryRegistrationAmendmentRepository.put("123", registration)
         val resp = controller.alfCallback(Some("123"))(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
+        val registrationCaptor: ArgumentCaptor[Registration] =
+          ArgumentCaptor.forClass(classOf[Registration])
+        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
+          any()
+        )
+
+        registrationCaptor.getValue.organisationDetails.businessRegisteredAddress mustBe Some(
+          Address(alfAddress)
+        )
       }
     }
 

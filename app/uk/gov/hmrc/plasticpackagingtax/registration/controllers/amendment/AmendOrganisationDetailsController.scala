@@ -63,6 +63,16 @@ class AmendOrganisationDetailsController @Inject() (
 
   def alfCallback(id: Option[String]): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      def updateBusinessAddress(
+        address: AddressLookupConfirmation
+      ): Registration => Registration = {
+        registration: Registration =>
+          val updatedOrganisationDetails =
+            registration.organisationDetails.copy(businessRegisteredAddress =
+              Some(Address(address))
+            )
+          registration.copy(organisationDetails = updatedOrganisationDetails)
+      }
       addressLookupFrontendConnector.getAddress(
         id.getOrElse(throw new MissingAddressIdException)
       ).flatMap {
@@ -72,16 +82,5 @@ class AmendOrganisationDetailsController @Inject() (
           }
       }
     }
-
-  private def updateBusinessAddress(
-    address: AddressLookupConfirmation
-  ): Registration => Registration = {
-    registration: Registration =>
-      registration.copy(organisationDetails =
-        registration.organisationDetails.copy(businessRegisteredAddress =
-          Some(Address(address))
-        )
-      )
-  }
 
 }
