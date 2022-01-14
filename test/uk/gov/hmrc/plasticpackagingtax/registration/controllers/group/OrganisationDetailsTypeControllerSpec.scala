@@ -70,7 +70,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[OrganisationType]], any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[OrganisationType]], any(), any())(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -82,13 +84,23 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
     "return 200" when {
 
-      "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate()
-        val result = controller.displayPage()(getRequest())
+      "user is authorised and display page method is invoked" when {
+        "adding new group member" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate()
+          val result = controller.displayPageNewMember()(getRequest())
 
-        status(result) mustBe OK
+          status(result) mustBe OK
+        }
+        "amending existing group member" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
+          mockRegistrationUpdate()
+          val result = controller.displayPageAmendMember(groupMember.id)(getRequest())
+
+          status(result) mustBe OK
+        }
       }
 
       "user is authorised and display page method for next group member" in {
@@ -106,7 +118,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           )
         )
         mockRegistrationUpdate()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPageNewMember()(getRequest())
 
         status(result) mustBe OK
       }
@@ -128,7 +140,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
           redirectLocation(result) mustBe Some("http://test/redirect/partnership")
         }
@@ -140,7 +152,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           redirectLocation(result) mustBe Some(
             organisationRoutes.PartnershipTypeController.displayPage().url
           )
@@ -186,17 +198,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> orgType.toString, formAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.groupDetail.get.members.head.organisationDetails.get.organisationType mustBe orgType.toString
 
-        formAction._1 match {
-          case "SaveAndContinue" =>
-            redirectLocation(result) mustBe Some(redirectUrl)
-          case _ =>
-            redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-        }
+        redirectLocation(result) mustBe Some(redirectUrl)
       }
 
       "return 400 (BAD_REQUEST) for " + formAction._1 when {
@@ -204,7 +211,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           val result =
-            controller.submit()(postRequestEncoded(JsObject.empty, formAction))
+            controller.submitNewMember()(postRequestEncoded(JsObject.empty, formAction))
 
           status(result) mustBe BAD_REQUEST
         }
@@ -213,7 +220,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           val incorrectForm = Seq("answer" -> "maybe", formAction)
-          val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
+          val result        = controller.submitNewMember()(postJsonRequestEncoded(incorrectForm: _*))
 
           status(result) mustBe BAD_REQUEST
         }
@@ -223,7 +230,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user is not authorised" in {
           unAuthorizedUser()
-          val result = controller.displayPage()(getRequest())
+          val result = controller.displayPageNewMember()(getRequest())
 
           intercept[RuntimeException](status(result))
         }
@@ -234,7 +241,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString, formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[DownstreamServiceError](status(result))
         }
@@ -245,7 +252,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationException()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString, formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[RuntimeException](status(result))
         }
@@ -287,7 +294,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> orgType.toString, saveAndContinueFormAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         if (supported)

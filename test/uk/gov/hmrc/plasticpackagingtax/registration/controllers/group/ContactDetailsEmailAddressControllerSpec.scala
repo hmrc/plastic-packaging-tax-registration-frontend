@@ -28,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_email_address_page
@@ -65,7 +66,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         mockRegistrationFind(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -75,7 +76,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         mockRegistrationFind(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -91,14 +92,16 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(postRequestEncoded(EmailAddress("test@test.com"), formAction))
+            controller.submit(groupMember.id)(
+              postRequestEncoded(EmailAddress("test@test.com"), formAction)
+            )
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.email mustBe Some(
             "test@test.com"
           )
           redirectLocation(result) mustBe Some(
-            groupRoutes.ContactDetailsTelephoneNumberController.displayPage().url
+            groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url
           )
           reset(mockRegistrationConnector)
         }
@@ -119,7 +122,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.displayPage(groupMember.id)(getRequest()))
 
         pageForm.get.value mustBe "test@test.com"
       }
@@ -129,7 +132,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       "user submits invalid email" in {
         authorizedUser()
-        val result = controller.submit()(postRequest(Json.toJson(EmailAddress("$%^"))))
+        val result =
+          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("$%^"))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -139,7 +143,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       "user is not authorised" in {
         unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -148,16 +152,16 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         authorizedUser()
         mockRegistrationUpdateFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[IllegalStateException](status(result))
+        intercept[DownstreamServiceError](status(result))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
         authorizedUser()
         mockRegistrationException()
         val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
         intercept[RuntimeException](status(result))
       }

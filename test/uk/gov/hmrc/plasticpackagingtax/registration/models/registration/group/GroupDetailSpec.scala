@@ -24,35 +24,84 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
 class GroupDetailSpec extends AnyWordSpec with Matchers {
 
-  "Group detail " should {
+  "Group detail" should {
 
-    "be NOT_STARTED " when {
+    "be NOT_STARTED" when {
       "members is empty" in {
         val groupDetail = GroupDetail()
         groupDetail.status mustBe TaskStatus.NotStarted
       }
     }
 
-    "be COMPLETED " when {
+    "be COMPLETED" when {
       "members are present" in {
-        val groupDetail = GroupDetail(members =
-          Seq(
-            GroupMember(customerIdentification1 = "id1",
-                        customerIdentification2 = Some("id2"),
-                        organisationDetails =
-                          Some(OrganisationDetails("UkCompany", "Company Name", Some("121212121"))),
-                        addressDetails = Address("line1",
-                                                 Some("line2"),
-                                                 Some("line3"),
-                                                 "line4",
-                                                 Some("AB12CD"),
-                                                 "UK"
-                        )
-            )
-          )
-        )
+        val groupDetail = GroupDetail(members = Seq(aGroupMember("Subsidiary 1")))
         groupDetail.status mustBe TaskStatus.Completed
       }
     }
+
+    "obtain business name" in {
+      val sub1        = aGroupMember("Subsidiary 1")
+      val sub2        = aGroupMember("Subsidiary 2")
+      val groupDetail = GroupDetail(members = Seq(sub1, sub2))
+
+      groupDetail.businessName(sub1.id) mustBe Some(sub1.businessName)
+      groupDetail.businessName(sub2.id) mustBe Some(sub2.businessName)
+    }
+
+    "update existing member" in {
+      val sub1        = aGroupMember("Subsidiary 1")
+      val sub2        = aGroupMember("Subsidiary 2")
+      val groupDetail = GroupDetail(members = Seq(sub1, sub2))
+
+      val updatedCust1Id     = s"${sub1.customerIdentification1}XXX"
+      val updatedSub1        = sub1.copy(customerIdentification1 = updatedCust1Id)
+      val updatedGroupDetail = groupDetail.withUpdatedOrNewMember(updatedSub1)
+
+      updatedGroupDetail.members.size mustBe 2
+      updatedGroupDetail.members.head.customerIdentification1 mustBe updatedCust1Id
+    }
+
+    "add new member" in {
+      val sub1        = aGroupMember("Subsidiary 1")
+      val sub2        = aGroupMember("Subsidiary 2")
+      val groupDetail = GroupDetail(members = Seq(sub1, sub2))
+
+      val sub3               = aGroupMember("Subsidiary 3")
+      val updatedGroupDetail = groupDetail.withUpdatedOrNewMember(sub3)
+
+      updatedGroupDetail.members.size mustBe 3
+      updatedGroupDetail.members(2).id mustBe sub3.id
+    }
   }
+
+  private def aGroupMember(name: String) =
+    GroupMember(customerIdentification1 = "cid1",
+                customerIdentification2 = Some("cid2"),
+                organisationDetails = Some(
+                  OrganisationDetails(organisationType = "UK Company",
+                                      organisationName = name,
+                                      businessPartnerId = Some("BP-123")
+                  )
+                ),
+                contactDetails = Some(
+                  GroupMemberContactDetails(firstName = "John",
+                                            lastName = "Benkson",
+                                            phoneNumber = Some("07875234567"),
+                                            email = Some("john@ppt.com"),
+                                            address = Some(anAddress())
+                  )
+                ),
+                addressDetails = anAddress()
+    )
+
+  private def anAddress() =
+    new Address(addressLine1 = "addressLine1",
+                addressLine2 = Some("addressLine2"),
+                addressLine3 = Some("addressLine3"),
+                townOrCity = "Wakefield",
+                postCode = Some("WF15 4HD"),
+                countryCode = "GB"
+    )
+
 }

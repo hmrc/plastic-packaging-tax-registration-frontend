@@ -81,7 +81,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     "redirect to address lookup frontend" when {
       "registered business address is not present" in {
 
-        val resp = controller.displayPage()(getRequest())
+        val resp = controller.displayPage(groupMember.id)(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some("/on-ramp")
@@ -95,11 +95,11 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
           )
         )
-        val resp = controller.alfCallback(Some("123"))(getRequest())
+        val resp = controller.alfCallback(Some("123"), groupMember.id)(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(
-          groupRoutes.ContactDetailsCheckAnswersController.displayPage().url
+          groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id).url
         )
 
         modifiedRegistration.lastMember.get.contactDetails.get.address mustBe Some(
@@ -110,7 +110,15 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
     "throw MissingAddressIdException if return from address lookup is missing a journey id" in {
       intercept[MissingAddressIdException] {
-        await(controller.alfCallback(None)(getRequest()))
+        await(controller.alfCallback(None, groupMember.id)(getRequest()))
+      }
+    }
+
+    "throw IllegalStateException" when {
+      "group member cannot be found in registration" in {
+        intercept[IllegalStateException] {
+          await(controller.alfCallback(Some("123"), "XXX")(getRequest()))
+        }
       }
     }
   }

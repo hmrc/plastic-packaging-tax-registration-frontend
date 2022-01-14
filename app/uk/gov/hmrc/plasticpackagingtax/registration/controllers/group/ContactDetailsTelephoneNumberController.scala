@@ -24,12 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupInt
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMemberContactDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Cacheable,
-  GroupDetail,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_phone_number_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -47,29 +42,26 @@ class ContactDetailsTelephoneNumberController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport with AddressLookupIntegration {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.lastMember.map(_.contactDetails match {
-        case Some(details) =>
-          Ok(
-            page(PhoneNumber.form().fill(PhoneNumber(details.phoneNumber.getOrElse(""))),
-                 Some(details.groupMemberName),
-                 groupRoutes.ContactDetailsEmailAddressController.displayPage(),
-                 groupRoutes.ContactDetailsTelephoneNumberController.submit()
-            )
-          )
-        case _ =>
-          Ok(
-            page(PhoneNumber.form(),
-                 None,
-                 groupRoutes.ContactDetailsEmailAddressController.displayPage(),
-                 groupRoutes.ContactDetailsTelephoneNumberController.submit()
-            )
-          )
-      }).get
+      val contactDetails = request.registration.findMember(memberId).flatMap(_.contactDetails)
+      val phoneNumber    = contactDetails.flatMap(_.phoneNumber)
+      val memberName     = contactDetails.map(_.groupMemberName)
+      val form = phoneNumber match {
+        case Some(phoneNumber) => PhoneNumber.form().fill(PhoneNumber(phoneNumber))
+        case _                 => PhoneNumber.form()
+      }
+
+      Ok(
+        page(form,
+             memberName,
+             groupRoutes.ContactDetailsEmailAddressController.displayPage(memberId),
+             groupRoutes.ContactDetailsTelephoneNumberController.submit(memberId)
+        )
+      )
     }
 
-  def submit(): Action[AnyContent] =
+  def submit(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       PhoneNumber.form()
         .bindFromRequest()
@@ -78,37 +70,33 @@ class ContactDetailsTelephoneNumberController @Inject() (
             Future.successful(
               BadRequest(
                 page(formWithErrors,
-                     request.registration.lastMember.flatMap(
+                     request.registration.findMember(memberId).flatMap(
                        _.contactDetails.map(_.groupMemberName)
                      ),
-                     groupRoutes.ContactDetailsEmailAddressController.displayPage(),
-                     groupRoutes.ContactDetailsTelephoneNumberController.submit()
+                     groupRoutes.ContactDetailsEmailAddressController.displayPage(memberId),
+                     groupRoutes.ContactDetailsTelephoneNumberController.submit(memberId)
                 )
               )
             ),
           phoneNumber =>
-            updateRegistration(phoneNumber).map {
+            updateRegistration(phoneNumber, memberId).map {
               case Right(_) =>
-                Redirect(groupRoutes.ContactDetailsConfirmAddressController.displayPage())
+                Redirect(groupRoutes.ContactDetailsConfirmAddressController.displayPage(memberId))
               case Left(error) => throw error
             }
         )
     }
 
-  private def updateRegistration(
-    formData: PhoneNumber
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegistration(phoneNumber: PhoneNumber, memberId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val contactDetails: Option[GroupMemberContactDetails] =
-        registration.lastMember.map(_.withGroupMemberPhoneNumber(phoneNumber = formData.value))
-      val detail: GroupDetail =
-        registration.groupDetail.getOrElse(throw new IllegalStateException("No group detail"))
       registration.copy(groupDetail =
-        Some(
-          detail.copy(members =
-            detail.updateMember(
-              registration.lastMember.map(_.copy(contactDetails = contactDetails)).get
-            )
+        registration.groupDetail.map(
+          _.withUpdatedOrNewMember(
+            registration.findMember(memberId).map(
+              _.withUpdatedGroupMemberPhoneNumber(phoneNumber.value)
+            ).getOrElse(throw new IllegalStateException("Expected group member absent"))
           )
         )
       )

@@ -28,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_name_page
@@ -48,7 +49,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -66,7 +67,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -76,7 +77,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -92,7 +93,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(
+            controller.submit(groupMember.id)(
               postRequestEncoded(MemberName(firstName = "Test", lastName = "User"), formAction)
             )
 
@@ -102,7 +103,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
           contactDetails.firstName mustBe "Test"
           contactDetails.lastName mustBe "User"
           redirectLocation(result) mustBe Some(
-            groupRoutes.ContactDetailsEmailAddressController.displayPage().url
+            groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id).url
           )
           reset(mockRegistrationConnector)
         }
@@ -113,7 +114,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       def pageForm: Form[MemberName] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[MemberName]])
-        verify(page).apply(captor.capture(), any(), any(), any())(any(), any())
+        verify(page).apply(captor.capture(), any(), any(), any(), any())(any(), any())
         captor.getValue
       }
 
@@ -123,7 +124,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
-        await(controller.displayPage()(getRequest()))
+        await(controller.displayPage(groupMember.id)(getRequest()))
 
         pageForm.get.firstName mustBe "Test"
         pageForm.get.lastName mustBe "User"
@@ -134,7 +135,8 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user submits invalid member name" in {
         authorizedUser()
-        val result = controller.submit()(postRequest(Json.toJson(MemberName("$%^", "£$£¬"))))
+        val result =
+          controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("$%^", "£$£¬"))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -144,7 +146,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user is not authorised" in {
         unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -153,18 +155,18 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
         authorizedUser()
         mockRegistrationUpdateFailure()
         val result =
-          controller.submit()(
+          controller.submit(groupMember.id)(
             postRequest(Json.toJson(MemberName(firstName = "Test", lastName = "User")))
           )
 
-        intercept[IllegalStateException](status(result))
+        intercept[DownstreamServiceError](status(result))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
         authorizedUser()
         mockRegistrationException()
         val result =
-          controller.submit()(
+          controller.submit(groupMember.id)(
             postRequest(Json.toJson(MemberName(firstName = "Test", lastName = "User")))
           )
 

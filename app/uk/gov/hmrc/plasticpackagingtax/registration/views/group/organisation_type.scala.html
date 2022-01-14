@@ -23,64 +23,67 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
 
 @this(
-    formHelper: FormWithCSRF,
-    govukLayout: main_template,
-    govukRadios : GovukRadios,
-    sectionHeader: sectionHeader,
-    saveButtons: saveButtons,
-    errorSummary: errorSummary
+        formHelper: FormWithCSRF,
+        govukLayout: main_template,
+        govukRadios: GovukRadios,
+        sectionHeader: sectionHeader,
+        saveButtons: saveButtons,
+        errorSummary: errorSummary
 )
 
-@(form: Form[OrganisationType], isFirstMember: Boolean)(implicit request: Request[_], messages: Messages)
+@(form: Form[OrganisationType], isFirstMember: Boolean, memberId: Option[String])(implicit request: Request[_], messages: Messages)
 
-    @title = @{ if(isFirstMember) "organisationDetails.other.group.title" else "organisationDetails.other.next.group.title" }
+@title = @{
+    if(isFirstMember) "organisationDetails.other.group.title" else "organisationDetails.other.next.group.title"
+}
 
-    @displayName(orgType: OrgType) = @{ messages(
-      orgType match {
-          case PARTNERSHIP  => "organisationDetails.type.GroupPartnership"
-          case _ => s"organisationDetails.type.$orgType"
-      }
+@displayName(orgType: OrgType) = @{
+    messages(
+        orgType match {
+            case PARTNERSHIP => "organisationDetails.type.GroupPartnership"
+            case _ => s"organisationDetails.type.$orgType"
+        }
     )
-    }
+}
 
-    @radioItem(orgType: OrgType) = @{
-        RadioItem(content = Text(displayName(orgType)), value = Some(orgType), checked = form("answer").value.contains(orgType.toString))
-    }
+@radioItem(orgType: OrgType) = @{
+    RadioItem(content = Text(displayName(orgType)), value = Some(orgType), checked = form("answer").value.contains(orgType.toString))
+}
 
-    @organisationRadios = @{
-          Seq(
-              radioItem(UK_COMPANY),
-              radioItem(PARTNERSHIP),
-              radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
-              radioItem(OVERSEAS_COMPANY_UK_BRANCH),
-              radioItem(OVERSEAS_COMPANY_NO_UK_BRANCH)
-          )
-    }
+@organisationRadios = @{
+    Seq(
+        radioItem(UK_COMPANY),
+        radioItem(PARTNERSHIP),
+        radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
+        radioItem(OVERSEAS_COMPANY_UK_BRANCH),
+        radioItem(OVERSEAS_COMPANY_NO_UK_BRANCH)
+    )
+}
 
-    @govukLayout(
-        title = Title(title),
-        backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
-            @errorSummary(form.errors)
+@govukLayout(
+    title = Title(title),
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+    @errorSummary(form.errors)
 
-        @sectionHeader(messages("organisationDetails.other.organisation.sectionHeader"))
+    @sectionHeader(messages("organisationDetails.other.organisation.sectionHeader"))
 
-        @formHelper(action = groupRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = memberId.fold(groupRoutes.OrganisationDetailsTypeController.submitNewMember())(memberId => groupRoutes.OrganisationDetailsTypeController.submitAmendMember(memberId)), 'autoComplete -> "off") {
 
-            @govukRadios(Radios(
-                fieldset = Some(Fieldset(
-                    legend = Some(Legend(
-                        content = Text(messages(title)),
-                        classes = gdsFieldsetPageHeading,
-                        isPageHeading = true
-                    ))
-                )),
-                hint = None,
-                idPrefix = Some(form("answer").name),
-                name = form("answer").name,
-                items = organisationRadios,
-                classes = "govuk-radios",
-                errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages(title)),
+                    classes = gdsFieldsetPageHeading,
+                    isPageHeading = true
                 ))
+            )),
+            hint = None,
+            idPrefix = Some(form("answer").name),
+            name = form("answer").name,
+            items = organisationRadios,
+            classes = "govuk-radios",
+            errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        ))
 
         @saveButtons()
     }
