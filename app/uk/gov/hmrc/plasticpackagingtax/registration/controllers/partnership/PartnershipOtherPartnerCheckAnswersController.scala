@@ -46,7 +46,7 @@ class PartnershipOtherPartnerCheckAnswersController @Inject() (
       (for {
         inflight <- request.registration.inflightOtherPartner
       } yield Ok(
-        page(inflight, partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage())
+        page(inflight, partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.displayPage())
       )).getOrElse(NotFound)
     }
 

@@ -58,7 +58,7 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
         case Some(data) =>
           Ok(
             page(EmailAddress.form().fill(EmailAddress(data)),
-                 partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
                  contactName
             )
@@ -66,7 +66,7 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
         case _ =>
           Ok(
             page(EmailAddress.form(),
-                 partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
                  contactName
             )
@@ -86,7 +86,7 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
             } yield Future.successful(
               BadRequest(
                 page(formWithErrors,
-                     partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage(),
+                     partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
                      partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
                      contactName
                 )

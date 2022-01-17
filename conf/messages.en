@@ -337,7 +337,6 @@ partnership.name.format.error = Please enter your partnership name in correct fo
 
 partnerships.otherPartners.title = You have {0} partners in your partnership
 partnership.otherPartners.contactNamePage.title = Who is the main contact for {0}?
-partnership.otherPartners.contactJobTitlePage.title = What is {0}’s job title?
 partnership.otherPartners.contactEmailAddressPage.title = What is {0}’s email address?
 partnership.otherPartners.contactPhoneNumberPage.title = What is {0}’s telephone number?
 partnership.otherPartners.checkAnswers.contactName = Name
