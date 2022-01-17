@@ -78,7 +78,7 @@ class OrganisationDetailsTypeController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    handleOrganisationType(organisationType)
+                    handleOrganisationType(organisationType, true, None)
                   case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
                 }
               case Left(error) => throw error
@@ -96,7 +96,7 @@ class OrganisationDetailsTypeController @Inject() (
       registration.copy(organisationDetails = updatedOrganisationDetails)
     }
 
-  override def grsCallbackUrl(): String =
+  override def grsCallbackUrl(organisationId: Option[String]): String =
     appConfig.grsCallbackUrl
 
 }

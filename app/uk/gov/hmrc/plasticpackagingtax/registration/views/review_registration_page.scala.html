@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -43,6 +44,13 @@
         liabilityStartLink: Call,
 )(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
+@addressChangeLink = @{
+    request.registration.organisationDetails.isBusinessAddressFromGrs match {
+        case Some(true) => None
+        case _ =>  Some(orgRoutes.ConfirmBusinessAddressController.changeBusinessAddress())
+    }
+}
+
 @govukLayout(
     title = Title("reviewRegistration.organisationDetails.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
@@ -52,7 +60,7 @@
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
         @liabilityDetails(registration.liabilityDetails, Some(liabilityStartLink), registration.registrationType, registration.groupDetail)
-        @organisationDetails(registration.organisationDetails, registration.registrationType)
+        @organisationDetails(registration.organisationDetails, registration.registrationType, Some(orgRoutes.OrganisationDetailsTypeController.displayPage()), addressChangeLink)
         @primaryContactDetails(registration.primaryContactDetails)
 
         @if(registration.registrationType.contains(GROUP)) {

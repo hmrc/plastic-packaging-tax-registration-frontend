@@ -65,7 +65,7 @@ class ContactDetailsCheckAnswersControllerSpec
 
   "Contact Details Check Answers Controller" should {
     "display captured group member details" in {
-      val resp = controller.displayPage()(getRequest())
+      val resp = controller.displayPage(groupMember.id)(getRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Group member contact details check answers"
@@ -76,14 +76,14 @@ class ContactDetailsCheckAnswersControllerSpec
         unAuthorizedUser()
 
         intercept[RuntimeException] {
-          await(controller.displayPage()(getRequest()))
+          await(controller.displayPage(groupMember.id)(getRequest()))
         }
       }
       "group member missing from registration" in {
         mockRegistrationFind(aRegistration(withGroupDetail(Some(groupDetails))))
 
         intercept[IllegalStateException] {
-          await(controller.displayPage()(getRequest()))
+          await(controller.displayPage(groupMember.id)(getRequest()))
         }
       }
     }

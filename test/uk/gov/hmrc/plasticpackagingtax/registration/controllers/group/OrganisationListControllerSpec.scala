@@ -99,7 +99,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          pptControllers.group.routes.OrganisationDetailsTypeController.displayPage().url
+          pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url
         )
       }
 
@@ -167,7 +167,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          pptControllers.group.routes.OrganisationDetailsTypeController.displayPage().url
+          pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember().url
         )
       }
     }

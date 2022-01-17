@@ -50,7 +50,7 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
       view.getElementById("back-link") must haveHref(
-        routes.ContactDetailsTelephoneNumberController.displayPage().url
+        routes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url
       )
     }
 
@@ -73,7 +73,7 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
       val expectedContent = Seq(
         (messages("contactDetails.member.check.orgType"),
          groupMember.businessType.get,
-         Some(routes.OrganisationDetailsTypeController.displayPage().url)
+         Some(routes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id).url)
         ),
         (messages("contactDetails.member.check.companyNumber"),
          groupMember.customerIdentification1,
@@ -86,15 +86,15 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
         ),
         (messages("contactDetails.member.check.contact.name"),
          groupMember.contactDetails.get.groupMemberName,
-         Some(routes.ContactDetailsNameController.displayPage().url)
+         Some(routes.ContactDetailsNameController.displayPage(groupMember.id).url)
         ),
         (messages("contactDetails.member.check.contact.email"),
          groupMember.contactDetails.get.email.get,
-         Some(routes.ContactDetailsEmailAddressController.displayPage().url)
+         Some(routes.ContactDetailsEmailAddressController.displayPage(groupMember.id).url)
         ),
         (messages("contactDetails.member.check.contact.phone"),
          groupMember.contactDetails.get.phoneNumber.get,
-         Some(routes.ContactDetailsTelephoneNumberController.displayPage().url)
+         Some(routes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url)
         ),
         (messages("contactDetails.member.check.contact.address"),
          extractAddress(groupMember.contactDetails.get.address.get),

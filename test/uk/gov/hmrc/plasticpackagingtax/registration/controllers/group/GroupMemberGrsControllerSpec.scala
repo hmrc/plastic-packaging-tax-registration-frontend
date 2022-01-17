@@ -99,12 +99,14 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "group member incorpIdCallback " should {
+  private def stripMemberId(url: String) = url.substring(0, url.lastIndexOf("/"))
+
+  "group member incorpIdCallback" should {
 
     forAll(supportedOrgTypes) { orgType =>
-      "redirect to the group member organisation details type controller page" when {
+      "redirect to the group member name details page" when {
 
-        "registering a member " + orgType in {
+        s"registering a new $orgType member" in {
           val result = orgType match {
             case PARTNERSHIP =>
               simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType))
@@ -112,14 +114,35 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
               simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType))
           }
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(
-            routes.ContactDetailsNameController.displayPage().url
+          stripMemberId(redirectLocation(result).get) mustBe stripMemberId(
+            routes.ContactDetailsNameController.displayPage(groupMember.id).url
           )
+        }
+
+        s"registering an existing $orgType member" in {
+          val result = orgType match {
+            case PARTNERSHIP =>
+              simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType,
+                                                                              Seq(groupMember)
+                                          ),
+                                          Some(groupMember.id)
+              )
+            case _ =>
+              simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType,
+                                                                                 Seq(groupMember)
+                                             ),
+                                             Some(groupMember.id)
+              )
+          }
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).get mustBe routes.ContactDetailsNameController.displayPage(
+            groupMember.id
+          ).url
         }
       }
 
       "store the returned business entity information" when {
-        "registering group member " + orgType in {
+        s"registering a $orgType group member" in {
           orgType match {
             case PARTNERSHIP =>
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
@@ -147,8 +170,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
       }
 
-      "show error page and not store business entity information " when {
-        "registering with same company number " + orgType in {
+      "show error page and do not store business entity information" when {
+        s"registering a $orgType group member with same company number" in {
           authorizedUser()
           val existingMember = orgType match {
             case PARTNERSHIP =>
@@ -184,7 +207,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
 
           groupMemberSize(registration) mustBe 1
-          val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+          val result =
+            controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(
@@ -197,7 +221,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           )
         }
 
-        "registering Company with same company number as Nominated organisation " + orgType in {
+        s"registering a $orgType group member with the same company number as Nominated organisation" in {
           authorizedUser()
           var registration: Registration = registrationWithSelectedGroupMember(orgType)
 
@@ -223,7 +247,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                   )
                 )
               mockGetPartnershipBusinessDetails(updatedPartnershipBusinessDetails)
-              val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+              val result =
+                controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
 
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
@@ -248,7 +273,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                 companyName = registration.organisationDetails.incorporationDetails.get.companyName
               )
               mockGetUkCompanyDetails(detailsFromGrs)
-              val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+              val result =
+                controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
 
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
@@ -282,7 +308,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           mockRegistrationUpdateFailure()
 
           intercept[DownstreamServiceError] {
-            await(controller.grsCallback("uuid-id")(getRequest()))
+            await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
           }
 
         }
@@ -293,7 +319,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
           intercept[RuntimeException] {
-            await(controller.grsCallback("uuid-id")(getRequest()))
+            await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
           }
         }
 
@@ -323,7 +349,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
           val result =
-            controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+            controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(
@@ -342,7 +368,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           mockRegistrationFind(registrationWithSelectedGroupMember(orgType))
 
           intercept[IllegalStateException] {
-            await(controller.grsCallback("uuid-id")(getRequest()))
+            await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
           }
         }
       }
@@ -352,7 +378,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration(withGroupDetail(None)))
 
         intercept[IllegalStateException] {
-          await(controller.grsCallback("uuid-id")(getRequest()))
+          await(controller.grsCallbackNewMember("uuid-id")(getRequest()))
         }
       }
 
@@ -366,7 +392,10 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
   private def groupError(registration: Registration) =
     registration.groupDetail.flatMap(_.groupError)
 
-  private def simulateLimitedCompanyCallback(registration: Registration) = {
+  private def simulateLimitedCompanyCallback(
+    registration: Registration,
+    memberId: Option[String] = None
+  ) = {
     authorizedUser()
     mockGetUkCompanyDetails(
       IncorporationDetails("123467890",
@@ -379,18 +408,31 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
     mockRegistrationFind(registration)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    memberId match {
+      case Some(memberId) =>
+        controller.grsCallbackAmendMember(registration.incorpJourneyId.get, memberId)(getRequest())
+      case None => controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+    }
   }
 
-  private def simulatePartnershipCallback(registration: Registration) = {
+  private def simulatePartnershipCallback(
+    registration: Registration,
+    memberId: Option[String] = None
+  ) = {
     authorizedUser()
     mockGetPartnershipBusinessDetails(
-      partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
+      partnershipBusinessDetails.copy(companyProfile =
+        Some(companyProfile.copy(companyNumber = "234234234"))
+      )
     )
     mockRegistrationFind(registration)
     mockRegistrationUpdate()
 
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+    memberId match {
+      case Some(memberId) =>
+        controller.grsCallbackAmendMember(registration.incorpJourneyId.get, memberId)(getRequest())
+      case None => controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+    }
   }
 
   private def getLastSavedRegistration: Registration = {

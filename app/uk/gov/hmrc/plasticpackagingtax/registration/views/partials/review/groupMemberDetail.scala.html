@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 
 @this(
         subHeading: subHeading,
@@ -33,13 +34,13 @@
     SummaryList(
         rows = Seq(
             viewUtils.summaryListRow("reviewRegistration.member.orgName", Some(groupMember.businessName), None),
-            viewUtils.summaryListRow("reviewRegistration.member.orgType", Some(businessTypeName), None),
+            viewUtils.summaryListRow("reviewRegistration.member.orgType", Some(businessTypeName), Some(groupRoutes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id))),
             viewUtils.summaryListRow("reviewRegistration.member.companyNumber", Some(groupMember.customerIdentification1), None),
             viewUtils.summaryListRow("reviewRegistration.member.utr", groupMember.customerIdentification2, None),
-            viewUtils.summaryListRow("reviewRegistration.member.contact.name", groupMember.contactDetails.map(_.groupMemberName), None),
-            viewUtils.summaryListRow("reviewRegistration.member.contact.email", groupMember.contactDetails.flatMap(_.email), None),
-            viewUtils.summaryListRow("reviewRegistration.member.contact.phone", groupMember.contactDetails.flatMap(_.phoneNumber), None),
-            viewUtils.summaryListRow("reviewRegistration.member.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), None)
+            viewUtils.summaryListRow("reviewRegistration.member.contact.name", groupMember.contactDetails.map(_.groupMemberName), Some(groupRoutes.ContactDetailsNameController.displayPage(groupMember.id))),
+            viewUtils.summaryListRow("reviewRegistration.member.contact.email", groupMember.contactDetails.flatMap(_.email), Some(groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id))),
+            viewUtils.summaryListRow("reviewRegistration.member.contact.phone", groupMember.contactDetails.flatMap(_.phoneNumber), Some(groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id))),
+            viewUtils.summaryListRow("reviewRegistration.member.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), Some(groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id)))
         ).filterNot(_.value.content == Empty)
     )
 )

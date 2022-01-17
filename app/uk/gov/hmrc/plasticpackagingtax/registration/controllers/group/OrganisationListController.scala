@@ -51,7 +51,9 @@ class OrganisationListController @Inject() (
         detail =>
           if (detail.members.isEmpty)
             // Must add at least one group member to use this page
-            Redirect(pptControllers.group.routes.OrganisationDetailsTypeController.displayPage())
+            Redirect(
+              pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
+            )
           else
             Ok(
               page(form(),
@@ -77,7 +79,7 @@ class OrganisationListController @Inject() (
             case SaveAndContinue =>
               if (addOrganisation.answer.getOrElse(true))
                 Redirect(
-                  pptControllers.group.routes.OrganisationDetailsTypeController.displayPage()
+                  pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
                 )
               else Redirect(pptControllers.routes.TaskListController.displayPage())
             case _ => Redirect(pptControllers.routes.TaskListController.displayPage())

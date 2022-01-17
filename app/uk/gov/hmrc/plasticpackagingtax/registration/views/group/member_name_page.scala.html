@@ -33,7 +33,7 @@
 )
 
 
-@(form: Form[MemberName], organisationName: String, backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[MemberName], organisationName: String, backLink: Call, updateCall: Call, memberId: String)(implicit request: Request[_], messages: Messages)
 
 @firstNameField = @{form("firstName")}
 @lastNameField = @{form("lastName")}
@@ -69,7 +69,7 @@
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
-    @formHelper(action = groupRoutes.ContactDetailsNameController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = groupRoutes.ContactDetailsNameController.submit(memberId), 'autoComplete -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

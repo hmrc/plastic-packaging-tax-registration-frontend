@@ -22,27 +22,27 @@ import spec.PptTestData
 
 class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTestData {
 
-  "Group member contact detail " should {
+  "Group member contact detail" should {
 
-    "update name " when {
-      "contact details exist " in {
+    "update name" when {
+      "contact details exist" in {
         val member = groupMember.copy(contactDetails =
           Some(GroupMemberContactDetails(firstName = "Test", lastName = "User"))
         )
-        val result = member.withGroupMemberName("Test1", "User2")
-        result.firstName mustBe "Test1"
-        result.lastName mustBe "User2"
+        val result = member.withUpdatedGroupMemberName("Test1", "User2")
+        result.contactDetails.map(_.firstName).get mustBe "Test1"
+        result.contactDetails.map(_.lastName).get mustBe "User2"
       }
-      "with no contact details " in {
+      "with no contact details" in {
         val member = groupMember.copy(contactDetails = None)
-        val result = member.withGroupMemberName("Test1", "User2")
-        result.firstName mustBe "Test1"
-        result.lastName mustBe "User2"
+        val result = member.withUpdatedGroupMemberName("Test1", "User2")
+        result.contactDetails.map(_.firstName).get mustBe "Test1"
+        result.contactDetails.map(_.lastName).get mustBe "User2"
       }
     }
 
-    "update email address " when {
-      "contact details exist " in {
+    "update email address" when {
+      "contact details exist" in {
         val member = groupMember.copy(contactDetails =
           Some(
             GroupMemberContactDetails(firstName = "Test",
@@ -51,18 +51,18 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
             )
           )
         )
-        val result = member.withGroupMemberEmail("t@t.com")
-        result.email mustBe Some("t@t.com")
+        val result = member.withUpdatedGroupMemberEmail("t@t.com")
+        result.contactDetails.map(_.email).get mustBe Some("t@t.com")
       }
-      "with no contact details " in {
+      "with no contact details" in {
         val member = groupMember.copy(contactDetails = None)
         intercept[IllegalStateException] {
-          member.withGroupMemberEmail("t@t.com")
+          member.withUpdatedGroupMemberEmail("t@t.com")
         }
       }
     }
-    "update phone number " when {
-      "contact details exist " in {
+    "update phone number" when {
+      "contact details exist" in {
         val member = groupMember.copy(contactDetails =
           Some(
             GroupMemberContactDetails(firstName = "Test",
@@ -71,18 +71,18 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
             )
           )
         )
-        val result = member.withGroupMemberPhoneNumber("121212")
-        result.phoneNumber mustBe Some("121212")
+        val result = member.withUpdatedGroupMemberPhoneNumber("121212")
+        result.contactDetails.map(_.phoneNumber).get mustBe Some("121212")
       }
-      "with no contact details " in {
+      "with no contact details" in {
         val member = groupMember.copy(contactDetails = None)
         intercept[IllegalStateException] {
-          member.withGroupMemberPhoneNumber("0777123")
+          member.withUpdatedGroupMemberPhoneNumber("0777123")
         }
       }
     }
-    "update address " when {
-      "contact details exist " in {
+    "update address" when {
+      "contact details exist" in {
         val member = groupMember.copy(contactDetails =
           Some(
             GroupMemberContactDetails(firstName = "Test",
@@ -91,13 +91,14 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
             )
           )
         )
-        val result = member.withGroupMemberAddress(addressDetails.copy(postCode = Some("AA1 1AA")))
-        result.address.get.postCode mustBe Some("AA1 1AA")
+        val result =
+          member.withUpdatedGroupMemberAddress(addressDetails.copy(postCode = Some("AA1 1AA")))
+        result.contactDetails.map(_.address.get.postCode).get mustBe Some("AA1 1AA")
       }
-      "with no contact details " in {
+      "with no contact details" in {
         val member = groupMember.copy(contactDetails = None)
         intercept[IllegalStateException] {
-          member.withGroupMemberPhoneNumber("0777123")
+          member.withUpdatedGroupMemberPhoneNumber("0777123")
         }
       }
     }

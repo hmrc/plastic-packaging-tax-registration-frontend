@@ -43,28 +43,28 @@ case class GroupMember(
       case _              => false
     }
 
-  def withGroupMemberName(firstName: String, lastName: String): GroupMemberContactDetails =
-    contactDetails match {
-      case Some(contactDetail) =>
-        contactDetail.copy(firstName = firstName, lastName = lastName)
-      case _ =>
-        GroupMemberContactDetails(firstName = firstName, lastName = lastName)
-    }
+  def withUpdatedGroupMemberName(firstName: String, lastName: String): GroupMember =
+    this.copy(contactDetails = Some(this.contactDetails match {
+      case Some(cd) => cd.copy(firstName = firstName, lastName = lastName)
+      case None     => GroupMemberContactDetails(firstName = firstName, lastName = lastName)
+    }))
 
-  def withGroupMemberEmail(email: String): GroupMemberContactDetails =
-    contactDetails.map(_.copy(email = Some(email))).getOrElse(
-      throw new IllegalStateException("No contact details found")
-    )
+  def withUpdatedGroupMemberEmail(email: String): GroupMember =
+    withUpdatedContactDetails(cd => cd.copy(email = Some(email)))
 
-  def withGroupMemberPhoneNumber(phoneNumber: String): GroupMemberContactDetails =
-    contactDetails.map(_.copy(phoneNumber = Some(phoneNumber))).getOrElse(
-      throw new IllegalStateException("No contact details found")
-    )
+  def withUpdatedGroupMemberPhoneNumber(phoneNumber: String): GroupMember =
+    withUpdatedContactDetails(cd => cd.copy(phoneNumber = Some(phoneNumber)))
 
-  def withGroupMemberAddress(address: Address): GroupMemberContactDetails =
-    contactDetails.map(_.copy(address = Some(address))).getOrElse(
-      throw new IllegalStateException("No contact details found")
-    )
+  def withUpdatedGroupMemberAddress(address: Address): GroupMember =
+    withUpdatedContactDetails(cd => cd.copy(address = Some(address)))
+
+  private def withUpdatedContactDetails(
+    update: GroupMemberContactDetails => GroupMemberContactDetails
+  ) =
+    this.copy(contactDetails = Some(this.contactDetails match {
+      case Some(cd) => update(cd)
+      case None     => throw new IllegalStateException("No contact details found")
+    }))
 
 }
 

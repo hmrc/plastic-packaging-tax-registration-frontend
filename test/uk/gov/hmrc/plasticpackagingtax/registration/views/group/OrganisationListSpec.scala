@@ -19,6 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.group
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
@@ -78,6 +80,16 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
       view must containElementWithID("addOrganisation")
       view must containElementWithID("addOrganisation-2")
+    }
+
+    "display change link for nominated org" in {
+      view.select("li a").get(0) must haveHref(orgRoutes.CheckAnswersController.displayPage())
+    }
+
+    "display change links for group members" in {
+      view.select("li a").get(1) must haveHref(
+        groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id)
+      )
     }
 
     "display 'Save and continue' button" in {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.4
+// @version      15.5
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -201,12 +201,7 @@ function getPasscode(){
 }
 
 const currentPageIs = (path) => {
-    if(path.includes("*")) {
-        let matches = window.location.pathname.match(path)
-        return matches && window.location.pathname.endsWith(path.slice(-5))
-    } else {
-        return path === window.location.pathname
-    }
+    return window.location.pathname.match(RegExp(path))
 }
 
 /*########################     PPT REGISTRATION PAGES     ########################## */
@@ -491,7 +486,7 @@ const groupMemberOrganisation = () => {
 }
 
 const groupMemberContactName = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-name')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-name/.*')) {
 
         document.getElementById('firstName').value = "James"
         document.getElementById('lastName').value = "Sparrow"
@@ -500,7 +495,7 @@ const groupMemberContactName = () => {
 }
 
 const groupMemberContactEmailAddress = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-email')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-email/.*')) {
 
         document.getElementById('value').value = "test@test.com"
         document.getElementsByClassName('govuk-button')[0].click()
@@ -508,9 +503,16 @@ const groupMemberContactEmailAddress = () => {
 }
 
 const groupMemberContactPhoneNumber = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-telephone')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-telephone/.*')) {
 
         document.getElementById('value').value = "07712345677"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const groupMemberContactCheckAnswers = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-check-answers/.*')) {
+
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -755,6 +757,7 @@ function completeJourney(manualJourney) {
     groupMemberContactName()
     groupMemberContactEmailAddress()
     groupMemberContactPhoneNumber()
+    groupMemberContactCheckAnswers()
 
     //review registration
     if(manualJourney){
