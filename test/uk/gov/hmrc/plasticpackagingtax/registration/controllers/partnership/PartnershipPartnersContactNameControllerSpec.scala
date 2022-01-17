@@ -27,23 +27,23 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnershipPartnersEmailAddressControllerSpec
-    extends ControllerSpec with DefaultAwaitTimeout {
+class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[email_address_page]
+  private val page = mock[member_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnershipOtherPartnerEmailAddressController(authenticate = mockAuthAction,
-                                                      journeyAction = mockJourneyAction,
-                                                      registrationConnector =
-                                                        mockRegistrationConnector,
-                                                      mcc = mcc,
-                                                      page = page
+    new PartnershipOtherPartnerContactNameController(authenticate = mockAuthAction,
+                                                     journeyAction = mockJourneyAction,
+                                                     registrationConnector =
+                                                       mockRegistrationConnector,
+                                                     mcc = mcc,
+                                                     page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -56,17 +56,15 @@ class PartnershipPartnersEmailAddressControllerSpec
     super.afterEach()
   }
 
-  def registrationWithInflightOtherPartnerJourney =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightOtherPartner(
-      Some(OtherPartner(firstName = Some("John"), lastName = Some("Smith")))
-    )
+  def registrationWithPartnershipDetails =
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
 
   "PartnershipOtherPartnerEmailAddressController" should {
 
     "return 200" when {
-      "user is authorised, a registration already exists with already collected contact name and display page method is invoked" in {
+      "user is authorised, a registration already exists with already collected nominated partner" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+        mockRegistrationFind(registrationWithPartnershipDetails)
 
         val result = controller.displayPage()(getRequest())
 
@@ -75,7 +73,7 @@ class PartnershipPartnersEmailAddressControllerSpec
     }
 
     "return 404" when {
-      "user is authorised but does not have an inflight journey and display page method is invoked" in {
+      "user is authorised but does have a nominated partner and display page method is invoked" in {
         authorizedUser()
 
         val result = controller.displayPage()(getRequest())
@@ -98,7 +96,7 @@ class PartnershipPartnersEmailAddressControllerSpec
         authorizedUser()
         mockRegistrationUpdateFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit()(postRequest(Json.toJson(MemberName("John", "Smith"))))
 
         intercept[DownstreamServiceError](status(result))
       }
