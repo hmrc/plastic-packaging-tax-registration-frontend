@@ -28,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyActio
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.check_other_partner_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,7 +63,8 @@ class PartnershipOtherPartnerCheckAnswersController @Inject() (
   ): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.inflightOtherPartner.map { otherPartner =>
-        registration.addOtherPartner(otherPartner).withInflightOtherPartner(None)
+        val withIdAssigned = otherPartner.copy(id = Some(UUID.randomUUID().toString))
+        registration.addOtherPartner(withIdAssigned).withInflightOtherPartner(None)
       }.getOrElse(registration)
     }
 
