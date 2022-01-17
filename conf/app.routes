@@ -100,6 +100,10 @@ GET        /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagin
 POST       /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.submit()
 GET        /partnerships/other-partners/job-title uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerJobTitleController.displayPage()
 POST       /partnerships/other-partners/job-title uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerJobTitleController.submit()
+GET        /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.displayPage()
+POST       /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.submit()
+GET        /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.displayPage()
+POST       /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.submit()
 GET        /partnerships/check-answers-other-partner uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerCheckAnswersController.displayPage()
 POST       /partnerships/check-answers-other-partner uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerCheckAnswersController.submit()
 

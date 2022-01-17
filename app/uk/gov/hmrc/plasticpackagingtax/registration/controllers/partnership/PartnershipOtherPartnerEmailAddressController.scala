@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -29,22 +29,22 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
   routes => partnershipRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnershipOtherPartnerJobTitleController @Inject() (
+class PartnershipOtherPartnerEmailAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: job_title_page
+  page: email_address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -54,20 +54,20 @@ class PartnershipOtherPartnerJobTitleController @Inject() (
         inflight    <- request.registration.inflightOtherPartner
         contactName <- inflight.contactName
 
-      } yield inflight.jobTitle match {
+      } yield inflight.emailAddress match {
         case Some(data) =>
           Ok(
-            page(JobTitle.form().fill(JobTitle(data)),
-                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerJobTitleController.submit(),
+            page(EmailAddress.form().fill(EmailAddress(data)),
+                 partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
                  contactName
             )
           )
         case _ =>
           Ok(
-            page(JobTitle.form(),
-                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerJobTitleController.submit(),
+            page(EmailAddress.form(),
+                 partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
                  contactName
             )
           )
@@ -76,29 +76,29 @@ class PartnershipOtherPartnerJobTitleController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      JobTitle.form()
+      EmailAddress.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[JobTitle]) =>
+          (formWithErrors: Form[EmailAddress]) =>
             (for {
-              inflightOtherParter <- request.registration.inflightOtherPartner
-              contactName         <- inflightOtherParter.contactName
+              inflight    <- request.registration.inflightOtherPartner
+              contactName <- inflight.contactName
             } yield Future.successful(
               BadRequest(
                 page(formWithErrors,
-                     partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerJobTitleController.submit(),
+                     partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage(),
+                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
                      contactName
                 )
               )
             )).getOrElse(Future.successful(NotFound)),
-          jobTitle =>
-            updateRegistration(jobTitle).map {
+          emailAddress =>
+            updateRegistration(emailAddress).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     Redirect(
-                      partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage()
+                      partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.displayPage()
                     )
                   case _ =>
                     Redirect(commonRoutes.TaskListController.displayPage())
@@ -109,12 +109,12 @@ class PartnershipOtherPartnerJobTitleController @Inject() (
     }
 
   private def updateRegistration(
-    formData: JobTitle
+    formData: EmailAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       (for {
         inflight <- registration.inflightOtherPartner
-      } yield inflight.copy(jobTitle = Some(formData.value))).map { updated =>
+      } yield inflight.copy(emailAddress = Some(formData.value))).map { updated =>
         registration.withInflightOtherPartner(Some(updated))
       }.getOrElse {
         registration

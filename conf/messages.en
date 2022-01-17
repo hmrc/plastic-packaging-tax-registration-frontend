@@ -335,13 +335,15 @@ partnership.name.title = What's the name of the partnership?
 partnership.name.empty.error = Please enter your partnership name
 partnership.name.format.error = Please enter your partnership name in correct format
 
-partnerships.otherPartners.title=You have {0} partners in your partnership
-partnership.otherPartners.contactNamePage.title=Who is the main contact for {0}?
-partnership.otherPartners.contactJobTitlePage.title=What is {0}'s job title'?
-partnership.otherPartners.checkAnswers.contactName=Name
-partnership.otherPartners.checkAnswers.jobTitle=Job title
-partnership.otherPartners.checkAnswers.emailAddress=Email address
-partnership.otherPartners.checkAnswers.phoneNumber=Phone number
+partnerships.otherPartners.title = You have {0} partners in your partnership
+partnership.otherPartners.contactNamePage.title = Who is the main contact for {0}?
+partnership.otherPartners.contactJobTitlePage.title = What is {0}’s job title?
+partnership.otherPartners.contactEmailAddressPage.title = What is {0}’s email address?
+partnership.otherPartners.contactPhoneNumberPage.title = What is {0}’s telephone number?
+partnership.otherPartners.checkAnswers.contactName = Name
+partnership.otherPartners.checkAnswers.jobTitle = Job title
+partnership.otherPartners.checkAnswers.emailAddress = Email address
+partnership.otherPartners.checkAnswers.phoneNumber = Phone number
 
 unauthorised.heading = You are not registered for Plastic Packaging Tax
 unauthorised.paragraph.1 = The Plastic Packaging Tax (PPT) service will launch in April 2022, and is currently available to a limited number of people for their feedback.

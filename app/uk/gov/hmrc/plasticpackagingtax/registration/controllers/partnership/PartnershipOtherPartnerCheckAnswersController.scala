@@ -43,21 +43,18 @@ class PartnershipOtherPartnerCheckAnswersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      val otherPartner = request.registration.inflightOtherPartner.get // TODO unchecked get
-      Ok(
-        page(otherPartner,
-             partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage()
-        )
-      )
+      (for {
+        inflight <- request.registration.inflightOtherPartner
+      } yield Ok(
+        page(inflight, partnershipRoutes.PartnershipOtherPartnerJobTitleController.displayPage())
+      )).getOrElse(NotFound)
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      val x = updateRegistration.map { _ =>
-        val result: Result = Redirect(routes.PartnershipPartnersListController.displayPage())
-        result
+      updateRegistration.map { _ =>
+        Redirect(routes.PartnershipPartnersListController.displayPage())
       }
-      x
     }
 
   private def updateRegistration()(implicit

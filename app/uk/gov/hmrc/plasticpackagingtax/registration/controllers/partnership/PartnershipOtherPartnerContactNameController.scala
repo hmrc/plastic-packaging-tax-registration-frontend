@@ -50,28 +50,31 @@ class PartnershipOtherPartnerContactNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      def partnerShipName =
-        request.registration.organisationDetails.partnershipDetails.flatMap(
-          _.partnershipName
-        ).get // TODO unchecked get
-      request.registration.inflightOtherPartner.flatMap(_.contactName) match {
-        case Some(data) =>
-          Ok(
-            page(FullName.form().fill(FullName(data)),
-                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
-                 partnerShipName
+      {
+        for {
+          partnershipDetails <- request.registration.organisationDetails.partnershipDetails
+          partnershipName    <- partnershipDetails.partnershipName
+
+        } yield request.registration.inflightOtherPartner.flatMap(_.contactName) match {
+          case Some(data) =>
+            Ok(
+              page(FullName.form().fill(FullName(data)),
+                   partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
+                   partnershipName
+              )
             )
-          )
-        case None =>
-          Ok(
-            page(FullName.form(),
-                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
-                 partnerShipName
+          case None =>
+            Ok(
+              page(FullName.form(),
+                   partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
+                   partnershipName
+              )
             )
-          )
-      }
+        }
+
+      }.getOrElse(NotFound)
     }
 
   def submit(): Action[AnyContent] =
