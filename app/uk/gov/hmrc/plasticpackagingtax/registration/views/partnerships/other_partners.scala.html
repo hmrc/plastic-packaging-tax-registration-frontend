@@ -42,7 +42,7 @@
     }
 }
 
-@govukLayout(title = Title("partnerships.otherPartners.title"),
+@govukLayout(title = Title(messages("partnerships.otherPartners.title", numberOfPartners)),
 backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
 
  @pageHeading(messages("partnerships.otherPartners.title", numberOfPartners))

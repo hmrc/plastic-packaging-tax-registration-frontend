@@ -28,11 +28,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
   routes => partnershipRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.full_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.member_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -44,7 +44,7 @@ class PartnershipOtherPartnerContactNameController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: full_name_page
+  page: member_name_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -55,21 +55,26 @@ class PartnershipOtherPartnerContactNameController @Inject() (
           partnershipDetails <- request.registration.organisationDetails.partnershipDetails
           partnershipName    <- partnershipDetails.partnershipName
 
-        } yield request.registration.inflightOtherPartner.flatMap(_.contactName) match {
+        } yield request.registration.inflightOtherPartner.flatMap { inflight =>
+          for {
+            firstName <- inflight.firstName
+            lastName  <- inflight.lastName
+          } yield (firstName, lastName)
+        } match {
           case Some(data) =>
             Ok(
-              page(FullName.form().fill(FullName(data)),
+              page(MemberName.form().fill(MemberName(data._1, data._2)),
+                   partnershipName,
                    partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
-                   partnershipName
+                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
               )
             )
           case None =>
             Ok(
-              page(FullName.form(),
+              page(MemberName.form(),
+                   partnershipName,
                    partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
-                   partnershipName
+                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
               )
             )
         }
@@ -83,16 +88,16 @@ class PartnershipOtherPartnerContactNameController @Inject() (
         request.registration.organisationDetails.partnershipDetails.flatMap(
           _.partnershipName
         ).get // TODO unchecked get
-      FullName.form()
+      MemberName.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[FullName]) =>
+          (formWithErrors: Form[MemberName]) =>
             Future.successful(
               BadRequest(
                 page(formWithErrors,
+                     partnerShipName,
                      partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerContactNameController.submit(),
-                     partnerShipName
+                     partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
                 )
               )
             ),
@@ -113,12 +118,16 @@ class PartnershipOtherPartnerContactNameController @Inject() (
     }
 
   private def updateRegistration(
-    formData: FullName
+    formData: MemberName
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val otherPartner = registration.inflightOtherPartner.getOrElse(OtherPartner())
       registration.withInflightOtherPartner(
-        Some(otherPartner.copy(contactName = Some(formData.value)))
+        Some(
+          otherPartner.copy(firstName = Some(formData.firstName),
+                            lastName = Some(formData.lastName)
+          )
+        )
       )
     }
 

@@ -19,11 +19,19 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 import play.api.libs.json.{Json, OFormat}
 
 case class OtherPartner(
-  contactName: Option[String] = None,
-  jobTitle: Option[String] = None,
+  firstName: Option[String] = None,
+  lastName: Option[String] = None,
   emailAddress: Option[String] = None,
   phoneNumber: Option[String] = None
-)
+) {
+
+  def contactName: Option[String] =
+    for {
+      firstName <- firstName
+      lastName  <- lastName
+    } yield Seq(firstName, lastName).mkString(" ")
+
+}
 
 object OtherPartner {
   implicit val format: OFormat[OtherPartner] = Json.format[OtherPartner]
