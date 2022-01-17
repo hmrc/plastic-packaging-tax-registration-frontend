@@ -120,20 +120,20 @@ GET        /group-nominated-organisation-already-registered    uk.gov.hmrc.plast
 GET        /organisation-already-in-group    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.organisationAlreadyInGroup()
 GET        /group-organisation-already-registered    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.groupMemberAlreadyRegistered()
 
-GET        /member-or-partner-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsNameController.displayPage(memberId)
-POST       /member-or-partner-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsNameController.submit(memberId)
+GET        /group-member-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsNameController.displayPage(memberId)
+POST       /group-member-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsNameController.submit(memberId)
 
-GET        /member-or-partner-contact-email/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressController.displayPage(memberId)
-POST       /member-or-partner-contact-email/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressController.submit(memberId)
+GET        /group-member-contact-email/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressController.displayPage(memberId)
+POST       /group-member-contact-email/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressController.submit(memberId)
 
-GET        /member-or-partner-contact-telephone/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.displayPage(memberId)
-POST       /member-or-partner-contact-telephone/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.submit(memberId)
+GET        /group-member-contact-telephone/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.displayPage(memberId)
+POST       /group-member-contact-telephone/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberController.submit(memberId)
 
-GET        /member-or-partner-check-answers/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.displayPage(memberId)
-POST       /member-or-partner-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.submit()
+GET        /group-member-check-answers/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.displayPage(memberId)
+POST       /group-member-check-answers              uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.submit()
 
-GET        /member-contact-address/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.displayPage(memberId)
-GET        /member-contact-address-callback/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.alfCallback(id: Option[String], memberId: String)
+GET        /group-member-contact-address/:memberId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.displayPage(memberId)
+GET        /group-member-contact-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.alfCallback(id: Option[String], memberId: String)
 
 GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
 POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
