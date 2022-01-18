@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.5
+// @version      15.6
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -486,7 +486,7 @@ const groupMemberOrganisation = () => {
 }
 
 const groupMemberContactName = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-name/.*')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/group-member-contact-name/.*')) {
 
         document.getElementById('firstName').value = "James"
         document.getElementById('lastName').value = "Sparrow"
@@ -495,7 +495,7 @@ const groupMemberContactName = () => {
 }
 
 const groupMemberContactEmailAddress = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-email/.*')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/group-member-contact-email/.*')) {
 
         document.getElementById('value').value = "test@test.com"
         document.getElementsByClassName('govuk-button')[0].click()
@@ -503,7 +503,7 @@ const groupMemberContactEmailAddress = () => {
 }
 
 const groupMemberContactPhoneNumber = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-contact-telephone/.*')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/group-member-contact-telephone/.*')) {
 
         document.getElementById('value').value = "07712345677"
         document.getElementsByClassName('govuk-button')[0].click()
@@ -511,7 +511,7 @@ const groupMemberContactPhoneNumber = () => {
 }
 
 const groupMemberContactCheckAnswers = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/member-or-partner-check-answers/.*')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/group-member-check-answers/.*')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
