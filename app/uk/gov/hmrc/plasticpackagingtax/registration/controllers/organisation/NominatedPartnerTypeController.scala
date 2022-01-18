@@ -33,8 +33,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   LIMITED_LIABILITY_PARTNERSHIP,
   OVERSEAS_COMPANY_UK_BRANCH,
   SCOTTISH_LIMITED_PARTNERSHIP,
@@ -76,50 +76,54 @@ class NominatedPartnerTypeController @Inject() (
           Future(
             Ok(
               page(
-                PartnershipPartnerType.form().fill(
-                  PartnershipPartnerType(partnershipDetails.nominatedPartnershipType)
+                PartnerType.form().fill(
+                  PartnerType(
+                    partnershipDetails.nominatedPartner.map(_.partnerType).getOrElse(
+                      throw new IllegalStateException("No Partner partnership type found")
+                    )
+                  )
                 )
               )
             )
           )
-        case _ => Future(Ok(page(PartnershipPartnerType.form())))
+        case _ => Future(Ok(page(PartnerType.form())))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      PartnershipPartnerType.form()
+      PartnerType.form()
         .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[PartnershipPartnerType]) =>
-            Future(BadRequest(page(formWithErrors))),
-          (partnershipPartnerType: PartnershipPartnerType) =>
-            updateNominatedPartnershipType(partnershipPartnerType).flatMap { _ =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  partnershipPartnerType.answer match {
-                    case Some(SOLE_TRADER) =>
-                      getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-                      getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-                      getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(SCOTTISH_PARTNERSHIP) =>
-                      getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                      getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case _ =>
-                      //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
-                      Future(Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad()))
+        .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),
+              (partnershipPartnerType: PartnerType) =>
+                updateNominatedPartnershipType(partnershipPartnerType).flatMap { _ =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      partnershipPartnerType.answer match {
+                        case Some(SOLE_TRADER) =>
+                          getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl)
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+                          getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl)
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
+                          getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl)
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case Some(SCOTTISH_PARTNERSHIP) =>
+                          getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl)
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
+                          getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl)
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case _ =>
+                          //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
+                          Future(
+                            Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
+                          )
+                      }
+                    case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
                   }
-                case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
-              }
-            }
+                }
         )
     }
 
@@ -164,16 +168,21 @@ class NominatedPartnerTypeController @Inject() (
     )
 
   private def updateNominatedPartnershipType(
-    partnershipPartnerType: PartnershipPartnerType
+    partnershipPartnerType: PartnerType
   )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
     update {
       registration =>
         registration.copy(organisationDetails =
           registration.organisationDetails.copy(partnershipDetails =
             Some(
-              registration.organisationDetails.partnershipDetails.get.copy(
-                nominatedPartnershipType = partnershipPartnerType.answer
-              )
+              registration.organisationDetails.partnershipDetails.map(
+                details =>
+                  details.copy(nominatedPartner = details.nominatedPartner match {
+                    case Some(partner) =>
+                      Some(partner.copy(partnerType = partnershipPartnerType.answer))
+                    case _ => throw new IllegalStateException("No nominated partner found")
+                  })
+              ).getOrElse(throw new IllegalStateException("No partnership details found"))
             )
           )
         )

@@ -60,8 +60,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
 
-  private val page           = instanceOf[review_registration_page]
-  private val countryService = instanceOf[CountryService]
+  private val page = instanceOf[review_registration_page]
 
   private val liabilitySection      = 0
   private val organisationSection   = 1

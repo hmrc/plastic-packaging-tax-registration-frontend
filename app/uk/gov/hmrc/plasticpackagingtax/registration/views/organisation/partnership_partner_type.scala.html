@@ -16,10 +16,10 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.{controllers => pptControllers}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerType
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 
 @this(
     formHelper: FormWithCSRF,
@@ -31,9 +31,10 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[PartnershipPartnerType])(implicit request: Request[_], messages: Messages)
+
+@(form: Form[PartnerType])(implicit request: Request[_], messages: Messages)
     
-    @radioItem(ppType: PartnershipPartnerTypeEnum) = @{
+    @radioItem(ppType: PartnerTypeEnum) = @{
         RadioItem(content = Text(displayName(ppType)), value = Some(ppType), checked = form("answer").value.contains(ppType.toString))
     }
 

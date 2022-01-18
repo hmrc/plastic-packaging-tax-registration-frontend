@@ -16,7 +16,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation
 
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
+import play.api.i18n.Messages
 import play.api.libs.json.{Format, Reads, Writes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 
 object PartnerTypeEnum extends Enumeration {
   type PartnerTypeEnum = Value
@@ -29,7 +34,36 @@ object PartnerTypeEnum extends Enumeration {
   val OVERSEAS_COMPANY_UK_BRANCH: Value           = Value("OverseasCompanyUkBranch")
   val OVERSEAS_COMPANY_NO_UK_BRANCH: Value        = Value("OverseasCompanyNoUKBranch")
 
+  def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
+
+  def displayName(partnerTypeEnum: PartnerTypeEnum)(implicit messages: Messages): String =
+    messages(s"nominated.partner.type.$partnerTypeEnum")
+
+  implicit def value(partnerTypeEnum: PartnerTypeEnum): String =
+    partnerTypeEnum.toString
+
   implicit val format: Format[PartnerTypeEnum] =
     Format(Reads.enumNameReads(PartnerTypeEnum), Writes.enumNameWrites)
+
+}
+
+case class PartnerType(answer: Option[PartnerTypeEnum])
+
+object PartnerType extends CommonFormValidators {
+  lazy val emptyError = "partnership.partner.name.empty.error"
+
+  def form(): Form[PartnerType] =
+    Form(
+      mapping(
+        "answer" -> text()
+          .verifying(emptyError, contains(PartnerTypeEnum.values.toSeq.map(_.toString)))
+      )(PartnerType.apply)(PartnerType.unapply)
+    )
+
+  def apply(value: String): PartnerType =
+    PartnerType(PartnerTypeEnum.withNameOpt(value))
+
+  def unapply(partnerType: PartnerType): Option[String] =
+    partnerType.answer.map(_.toString)
 
 }

@@ -105,6 +105,24 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
       )
     ).thenReturn(Future.successful(redirectUrl))
 
+  def mockCreateSoleTraderPartnershipGrsJourneyCreation(
+    redirectUrl: String
+  ): OngoingStubbing[Future[String]] =
+    when(
+      mockSoleTraderGrsConnector.createJourney(any[SoleTraderGrsCreateRequest], any[String])(any(),
+                                                                                             any()
+      )
+    ).thenReturn(Future.successful(redirectUrl))
+
+  def mockCreateUkCompanyPartnershipGrsJourneyCreation(
+    redirectUrl: String
+  ): OngoingStubbing[Future[String]] =
+    when(
+      mockUkCompanyGrsConnector.createJourney(any[IncorpEntityGrsCreateRequest], any[String])(any(),
+                                                                                              any()
+      )
+    ).thenReturn(Future.successful(redirectUrl))
+
   def lastPartnershipGrsJourneyCreation(): (PartnershipGrsCreateRequest, String) = {
     val partnershipGrsCreateRequestCaptor: ArgumentCaptor[PartnershipGrsCreateRequest] =
       ArgumentCaptor.forClass(classOf[PartnershipGrsCreateRequest])

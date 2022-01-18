@@ -30,8 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   RegistrationDate
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum.PartnershipPartnerTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
@@ -235,7 +234,6 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val generalPartnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
                        partnershipName = Some("General Partnership"),
-                       nominatedPartnershipType = Some(PartnershipPartnerTypeEnum.UK_COMPANY),
                        partnershipBusinessDetails =
                          Some(
                            PartnershipBusinessDetails(testSatur,
@@ -258,6 +256,9 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                            )
                          )
     )
+
+  protected def nominatedPartner(partnerTypeEnum: PartnerTypeEnum): Option[Partner] =
+    Some(Partner(id = "3534345", partnerType = Some(partnerTypeEnum)))
 
   protected val llpPartnershipDetails: PartnershipDetails =
     PartnershipDetails(partnershipType = LIMITED_LIABILITY_PARTNERSHIP,
@@ -396,14 +397,12 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected def unregisteredPartnershipDetails(
     partnershipType: PartnershipTypeEnum,
-    partnershipName: Option[String] = None,
-    nominatedPartnershipType: Option[PartnershipPartnerTypeEnum] = None
+    partnershipName: Option[String] = None
   ): OrganisationDetails =
     OrganisationDetails(organisationType = Some(PARTNERSHIP),
                         partnershipDetails = Some(
                           PartnershipDetails(partnershipType = partnershipType,
                                              partnershipName = partnershipName,
-                                             nominatedPartnershipType = nominatedPartnershipType,
                                              partnershipBusinessDetails = None
                           )
                         )

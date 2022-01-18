@@ -26,8 +26,11 @@ import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  PartnerType,
+  PartnerTypeEnum
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -49,7 +52,9 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
   )
 
   private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetails))
+    withPartnershipDetails(
+      Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+    )
   )
 
   override protected def beforeEach(): Unit = {
@@ -76,7 +81,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       "no previous partnership partner type in registration" in {
         val registration = aRegistration(
           withPartnershipDetails(
-            Some(generalPartnershipDetails.copy(nominatedPartnershipType = None))
+            Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
           )
         )
 
@@ -89,7 +94,11 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       }
 
       "previous partnership partner type in registration" in {
-        val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
+        val registration = aRegistration(
+          withPartnershipDetails(
+            Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+          )
+        )
 
         authorizedUser()
         mockRegistrationFind(registration)
@@ -100,11 +109,39 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       }
     }
 
-    //TODO add more entities here
     "redirect to partnership GRS" when {
       forAll(
-        Seq((SCOTTISH_LIMITED_PARTNERSHIP, scottishPartnershipDetails),
-            (LIMITED_LIABILITY_PARTNERSHIP, llpPartnershipDetails)
+        Seq(
+          (SCOTTISH_LIMITED_PARTNERSHIP,
+           scottishPartnershipDetails.copy(nominatedPartner =
+             nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP)
+           )
+          ),
+          (LIMITED_LIABILITY_PARTNERSHIP,
+           llpPartnershipDetails.copy(nominatedPartner =
+             nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP)
+           )
+          ),
+          (SOLE_TRADER,
+           scottishPartnershipDetails.copy(nominatedPartner =
+             nominatedPartner(PartnerTypeEnum.SOLE_TRADER)
+           )
+          ),
+          (UK_COMPANY,
+           scottishPartnershipDetails.copy(nominatedPartner =
+             nominatedPartner(PartnerTypeEnum.UK_COMPANY)
+           )
+          ),
+          (OVERSEAS_COMPANY_UK_BRANCH,
+           scottishPartnershipDetails.copy(nominatedPartner =
+             nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH)
+           )
+          ),
+          (SCOTTISH_PARTNERSHIP,
+           scottishPartnershipDetails.copy(nominatedPartner =
+             nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)
+           )
+          )
         )
       ) { partnershipDetails =>
         s"a ${partnershipDetails._1} type was selected" in {
@@ -113,7 +150,16 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
           authorizedUser()
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          partnershipDetails._1 match {
+            case SOLE_TRADER =>
+              mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+            case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
+              mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
+                SCOTTISH_LIMITED_PARTNERSHIP =>
+              mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+            case _ => None
+          }
 
           val correctForm =
             Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
@@ -126,7 +172,11 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
     "redirect to registration main page" when {
       "save and come back later button is used" in {
-        val registration = aRegistration(withPartnershipDetails(Some(llpPartnershipDetails)))
+        val registration = aRegistration(
+          withPartnershipDetails(
+            Some(llpPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+          )
+        )
 
         authorizedUser()
         mockRegistrationFind(registration)
@@ -141,7 +191,11 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
     }
 
     "throw errors resulting from failed registration updates for LLP" in {
-      val registration = aRegistration(withPartnershipDetails(Some(llpPartnershipDetails)))
+      val registration = aRegistration(
+        withPartnershipDetails(
+          Some(llpPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+        )
+      )
 
       authorizedUser()
       mockRegistrationFind(registration)
@@ -158,7 +212,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
     "returns bad request when empty radio button submitted" in {
       val registration = aRegistration(
         withPartnershipDetails(
-          Some(generalPartnershipDetails.copy(nominatedPartnershipType = None))
+          Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
         )
       )
 
@@ -185,8 +239,8 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
             aRegistration(
               withPartnershipDetails(
                 Some(
-                  generalPartnershipDetails.copy(nominatedPartnershipType =
-                    Some(PartnershipPartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
+                  generalPartnershipDetails.copy(nominatedPartner =
+                    nominatedPartner(PartnerTypeEnum.UK_COMPANY)
                   )
                 )
               )

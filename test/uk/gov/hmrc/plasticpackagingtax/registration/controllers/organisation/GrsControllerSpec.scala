@@ -29,8 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes =>
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   GENERAL_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
@@ -93,10 +91,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private val unregisteredGeneralPartnership = aRegistration(
     withOrganisationDetails(
-      unregisteredPartnershipDetails(GENERAL_PARTNERSHIP,
-                                     Some("General Partnership"),
-                                     Some(UK_COMPANY)
-      )
+      unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership"))
     )
   )
 
