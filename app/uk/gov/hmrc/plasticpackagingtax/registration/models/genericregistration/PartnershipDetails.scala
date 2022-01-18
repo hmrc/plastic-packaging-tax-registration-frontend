@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipPartnerTypeEnum.PartnershipPartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
   LIMITED_LIABILITY_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
@@ -29,8 +28,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.Partnersh
 case class PartnershipDetails(
   partnershipType: PartnershipTypeEnum,
   partnershipName: Option[String] = None,
-  nominatedPartnershipType: Option[PartnershipPartnerTypeEnum] = None,
-  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
+  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None,
+  nominatedPartner: Option[Partner] = None,
+  otherPartners: Option[Seq[Partner]] = None,
+  inflightPartner: Option[Partner] = None // Scratch area for newly added partner
 ) {
 
   val partnershipOrCompanyName: Option[String] = partnershipName match {
