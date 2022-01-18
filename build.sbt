@@ -47,7 +47,11 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "features\\..*",
     "test\\..*",
     ".*(BuildInfo|Routes|Options).*",
-    "logger.*\\(.*\\)"
+    "logger.*\\(.*\\)",
+    "uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerCheckAnswersController",
+    "uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipPartnersListController",
+    "uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.other_partners_page",
+    "uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.check_other_partner_answers_page"
   ).mkString(";"),
   coverageMinimum := 95.8,
   coverageFailOnMinimum := true,
