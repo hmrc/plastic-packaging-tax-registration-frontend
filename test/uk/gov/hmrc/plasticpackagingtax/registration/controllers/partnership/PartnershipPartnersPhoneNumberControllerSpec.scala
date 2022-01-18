@@ -70,12 +70,31 @@ class PartnershipPartnersPhoneNumberControllerSpec extends ControllerSpec with D
       Some(OtherPartner(firstName = Some("John"), lastName = Some("Smith")))
     )
 
+  def registrationWithInflightOtherPartnerJourneyAndPhoneNumber =
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightOtherPartner(
+      Some(
+        OtherPartner(firstName = Some("John"),
+                     lastName = Some("Smith"),
+                     phoneNumber = Some("12345678")
+        )
+      )
+    )
+
   "PartnershipOtherPartnerPhoneNumberController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected contact name and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "user is authorised, a registration already exists with already collected contact name and phone number display page method is invoked" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithInflightOtherPartnerJourneyAndPhoneNumber)
 
         val result = controller.displayPage()(getRequest())
 

@@ -61,12 +61,31 @@ class PartnershipPartnersEmailAddressControllerSpec
       Some(OtherPartner(firstName = Some("John"), lastName = Some("Smith")))
     )
 
+  def registrationWithInflightOtherPartnerJourneyAndEmailAddress =
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightOtherPartner(
+      Some(
+        OtherPartner(firstName = Some("John"),
+                     lastName = Some("Smith"),
+                     emailAddress = Some("test@localhost")
+        )
+      )
+    )
+
   "PartnershipOtherPartnerEmailAddressController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected contact name and display page method is invoked" in {
         authorizedUser()
         mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "user is authorised, a registration already exists with already collected contact name and email address display page method is invoked" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithInflightOtherPartnerJourneyAndEmailAddress)
 
         val result = controller.displayPage()(getRequest())
 
