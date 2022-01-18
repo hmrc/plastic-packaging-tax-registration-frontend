@@ -25,7 +25,13 @@ case class PartnerContactDetails(
   emailAddress: Option[String] = None,
   phoneNumber: Option[String] = None,
   address: Option[Address] = None
-)
+) {
+
+  lazy val name: Option[String] =
+    if (firstName.isDefined && lastName.isDefined) Some(s"${firstName.get} ${lastName.get}")
+    else None
+
+}
 
 object PartnerContactDetails {
   implicit val format: OFormat[PartnerContactDetails] = Json.format[PartnerContactDetails]

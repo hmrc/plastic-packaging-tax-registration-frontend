@@ -314,6 +314,12 @@ organisationDetails.type.RegisteredSociety = Registered society
 organisationDetails.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
 organisationDetails.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
 
+organisationDetails.type.GeneralPartnership = General partnership
+organisationDetails.type.LimitedLiabilityPartnership = Limited liability partnership
+organisationDetails.type.LimitedPartnership = Limited partnership
+organisationDetails.type.ScottishPartnership = Scottish partnership
+organisationDetails.type.ScottishLimitedPartnership = Scottish limited partnership
+
 organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
 
 partnership.type.title = What type of partnership are you registering?
@@ -553,3 +559,17 @@ addressLookup.member.contact.select.heading = Select your address for {0}
 
 addressLookup.member.contact.confirm.title = Confirm your address for {0}
 addressLookup.member.contact.confirm.heading = Confirm your address for {0}
+
+partner.check.title = Check your answers
+partner.check.orgType = Organisation type
+partner.check.companyNumber = Company number
+partner.check.orgName = Organisation name
+partner.check.utr = Unique Taxpayer Reference
+partner.check.sautr = Self Assessment Unique Taxpayer Reference
+partner.check.dob = Date of birth
+partner.check.name = Name
+partner.check.nino = National Insurance Number
+partner.check.contact.name = Contact name
+partner.check.contact.email = Contact email
+partner.check.contact.phone = Phone number
+partner.check.contact.address = Contact address
