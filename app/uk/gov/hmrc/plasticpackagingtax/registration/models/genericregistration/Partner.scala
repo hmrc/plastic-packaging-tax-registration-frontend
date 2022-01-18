@@ -23,7 +23,7 @@ import java.util.UUID
 
 case class Partner(
   id: String = UUID.randomUUID().toString,
-  partnerType: PartnerTypeEnum,
+  partnerType: Option[PartnerTypeEnum],
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None,
