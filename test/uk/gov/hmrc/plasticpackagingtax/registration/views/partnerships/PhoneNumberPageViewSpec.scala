@@ -21,25 +21,24 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, PhoneNumber}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.phone_number_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class EmailAddressPageViewSpec extends UnitViewSpec with Matchers {
+class PhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[email_address_page]
+  private val page = instanceOf[phone_number_page]
 
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
-  private val organisationName = "Organisation"
-  private val contactName      = "A Contact"
+  private val contactName = "A Contact"
 
-  private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
+  private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
     page(form, backLink, updateLink, contactName)(journeyRequest, messages)
 
-  "Email address View" should {
+  "Phone number View" should {
 
     val view = createView()
 
@@ -63,11 +62,11 @@ class EmailAddressPageViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(
-        messages("partnership.otherPartners.contactEmailAddressPage.title", contactName)
+        messages("partnership.otherPartners.contactPhoneNumberPage.title", contactName)
       )
     }
 
-    "display email address input box" in {
+    "display phone number input box" in {
 
       view must containElementWithID("value")
     }
@@ -82,11 +81,10 @@ class EmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
   "display error" when {
 
-    "email address is not entered" in {
-
-      val form = EmailAddress
+    "PhoneNumber is not entered" in {
+      val form = PhoneNumber
         .form()
-        .fillAndValidate(EmailAddress(""))
+        .fillAndValidate(PhoneNumber(""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
@@ -94,8 +92,8 @@ class EmailAddressPageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddress.form(), backLink, updateLink, contactName)(journeyRequest, messages)
-    page.render(EmailAddress.form(), backLink, updateLink, contactName, journeyRequest, messages)
+    page.f(PhoneNumber.form(), backLink, updateLink, contactName)(journeyRequest, messages)
+    page.render(PhoneNumber.form(), backLink, updateLink, contactName, journeyRequest, messages)
   }
 
 }
