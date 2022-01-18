@@ -86,6 +86,11 @@ POST       /enter-contact-address    uk.gov.hmrc.plasticpackagingtax.registratio
 GET        /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsCheckAnswersController.displayPage()
 POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsCheckAnswersController.submit()
 
+# Partnership Registrations
+GET        /nominated-partner-check-answers   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.nominatedPartner()
+GET        /partner-check-answers/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.partner(partnerId: String)
+POST       /partner-check-answers             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.submit()
+
 # Others
 GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.TaskListController.displayPage()
 
@@ -196,4 +201,3 @@ POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration
 
 GET        /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.address()
 POST       /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateAddress()
-

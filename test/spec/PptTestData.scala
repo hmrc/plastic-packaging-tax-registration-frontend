@@ -30,6 +30,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   RegistrationDate
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  PartnerTypeEnum,
+  PartnershipTypeEnum
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
@@ -477,6 +481,131 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected def groupMemberForOrganisationType(organisationType: OrgType) =
     groupMember.copy(organisationDetails =
       Some(GroupOrgDetails(organisationType.toString, "Company Name", Some(safeNumber)))
+    )
+
+  protected val generalPartnershipDetailsWithPartners =
+    PartnershipDetails(partnershipType = PartnershipTypeEnum.GENERAL_PARTNERSHIP,
+                       partnershipName = Some("Partners in Plastic"),
+                       partnershipBusinessDetails = Some(
+                         PartnershipBusinessDetails(sautr = "123ABC",
+                                                    postcode = "LS1 1AA",
+                                                    companyProfile = None,
+                                                    registration = Some(
+                                                      RegistrationDetails(
+                                                        identifiersMatch = true,
+                                                        verificationStatus = Some("Verified"),
+                                                        registrationStatus = "REGISTERED",
+                                                        registeredBusinessPartnerId =
+                                                          Some("XM123456")
+                                                      )
+                                                    )
+                         )
+                       ),
+                       nominatedPartner = Some(aSoleTraderPartner()),
+                       otherPartners = Some(Seq(aLimitedCompanyPartner(), aPartnershipPartner())),
+                       inflightPartner = None
+    )
+
+  protected def aSoleTraderPartner() =
+    Partner(partnerType = Some(PartnerTypeEnum.SOLE_TRADER),
+            soleTraderDetails = Some(
+              SoleTraderDetails(firstName = "Ben",
+                                lastName = "Benkson",
+                                dateOfBirth = Some("01/01/2000"),
+                                ninoOrTrn = "12345678ABC",
+                                sautr = Some("654321"),
+                                registration = Some(
+                                  RegistrationDetails(identifiersMatch = true,
+                                                      verificationStatus = Some("Verified"),
+                                                      registrationStatus = "REGISTERED",
+                                                      registeredBusinessPartnerId = Some("XM654321")
+                                  )
+                                )
+              )
+            ),
+            contactDetails = Some(
+              PartnerContactDetails(firstName = Some("Ben"),
+                                    lastName = Some("Benkson"),
+                                    emailAddress = Some("ben@benksons.com"),
+                                    phoneNumber = Some("076542345687"),
+                                    address = Some(
+                                      Address(addressLine1 = "1 High Street",
+                                              townOrCity = "Leeds",
+                                              postCode = Some("LS1 1AA")
+                                      )
+                                    )
+              )
+            )
+    )
+
+  protected def aLimitedCompanyPartner() =
+    Partner(partnerType = Some(PartnerTypeEnum.UK_COMPANY),
+            incorporationDetails = Some(
+              IncorporationDetails(companyNumber = "123456",
+                                   companyName = "Plastic Packaging Ltd",
+                                   ctutr = "123456ABC",
+                                   companyAddress = IncorporationAddressDetails(),
+                                   registration = Some(
+                                     RegistrationDetails(identifiersMatch = true,
+                                                         verificationStatus = Some("Verified"),
+                                                         registrationStatus = "REGISTERED",
+                                                         registeredBusinessPartnerId =
+                                                           Some("XM5334545")
+                                     )
+                                   )
+              )
+            ),
+            contactDetails = Some(
+              PartnerContactDetails(firstName = Some("Jon"),
+                                    lastName = Some("Jobson"),
+                                    emailAddress = Some("jon@pp.com"),
+                                    phoneNumber = Some("07876235834"),
+                                    address = Some(
+                                      Address(addressLine1 = "3 Old Street",
+                                              townOrCity = "Leeds",
+                                              postCode = Some("LS1 1BB")
+                                      )
+                                    )
+              )
+            )
+    )
+
+  protected def aPartnershipPartner() =
+    Partner(partnerType = Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP),
+            partnershipDetails = Some(
+              PartnershipDetails(partnershipType = PartnershipTypeEnum.SCOTTISH_PARTNERSHIP,
+                                 partnershipName = Some("The Plastic Partnership"),
+                                 partnershipBusinessDetails = Some(
+                                   PartnershipBusinessDetails(sautr = "234923487362",
+                                                              postcode = "LS1 1HS",
+                                                              companyProfile = None,
+                                                              registration = Some(
+                                                                RegistrationDetails(
+                                                                  identifiersMatch = true,
+                                                                  verificationStatus =
+                                                                    Some("Verified"),
+                                                                  registrationStatus = "REGISTERED",
+                                                                  registeredBusinessPartnerId =
+                                                                    Some("XM234976234")
+                                                                )
+                                                              )
+                                   )
+                                 )
+              )
+            ),
+            contactDetails = Some(
+              PartnerContactDetails(firstName = Some("Clive"),
+                                    lastName = Some("Clarkson"),
+                                    emailAddress = Some("clive@tpp.com"),
+                                    phoneNumber = Some("07876235342"),
+                                    address = Some(
+                                      Address(addressLine1 = "15 Big Road",
+                                              townOrCity = "Leeds",
+                                              postCode = Some("LS1 1CC")
+                                      )
+                                    )
+              )
+            )
     )
 
 }

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation
 
+import play.api.i18n.Messages
 import play.api.libs.json.{Format, Reads, Writes}
 
 object PartnerTypeEnum extends Enumeration {
@@ -31,5 +32,8 @@ object PartnerTypeEnum extends Enumeration {
 
   implicit val format: Format[PartnerTypeEnum] =
     Format(Reads.enumNameReads(PartnerTypeEnum), Writes.enumNameWrites)
+
+  def displayName(partnerType: PartnerTypeEnum)(implicit messages: Messages): String =
+    messages(s"organisationDetails.type.$partnerType")
 
 }

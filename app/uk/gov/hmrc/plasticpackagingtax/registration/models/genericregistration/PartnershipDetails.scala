@@ -50,6 +50,9 @@ case class PartnershipDetails(
       _.isGroupMemberSameAsNominatedPartnership(customerIdentification1)
     )
 
+  def findPartner(partnerId: String): Option[Partner] =
+    otherPartners.flatMap(_.find(_.id == partnerId))
+
 }
 
 object PartnershipDetails {
