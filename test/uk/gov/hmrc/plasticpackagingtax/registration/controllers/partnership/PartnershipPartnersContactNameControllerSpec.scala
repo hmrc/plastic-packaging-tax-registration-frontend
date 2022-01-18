@@ -20,15 +20,13 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -56,7 +54,7 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
     super.afterEach()
   }
 
-  def registrationWithPartnershipDetails =
+  private def registrationWithPartnershipDetails =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
 
   "PartnershipOtherPartnerEmailAddressController" should {
@@ -72,13 +70,34 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
       }
     }
 
-    "return 404" when {
-      "user is authorised but does have a nominated partner and display page method is invoked" in {
+    "return 400 (BAD_REQUEST)" when {
+      "user does not enter name" in {
         authorizedUser()
+        val result =
+          controller.submit()(postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction))
 
-        val result = controller.displayPage()(getRequest())
+        status(result) mustBe BAD_REQUEST
+      }
 
-        status(result) mustBe NOT_FOUND
+      "user enters a long name" in {
+        authorizedUser()
+        val result = controller.submit()(
+          postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
+        )
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "user enters non-alphabetic characters" in {
+        authorizedUser()
+        val result =
+          controller.submit()(
+            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
+                               saveAndContinueFormAction
+            )
+          )
+
+        status(result) mustBe BAD_REQUEST
       }
     }
 

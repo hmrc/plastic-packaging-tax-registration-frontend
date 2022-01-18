@@ -20,6 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class OtherPartner(
   id: Option[String] = None,
+  organisationName: Option[String] = None,
   firstName: Option[String] = None,
   lastName: Option[String] = None,
   emailAddress: Option[String] = None,

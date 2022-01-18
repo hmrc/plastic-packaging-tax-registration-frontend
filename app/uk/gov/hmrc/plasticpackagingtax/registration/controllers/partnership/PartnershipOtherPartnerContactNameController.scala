@@ -50,52 +50,57 @@ class PartnershipOtherPartnerContactNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      {
-        for {
-          partnershipDetails <- request.registration.organisationDetails.partnershipDetails
-          partnershipName    <- partnershipDetails.partnershipName
+      val inflightOtherPartner =
+        Some(
+          OtherPartner(organisationName = Some("Partner organisation"))
+        ) // TODO will have been populated by the preceding GRS journey
 
-        } yield request.registration.inflightOtherPartner.flatMap { inflight =>
-          for {
-            firstName <- inflight.firstName
-            lastName  <- inflight.lastName
-          } yield (firstName, lastName)
-        } match {
-          case Some(data) =>
-            Ok(
-              page(MemberName.form().fill(MemberName(data._1, data._2)),
-                   partnershipName,
-                   partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
-              )
-            )
-          case None =>
-            Ok(
-              page(MemberName.form(),
-                   partnershipName,
-                   partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                   partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
-              )
-            )
-        }
+      (for {
+        inflight         <- inflightOtherPartner
+        organisationName <- inflight.organisationName
 
-      }.getOrElse(NotFound)
+      } yield (for {
+        firstName <- inflight.firstName
+        lastName  <- inflight.lastName
+
+      } yield (firstName, lastName)) match {
+        case Some(data) =>
+          Ok(
+            page(MemberName.form().fill(MemberName(data._1, data._2)),
+                 organisationName,
+                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
+            )
+          )
+        case None =>
+          Ok(
+            page(MemberName.form(),
+                 organisationName,
+                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
+            )
+          )
+      }).getOrElse(NotFound)
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      def partnerShipName =
-        request.registration.organisationDetails.partnershipDetails.flatMap(
-          _.partnershipName
-        ).get // TODO unchecked get
-      MemberName.form()
+      val inflightOtherPartner =
+        Some(
+          OtherPartner(organisationName = Some("Partner organisation"))
+        ) // TODO will have been populated by the preceding GRS journey
+
+      (for {
+        inflight         <- inflightOtherPartner
+        organisationName <- inflight.organisationName
+      } yield MemberName.form()
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[MemberName]) =>
             Future.successful(
               BadRequest(
                 page(formWithErrors,
-                     partnerShipName,
+                     organisationName,
                      partnershipRoutes.PartnershipPartnersListController.displayPage(),
                      partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
                 )
@@ -114,7 +119,7 @@ class PartnershipOtherPartnerContactNameController @Inject() (
                 }
               case Left(error) => throw error
             }
-        )
+        )).getOrElse(Future.successful(NotFound))
     }
 
   private def updateRegistration(
