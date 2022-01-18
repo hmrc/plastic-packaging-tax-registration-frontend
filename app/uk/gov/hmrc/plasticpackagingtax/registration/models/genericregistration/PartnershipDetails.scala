@@ -28,7 +28,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.Partnersh
 case class PartnershipDetails(
   partnershipType: PartnershipTypeEnum,
   partnershipName: Option[String] = None,
-  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
+  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None,
+  nominatedPartner: Option[Partner] = None,
+  otherPartners: Option[Seq[Partner]] = None,
+  inflightPartner: Option[Partner] = None // Scratch area for newly added partner
 ) {
 
   val partnershipOrCompanyName: Option[String] = partnershipName match {
