@@ -93,8 +93,6 @@ POST       /partner-check-answers             uk.gov.hmrc.plasticpackagingtax.re
 
 GET        /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.displayPage()
 POST       /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.submit()
-GET        /partnerships/other-partners uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnersController.prompt()
-GET        /partnerships/other-partners uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnersController.displayPage()
 GET        /partnerships/partners-list  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipPartnersListController.displayPage()
 GET        /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.displayPage()
 POST       /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.submit()
