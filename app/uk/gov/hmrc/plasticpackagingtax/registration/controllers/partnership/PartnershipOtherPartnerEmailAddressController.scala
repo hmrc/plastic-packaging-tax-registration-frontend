@@ -113,16 +113,13 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
     formData: EmailAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      (for {
-        inflight <- registration.inflightPartner
-      } yield {
+      registration.inflightPartner.map { inflight =>
         val updatedContactDetails =
           inflight.contactDetails.getOrElse(PartnerContactDetails()).copy(emailAddress =
             Some(formData.value)
           )
         inflight.copy(contactDetails = Some(updatedContactDetails))
-
-      }).map { updated =>
+      }.map { updated =>
         registration.withInflightPartner(Some(updated))
       }.getOrElse {
         registration
