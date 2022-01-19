@@ -20,6 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.other_partners
@@ -34,13 +35,25 @@ class PartnershipOtherPartnersController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  otherPartners: other_partners
+  otherPartnersPage: other_partners
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def prompt(): Action[AnyContent] =
+  def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(otherPartners())
+      // Access the in flight registration so that we can render current other partners
+      if (request.registration.isPartnership) {
+        val maybePartnershipDetails: Option[PartnershipDetails] =
+          request.registration.organisationDetails.partnershipDetails
+        val otherPartners = maybePartnershipDetails.flatMap { partnershipBusinessDetails =>
+          partnershipBusinessDetails.otherPartners
+        }.getOrElse(Seq.empty)
+
+        Ok(otherPartnersPage(otherPartners))
+
+      } else
+        // This page is only available to partnerships
+        NotFound
     }
 
 }

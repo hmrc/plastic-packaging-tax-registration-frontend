@@ -14,23 +14,26 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{routes => partnershipRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
 
 @this(
   govukLayout: main_template,
-pageHeading: pageHeading,
-
+  govukButton: GovukButton,
+  pageHeading: pageHeading,
 )
 
-@()(implicit request: Request[_], messages: Messages, flash: Flash)
+@(otherPartners: Seq[OtherPartner])(implicit request: Request[_], messages: Messages, flash: Flash)
 
 @govukLayout(title = Title("partnerships.otherPartners.title"),
 backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
-
  @pageHeading(messages("partnerships.otherPartners.title"))
+ <p>@otherPartners.size details of other partners currently added</p>
+ <p>@otherPartners</p>
+ <p><a href="@partnershipRoutes.PartnershipOtherPartnerFullNameController.displayPage()">Add other partner details</a></p>
 }
