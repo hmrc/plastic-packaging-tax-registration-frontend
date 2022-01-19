@@ -51,29 +51,28 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      (for {
-        inflight       <- request.registration.inflightPartner
-        contactDetails <- inflight.contactDetails
-        contactName    <- contactDetails.name
-
-      } yield contactDetails.phoneNumber match {
-        case Some(data) =>
-          Ok(
-            page(PhoneNumber.form().fill(PhoneNumber(data)),
-                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
-                 contactName
-            )
-          )
-        case _ =>
-          Ok(
-            page(PhoneNumber.form(),
-                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
-                 contactName
-            )
-          )
-      }).getOrElse(NotFound)
+      request.registration.inflightPartner.flatMap(_.contactDetails).map { contactDetails =>
+        contactDetails.name.map { contactName =>
+          contactDetails.phoneNumber match {
+            case Some(data) =>
+              Ok(
+                page(PhoneNumber.form().fill(PhoneNumber(data)),
+                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
+                     partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
+                     contactName
+                )
+              )
+            case _ =>
+              Ok(
+                page(PhoneNumber.form(),
+                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
+                     partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
+                     contactName
+                )
+              )
+          }
+        }.getOrElse(NotFound)
+      }.getOrElse(NotFound)
     }
 
   def submit(): Action[AnyContent] =
@@ -82,20 +81,18 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[PhoneNumber]) =>
-            (for {
-              inflight       <- request.registration.inflightPartner
-              contactDetails <- inflight.contactDetails
-              contactName    <- contactDetails.name
-
-            } yield Future.successful(
-              BadRequest(
-                page(formWithErrors,
-                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
-                     contactName
+            request.registration.inflightPartner.flatMap(_.contactDetails.flatMap(_.name)).map {
+              contactName =>
+                Future.successful(
+                  BadRequest(
+                    page(formWithErrors,
+                         partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
+                         partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
+                         contactName
+                    )
+                  )
                 )
-              )
-            )).getOrElse(Future.successful(NotFound)),
+            }.getOrElse(Future.successful(NotFound)),
           phoneNumber =>
             updateRegistration(phoneNumber).map {
               case Right(_) =>
