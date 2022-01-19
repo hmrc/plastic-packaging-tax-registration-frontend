@@ -85,8 +85,8 @@ class PartnershipOtherPartnerContactNameController @Inject() (
             )
           )
 
-        }.getOrElse(NotFound)
-      }.getOrElse(NotFound)
+        }.getOrElse(throw new IllegalStateException("Expected partner organisation name missing"))
+      }.getOrElse(throw new IllegalStateException("Expected group member missing"))
     }
 
   def submit(): Action[AnyContent] =
@@ -127,7 +127,9 @@ class PartnershipOtherPartnerContactNameController @Inject() (
                 case Left(error) => throw error
               }
           )
-      }.getOrElse(Future.successful(NotFound))
+      }.getOrElse(
+        Future.successful(throw new IllegalStateException("Expected inflight partner missing"))
+      )
     }
 
   private def updateRegistration(

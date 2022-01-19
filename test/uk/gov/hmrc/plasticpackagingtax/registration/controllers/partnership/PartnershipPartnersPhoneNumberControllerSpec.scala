@@ -124,20 +124,18 @@ class PartnershipPartnersPhoneNumberControllerSpec extends ControllerSpec with D
       }
     }
 
-    "return 404" when {
-      "user is authorised but does not have an inflight journey and display page method is invoked" in {
-        authorizedUser()
-
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe NOT_FOUND
-      }
-    }
-
     "return an error" when {
 
       "user is not authorised" in {
         unAuthorizedUser()
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user is authorised but does not have an inflight journey and display page method is invoked" in {
+        authorizedUser()
 
         val result = controller.displayPage()(getRequest())
 

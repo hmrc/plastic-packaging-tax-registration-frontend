@@ -67,8 +67,8 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
                  contactName
             )
           )
-        }.getOrElse(NotFound)
-      }.getOrElse(NotFound)
+        }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
+      }.getOrElse(throw new IllegalStateException("Expected partner name missing"))
     }
 
   def submit(): Action[AnyContent] =
@@ -88,7 +88,9 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
                     )
                   )
                 )
-            }.getOrElse(Future.successful(NotFound)),
+            }.getOrElse(
+              Future.successful(throw new IllegalStateException("Expected partner name missing"))
+            ),
           phoneNumber =>
             updateRegistration(phoneNumber).map {
               case Right(_) =>
