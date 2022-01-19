@@ -27,12 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
