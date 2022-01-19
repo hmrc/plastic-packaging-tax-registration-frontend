@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -54,80 +54,84 @@ class PartnershipOtherPartnerContactNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
+      // TODO will have been populated by the preceding GRS journey
       val inflightOtherPartner =
         Some(
           Partner(organisationName = Some("Partner organisation"),
                   partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
-          ) // TODO will have been populated by the preceding GRS journey
+          )
         )
 
-      (for {
-        inflight         <- inflightOtherPartner
-        organisationName <- inflight.organisationName
-      } yield (for {
-        contactDetails <- inflight.contactDetails
-        firstName      <- contactDetails.firstName
-        lastName       <- contactDetails.lastName
+      inflightOtherPartner.map { inflight =>
+        inflight.organisationName.map { organisationName =>
+          val existingNameFields = for {
+            contactDetails <- inflight.contactDetails
+            firstName      <- contactDetails.firstName
+            lastName       <- contactDetails.lastName
+          } yield (firstName, lastName)
 
-      } yield (firstName, lastName)) match {
-        case Some(data) =>
-          Ok(
-            page(MemberName.form().fill(MemberName(data._1, data._2)),
-                 organisationName,
-                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
-            )
-          )
-        case None =>
-          Ok(
-            page(MemberName.form(),
-                 organisationName,
-                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
-            )
-          )
-      }).getOrElse(NotFound)
-    }
-
-  def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      val inflightOtherPartner =
-        Some(
-          Partner(organisationName = Some("Partner organisation"),
-                  partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
-          )
-        ) // TODO will have been populated by the preceding GRS journey
-
-      (for {
-        inflight         <- inflightOtherPartner
-        organisationName <- inflight.organisationName
-      } yield MemberName.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[MemberName]) =>
-            Future.successful(
-              BadRequest(
-                page(formWithErrors,
+          existingNameFields match {
+            case Some(data) =>
+              Ok(
+                page(MemberName.form().fill(MemberName(data._1, data._2)),
                      organisationName,
                      partnershipRoutes.PartnershipPartnersListController.displayPage(),
                      partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
                 )
               )
-            ),
-          fullName =>
-            updateRegistration(fullName).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(routes.PartnershipOtherPartnerEmailAddressController.displayPage())
-                  case _ =>
-                    Redirect(
-                      partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage()
-                    )
-                }
-              case Left(error) => throw error
-            }
-        )).getOrElse(Future.successful(NotFound))
+            case None =>
+              Ok(
+                page(MemberName.form(),
+                     organisationName,
+                     partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                     partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
+                )
+              )
+          }
+
+        }.getOrElse(NotFound)
+      }.getOrElse(NotFound)
+    }
+
+  def submit(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      // TODO will have been populated by the preceding GRS journey
+      val inflightOtherPartner =
+        Some(
+          Partner(organisationName = Some("Partner organisation"),
+                  partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
+          )
+        )
+
+      inflightOtherPartner.flatMap(_.organisationName).map { organisationName =>
+        MemberName.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[MemberName]) =>
+              Future.successful(
+                BadRequest(
+                  page(formWithErrors,
+                       organisationName,
+                       partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                       partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
+                  )
+                )
+              ),
+            fullName =>
+              updateRegistration(fullName).map {
+                case Right(_) =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      Redirect(routes.PartnershipOtherPartnerEmailAddressController.displayPage())
+                    case _ =>
+                      Redirect(
+                        partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage()
+                      )
+                  }
+                case Left(error) => throw error
+              }
+          )
+      }.getOrElse(Future.successful(NotFound))
     }
 
   private def updateRegistration(
