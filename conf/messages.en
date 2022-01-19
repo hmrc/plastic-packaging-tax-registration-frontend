@@ -573,3 +573,8 @@ partner.check.contact.name = Contact name
 partner.check.contact.email = Contact email
 partner.check.contact.phone = Phone number
 partner.check.contact.address = Contact address
+
+partnership.partnerList.title = You have added {0} partners
+partnership.partnerList.nominatedPartner = Nominated partner
+partnership.partnerList.subHeading = Do you need to add another partner?
+addPartner.empty.error = Select yes if you need to add another partner

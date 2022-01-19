@@ -91,6 +91,9 @@ GET        /nominated-partner-check-answers   uk.gov.hmrc.plasticpackagingtax.re
 GET        /partner-check-answers/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.partner(partnerId: String)
 POST       /partner-check-answers             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.submit()
 
+GET        /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.displayPage()
+POST       /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.submit()
+
 # Others
 GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.TaskListController.displayPage()
 
