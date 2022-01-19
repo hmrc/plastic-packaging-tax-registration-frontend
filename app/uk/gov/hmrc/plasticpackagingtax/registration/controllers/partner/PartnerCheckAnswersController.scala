@@ -21,13 +21,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_check_answers_page
-
-import scala.concurrent.ExecutionContext
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class PartnerCheckAnswersController @Inject() (
@@ -36,8 +34,7 @@ class PartnerCheckAnswersController @Inject() (
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partner_check_answers_page
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def nominatedPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -56,7 +53,7 @@ class PartnerCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen journeyAction) {
       Redirect(
         commonRoutes.TaskListController.displayPage()
       ) // TODO: direct to partner list page when created
