@@ -20,13 +20,13 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status.{NOT_FOUND, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, PhoneNumber}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   Partner,
@@ -103,6 +103,24 @@ class PartnershipPartnersPhoneNumberControllerSpec extends ControllerSpec with D
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+      }
+    }
+
+    "update inflight registration" when {
+      "user submits a valid phone number" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+        mockRegistrationUpdate()
+
+        val result = controller.submit()(
+          postRequestEncoded(PhoneNumber("12345678"), saveAndContinueFormAction)
+        )
+
+        status(result) mustBe SEE_OTHER
+
+        modifiedRegistration.inflightPartner.flatMap(
+          _.contactDetails.flatMap(_.phoneNumber)
+        ) mustBe Some("12345678")
       }
     }
 

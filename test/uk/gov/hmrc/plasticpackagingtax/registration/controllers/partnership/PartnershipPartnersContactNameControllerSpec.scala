@@ -20,7 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.status
@@ -67,6 +67,27 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+      }
+    }
+
+    "update inflight registration" when {
+      "user submits a complete contact name" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetails)
+        mockRegistrationUpdate()
+
+        val result = controller.submit()(
+          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+        )
+
+        status(result) mustBe SEE_OTHER
+
+        modifiedRegistration.inflightPartner.flatMap(
+          _.contactDetails.flatMap(_.firstName)
+        ) mustBe Some("John")
+        modifiedRegistration.inflightPartner.flatMap(
+          _.contactDetails.flatMap(_.lastName)
+        ) mustBe Some("Smith")
       }
     }
 
