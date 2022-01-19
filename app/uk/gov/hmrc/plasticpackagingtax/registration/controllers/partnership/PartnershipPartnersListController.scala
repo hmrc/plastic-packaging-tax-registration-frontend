@@ -44,10 +44,9 @@ class PartnershipPartnersListController @Inject() (
       if (request.registration.isPartnership)
         (for {
           partnershipDetails <- request.registration.organisationDetails.partnershipDetails
-          nominatedPartner   <- partnershipDetails.nominatedPartner
-          nominatedPartnerName = nominatedPartner.organisationName.getOrElse(
-            "Nominated partner"
-          ) // TODO Enforce when available
+          //nominatedPartner   <- partnershipDetails.nominatedPartner
+          nominatedPartnerName = "Nominated partner" // nominatedPartner.organisationName.getOrElse(
+          // TODO Enforce when available
 
         } yield {
           val otherPartners = partnershipDetails.otherPartners.getOrElse(Seq.empty)
