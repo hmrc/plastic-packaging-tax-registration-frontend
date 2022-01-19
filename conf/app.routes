@@ -94,6 +94,16 @@ POST       /partner-check-answers             uk.gov.hmrc.plasticpackagingtax.re
 GET        /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.displayPage()
 POST       /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.submit()
 
+GET        /inflight-nominated-partner-contact-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForInflightNominatedPartner()
+GET        /nominated-partner-contact-address               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForExistingNominatedPartner()
+GET        /inflight-partner-contact-address                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForInflightPartner()
+GET        /partner-contact-address/:partnerId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForExistingPartner(partnerId)
+
+GET        /inflight-nominated-partner-contact-address-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackInflightNominatedPartner(id: Option[String])
+GET        /nominated-partner-contact-address-callback              uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackExistingNominatedPartner(id: Option[String])
+GET        /inflight-partner-contact-address-callback               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackInflightPartner(id: Option[String])
+GET        /partner-contact-address-callback/:partnerId             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackExistingPartner(partnerId, id: Option[String])
+
 # Others
 GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.TaskListController.displayPage()
 
