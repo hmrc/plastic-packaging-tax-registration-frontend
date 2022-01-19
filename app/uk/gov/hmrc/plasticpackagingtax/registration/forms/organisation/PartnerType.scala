@@ -27,7 +27,9 @@ object PartnerTypeEnum extends Enumeration {
   type PartnerTypeEnum = Value
   val SOLE_TRADER: Value                          = Value("SoleTrader")
   val UK_COMPANY: Value                           = Value("UkCompany")
+  val GENERAL_PARTNERSHIP: Value                  = Value("GeneralPartnership")
   val LIMITED_LIABILITY_PARTNERSHIP: Value        = Value("LimitedLiabilityPartnership")
+  val LIMITED_PARTNERSHIP: Value                  = Value("LimitedPartnership")
   val SCOTTISH_PARTNERSHIP: Value                 = Value("ScottishPartnership")
   val SCOTTISH_LIMITED_PARTNERSHIP: Value         = Value("ScottishLimitedPartnership")
   val CHARITABLE_INCORPORATED_ORGANISATION: Value = Value("CIO")
@@ -37,7 +39,7 @@ object PartnerTypeEnum extends Enumeration {
   def withNameOpt(name: String): Option[Value] = values.find(_.toString == name)
 
   def displayName(partnerTypeEnum: PartnerTypeEnum)(implicit messages: Messages): String =
-    messages(s"nominated.partner.type.$partnerTypeEnum")
+    messages(s"partner.type.$partnerTypeEnum")
 
   implicit def value(partnerTypeEnum: PartnerTypeEnum): String =
     partnerTypeEnum.toString

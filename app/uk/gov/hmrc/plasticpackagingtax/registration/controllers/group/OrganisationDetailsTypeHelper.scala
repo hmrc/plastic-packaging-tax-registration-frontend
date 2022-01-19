@@ -31,11 +31,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.PartnershipTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
   OrgType,
   OrganisationType,
-  PartnershipTypeEnum
+  PartnerTypeEnum
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorpEntityGrsCreateRequest,
@@ -81,7 +81,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
         if (request.registration.isGroup) {
-          updateRegistration(PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
+          updateRegistration(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
           getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                          businessVerificationCheck,
                          memberId
@@ -149,7 +149,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       url
     )
 
-  private def updateRegistration(partnershipType: PartnershipTypeEnum)(implicit
+  private def updateRegistration(partnershipType: PartnerTypeEnum)(implicit
     req: JourneyRequest[AnyContent],
     headerCarrier: HeaderCarrier,
     executionContext: ExecutionContext

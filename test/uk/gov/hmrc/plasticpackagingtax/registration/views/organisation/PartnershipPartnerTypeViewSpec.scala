@@ -102,7 +102,7 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
       "value"
     ).text() mustBe partnershipPartnerType.toString
     view.getElementsByClass("govuk-label").get(number - 1).text() mustBe messages(
-      labelKey.getOrElse(s"nominated.partner.type.$partnershipPartnerType")
+      labelKey.getOrElse(s"partner.type.$partnershipPartnerType")
     )
   }
 

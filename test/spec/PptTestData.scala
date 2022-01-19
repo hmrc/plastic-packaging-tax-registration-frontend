@@ -29,9 +29,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   PptReference,
   RegistrationDate
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
+  SOLE_TRADER,
+  UK_COMPANY,
+  _
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
@@ -300,9 +304,9 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected def partnershipDetailsWithBusinessAddress(
-    partnershipTypeEnum: PartnershipTypeEnum
+    partnerTypeEnum: PartnerTypeEnum
   ): PartnershipDetails =
-    PartnershipDetails(partnershipType = partnershipTypeEnum,
+    PartnershipDetails(partnershipType = partnerTypeEnum,
                        partnershipBusinessDetails =
                          Some(
                            PartnershipBusinessDetails(testSatur,
@@ -396,7 +400,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected def unregisteredPartnershipDetails(
-    partnershipType: PartnershipTypeEnum,
+    partnershipType: PartnerTypeEnum,
     partnershipName: Option[String] = None
   ): OrganisationDetails =
     OrganisationDetails(organisationType = Some(PARTNERSHIP),

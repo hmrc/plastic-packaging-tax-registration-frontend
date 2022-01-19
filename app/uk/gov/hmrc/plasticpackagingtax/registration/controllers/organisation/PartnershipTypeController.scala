@@ -28,8 +28,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
@@ -65,29 +65,23 @@ class PartnershipTypeController @Inject() (
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
           Future(
-            Ok(
-              page(
-                PartnershipType.form().fill(
-                  PartnershipType(Some(partnershipDetails.partnershipType))
-                )
-              )
-            )
+            Ok(page(PartnerType.form().fill(PartnerType(Some(partnershipDetails.partnershipType)))))
           )
-        case _ => Future(Ok(page(PartnershipType.form())))
+        case _ => Future(Ok(page(PartnerType.form())))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      PartnershipType.form()
+      PartnerType.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[PartnershipType]) => Future(BadRequest(page(formWithErrors))),
-              partnershipType =>
-                updateRegistration(partnershipType).flatMap {
+        .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),
+              partnerType =>
+                updateRegistration(partnerType).flatMap {
                   case Right(_) =>
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
-                        partnershipType.answer match {
+                        partnerType.answer match {
                           case Some(GENERAL_PARTNERSHIP) | Some(SCOTTISH_PARTNERSHIP) =>
                             Future(Redirect(routes.PartnershipNameController.displayPage().url))
                           case Some(LIMITED_PARTNERSHIP) =>
@@ -125,7 +119,7 @@ class PartnershipTypeController @Inject() (
     )
 
   private def updateRegistration(
-    formData: PartnershipType
+    formData: PartnerType
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     formData.answer match {
       case Some(partnershipType) =>

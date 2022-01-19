@@ -319,24 +319,20 @@ organisationDetails.type.GroupNominatedPartnership = Limited liability partnersh
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected
 
-partnership.type.GeneralPartnership = General partnership
-partnership.type.LimitedLiabilityPartnership = Limited liability partnership
-partnership.type.LimitedPartnership = Limited partnership
-partnership.type.ScottishPartnership = Scottish partnership
-partnership.type.ScottishLimitedPartnership = Scottish limited partnership
-
 partnership.name.title = What's the name of the partnership?
 partnership.name.empty.error = Please enter your partnership name
 partnership.name.format.error = Please enter your partnership name in correct format
 
-nominated.partner.type.SoleTrader = Sole trader
-nominated.partner.type.UkCompany = UK limited company
-nominated.partner.type.LimitedLiabilityPartnership = Limited liability partnership
-nominated.partner.type.ScottishPartnership = Scottish partnership
-nominated.partner.type.ScottishLimitedPartnership = Scottish limited partnership
-nominated.partner.type.CIO = Charitable Incorporated Organisation (CIO)
-nominated.partner.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
-nominated.partner.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
+partner.type.SoleTrader = Sole trader
+partner.type.UkCompany = UK limited company
+partner.type.GeneralPartnership = General partnership
+partner.type.LimitedLiabilityPartnership = Limited liability partnership
+partner.type.LimitedPartnership = Limited partnership
+partner.type.ScottishPartnership = Scottish partnership
+partner.type.ScottishLimitedPartnership = Scottish limited partnership
+partner.type.CIO = Charitable Incorporated Organisation (CIO)
+partner.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
+partner.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
 
 nominated.partner.type.title = What type of organisation is the nominated partner?
 nominated.partner.name.empty.error = Please select an entity type from the options above

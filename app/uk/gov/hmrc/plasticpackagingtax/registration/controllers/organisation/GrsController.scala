@@ -38,7 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{ro
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.PartnershipTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
@@ -227,7 +227,7 @@ class GrsController @Inject() (
                                       organisationDetails =
                                         request.registration.organisationDetails,
                                       partnershipBusinessDetails = Some(partnershipBusinessDetails),
-                                      partnershipTypeEnum = partnershipDetails.partnershipType
+                                      partnerTypeEnum = partnershipDetails.partnershipType
                                     )
           )
         }
@@ -237,10 +237,10 @@ class GrsController @Inject() (
   private def updatePartnershipDetails(
     organisationDetails: OrganisationDetails,
     partnershipBusinessDetails: Option[PartnershipBusinessDetails],
-    partnershipTypeEnum: PartnershipTypeEnum
+    partnerTypeEnum: PartnerTypeEnum
   ): OrganisationDetails = {
     val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
-      PartnershipDetails(partnershipType = partnershipTypeEnum,
+      PartnershipDetails(partnershipType = partnerTypeEnum,
                          partnershipName = None,
                          partnershipBusinessDetails = partnershipBusinessDetails
       )
