@@ -53,7 +53,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.other_partners_page",
     "uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.check_other_partner_answers_page"
   ).mkString(";"),
-  coverageMinimum := 95.4,
+  coverageMinimum := 95.5,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false

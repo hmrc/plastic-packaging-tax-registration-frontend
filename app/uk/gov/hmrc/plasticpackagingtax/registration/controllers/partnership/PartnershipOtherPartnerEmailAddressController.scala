@@ -53,24 +53,20 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.flatMap(_.contactDetails).map { contactDetails =>
         contactDetails.name.map { contactName =>
-          contactDetails.emailAddress match {
+          val form = contactDetails.emailAddress match {
             case Some(data) =>
-              Ok(
-                page(EmailAddress.form().fill(EmailAddress(data)),
-                     partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
-                     contactName
-                )
-              )
+              EmailAddress.form().fill(EmailAddress(data))
             case _ =>
-              Ok(
-                page(EmailAddress.form(),
-                     partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
-                     contactName
-                )
-              )
+              EmailAddress.form()
           }
+
+          Ok(
+            page(form,
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
+                 contactName
+            )
+          )
         }.getOrElse(NotFound)
       }.getOrElse(NotFound)
     }

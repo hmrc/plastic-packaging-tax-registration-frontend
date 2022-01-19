@@ -53,24 +53,20 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.flatMap(_.contactDetails).map { contactDetails =>
         contactDetails.name.map { contactName =>
-          contactDetails.phoneNumber match {
+          val form = contactDetails.phoneNumber match {
             case Some(data) =>
-              Ok(
-                page(PhoneNumber.form().fill(PhoneNumber(data)),
-                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
-                     contactName
-                )
-              )
+              PhoneNumber.form().fill(PhoneNumber(data))
             case _ =>
-              Ok(
-                page(PhoneNumber.form(),
-                     partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
-                     contactName
-                )
-              )
+              PhoneNumber.form()
           }
+
+          Ok(
+            page(form,
+                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
+                 contactName
+            )
+          )
         }.getOrElse(NotFound)
       }.getOrElse(NotFound)
     }

@@ -70,24 +70,20 @@ class PartnershipOtherPartnerContactNameController @Inject() (
             lastName       <- contactDetails.lastName
           } yield (firstName, lastName)
 
-          existingNameFields match {
+          val form = existingNameFields match {
             case Some(data) =>
-              Ok(
-                page(MemberName.form().fill(MemberName(data._1, data._2)),
-                     organisationName,
-                     partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
-                )
-              )
+              MemberName.form().fill(MemberName(data._1, data._2))
             case None =>
-              Ok(
-                page(MemberName.form(),
-                     organisationName,
-                     partnershipRoutes.PartnershipPartnersListController.displayPage(),
-                     partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
-                )
-              )
+              MemberName.form()
           }
+
+          Ok(
+            page(form,
+                 organisationName,
+                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                 partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
+            )
+          )
 
         }.getOrElse(NotFound)
       }.getOrElse(NotFound)
