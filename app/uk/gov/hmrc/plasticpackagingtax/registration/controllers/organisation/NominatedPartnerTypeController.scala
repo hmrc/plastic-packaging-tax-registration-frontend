@@ -44,6 +44,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorpEntityGrsCreateRequest,
+  Partner,
   PartnershipGrsCreateRequest,
   SoleTraderGrsCreateRequest
 }
@@ -71,21 +72,9 @@ class NominatedPartnerTypeController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.organisationDetails.partnershipDetails match {
-        case Some(partnershipDetails) =>
-          Future(
-            Ok(
-              page(
-                PartnerType.form().fill(
-                  PartnerType(
-                    partnershipDetails.nominatedPartner.map(_.partnerType).getOrElse(
-                      throw new IllegalStateException("No Partner partnership type found")
-                    )
-                  )
-                )
-              )
-            )
-          )
+      request.registration.organisationDetails.nominatedPartner match {
+        case Some(nominatedPartner) =>
+          Future(Ok(page(PartnerType.form().fill(PartnerType(nominatedPartner.partnerType)))))
         case _ => Future(Ok(page(PartnerType.form())))
       }
     }
@@ -131,7 +120,7 @@ class NominatedPartnerTypeController @Inject() (
     url: String
   )(implicit request: JourneyRequest[AnyContent]): Future[String] =
     ukCompanyGrsConnector.createJourney(
-      IncorpEntityGrsCreateRequest(appConfig.grsCallbackUrl,
+      IncorpEntityGrsCreateRequest(appConfig.partnerGrsCallbackUrl(None),
                                    Some(request2Messages(request)("service.name")),
                                    appConfig.serviceIdentifier,
                                    appConfig.signOutLink,
@@ -145,7 +134,7 @@ class NominatedPartnerTypeController @Inject() (
     url: String
   )(implicit request: JourneyRequest[AnyContent]): Future[String] =
     partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
+      PartnershipGrsCreateRequest(appConfig.partnerGrsCallbackUrl(None),
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.signOutLink,
@@ -158,7 +147,7 @@ class NominatedPartnerTypeController @Inject() (
     url: String
   )(implicit request: JourneyRequest[AnyContent]): Future[String] =
     soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(appConfig.grsCallbackUrl,
+      SoleTraderGrsCreateRequest(appConfig.partnerGrsCallbackUrl(None),
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
@@ -180,7 +169,7 @@ class NominatedPartnerTypeController @Inject() (
                   details.copy(nominatedPartner = details.nominatedPartner match {
                     case Some(partner) =>
                       Some(partner.copy(partnerType = partnershipPartnerType.answer))
-                    case _ => throw new IllegalStateException("No nominated partner found")
+                    case _ => Some(Partner(partnerType = partnershipPartnerType.answer))
                   })
               ).getOrElse(throw new IllegalStateException("No partnership details found"))
             )

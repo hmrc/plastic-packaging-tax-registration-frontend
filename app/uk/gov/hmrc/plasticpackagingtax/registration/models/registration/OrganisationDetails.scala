@@ -26,9 +26,23 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
+  CHARITABLE_INCORPORATED_ORGANISATION,
+  OVERSEAS_COMPANY_NO_UK_BRANCH,
+  PartnerTypeEnum,
+  SCOTTISH_PARTNERSHIP
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  PartnerTypeEnum,
+  PartnershipTypeEnum
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
+  LIMITED_LIABILITY_PARTNERSHIP,
+  SCOTTISH_LIMITED_PARTNERSHIP
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorporationDetails,
+  Partner,
   PartnershipDetails,
   RegistrationDetails,
   SoleTraderDetails
@@ -114,6 +128,51 @@ case class OrganisationDetails(
               isBusinessAddressFromGrs = Some(businessAddress.isDefined)
     )
   }
+
+  lazy val nominatedPartner: Option[Partner] = partnershipDetails.map(_.nominatedPartner).getOrElse(
+    throw new IllegalStateException("No partnership details found")
+  )
+
+  lazy val nominatedPartnerType: Option[PartnerTypeEnum] = nominatedPartner.flatMap(_.partnerType)
+
+  lazy val nominatedPartnerGrsRegistration: Option[RegistrationDetails] = nominatedPartner match {
+    case Some(partner) =>
+      partner.partnerType match {
+        case Some(partnerType) =>
+          partnerType match {
+            case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
+            case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
+              partner.incorporationDetails.flatMap(_.registration)
+            case PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP        => None
+            case PartnerTypeEnum.SCOTTISH_PARTNERSHIP                 => None
+            case PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP         => None
+            case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
+            case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
+          }
+        case _ => None
+      }
+    case _ => None
+  }
+
+  lazy val nominatedPartnerRegistrationStatus: Option[String] =
+    nominatedPartnerGrsRegistration.map { reg =>
+      reg.registrationStatus
+    }
+
+  lazy val nominatedPartnerBusinessVerificationFailed: Boolean =
+    nominatedPartnerRegistrationStatus.contains(
+      "REGISTRATION_NOT_CALLED"
+    ) && nominatedPartnerVerificationStatus.contains("FAIL")
+
+  lazy val nominatedPartnerVerificationStatus: Option[String] =
+    nominatedPartnerGrsRegistration.flatMap { reg =>
+      reg.verificationStatus
+    }
+
+  lazy val nominatedPartnerBusinessPartnerId: Option[String] =
+    nominatedPartnerGrsRegistration.flatMap { reg =>
+      reg.registeredBusinessPartnerId
+    }
 
 }
 

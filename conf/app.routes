@@ -57,6 +57,8 @@ GET        /edit-address    uk.gov.hmrc.plasticpackagingtax.registration.control
 
 GET       /organisation-check-answers  uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.CheckAnswersController.displayPage()
 
+GET        /partner-grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnerGrsController.grsCallback(journeyId)
+
 # Primary Contact Details
 GET        /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsFullNameController.displayPage()
 POST       /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsFullNameController.submit()
