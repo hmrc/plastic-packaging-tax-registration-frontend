@@ -20,6 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.other_partners_page
@@ -43,9 +44,11 @@ class PartnershipPartnersListController @Inject() (
       if (request.registration.isPartnership)
         (for {
           partnershipDetails <- request.registration.organisationDetails.partnershipDetails
-          nominatedPartnerName = request.registration.primaryContactDetails.name.getOrElse(
-            "Nominated partner name"
+          nominatedPartner   <- partnershipDetails.nominatedPartner
+          nominatedPartnerName = nominatedPartner.organisationName.getOrElse(
+            "Nominated partner"
           ) // TODO Enforce when available
+
         } yield {
           val otherPartners = partnershipDetails.otherPartners.getOrElse(Seq.empty)
           Ok(otherPartnersPage(otherPartners, nominatedPartnerName, otherPartners.size + 1))
