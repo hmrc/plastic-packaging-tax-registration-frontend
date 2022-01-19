@@ -49,7 +49,7 @@
                             content = Text(messages("partnership.otherPartners.checkAnswers.contactName"))
                         ),
                         value = Value(
-                             content =  Text(answers.contactDetails.flatMap(_.contactName).getOrElse(""))
+                             content =  Text(answers.contactDetails.flatMap(_.name).getOrElse(""))
                         )
                     ),
                     SummaryListRow(

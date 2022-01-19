@@ -38,7 +38,7 @@
 }
 @otherPartnerRows = @{
     nominatedPartnerRow +: otherPartners.map { partner =>
-        viewUtils.summaryListRow(partner.contactDetails.flatMap(_.contactName).getOrElse(""), None, None)
+        viewUtils.summaryListRow(partner.contactDetails.flatMap(_.name).getOrElse(""), None, None)
     }
 }
 

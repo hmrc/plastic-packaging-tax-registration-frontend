@@ -54,7 +54,7 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
       (for {
         inflight       <- request.registration.inflightPartner
         contactDetails <- inflight.contactDetails
-        contactName    <- contactDetails.contactName
+        contactName    <- contactDetails.name
 
       } yield contactDetails.phoneNumber match {
         case Some(data) =>
@@ -85,7 +85,7 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
             (for {
               inflight       <- request.registration.inflightPartner
               contactDetails <- inflight.contactDetails
-              contactName    <- contactDetails.contactName
+              contactName    <- contactDetails.name
 
             } yield Future.successful(
               BadRequest(
