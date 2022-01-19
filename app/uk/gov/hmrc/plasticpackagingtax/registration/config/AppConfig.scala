@@ -123,7 +123,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   def partnerGrsCallbackUrl(partnerId: Option[String]): String =
     partnerId match {
-      case Some(groupMemberId) =>
+      case Some(partnerId) =>
         s"${config.get[String]("urls.partnerGrsCallback")}/$partnerId"
       case None => config.get[String]("urls.partnerGrsCallback")
     }

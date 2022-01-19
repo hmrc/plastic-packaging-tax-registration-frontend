@@ -24,12 +24,9 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipRegistrationStatus.{
-  BUSINESS_VERIFICATION_FAILED,
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   DUPLICATE_SUBSCRIPTION,
-  GRS_FAILED,
-  PartnershipRegistrationStatus,
-  SOLE_TRADER_VERIFICATION_FAILED,
+  RegistrationStatus,
   STATUS_OK,
   UNSUPPORTED_ORGANISATION
 }
@@ -49,17 +46,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
-object PartnershipRegistrationStatus extends Enumeration {
-  type PartnershipRegistrationStatus = Value
-
-  val STATUS_OK: Value                       = Value
-  val GRS_FAILED: Value                      = Value
-  val BUSINESS_VERIFICATION_FAILED: Value    = Value
-  val SOLE_TRADER_VERIFICATION_FAILED: Value = Value
-  val DUPLICATE_SUBSCRIPTION: Value          = Value
-  val UNSUPPORTED_ORGANISATION: Value        = Value
-}
 
 @Singleton
 class PartnerGrsController @Inject() (
@@ -90,13 +76,7 @@ class PartnerGrsController @Inject() (
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
-                case GRS_FAILED =>
-                  Redirect(commonRoutes.NotableErrorController.grsFailure())
-                case BUSINESS_VERIFICATION_FAILED =>
-                  Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
-                case SOLE_TRADER_VERIFICATION_FAILED =>
-                  Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
+                  Redirect(commonRoutes.TaskListController.displayPage())
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
@@ -107,52 +87,23 @@ class PartnerGrsController @Inject() (
         }
     }
 
-  private def registrationStatus(registration: Registration)(implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[AnyContent]
-  ): Future[PartnershipRegistrationStatus] =
-    if (registration.organisationDetails.nominatedPartnerBusinessVerificationFailed)
-      registration.organisationDetails.nominatedPartnerType match {
-        case Some(SOLE_TRADER) =>
-          Future.successful(SOLE_TRADER_VERIFICATION_FAILED)
-        case _ =>
-          Future.successful(BUSINESS_VERIFICATION_FAILED)
-      }
-    else
-      registration.organisationDetails.nominatedPartnerBusinessPartnerId match {
-        case Some(businessPartnerId) =>
-          checkSubscriptionStatus(businessPartnerId, registration).map {
-            case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
-            case _          => STATUS_OK
-          }
-        case None =>
-          registration.organisationDetails.nominatedPartnerGrsRegistration match {
-            case Some(
-                  RegistrationDetails(false, Some("UNCHALLENGED"), "REGISTRATION_NOT_CALLED", _)
-                ) =>
-              Future.successful(UNSUPPORTED_ORGANISATION)
-            case _ => Future.successful(GRS_FAILED)
-          }
-      }
-
-  private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(
-    implicit
-    hc: HeaderCarrier,
-    request: JourneyRequest[AnyContent]
-  ): Future[SubscriptionStatus.Status] =
-    subscriptionsConnector.getSubscriptionStatus(businessPartnerId).flatMap {
-      response =>
-        update(
-          model =>
-            model.copy(
-              incorpJourneyId = registration.incorpJourneyId,
-              organisationDetails =
-                registration.organisationDetails.copy(subscriptionStatus = Some(response.status))
-            )
-        ).map { _ =>
-          response.status
+  private def registrationStatus(
+    registration: Registration
+  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[RegistrationStatus] =
+    registration.organisationDetails.nominatedPartnerBusinessPartnerId match {
+      case Some(businessPartnerId) =>
+        checkSubscriptionStatus(businessPartnerId).map {
+          case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
+          case _          => STATUS_OK
         }
+      case None =>
+        Future.successful(UNSUPPORTED_ORGANISATION)
     }
+
+  private def checkSubscriptionStatus(
+    businessPartnerId: String
+  )(implicit hc: HeaderCarrier): Future[SubscriptionStatus.Status] =
+    subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map(_.status)
 
   private def saveRegistrationDetails(journeyId: String)(implicit
     hc: HeaderCarrier,
@@ -162,8 +113,9 @@ class PartnerGrsController @Inject() (
       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
         updateUkCompanyDetails(journeyId)
       case Some(SOLE_TRADER) => updateSoleTraderDetails(journeyId)
-      case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-        throw new InternalServerException(s"Invalid organisation type")
+      case Some(LIMITED_LIABILITY_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) |
+          Some(SCOTTISH_PARTNERSHIP) =>
+        updatePartnershipDetails(journeyId)
       case _ => throw new InternalServerException(s"Invalid organisation type")
     }
   }.flatMap(updatedRegistration => update(_ => updatedRegistration))
@@ -181,7 +133,8 @@ class PartnerGrsController @Inject() (
       request.registration.copy(organisationDetails =
         updateOrganisationDetails(request.registration.organisationDetails,
                                   soleTraderDetails = None,
-                                  incorporationDetails = Some(incorporationDetails)
+                                  incorporationDetails = Some(incorporationDetails),
+                                  partnershipDetails = None
         )
       )
     }
@@ -193,7 +146,28 @@ class PartnerGrsController @Inject() (
       request.registration.copy(organisationDetails =
         updateOrganisationDetails(request.registration.organisationDetails,
                                   soleTraderDetails = Some(soleTraderDetails),
-                                  incorporationDetails = None
+                                  incorporationDetails = None,
+                                  partnershipDetails = None
+        )
+      )
+    }
+
+  private def updatePartnershipDetails(
+    journeyId: String
+  )(implicit request: JourneyRequest[AnyContent]): Future[Registration] =
+    partnershipGrsConnector.getDetails(journeyId).map { partnershipBusinessDetails =>
+      val partnershipDetails = Some(
+        PartnerPartnershipDetails(
+          partnershipType = request.registration.organisationDetails.nominatedPartnerType.get,
+          partnershipName = None,
+          partnershipBusinessDetails = Some(partnershipBusinessDetails)
+        )
+      )
+      request.registration.copy(organisationDetails =
+        updateOrganisationDetails(organisationDetails = request.registration.organisationDetails,
+                                  soleTraderDetails = None,
+                                  incorporationDetails = None,
+                                  partnershipDetails = partnershipDetails
         )
       )
     }
@@ -201,7 +175,8 @@ class PartnerGrsController @Inject() (
   private def updateOrganisationDetails(
     organisationDetails: OrganisationDetails,
     soleTraderDetails: Option[SoleTraderDetails],
-    incorporationDetails: Option[IncorporationDetails]
+    incorporationDetails: Option[IncorporationDetails],
+    partnershipDetails: Option[PartnerPartnershipDetails]
   ) =
     organisationDetails.copy(partnershipDetails =
       Some(
@@ -210,7 +185,8 @@ class PartnerGrsController @Inject() (
             details.copy(nominatedPartner =
               updatedNominatedPartner(details = details,
                                       soleTraderDetails = soleTraderDetails,
-                                      incorporationDetails = incorporationDetails
+                                      incorporationDetails = incorporationDetails,
+                                      partnershipDetails = partnershipDetails
               )
             )
         ).getOrElse(throw new IllegalStateException("No partnership details found"))
@@ -220,50 +196,18 @@ class PartnerGrsController @Inject() (
   private def updatedNominatedPartner(
     details: PartnershipDetails,
     soleTraderDetails: Option[SoleTraderDetails],
-    incorporationDetails: Option[IncorporationDetails]
+    incorporationDetails: Option[IncorporationDetails],
+    partnershipDetails: Option[PartnerPartnershipDetails]
   ): Option[Partner] =
     details.nominatedPartner match {
       case Some(partner) =>
         Some(
           partner.copy(soleTraderDetails = soleTraderDetails,
-                       incorporationDetails = incorporationDetails
+                       incorporationDetails = incorporationDetails,
+                       partnerPartnershipDetails = partnershipDetails
           )
         )
       case _ => throw new IllegalStateException("No nominated partner found")
     }
-
-//  private def updatePartnershipDetails(
-//    journeyId: String
-//  )(implicit request: JourneyRequest[AnyContent]): Future[Registration] =
-//      partnershipGrsConnector.getDetails(journeyId).map { partnershipBusinessDetails =>
-//        request.registration.copy(organisationDetails =
-//          request.registration.organisationDetails.copy(partnershipDetails =
-//            Some(
-//              request.registration.organisationDetails.partnershipDetails.map(
-//                details =>
-//                  details.copy(nominatedPartner = details.nominatedPartner match {
-//                    case Some(partner) =>
-//                      Some(partner.copy(partnershipDetails = updatePartnershipDetails(partnershipBusinessDetails, partner.partnerType)))
-//                    case _ => throw new IllegalStateException("No nominated partner found")
-//                  })
-//              ).getOrElse(throw new IllegalStateException("No partnership details found"))
-//            )
-//          )
-//        )
-//      }
-//
-//  private def updatePartnershipDetails(
-//    organisationDetails: OrganisationDetails,
-//    partnershipBusinessDetails: Option[PartnershipBusinessDetails],
-//    partnerTypeEnum: Option[PartnerTypeEnum]
-//  ): Partner = {
-//    val updatedPartnershipDetails: PartnershipDetails = organisationDetails.partnershipDetails.fold(
-//      PartnershipDetails(partnerType = partnerTypeEnum,
-//                         partnershipName = None,
-//                         partnershipBusinessDetails = partnershipBusinessDetails
-//      )
-//    )
-//    organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
-//  }
 
 }

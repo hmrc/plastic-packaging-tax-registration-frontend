@@ -101,6 +101,12 @@ case class Registration(
     else
       this.primaryContactDetails.status(metaData.emailVerified)
 
+  def nominatedPartnerDetailsStatus: TaskStatus =
+    this.organisationDetails.nominatedPartner match {
+      case Some(value) => if (value.isCompleted) TaskStatus.Completed else TaskStatus.InProgress
+      case _           => TaskStatus.NotStarted
+    }
+
   def isOtherOrganisationsInGroupComplete: Boolean =
     !isGroup || otherOrganisationsInGroupStatus == TaskStatus.Completed
 

@@ -27,7 +27,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
+  LIMITED_LIABILITY_PARTNERSHIP,
+  PartnerTypeEnum,
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   SUBSCRIBED,
@@ -124,9 +129,11 @@ case class OrganisationDetails(
             case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
             case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
               partner.incorporationDetails.flatMap(_.registration)
-            case PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP        => None
-            case PartnerTypeEnum.SCOTTISH_PARTNERSHIP                 => None
-            case PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP         => None
+            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
+                SCOTTISH_LIMITED_PARTNERSHIP =>
+              partner.partnerPartnershipDetails.flatMap(
+                _.partnershipBusinessDetails.flatMap(_.registration)
+              )
             case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
             case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
           }

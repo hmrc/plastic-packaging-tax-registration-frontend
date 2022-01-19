@@ -26,9 +26,14 @@ case class Partner(
   partnerType: Option[PartnerTypeEnum],
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
-  partnershipDetails: Option[PartnershipDetails] = None,
+  partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None,
   contactDetails: Option[PartnerContactDetails] = None
-)
+) {
+
+  def isCompleted: Boolean =
+    partnerType.nonEmpty && (soleTraderDetails.nonEmpty || incorporationDetails.nonEmpty || partnerPartnershipDetails.nonEmpty)
+
+}
 
 object Partner {
   implicit val format: OFormat[Partner] = Json.format[Partner]
