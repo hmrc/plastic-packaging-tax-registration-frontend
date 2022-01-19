@@ -45,7 +45,7 @@ class PartnershipOtherPartnerCheckAnswersController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       (for {
-        inflight <- request.registration.inflightOtherPartner
+        inflight <- request.registration.inflightPartner
       } yield Ok(
         page(inflight, partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.displayPage())
       )).getOrElse(NotFound)
@@ -62,9 +62,9 @@ class PartnershipOtherPartnerCheckAnswersController @Inject() (
     req: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.inflightOtherPartner.map { otherPartner =>
-        val withIdAssigned = otherPartner.copy(id = Some(UUID.randomUUID().toString))
-        registration.addOtherPartner(withIdAssigned).withInflightOtherPartner(None)
+      registration.inflightPartner.map { otherPartner =>
+        val withIdAssigned = otherPartner.copy(id = UUID.randomUUID().toString)
+        registration.addOtherPartner(withIdAssigned).withInflightPartner(None)
       }.getOrElse(registration)
     }
 

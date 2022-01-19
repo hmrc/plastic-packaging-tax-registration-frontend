@@ -19,27 +19,21 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  ServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnerContactDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, PhoneNumber}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  CreateEmailVerificationRequest,
-  VerificationStatus
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-
-import scala.concurrent.Future
 
 class PartnershipPartnersPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -66,16 +60,26 @@ class PartnershipPartnersPhoneNumberControllerSpec extends ControllerSpec with D
   }
 
   def registrationWithInflightOtherPartnerJourney =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightOtherPartner(
-      Some(OtherPartner(firstName = Some("John"), lastName = Some("Smith")))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(
+        Partner(contactDetails =
+                  Some(PartnerContactDetails(firstName = Some("John"), lastName = Some("Smith"))),
+                partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
+        )
+      )
     )
 
   def registrationWithInflightOtherPartnerJourneyAndPhoneNumber =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightOtherPartner(
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
       Some(
-        OtherPartner(firstName = Some("John"),
-                     lastName = Some("Smith"),
-                     phoneNumber = Some("12345678")
+        Partner(
+          contactDetails = Some(
+            PartnerContactDetails(firstName = Some("John"),
+                                  lastName = Some("Smith"),
+                                  phoneNumber = Some("12345678")
+            )
+          ),
+          partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
         )
       )
     )

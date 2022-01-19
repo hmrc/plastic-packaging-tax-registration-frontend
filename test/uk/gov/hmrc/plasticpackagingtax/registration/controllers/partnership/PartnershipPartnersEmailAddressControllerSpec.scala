@@ -27,7 +27,11 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnerContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -57,16 +61,26 @@ class PartnershipPartnersEmailAddressControllerSpec
   }
 
   def registrationWithInflightOtherPartnerJourney =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightOtherPartner(
-      Some(OtherPartner(firstName = Some("John"), lastName = Some("Smith")))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(
+        Partner(contactDetails =
+                  Some(PartnerContactDetails(firstName = Some("John"), lastName = Some("Smith"))),
+                partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
+        )
+      )
     )
 
   def registrationWithInflightOtherPartnerJourneyAndEmailAddress =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightOtherPartner(
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
       Some(
-        OtherPartner(firstName = Some("John"),
-                     lastName = Some("Smith"),
-                     emailAddress = Some("test@localhost")
+        Partner(
+          contactDetails = Some(
+            PartnerContactDetails(firstName = Some("John"),
+                                  lastName = Some("Smith"),
+                                  emailAddress = Some("test@localhost")
+            )
+          ),
+          partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
         )
       )
     )

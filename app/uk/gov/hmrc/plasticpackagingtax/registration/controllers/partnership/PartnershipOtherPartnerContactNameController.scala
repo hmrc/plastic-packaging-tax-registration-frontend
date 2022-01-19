@@ -29,7 +29,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
   routes => partnershipRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnerContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.member_name_page
@@ -52,16 +56,18 @@ class PartnershipOtherPartnerContactNameController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       val inflightOtherPartner =
         Some(
-          OtherPartner(organisationName = Some("Partner organisation"))
-        ) // TODO will have been populated by the preceding GRS journey
+          Partner(organisationName = Some("Partner organisation"),
+                  partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
+          ) // TODO will have been populated by the preceding GRS journey
+        )
 
       (for {
         inflight         <- inflightOtherPartner
         organisationName <- inflight.organisationName
-
       } yield (for {
-        firstName <- inflight.firstName
-        lastName  <- inflight.lastName
+        contactDetails <- inflight.contactDetails
+        firstName      <- contactDetails.firstName
+        lastName       <- contactDetails.lastName
 
       } yield (firstName, lastName)) match {
         case Some(data) =>
@@ -87,7 +93,9 @@ class PartnershipOtherPartnerContactNameController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       val inflightOtherPartner =
         Some(
-          OtherPartner(organisationName = Some("Partner organisation"))
+          Partner(organisationName = Some("Partner organisation"),
+                  partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
+          )
         ) // TODO will have been populated by the preceding GRS journey
 
       (for {
@@ -126,14 +134,19 @@ class PartnershipOtherPartnerContactNameController @Inject() (
     formData: MemberName
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val otherPartner = registration.inflightOtherPartner.getOrElse(OtherPartner())
-      registration.withInflightOtherPartner(
+      val otherPartner = registration.inflightPartner.getOrElse(
+        Partner(partnerType = Some(PartnerTypeEnum.SOLE_TRADER))
+      ) // TODO type from previous GRS screen
+
+      val withContactName = otherPartner.copy(contactDetails =
         Some(
-          otherPartner.copy(firstName = Some(formData.firstName),
-                            lastName = Some(formData.lastName)
+          PartnerContactDetails(firstName = Some(formData.firstName),
+                                lastName = Some(formData.lastName)
           )
         )
       )
+
+      registration.withInflightPartner(Some(withContactName))
     }
 
 }

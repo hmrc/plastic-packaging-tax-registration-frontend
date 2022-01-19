@@ -28,7 +28,8 @@ case class Partner(
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnershipDetails: Option[PartnershipDetails] = None,
-  contactDetails: Option[PartnerContactDetails] = None
+  contactDetails: Option[PartnerContactDetails] = None,
+  organisationName: Option[String] = None // TODO for other partners flow
 ) {
 
   lazy val name: String = partnerType match {

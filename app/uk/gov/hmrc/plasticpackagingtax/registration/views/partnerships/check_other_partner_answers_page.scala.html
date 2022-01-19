@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{routes => partnershipRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 @import java.time.format.DateTimeFormatter
 
 @this(
@@ -32,7 +32,7 @@
         saveAndContinue: saveAndContinue
 )
 
-@(answers: OtherPartner, backLink: Call)(implicit request: Request[_], messages: Messages)
+@(answers: Partner, backLink: Call)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title("enrolment.checkAnswers.title"),
@@ -49,7 +49,7 @@
                             content = Text(messages("partnership.otherPartners.checkAnswers.contactName"))
                         ),
                         value = Value(
-                             content =  Text(answers.contactName.getOrElse(""))
+                             content =  Text(answers.contactDetails.flatMap(_.contactName).getOrElse(""))
                         )
                     ),
                     SummaryListRow(
@@ -57,7 +57,7 @@
                             content = Text(messages("partnership.otherPartners.checkAnswers.emailAddress"))
                         ),
                         value = Value(
-                            content =  Text(answers.emailAddress.getOrElse(""))
+                            content =  Text(answers.contactDetails.flatMap(_.emailAddress).getOrElse(""))
                         )
                     ),
                     SummaryListRow(
@@ -65,7 +65,7 @@
                             content = Text(messages("partnership.otherPartners.checkAnswers.phoneNumber"))
                         ),
                         value = Value(
-                            content =  Text(answers.phoneNumber.getOrElse(""))
+                            content =  Text(answers.contactDetails.flatMap(_.phoneNumber).getOrElse(""))
                         )
                     )
                 ).filterNot(_.value.content == Empty)

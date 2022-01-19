@@ -30,6 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
@@ -51,10 +52,11 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       (for {
-        inflight    <- request.registration.inflightOtherPartner
-        contactName <- inflight.contactName
+        inflight       <- request.registration.inflightPartner
+        contactDetails <- inflight.contactDetails
+        contactName    <- contactDetails.contactName
 
-      } yield inflight.emailAddress match {
+      } yield contactDetails.emailAddress match {
         case Some(data) =>
           Ok(
             page(EmailAddress.form().fill(EmailAddress(data)),
@@ -81,8 +83,10 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
         .fold(
           (formWithErrors: Form[EmailAddress]) =>
             (for {
-              inflight    <- request.registration.inflightOtherPartner
-              contactName <- inflight.contactName
+              inflight       <- request.registration.inflightPartner
+              contactDetails <- inflight.contactDetails
+              contactName    <- contactDetails.contactName
+
             } yield Future.successful(
               BadRequest(
                 page(formWithErrors,
@@ -113,9 +117,16 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       (for {
-        inflight <- registration.inflightOtherPartner
-      } yield inflight.copy(emailAddress = Some(formData.value))).map { updated =>
-        registration.withInflightOtherPartner(Some(updated))
+        inflight <- registration.inflightPartner
+      } yield {
+        val updatedContactDetails =
+          inflight.contactDetails.getOrElse(PartnerContactDetails()).copy(emailAddress =
+            Some(formData.value)
+          )
+        inflight.copy(contactDetails = Some(updatedContactDetails))
+
+      }).map { updated =>
+        registration.withInflightPartner(Some(updated))
       }.getOrElse {
         registration
       }

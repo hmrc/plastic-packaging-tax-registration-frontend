@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.OtherPartner
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
@@ -31,14 +31,14 @@
   pageHeading: pageHeading,
 )
 
-@(otherPartners: Seq[OtherPartner], nominatedPartnerName: String, numberOfPartners: Int)(implicit request: Request[_], messages: Messages, flash: Flash)
+@(otherPartners: Seq[Partner], nominatedPartnerName: String, numberOfPartners: Int)(implicit request: Request[_], messages: Messages, flash: Flash)
 
 @nominatedPartnerRow = @{
     SummaryListRow(key = Key(content = Text(nominatedPartnerName)))
 }
 @otherPartnerRows = @{
     nominatedPartnerRow +: otherPartners.map { partner =>
-        viewUtils.summaryListRow(partner.contactName.getOrElse("") + "(" + partner.id.getOrElse("") + ")", None, None)
+        viewUtils.summaryListRow(partner.contactDetails.flatMap(_.contactName).getOrElse(""), None, None)
     }
 }
 
