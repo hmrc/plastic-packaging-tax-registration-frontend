@@ -13,7 +13,7 @@ This service integrates with the Generic Registration Service and Tax Enrolments
  
 ```
 # Start the plastic packaging services and dependencies for company and registered society organisation types - 
-sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r
+sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALLADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}' 
 
 # For the above organisation types along with partnerships and sole traders use these profiles -
 sm --start PLASTIC_PACKAGING_TAX_ALL INCORPORATED_ENTITY_IDENTIFICATION_ALL SOLE_TRADER_IDENTIFICATION_ALL PARTNERSHIP_IDENTIFICATION_ALL EMAIL_VERIFICATION_ALL TAX_ENROLMENTS_ALL ADDRESS_LOOKUP_SERVICES -r --appendArgs '{"ADDRESS_LOOKUP_FRONTEND":["-J-Dapplication.router=testOnlyDoNotUseInAppConf.Routes","-J-Dmicroservice.hosts.allowList.1=localhost"]}'

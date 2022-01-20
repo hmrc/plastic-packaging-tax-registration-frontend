@@ -129,6 +129,26 @@ case class Registration(
   val inflightPartner: Option[Partner] =
     organisationDetails.partnershipDetails.flatMap(_.inflightPartner)
 
+  def withInflightPartner(updatedOtherPartner: Option[Partner]): Registration =
+    organisationDetails.partnershipDetails.map { partnershipDetails =>
+      val updatedPartnershipDetails =
+        partnershipDetails.copy(inflightPartner = updatedOtherPartner)
+      this.copy(organisationDetails =
+        organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
+      )
+    }.getOrElse(this)
+
+  def addOtherPartner(otherPartner: Partner): Registration =
+    organisationDetails.partnershipDetails.map { partnershipDetails =>
+      val updatedOtherPartners =
+        partnershipDetails.otherPartners.getOrElse(Seq.empty) :+ otherPartner;
+      val updatedPartnershipDetails =
+        partnershipDetails.copy(otherPartners = Some(updatedOtherPartners))
+      this.copy(organisationDetails =
+        organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
+      )
+    }.getOrElse(this)
+
   val nominatedPartner = organisationDetails.partnershipDetails.flatMap(_.nominatedPartner)
 
   def findPartner(partnerId: String): Option[Partner] =

@@ -30,8 +30,8 @@ case class PartnershipDetails(
   partnershipName: Option[String] = None,
   partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None,
   nominatedPartner: Option[Partner] = None,
-  otherPartners: Option[Seq[Partner]] = None,
-  inflightPartner: Option[Partner] = None // Scratch area for newly added partner
+  inflightPartner: Option[Partner] = None, // Scratch area for newly added partner
+  otherPartners: Option[Seq[Partner]] = None
 ) {
 
   val partnershipOrCompanyName: Option[String] = partnershipName match {

@@ -411,7 +411,7 @@ const liabilityStartDate = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/liable-date')) {
 
         document.getElementById('day').value = '01'
-        document.getElementById('month').value = '06'
+        document.getElementById('month').value = '04'
         document.getElementById('year').value = '2022'
         document.getElementsByClassName('govuk-button')[0].click()
     }
