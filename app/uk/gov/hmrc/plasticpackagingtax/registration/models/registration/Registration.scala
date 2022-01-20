@@ -20,6 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 
@@ -134,6 +135,29 @@ case class Registration(
 
   def findMember(memberId: String): Option[GroupMember] =
     groupDetail.flatMap(_.findGroupMember(memberId))
+
+  val inflightPartner: Option[Partner] =
+    organisationDetails.partnershipDetails.flatMap(_.inflightPartner)
+
+  def withInflightPartner(updatedOtherPartner: Option[Partner]): Registration =
+    organisationDetails.partnershipDetails.map { partnershipDetails =>
+      val updatedPartnershipDetails =
+        partnershipDetails.copy(inflightPartner = updatedOtherPartner)
+      this.copy(organisationDetails =
+        organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
+      )
+    }.getOrElse(this)
+
+  def addOtherPartner(otherPartner: Partner): Registration =
+    organisationDetails.partnershipDetails.map { partnershipDetails =>
+      val updatedOtherPartners =
+        partnershipDetails.otherPartners.getOrElse(Seq.empty) :+ otherPartner;
+      val updatedPartnershipDetails =
+        partnershipDetails.copy(otherPartners = Some(updatedOtherPartners))
+      this.copy(organisationDetails =
+        organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
+      )
+    }.getOrElse(this)
 
 }
 

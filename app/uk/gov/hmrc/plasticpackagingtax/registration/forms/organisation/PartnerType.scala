@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.i18n.Messages
+import play.api.i18n.Messages
 import play.api.libs.json.{Format, Reads, Writes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum

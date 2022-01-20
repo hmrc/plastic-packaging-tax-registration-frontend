@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 
 import java.util.UUID
@@ -27,11 +28,29 @@ case class Partner(
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None,
-  contactDetails: Option[PartnerContactDetails] = None
+  contactDetails: Option[PartnerContactDetails] = None,
+  organisationName: Option[String] =
+    None // TODO for other partners flow; change after GRS flow results are available
 ) {
+
+  lazy val name: String = partnerType match {
+    case Some(PartnerTypeEnum.SOLE_TRADER) =>
+      soleTraderDetails.map(_.name).getOrElse(
+        throw new IllegalStateException("Sole Trader details absent")
+      )
+    case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) =>
+      partnershipDetails.flatMap(_.partnershipName).getOrElse(
+        throw new IllegalStateException("Partnership details absent")
+      )
+    case _ =>
+      incorporationDetails.map(_.companyName).getOrElse(
+        throw new IllegalStateException("Incorporation details absent")
+      )
+  }
 
   def isCompleted: Boolean =
     partnerType.nonEmpty && (soleTraderDetails.nonEmpty || incorporationDetails.nonEmpty || partnerPartnershipDetails.nonEmpty)
+
 
 }
 

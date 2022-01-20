@@ -1,0 +1,56 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{routes => partnershipRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.saveButtons
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
+
+@this(
+  govukLayout: main_template,
+  govukButton: GovukButton,
+  govukSummaryList: GovukSummaryList,
+  viewUtils: ViewUtils,
+  pageHeading: pageHeading,
+)
+
+@(otherPartners: Seq[Partner], nominatedPartnerName: String, numberOfPartners: Int)(implicit request: Request[_], messages: Messages, flash: Flash)
+
+@nominatedPartnerRow = @{
+    SummaryListRow(key = Key(content = Text(nominatedPartnerName)))
+}
+@otherPartnerRows = @{
+    nominatedPartnerRow +: otherPartners.map { partner =>
+        viewUtils.summaryListRow(partner.contactDetails.flatMap(_.name).getOrElse(""), None, None)
+    }
+}
+
+@govukLayout(title = Title(messages("partnerships.otherPartners.title", numberOfPartners)),
+backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+
+ @pageHeading(messages("partnerships.otherPartners.title", numberOfPartners))
+ @govukSummaryList(
+    SummaryList(
+        rows = otherPartnerRows
+    )
+ )
+
+ <p><a href="@partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage()">Add other partner details</a></p>
+}

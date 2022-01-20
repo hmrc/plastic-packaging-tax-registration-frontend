@@ -46,7 +46,9 @@ case class SoleTraderDetails(
   ninoOrTrn: String,
   sautr: Option[String],
   override val registration: Option[RegistrationDetails]
-) extends HasRegistrationDetails
+) extends HasRegistrationDetails {
+  lazy val name = s"$firstName $lastName"
+}
 
 object SoleTraderDetails {
 

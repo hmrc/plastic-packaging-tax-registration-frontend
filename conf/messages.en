@@ -314,6 +314,12 @@ organisationDetails.type.RegisteredSociety = Registered society
 organisationDetails.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
 organisationDetails.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
 
+organisationDetails.type.GeneralPartnership = General partnership
+organisationDetails.type.LimitedLiabilityPartnership = Limited liability partnership
+organisationDetails.type.LimitedPartnership = Limited partnership
+organisationDetails.type.ScottishPartnership = Scottish partnership
+organisationDetails.type.ScottishLimitedPartnership = Scottish limited partnership
+
 organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
 
 partnership.type.title = What type of partnership are you registering?
@@ -336,6 +342,15 @@ partner.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or plac
 
 nominated.partner.type.title = What type of organisation is the nominated partner?
 nominated.partner.name.empty.error = Please select an entity type from the options above
+
+partnerships.otherPartners.title = You have {0} partners in your partnership
+partnership.otherPartners.contactNamePage.title = Who is the main contact for {0}?
+partnership.otherPartners.contactEmailAddressPage.title = What is {0}’s email address?
+partnership.otherPartners.contactPhoneNumberPage.title = What is {0}’s telephone number?
+partnership.otherPartners.checkAnswers.contactName = Name
+partnership.otherPartners.checkAnswers.jobTitle = Job title
+partnership.otherPartners.checkAnswers.emailAddress = Email address
+partnership.otherPartners.checkAnswers.phoneNumber = Phone number
 
 unauthorised.heading = You are not registered for Plastic Packaging Tax
 unauthorised.paragraph.1 = The Plastic Packaging Tax (PPT) service will launch in April 2022, and is currently available to a limited number of people for their feedback.
@@ -561,3 +576,22 @@ addressLookup.member.contact.select.heading = Select your address for {0}
 
 addressLookup.member.contact.confirm.title = Confirm your address for {0}
 addressLookup.member.contact.confirm.heading = Confirm your address for {0}
+
+partner.check.title = Check your answers
+partner.check.orgType = Organisation type
+partner.check.companyNumber = Company number
+partner.check.orgName = Organisation name
+partner.check.utr = Unique Taxpayer Reference
+partner.check.sautr = Self Assessment Unique Taxpayer Reference
+partner.check.dob = Date of birth
+partner.check.name = Name
+partner.check.nino = National Insurance Number
+partner.check.contact.name = Contact name
+partner.check.contact.email = Contact email
+partner.check.contact.phone = Phone number
+partner.check.contact.address = Contact address
+
+partnership.partnerList.title = You have added {0} partners
+partnership.partnerList.nominatedPartner = Nominated partner
+partnership.partnerList.subHeading = Do you need to add another partner?
+addPartner.empty.error = Select yes if you need to add another partner
