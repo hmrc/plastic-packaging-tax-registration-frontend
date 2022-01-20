@@ -501,8 +501,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                                     )
                          )
                        ),
-                       nominatedPartner = Some(aSoleTraderPartner()),
-                       otherPartners = Some(Seq(aLimitedCompanyPartner(), aPartnershipPartner())),
+                       partners =
+                         Seq(aSoleTraderPartner(), aLimitedCompanyPartner(), aPartnershipPartner()),
                        inflightPartner = None
     )
 

@@ -64,13 +64,11 @@ class PartnerListController @Inject() (
     }
 
   private def getNominatedPartner(request: JourneyRequest[AnyContent]) =
-    request.registration.organisationDetails.partnershipDetails.flatMap(
-      _.nominatedPartner
-    ).getOrElse(throw new IllegalStateException("Nominated partner absent"))
+    request.registration.nominatedPartner.getOrElse(
+      throw new IllegalStateException("Nominated partner absent")
+    )
 
   private def getOtherPartners(request: JourneyRequest[AnyContent]) =
-    request.registration.organisationDetails.partnershipDetails.flatMap(_.otherPartners).getOrElse(
-      throw new IllegalStateException("Other partners absent")
-    )
+    request.registration.otherPartners
 
 }

@@ -29,10 +29,12 @@ case class PartnershipDetails(
   partnershipType: PartnershipTypeEnum,
   partnershipName: Option[String] = None,
   partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None,
-  nominatedPartner: Option[Partner] = None,
-  inflightPartner: Option[Partner] = None, // Scratch area for newly added partner
-  otherPartners: Option[Seq[Partner]] = None
+  partners: Seq[Partner] = Seq(),
+  inflightPartner: Option[Partner] = None // Scratch area for newly added partner
 ) {
+
+  val nominatedPartner: Option[Partner] = partners.headOption
+  val otherPartners: Seq[Partner]       = partners.drop(1)
 
   val partnershipOrCompanyName: Option[String] = partnershipName match {
     case Some(name) => Some(name)
@@ -51,7 +53,14 @@ case class PartnershipDetails(
     )
 
   def findPartner(partnerId: String): Option[Partner] =
-    otherPartners.flatMap(_.find(_.id == partnerId))
+    partners.find(_.id == partnerId)
+
+  def withPromotedInflightPartner(): PartnershipDetails =
+    this.copy(partners = partners :+ inflightPartner.getOrElse(
+                throw new IllegalStateException("Inflight partner absent")
+              ),
+              inflightPartner = None
+    )
 
 }
 

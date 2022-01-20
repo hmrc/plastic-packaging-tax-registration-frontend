@@ -87,31 +87,27 @@ GET        /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registratio
 POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsCheckAnswersController.submit()
 
 # Partnership Registrations
-GET        /nominated-partner-check-answers   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.nominatedPartner()
-GET        /partner-check-answers/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.partner(partnerId: String)
-POST       /partner-check-answers             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.submit()
+GET        /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.displayPage()
+POST       /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.submit()
+
+GET        /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.displayPage()
+POST       /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.submit()
+
+GET        /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.displayPage()
+POST       /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.submit()
+
+GET        /partner-contact-address             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureNewPartner()
+GET        /partner-contact-address/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureExistingPartner(partnerId)
+
+GET        /partner-check-answers               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayNominatedPartner()
+GET        /partner-check-answers/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayPartner(partnerId: String)
+POST       /partner-check-answers               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.continue()
+
+GET        /partner-contact-address-callback                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackNewPartner(id: Option[String])
+GET        /partner-contact-address-callback/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackExistingPartner(partnerId, id: Option[String])
 
 GET        /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.displayPage()
 POST       /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.submit()
-GET        /partnerships/partners-list  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipPartnersListController.displayPage()
-GET        /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.displayPage()
-POST       /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.submit()
-GET        /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.displayPage()
-POST       /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.submit()
-GET        /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.displayPage()
-POST       /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.submit()
-GET        /partnerships/check-answers-other-partner uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerCheckAnswersController.displayPage()
-POST       /partnerships/check-answers-other-partner uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerCheckAnswersController.submit()
-
-GET        /inflight-nominated-partner-contact-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForInflightNominatedPartner()
-GET        /nominated-partner-contact-address               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForExistingNominatedPartner()
-GET        /inflight-partner-contact-address                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForInflightPartner()
-GET        /partner-contact-address/:partnerId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureForExistingPartner(partnerId)
-
-GET        /inflight-nominated-partner-contact-address-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackInflightNominatedPartner(id: Option[String])
-GET        /nominated-partner-contact-address-callback              uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackExistingNominatedPartner(id: Option[String])
-GET        /inflight-partner-contact-address-callback               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackInflightPartner(id: Option[String])
-GET        /partner-contact-address-callback/:partnerId             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackExistingPartner(partnerId, id: Option[String])
 
 # Others
 GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.TaskListController.displayPage()

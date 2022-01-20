@@ -514,21 +514,29 @@ addressLookup.business.select.title = Select the business address for {0}?
 addressLookup.business.select.heading = Select the business address for {0}?
 addressLookup.contact.select.title = Select {0}’s business address?
 addressLookup.contact.select.heading = Select {0}’s business address?
+addressLookup.partner.select.title = Select {0}’s contact address?
+addressLookup.partner.select.heading = Select {0}’s contact address?
 
 addressLookup.business.lookup.title = What is the business address for {0}?
 addressLookup.business.lookup.heading = What is the business address for {0}?
 addressLookup.contact.lookup.title = What is {0}’s business address?
 addressLookup.contact.lookup.heading = What is {0}’s business address?
+addressLookup.partner.lookup.title = What is {0}’s contact address?
+addressLookup.partner.lookup.heading = What is {0}’s contact address?
 
 addressLookup.business.confirm.title = What is the business address for {0}?
 addressLookup.business.confirm.heading = What is the business address for {0}?
 addressLookup.contact.confirm.title = What is {0}’s business address?
 addressLookup.contact.confirm.heading = What is {0}’s business address?
+addressLookup.partner.confirm.title = What is {0}’s contact address?
+addressLookup.partner.confirm.heading = What is {0}’s contact address?
 
 addressLookup.business.edit.title = What is the business address for {0}?
 addressLookup.business.edit.heading = What is the business address for {0}?
 addressLookup.contact.edit.title = What is {0}’s business address?
 addressLookup.contact.edit.heading = What is {0}’s business address?
+addressLookup.partner.edit.title = What is {0}’s contact address?
+addressLookup.partner.edit.heading = What is {0}’s contact address?
 
 organisation.checkAnswers.title = Check your answers
 
@@ -587,5 +595,3 @@ partnership.partnerList.title = You have added {0} partners
 partnership.partnerList.nominatedPartner = Nominated partner
 partnership.partnerList.subHeading = Do you need to add another partner?
 addPartner.empty.error = Select yes if you need to add another partner
-
-addressLookup.partner.contact.lookup.title = What is {0}’s contact address?

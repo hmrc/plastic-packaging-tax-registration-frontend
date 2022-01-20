@@ -93,7 +93,6 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and continue"
     }
-
   }
 
   override def exerciseGeneratedRenderingMethods() = {
@@ -110,7 +109,7 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
   }
 
   private def getOtherPartners(registration: Registration) =
-    registration.organisationDetails.partnershipDetails.flatMap(_.otherPartners).getOrElse(
+    registration.organisationDetails.partnershipDetails.map(_.otherPartners).getOrElse(
       throw new IllegalStateException("Other partners absent")
     )
 

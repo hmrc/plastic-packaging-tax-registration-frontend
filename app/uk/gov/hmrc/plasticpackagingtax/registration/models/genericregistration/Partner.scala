@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 
@@ -47,6 +48,9 @@ case class Partner(
         throw new IllegalStateException("Incorporation details absent")
       )
   }
+
+  def withContactAddress(contactAddress: Address): Partner =
+    this.copy(contactDetails = this.contactDetails.map(_.withUpdatedAddress(contactAddress)))
 
 }
 

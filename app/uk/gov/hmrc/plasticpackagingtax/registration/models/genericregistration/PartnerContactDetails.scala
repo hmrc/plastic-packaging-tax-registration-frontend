@@ -31,6 +31,9 @@ case class PartnerContactDetails(
     if (firstName.isDefined && lastName.isDefined) Some(s"${firstName.get} ${lastName.get}")
     else None
 
+  def withUpdatedAddress(updatedAddress: Address): PartnerContactDetails =
+    this.copy(address = Some(updatedAddress))
+
 }
 
 object PartnerContactDetails {

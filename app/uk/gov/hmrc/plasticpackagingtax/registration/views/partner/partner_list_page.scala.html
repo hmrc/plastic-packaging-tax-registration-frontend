@@ -47,12 +47,12 @@
         ListMember(
             name = nominatedPartner.name,
             subHeading = Some(messages("partnership.partnerList.nominatedPartner")),
-            change = Some(partnerRoutes.PartnerCheckAnswersController.nominatedPartner())
+            change = Some(partnerRoutes.PartnerCheckAnswersController.displayPartner(nominatedPartner.id))
         )) ++
             otherPartners.map(partner =>
                 ListMember(
                     name = partner.name,
-                    change = Some(partnerRoutes.PartnerCheckAnswersController.partner(partner.id)),
+                    change = Some(partnerRoutes.PartnerCheckAnswersController.displayPartner(partner.id)),
                     remove = None // TODO: add a remove link
                 )
             )
