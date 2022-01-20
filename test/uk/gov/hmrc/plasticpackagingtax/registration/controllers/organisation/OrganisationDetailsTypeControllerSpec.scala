@@ -29,6 +29,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY_UK_BRANCH,
@@ -115,7 +116,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
         "user submits organisation type: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          assertRedirectForOrgType(PARTNERSHIP, routes.PartnershipTypeController.displayPage().url)
+          assertRedirectForOrgType(PARTNERSHIP,
+                                   partnerRoutes.PartnershipTypeController.displayPage().url
+          )
         }
 
         "user submits organisation type: " + REGISTERED_SOCIETY in {

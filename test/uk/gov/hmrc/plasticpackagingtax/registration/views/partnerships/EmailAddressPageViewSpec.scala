@@ -33,8 +33,7 @@ class EmailAddressPageViewSpec extends UnitViewSpec with Matchers {
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
-  private val organisationName = "Organisation"
-  private val contactName      = "A Contact"
+  private val contactName = "A Contact"
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
     page(form, backLink, updateLink, contactName)(journeyRequest, messages)

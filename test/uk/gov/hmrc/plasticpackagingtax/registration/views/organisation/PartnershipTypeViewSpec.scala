@@ -23,8 +23,8 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipType.form
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType.form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
@@ -32,8 +32,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.Partnersh
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
-  PartnershipType,
-  PartnershipTypeEnum
+  PartnerType,
+  PartnerTypeEnum
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -43,7 +43,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[partnership_type]
 
-  private def createView(form: Form[PartnershipType] = PartnershipType.form()): Document =
+  private def createView(form: Form[PartnerType] = PartnerType.form()): Document =
     page(form)(journeyRequest, messages)
 
   "Partnership Type View" should {
@@ -82,27 +82,27 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
     "display radio inputs" in {
 
       view.getElementById("answer").attr("value").text() mustBe GENERAL_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").first().text() mustBe PartnershipTypeEnum.displayName(
+      view.getElementsByClass("govuk-label").first().text() mustBe PartnerTypeEnum.displayName(
         GENERAL_PARTNERSHIP
       )
       view.getElementById("answer-2").attr(
         "value"
       ).text() mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(1).text() mustBe PartnershipTypeEnum.displayName(
+      view.getElementsByClass("govuk-label").get(1).text() mustBe PartnerTypeEnum.displayName(
         LIMITED_LIABILITY_PARTNERSHIP
       )
       view.getElementById("answer-3").attr("value").text() mustBe LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(2).text() mustBe PartnershipTypeEnum.displayName(
+      view.getElementsByClass("govuk-label").get(2).text() mustBe PartnerTypeEnum.displayName(
         LIMITED_PARTNERSHIP
       )
       view.getElementById("answer-4").attr("value").text() mustBe SCOTTISH_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(3).text() mustBe PartnershipTypeEnum.displayName(
+      view.getElementsByClass("govuk-label").get(3).text() mustBe PartnerTypeEnum.displayName(
         SCOTTISH_PARTNERSHIP
       )
       view.getElementById("answer-5").attr(
         "value"
       ).text() mustBe SCOTTISH_LIMITED_PARTNERSHIP.toString
-      view.getElementsByClass("govuk-label").get(4).text() mustBe PartnershipTypeEnum.displayName(
+      view.getElementsByClass("govuk-label").get(4).text() mustBe PartnerTypeEnum.displayName(
         SCOTTISH_LIMITED_PARTNERSHIP
       )
     }
@@ -119,9 +119,9 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display checked radio button" in {
 
-      val form = PartnershipType
+      val form = PartnerType
         .form()
-        .fill(PartnershipType(LIMITED_LIABILITY_PARTNERSHIP.toString))
+        .fill(PartnerType(LIMITED_LIABILITY_PARTNERSHIP.toString))
       val view = createView(form)
 
       view.getElementById("answer-2").attr("value") mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
@@ -131,7 +131,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
       "no radio button checked" in {
 
-        val form = PartnershipType
+        val form = PartnerType
           .form()
           .bind(emptyFormData)
         val view = createView(form)

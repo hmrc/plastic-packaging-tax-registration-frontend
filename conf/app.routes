@@ -40,11 +40,14 @@ GET        /grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controll
 GET        /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPage()
 POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submit()
 
-GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.displayPage()
-POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.submit()
+GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.displayPage()
+POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.submit()
 
-GET        /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipNameController.displayPage()
-POST       /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipNameController.submit()
+GET        /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipNameController.displayPage()
+POST       /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipNameController.submit()
+
+GET        /partnership-nominated-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.displayPage()
+POST       /partnership-nominated-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.submit()
 
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationTypeNotSupportedController.onPageLoad()
 
@@ -53,6 +56,8 @@ GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registra
 GET        /edit-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.changeBusinessAddress()
 
 GET       /organisation-check-answers  uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.CheckAnswersController.displayPage()
+
+GET        /partner-grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerGrsController.grsCallback(journeyId)
 
 # Primary Contact Details
 GET        /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsFullNameController.displayPage()

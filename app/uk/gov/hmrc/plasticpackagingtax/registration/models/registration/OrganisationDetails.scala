@@ -26,13 +26,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationDetails,
-  PartnershipDetails,
-  RegistrationDetails,
-  SoleTraderDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
+  LIMITED_LIABILITY_PARTNERSHIP,
+  PartnerTypeEnum,
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   SUBSCRIBED,
   Status
@@ -64,9 +65,8 @@ case class OrganisationDetails(
     case Some(PARTNERSHIP) =>
       partnershipDetails.flatMap { partnershipDetails =>
         partnershipDetails.partnershipType match {
-          case PartnershipTypeEnum.LIMITED_PARTNERSHIP |
-              PartnershipTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
-              PartnershipTypeEnum.SCOTTISH_PARTNERSHIP | PartnershipTypeEnum.GENERAL_PARTNERSHIP =>
+          case PartnerTypeEnum.LIMITED_PARTNERSHIP | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
+              PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP =>
             partnershipDetails.partnershipBusinessDetails.flatMap { orgDetails =>
               orgDetails.registration
             }
@@ -114,6 +114,52 @@ case class OrganisationDetails(
               isBusinessAddressFromGrs = Some(businessAddress.isDefined)
     )
   }
+
+  lazy val nominatedPartner: Option[Partner] =
+    partnershipDetails.map(_.nominatedPartner).getOrElse(None)
+
+  lazy val nominatedPartnerType: Option[PartnerTypeEnum] = nominatedPartner.flatMap(_.partnerType)
+
+  lazy val nominatedPartnerGrsRegistration: Option[RegistrationDetails] = nominatedPartner match {
+    case Some(partner) =>
+      partner.partnerType match {
+        case Some(partnerType) =>
+          partnerType match {
+            case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
+            case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
+              partner.incorporationDetails.flatMap(_.registration)
+            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
+                SCOTTISH_LIMITED_PARTNERSHIP =>
+              partner.partnerPartnershipDetails.flatMap(
+                _.partnershipBusinessDetails.flatMap(_.registration)
+              )
+            case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
+            case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
+          }
+        case _ => None
+      }
+    case _ => None
+  }
+
+  lazy val nominatedPartnerRegistrationStatus: Option[String] =
+    nominatedPartnerGrsRegistration.map { reg =>
+      reg.registrationStatus
+    }
+
+  lazy val nominatedPartnerBusinessVerificationFailed: Boolean =
+    nominatedPartnerRegistrationStatus.contains(
+      "REGISTRATION_NOT_CALLED"
+    ) && nominatedPartnerVerificationStatus.contains("FAIL")
+
+  lazy val nominatedPartnerVerificationStatus: Option[String] =
+    nominatedPartnerGrsRegistration.flatMap { reg =>
+      reg.verificationStatus
+    }
+
+  lazy val nominatedPartnerBusinessPartnerId: Option[String] =
+    nominatedPartnerGrsRegistration.flatMap { reg =>
+      reg.registeredBusinessPartnerId
+    }
 
 }
 
