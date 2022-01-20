@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
@@ -35,11 +36,11 @@
 
 @govukLayout(
     title = Title("partnership.name.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.PartnershipTypeController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), partnerRoutes.PartnershipTypeController.displayPage(), messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
 
-    @formHelper(action = pptRoutes.PartnershipNameController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = partnerRoutes.PartnershipNameController.submit(), 'autoComplete -> "off") {
 
         @govukInput(
             Input(

@@ -18,15 +18,15 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   LIMITED_LIABILITY_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
-  PartnershipTypeEnum,
+  PartnerTypeEnum,
   SCOTTISH_LIMITED_PARTNERSHIP
 }
 
 case class PartnershipDetails(
-  partnershipType: PartnershipTypeEnum,
+  partnershipType: PartnerTypeEnum,
   partnershipName: Option[String] = None,
   partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None,
   partners: Seq[Partner] = Seq(),
@@ -66,4 +66,14 @@ case class PartnershipDetails(
 
 object PartnershipDetails {
   implicit val format: OFormat[PartnershipDetails] = Json.format[PartnershipDetails]
+}
+
+case class PartnerPartnershipDetails(
+  partnershipType: PartnerTypeEnum,
+  partnershipName: Option[String] = None,
+  partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
+)
+
+object PartnerPartnershipDetails {
+  implicit val format: OFormat[PartnerPartnershipDetails] = Json.format[PartnerPartnershipDetails]
 }

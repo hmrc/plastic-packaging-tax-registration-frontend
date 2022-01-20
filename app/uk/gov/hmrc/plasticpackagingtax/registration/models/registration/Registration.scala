@@ -62,6 +62,7 @@ case class Registration(
           isCompanyDetailsComplete,
           isPrimaryContactDetailsComplete,
           isGroup && isOtherOrganisationsInGroupComplete,
+          isPartnership && isNominatedPartnerDetailsComplete,
           isRegistrationComplete
     ).count(isComplete => isComplete)
 
@@ -96,11 +97,20 @@ case class Registration(
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
 
+  def isNominatedPartnerDetailsComplete: Boolean =
+    nominatedPartnerDetailsStatus == TaskStatus.Completed
+
   def primaryContactDetailsStatus: TaskStatus =
     if (companyDetailsStatus != TaskStatus.Completed)
       TaskStatus.CannotStartYet
     else
       this.primaryContactDetails.status(metaData.emailVerified)
+
+  def nominatedPartnerDetailsStatus: TaskStatus =
+    this.organisationDetails.nominatedPartner match {
+      case Some(value) => if (value.isCompleted) TaskStatus.Completed else TaskStatus.InProgress
+      case _           => TaskStatus.NotStarted
+    }
 
   def isOtherOrganisationsInGroupComplete: Boolean =
     !isGroup || otherOrganisationsInGroupStatus == TaskStatus.Completed

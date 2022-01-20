@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
@@ -27,8 +27,8 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
@@ -55,7 +55,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[PartnershipType]])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[PartnerType]])(any(), any())).thenReturn(HtmlFormat.empty)
     mockCreatePartnershipGrsJourneyCreation("/partnership-grs-journey")
   }
 

@@ -52,7 +52,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   OrganisationDetails,
   Registration
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsPageHeading
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -60,8 +59,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
 
-  private val page           = instanceOf[review_registration_page]
-  private val countryService = instanceOf[CountryService]
+  private val page = instanceOf[review_registration_page]
 
   private val liabilitySection      = 0
   private val organisationSection   = 1

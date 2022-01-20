@@ -30,10 +30,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
-  PartnershipTypeEnum,
+  PartnerTypeEnum,
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
@@ -157,7 +157,7 @@ class OrganisationDetailsSpec
 
   private def createOrg(
     orgType: OrgType,
-    partnershipType: Option[PartnershipTypeEnum],
+    partnershipType: Option[PartnerTypeEnum],
     registered: Boolean,
     subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
   ) =

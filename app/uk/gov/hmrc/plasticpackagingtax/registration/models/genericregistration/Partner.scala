@@ -28,7 +28,7 @@ case class Partner(
   partnerType: Option[PartnerTypeEnum],
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
-  partnershipDetails: Option[PartnershipDetails] = None,
+  partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None,
   contactDetails: Option[PartnerContactDetails] = None,
   organisationName: Option[String] =
     None // TODO for other partners flow; change after GRS flow results are available
@@ -40,7 +40,7 @@ case class Partner(
         throw new IllegalStateException("Sole Trader details absent")
       )
     case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) =>
-      partnershipDetails.flatMap(_.partnershipName).getOrElse(
+      partnerPartnershipDetails.flatMap(_.partnershipName).getOrElse(
         throw new IllegalStateException("Partnership details absent")
       )
     case _ =>
@@ -48,6 +48,9 @@ case class Partner(
         throw new IllegalStateException("Incorporation details absent")
       )
   }
+
+  def isCompleted: Boolean =
+    partnerType.nonEmpty && (soleTraderDetails.nonEmpty || incorporationDetails.nonEmpty || partnerPartnershipDetails.nonEmpty)
 
   def withContactAddress(contactAddress: Address): Partner =
     this.copy(contactDetails = this.contactDetails.map(_.withUpdatedAddress(contactAddress)))

@@ -1,0 +1,77 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.{controllers => pptControllers}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
+
+@this(
+    formHelper: FormWithCSRF,
+    pageHeading: pageHeading,
+    govukLayout: main_template,
+    govukRadios : GovukRadios,
+    sectionHeader: sectionHeader,
+    saveButtons: saveButtons,
+    errorSummary: errorSummary
+)
+
+
+@(form: Form[PartnerType])(implicit request: Request[_], messages: Messages)
+    
+    @radioItem(ppType: PartnerTypeEnum) = @{
+        RadioItem(content = Text(displayName(ppType)), value = Some(ppType), checked = form("answer").value.contains(ppType.toString))
+    }
+
+    @govukLayout(
+        title = Title("nominated.partner.type.title"),
+        backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+            @errorSummary(form.errors)
+
+        @pageHeading(messages("nominated.partner.type.title"))
+
+        @formHelper(action = partnerRoutes.NominatedPartnerTypeController.submit(), 'autoComplete -> "off") {
+
+            @govukRadios(Radios(
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(messages("nominated.partner.type.title")),
+                        classes = "govuk-visually-hidden",
+                        isPageHeading = false
+                    ))
+                )),
+                hint = None,
+                idPrefix = Some(form("answer").name),
+                name = form("answer").name,
+                items = Seq(
+                    radioItem(SOLE_TRADER),
+                    radioItem(UK_COMPANY),
+                    radioItem(LIMITED_LIABILITY_PARTNERSHIP),
+                    radioItem(SCOTTISH_PARTNERSHIP),
+                    radioItem(SCOTTISH_LIMITED_PARTNERSHIP),
+                    radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
+                    radioItem(OVERSEAS_COMPANY_UK_BRANCH),
+                    radioItem(OVERSEAS_COMPANY_NO_UK_BRANCH)
+                ),
+                classes = "govuk-radios",
+                errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+                ))
+
+        @saveButtons()
+    }
+}
