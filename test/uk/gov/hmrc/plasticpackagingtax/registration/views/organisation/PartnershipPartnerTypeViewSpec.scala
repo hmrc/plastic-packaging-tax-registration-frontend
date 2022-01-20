@@ -33,13 +33,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_partner_type
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.{partner_type}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[partnership_partner_type]
+  private val page = instanceOf[partner_type]
 
   private def createView(form: Form[PartnerType] = PartnerType.form()): Document =
     page(form)(journeyRequest, messages)

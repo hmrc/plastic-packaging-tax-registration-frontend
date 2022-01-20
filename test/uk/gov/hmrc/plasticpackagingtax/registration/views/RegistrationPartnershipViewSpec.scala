@@ -25,6 +25,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
@@ -269,7 +270,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(contactElement, 0) must haveHref(
-            organisationRoutes.NominatedPartnerTypeController.displayPage()
+            partnerRoutes.NominatedPartnerTypeController.displayPage()
           )
         }
 
@@ -357,7 +358,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            organisationRoutes.NominatedPartnerTypeController.displayPage()
+            partnerRoutes.NominatedPartnerTypeController.displayPage()
           )
         }
 

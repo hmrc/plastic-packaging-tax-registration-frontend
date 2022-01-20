@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -33,6 +33,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   LIMITED_LIABILITY_PARTNERSHIP,
@@ -50,7 +53,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_partner_type
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -66,7 +69,7 @@ class NominatedPartnerTypeController @Inject() (
   partnershipGrsConnector: PartnershipGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: partnership_partner_type
+  page: partner_type
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -107,7 +110,9 @@ class NominatedPartnerTypeController @Inject() (
                         case _ =>
                           //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
                           Future(
-                            Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
+                            Redirect(
+                              organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                            )
                           )
                       }
                     case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))

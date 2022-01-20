@@ -40,14 +40,14 @@ GET        /grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controll
 GET        /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPage()
 POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submit()
 
-GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.displayPage()
-POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipTypeController.submit()
+GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.displayPage()
+POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.submit()
 
-GET        /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipNameController.displayPage()
-POST       /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.PartnershipNameController.submit()
+GET        /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipNameController.displayPage()
+POST       /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipNameController.submit()
 
-GET        /partnership-nominated-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.NominatedPartnerTypeController.displayPage()
-POST       /partnership-nominated-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.NominatedPartnerTypeController.submit()
+GET        /partnership-nominated-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.displayPage()
+POST       /partnership-nominated-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.submit()
 
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationTypeNotSupportedController.onPageLoad()
 

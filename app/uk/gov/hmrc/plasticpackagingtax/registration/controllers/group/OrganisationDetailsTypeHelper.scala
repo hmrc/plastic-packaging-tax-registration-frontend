@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
   OrgType,
@@ -87,7 +88,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
                          memberId
           ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
         } else
-          Future(Redirect(organisationRoutes.PartnershipTypeController.displayPage()))
+          Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
       case _ =>
         Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
     }

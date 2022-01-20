@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, displayName}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -41,7 +42,7 @@
 
         @pageHeading(messages("partnership.type.title"))
 
-        @formHelper(action = pptRoutes.PartnershipTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = partnerRoutes.PartnershipTypeController.submit(), 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(

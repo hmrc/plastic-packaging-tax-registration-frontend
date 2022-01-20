@@ -23,6 +23,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName.form
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_name
@@ -50,7 +51,7 @@ class PartnershipNameViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
       view.getElementById("back-link") must haveHref(
-        organisationRoutes.PartnershipTypeController.displayPage()
+        partnerRoutes.PartnershipTypeController.displayPage()
       )
     }
 

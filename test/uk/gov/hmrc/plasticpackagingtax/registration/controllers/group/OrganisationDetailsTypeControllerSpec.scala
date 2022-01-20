@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
@@ -153,7 +154,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           redirectLocation(result) mustBe Some(
-            organisationRoutes.PartnershipTypeController.displayPage().url
+            partnerRoutes.PartnershipTypeController.displayPage().url
           )
         }
 

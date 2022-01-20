@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
@@ -28,12 +28,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_partner_type
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 
 class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
-  private val page = mock[partnership_partner_type]
+  private val page = mock[partner_type]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller = new NominatedPartnerTypeController(
@@ -168,7 +169,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
               redirectLocation(result) mustBe Some("http://test/redirect/partnership")
             case _ =>
               redirectLocation(result) mustBe Some(
-                routes.OrganisationTypeNotSupportedController.onPageLoad().url
+                orgRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
               )
           }
         }

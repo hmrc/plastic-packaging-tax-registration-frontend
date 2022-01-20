@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -28,6 +28,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
@@ -95,7 +98,9 @@ class PartnershipTypeController @Inject() (
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case _ =>
                             Future(
-                              Redirect(routes.OrganisationTypeNotSupportedController.onPageLoad())
+                              Redirect(
+                                organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                              )
                             )
                         }
                       case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
