@@ -29,19 +29,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   PptReference,
   RegistrationDate
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY,
   _
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
-  PartnerTypeEnum,
-  PartnershipTypeEnum
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipTypeEnum._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
@@ -369,37 +364,37 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   )
 
   protected def registeredUkCompanyOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(UK_COMPANY),
+    OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         incorporationDetails = Some(incorporationDetails)
     )
 
   protected def registeredRegisteredSocietyOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(REGISTERED_SOCIETY),
+    OrganisationDetails(organisationType = Some(OrgType.REGISTERED_SOCIETY),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         incorporationDetails = Some(incorporationDetails)
     )
 
   protected def registeredSoleTraderOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(SOLE_TRADER),
+    OrganisationDetails(organisationType = Some(OrgType.SOLE_TRADER),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         soleTraderDetails = Some(soleTraderDetails)
     )
 
   protected def registeredGeneralPartnershipOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(PARTNERSHIP),
+    OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         partnershipDetails = Some(generalPartnershipDetails)
     )
 
   protected def registeredScottishPartnershipOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(PARTNERSHIP),
+    OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         partnershipDetails = Some(scottishPartnershipDetails)
     )
 
   protected def registeredLimitedLiabilityhPartnershipOrgDetails(): OrganisationDetails =
-    OrganisationDetails(organisationType = Some(PARTNERSHIP),
+    OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP),
                         businessRegisteredAddress = Some(testBusinessAddress),
                         partnershipDetails =
                           Some(partnershipDetailsWithBusinessAddress(LIMITED_LIABILITY_PARTNERSHIP))
@@ -448,7 +443,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                           customerIdentification2 = Some("id2"),
                                           organisationDetails =
                                             Some(
-                                              GroupOrgDetails(UK_COMPANY.toString,
+                                              GroupOrgDetails(OrgType.UK_COMPANY.toString,
                                                               "Company Name",
                                                               Some(safeNumber)
                                               )
@@ -506,7 +501,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected val generalPartnershipDetailsWithPartners =
-    PartnershipDetails(partnershipType = PartnershipTypeEnum.GENERAL_PARTNERSHIP,
+    PartnershipDetails(partnershipType = PartnerTypeEnum.GENERAL_PARTNERSHIP,
                        partnershipName = Some("Partners in Plastic"),
                        partnershipBusinessDetails = Some(
                          PartnershipBusinessDetails(sautr = "123ABC",
@@ -594,25 +589,26 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected def aPartnershipPartner() =
     Partner(partnerType = Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP),
-            partnershipDetails = Some(
-              PartnershipDetails(partnershipType = PartnershipTypeEnum.SCOTTISH_PARTNERSHIP,
-                                 partnershipName = Some("The Plastic Partnership"),
-                                 partnershipBusinessDetails = Some(
-                                   PartnershipBusinessDetails(sautr = "234923487362",
-                                                              postcode = "LS1 1HS",
-                                                              companyProfile = None,
-                                                              registration = Some(
-                                                                RegistrationDetails(
-                                                                  identifiersMatch = true,
-                                                                  verificationStatus =
-                                                                    Some("Verified"),
-                                                                  registrationStatus = "REGISTERED",
-                                                                  registeredBusinessPartnerId =
-                                                                    Some("XM234976234")
-                                                                )
-                                                              )
-                                   )
-                                 )
+            partnerPartnershipDetails = Some(
+              PartnerPartnershipDetails(partnershipType = PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
+                                        partnershipName = Some("The Plastic Partnership"),
+                                        partnershipBusinessDetails = Some(
+                                          PartnershipBusinessDetails(sautr = "234923487362",
+                                                                     postcode = "LS1 1HS",
+                                                                     companyProfile = None,
+                                                                     registration = Some(
+                                                                       RegistrationDetails(
+                                                                         identifiersMatch = true,
+                                                                         verificationStatus =
+                                                                           Some("Verified"),
+                                                                         registrationStatus =
+                                                                           "REGISTERED",
+                                                                         registeredBusinessPartnerId =
+                                                                           Some("XM234976234")
+                                                                       )
+                                                                     )
+                                          )
+                                        )
               )
             ),
             contactDetails = Some(

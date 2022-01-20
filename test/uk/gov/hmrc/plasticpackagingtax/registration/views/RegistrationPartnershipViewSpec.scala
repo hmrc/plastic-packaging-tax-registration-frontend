@@ -22,13 +22,13 @@ import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   MetaData,
@@ -49,7 +49,17 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
-  private def createView(registration: Registration = aRegistration()): Html =
+  val registrationWithPartnershipDetails = aRegistration(
+    withPartnershipDetails(
+      Some(
+        scottishPartnershipDetails.copy(nominatedPartner =
+          nominatedPartner(PartnerTypeEnum.UK_COMPANY, soleTraderDetails = Some(soleTraderDetails))
+        )
+      )
+    )
+  )
+
+  private def createView(registration: Registration = registrationWithPartnershipDetails): Html =
     registrationPage(registration, liabilityStartLink)
 
   "Registration Single Entity Page view" should {
@@ -109,10 +119,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           ).text() mustBe messages("registrationPage.subheading.incomplete")
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
-          ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections,
-                                   4
-          )
+          ).text() mustBe messages("registrationPage.completedSections", 0, 4)
         }
 
         "Eligibility check" in {
@@ -149,7 +156,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages(
             "registrationPage.task.contactDetails.partnership"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
 
           sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.partnership.otherPartners"
@@ -188,10 +195,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           ).text() mustBe messages("registrationPage.subheading.incomplete")
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
-          ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections,
-                                   4
-          )
+          ).text() mustBe messages("registrationPage.completedSections", 1, 4)
         }
 
         "Eligibility check" in {
@@ -231,7 +235,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages(
             "registrationPage.task.contactDetails.partnership"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
         }
 
         "Review and send" in {
@@ -263,9 +267,9 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages(
             "registrationPage.task.contactDetails.partnership"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.inProgress")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(contactElement, 0) must haveHref(
-            contactRoutes.ContactDetailsFullNameController.displayPage()
+            organisationRoutes.NominatedPartnerTypeController.displayPage()
           )
         }
 
@@ -285,7 +289,18 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registrationCompletedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completeRegistration =
-          aRegistration(withMetaData(registrationCompletedMetaData))
+          aRegistration(
+            withPartnershipDetails(
+              Some(
+                scottishPartnershipDetails.copy(nominatedPartner =
+                  nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                   soleTraderDetails = Some(soleTraderDetails)
+                  )
+                )
+              )
+            ),
+            withMetaData(registrationCompletedMetaData)
+          )
 
         val view: Html =
           createView(completeRegistration)
@@ -342,7 +357,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            contactRoutes.ContactDetailsFullNameController.displayPage()
+            organisationRoutes.NominatedPartnerTypeController.displayPage()
           )
         }
 
@@ -364,8 +379,19 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val inProgressMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = false)
-        val inProgressRegistration = aRegistration(withMetaData(inProgressMetaData))
-        val view: Html             = createView(inProgressRegistration)
+        val inProgressRegistration = aRegistration(
+          withPartnershipDetails(
+            Some(
+              scottishPartnershipDetails.copy(nominatedPartner =
+                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                 soleTraderDetails = Some(soleTraderDetails)
+                )
+              )
+            )
+          ),
+          withMetaData(inProgressMetaData)
+        )
+        val view: Html = createView(inProgressRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
@@ -382,8 +408,19 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val completedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
-        val completedRegistration = aRegistration(withMetaData(completedMetaData))
-        val view: Html            = createView(completedRegistration)
+        val completedRegistration = aRegistration(
+          withPartnershipDetails(
+            Some(
+              scottishPartnershipDetails.copy(nominatedPartner =
+                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                 soleTraderDetails = Some(soleTraderDetails)
+                )
+              )
+            )
+          ),
+          withMetaData(completedMetaData)
+        )
+        val view: Html = createView(completedRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
@@ -399,8 +436,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(aRegistration(), liabilityStartLink)(journeyRequest, messages)
-    registrationPage.render(aRegistration(), liabilityStartLink, journeyRequest, messages)
+    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink)(journeyRequest,
+                                                                               messages
+    )
+    registrationPage.render(registrationWithPartnershipDetails,
+                            liabilityStartLink,
+                            journeyRequest,
+                            messages
+    )
   }
 
 }

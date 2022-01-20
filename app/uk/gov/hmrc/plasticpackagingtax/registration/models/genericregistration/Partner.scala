@@ -39,7 +39,7 @@ case class Partner(
         throw new IllegalStateException("Sole Trader details absent")
       )
     case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) =>
-      partnershipDetails.flatMap(_.partnershipName).getOrElse(
+      partnerPartnershipDetails.flatMap(_.partnershipName).getOrElse(
         throw new IllegalStateException("Partnership details absent")
       )
     case _ =>
@@ -50,7 +50,6 @@ case class Partner(
 
   def isCompleted: Boolean =
     partnerType.nonEmpty && (soleTraderDetails.nonEmpty || incorporationDetails.nonEmpty || partnerPartnershipDetails.nonEmpty)
-
 
 }
 

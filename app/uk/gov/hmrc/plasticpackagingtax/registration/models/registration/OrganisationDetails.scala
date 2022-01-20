@@ -115,9 +115,8 @@ case class OrganisationDetails(
     )
   }
 
-  lazy val nominatedPartner: Option[Partner] = partnershipDetails.map(_.nominatedPartner).getOrElse(
-    throw new IllegalStateException("No partnership details found")
-  )
+  lazy val nominatedPartner: Option[Partner] =
+    partnershipDetails.map(_.nominatedPartner).getOrElse(None)
 
   lazy val nominatedPartnerType: Option[PartnerTypeEnum] = nominatedPartner.flatMap(_.partnerType)
 

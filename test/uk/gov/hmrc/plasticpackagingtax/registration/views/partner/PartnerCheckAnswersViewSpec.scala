@@ -159,11 +159,11 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
           None: Option[Call]
          ),
          (messages("partner.check.orgName"),
-          partnershipPartner.partnershipDetails.get.partnershipName.get,
+          partnershipPartner.partnerPartnershipDetails.get.partnershipName.get,
           None: Option[Call]
          ),
          (messages("partner.check.sautr"),
-          partnershipPartner.partnershipDetails.get.partnershipBusinessDetails.get.sautr,
+          partnershipPartner.partnerPartnershipDetails.get.partnershipBusinessDetails.get.sautr,
           None: Option[Call]
          ),
          (messages("partner.check.contact.name"),
