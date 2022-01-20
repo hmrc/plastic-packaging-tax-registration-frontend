@@ -20,9 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName.form

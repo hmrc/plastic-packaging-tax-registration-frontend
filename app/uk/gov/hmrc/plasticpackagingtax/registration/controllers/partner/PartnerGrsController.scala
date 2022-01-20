@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -76,7 +76,7 @@ class PartnerGrsController @Inject() (
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(commonRoutes.TaskListController.displayPage())
+                  Redirect(routes.PartnerCheckAnswersController.nominatedPartner())
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>

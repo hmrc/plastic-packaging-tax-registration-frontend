@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
 import org.scalatest.Inspectors.forAll
@@ -129,7 +129,9 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             case _ =>
               val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
               status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+              redirectLocation(result) mustBe Some(
+                routes.PartnerCheckAnswersController.nominatedPartner().url
+              )
           }
 
         }
