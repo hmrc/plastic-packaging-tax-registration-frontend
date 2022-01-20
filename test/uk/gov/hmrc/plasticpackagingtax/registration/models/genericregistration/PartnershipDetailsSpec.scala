@@ -18,8 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json.JsObject
-import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 
 class PartnershipDetailsSpec extends AnyWordSpec with Matchers {

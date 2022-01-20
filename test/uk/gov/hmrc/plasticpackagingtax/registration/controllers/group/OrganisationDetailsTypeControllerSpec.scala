@@ -31,7 +31,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
@@ -42,11 +41,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   OrganisationDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

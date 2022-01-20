@@ -89,7 +89,7 @@ class PartnerGrsController @Inject() (
 
   private def registrationStatus(
     registration: Registration
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[RegistrationStatus] =
+  )(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
     registration.organisationDetails.nominatedPartnerBusinessPartnerId match {
       case Some(businessPartnerId) =>
         checkSubscriptionStatus(businessPartnerId).map {

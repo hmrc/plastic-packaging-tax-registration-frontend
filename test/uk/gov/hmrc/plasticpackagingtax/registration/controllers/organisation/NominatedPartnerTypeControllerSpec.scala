@@ -26,11 +26,8 @@ import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
-  PartnerType,
-  PartnerTypeEnum
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -137,11 +134,8 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
              nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH)
            )
           ),
-          (SCOTTISH_PARTNERSHIP,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)
-           )
-          )
+          (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails),
+          (CHARITABLE_INCORPORATED_ORGANISATION, scottishPartnershipDetails)
         )
       ) { partnershipDetails =>
         s"a ${partnershipDetails._1} type was selected" in {
@@ -152,9 +146,9 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
           partnershipDetails._1 match {
             case SOLE_TRADER =>
-              mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+              mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
             case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
-              mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/partnership")
+              mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/ukCompany")
             case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
                 SCOTTISH_LIMITED_PARTNERSHIP =>
               mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
@@ -164,8 +158,19 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
           val correctForm =
             Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
           val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+          partnershipDetails._1 match {
+            case SOLE_TRADER =>
+              redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+            case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
+              redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
+            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
+                SCOTTISH_LIMITED_PARTNERSHIP =>
+              redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+            case _ =>
+              redirectLocation(result) mustBe Some(
+                routes.OrganisationTypeNotSupportedController.onPageLoad().url
+              )
+          }
         }
       }
     }
@@ -253,23 +258,6 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
         }
       }
     }
-
-//TODO
-//    "update nominated partner type" in {
-//      authorizedUser()
-//
-//      await(
-//        controller.submit()(
-//          postRequestEncoded(Some(PartnershipPartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP),
-//                             (SaveAndContinue.toString, "")
-//          )
-//        )
-//      )
-//
-//      modifiedRegistration.organisationDetails.partnershipDetails.get.nominatedPartnershipType mustBe Some(
-//        PartnershipPartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-//      )
-//    }
 
   }
 

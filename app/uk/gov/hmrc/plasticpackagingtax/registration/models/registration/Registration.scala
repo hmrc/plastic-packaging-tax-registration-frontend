@@ -61,6 +61,7 @@ case class Registration(
           isCompanyDetailsComplete,
           isPrimaryContactDetailsComplete,
           isGroup && isOtherOrganisationsInGroupComplete,
+          isPartnership && isNominatedPartnerDetailsComplete,
           isRegistrationComplete
     ).count(isComplete => isComplete)
 
@@ -94,6 +95,9 @@ case class Registration(
       this.liabilityDetails.status
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
+
+  def isNominatedPartnerDetailsComplete: Boolean =
+    nominatedPartnerDetailsStatus == TaskStatus.Completed
 
   def primaryContactDetailsStatus: TaskStatus =
     if (companyDetailsStatus != TaskStatus.Completed)
