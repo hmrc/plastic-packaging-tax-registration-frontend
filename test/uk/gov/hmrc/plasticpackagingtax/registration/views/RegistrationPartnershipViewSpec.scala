@@ -36,10 +36,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
-  private val LIABILITY_DETAILS               = 0
-  private val ENTER_PARTNERSHIP_DETAILS       = 1
-  private val ENTER_NOMINATED_PARTNER_DETAILS = 2
-//  private val ENTER_OTHER_PARTNER_DETAILS             = 3
+  private val LIABILITY_DETAILS                       = 0
+  private val ENTER_PARTNERSHIP_DETAILS               = 1
+  private val ENTER_NOMINATED_PARTNER_DETAILS         = 2
   private val CHECK_AND_SUBMIT                        = 3
   private val registrationPage: task_list_partnership = instanceOf[task_list_partnership]
 
@@ -180,13 +179,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
                                          ),
                                          withOrganisationDetails(OrganisationDetails()),
                                          withNoPrimaryContactDetails(),
-                                         withPartnershipDetails(
-                                           Some(
-                                             scottishPartnershipDetails.copy(nominatedPartner =
-                                               nominatedPartner(PartnerTypeEnum.UK_COMPANY)
-                                             )
-                                           )
-                                         )
+                                         withPartnershipDetails(Some(scottishPartnershipDetails))
         )
         val view: Html = createView(registration)
 
@@ -224,7 +217,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           sectionName(organisationElement, 0) mustBe messages(
             "registrationPage.task.contactDetails.partnership"
           )
-          sectionStatus(organisationElement, 0) mustBe messages("task.status.inProgress")
+          sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
         }
 
         "Review and send" in {
