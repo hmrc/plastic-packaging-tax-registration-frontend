@@ -32,6 +32,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
+  routes => partnershipRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -76,7 +79,9 @@ class PartnerGrsController @Inject() (
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(routes.PartnerCheckAnswersController.nominatedPartner())
+                  Redirect(
+                    partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage()
+                  )
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
@@ -90,7 +95,7 @@ class PartnerGrsController @Inject() (
   private def registrationStatus(
     registration: Registration
   )(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    registration.organisationDetails.nominatedPartnerBusinessPartnerId match {
+    registration.organisationDetails.inflightPartnerBusinessPartnerId match {
       case Some(businessPartnerId) =>
         checkSubscriptionStatus(businessPartnerId).map {
           case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
@@ -109,7 +114,7 @@ class PartnerGrsController @Inject() (
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] = {
-    request.registration.organisationDetails.nominatedPartnerType match {
+    request.registration.organisationDetails.inflightPartner.flatMap(_.partnerType) match {
       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
         updateUkCompanyDetails(journeyId)
       case Some(SOLE_TRADER) => updateSoleTraderDetails(journeyId)
@@ -158,7 +163,7 @@ class PartnerGrsController @Inject() (
     partnershipGrsConnector.getDetails(journeyId).map { partnershipBusinessDetails =>
       val partnershipDetails = Some(
         PartnerPartnershipDetails(
-          partnershipType = request.registration.organisationDetails.nominatedPartnerType.get,
+          partnershipType = request.registration.organisationDetails.inflightPartnerType.get,
           partnershipName = None,
           partnershipBusinessDetails = Some(partnershipBusinessDetails)
         )
@@ -182,8 +187,8 @@ class PartnerGrsController @Inject() (
       Some(
         organisationDetails.partnershipDetails.map(
           details =>
-            details.copy(nominatedPartner =
-              updatedNominatedPartner(details = details,
+            details.copy(inflightPartner =
+              updatedPartner(details = details,
                                       soleTraderDetails = soleTraderDetails,
                                       incorporationDetails = incorporationDetails,
                                       partnershipDetails = partnershipDetails
@@ -193,13 +198,13 @@ class PartnerGrsController @Inject() (
       )
     )
 
-  private def updatedNominatedPartner(
+  private def updatedPartner(
     details: PartnershipDetails,
     soleTraderDetails: Option[SoleTraderDetails],
     incorporationDetails: Option[IncorporationDetails],
     partnershipDetails: Option[PartnerPartnershipDetails]
   ): Option[Partner] =
-    details.nominatedPartner match {
+    details.inflightPartner match {
       case Some(partner) =>
         Some(
           partner.copy(soleTraderDetails = soleTraderDetails,
@@ -207,7 +212,7 @@ class PartnerGrsController @Inject() (
                        partnerPartnershipDetails = partnershipDetails
           )
         )
-      case _ => throw new IllegalStateException("No nominated partner found")
+      case _ => throw new IllegalStateException("No inflight partner found")
     }
 
 }

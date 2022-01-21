@@ -53,8 +53,8 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   val registrationWithPartnershipDetails = aRegistration(
     withPartnershipDetails(
       Some(
-        scottishPartnershipDetails.copy(nominatedPartner =
-          nominatedPartner(PartnerTypeEnum.UK_COMPANY, soleTraderDetails = Some(soleTraderDetails))
+        scottishPartnershipDetails.copy(partners =
+          Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY, soleTraderDetails = Some(soleTraderDetails)))
         )
       )
     )
@@ -293,10 +293,10 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           aRegistration(
             withPartnershipDetails(
               Some(
-                scottishPartnershipDetails.copy(nominatedPartner =
-                  nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                scottishPartnershipDetails.copy(partners =
+                  Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY,
                                    soleTraderDetails = Some(soleTraderDetails)
-                  )
+                  ))
                 )
               )
             ),
@@ -383,10 +383,10 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val inProgressRegistration = aRegistration(
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(nominatedPartner =
-                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+              scottishPartnershipDetails.copy(partners =
+                Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY,
                                  soleTraderDetails = Some(soleTraderDetails)
-                )
+                ))
               )
             )
           ),
@@ -412,10 +412,10 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val completedRegistration = aRegistration(
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(nominatedPartner =
-                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+              scottishPartnershipDetails.copy(partners =
+                Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY,
                                  soleTraderDetails = Some(soleTraderDetails)
-                )
+                ))
               )
             )
           ),
