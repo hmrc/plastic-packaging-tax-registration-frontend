@@ -129,7 +129,7 @@ class PartnershipOtherPartnerContactNameController @Inject() (
                 case Right(_) =>
                   FormAction.bindFromRequest match {
                     case SaveAndContinue =>
-                      Redirect(routes.PartnershipOtherPartnerEmailAddressController.displayPage())
+                      Redirect(partnerRoutes.PartnerEmailAddressController.displayPage())
                     case _ =>
                       Redirect(
                         partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage()

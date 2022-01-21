@@ -63,7 +63,7 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
 
           Ok(
             page(form,
-                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
+                 partnerRoutes.PartnerEmailAddressController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
                  contactName
             )
@@ -83,8 +83,8 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
                 Future.successful(
                   BadRequest(
                     page(formWithErrors,
-                         partnershipRoutes.PartnershipOtherPartnerEmailAddressController.displayPage(),
-                         partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.submit(),
+                         partnerRoutes.PartnerEmailAddressController.displayPage(),
+                         routes.PartnershipOtherPartnerPhoneNumberController.submit(),
                          contactName
                     )
                   )

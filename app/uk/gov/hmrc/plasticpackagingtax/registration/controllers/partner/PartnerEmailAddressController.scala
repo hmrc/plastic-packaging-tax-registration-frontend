@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -25,12 +25,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
-  routes => partnershipRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
@@ -40,7 +37,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnershipOtherPartnerEmailAddressController @Inject() (
+class PartnerEmailAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
@@ -62,8 +59,8 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
 
           Ok(
             page(form,
-                 partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
-                 partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
+                 partnerRoutes.PartnerContactNameController.displayPage(),
+                 partnerRoutes.PartnerEmailAddressController.submit(),
                  contactName
             )
           )
@@ -82,8 +79,8 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
                 Future.successful(
                   BadRequest(
                     page(formWithErrors,
-                         partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage(),
-                         partnershipRoutes.PartnershipOtherPartnerEmailAddressController.submit(),
+                         partnerRoutes.PartnerContactNameController.displayPage(),
+                         partnerRoutes.PartnerEmailAddressController.submit(),
                          contactName
                     )
                   )
@@ -98,9 +95,7 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(
-                      partnershipRoutes.PartnershipOtherPartnerPhoneNumberController.displayPage()
-                    )
+                    Redirect(partnerRoutes.PartnerPhoneNumberController.displayPage())
                   case _ =>
                     Redirect(commonRoutes.TaskListController.displayPage())
                 }
@@ -113,14 +108,14 @@ class PartnershipOtherPartnerEmailAddressController @Inject() (
     formData: EmailAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.inflightPartner.map { inflight =>
-        val updatedContactDetails =
-          inflight.contactDetails.getOrElse(PartnerContactDetails()).copy(emailAddress =
-            Some(formData.value)
-          )
-        inflight.copy(contactDetails = Some(updatedContactDetails))
-      }.map { updated =>
-        registration.withInflightPartner(Some(updated))
+      registration.inflightPartner.map { partner =>
+        val withPhoneNumber =
+          partner.contactDetails.map { contactDetails =>
+            val updatedContactDetailsWithEmailAddress =
+              contactDetails.copy(emailAddress = Some(formData.value))
+            partner.copy(contactDetails = Some(updatedContactDetailsWithEmailAddress))
+          }
+        registration.withInflightPartner(withPhoneNumber)
       }.getOrElse {
         registration
       }

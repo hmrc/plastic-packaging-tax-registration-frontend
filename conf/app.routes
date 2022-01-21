@@ -95,14 +95,14 @@ POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registratio
 GET        /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.displayPage()
 POST       /partnerships/other-partners/contact-name uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerContactNameController.submit()
 
-GET        /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.displayPage()
-POST       /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerEmailAddressController.submit()
-
 GET        /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.displayPage()
 POST       /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.submit()
 
 GET        /partner-contact-name            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.displayPage()
 POST       /partner-contact-name            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.submit()
+GET        /partner-email-address            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.displayPage()
+POST       /partner-email-address            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.submit()
+
 GET        /partner-phone-number            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.displayPage()
 POST       /partner-phone-number            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.submit()
 
