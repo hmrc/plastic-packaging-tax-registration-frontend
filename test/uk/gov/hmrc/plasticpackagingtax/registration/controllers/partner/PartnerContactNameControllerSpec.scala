@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
@@ -30,18 +30,18 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
+class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
   private val page = mock[member_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnershipOtherPartnerContactNameController(authenticate = mockAuthAction,
-                                                     journeyAction = mockJourneyAction,
-                                                     registrationConnector =
-                                                       mockRegistrationConnector,
-                                                     mcc = mcc,
-                                                     page = page
+    new PartnerContactNameController(authenticate = mockAuthAction,
+                                     journeyAction = mockJourneyAction,
+                                     registrationConnector =
+                                       mockRegistrationConnector,
+                                     mcc = mcc,
+                                     page = page
     )
 
   override protected def beforeEach(): Unit = {

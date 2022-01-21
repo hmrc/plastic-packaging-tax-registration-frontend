@@ -18,25 +18,20 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.SEE_OTHER
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
-import play.twirl.api.HtmlFormat
+import play.api.test.Helpers.{redirectLocation, status}
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
   AddressLookupAddress,
   AddressLookupConfirmation,
   AddressLookupCountry,
   AddressLookupOnRamp
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_list_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
