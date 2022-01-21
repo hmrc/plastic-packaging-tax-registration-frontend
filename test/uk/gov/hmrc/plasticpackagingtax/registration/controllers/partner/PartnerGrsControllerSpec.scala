@@ -23,9 +23,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
-  routes => partnershipRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   CHARITABLE_INCORPORATED_ORGANISATION,
@@ -133,7 +131,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
               val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
-                partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage().url
+                partnerRoutes.PartnerContactNameController.displayPage().url
               )
           }
 

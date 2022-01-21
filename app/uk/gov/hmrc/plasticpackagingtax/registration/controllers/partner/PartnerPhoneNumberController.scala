@@ -28,7 +28,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.phone_number_page
@@ -49,7 +48,7 @@ class PartnerPhoneNumberController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.partnershipNominatedPartner.flatMap(_.contactDetails).map {
+      request.registration.inflightPartner.flatMap(_.contactDetails).map {
         contactDetails =>
           contactDetails.name.map { contactName =>
             val form = contactDetails.phoneNumber match {
@@ -95,7 +94,7 @@ class PartnerPhoneNumberController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(partnerRoutes.PartnerCheckAnswersController.nominatedPartner())
+                    Redirect(partnerRoutes.PartnerContactAddressController.captureNewPartner())
                   case _ =>
                     Redirect(commonRoutes.TaskListController.displayPage())
                 }
@@ -108,14 +107,14 @@ class PartnerPhoneNumberController @Inject() (
     formData: PhoneNumber
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.partnershipNominatedPartner.map { partner =>
-        val updatedPartnerWithPhoneNumber: Option[Partner] =
+      registration.inflightPartner.map { partner =>
+        val withPhoneNumber =
           partner.contactDetails.map { contactDetails =>
             val updatedContactDetailsWithPhoneNumber =
               contactDetails.copy(phoneNumber = Some(formData.value))
             partner.copy(contactDetails = Some(updatedContactDetailsWithPhoneNumber))
           }
-        registration.withPartnershipNominatedPartner(updatedPartnerWithPhoneNumber)
+        registration.withInflightPartner(withPhoneNumber)
       }.getOrElse {
         registration
       }

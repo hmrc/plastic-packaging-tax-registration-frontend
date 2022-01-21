@@ -101,6 +101,11 @@ POST       /partnerships/other-partners/email-address  uk.gov.hmrc.plasticpackag
 GET        /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.displayPage()
 POST       /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.PartnershipOtherPartnerPhoneNumberController.submit()
 
+GET        /partner-contact-name            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.displayPage()
+POST       /partner-contact-name            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.submit()
+GET        /partner-phone-number            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.displayPage()
+POST       /partner-phone-number            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.submit()
+
 GET        /partner-contact-address             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureNewPartner()
 GET        /partner-contact-address/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureExistingPartner(partnerId)
 

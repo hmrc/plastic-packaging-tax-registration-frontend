@@ -48,7 +48,7 @@ class PartnerContactNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.partnershipNominatedPartner.map { partner =>
+      request.registration.inflightPartner.map { partner =>
         val existingNameFields = for {
           contactDetails <- partner.contactDetails
           firstName      <- contactDetails.firstName
@@ -70,12 +70,12 @@ class PartnerContactNameController @Inject() (
           )
         )
 
-      }.getOrElse(throw new IllegalStateException("Expected group member missing"))
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.partnershipNominatedPartner.map { partner =>
+      request.registration.inflightPartner.map { partner =>
         MemberName.form()
           .bindFromRequest()
           .fold(
@@ -110,7 +110,7 @@ class PartnerContactNameController @Inject() (
     formData: MemberName
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.partnershipNominatedPartner.map { partner =>
+      registration.inflightPartner.map { partner =>
         val withContactName = partner.copy(contactDetails =
           Some(
             PartnerContactDetails(firstName = Some(formData.firstName),
@@ -118,7 +118,7 @@ class PartnerContactNameController @Inject() (
             )
           )
         )
-        registration.withPartnershipNominatedPartner(Some(withContactName))
+        registration.withInflightPartner(Some(withContactName))
       }.getOrElse {
         registration
       }
