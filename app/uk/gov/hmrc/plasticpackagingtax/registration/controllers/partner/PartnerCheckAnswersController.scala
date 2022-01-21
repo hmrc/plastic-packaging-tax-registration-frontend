@@ -35,18 +35,18 @@ class PartnerCheckAnswersController @Inject() (
   page: partner_check_answers_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayNominatedPartner(): Action[AnyContent] =
+  def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
         page(
-          request.registration.nominatedPartner.getOrElse(
-            throw new IllegalStateException("Nominated partner absent")
+          request.registration.newPartner.getOrElse(
+            throw new IllegalStateException("New partner absent")
           )
         )
       )
     }
 
-  def displayPartner(partnerId: String): Action[AnyContent] =
+  def displayExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       val partner = request.registration.organisationDetails.partnershipDetails.flatMap(
         _.findPartner(partnerId)

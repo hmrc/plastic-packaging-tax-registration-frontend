@@ -60,9 +60,9 @@ class PartnerCheckAnswersControllerSpec
 
   "Partner Check Answers Controller" should {
     "show nominated partner detail" in {
-      val resp = controller.displayPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(
-        getRequest()
-      )
+      val resp = controller.displayExistingPartner(
+        partnershipRegistration.nominatedPartner.map(_.id).get
+      )(getRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner check answers"
@@ -71,7 +71,7 @@ class PartnerCheckAnswersControllerSpec
       val firstPartnerId = partnershipRegistration.organisationDetails.partnershipDetails.map(
         _.otherPartners.head.id
       ).getOrElse(throw new IllegalStateException("Missing partner id"))
-      val resp = controller.displayPartner(firstPartnerId)(getRequest())
+      val resp = controller.displayExistingPartner(firstPartnerId)(getRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Partner check answers"
@@ -89,15 +89,15 @@ class PartnerCheckAnswersControllerSpec
 
         intercept[IllegalStateException] {
           await(
-            controller.displayPartner(partnershipRegistration.nominatedPartner.map(_.id).get)(
-              getRequest()
-            )
+            controller.displayExistingPartner(
+              partnershipRegistration.nominatedPartner.map(_.id).get
+            )(getRequest())
           )
         }
       }
       "specific partner not found" in {
         intercept[IllegalStateException] {
-          await(controller.displayPartner("XXX")(getRequest()))
+          await(controller.displayExistingPartner("XXX")(getRequest()))
         }
       }
     }

@@ -23,7 +23,9 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{routes => partnershipRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
+  routes => partnershipRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   CHARITABLE_INCORPORATED_ORGANISATION,

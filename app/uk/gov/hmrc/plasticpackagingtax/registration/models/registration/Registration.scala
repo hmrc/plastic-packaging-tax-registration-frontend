@@ -187,6 +187,8 @@ case class Registration(
   val otherPartners: Seq[Partner] =
     organisationDetails.partnershipDetails.map(_.otherPartners).getOrElse(Seq.empty)
 
+  val newPartner: Option[Partner] = organisationDetails.partnershipDetails.flatMap(_.newPartner)
+
   def findPartner(partnerId: String): Option[Partner] =
     organisationDetails.partnershipDetails.flatMap(_.findPartner(partnerId))
 

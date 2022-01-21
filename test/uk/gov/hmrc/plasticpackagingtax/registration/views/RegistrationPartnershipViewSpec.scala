@@ -54,7 +54,11 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
     withPartnershipDetails(
       Some(
         scottishPartnershipDetails.copy(partners =
-          Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY, soleTraderDetails = Some(soleTraderDetails)))
+          Seq(
+            nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                             soleTraderDetails = Some(soleTraderDetails)
+            )
+          )
         )
       )
     )
@@ -294,9 +298,11 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
             withPartnershipDetails(
               Some(
                 scottishPartnershipDetails.copy(partners =
-                  Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                                   soleTraderDetails = Some(soleTraderDetails)
-                  ))
+                  Seq(
+                    nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                     soleTraderDetails = Some(soleTraderDetails)
+                    )
+                  )
                 )
               )
             ),
@@ -384,9 +390,11 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withPartnershipDetails(
             Some(
               scottishPartnershipDetails.copy(partners =
-                Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                                 soleTraderDetails = Some(soleTraderDetails)
-                ))
+                Seq(
+                  nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                   soleTraderDetails = Some(soleTraderDetails)
+                  )
+                )
               )
             )
           ),
@@ -413,9 +421,11 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withPartnershipDetails(
             Some(
               scottishPartnershipDetails.copy(partners =
-                Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                                 soleTraderDetails = Some(soleTraderDetails)
-                ))
+                Seq(
+                  nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                   soleTraderDetails = Some(soleTraderDetails)
+                  )
+                )
               )
             )
           ),

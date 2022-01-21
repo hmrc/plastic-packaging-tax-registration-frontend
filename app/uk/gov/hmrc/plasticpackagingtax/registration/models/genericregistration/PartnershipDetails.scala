@@ -35,6 +35,7 @@ case class PartnershipDetails(
 
   val nominatedPartner: Option[Partner] = partners.headOption
   val otherPartners: Seq[Partner]       = partners.drop(1)
+  val newPartner: Option[Partner]       = partners.lastOption
 
   val partnershipOrCompanyName: Option[String] = partnershipName match {
     case Some(name) => Some(name)

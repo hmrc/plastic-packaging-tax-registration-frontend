@@ -80,7 +80,7 @@ class PartnerContactAddressController @Inject() (
                                     )
                                     updatedInflightPartner.withPromotedInflightPartner()
                                   },
-                                  routes.PartnerCheckAnswersController.displayNominatedPartner()
+                                  routes.PartnerCheckAnswersController.displayNewPartner()
     )
 
   def alfCallbackExistingPartner(partnerId: String, id: Option[String]): Action[AnyContent] =
@@ -95,7 +95,9 @@ class PartnerContactAddressController @Inject() (
                                           )
                                         )
                                     ),
-                                  routes.PartnerCheckAnswersController.displayPartner(partnerId)
+                                  routes.PartnerCheckAnswersController.displayExistingPartner(
+                                    partnerId
+                                  )
     )
 
   private def updateRegistrationAndRedirect(

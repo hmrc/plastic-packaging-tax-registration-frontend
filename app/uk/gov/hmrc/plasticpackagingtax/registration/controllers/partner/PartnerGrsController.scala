@@ -189,9 +189,9 @@ class PartnerGrsController @Inject() (
           details =>
             details.copy(inflightPartner =
               updatedPartner(details = details,
-                                      soleTraderDetails = soleTraderDetails,
-                                      incorporationDetails = incorporationDetails,
-                                      partnershipDetails = partnershipDetails
+                             soleTraderDetails = soleTraderDetails,
+                             incorporationDetails = incorporationDetails,
+                             partnershipDetails = partnershipDetails
               )
             )
         ).getOrElse(throw new IllegalStateException("No partnership details found"))

@@ -104,8 +104,8 @@ POST       /partnerships/other-partners/phone-number  uk.gov.hmrc.plasticpackagi
 GET        /partner-contact-address             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureNewPartner()
 GET        /partner-contact-address/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureExistingPartner(partnerId)
 
-GET        /partner-check-answers               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayNominatedPartner()
-GET        /partner-check-answers/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayPartner(partnerId: String)
+GET        /partner-check-answers               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayNewPartner()
+GET        /partner-check-answers/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayExistingPartner(partnerId: String)
 POST       /partner-check-answers               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.continue()
 
 GET        /partner-contact-address-callback                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackNewPartner(id: Option[String])
