@@ -116,11 +116,37 @@ case class OrganisationDetails(
   }
 
   lazy val nominatedPartner: Option[Partner] =
-    partnershipDetails.map(_.nominatedPartner).getOrElse(None)
+    partnershipDetails.flatMap(_.nominatedPartner)
+
+  lazy val inflightPartner: Option[Partner] =
+    partnershipDetails.flatMap(_.inflightPartner)
 
   lazy val nominatedPartnerType: Option[PartnerTypeEnum] = nominatedPartner.flatMap(_.partnerType)
 
+  lazy val inflightPartnerType: Option[PartnerTypeEnum] = inflightPartner.flatMap(_.partnerType)
+
   lazy val nominatedPartnerGrsRegistration: Option[RegistrationDetails] = nominatedPartner match {
+    case Some(partner) =>
+      partner.partnerType match {
+        case Some(partnerType) =>
+          partnerType match {
+            case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
+            case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
+              partner.incorporationDetails.flatMap(_.registration)
+            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
+                SCOTTISH_LIMITED_PARTNERSHIP =>
+              partner.partnerPartnershipDetails.flatMap(
+                _.partnershipBusinessDetails.flatMap(_.registration)
+              )
+            case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
+            case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
+          }
+        case _ => None
+      }
+    case _ => None
+  }
+
+  lazy val inflightPartnerGrsRegistration: Option[RegistrationDetails] = inflightPartner match {
     case Some(partner) =>
       partner.partnerType match {
         case Some(partnerType) =>
@@ -158,6 +184,11 @@ case class OrganisationDetails(
 
   lazy val nominatedPartnerBusinessPartnerId: Option[String] =
     nominatedPartnerGrsRegistration.flatMap { reg =>
+      reg.registeredBusinessPartnerId
+    }
+
+  lazy val inflightPartnerBusinessPartnerId: Option[String] =
+    inflightPartnerGrsRegistration.flatMap { reg =>
       reg.registeredBusinessPartnerId
     }
 

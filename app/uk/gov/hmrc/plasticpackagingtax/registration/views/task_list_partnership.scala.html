@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{routes => partnershipRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -80,7 +81,7 @@
             ),
             TaskSection(
                 title = "registrationPage.task.contactDetails.partnership.otherPartners",
-                link = partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                link = partnerRoutes.PartnerListController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.primaryContactDetailsStatus
             )

@@ -267,14 +267,12 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     soleTraderDetails: Option[SoleTraderDetails] = None,
     incorporationDetails: Option[IncorporationDetails] = None,
     partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None
-  ): Option[Partner] =
-    Some(
-      Partner(id = "3534345",
-              partnerType = Some(partnerTypeEnum),
-              soleTraderDetails = soleTraderDetails,
-              partnerPartnershipDetails = partnerPartnershipDetails,
-              incorporationDetails = incorporationDetails
-      )
+  ): Partner =
+    Partner(id = "3534345",
+            partnerType = Some(partnerTypeEnum),
+            soleTraderDetails = soleTraderDetails,
+            partnerPartnershipDetails = partnerPartnershipDetails,
+            incorporationDetails = incorporationDetails
     )
 
   protected val llpPartnershipDetails: PartnershipDetails =
@@ -518,8 +516,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                                     )
                          )
                        ),
-                       nominatedPartner = Some(aSoleTraderPartner()),
-                       otherPartners = Some(Seq(aLimitedCompanyPartner(), aPartnershipPartner())),
+                       partners =
+                         Seq(aSoleTraderPartner(), aLimitedCompanyPartner(), aPartnershipPartner()),
                        inflightPartner = None
     )
 

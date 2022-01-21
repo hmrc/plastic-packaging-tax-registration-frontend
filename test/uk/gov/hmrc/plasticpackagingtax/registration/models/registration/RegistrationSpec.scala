@@ -281,9 +281,11 @@ class RegistrationSpec
       aRegistration(
         withPartnershipDetails(
           Some(
-            scottishPartnershipDetails.copy(nominatedPartner =
-              nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                               soleTraderDetails = Some(soleTraderDetails)
+            scottishPartnershipDetails.copy(partners =
+              Seq(
+                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                 soleTraderDetails = Some(soleTraderDetails)
+                )
               )
             )
           )
@@ -294,11 +296,13 @@ class RegistrationSpec
       aRegistration(
         withPartnershipDetails(
           Some(
-            scottishPartnershipDetails.copy(nominatedPartner =
-              nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                               soleTraderDetails = None,
-                               incorporationDetails = None,
-                               partnerPartnershipDetails = None
+            scottishPartnershipDetails.copy(partners =
+              Seq(
+                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
+                                 soleTraderDetails = None,
+                                 incorporationDetails = None,
+                                 partnerPartnershipDetails = None
+                )
               )
             )
           )

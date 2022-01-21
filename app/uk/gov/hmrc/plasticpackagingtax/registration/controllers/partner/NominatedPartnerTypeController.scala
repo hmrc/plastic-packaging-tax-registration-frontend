@@ -171,7 +171,7 @@ class NominatedPartnerTypeController @Inject() (
             Some(
               registration.organisationDetails.partnershipDetails.map(
                 details =>
-                  details.copy(nominatedPartner = details.nominatedPartner match {
+                  details.copy(inflightPartner = details.nominatedPartner match {
                     case Some(partner) =>
                       Some(partner.copy(partnerType = partnershipPartnerType.answer))
                     case _ => Some(Partner(partnerType = partnershipPartnerType.answer))

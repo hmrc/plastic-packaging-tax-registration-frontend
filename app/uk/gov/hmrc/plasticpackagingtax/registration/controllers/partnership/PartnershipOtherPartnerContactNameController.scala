@@ -28,11 +28,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
   routes => partnershipRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   Partner,
-  PartnerContactDetails
+  PartnerContactDetails,
+  SoleTraderDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -58,7 +60,16 @@ class PartnershipOtherPartnerContactNameController @Inject() (
       val inflightOtherPartner =
         Some(
           Partner(organisationName = Some("Partner organisation"),
-                  partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
+                  partnerType = Some(PartnerTypeEnum.SOLE_TRADER),
+                  soleTraderDetails = Some(
+                    SoleTraderDetails(firstName = "Dean",
+                                      lastName = "Clough",
+                                      dateOfBirth = None,
+                                      ninoOrTrn = "123456",
+                                      sautr = None,
+                                      registration = None
+                    )
+                  )
           )
         )
 
@@ -80,7 +91,7 @@ class PartnershipOtherPartnerContactNameController @Inject() (
           Ok(
             page(form,
                  organisationName,
-                 partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                 partnerRoutes.PartnerListController.displayPage(),
                  partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
             )
           )
@@ -108,7 +119,7 @@ class PartnershipOtherPartnerContactNameController @Inject() (
                 BadRequest(
                   page(formWithErrors,
                        organisationName,
-                       partnershipRoutes.PartnershipPartnersListController.displayPage(),
+                       partnerRoutes.PartnerListController.displayPage(),
                        partnershipRoutes.PartnershipOtherPartnerContactNameController.submit()
                   )
                 )

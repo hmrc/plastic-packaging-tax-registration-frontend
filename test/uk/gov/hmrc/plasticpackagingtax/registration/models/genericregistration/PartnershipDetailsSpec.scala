@@ -24,35 +24,38 @@ class PartnershipDetailsSpec extends AnyWordSpec with Matchers {
   "PartnershipDetails " should {
     "serialise " when {
       "premises is provided" in {
-        val nominatePartner = Some(
+        val nominatePartner =
           Partner(id = "3534345",
                   partnerType = Some(PartnerTypeEnum.UK_COMPANY),
                   partnerPartnershipDetails = Some(
-                    PartnerPartnershipDetails(
-                      partnershipType = PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
-                      partnershipName = Some("Company 2"),
-                      partnershipBusinessDetails =
-                        Some(
-                          PartnershipBusinessDetails("123456789",
-                                                     "AA11AA",
-                                                     None,
-                                                     Some(
-                                                       RegistrationDetails(
-                                                         identifiersMatch = true,
-                                                         verificationStatus =
-                                                           Some("PASS"),
-                                                         registrationStatus =
-                                                           "REGISTERED",
-                                                         registeredBusinessPartnerId =
-                                                           Some("XXPPTP123456789")
-                                                       )
-                                                     )
-                          )
-                        )
+                    PartnerPartnershipDetails(partnershipType =
+                                                PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
+                                              partnershipName = Some("Company 2"),
+                                              partnershipBusinessDetails =
+                                                Some(
+                                                  PartnershipBusinessDetails("123456789",
+                                                                             "AA11AA",
+                                                                             None,
+                                                                             Some(
+                                                                               RegistrationDetails(
+                                                                                 identifiersMatch =
+                                                                                   true,
+                                                                                 verificationStatus =
+                                                                                   Some("PASS"),
+                                                                                 registrationStatus =
+                                                                                   "REGISTERED",
+                                                                                 registeredBusinessPartnerId =
+                                                                                   Some(
+                                                                                     "XXPPTP123456789"
+                                                                                   )
+                                                                               )
+                                                                             )
+                                                  )
+                                                )
                     )
                   )
           )
-        )
+
         val partnershipDetails = PartnershipDetails(partnershipType =
                                                       PartnerTypeEnum.GENERAL_PARTNERSHIP,
                                                     partnershipName = Some("Company 1"),
@@ -79,7 +82,7 @@ class PartnershipDetailsSpec extends AnyWordSpec with Matchers {
                                                                                    )
                                                         )
                                                       ),
-                                                    nominatedPartner = nominatePartner
+                                                    partners = Seq(nominatePartner)
         )
         partnershipDetails.nominatedPartner.get.partnerPartnershipDetails.get.partnershipType mustBe PartnerTypeEnum.SCOTTISH_PARTNERSHIP
       }

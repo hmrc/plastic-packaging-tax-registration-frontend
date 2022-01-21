@@ -51,7 +51,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
   private val partnershipRegistration = aRegistration(
     withPartnershipDetails(
-      Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+      Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
     )
   )
 
@@ -79,7 +79,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       "no previous partnership partner type in registration" in {
         val registration = aRegistration(
           withPartnershipDetails(
-            Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+            Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
           )
         )
 
@@ -94,7 +94,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       "previous partnership partner type in registration" in {
         val registration = aRegistration(
           withPartnershipDetails(
-            Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+            Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
           )
         )
 
@@ -111,28 +111,28 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       forAll(
         Seq(
           (SCOTTISH_LIMITED_PARTNERSHIP,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP)
+           scottishPartnershipDetails.copy(partners =
+             Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
            )
           ),
           (LIMITED_LIABILITY_PARTNERSHIP,
-           llpPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP)
+           llpPartnershipDetails.copy(partners =
+             Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
            )
           ),
           (SOLE_TRADER,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.SOLE_TRADER)
+           scottishPartnershipDetails.copy(partners =
+             Seq(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
            )
           ),
           (UK_COMPANY,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.UK_COMPANY)
+           scottishPartnershipDetails.copy(partners =
+             Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
            )
           ),
           (OVERSEAS_COMPANY_UK_BRANCH,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH)
+           scottishPartnershipDetails.copy(partners =
+             Seq(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
            )
           ),
           (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails),
@@ -180,7 +180,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       "save and come back later button is used" in {
         val registration = aRegistration(
           withPartnershipDetails(
-            Some(llpPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+            Some(llpPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
           )
         )
 
@@ -199,7 +199,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
     "throw errors resulting from failed registration updates for LLP" in {
       val registration = aRegistration(
         withPartnershipDetails(
-          Some(llpPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+          Some(llpPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
         )
       )
 
@@ -218,7 +218,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
     "returns bad request when empty radio button submitted" in {
       val registration = aRegistration(
         withPartnershipDetails(
-          Some(generalPartnershipDetails.copy(nominatedPartner = nominatedPartner(UK_COMPANY)))
+          Some(generalPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
         )
       )
 
@@ -245,8 +245,8 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
             aRegistration(
               withPartnershipDetails(
                 Some(
-                  generalPartnershipDetails.copy(nominatedPartner =
-                    nominatedPartner(PartnerTypeEnum.UK_COMPANY)
+                  generalPartnershipDetails.copy(partners =
+                    Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
                   )
                 )
               )

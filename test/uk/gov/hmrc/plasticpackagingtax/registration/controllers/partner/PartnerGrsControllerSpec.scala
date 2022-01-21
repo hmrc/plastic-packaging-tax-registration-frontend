@@ -23,6 +23,9 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
+  routes => partnershipRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   CHARITABLE_INCORPORATED_ORGANISATION,
@@ -63,43 +66,43 @@ class PartnerGrsControllerSpec extends ControllerSpec {
       forAll(
         Seq(
           (SCOTTISH_LIMITED_PARTNERSHIP,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP)
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
            )
           ),
           (LIMITED_LIABILITY_PARTNERSHIP,
-           llpPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP)
+           llpPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
            )
           ),
           (SOLE_TRADER,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.SOLE_TRADER)
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
            )
           ),
           (UK_COMPANY,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.UK_COMPANY)
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
            )
           ),
           (OVERSEAS_COMPANY_UK_BRANCH,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH)
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
            )
           ),
           (SCOTTISH_PARTNERSHIP,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP))
            )
           ),
           (OVERSEAS_COMPANY_NO_UK_BRANCH,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH)
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH))
            )
           ),
           (CHARITABLE_INCORPORATED_ORGANISATION,
-           scottishPartnershipDetails.copy(nominatedPartner =
-             nominatedPartner(PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION)
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION))
            )
           )
         )
@@ -130,7 +133,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
               val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
-                routes.PartnerCheckAnswersController.nominatedPartner().url
+                partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage().url
               )
           }
 
@@ -143,8 +146,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withPartnershipDetails(
             Some(
-              scottishPartnershipDetails.copy(nominatedPartner =
-                nominatedPartner(PartnerTypeEnum.UK_COMPANY)
+              scottishPartnershipDetails.copy(inflightPartner =
+                Some(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
               )
             )
           )

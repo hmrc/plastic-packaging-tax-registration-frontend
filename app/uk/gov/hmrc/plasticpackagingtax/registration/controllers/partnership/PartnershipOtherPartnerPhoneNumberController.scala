@@ -28,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
   routes => partnershipRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerContactDetails
@@ -96,9 +97,8 @@ class PartnershipOtherPartnerPhoneNumberController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    Redirect(
-                      partnershipRoutes.PartnershipOtherPartnerCheckAnswersController.displayPage()
-                    )
+                    // TODO: deal with partner amendments
+                    Redirect(partnerRoutes.PartnerContactAddressController.captureNewPartner())
                   case _ =>
                     Redirect(commonRoutes.TaskListController.displayPage())
                 }

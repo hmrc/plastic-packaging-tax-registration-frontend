@@ -100,14 +100,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
     "throw IllegalStateException" when {
       "nominated partner absent from registration" in {
-        mockRegistrationFind(withNominatedPartnerRemoved(partnershipRegistration))
-
-        intercept[IllegalStateException] {
-          await(controller.displayPage()(getRequest()))
-        }
-      }
-      "other partners absent from registration" in {
-        mockRegistrationFind(withOtherPartnersRemoved(partnershipRegistration))
+        mockRegistrationFind(withAllPartnersRemoved(partnershipRegistration))
 
         intercept[IllegalStateException] {
           await(controller.displayPage()(getRequest()))
@@ -116,17 +109,10 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
     }
   }
 
-  private def withNominatedPartnerRemoved(reg: Registration): Registration =
+  private def withAllPartnersRemoved(reg: Registration): Registration =
     reg.copy(organisationDetails =
       reg.organisationDetails.copy(partnershipDetails =
-        reg.organisationDetails.partnershipDetails.map(_.copy(nominatedPartner = None))
-      )
-    )
-
-  private def withOtherPartnersRemoved(reg: Registration): Registration =
-    reg.copy(organisationDetails =
-      reg.organisationDetails.copy(partnershipDetails =
-        reg.organisationDetails.partnershipDetails.map(_.copy(otherPartners = None))
+        reg.organisationDetails.partnershipDetails.map(_.copy(partners = Seq.empty))
       )
     )
 

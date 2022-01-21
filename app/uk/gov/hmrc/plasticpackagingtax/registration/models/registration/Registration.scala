@@ -126,7 +126,7 @@ case class Registration(
 
   val isStarted: Boolean = liabilityDetails.status != TaskStatus.NotStarted
 
-  val isFirstGroupMember = groupDetail.exists(_.members.isEmpty)
+  val isFirstGroupMember: Boolean = groupDetail.exists(_.members.isEmpty)
 
   def populateBusinessRegisteredAddress(): Registration =
     this.copy(organisationDetails = this.organisationDetails.withBusinessRegisteredAddress())
@@ -151,13 +151,46 @@ case class Registration(
   def addOtherPartner(otherPartner: Partner): Registration =
     organisationDetails.partnershipDetails.map { partnershipDetails =>
       val updatedOtherPartners =
-        partnershipDetails.otherPartners.getOrElse(Seq.empty) :+ otherPartner;
+        partnershipDetails.otherPartners :+ otherPartner
       val updatedPartnershipDetails =
-        partnershipDetails.copy(otherPartners = Some(updatedOtherPartners))
+        partnershipDetails.copy(partners = updatedOtherPartners)
       this.copy(organisationDetails =
         organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
       )
     }.getOrElse(this)
+
+  def withPromotedInflightPartner(): Registration =
+    this.copy(organisationDetails =
+      organisationDetails.copy(partnershipDetails =
+        this.organisationDetails.partnershipDetails.map(_.withPromotedInflightPartner())
+      )
+    )
+
+  def withUpdatedPartner(partnerId: String, partnerUpdate: Partner => Partner): Registration =
+    this.copy(organisationDetails =
+      this.organisationDetails.copy(partnershipDetails =
+        this.organisationDetails.partnershipDetails.map(
+          _.copy(partners = this.organisationDetails.partnershipDetails.map(_.partners.map {
+            partner =>
+              if (partner.id == partnerId)
+                partnerUpdate(partner)
+              else
+                partner
+          }).getOrElse(Seq()))
+        )
+      )
+    )
+
+  val nominatedPartner: Option[Partner] =
+    organisationDetails.partnershipDetails.flatMap(_.nominatedPartner)
+
+  val otherPartners: Seq[Partner] =
+    organisationDetails.partnershipDetails.map(_.otherPartners).getOrElse(Seq.empty)
+
+  val newPartner: Option[Partner] = organisationDetails.partnershipDetails.flatMap(_.newPartner)
+
+  def findPartner(partnerId: String): Option[Partner] =
+    organisationDetails.partnershipDetails.flatMap(_.findPartner(partnerId))
 
 }
 
