@@ -49,8 +49,6 @@ class PartnerContactNameController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.partnershipNominatedPartner.map { partner =>
-        val organisationName = partner.name
-
         val existingNameFields = for {
           contactDetails <- partner.contactDetails
           firstName      <- contactDetails.firstName
@@ -66,7 +64,7 @@ class PartnerContactNameController @Inject() (
 
         Ok(
           page(form,
-               organisationName,
+               partner.name,
                partnerRoutes.NominatedPartnerTypeController.displayPage(),
                partnerRoutes.PartnerContactNameController.submit()
           )
@@ -96,7 +94,7 @@ class PartnerContactNameController @Inject() (
                 case Right(_) =>
                   FormAction.bindFromRequest match {
                     case SaveAndContinue =>
-                      Redirect(routes.PartnerCheckAnswersController.nominatedPartner())
+                      Redirect(routes.PartnerPhoneNumberController.displayPage())
                     case _ =>
                       Redirect(partnerRoutes.PartnerContactNameController.displayPage())
                   }

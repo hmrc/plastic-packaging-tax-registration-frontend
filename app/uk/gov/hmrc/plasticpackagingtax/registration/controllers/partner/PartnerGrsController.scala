@@ -164,7 +164,10 @@ class PartnerGrsController @Inject() (
       val partnershipDetails = Some(
         PartnerPartnershipDetails(
           partnershipType = request.registration.organisationDetails.inflightPartnerType.get,
-          partnershipName = None,
+          partnershipName =
+            Some(
+              "TODO Screen needed to prompt for Partner partnership name"
+            ), // We don’t get partnership names for non-incorp partnerships from GRS. We capture a name prior to the redirection to GRS
           partnershipBusinessDetails = Some(partnershipBusinessDetails)
         )
       )
