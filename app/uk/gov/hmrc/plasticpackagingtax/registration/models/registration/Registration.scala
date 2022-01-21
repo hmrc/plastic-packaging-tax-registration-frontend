@@ -136,13 +136,25 @@ case class Registration(
   def findMember(memberId: String): Option[GroupMember] =
     groupDetail.flatMap(_.findGroupMember(memberId))
 
-  val inflightPartner: Option[Partner] =
-    organisationDetails.partnershipDetails.flatMap(_.inflightPartner)
+  def partnershipNominatedPartner: Option[Partner] =
+    this.organisationDetails.nominatedPartner
 
-  def withInflightPartner(updatedOtherPartner: Option[Partner]): Registration =
+  def withPartnershipNominatedPartner(updatedPartner: Option[Partner]): Registration =
     organisationDetails.partnershipDetails.map { partnershipDetails =>
       val updatedPartnershipDetails =
-        partnershipDetails.copy(inflightPartner = updatedOtherPartner)
+        partnershipDetails.copy(nominatedPartner = updatedPartner)
+      this.copy(organisationDetails =
+        organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
+      )
+    }.getOrElse(this)
+
+  def inflightPartner: Option[Partner] =
+    organisationDetails.partnershipDetails.flatMap(_.inflightPartner)
+
+  def withInflightPartner(updatedPartner: Option[Partner]): Registration =
+    organisationDetails.partnershipDetails.map { partnershipDetails =>
+      val updatedPartnershipDetails =
+        partnershipDetails.copy(inflightPartner = updatedPartner)
       this.copy(organisationDetails =
         organisationDetails.copy(partnershipDetails = Some(updatedPartnershipDetails))
       )
