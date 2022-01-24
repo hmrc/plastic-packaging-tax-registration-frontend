@@ -51,29 +51,6 @@ class PartnerContactNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      def renderPageFor(partner: Partner): Result = {
-        val existingNameFields = for {
-          contactDetails <- partner.contactDetails
-          firstName      <- contactDetails.firstName
-          lastName       <- contactDetails.lastName
-        } yield (firstName, lastName)
-
-        val form = existingNameFields match {
-          case Some(data) =>
-            MemberName.form().fill(MemberName(data._1, data._2))
-          case None =>
-            MemberName.form()
-        }
-
-        Ok(
-          page(form,
-               partner.name,
-               partnerRoutes.NominatedPartnerTypeController.displayPage(),
-               partnerRoutes.PartnerContactNameController.submit()
-          )
-        )
-      }
-
       request.registration.inflightPartner.map { partner =>
         renderPageFor(partner)
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
@@ -104,6 +81,29 @@ class PartnerContactNameController @Inject() (
         )
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
+
+  private def renderPageFor(partner: Partner)(implicit request: JourneyRequest[AnyContent]): Result = {
+    val existingNameFields = for {
+      contactDetails <- partner.contactDetails
+      firstName      <- contactDetails.firstName
+      lastName       <- contactDetails.lastName
+    } yield (firstName, lastName)
+
+    val form = existingNameFields match {
+      case Some(data) =>
+        MemberName.form().fill(MemberName(data._1, data._2))
+      case None =>
+        MemberName.form()
+    }
+
+    Ok(
+      page(form,
+        partner.name,
+        partnerRoutes.NominatedPartnerTypeController.displayPage(),
+        partnerRoutes.PartnerContactNameController.submit()
+      )
+    )
+  }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
