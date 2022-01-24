@@ -54,15 +54,17 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     super.afterEach()
   }
 
-  private def registrationWithPartnershipDetails =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
+  private def registrationWithPartnershipDetailsAndInflightPartner =
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner)
+    )
 
   "PartnershipOtherPartnerEmailAddressController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected nominated partner" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetails)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.displayPage()(getRequest())
 
@@ -73,7 +75,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     "update inflight registration" when {
       "user submits a complete contact name" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetails)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submit()(
@@ -94,6 +96,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
         val result =
           controller.submit()(postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction))
 
@@ -102,6 +106,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user enters a long name" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
         val result = controller.submit()(
           postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
         )
@@ -111,6 +117,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user enters non-alphabetic characters" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
         val result =
           controller.submit()(
             postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
@@ -134,7 +142,9 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user submits form and the registration update fails" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
+
         val result =
           controller.submit()(postRequest(Json.toJson(MemberName("John", "Smith"))))
 
