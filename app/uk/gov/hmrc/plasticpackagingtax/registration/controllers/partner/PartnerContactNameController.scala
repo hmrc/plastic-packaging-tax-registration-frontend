@@ -65,7 +65,7 @@ class PartnerContactNameController @Inject() (
         Ok(
           page(form,
                partner.name,
-               partnerRoutes.NominatedPartnerTypeController.displayPage(),
+               partnerRoutes.NominatedPartnerTypeController.displayNewPartner(),
                partnerRoutes.PartnerContactNameController.submit()
           )
         )
@@ -84,7 +84,7 @@ class PartnerContactNameController @Inject() (
                 BadRequest(
                   page(formWithErrors,
                        partner.name,
-                       partnerRoutes.NominatedPartnerTypeController.displayPage(),
+                       partnerRoutes.NominatedPartnerTypeController.displayNewPartner(),
                        partnerRoutes.PartnerContactNameController.submit()
                   )
                 )

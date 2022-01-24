@@ -47,7 +47,7 @@
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("partner.check.orgType", partner.partnerType.map(displayName(_)), None), // TODO: add change link
+            viewUtils.summaryListRow("partner.check.orgType", partner.partnerType.map(displayName(_)), Some(partnerRoutes.NominatedPartnerTypeController.displayExistingPartner(partner.id))), // TODO: add change link
             viewUtils.summaryListRow("partner.check.companyNumber", partner.incorporationDetails.map(_.companyNumber), None),
             viewUtils.summaryListRow("partner.check.orgName", partner.incorporationDetails.map(_.companyName), None),
             viewUtils.summaryListRow("partner.check.utr", partner.incorporationDetails.map(_.ctutr), None),
@@ -58,7 +58,7 @@
 @soleTraderSummary() = @{
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("partner.check.orgType", partner.partnerType.map(displayName(_)), None), // TODO: add change link
+            viewUtils.summaryListRow("partner.check.orgType", partner.partnerType.map(displayName(_)), Some(partnerRoutes.NominatedPartnerTypeController.displayExistingPartner(partner.id))), // TODO: add change link
             viewUtils.summaryListRow("partner.check.name", partner.soleTraderDetails.map(_.name), None),
             viewUtils.summaryListRow("partner.check.dob", partner.soleTraderDetails.flatMap(_.dateOfBirth), None),
             viewUtils.summaryListRow("partner.check.nino", partner.soleTraderDetails.map(_.ninoOrTrn), None),

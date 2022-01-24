@@ -63,7 +63,12 @@ class PartnerGrsController @Inject() (
 
   private val logger = Logger(this.getClass)
 
-  def grsCallback(journeyId: String): Action[AnyContent] =
+  def grsCallbackNewPartner(journeyId: String): Action[AnyContent] = grsCallback(journeyId, None)
+
+  def grsCallbackAmendPartner(journeyId: String, memberId: String): Action[AnyContent] =
+    grsCallback(journeyId, Some(memberId))
+
+  def grsCallback(journeyId: String, memberId : Option[String]): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {
@@ -71,7 +76,7 @@ class PartnerGrsController @Inject() (
             registrationStatus(registration).map { status =>
               logger.info(
                 s"PPT GRS callback for journeyId [$journeyId] " +
-                  s"and organisation type [${registration.organisationDetails.nominatedPartnerType.getOrElse("")}] " +
+                  s"and partner type [${registration.organisationDetails.inflightPartner.getOrElse("")}] " +
                   s"had registration status [$status] " +
                   s"and details [${registration.organisationDetails.nominatedPartnerRegistrationStatus.getOrElse("None")}]"
               )

@@ -73,22 +73,34 @@ class NominatedPartnerTypeController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayNewPartner(): Action[AnyContent] = displayPage()
+
+  def displayExistingPartner(partnerId: String): Action[AnyContent] = displayPage(partnerId = Some(partnerId))
+
+  def displayPage(partnerId: Option[String]= None): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.organisationDetails.nominatedPartner match {
-        case Some(nominatedPartner) =>
-          Future(Ok(page(PartnerType.form().fill(PartnerType(nominatedPartner.partnerType)))))
-        case _ => Future(Ok(page(PartnerType.form())))
+      val partner = partnerId match {
+        case Some(partnerId) => request.registration.findPartner(partnerId)
+        case _ => None
+      }
+      partner match {
+        case Some(partner) =>
+          Future(Ok(page(PartnerType.form().fill(PartnerType(partner.partnerType)), partnerId)))
+        case _ => Future(Ok(page(PartnerType.form(), partnerId)))
       }
     }
 
-  def submit(): Action[AnyContent] =
+  def submitNewPartner(): Action[AnyContent] = submit()
+
+  def submitExistingPartner(partnerId: String): Action[AnyContent] = submit(Some(partnerId))
+
+  def submit(partnerId: Option[String]= None): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       PartnerType.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),
+        .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors, partnerId))),
               (partnershipPartnerType: PartnerType) =>
-                updateNominatedPartnershipType(partnershipPartnerType).flatMap { _ =>
+                updateNominatedPartnershipType(partnershipPartnerType, partnerId).flatMap { _ =>
                   FormAction.bindFromRequest match {
                     case SaveAndContinue =>
                       partnershipPartnerType.answer match {
@@ -162,7 +174,8 @@ class NominatedPartnerTypeController @Inject() (
     )
 
   private def updateNominatedPartnershipType(
-    partnershipPartnerType: PartnerType
+    partnershipPartnerType: PartnerType,
+    partnerId: Option[String]
   )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
     update {
       registration =>
@@ -171,11 +184,20 @@ class NominatedPartnerTypeController @Inject() (
             Some(
               registration.organisationDetails.partnershipDetails.map(
                 details =>
-                  details.copy(inflightPartner = details.nominatedPartner match {
-                    case Some(partner) =>
-                      Some(partner.copy(partnerType = partnershipPartnerType.answer))
-                    case _ => Some(Partner(partnerType = partnershipPartnerType.answer))
-                  })
+                  details.copy(inflightPartner =
+                    if(details.isNominatedPartner(partnerId)) {
+                        details.nominatedPartner match {
+                          case Some(partner) =>
+                            Some(partner.copy(partnerType = partnershipPartnerType.answer))
+                          case _ => Some(Partner(partnerType = partnershipPartnerType.answer))
+                        }
+                    }else{
+                      partnerId match {
+                        case Some(partnerId) => details.findPartner(partnerId)
+                        case None => Some(Partner(partnerType = partnershipPartnerType.answer))
+                      }
+                    }
+                  )
               ).getOrElse(throw new IllegalStateException("No partnership details found"))
             )
           )

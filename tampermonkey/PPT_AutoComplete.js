@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.6
+// @version      15.7
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -405,6 +405,54 @@ const grsPartnershipCheckYourAnswers = () => {
     }
 }
 
+const partnerOrganisationList = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partnership-partners-list')) {
+
+        document.getElementById('addOrganisation-2').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const partnerOrganisation = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partnership-nominated-partner-type') ||
+        currentPageIs('/register-for-plastic-packaging-tax/partnership-partner-type') ) {
+
+        document.getElementById('answer').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const partnerContactName = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-contact-name')) {
+
+        document.getElementById('firstName').value = "James"
+        document.getElementById('lastName').value = "Sparrow"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const partnerContactEmailAddress = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-email-address')) {
+
+        document.getElementById('value').value = "test@test.com"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const partnerContactPhoneNumber = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-phone-number')) {
+
+        document.getElementById('value').value = "07712345677"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const partnerContactCheckAnswers = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-check-answers')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 /* ####################### PPT */
 
 const liabilityStartDate = () => {
@@ -725,6 +773,12 @@ function completeJourney(manualJourney) {
     grsPartnershipUtr()
     grsPartnershipPostcode()
     grsPartnershipCheckYourAnswers()
+    partnerOrganisationList()
+    partnerOrganisation()
+    partnerContactName()
+    partnerContactEmailAddress()
+    partnerContactPhoneNumber()
+    partnerContactCheckAnswers()
 
     // Business Details
     organisationType()
