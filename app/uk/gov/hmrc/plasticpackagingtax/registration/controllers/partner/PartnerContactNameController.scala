@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -27,7 +27,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerContactDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnerContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
@@ -48,7 +51,7 @@ class PartnerContactNameController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.inflightPartner.map { partner =>
+      def renderPageFor(partner: Partner): Result = {
         val existingNameFields = for {
           contactDetails <- partner.contactDetails
           firstName      <- contactDetails.firstName
@@ -69,7 +72,10 @@ class PartnerContactNameController @Inject() (
                partnerRoutes.PartnerContactNameController.submit()
           )
         )
+      }
 
+      request.registration.inflightPartner.map { partner =>
+        renderPageFor(partner)
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
