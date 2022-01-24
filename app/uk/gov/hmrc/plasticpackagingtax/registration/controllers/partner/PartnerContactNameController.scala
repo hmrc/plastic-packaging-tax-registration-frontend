@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -52,37 +52,26 @@ class PartnerContactNameController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        renderPageFor(partner)
+        renderPageFor(partner,
+                      partnerRoutes.NominatedPartnerTypeController.displayPage(),
+                      partnerRoutes.PartnerContactNameController.submit()
+        )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
-        val existingNameFields = for {
-          contactDetails <- partner.contactDetails
-          firstName      <- contactDetails.firstName
-          lastName       <- contactDetails.lastName
-        } yield (firstName, lastName)
-
-        val form = existingNameFields match {
-          case Some(data) =>
-            MemberName.form().fill(MemberName(data._1, data._2))
-          case None =>
-            MemberName.form()
-        }
-
-        Ok(
-          page(form,
-               partner.name,
-               partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-               partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
-          )
+        renderPageFor(partner,
+                      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                      partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
         )
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
 
-  private def renderPageFor(partner: Partner)(implicit request: JourneyRequest[AnyContent]): Result = {
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result = {
     val existingNameFields = for {
       contactDetails <- partner.contactDetails
       firstName      <- contactDetails.firstName
@@ -96,13 +85,7 @@ class PartnerContactNameController @Inject() (
         MemberName.form()
     }
 
-    Ok(
-      page(form,
-        partner.name,
-        partnerRoutes.NominatedPartnerTypeController.displayPage(),
-        partnerRoutes.PartnerContactNameController.submit()
-      )
-    )
+    Ok(page(form, partner.name, backCall, submitCall))
   }
 
   def submit(): Action[AnyContent] =
@@ -149,8 +132,10 @@ class PartnerContactNameController @Inject() (
                 BadRequest(
                   page(formWithErrors,
                        partner.name,
-                       partnerRoutes.NominatedPartnerTypeController.displayPage(),
-                       partnerRoutes.PartnerContactNameController.submit()
+                       partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
+                         partnerId
+                       ),
+                       partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
                   )
                 )
               ),
