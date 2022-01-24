@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -62,8 +62,8 @@ class PartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
         renderPageFor(partner,
-          partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-          partnerRoutes.PartnerEmailAddressController.submitExistingPartner(partnerId)
+                      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                      partnerRoutes.PartnerEmailAddressController.submitExistingPartner(partnerId)
         )
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
@@ -95,9 +95,9 @@ class PartnerEmailAddressController @Inject() (
                   Future.successful(
                     BadRequest(
                       page(formWithErrors,
-                        partnerRoutes.PartnerContactNameController.displayPage(),
-                        partnerRoutes.PartnerEmailAddressController.submit(),
-                        contactName
+                           partnerRoutes.PartnerContactNameController.displayPage(),
+                           partnerRoutes.PartnerEmailAddressController.submit(),
+                           contactName
                       )
                     )
                   )
@@ -107,7 +107,7 @@ class PartnerEmailAddressController @Inject() (
                 )
               ),
             emailAddress =>
-              updateRegistration(emailAddress).map {
+              updateInflightRegistration(emailAddress).map {
                 case Right(_) =>
                   FormAction.bindFromRequest match {
                     case SaveAndContinue =>
@@ -115,27 +115,88 @@ class PartnerEmailAddressController @Inject() (
                     case _ =>
                       Redirect(commonRoutes.TaskListController.displayPage())
                   }
-                case Left(error) => throw error
+                case Left(error) =>
+                  throw error
+
               }
           )
       }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
-  }
+    }
 
-  private def updateRegistration(
+  def submitExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.findPartner(partnerId).map { partner =>
+        EmailAddress.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[EmailAddress]) =>
+              partner.contactDetails.flatMap(_.name).map {
+                contactName =>
+                  Future.successful(
+                    BadRequest(
+                      page(formWithErrors,
+                           partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
+                             partnerId
+                           ),
+                           partnerRoutes.PartnerEmailAddressController.submitExistingPartner(
+                             partnerId
+                           ),
+                           contactName
+                      )
+                    )
+                  )
+              }.getOrElse(
+                Future.successful(
+                  throw new IllegalStateException("Expected partner contact name missing")
+                )
+              ),
+            emailAddress =>
+              updateExistingPartner(emailAddress, partnerId).map {
+                case Right(_) =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      Redirect(
+                        partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+                      )
+                    case _ =>
+                      Redirect(
+                        partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+                      )
+                  }
+                case Left(error) => throw error
+              }
+          )
+      }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
+    }
+
+  private def updateInflightRegistration(
     formData: EmailAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.inflightPartner.map { partner =>
-        val withPhoneNumber =
+        val withEmailAddress =
           partner.contactDetails.map { contactDetails =>
             val updatedContactDetailsWithEmailAddress =
               contactDetails.copy(emailAddress = Some(formData.value))
             partner.copy(contactDetails = Some(updatedContactDetailsWithEmailAddress))
           }
-        registration.withInflightPartner(withPhoneNumber)
+        registration.withInflightPartner(withEmailAddress)
       }.getOrElse {
         registration
       }
+    }
+
+  private def updateExistingPartner(formData: EmailAddress, partnerId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.withUpdatedPartner(
+        partnerId,
+        partner =>
+          partner.copy(contactDetails =
+            partner.contactDetails.map(_.copy(emailAddress = Some(formData.value)))
+          )
+      )
     }
 
 }

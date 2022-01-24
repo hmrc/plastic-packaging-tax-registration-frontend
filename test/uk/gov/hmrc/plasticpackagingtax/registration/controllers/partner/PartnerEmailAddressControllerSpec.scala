@@ -129,7 +129,9 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
       "user submits form and the registration update fails" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdateFailure()
+
         val result =
           controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
