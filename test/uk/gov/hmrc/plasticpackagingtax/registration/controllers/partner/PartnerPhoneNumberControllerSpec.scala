@@ -27,11 +27,6 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnerContactDetails
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -59,37 +54,25 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
     super.afterEach()
   }
 
-  def registrationWithInflightOtherPartnerJourney =
+  private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(
-        Partner(contactDetails =
-                  Some(PartnerContactDetails(firstName = Some("John"), lastName = Some("Smith"))),
-                partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
-        )
-      )
+      Some(aLimitedCompanyPartner)
     )
 
-  def registrationWithInflightOtherPartnerJourneyAndPhoneNumber =
+  def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber = {
+    val contactDetailsWithPhoneNumber =
+      aLimitedCompanyPartner().contactDetails.map(_.copy(phoneNumber = Some("12345678")))
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(
-        Partner(
-          contactDetails = Some(
-            PartnerContactDetails(firstName = Some("John"),
-                                  lastName = Some("Smith"),
-                                  phoneNumber = Some("12345678")
-            )
-          ),
-          partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
-        )
-      )
+      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber))
     )
+  }
 
   "PartnershipOtherPartnerPhoneNumberController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected contact name and display page method is invoked" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         val result = controller.displayPage()(getRequest())
 
@@ -98,7 +81,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user is authorised, a registration already exists with already collected contact name and phone number display page method is invoked" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithInflightOtherPartnerJourneyAndPhoneNumber)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         val result = controller.displayPage()(getRequest())
 
@@ -109,7 +92,9 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
     "update inflight registration" when {
       "user submits a valid phone number" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+        mockRegistrationFind(
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber
+        )
         mockRegistrationUpdate()
 
         val result = controller.submit()(

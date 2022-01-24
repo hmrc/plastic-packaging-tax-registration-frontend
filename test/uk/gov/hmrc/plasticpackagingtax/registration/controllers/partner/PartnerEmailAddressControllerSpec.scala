@@ -27,11 +27,6 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnerContactDetails
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -59,37 +54,25 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     super.afterEach()
   }
 
-  def registrationWithInflightOtherPartnerJourney =
+  private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(
-        Partner(contactDetails =
-                  Some(PartnerContactDetails(firstName = Some("John"), lastName = Some("Smith"))),
-                partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
-        )
-      )
+      Some(aLimitedCompanyPartner)
     )
 
-  def registrationWithInflightOtherPartnerJourneyAndEmailAddress =
+  def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress = {
+    val contactDetailsWithEmailAddress =
+      aLimitedCompanyPartner().contactDetails.map(_.copy(emailAddress = Some("test@localhost")))
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(
-        Partner(
-          contactDetails = Some(
-            PartnerContactDetails(firstName = Some("John"),
-                                  lastName = Some("Smith"),
-                                  emailAddress = Some("test@localhost")
-            )
-          ),
-          partnerType = Some(PartnerTypeEnum.SOLE_TRADER)
-        )
-      )
+      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithEmailAddress))
     )
+  }
 
   "PartnershipOtherPartnerEmailAddressController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected contact name and display page method is invoked" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         val result = controller.displayPage()(getRequest())
 
@@ -98,7 +81,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
       "user is authorised, a registration already exists with already collected contact name and email address display page method is invoked" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithInflightOtherPartnerJourneyAndEmailAddress)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         val result = controller.displayPage()(getRequest())
 
@@ -109,7 +92,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     "update inflight registration" when {
       "user submits a valid email address" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithInflightOtherPartnerJourney)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdate()
 
         val result = controller.submit()(
