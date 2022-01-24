@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -28,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
@@ -48,25 +49,29 @@ class PartnerEmailAddressController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.inflightPartner.flatMap(_.contactDetails).map { contactDetails =>
-        contactDetails.name.map { contactName =>
-          val form = contactDetails.emailAddress match {
-            case Some(data) =>
-              EmailAddress.form().fill(EmailAddress(data))
-            case _ =>
-              EmailAddress.form()
-          }
+      request.registration.inflightPartner.map { partner =>
+        renderPageFor(partner,
+                      partnerRoutes.PartnerContactNameController.displayPage(),
+                      partnerRoutes.PartnerEmailAddressController.submit()
+        )
 
-          Ok(
-            page(form,
-                 partnerRoutes.PartnerContactNameController.displayPage(),
-                 partnerRoutes.PartnerEmailAddressController.submit(),
-                 contactName
-            )
-          )
-        }.getOrElse(throw new IllegalStateException("Expected partner name missing"))
-      }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
+      }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
     }
+
+  def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result =
+    partner.contactDetails.map { contactDetails =>
+      contactDetails.name.map { contactName =>
+        val form = contactDetails.emailAddress match {
+          case Some(data) =>
+            EmailAddress.form().fill(EmailAddress(data))
+          case _ =>
+            EmailAddress.form()
+        }
+        Ok(page(form, backCall, submitCall, contactName))
+      }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
+    }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
