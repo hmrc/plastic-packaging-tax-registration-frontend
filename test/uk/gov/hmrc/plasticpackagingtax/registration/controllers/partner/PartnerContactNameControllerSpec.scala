@@ -27,12 +27,12 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[member_name_page]
+  private val page = mock[partner_member_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
@@ -56,7 +56,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner)
+      Some(aLimitedCompanyPartner())
     )
 
   "PartnershipOtherPartnerEmailAddressController" should {

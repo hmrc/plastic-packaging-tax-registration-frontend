@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.partnerships
+package uk.gov.hmrc.plasticpackagingtax.registration.views.partner
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
@@ -22,13 +22,13 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.phone_number_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_phone_number_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class PhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
+class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[phone_number_page]
+  private val page = instanceOf[partner_phone_number_page]
 
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
@@ -91,7 +91,7 @@ class PhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
     }
   }
 
-  override def exerciseGeneratedRenderingMethods() = {
+  override def exerciseGeneratedRenderingMethods(): Unit = {
     page.f(PhoneNumber.form(), backLink, updateLink, contactName)(journeyRequest, messages)
     page.render(PhoneNumber.form(), backLink, updateLink, contactName, journeyRequest, messages)
   }

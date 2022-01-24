@@ -27,12 +27,12 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.phone_number_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[phone_number_page]
+  private val page = mock[partner_phone_number_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
@@ -56,14 +56,14 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner)
+      Some(aLimitedCompanyPartner())
     )
 
-  def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber = {
+  private def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber = {
     val contactDetailsWithPhoneNumber =
       aLimitedCompanyPartner().contactDetails.map(_.copy(phoneNumber = Some("12345678")))
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithPhoneNumber))
+      Some(aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithPhoneNumber))
     )
   }
 

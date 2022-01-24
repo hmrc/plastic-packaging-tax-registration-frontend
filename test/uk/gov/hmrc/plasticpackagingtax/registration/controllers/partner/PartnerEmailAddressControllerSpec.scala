@@ -27,12 +27,12 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.email_address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[email_address_page]
+  private val page = mock[partner_email_address_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
@@ -56,14 +56,14 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactName =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner)
+      Some(aLimitedCompanyPartner())
     )
 
-  def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress = {
+  private def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress = {
     val contactDetailsWithEmailAddress =
       aLimitedCompanyPartner().contactDetails.map(_.copy(emailAddress = Some("test@localhost")))
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
-      Some(aLimitedCompanyPartner.copy(contactDetails = contactDetailsWithEmailAddress))
+      Some(aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithEmailAddress))
     )
   }
 
@@ -81,7 +81,9 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
       "user is authorised, a registration already exists with already collected contact name and email address display page method is invoked" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
+        mockRegistrationFind(
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress
+        )
 
         val result = controller.displayPage()(getRequest())
 

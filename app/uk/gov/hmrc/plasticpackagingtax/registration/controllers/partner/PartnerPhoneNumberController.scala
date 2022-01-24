@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commo
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.phone_number_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_phone_number_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +42,7 @@ class PartnerPhoneNumberController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: phone_number_page
+  page: partner_phone_number_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
