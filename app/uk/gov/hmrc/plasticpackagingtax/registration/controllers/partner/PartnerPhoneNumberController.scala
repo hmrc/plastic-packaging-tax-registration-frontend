@@ -18,13 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
@@ -50,13 +46,21 @@ class PartnerPhoneNumberController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        renderPageFor(partner)
+        renderPageFor(partner, partnerRoutes.PartnerContactNameController.displayPage(), partnerRoutes.PartnerPhoneNumberController.submit())
       }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
     }
 
+  def displayExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.findPartner(partnerId).map { partner =>
+        renderPageFor(partner, partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+          partnerRoutes.PartnerPhoneNumberController.submit())  // TODO partner id
+      }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
+    }
+
   private def renderPageFor(
-    partner: Partner
-  )(implicit request: JourneyRequest[AnyContent]): Result =
+    partner: Partner, backCall: Call, submitCall: Call
+  )(implicit request: JourneyRequest[AnyContent]): Result = {
     partner.contactDetails.map {
       contactDetails =>
         contactDetails.name.map { contactName =>
@@ -68,13 +72,14 @@ class PartnerPhoneNumberController @Inject() (
           }
           Ok(
             page(form,
-                 partnerRoutes.PartnerContactNameController.displayPage(),
-                 partnerRoutes.PartnerPhoneNumberController.submit(),
-                 contactName
+              backCall,
+              submitCall,
+              contactName
             )
           )
         }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
+  }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
