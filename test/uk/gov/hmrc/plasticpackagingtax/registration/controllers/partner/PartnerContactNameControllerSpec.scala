@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
@@ -27,21 +27,21 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partnerships.member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
+class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[member_name_page]
+  private val page = mock[partner_member_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnershipOtherPartnerContactNameController(authenticate = mockAuthAction,
-                                                     journeyAction = mockJourneyAction,
-                                                     registrationConnector =
-                                                       mockRegistrationConnector,
-                                                     mcc = mcc,
-                                                     page = page
+    new PartnerContactNameController(authenticate = mockAuthAction,
+                                     journeyAction = mockJourneyAction,
+                                     registrationConnector =
+                                       mockRegistrationConnector,
+                                     mcc = mcc,
+                                     page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -54,15 +54,17 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
     super.afterEach()
   }
 
-  private def registrationWithPartnershipDetails =
-    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
+  private def registrationWithPartnershipDetailsAndInflightPartner =
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner())
+    )
 
   "PartnershipOtherPartnerEmailAddressController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected nominated partner" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetails)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.displayPage()(getRequest())
 
@@ -73,7 +75,7 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
     "update inflight registration" when {
       "user submits a complete contact name" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetails)
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submit()(
@@ -94,6 +96,8 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
         val result =
           controller.submit()(postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction))
 
@@ -102,6 +106,8 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
 
       "user enters a long name" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
         val result = controller.submit()(
           postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
         )
@@ -111,6 +117,8 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
 
       "user enters non-alphabetic characters" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
         val result =
           controller.submit()(
             postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
@@ -134,7 +142,9 @@ class PartnershipPartnersContactNameControllerSpec extends ControllerSpec with D
 
       "user submits form and the registration update fails" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
+
         val result =
           controller.submit()(postRequest(Json.toJson(MemberName("John", "Smith"))))
 

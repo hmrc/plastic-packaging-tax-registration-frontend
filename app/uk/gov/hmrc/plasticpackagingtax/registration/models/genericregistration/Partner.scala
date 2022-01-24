@@ -31,7 +31,7 @@ case class Partner(
   partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None,
   contactDetails: Option[PartnerContactDetails] = None,
   organisationName: Option[String] =
-    None // TODO for other partners flow; change after GRS flow results are available
+    None // TODO remove in favour of partner.name
 ) {
 
   lazy val name: String = partnerType match {

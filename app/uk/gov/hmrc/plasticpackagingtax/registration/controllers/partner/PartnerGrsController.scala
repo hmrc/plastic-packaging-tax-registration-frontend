@@ -32,9 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partnership.{
-  routes => partnershipRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -79,9 +77,7 @@ class PartnerGrsController @Inject() (
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(
-                    partnershipRoutes.PartnershipOtherPartnerContactNameController.displayPage()
-                  )
+                  Redirect(partnerRoutes.PartnerContactNameController.displayPage())
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
@@ -164,7 +160,10 @@ class PartnerGrsController @Inject() (
       val partnershipDetails = Some(
         PartnerPartnershipDetails(
           partnershipType = request.registration.organisationDetails.inflightPartnerType.get,
-          partnershipName = None,
+          partnershipName =
+            Some(
+              "TODO Screen needed to prompt for Partner partnership name"
+            ), // We don’t get partnership names for non-incorp partnerships from GRS. We capture a name prior to the redirection to GRS
           partnershipBusinessDetails = Some(partnershipBusinessDetails)
         )
       )
