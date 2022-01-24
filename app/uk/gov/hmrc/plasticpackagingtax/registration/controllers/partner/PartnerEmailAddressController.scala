@@ -85,39 +85,41 @@ class PartnerEmailAddressController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      EmailAddress.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[EmailAddress]) =>
-            request.registration.inflightPartner.flatMap(_.contactDetails.flatMap(_.name)).map {
-              contactName =>
-                Future.successful(
-                  BadRequest(
-                    page(formWithErrors,
-                         partnerRoutes.PartnerContactNameController.displayPage(),
-                         partnerRoutes.PartnerEmailAddressController.submit(),
-                         contactName
+      request.registration.inflightPartner.map { partner: Partner =>
+        EmailAddress.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[EmailAddress]) =>
+              partner.contactDetails.flatMap(_.name).map {
+                contactName =>
+                  Future.successful(
+                    BadRequest(
+                      page(formWithErrors,
+                        partnerRoutes.PartnerContactNameController.displayPage(),
+                        partnerRoutes.PartnerEmailAddressController.submit(),
+                        contactName
+                      )
                     )
                   )
+              }.getOrElse(
+                Future.successful(
+                  throw new IllegalStateException("Expected partner contact name missing")
                 )
-            }.getOrElse(
-              Future.successful(
-                throw new IllegalStateException("Expected partner contact details missing")
-              )
-            ),
-          emailAddress =>
-            updateRegistration(emailAddress).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(partnerRoutes.PartnerPhoneNumberController.displayPage())
-                  case _ =>
-                    Redirect(commonRoutes.TaskListController.displayPage())
-                }
-              case Left(error) => throw error
-            }
-        )
-    }
+              ),
+            emailAddress =>
+              updateRegistration(emailAddress).map {
+                case Right(_) =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      Redirect(partnerRoutes.PartnerPhoneNumberController.displayPage())
+                    case _ =>
+                      Redirect(commonRoutes.TaskListController.displayPage())
+                  }
+                case Left(error) => throw error
+              }
+          )
+      }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
+  }
 
   private def updateRegistration(
     formData: EmailAddress
