@@ -68,7 +68,7 @@ class PartnerEmailAddressController @Inject() (
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
 
-  def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
     request: JourneyRequest[AnyContent]
   ): Result =
     partner.contactDetails.map { contactDetails =>

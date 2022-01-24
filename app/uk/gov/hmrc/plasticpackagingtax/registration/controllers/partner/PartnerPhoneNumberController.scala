@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -28,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_phone_number_page
@@ -48,26 +49,32 @@ class PartnerPhoneNumberController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.inflightPartner.flatMap(_.contactDetails).map {
-        contactDetails =>
-          contactDetails.name.map { contactName =>
-            val form = contactDetails.phoneNumber match {
-              case Some(data) =>
-                PhoneNumber.form().fill(PhoneNumber(data))
-              case _ =>
-                PhoneNumber.form()
-            }
-
-            Ok(
-              page(form,
-                   partnerRoutes.PartnerContactNameController.displayPage(),
-                   partnerRoutes.PartnerPhoneNumberController.submit(),
-                   contactName
-              )
-            )
-          }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
-      }.getOrElse(throw new IllegalStateException("Expected partner name missing"))
+      request.registration.inflightPartner.map { partner =>
+        renderPageFor(partner)
+      }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
     }
+
+  private def renderPageFor(
+    partner: Partner
+  )(implicit request: JourneyRequest[AnyContent]): Result =
+    partner.contactDetails.map {
+      contactDetails =>
+        contactDetails.name.map { contactName =>
+          val form = contactDetails.phoneNumber match {
+            case Some(data) =>
+              PhoneNumber.form().fill(PhoneNumber(data))
+            case _ =>
+              PhoneNumber.form()
+          }
+          Ok(
+            page(form,
+                 partnerRoutes.PartnerContactNameController.displayPage(),
+                 partnerRoutes.PartnerPhoneNumberController.submit(),
+                 contactName
+            )
+          )
+        }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
+    }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
