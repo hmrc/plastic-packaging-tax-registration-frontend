@@ -98,8 +98,9 @@ POST       /partner-contact-name                uk.gov.hmrc.plasticpackagingtax.
 GET        /partner-contact-name/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.displayExistingPartner(partnerId: String)
 POST       /partner-contact-name/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.submitExistingPartner(partnerId: String)
 
-GET        /partner-email-address            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.displayPage()
-POST       /partner-email-address            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.submit()
+GET        /partner-email-address               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.displayPage()
+POST       /partner-email-address               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.submit()
+GET        /partner-email-address/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.displayExistingPartner(partnerId: String)
 
 GET        /partner-phone-number            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.displayPage()
 POST       /partner-phone-number            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.submit()

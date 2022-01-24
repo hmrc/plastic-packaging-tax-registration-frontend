@@ -58,6 +58,16 @@ class PartnerEmailAddressController @Inject() (
       }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
     }
 
+  def displayExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.findPartner(partnerId).map { partner =>
+        renderPageFor(partner,
+          partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+          partnerRoutes.PartnerEmailAddressController.submitExistingPartner(partnerId)
+        )
+      }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
+    }
+
   def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
     request: JourneyRequest[AnyContent]
   ): Result =

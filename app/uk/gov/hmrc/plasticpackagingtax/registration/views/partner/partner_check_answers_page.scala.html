@@ -37,7 +37,7 @@
 @partnerContactRows() = @{
     Seq(
         viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.PartnerContactNameController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("partner.check.contact.email", partner.contactDetails.flatMap(_.emailAddress), None), // TODO: add change link
+        viewUtils.summaryListRow("partner.check.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partner.id))),
         viewUtils.summaryListRow("partner.check.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), None), // TODO: add change link
         viewUtils.summaryListRow("partner.check.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)),
             Some(partnerRoutes.PartnerContactAddressController.captureExistingPartner(partner.id))),
