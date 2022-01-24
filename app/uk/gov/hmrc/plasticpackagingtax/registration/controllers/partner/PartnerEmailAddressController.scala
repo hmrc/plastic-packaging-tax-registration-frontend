@@ -156,11 +156,13 @@ class PartnerEmailAddressController @Inject() (
                   FormAction.bindFromRequest match {
                     case SaveAndContinue =>
                       Redirect(
-                        partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+                        routes.PartnerCheckAnswersController.displayExistingPartner(partnerId)
                       )
                     case _ =>
                       Redirect(
-                        partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+                        partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
+                          partnerId
+                        )
                       )
                   }
                 case Left(error) => throw error
