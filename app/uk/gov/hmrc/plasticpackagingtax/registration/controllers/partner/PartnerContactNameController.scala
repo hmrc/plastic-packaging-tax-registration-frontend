@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -91,31 +91,13 @@ class PartnerContactNameController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        MemberName.form()
-          .bindFromRequest()
-          .fold(
-            (formWithErrors: Form[MemberName]) =>
-              Future.successful(
-                BadRequest(
-                  page(formWithErrors,
-                       partner.name,
-                       partnerRoutes.NominatedPartnerTypeController.displayPage(),
-                       partnerRoutes.PartnerContactNameController.submit()
-                  )
-                )
-              ),
-            fullName =>
-              updateInflightPartner(fullName).map {
-                case Right(_) =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      Redirect(routes.PartnerEmailAddressController.displayPage())
-                    case _ =>
-                      Redirect(partnerRoutes.PartnerContactNameController.displayPage())
-                  }
-                case Left(error) => throw error
-              }
-          )
+        handleSubmission(partner,
+                         partnerRoutes.NominatedPartnerTypeController.displayPage(),
+                         partnerRoutes.PartnerContactNameController.submit(),
+                         routes.PartnerEmailAddressController.displayPage(),
+                         partnerRoutes.PartnerContactNameController.displayPage(),
+                         updateInflightPartner
+        )
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected inflight partner missing"))
       )
@@ -123,42 +105,53 @@ class PartnerContactNameController @Inject() (
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
+      def updateAction(memberName: MemberName): Future[Either[ServiceError, Registration]] =
+        updateExistingPartner(memberName, partnerId)
+
       request.registration.findPartner(partnerId).map { partner =>
-        MemberName.form()
-          .bindFromRequest()
-          .fold(
-            (formWithErrors: Form[MemberName]) =>
-              Future.successful(
-                BadRequest(
-                  page(formWithErrors,
-                       partner.name,
-                       partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
-                         partnerId
-                       ),
-                       partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
-                  )
-                )
-              ),
-            fullName =>
-              updateExistingPartner(fullName, partnerId).map {
-                case Right(_) =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      Redirect(
-                        routes.PartnerCheckAnswersController.displayExistingPartner(partnerId)
-                      )
-                    case _ =>
-                      Redirect(
-                        partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
-                      )
-                  }
-                case Left(error) => throw error
-              }
-          )
+        handleSubmission(partner,
+                         partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
+                           partnerId
+                         ),
+                         partnerRoutes.PartnerContactNameController.submitExistingPartner(
+                           partnerId
+                         ),
+                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         partnerRoutes.PartnerContactNameController.displayExistingPartner(
+                           partnerId
+                         ),
+                         updateAction
+        )
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected existing partner missing"))
       )
     }
+
+  private def handleSubmission(
+    partner: Partner,
+    backCall: Call,
+    submitCall: Call,
+    onwardsCall: Call,
+    dropoutCall: Call,
+    updateAction: MemberName => Future[Either[ServiceError, Registration]]
+  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
+    MemberName.form()
+      .bindFromRequest()
+      .fold(
+        (formWithErrors: Form[MemberName]) =>
+          Future.successful(BadRequest(page(formWithErrors, partner.name, backCall, submitCall))),
+        fullName =>
+          updateAction(fullName).map {
+            case Right(_) =>
+              FormAction.bindFromRequest match {
+                case SaveAndContinue =>
+                  Redirect(onwardsCall)
+                case _ =>
+                  Redirect(dropoutCall)
+              }
+            case Left(error) => throw error
+          }
+      )
 
   private def updateInflightPartner(
     formData: MemberName

@@ -96,6 +96,23 @@ class PartnerPhoneNumberController @Inject() (
       }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
     }
 
+  def submitExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      def updateAction(phoneNumber: PhoneNumber): Future[Either[ServiceError, Registration]] =
+        updateExistingPartner(phoneNumber, partnerId)
+      request.registration.findPartner(partnerId).map { partner =>
+        handleSubmission(partner,
+                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
+                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
+                           partnerId
+                         ),
+                         updateAction
+        )
+      }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
+    }
+
   private def handleSubmission(
     partner: Partner,
     backCall: Call,
@@ -103,7 +120,7 @@ class PartnerPhoneNumberController @Inject() (
     onwardsCall: Call,
     dropoutCall: Call,
     updateAction: PhoneNumber => Future[Either[ServiceError, Registration]]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
+  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     partner.contactDetails.flatMap(_.name).map { contactName =>
       PhoneNumber.form()
         .bindFromRequest()
@@ -122,27 +139,7 @@ class PartnerPhoneNumberController @Inject() (
               case Left(error) => throw error
             }
         )
-    }.getOrElse(
-      Future.successful(throw new IllegalStateException("Expected partner name missing"))
-    )
-  }
-
-  def submitExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      def updateAction(phoneNumber: PhoneNumber): Future[Either[ServiceError, Registration]] =
-        updateExistingPartner(phoneNumber, partnerId)
-      request.registration.findPartner(partnerId).map { partner =>
-        handleSubmission(partner,
-                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-                         routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
-                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-                         partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
-                           partnerId
-                         ),
-                         updateAction
-        )
-      }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
-    }
+    }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner name missing")))
 
   private def updateInflightRegistration(
     formData: PhoneNumber

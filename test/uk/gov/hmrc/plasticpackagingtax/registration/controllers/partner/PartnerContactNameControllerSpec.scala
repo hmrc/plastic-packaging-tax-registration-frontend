@@ -59,6 +59,14 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       Some(aLimitedCompanyPartner())
     )
 
+  private val existingPartner =
+    aLimitedCompanyPartner()
+
+  private def registrationWithExistingPartner =
+    aRegistration(
+      withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
+    )
+
   "PartnershipOtherPartnerEmailAddressController" should {
 
     "return 200" when {
@@ -67,6 +75,15 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "displaying an existing partner to edit their contact name" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+
+        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -136,6 +153,27 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         unAuthorizedUser()
 
         val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user tries to display an non existent partner" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+
+        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user submits an amendment to a non existent partner" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+        mockRegistrationUpdate()
+
+        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
+          postRequestEncoded(MemberName("Jane", "Smith"), saveAndContinueFormAction)
+        )
 
         intercept[RuntimeException](status(result))
       }

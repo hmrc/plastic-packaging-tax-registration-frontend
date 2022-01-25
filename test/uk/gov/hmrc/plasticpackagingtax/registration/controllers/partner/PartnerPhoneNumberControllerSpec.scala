@@ -186,11 +186,11 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         intercept[RuntimeException](status(result))
       }
 
-      "user tries to display an non existing partner" in {
+      "user tries to display an non existent partner" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
+        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
 
         intercept[RuntimeException](status(result))
       }
