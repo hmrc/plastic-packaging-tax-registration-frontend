@@ -20,11 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  EmailVerificationConnector,
-  RegistrationConnector,
-  ServiceError
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
@@ -51,7 +47,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ContactDetailsEmailAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  emailVerificationConnector: EmailVerificationConnector,
   override val registrationConnector: RegistrationConnector,
   emailVerificationService: EmailVerificationService,
   mcc: MessagesControllerComponents,
@@ -101,7 +96,7 @@ class ContactDetailsEmailAddressController @Inject() (
   private def updateRegistration(formData: EmailAddress, credId: String)(implicit
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
-    emailVerificationConnector.getStatus(credId).flatMap {
+    emailVerificationService.getStatus(credId).flatMap {
       case Right(emailStatusResponse) =>
         emailStatusResponse match {
           case Some(response) =>

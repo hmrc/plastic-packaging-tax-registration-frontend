@@ -18,7 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.services
 
 import com.google.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.EmailVerificationConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
+  EmailVerificationConnector,
+  ServiceError
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
 
 import javax.inject.Singleton
@@ -29,8 +32,13 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
   implicit ec: ExecutionContext
 ) {
 
+  def getStatus(
+    credId: String
+  )(implicit hc: HeaderCarrier): Future[Either[ServiceError, Option[VerificationStatus]]] =
+    emailVerificationConnector.getStatus(credId)
+
   def isEmailVerified(email: String, credId: String)(implicit hc: HeaderCarrier): Future[Boolean] =
-    emailVerificationConnector.getStatus(credId).map {
+    getStatus(credId).map {
       case Right(resp) =>
         resp.exists { emailStatuses =>
           emailStatuses.emails.exists {
