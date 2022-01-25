@@ -37,8 +37,8 @@
 
     @titleMessage = @{
         request.registration.isNominatedPartner(partnerId) match {
-            case Some(false) => messages("other.partner.type.title")
-            case _ => messages("nominated.partner.type.title")
+            case Some(false) => "other.partner.type.title"
+            case _ => "nominated.partner.type.title"
         }}
 
     @submitLink = @{
@@ -56,14 +56,14 @@
         backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 
-        @pageHeading(titleMessage)
+        @pageHeading(messages(titleMessage))
 
         @formHelper(action = submitLink, 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(titleMessage),
+                        content = Text(messages(titleMessage)),
                         classes = "govuk-visually-hidden",
                         isPageHeading = false
                     ))

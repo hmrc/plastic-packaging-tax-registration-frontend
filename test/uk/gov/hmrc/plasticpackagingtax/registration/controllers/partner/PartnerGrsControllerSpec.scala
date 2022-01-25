@@ -125,10 +125,11 @@ class PartnerGrsControllerSpec extends ControllerSpec {
           partnershipDetails._1 match {
             case CHARITABLE_INCORPORATED_ORGANISATION | OVERSEAS_COMPANY_NO_UK_BRANCH =>
               intercept[InternalServerException](
-                await(controller.grsCallback(registration.incorpJourneyId.get)(getRequest()))
+                await(controller.grsCallback(registration.incorpJourneyId.get, None)(getRequest()))
               )
             case _ =>
-              val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+              val result =
+                controller.grsCallback(registration.incorpJourneyId.get, None)(getRequest())
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
                 partnerRoutes.PartnerContactNameController.displayPage().url
@@ -156,7 +157,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
-        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+        val result = controller.grsCallback(registration.incorpJourneyId.get, None)(getRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(

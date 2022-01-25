@@ -68,7 +68,7 @@ class PartnerGrsController @Inject() (
   def grsCallbackAmendPartner(journeyId: String, memberId: String): Action[AnyContent] =
     grsCallback(journeyId, Some(memberId))
 
-  def grsCallback(journeyId: String, memberId : Option[String]): Action[AnyContent] =
+  def grsCallback(journeyId: String, memberId: Option[String]): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {

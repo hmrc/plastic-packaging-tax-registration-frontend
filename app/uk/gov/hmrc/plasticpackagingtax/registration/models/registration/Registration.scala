@@ -197,6 +197,7 @@ case class Registration(
 
   def isNominatedPartner(partnerId: Option[String]): Option[Boolean] =
     organisationDetails.partnershipDetails.map(_.isNominatedPartner(partnerId))
+
 }
 
 object Registration {

@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.views.organisation
 
+import base.PptTestData
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
@@ -33,20 +35,38 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.{partner_type}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AuthenticatedRequest,
+  JourneyRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 @ViewTest
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = instanceOf[partner_type]
 
-  private def createView(form: Form[PartnerType] = PartnerType.form()): Document =
-    page(form)(journeyRequest, messages)
+  private val registrationWithOtherPartners = aRegistration(
+    withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners))
+  )
 
-  "Confirm Partnership Type View" should {
+  val journeyReqForOthers = new JourneyRequest(
+    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser()),
+    registrationWithOtherPartners,
+    appConfig
+  )
 
-    implicit val view = createView()
+  private def createViewNominated(form: Form[PartnerType] = PartnerType.form()): Document =
+    page(form, None)(journeyRequest, messages)
+
+  private def createViewForOthers(form: Form[PartnerType] = PartnerType.form()): Document =
+    page(form, None)(journeyReqForOthers, messages)
+
+  "Confirm Partnership Type View for Nominated" should {
+
+    implicit val view = createViewNominated()
 
     "contain timeout dialog function" in {
 
@@ -63,7 +83,7 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
-    "display title" in {
+    "display title for nominated partner" in {
 
       view.select("title").text() must include(messages("nominated.partner.type.title"))
     }
@@ -88,9 +108,53 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
   }
 
+  "Confirm Partnership Type View for Other" should {
+
+    implicit val view1 = createViewForOthers()
+
+    "contain timeout dialog function" in {
+
+      containTimeoutDialogFunction(view1) mustBe true
+    }
+
+    "display sign out link" in {
+
+      displaySignOutLink(view1)
+    }
+
+    "display 'Back' button" in {
+
+      view1.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
+    }
+
+    "display title for other partner" in {
+
+      view1.select("title").text() must include(messages("other.partner.type.title"))
+    }
+
+    "display radio inputs" in {
+
+      radioInputMustBe(1, SOLE_TRADER)
+      radioInputMustBe(2, UK_COMPANY)
+      radioInputMustBe(3, LIMITED_LIABILITY_PARTNERSHIP)
+      radioInputMustBe(4, SCOTTISH_PARTNERSHIP)
+      radioInputMustBe(5, SCOTTISH_LIMITED_PARTNERSHIP)
+      radioInputMustBe(6, CHARITABLE_INCORPORATED_ORGANISATION)
+      radioInputMustBe(7, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputMustBe(8, OVERSEAS_COMPANY_NO_UK_BRANCH)
+    }
+
+    "display 'Save and continue' button" in {
+
+      view1 must containElementWithID("submit")
+      view1.getElementById("submit").text() mustBe "Save and continue"
+    }
+
+  }
+
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PartnerType.form())(request, messages)
-    page.render(PartnerType.form(), request, messages)
+    page.f(PartnerType.form(), None)(journeyRequest, messages)
+    page.render(PartnerType.form(), None, journeyRequest, messages)
   }
 
   def radioInputMustBe(

@@ -42,11 +42,12 @@ case class PartnershipDetails(
     case _          => partnershipBusinessDetails.flatMap(_.companyName)
   }
 
-  def isNominatedPartner(partnerId : Option[String]): Boolean = partnerId match {
-    case Some(partnerId) => nominatedPartner.exists(_.id.equals(partnerId))
-    case _ if(nominatedPartner.isEmpty) => true
-    case _ => false
-  }
+  def isNominatedPartner(partnerId: Option[String]): Boolean =
+    partnerId match {
+      case Some(partnerId)               => nominatedPartner.exists(_.id.equals(partnerId))
+      case _ if nominatedPartner.isEmpty => true
+      case _                             => false
+    }
 
   val partnershipOrCompanyAddress: Option[Address] = partnershipType match {
     case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>

@@ -58,7 +58,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     authorizedUser()
-    when(page.apply(any())(any(), any())).thenReturn(
+    when(page.apply(any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Nominated partner type capture")
     )
     mockRegistrationFind(partnershipRegistration)

@@ -84,7 +84,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(
-          commonRoutes.TaskListController.displayPage().url
+          routes.NominatedPartnerTypeController.displayNewPartner().url
         ) // TODO: update when other partner type selection page is built
       }
     }

@@ -75,13 +75,14 @@ class NominatedPartnerTypeController @Inject() (
 
   def displayNewPartner(): Action[AnyContent] = displayPage()
 
-  def displayExistingPartner(partnerId: String): Action[AnyContent] = displayPage(partnerId = Some(partnerId))
+  def displayExistingPartner(partnerId: String): Action[AnyContent] =
+    displayPage(partnerId = Some(partnerId))
 
-  def displayPage(partnerId: Option[String]= None): Action[AnyContent] =
+  def displayPage(partnerId: Option[String] = None): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val partner = partnerId match {
         case Some(partnerId) => request.registration.findPartner(partnerId)
-        case _ => None
+        case _               => None
       }
       partner match {
         case Some(partner) =>
@@ -94,50 +95,56 @@ class NominatedPartnerTypeController @Inject() (
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] = submit(Some(partnerId))
 
-  def submit(partnerId: Option[String]= None): Action[AnyContent] =
+  def submit(partnerId: Option[String] = None): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       PartnerType.form()
         .bindFromRequest()
-        .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors, partnerId))),
-              (partnershipPartnerType: PartnerType) =>
-                updateNominatedPartnershipType(partnershipPartnerType, partnerId).flatMap { _ =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      partnershipPartnerType.answer match {
-                        case Some(SOLE_TRADER) =>
-                          getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl)
-                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                        case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-                          getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl)
-                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                        case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-                          getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl)
-                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                        case Some(SCOTTISH_PARTNERSHIP) =>
-                          getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl)
-                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                        case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                          getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl)
-                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                        case _ =>
-                          //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
-                          Future(
-                            Redirect(
-                              organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
-                            )
-                          )
-                      }
-                    case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
+        .fold(
+          (formWithErrors: Form[PartnerType]) =>
+            Future(BadRequest(page(formWithErrors, partnerId))),
+          (partnershipPartnerType: PartnerType) =>
+            updateNominatedPartnershipType(partnershipPartnerType, partnerId).flatMap { _ =>
+              FormAction.bindFromRequest match {
+                case SaveAndContinue =>
+                  partnershipPartnerType.answer match {
+                    case Some(SOLE_TRADER) =>
+                      getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl, partnerId)
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+                      getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl, partnerId)
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
+                      getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                                                partnerId
+                      )
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case Some(SCOTTISH_PARTNERSHIP) =>
+                      getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl, partnerId)
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
+                      getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
+                                                partnerId
+                      )
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case _ =>
+                      //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
+                      Future(
+                        Redirect(
+                          organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                        )
+                      )
                   }
-                }
+                case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
+              }
+            }
         )
     }
 
-  private def getUkCompanyRedirectUrl(
-    url: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[String] =
+  private def getUkCompanyRedirectUrl(url: String, partnerId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[String] =
     ukCompanyGrsConnector.createJourney(
-      IncorpEntityGrsCreateRequest(appConfig.partnerGrsCallbackUrl(None),
+      IncorpEntityGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
                                    Some(request2Messages(request)("service.name")),
                                    appConfig.serviceIdentifier,
                                    appConfig.signOutLink,
@@ -147,11 +154,11 @@ class NominatedPartnerTypeController @Inject() (
       url
     )
 
-  private def getPartnershipRedirectUrl(
-    url: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[String] =
+  private def getPartnershipRedirectUrl(url: String, partnerId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[String] =
     partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.partnerGrsCallbackUrl(None),
+      PartnershipGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.signOutLink,
@@ -160,11 +167,11 @@ class NominatedPartnerTypeController @Inject() (
       url
     )
 
-  private def getSoleTraderRedirectUrl(
-    url: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[String] =
+  private def getSoleTraderRedirectUrl(url: String, partnerId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[String] =
     soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(appConfig.partnerGrsCallbackUrl(None),
+      SoleTraderGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
@@ -185,18 +192,17 @@ class NominatedPartnerTypeController @Inject() (
               registration.organisationDetails.partnershipDetails.map(
                 details =>
                   details.copy(inflightPartner =
-                    if(details.isNominatedPartner(partnerId)) {
-                        details.nominatedPartner match {
-                          case Some(partner) =>
-                            Some(partner.copy(partnerType = partnershipPartnerType.answer))
-                          case _ => Some(Partner(partnerType = partnershipPartnerType.answer))
-                        }
-                    }else{
+                    if (details.isNominatedPartner(partnerId))
+                      details.nominatedPartner match {
+                        case Some(partner) =>
+                          Some(partner.copy(partnerType = partnershipPartnerType.answer))
+                        case _ => Some(Partner(partnerType = partnershipPartnerType.answer))
+                      }
+                    else
                       partnerId match {
                         case Some(partnerId) => details.findPartner(partnerId)
-                        case None => Some(Partner(partnerType = partnershipPartnerType.answer))
+                        case None            => Some(Partner(partnerType = partnershipPartnerType.answer))
                       }
-                    }
                   )
               ).getOrElse(throw new IllegalStateException("No partnership details found"))
             )
