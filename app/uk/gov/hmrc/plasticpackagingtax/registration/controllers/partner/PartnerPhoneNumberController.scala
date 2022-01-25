@@ -129,43 +129,18 @@ class PartnerPhoneNumberController @Inject() (
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
+      def updateAction(phoneNumber: PhoneNumber): Future[Either[ServiceError, Registration]] =
+        updateExistingPartner(phoneNumber, partnerId)
       request.registration.findPartner(partnerId).map { partner =>
-        PhoneNumber.form()
-          .bindFromRequest()
-          .fold(
-            (formWithErrors: Form[PhoneNumber]) =>
-              partner.contactDetails.flatMap(_.name).map {
-                contactName =>
-                  Future.successful(
-                    BadRequest(
-                      page(formWithErrors,
-                           routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-                           routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
-                           contactName
-                      )
-                    )
-                  )
-              }.getOrElse(
-                Future.successful(throw new IllegalStateException("Expected partner name missing"))
-              ),
-            phoneNumber =>
-              updateExistingPartner(phoneNumber, partnerId).map {
-                case Right(_) =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      Redirect(
-                        routes.PartnerCheckAnswersController.displayExistingPartner(partnerId)
-                      )
-                    case _ =>
-                      Redirect(
-                        partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
-                          partnerId
-                        )
-                      )
-                  }
-                case Left(error) => throw error
-              }
-          )
+        handleSubmission(partner,
+                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
+                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
+                           partnerId
+                         ),
+                         updateAction
+        )
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
 
