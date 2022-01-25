@@ -125,7 +125,9 @@ class PartnerGrsControllerSpec extends ControllerSpec {
           partnershipDetails._1 match {
             case CHARITABLE_INCORPORATED_ORGANISATION | OVERSEAS_COMPANY_NO_UK_BRANCH =>
               intercept[InternalServerException](
-                await(controller.grsCallback(registration.incorpJourneyId.get, None)(getRequest()))
+                await(
+                  controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+                )
               )
             case _ =>
               val result =
@@ -137,6 +139,24 @@ class PartnerGrsControllerSpec extends ControllerSpec {
           }
 
         }
+      }
+    }
+
+    "redirect from GRS to task list or error page" when {
+      s"for an existing partner" in {
+        val registration =
+          aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+        mockGetSoleTraderDetails(soleTraderDetails)
+        val result =
+          controller.grsCallbackAmendPartner(registration.incorpJourneyId.get, "123")(getRequest())
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          partnerRoutes.PartnerContactNameController.displayPage().url
+        )
       }
     }
 

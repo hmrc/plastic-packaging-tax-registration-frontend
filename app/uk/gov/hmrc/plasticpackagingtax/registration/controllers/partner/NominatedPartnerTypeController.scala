@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
@@ -32,10 +31,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   LIMITED_LIABILITY_PARTNERSHIP,
@@ -103,7 +102,7 @@ class NominatedPartnerTypeController @Inject() (
           (formWithErrors: Form[PartnerType]) =>
             Future(BadRequest(page(formWithErrors, partnerId))),
           (partnershipPartnerType: PartnerType) =>
-            updateNominatedPartnershipType(partnershipPartnerType, partnerId).flatMap { _ =>
+            updatePartnerType(partnershipPartnerType, partnerId).flatMap { _ =>
               FormAction.bindFromRequest match {
                 case SaveAndContinue =>
                   partnershipPartnerType.answer match {
@@ -180,38 +179,32 @@ class NominatedPartnerTypeController @Inject() (
       url
     )
 
-  private def updateNominatedPartnershipType(
-    partnershipPartnerType: PartnerType,
-    partnerId: Option[String]
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
-    update {
-      registration =>
-        registration.copy(organisationDetails =
-          registration.organisationDetails.copy(partnershipDetails =
-            Some(
-              registration.organisationDetails.partnershipDetails.map(
-                details =>
-                  details.copy(inflightPartner =
-                    if (details.isNominatedPartner(partnerId))
-                      details.nominatedPartner match {
-                        case Some(partner) =>
-                          Some(partner.copy(partnerType = partnershipPartnerType.answer))
-                        case _ => Some(Partner(partnerType = partnershipPartnerType.answer))
-                      }
-                    else
-                      partnerId match {
-                        case Some(partnerId) => details.findPartner(partnerId)
-                        case None            => Some(Partner(partnerType = partnershipPartnerType.answer))
-                      }
-                  )
-              ).getOrElse(throw new IllegalStateException("No partnership details found"))
-            )
-          )
-        )
-    }.map {
-      case Right(registration) =>
-        registration
-      case Left(ex) => throw ex
+  private def updatePartnerType(partnerType: PartnerType, partnerId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    partnerId match {
+      case Some(partnerId) => updateExistingPartner(partnerType, partnerId)
+      case _               => updateInflightPartner(partnerType)
+    }
+
+  private def updateInflightPartner(
+    partnerType: PartnerType
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      val result = registration.inflightPartner match {
+        case Some(partner) => partner.copy(partnerType = partnerType.answer)
+        case _             => Partner(partnerType = partnerType.answer)
+      }
+      registration.withInflightPartner(Some(result))
+    }
+
+  private def updateExistingPartner(partnerType: PartnerType, partnerId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.withUpdatedPartner(partnerId,
+                                      partner => partner.copy(partnerType = partnerType.answer)
+      )
     }
 
 }

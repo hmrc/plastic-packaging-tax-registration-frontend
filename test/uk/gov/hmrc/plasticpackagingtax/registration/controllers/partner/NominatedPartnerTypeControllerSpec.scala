@@ -22,15 +22,14 @@ import org.mockito.Mockito.when
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 
 class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
@@ -86,7 +85,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -101,13 +100,13 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayExistingPartner("123")(getRequest())
 
         status(result) mustBe OK
       }
     }
 
-    "redirect to partnership GRS" when {
+    "redirect to partnership GRS for new partner" when {
       forAll(
         Seq(
           (SCOTTISH_LIMITED_PARTNERSHIP,
@@ -158,7 +157,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
           val correctForm =
             Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
-          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
           partnershipDetails._1 match {
             case SOLE_TRADER =>
               redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
@@ -173,6 +172,25 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
               )
           }
         }
+      }
+    }
+
+    "redirect to partnership GRS " when {
+      "for existing partner" in {
+        val registration =
+          aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+        mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
+
+        val correctForm =
+          Seq("answer" -> SOLE_TRADER.toString, saveAndContinueFormAction)
+        val result =
+          controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
+        redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+
       }
     }
 
@@ -193,25 +211,6 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-      }
-    }
-
-    "throw errors resulting from failed registration updates for LLP" in {
-      val registration = aRegistration(
-        withPartnershipDetails(
-          Some(llpPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
-        )
-      )
-
-      authorizedUser()
-      mockRegistrationFind(registration)
-      mockRegistrationUpdateFailure()
-
-      val correctForm =
-        Seq("answer" -> LIMITED_LIABILITY_PARTNERSHIP.toString, saveAndContinueFormAction)
-
-      intercept[DownstreamServiceError] {
-        await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
       }
     }
 

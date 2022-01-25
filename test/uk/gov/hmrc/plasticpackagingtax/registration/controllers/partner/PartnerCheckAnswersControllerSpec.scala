@@ -59,6 +59,17 @@ class PartnerCheckAnswersControllerSpec
   }
 
   "Partner Check Answers Controller" should {
+    "show new partner detail" in {
+      authorizedUser()
+      mockRegistrationFind(
+        aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+      )
+      val resp = controller.displayNewPartner()(getRequest())
+
+      status(resp) mustBe OK
+      contentAsString(resp) mustBe "Partner check answers"
+    }
+
     "show nominated partner detail" in {
       val resp = controller.displayExistingPartner(
         partnershipRegistration.nominatedPartner.map(_.id).get
