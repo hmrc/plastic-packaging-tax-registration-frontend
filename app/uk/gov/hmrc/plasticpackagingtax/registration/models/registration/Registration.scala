@@ -20,10 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnershipDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
 

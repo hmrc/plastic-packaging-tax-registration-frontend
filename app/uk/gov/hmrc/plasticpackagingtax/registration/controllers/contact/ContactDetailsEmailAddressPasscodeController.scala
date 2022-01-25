@@ -20,11 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  EmailVerificationConnector,
-  RegistrationConnector,
-  ServiceError
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
@@ -35,15 +31,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPa
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
   COMPLETE,
   INCORRECT_PASSCODE,
-  JourneyStatus,
   TOO_MANY_ATTEMPTS
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
-  VerifyPasscodeRequest
+  EmailVerificationJourneyStatus
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -54,7 +50,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  emailVerificationConnector: EmailVerificationConnector,
+  emailVerificationService: EmailVerificationService,
   override val registrationConnector: RegistrationConnector,
   page: email_address_passcode_page
 )(implicit ec: ExecutionContext)
@@ -93,18 +89,21 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   private def continue(passcode: String, email: String)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
-  ): Future[Result] =
-    verifyEmailPasscode(passcode,
-                        email,
-                        request.registration.primaryContactDetails.journeyId.getOrElse("")
-    ).flatMap {
-      case Right(COMPLETE) =>
+  ): Future[Result] = {
+    val eventualValue = verifyEmailPasscode(
+      passcode,
+      email,
+      request.registration.primaryContactDetails.journeyId.getOrElse("")
+    )
+
+    eventualValue.flatMap {
+      case COMPLETE =>
         addVerifiedEmail(email) map {
           case Right(_) =>
             Redirect(routes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage())
           case Left(error) => throw error
         }
-      case Right(INCORRECT_PASSCODE) =>
+      case INCORRECT_PASSCODE =>
         Future.successful(
           BadRequest(
             buildEmailPasscodePage(
@@ -113,13 +112,13 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
             )
           )
         )
-      case Right(TOO_MANY_ATTEMPTS) =>
+      case TOO_MANY_ATTEMPTS =>
         Future.successful(
           Redirect(
             routes.ContactDetailsTooManyAttemptsPasscodeController.displayPage()
           ).withNewSession
         )
-      case Right(_) =>
+      case _ =>
         Future.successful(
           BadRequest(
             buildEmailPasscodePage(
@@ -130,8 +129,8 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
             )
           )
         )
-      case Left(error) => throw error
     }
+  }
 
   private def buildEmailPasscodePage(form: Form[EmailAddressPasscode], email: Option[String])(
     implicit request: JourneyRequest[AnyContent]
@@ -152,10 +151,7 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
 
   private def verifyEmailPasscode(passcode: String, email: String, journeyId: String)(implicit
     hc: HeaderCarrier
-  ): Future[Either[ServiceError, JourneyStatus]] =
-    emailVerificationConnector.verifyPasscode(
-      journeyId = journeyId,
-      VerifyPasscodeRequest(passcode = passcode, email = email)
-    )
+  ): Future[EmailVerificationJourneyStatus.Value] =
+    emailVerificationService.checkVerificationCode(passcode, email, journeyId)
 
 }
