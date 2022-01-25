@@ -94,7 +94,7 @@ class PartnerContactNameController @Inject() (
         handleSubmission(partner,
                          partnerRoutes.NominatedPartnerTypeController.displayPage(),
                          partnerRoutes.PartnerContactNameController.submitNewPartner(),
-                         routes.PartnerEmailAddressController.displayNewPartner(),
+                         partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
                          partnerRoutes.PartnerContactNameController.displayNewPartner(),
                          updateInflightPartner
         )
@@ -116,7 +116,7 @@ class PartnerContactNameController @Inject() (
                          partnerRoutes.PartnerContactNameController.submitExistingPartner(
                            partnerId
                          ),
-                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
                          partnerRoutes.PartnerContactNameController.displayExistingPartner(
                            partnerId
                          ),

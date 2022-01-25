@@ -109,7 +109,7 @@ class PartnerEmailAddressController @Inject() (
                          partnerRoutes.PartnerEmailAddressController.submitExistingPartner(
                            partnerId
                          ),
-                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         routes.PartnerPhoneNumberController.displayExistingPartner(partnerId),
                          partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
                            partnerId
                          ),

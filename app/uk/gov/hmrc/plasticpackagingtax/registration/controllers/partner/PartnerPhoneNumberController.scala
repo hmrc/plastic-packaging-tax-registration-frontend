@@ -104,7 +104,7 @@ class PartnerPhoneNumberController @Inject() (
         handleSubmission(partner,
                          routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
                          routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
-                         routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                         routes.PartnerContactAddressController.captureExistingPartner(partnerId),
                          partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
                            partnerId
                          ),
