@@ -83,36 +83,39 @@ class PartnerPhoneNumberController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      PhoneNumber.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[PhoneNumber]) =>
-            request.registration.inflightPartner.flatMap(_.contactDetails.flatMap(_.name)).map {
-              contactName =>
-                Future.successful(
-                  BadRequest(
-                    page(formWithErrors,
-                         partnerRoutes.PartnerContactNameController.displayPage(),
-                         partnerRoutes.PartnerPhoneNumberController.submit(),
-                         contactName
+      request.registration.inflightPartner.map { partner =>
+        PhoneNumber.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[PhoneNumber]) => {
+              partner.contactDetails.flatMap(_.name).map {
+                contactName =>
+                  Future.successful(
+                    BadRequest(
+                      page(formWithErrors,
+                        partnerRoutes.PartnerContactNameController.displayPage(),
+                        partnerRoutes.PartnerPhoneNumberController.submit(),
+                        contactName
+                      )
                     )
                   )
-                )
-            }.getOrElse(
-              Future.successful(throw new IllegalStateException("Expected partner name missing"))
-            ),
-          phoneNumber =>
-            updateRegistration(phoneNumber).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(partnerRoutes.PartnerContactAddressController.captureNewPartner())
-                  case _ =>
-                    Redirect(commonRoutes.TaskListController.displayPage())
-                }
-              case Left(error) => throw error
-            }
-        )
+              }.getOrElse(
+                Future.successful(throw new IllegalStateException("Expected partner name missing"))
+              )
+            },
+            phoneNumber =>
+              updateRegistration(phoneNumber).map {
+                case Right(_) =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      Redirect(partnerRoutes.PartnerContactAddressController.captureNewPartner())
+                    case _ =>
+                      Redirect(commonRoutes.TaskListController.displayPage())
+                  }
+                case Left(error) => throw error
+              }
+          )
+      }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
     }
 
   private def updateRegistration(
