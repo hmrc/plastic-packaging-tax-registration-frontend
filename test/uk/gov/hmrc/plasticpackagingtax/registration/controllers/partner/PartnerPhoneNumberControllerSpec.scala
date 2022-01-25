@@ -20,7 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.status
@@ -58,6 +58,14 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
       Some(aLimitedCompanyPartner())
     )
+
+  private def registrationWithInflightPartnerWithMissingContactName = {
+    val contactDetailsWithNoName =
+      aLimitedCompanyPartner().contactDetails.map(_.copy(firstName = None, lastName = None))
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithNoName))
+    )
+  }
 
   private def registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber = {
     val contactDetailsWithPhoneNumber =
@@ -106,6 +114,21 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
         status(result) mustBe OK
+      }
+    }
+
+    "return 400" when {
+      "user submits an invalid phone number" in {
+        authorizedUser()
+        mockRegistrationFind(
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndPhoneNumber
+        )
+        mockRegistrationUpdate()
+
+        val result =
+          controller.submit()(postRequestEncoded(PhoneNumber("abcdef"), saveAndContinueFormAction))
+
+        status(result) mustBe BAD_REQUEST
       }
     }
 
@@ -159,6 +182,37 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         authorizedUser()
 
         val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user tries to display an non existing partner" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
+
+        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user submits an amendment to a non existent partner" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+        mockRegistrationUpdate()
+
+        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
+          postRequestEncoded(PhoneNumber("987654321"), saveAndContinueFormAction)
+        )
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user tries to submit before contact name for partner has been provided" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithInflightPartnerWithMissingContactName)
+
+        val result =
+          controller.submit()(postRequest(Json.toJson(PhoneNumber("12345678"))))
 
         intercept[RuntimeException](status(result))
       }
