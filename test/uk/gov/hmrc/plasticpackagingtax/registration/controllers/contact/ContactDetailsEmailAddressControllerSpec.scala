@@ -44,6 +44,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   MetaData,
   PrimaryContactDetails
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -54,14 +55,18 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   private val page = mock[email_address_page]
   private val mcc  = stubMessagesControllerComponents()
 
+  private val emailVerificationService: EmailVerificationService = new EmailVerificationService(
+    mockEmailVerificationConnector
+  )
+
   private val controller =
     new ContactDetailsEmailAddressController(authenticate = mockAuthAction,
                                              journeyAction = mockJourneyAction,
                                              emailVerificationConnector =
                                                mockEmailVerificationConnector,
+                                             emailVerificationService = emailVerificationService,
                                              registrationConnector = mockRegistrationConnector,
                                              mcc = mcc,
-                                             config,
                                              page = page
     )
 

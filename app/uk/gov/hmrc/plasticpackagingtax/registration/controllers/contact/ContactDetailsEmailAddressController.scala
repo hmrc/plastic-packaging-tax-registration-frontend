@@ -20,7 +20,6 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   EmailVerificationConnector,
   RegistrationConnector,
@@ -41,6 +40,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -53,8 +53,8 @@ class ContactDetailsEmailAddressController @Inject() (
   journeyAction: JourneyAction,
   emailVerificationConnector: EmailVerificationConnector,
   override val registrationConnector: RegistrationConnector,
+  emailVerificationService: EmailVerificationService,
   mcc: MessagesControllerComponents,
-  appConfig: AppConfig,
   page: email_address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
@@ -148,18 +148,11 @@ class ContactDetailsEmailAddressController @Inject() (
 
   private def createEmailVerification(credId: String, email: String)(implicit
     hc: HeaderCarrier
-  ): Future[Either[ServiceError, String]] =
-    emailVerificationConnector.create(
-      CreateEmailVerificationRequest(credId = credId,
-                                     continueUrl =
-                                       "/register-for-plastic-packaging-tax/primary-contact-details",
-                                     origin = "ppt",
-                                     accessibilityStatementUrl = "/accessibility",
-                                     email = Email(address = email, enterUrl = "/start"),
-                                     backUrl = "/back",
-                                     pageTitle = "PPT Title",
-                                     deskproServiceName = "plastic-packaging-tax"
-      )
+  ): Future[String] =
+    this.emailVerificationService.sendVerificationCode(
+      email,
+      credId,
+      "/register-for-plastic-packaging-tax/primary-contact-details"
     )
 
   private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit
@@ -168,17 +161,12 @@ class ContactDetailsEmailAddressController @Inject() (
   ): Future[Result] =
     registration.primaryContactDetails.email match {
       case Some(emailAddress) =>
-        createEmailVerification(credId, emailAddress).flatMap {
-          case Right(verificationJourneyStartUrl) =>
-            updatedJourneyId(registration,
-                             verificationJourneyStartUrl.split("/").slice(0, 4).last
-            ).flatMap {
-              case Left(error) => throw error
-              case Right(_) =>
-                Future(Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage()))
-            }
-
-          case Left(error) => throw error
+        createEmailVerification(credId, emailAddress).flatMap { journeyId =>
+          updatedJourneyId(registration, journeyId).map {
+            case Left(error) => throw error
+            case Right(_) =>
+              Redirect(routes.ContactDetailsEmailAddressPasscodeController.displayPage())
+          }
         }
       case None => throw RegistrationException("Failed to get email from the cache")
     }

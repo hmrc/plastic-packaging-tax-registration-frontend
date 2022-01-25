@@ -41,13 +41,12 @@ class EmailVerificationService @Inject() (emailVerificationConnector: EmailVerif
       case Left(ex) => throw ex
     }
 
-  def sendVerificationCode(email: String, credId: String)(implicit
+  def sendVerificationCode(email: String, credId: String, continueUrl: String)(implicit
     hc: HeaderCarrier
   ): Future[String] =
     emailVerificationConnector.create(
       CreateEmailVerificationRequest(credId = credId,
-                                     continueUrl =
-                                       "/register-for-plastic-packaging-tax/amend-registration",
+                                     continueUrl = continueUrl,
                                      origin = "ppt",
                                      accessibilityStatementUrl = "/accessibility",
                                      email = Email(address = email, enterUrl = "/start"),

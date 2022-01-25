@@ -86,7 +86,7 @@ class AmendEmailAddressControllerSpec
   private val pptReference = "XMPPT0000000123"
   private val sessionId    = "ABC"
 
-  private def authorisedUserWithPptSubscription() =
+  private def authorisedUserWithPptSubscription(): Unit =
     authorizedUser(user =
       newUser().copy(enrolments =
         Enrolments(
@@ -124,7 +124,7 @@ class AmendEmailAddressControllerSpec
     )
 
   private def simulateSendingEmailVerificationCodeSuccess() =
-    when(mockEmailVerificationService.sendVerificationCode(any(), any())(any())).thenReturn(
+    when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(
       Future.successful("email-verification-journey-id")
     )
 
@@ -161,11 +161,7 @@ class AmendEmailAddressControllerSpec
         )
 
       forAll(showPageTestData) {
-        (
-          testName: String,
-          call: (Request[AnyContent]) => Future[Result],
-          expectedContent: String
-        ) =>
+        (testName: String, call: Request[AnyContent] => Future[Result], expectedContent: String) =>
           s"$testName page requested and registration populated" in {
             val resp = call(getRequest())
 
@@ -366,9 +362,10 @@ class AmendEmailAddressControllerSpec
   }
 
   private def verifyEmailVerificationCodeSentAsExpected(email: String) =
-    verify(mockEmailVerificationService).sendVerificationCode(ArgumentMatchers.eq(email), any())(
-      any()
-    )
+    verify(mockEmailVerificationService).sendVerificationCode(ArgumentMatchers.eq(email),
+                                                              any(),
+                                                              any()
+    )(any())
 
   private def simulateEmailVerificationPassword(
     passcode: String,
