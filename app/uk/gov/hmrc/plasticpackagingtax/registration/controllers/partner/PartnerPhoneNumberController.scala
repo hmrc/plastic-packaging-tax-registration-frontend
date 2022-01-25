@@ -103,29 +103,29 @@ class PartnerPhoneNumberController @Inject() (
     onwardsCall: Call,
     dropoutCall: Call,
     updateAction: PhoneNumber => Future[Either[ServiceError, Registration]]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
-    PhoneNumber.form()
-      .bindFromRequest()
-      .fold(
-        (formWithErrors: Form[PhoneNumber]) =>
-          partner.contactDetails.flatMap(_.name).map {
-            contactName =>
-              Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName)))
-          }.getOrElse(
-            Future.successful(throw new IllegalStateException("Expected partner name missing"))
-          ),
-        phoneNumber =>
-          updateAction(phoneNumber).map {
-            case Right(_) =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  Redirect(onwardsCall)
-                case _ =>
-                  Redirect(dropoutCall)
-              }
-            case Left(error) => throw error
-          }
-      )
+  )(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
+    partner.contactDetails.flatMap(_.name).map { contactName =>
+      PhoneNumber.form()
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[PhoneNumber]) =>
+            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName))),
+          phoneNumber =>
+            updateAction(phoneNumber).map {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    Redirect(onwardsCall)
+                  case _ =>
+                    Redirect(dropoutCall)
+                }
+              case Left(error) => throw error
+            }
+        )
+    }.getOrElse(
+      Future.successful(throw new IllegalStateException("Expected partner name missing"))
+    )
+  }
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
