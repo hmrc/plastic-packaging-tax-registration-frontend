@@ -47,12 +47,12 @@ class PartnerEmailAddressController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
         renderPageFor(partner,
-                      partnerRoutes.PartnerContactNameController.displayPage(),
-                      partnerRoutes.PartnerEmailAddressController.submit()
+                      partnerRoutes.PartnerContactNameController.displayNewPartner(),
+                      partnerRoutes.PartnerEmailAddressController.submitNewPartner()
         )
 
       }.getOrElse(throw new IllegalStateException("Expected inflight partner missing"))
@@ -83,13 +83,13 @@ class PartnerEmailAddressController @Inject() (
       }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
-  def submit(): Action[AnyContent] =
+  def submitNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner: Partner =>
         handleSubmission(partner,
-                         partnerRoutes.PartnerContactNameController.displayPage(),
-                         partnerRoutes.PartnerEmailAddressController.submit(),
-                         partnerRoutes.PartnerPhoneNumberController.displayPage(),
+                         partnerRoutes.PartnerContactNameController.displayNewPartner(),
+                         partnerRoutes.PartnerEmailAddressController.submitNewPartner(),
+                         partnerRoutes.PartnerPhoneNumberController.displayNewPartner(),
                          commonRoutes.TaskListController.displayPage(),
                          updateInflightRegistration
         )

@@ -93,7 +93,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -102,7 +102,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -126,7 +126,9 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result =
-          controller.submit()(postRequestEncoded(PhoneNumber("abcdef"), saveAndContinueFormAction))
+          controller.submitNewPartner()(
+            postRequestEncoded(PhoneNumber("abcdef"), saveAndContinueFormAction)
+          )
 
         status(result) mustBe BAD_REQUEST
       }
@@ -140,7 +142,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         )
         mockRegistrationUpdate()
 
-        val result = controller.submit()(
+        val result = controller.submitNewPartner()(
           postRequestEncoded(PhoneNumber("12345678"), saveAndContinueFormAction)
         )
 
@@ -173,7 +175,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
       "user is not authorised" in {
         unAuthorizedUser()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -181,7 +183,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
         authorizedUser()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -212,7 +214,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithInflightPartnerWithMissingContactName)
 
         val result =
-          controller.submit()(postRequest(Json.toJson(PhoneNumber("12345678"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
 
         intercept[RuntimeException](status(result))
       }
@@ -222,7 +224,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdateFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(PhoneNumber("12345678"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
 
         intercept[DownstreamServiceError](status(result))
       }

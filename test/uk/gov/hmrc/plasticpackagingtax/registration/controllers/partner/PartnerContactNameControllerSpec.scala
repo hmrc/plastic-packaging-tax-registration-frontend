@@ -75,7 +75,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -96,7 +96,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submit()(
+        val result = controller.submitNewPartner()(
           postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
         )
 
@@ -134,7 +134,9 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submit()(postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction))
+          controller.submitNewPartner()(
+            postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction)
+          )
 
         status(result) mustBe BAD_REQUEST
       }
@@ -143,7 +145,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
-        val result = controller.submit()(
+        val result = controller.submitNewPartner()(
           postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
         )
 
@@ -155,7 +157,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submit()(
+          controller.submitNewPartner()(
             postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
                                saveAndContinueFormAction
             )
@@ -170,7 +172,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       "user is not authorised" in {
         unAuthorizedUser()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -202,7 +204,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdateFailure()
 
         val result =
-          controller.submit()(postRequest(Json.toJson(MemberName("John", "Smith"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(MemberName("John", "Smith"))))
 
         intercept[DownstreamServiceError](status(result))
       }

@@ -82,7 +82,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -93,7 +93,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress
         )
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -114,7 +114,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdate()
 
-        val result = controller.submit()(
+        val result = controller.submitNewPartner()(
           postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)
         )
 
@@ -131,7 +131,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       "user is not authorised" in {
         unAuthorizedUser()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -139,7 +139,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
         authorizedUser()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -171,7 +171,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         mockRegistrationUpdateFailure()
 
         val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
         intercept[DownstreamServiceError](status(result))
       }
