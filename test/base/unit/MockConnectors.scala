@@ -32,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateOrUpdateResponseSuccess,
   SubscriptionStatusResponse
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -49,8 +50,7 @@ trait MockConnectors extends MockitoSugar with RegistrationBuilder with BeforeAn
   val mockPartnershipGrsConnector: PartnershipGrsConnector =
     mock[PartnershipGrsConnector]
 
-  val mockSubscriptionsConnector: SubscriptionsConnector         = mock[SubscriptionsConnector]
-  val mockEmailVerificationConnector: EmailVerificationConnector = mock[EmailVerificationConnector]
+  val mockSubscriptionsConnector: SubscriptionsConnector = mock[SubscriptionsConnector]
 
   def mockGetUkCompanyDetails(
     incorporationDetails: IncorporationDetails

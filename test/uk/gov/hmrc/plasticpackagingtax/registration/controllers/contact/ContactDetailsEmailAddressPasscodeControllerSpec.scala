@@ -43,7 +43,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   JourneyStatus,
   TOO_MANY_ATTEMPTS
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
@@ -57,15 +56,17 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
   private val page = mock[email_address_passcode_page]
   private val mcc  = stubMessagesControllerComponents()
 
+  private val mockEmailVerificationService = mock[EmailVerificationService]
+
   private val controller =
-    new ContactDetailsEmailAddressPasscodeController(
-      authenticate = mockAuthAction,
-      journeyAction = mockJourneyAction,
-      emailVerificationService = new EmailVerificationService(mockEmailVerificationConnector),
-      registrationConnector =
-        mockRegistrationConnector,
-      mcc = mcc,
-      page = page
+    new ContactDetailsEmailAddressPasscodeController(authenticate = mockAuthAction,
+                                                     journeyAction = mockJourneyAction,
+                                                     emailVerificationService =
+                                                       mockEmailVerificationService,
+                                                     registrationConnector =
+                                                       mockRegistrationConnector,
+                                                     mcc = mcc,
+                                                     page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -80,19 +81,21 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
   def mockEmailVerificationVerifyPasscode(
     dataToReturn: JourneyStatus
-  ): OngoingStubbing[Future[Either[ServiceError, JourneyStatus]]] =
+  ): OngoingStubbing[Future[JourneyStatus]] =
     when(
-      mockEmailVerificationConnector.verifyPasscode(any[String], any[VerifyPasscodeRequest])(any())
-    )
-      .thenReturn(Future.successful(Right(dataToReturn)))
+      mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(
+        any()
+      )
+    ).thenReturn(Future.successful(dataToReturn))
 
   def mockEmailVerificationVerifyPasscodeWithException(
     error: ServiceError
-  ): OngoingStubbing[Future[Either[ServiceError, JourneyStatus]]] =
+  ): OngoingStubbing[Future[JourneyStatus]] =
     when(
-      mockEmailVerificationConnector.verifyPasscode(any[String], any[VerifyPasscodeRequest])(any())
-    )
-      .thenReturn(Future(Left(error)))
+      mockEmailVerificationService.checkVerificationCode(any[String], any[String], any[String])(
+        any()
+      )
+    ).thenReturn(Future.failed(error))
 
   "ContactDetailsEmailAddressPasscodeController" should {
 

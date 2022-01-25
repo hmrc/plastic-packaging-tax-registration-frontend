@@ -36,7 +36,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, EmailAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  CreateEmailVerificationRequest,
   EmailStatus,
   VerificationStatus
 }
@@ -55,14 +54,13 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   private val page = mock[email_address_page]
   private val mcc  = stubMessagesControllerComponents()
 
-  private val emailVerificationService: EmailVerificationService = new EmailVerificationService(
-    mockEmailVerificationConnector
-  )
+  private val mockEmailVerificationService = mock[EmailVerificationService]
 
   private val controller =
     new ContactDetailsEmailAddressController(authenticate = mockAuthAction,
                                              journeyAction = mockJourneyAction,
-                                             emailVerificationService = emailVerificationService,
+                                             emailVerificationService =
+                                               mockEmailVerificationService,
                                              registrationConnector = mockRegistrationConnector,
                                              mcc = mcc,
                                              page = page
@@ -81,30 +79,26 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   def mockEmailVerificationGetStatus(
     dataToReturn: Option[VerificationStatus]
   ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
-    when(mockEmailVerificationConnector.getStatus(any[String])(any())).thenReturn(
+    when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(
       Future(Right(dataToReturn))
     )
 
   def mockEmailVerificationGetStatusWithException(
     error: ServiceError
   ): OngoingStubbing[Future[Either[ServiceError, Option[VerificationStatus]]]] =
-    when(mockEmailVerificationConnector.getStatus(any[String])(any())).thenReturn(
-      Future(Left(error))
-    )
+    when(mockEmailVerificationService.getStatus(any[String])(any())).thenReturn(Future(Left(error)))
 
-  def mockEmailVerificationCreate(
-    dataToReturn: String
-  ): OngoingStubbing[Future[Either[ServiceError, String]]] =
-    when(
-      mockEmailVerificationConnector.create(any[CreateEmailVerificationRequest])(any())
-    ).thenReturn(Future.successful(Right(dataToReturn)))
+  def mockEmailVerificationCreate(dataToReturn: String): OngoingStubbing[Future[String]] =
+    when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(
+      Future.successful(dataToReturn)
+    )
 
   def mockEmailVerificationCreateWithException(
     error: ServiceError
-  ): OngoingStubbing[Future[Either[ServiceError, String]]] =
-    when(
-      mockEmailVerificationConnector.create(any[CreateEmailVerificationRequest])(any())
-    ).thenReturn(Future(Left(error)))
+  ): OngoingStubbing[Future[String]] =
+    when(mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())).thenReturn(
+      Future.failed(error)
+    )
 
   "ContactDetailsEmailAddressController" should {
 
@@ -197,7 +191,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
             )
           }
           reset(mockRegistrationConnector)
-          reset(mockEmailVerificationConnector)
+          reset(mockEmailVerificationService)
         }
       }
 
