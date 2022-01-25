@@ -129,6 +129,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "user submits form and the registration update fails" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequest(Json.toJson(PhoneNumber("12345678"))))

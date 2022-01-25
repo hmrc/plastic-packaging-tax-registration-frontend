@@ -106,6 +106,7 @@ POST       /partner-email-address/:partnerId    uk.gov.hmrc.plasticpackagingtax.
 GET        /partner-phone-number                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.displayPage()
 POST       /partner-phone-number                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.submit()
 GET        /partner-phone-number/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.displayExistingPartner(partnerId: String)
+POST       /partner-phone-number/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.submitExistingPartner(partnerId: String)
 
 GET        /partner-contact-address             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureNewPartner()
 GET        /partner-contact-address/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureExistingPartner(partnerId)
