@@ -190,7 +190,6 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
         val result =
           controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
         redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
-
       }
     }
 
