@@ -71,8 +71,10 @@ class AmendEmailAddressController @Inject() (
               emailVerificationService.isEmailVerified(email.value, request.user.credId).flatMap {
                 case true => updateRegistration(updateEmail(email.value))
                 case false =>
-                  emailVerificationService.sendVerificationCode(email.value,
-                                                                request.user.credId
+                  emailVerificationService.sendVerificationCode(
+                    email.value,
+                    request.user.credId,
+                    "/register-for-plastic-packaging-tax/amend-registration"
                   ).map { journeyId =>
                     amendmentJourneyAction.updateLocalRegistration(
                       updateProspectiveEmail(journeyId, email.value)

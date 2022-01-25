@@ -91,7 +91,9 @@ class EmailVerificationServiceSpec()
     }
 
     "send verification passcode and return journeyId" in {
-      emailVerificationService.sendVerificationCode("user@ppt.com", "123").map(_ mustBe journeyId)
+      emailVerificationService.sendVerificationCode("user@ppt.com", "123", "/a-continue-url").map(
+        _ mustBe journeyId
+      )
     }
 
     "verify passcodes" when {
@@ -141,7 +143,7 @@ class EmailVerificationServiceSpec()
           new IllegalStateException("BANG!")
         )
         intercept[Exception] {
-          emailVerificationService.sendVerificationCode("user@ppt.com", "123")
+          emailVerificationService.sendVerificationCode("user@ppt.com", "123", "/a-continue-url")
         }
       }
 
