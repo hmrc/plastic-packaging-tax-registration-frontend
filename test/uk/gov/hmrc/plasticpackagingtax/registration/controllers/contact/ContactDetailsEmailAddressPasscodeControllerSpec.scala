@@ -45,6 +45,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.VerifyPasscodeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -57,14 +58,14 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsEmailAddressPasscodeController(authenticate = mockAuthAction,
-                                                     journeyAction = mockJourneyAction,
-                                                     emailVerificationConnector =
-                                                       mockEmailVerificationConnector,
-                                                     registrationConnector =
-                                                       mockRegistrationConnector,
-                                                     mcc = mcc,
-                                                     page = page
+    new ContactDetailsEmailAddressPasscodeController(
+      authenticate = mockAuthAction,
+      journeyAction = mockJourneyAction,
+      emailVerificationService = new EmailVerificationService(mockEmailVerificationConnector),
+      registrationConnector =
+        mockRegistrationConnector,
+      mcc = mcc,
+      page = page
     )
 
   override protected def beforeEach(): Unit = {
