@@ -121,7 +121,7 @@ class PartnerPhoneNumberController @Inject() (
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.inflightPartner.map { partner =>
+      request.registration.findPartner(partnerId).map { partner =>
         PhoneNumber.form()
           .bindFromRequest()
           .fold(

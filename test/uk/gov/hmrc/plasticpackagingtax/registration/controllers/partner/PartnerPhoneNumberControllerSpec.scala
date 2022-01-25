@@ -67,6 +67,17 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
     )
   }
 
+  private val existingPartner = {
+    val contactDetailsWithPhoneNumber =
+      aLimitedCompanyPartner().contactDetails.map(_.copy(phoneNumber = Some("12345678")))
+    aLimitedCompanyPartner().copy(contactDetails = contactDetailsWithPhoneNumber)
+  }
+
+  private def registrationWithExistingPartner =
+    aRegistration(
+      withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
+    )
+
   "PartnershipOtherPartnerPhoneNumberController" should {
 
     "return 200" when {
@@ -84,6 +95,15 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "displaying an existing partner to edit their phone number" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+
+        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -106,6 +126,22 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         modifiedRegistration.inflightPartner.flatMap(
           _.contactDetails.flatMap(_.phoneNumber)
         ) mustBe Some("12345678")
+      }
+
+      "user submits an amendment to an existing partners phone number" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+        mockRegistrationUpdate()
+
+        val result = controller.submitExistingPartner(existingPartner.id)(
+          postRequestEncoded(PhoneNumber("987654321"), saveAndContinueFormAction)
+        )
+
+        status(result) mustBe SEE_OTHER
+
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(
+          _.contactDetails.flatMap(_.phoneNumber)
+        ) mustBe Some("987654321")
       }
     }
 
