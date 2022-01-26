@@ -101,15 +101,9 @@ class PartnerGrsControllerSpec extends ControllerSpec {
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
-          partnershipDetails._1 match {
-            case SOLE_TRADER => mockGetSoleTraderDetails(soleTraderDetails)
-            case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
-              mockGetUkCompanyDetails(incorporationDetails)
-            case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
-                SCOTTISH_LIMITED_PARTNERSHIP =>
-              mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
-            case _ =>
-          }
+          mockGetSoleTraderDetails(soleTraderDetails)
+          mockGetUkCompanyDetails(incorporationDetails)
+          mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
           val result =
             controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
