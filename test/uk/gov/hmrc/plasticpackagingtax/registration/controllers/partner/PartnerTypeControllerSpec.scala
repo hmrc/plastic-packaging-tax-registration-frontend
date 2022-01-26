@@ -107,99 +107,103 @@ class PartnerTypeControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirect to partnership GRS for new partner with GRS provided names" when {
-      forAll(
-        Seq(
-          (SOLE_TRADER,
-           scottishPartnershipDetails.copy(partners =
-             Seq(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
-           )
-          ),
-          (UK_COMPANY,
-           scottishPartnershipDetails.copy(partners =
-             Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
-           )
-          ),
-          (OVERSEAS_COMPANY_UK_BRANCH,
-           scottishPartnershipDetails.copy(partners =
-             Seq(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
-           )
-          ),
-          (CHARITABLE_INCORPORATED_ORGANISATION, scottishPartnershipDetails)
-        )
-      ) { partnershipDetails =>
-        s"a ${partnershipDetails._1} type was selected" in {
-          val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
+    "redirect to partnership GRS for new partner" when {
+      "user selected a type which has a GRS provided name" when {
+        forAll(
+          Seq(
+            (SOLE_TRADER,
+             scottishPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
+             )
+            ),
+            (UK_COMPANY,
+             scottishPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
+             )
+            ),
+            (OVERSEAS_COMPANY_UK_BRANCH,
+             scottishPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
+             )
+            ),
+            (CHARITABLE_INCORPORATED_ORGANISATION, scottishPartnershipDetails)
+          )
+        ) { partnershipDetails =>
+          s"a ${partnershipDetails._1} type was selected" in {
+            val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
-          authorizedUser()
-          mockRegistrationFind(registration)
-          mockRegistrationUpdate()
+            authorizedUser()
+            mockRegistrationFind(registration)
+            mockRegistrationUpdate()
 
-          mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
-          mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/ukCompany")
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+            mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
+            mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/ukCompany")
+            mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
-          val correctForm =
-            Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
-          val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
-          partnershipDetails._1 match {
-            case SOLE_TRADER =>
-              redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
-            case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
-              redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
-            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
-                SCOTTISH_LIMITED_PARTNERSHIP =>
-              redirectLocation(result) mustBe Some("http://test/redirect/partnership")
-            case _ =>
-              redirectLocation(result) mustBe Some(
-                orgRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
-              )
+            val correctForm =
+              Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+            val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
+            partnershipDetails._1 match {
+              case SOLE_TRADER =>
+                redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+              case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
+                redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
+              case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
+                  SCOTTISH_LIMITED_PARTNERSHIP =>
+                redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+              case _ =>
+                redirectLocation(result) mustBe Some(
+                  orgRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+                )
+            }
           }
         }
       }
     }
 
-    "redirect to capture partner name for new partner types with no GRS provided name" when {
-      forAll(
-        Seq(
-          (SCOTTISH_LIMITED_PARTNERSHIP,
-           scottishPartnershipDetails.copy(partners =
-             Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
-           )
-          ),
-          (LIMITED_LIABILITY_PARTNERSHIP,
-           llpPartnershipDetails.copy(partners =
-             Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
-           )
-          ),
-          (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails)
-        )
-      ) { partnershipDetails =>
-        s"a ${partnershipDetails._1} type was selected" in {
-          val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
-
-          authorizedUser()
-          mockRegistrationFind(registration)
-          mockRegistrationUpdate()
-
-          mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
-          mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/ukCompany")
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-
-          val correctForm =
-            Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
-
-          val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
-
-          redirectLocation(result) mustBe Some(
-            partnerRoutes.PartnerNameController.displayNewPartner().url
+    "redirect to capture partner name for new partner" when {
+      "user selected a type which has no GRS provided name" when {
+        forAll(
+          Seq(
+            (SCOTTISH_LIMITED_PARTNERSHIP,
+             scottishPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
+             )
+            ),
+            (LIMITED_LIABILITY_PARTNERSHIP,
+             llpPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
+             )
+            ),
+            (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails)
           )
+        ) { partnershipDetails =>
+          s"a ${partnershipDetails._1} type was selected" in {
+            val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
+
+            authorizedUser()
+            mockRegistrationFind(registration)
+            mockRegistrationUpdate()
+
+            mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
+            mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/ukCompany")
+            mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+
+            val correctForm =
+              Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+
+            val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
+
+            redirectLocation(result) mustBe Some(
+              partnerRoutes.PartnerNameController.displayNewPartner().url
+            )
+          }
         }
       }
     }
 
-    "redirect to partnership GRS " when {
-      "for existing partner" in {
+    "redirect to partnership GRS for existing partner" when {
+      "existing partner selects a type which has a GRS supplied name" in {
         val registration =
           aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
@@ -210,9 +214,33 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
         val correctForm =
           Seq("answer" -> SOLE_TRADER.toString, saveAndContinueFormAction)
+
         val result =
           controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
+
         redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+      }
+    }
+
+    "redirect to capture partner name for existing partner" when {
+      "existing partner selects a type which does not have a have GRS provided name" in {
+        val registration =
+          aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+        mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
+
+        val correctForm =
+          Seq("answer" -> SCOTTISH_PARTNERSHIP.toString, saveAndContinueFormAction)
+
+        val result =
+          controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
+
+        redirectLocation(result) mustBe Some(
+          partnerRoutes.PartnerNameController.displayExistingPartner("123").url
+        )
       }
     }
 

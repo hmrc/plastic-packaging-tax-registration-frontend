@@ -116,11 +116,11 @@ class PartnerTypeController @Inject() (
                           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
 
                       case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-                        redirectToPartnerNamePrompt
+                        redirectToPartnerNamePrompt(partnerId)
                       case Some(SCOTTISH_PARTNERSHIP) =>
-                        redirectToPartnerNamePrompt
+                        redirectToPartnerNamePrompt(partnerId)
                       case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                        redirectToPartnerNamePrompt
+                        redirectToPartnerNamePrompt(partnerId)
 
                       case _ =>
                         //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
@@ -204,11 +204,11 @@ class PartnerTypeController @Inject() (
       )
     }
 
-  private def redirectToPartnerNamePrompt: Future[Result] =
-    Future(
-      Redirect(
-        partnerRoutes.PartnerNameController.displayNewPartner() // TODO support exisitng partners
-      )
-    )
+  private def redirectToPartnerNamePrompt(existingParterId: Option[String]): Future[Result] =
+    Future {
+      Redirect(existingParterId.map { partnerId =>
+        partnerRoutes.PartnerNameController.displayExistingPartner(partnerId)
+      }.getOrElse(partnerRoutes.PartnerNameController.displayNewPartner()))
+    }
 
 }

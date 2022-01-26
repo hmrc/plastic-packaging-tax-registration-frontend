@@ -43,4 +43,9 @@ class PartnerNameController @Inject() (
       Ok("TODO")
     }
 
+  def displayExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok("TODO")
+    }
+
 }
