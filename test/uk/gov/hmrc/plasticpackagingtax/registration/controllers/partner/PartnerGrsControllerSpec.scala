@@ -60,54 +60,43 @@ class PartnerGrsControllerSpec extends ControllerSpec {
 
   "PartnerGrsController " should {
     mockGetSubscriptionStatus(SubscriptionStatusResponse(NOT_SUBSCRIBED, None))
-    "redirect from GRS to task list or error page" when {
-      forAll(
-        Seq(
-          (SCOTTISH_LIMITED_PARTNERSHIP,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
-           )
-          ),
-          (LIMITED_LIABILITY_PARTNERSHIP,
-           llpPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
-           )
-          ),
-          (SOLE_TRADER,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
-           )
-          ),
-          (UK_COMPANY,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
-           )
-          ),
-          (OVERSEAS_COMPANY_UK_BRANCH,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
-           )
-          ),
-          (SCOTTISH_PARTNERSHIP,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP))
-           )
-          ),
-          (OVERSEAS_COMPANY_NO_UK_BRANCH,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH))
-           )
-          ),
-          (CHARITABLE_INCORPORATED_ORGANISATION,
-           scottishPartnershipDetails.copy(inflightPartner =
-             Some(nominatedPartner(PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION))
-           )
-          )
+
+    "redirect from GRS to contact details for supported partner types" when {
+      val supportedPartnerTypes = Seq(
+        (SOLE_TRADER,
+         scottishPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
+         )
+        ),
+        (UK_COMPANY,
+         scottishPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
+         )
+        ),
+        (OVERSEAS_COMPANY_UK_BRANCH,
+         scottishPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
+         )
+        ),
+        (LIMITED_LIABILITY_PARTNERSHIP,
+         llpPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
+         )
+        ),
+        (SCOTTISH_PARTNERSHIP,
+         scottishPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP))
+         )
+        ),
+        (SCOTTISH_LIMITED_PARTNERSHIP,
+         scottishPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
+         )
         )
-      ) { partnershipDetails =>
+      )
+      forAll(supportedPartnerTypes) { partnershipDetails =>
         s"${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
-
           authorizedUser()
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
@@ -119,24 +108,45 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
                 SCOTTISH_LIMITED_PARTNERSHIP =>
               mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
-            case _ => None
+            case _ =>
           }
 
-          partnershipDetails._1 match {
-            case CHARITABLE_INCORPORATED_ORGANISATION | OVERSEAS_COMPANY_NO_UK_BRANCH =>
-              intercept[InternalServerException](
-                await(
-                  controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
-                )
-              )
-            case _ =>
-              val result =
-                controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
-              status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(
-                partnerRoutes.PartnerContactNameController.displayNewPartner().url
-              )
-          }
+          val result =
+            controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+          status(result) mustBe SEE_OTHER
+
+          redirectLocation(result) mustBe Some(
+            partnerRoutes.PartnerContactNameController.displayNewPartner().url
+          )
+        }
+      }
+    }
+
+    "error when returning from GRS with an unsupported partner type" when {
+      val unsupportedPartnerTypes = Seq(
+        (OVERSEAS_COMPANY_NO_UK_BRANCH,
+         scottishPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH))
+         )
+        ),
+        (CHARITABLE_INCORPORATED_ORGANISATION,
+         scottishPartnershipDetails.copy(inflightPartner =
+           Some(nominatedPartner(PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION))
+         )
+        )
+      )
+
+      forAll(unsupportedPartnerTypes) { partnershipDetails =>
+        s"${partnershipDetails._1} type was selected" in {
+          val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
+
+          authorizedUser()
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+
+          intercept[InternalServerException](
+            await(controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest()))
+          )
 
         }
       }
