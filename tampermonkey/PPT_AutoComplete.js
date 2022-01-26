@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.7
+// @version      15.8
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -308,7 +308,7 @@ const grsPartnershipFeatureFlags = () => {
 /* ####################### GRS UK COMPANY */
 const grsCompanyNumber = () => {
     if (currentPageIs('/identify-your-incorporated-business/.*/company-number')) {
-        document.getElementById('companyNumber').value = Math.floor(10000000 + Math.random() * 90000000)
+        document.getElementById('companyNumber').value = generateCrn()
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -380,6 +380,21 @@ const grsStCheckYourAnswers = () => {
 }
 
 /* ####################### GRS PARTNERSHIP */
+
+const grsPartnershipCrn = () => {
+    if (currentPageIs('/identify-your-partnership/.*/company-registration-number')) {
+        document.getElementById('companyNumber').value = generateCrn()
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const grsPartnershipConfirmCompany = () => {
+    if (currentPageIs('/identify-your-partnership/.*/confirm-company-name')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
 const grsPartnershipUtr = () => {
     if (currentPageIs('/identify-your-partnership/.*/sa-utr')) {
@@ -743,6 +758,10 @@ const verificationFailure = () => {
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
+
+const generateCrn = () => {
+    return Math.floor(10000000 + Math.random() * 90000000)
+}
 /*########################     MAIN FUNCTION     ########################## */
 function completeJourney(manualJourney) {
 
@@ -770,6 +789,8 @@ function completeJourney(manualJourney) {
     grsStCheckYourAnswers()
 
     // grs partnership pages
+    grsPartnershipCrn()
+    grsPartnershipConfirmCompany()
     grsPartnershipUtr()
     grsPartnershipPostcode()
     grsPartnershipCheckYourAnswers()
