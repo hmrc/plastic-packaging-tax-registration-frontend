@@ -39,8 +39,12 @@ case class Partner(
       soleTraderDetails.map(_.name).getOrElse(
         throw new IllegalStateException("Sole Trader details absent")
       )
-    case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) =>
-      partnerPartnershipDetails.flatMap(_.partnershipName).getOrElse("SOme name")
+    case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) | Some(
+          PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+        ) | Some(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP) =>
+      partnerPartnershipDetails.flatMap(_.name).getOrElse(
+        throw new IllegalStateException("Partnership details absent")
+      )
     case _ =>
       incorporationDetails.map(_.companyName).getOrElse(
         throw new IllegalStateException("Incorporation details absent")
