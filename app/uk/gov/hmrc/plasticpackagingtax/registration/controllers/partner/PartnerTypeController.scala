@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
@@ -34,6 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
@@ -95,48 +96,44 @@ class PartnerTypeController @Inject() (
   def submitExistingPartner(partnerId: String): Action[AnyContent] = submit(Some(partnerId))
 
   private def submit(partnerId: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      PartnerType.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[PartnerType]) =>
-            Future(BadRequest(page(formWithErrors, partnerId))),
-          (partnershipPartnerType: PartnerType) =>
-            updatePartnerType(partnershipPartnerType, partnerId).flatMap { _ =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  partnershipPartnerType.answer match {
-                    case Some(SOLE_TRADER) =>
-                      getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl, partnerId)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-                      getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl, partnerId)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-                      getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                                                partnerId
-                      )
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(SCOTTISH_PARTNERSHIP) =>
-                      getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl, partnerId)
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                      getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
-                                                partnerId
-                      )
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case _ =>
-                      //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
-                      Future(
-                        Redirect(
-                          organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+    (authenticate andThen journeyAction).async {
+      implicit request =>
+        PartnerType.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[PartnerType]) =>
+              Future(BadRequest(page(formWithErrors, partnerId))),
+            (partnershipPartnerType: PartnerType) =>
+              updatePartnerType(partnershipPartnerType, partnerId).flatMap { _ =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    partnershipPartnerType.answer match {
+                      case Some(SOLE_TRADER) =>
+                        getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl, partnerId)
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+                        getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl, partnerId)
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+
+                      case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
+                        redirectToPartnerNamePrompt
+                      case Some(SCOTTISH_PARTNERSHIP) =>
+                        redirectToPartnerNamePrompt
+                      case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
+                        redirectToPartnerNamePrompt
+
+                      case _ =>
+                        //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
+                        Future(
+                          Redirect(
+                            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                          )
                         )
-                      )
-                  }
-                case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
+                    }
+                  case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
+                }
               }
-            }
-        )
+          )
     }
 
   private def getUkCompanyRedirectUrl(url: String, partnerId: Option[String])(implicit
@@ -206,5 +203,12 @@ class PartnerTypeController @Inject() (
                                       partner => partner.copy(partnerType = partnerType.answer)
       )
     }
+
+  private def redirectToPartnerNamePrompt: Future[Result] =
+    Future(
+      Redirect(
+        partnerRoutes.PartnerNameController.displayNewPartner() // TODO support exisitng partners
+      )
+    )
 
 }
