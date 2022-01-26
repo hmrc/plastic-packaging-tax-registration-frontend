@@ -71,7 +71,7 @@
     SummaryList(
         rows = Seq(
             viewUtils.summaryListRow("partner.check.orgType", partner.partnerType.map(displayName(_)), None), // TODO: add change link
-            viewUtils.summaryListRow("partner.check.orgName", partner.partnerPartnershipDetails.flatMap(_.partnershipName), None),
+            viewUtils.summaryListRow("partner.check.orgName", partner.partnerPartnershipDetails.flatMap(_.name), None),
             viewUtils.summaryListRow("partner.check.sautr", partner.partnerPartnershipDetails.flatMap(_.partnershipBusinessDetails.map(_.sautr)), None),
         ) ++ partnerContactRows().filterNot(_.value.content == Empty)
     )
