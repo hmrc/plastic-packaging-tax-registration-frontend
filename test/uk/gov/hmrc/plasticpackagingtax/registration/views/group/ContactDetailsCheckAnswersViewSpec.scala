@@ -23,6 +23,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_contact_check_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -72,7 +73,9 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
       val expectedContent = Seq(
         (messages("contactDetails.member.check.orgType"),
-         groupMember.businessType.get,
+         messages(
+           s"organisationDetails.type.${OrgType.withNameOpt(groupMember.businessType.get).get}"
+         ),
          Some(routes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id).url)
         ),
         (messages("contactDetails.member.check.companyNumber"),
