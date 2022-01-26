@@ -131,7 +131,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
               )
             case _ =>
               val result =
-                controller.grsCallback(registration.incorpJourneyId.get, None)(getRequest())
+                controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
                 partnerRoutes.PartnerContactNameController.displayNewPartner().url
@@ -152,10 +152,12 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         mockGetSoleTraderDetails(soleTraderDetails)
         val result =
-          controller.grsCallbackAmendPartner(registration.incorpJourneyId.get, "123")(getRequest())
+          controller.grsCallbackExistingPartner(registration.incorpJourneyId.get, "123")(
+            getRequest()
+          )
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          partnerRoutes.PartnerContactNameController.displayPage().url
+          partnerRoutes.PartnerContactNameController.displayExistingPartner("123").url
         )
       }
     }
@@ -177,7 +179,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
-        val result = controller.grsCallback(registration.incorpJourneyId.get, None)(getRequest())
+        val result =
+          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(

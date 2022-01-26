@@ -31,12 +31,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class NominatedPartnerTypeControllerSpec extends ControllerSpec {
+class PartnerTypeControllerSpec extends ControllerSpec {
 
   private val page = mock[partner_type]
   private val mcc  = stubMessagesControllerComponents()
 
-  private val controller = new NominatedPartnerTypeController(
+  private val controller = new PartnerTypeController(
     authenticate = mockAuthAction,
     journeyAction = mockJourneyAction,
     appConfig = appConfig,
@@ -207,7 +207,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
         val correctForm =
           Seq("answer" -> LIMITED_LIABILITY_PARTNERSHIP.toString, saveAndComeBackLaterFormAction)
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
 
         redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
       }
@@ -226,7 +226,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
       val incompleteForm = Seq(saveAndContinueFormAction)
 
-      val result = controller.submit()(postJsonRequestEncoded(incompleteForm: _*))
+      val result = controller.submitNewPartner()(postJsonRequestEncoded(incompleteForm: _*))
 
       status(result) mustBe BAD_REQUEST
     }
@@ -234,7 +234,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
     "display nominated partner type capture page" when {
       "user is authorized" when {
         "registration does not contain partnership partner" in {
-          val resp = controller.displayPage()(getRequest())
+          val resp = controller.displayNewPartner()(getRequest())
 
           contentAsString(resp) mustBe "Nominated partner type capture"
         }
@@ -251,7 +251,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
             )
           )
 
-          val resp = controller.displayPage()(getRequest())
+          val resp = controller.displayNewPartner()(getRequest())
 
           contentAsString(resp) mustBe "Nominated partner type capture"
         }

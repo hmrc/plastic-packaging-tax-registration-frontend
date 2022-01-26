@@ -61,10 +61,10 @@ class PartnerGrsController @Inject() (
 
   def grsCallbackNewPartner(journeyId: String): Action[AnyContent] = grsCallback(journeyId, None)
 
-  def grsCallbackAmendPartner(journeyId: String, partnerId: String): Action[AnyContent] =
+  def grsCallbackExistingPartner(journeyId: String, partnerId: String): Action[AnyContent] =
     grsCallback(journeyId, Some(partnerId))
 
-  def grsCallback(journeyId: String, partnerId: Option[String]): Action[AnyContent] =
+  private def grsCallback(journeyId: String, partnerId: Option[String]): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
         saveRegistrationDetails(journeyId, partnerId).flatMap {
@@ -78,7 +78,14 @@ class PartnerGrsController @Inject() (
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(partnerRoutes.PartnerContactNameController.displayNewPartner())
+                  partnerId match {
+                    case Some(partnerId) =>
+                      Redirect(
+                        partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+                      )
+                    case None =>
+                      Redirect(partnerRoutes.PartnerContactNameController.displayNewPartner())
+                  }
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>

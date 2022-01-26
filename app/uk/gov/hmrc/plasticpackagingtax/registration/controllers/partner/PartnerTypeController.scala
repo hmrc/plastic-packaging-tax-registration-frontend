@@ -59,7 +59,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NominatedPartnerTypeController @Inject() (
+class PartnerTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   appConfig: AppConfig,
@@ -77,16 +77,16 @@ class NominatedPartnerTypeController @Inject() (
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     displayPage(partnerId = Some(partnerId))
 
-  def displayPage(partnerId: Option[String] = None): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+  private def displayPage(partnerId: Option[String] = None): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
       val partner = partnerId match {
         case Some(partnerId) => request.registration.findPartner(partnerId)
         case _               => None
       }
       partner match {
         case Some(partner) =>
-          Future(Ok(page(PartnerType.form().fill(PartnerType(partner.partnerType)), partnerId)))
-        case _ => Future(Ok(page(PartnerType.form(), partnerId)))
+          Ok(page(PartnerType.form().fill(PartnerType(partner.partnerType)), partnerId))
+        case _ => Ok(page(PartnerType.form(), partnerId))
       }
     }
 
@@ -94,7 +94,7 @@ class NominatedPartnerTypeController @Inject() (
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] = submit(Some(partnerId))
 
-  def submit(partnerId: Option[String] = None): Action[AnyContent] =
+  private def submit(partnerId: Option[String] = None): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       PartnerType.form()
         .bindFromRequest()

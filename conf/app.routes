@@ -87,13 +87,13 @@ GET        /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registratio
 POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsCheckAnswersController.submit()
 
 # Partnership Registrations
-GET        /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.displayNewPartner()
-GET        /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.displayExistingPartner(partnerId: String)
-POST       /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.submitNewPartner()
-POST       /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.NominatedPartnerTypeController.submitExistingPartner(partnerId: String)
+GET        /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.displayNewPartner()
+GET        /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.displayExistingPartner(partnerId: String)
+POST       /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.submitNewPartner()
+POST       /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.submitExistingPartner(partnerId: String)
 
 GET        /partner-grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerGrsController.grsCallbackNewPartner(journeyId)
-GET        /partner-grs-callback/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerGrsController.grsCallbackAmendPartner(journeyId, partnerId)
+GET        /partner-grs-callback/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerGrsController.grsCallbackExistingPartner(journeyId, partnerId)
 
 GET        /partner-contact-name                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.displayNewPartner()
 POST       /partner-contact-name                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameController.submitNewPartner()

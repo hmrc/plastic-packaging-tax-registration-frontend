@@ -83,9 +83,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         val resp = controller.submit()(postJsonRequestEncoded(form: _*))
 
         status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(
-          routes.NominatedPartnerTypeController.displayNewPartner().url
-        ) // TODO: update when other partner type selection page is built
+        redirectLocation(resp) mustBe Some(routes.PartnerTypeController.displayNewPartner().url)
       }
     }
     "redirect to task list page" when {

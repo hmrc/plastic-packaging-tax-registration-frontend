@@ -32,7 +32,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateOrUpdateResponseSuccess,
   SubscriptionStatusResponse
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

@@ -274,7 +274,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.NominatedPartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerTypeController.displayNewPartner()
           )
         }
 
@@ -364,7 +364,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.NominatedPartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerTypeController.displayNewPartner()
           )
         }
 

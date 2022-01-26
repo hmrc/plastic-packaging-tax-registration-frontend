@@ -43,8 +43,8 @@
 
     @submitLink = @{
         partnerId match {
-            case Some(partnerId) => partnerRoutes.NominatedPartnerTypeController.submitExistingPartner(partnerId)
-            case _ => partnerRoutes.NominatedPartnerTypeController.submitNewPartner()
+            case Some(partnerId) => partnerRoutes.PartnerTypeController.submitExistingPartner(partnerId)
+            case _ => partnerRoutes.PartnerTypeController.submitNewPartner()
         }
     }
     @radioItem(ppType: PartnerTypeEnum) = @{
