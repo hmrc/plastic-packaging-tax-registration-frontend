@@ -78,7 +78,7 @@ class PartnerGrsController @Inject() (
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(partnerRoutes.PartnerContactNameController.displayPage())
+                  Redirect(partnerRoutes.PartnerContactNameController.displayNewPartner())
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
