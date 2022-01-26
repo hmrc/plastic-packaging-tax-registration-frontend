@@ -67,6 +67,14 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     )
   }
 
+  private val existingPartner =
+    aLimitedCompanyPartner()
+
+  private def registrationWithExistingPartner =
+    aRegistration(
+      withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
+    )
+
   "PartnershipOtherPartnerEmailAddressController" should {
 
     "return 200" when {
@@ -74,7 +82,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -85,7 +93,16 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           registrationWithPartnershipDetailsAndInflightPartnerWithContactNameAndEmailAddress
         )
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "displaying an existing partner to edit their contact name" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+
+        val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
         status(result) mustBe OK
       }
@@ -97,7 +114,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdate()
 
-        val result = controller.submit()(
+        val result = controller.submitNewPartner()(
           postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)
         )
 
@@ -114,7 +131,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       "user is not authorised" in {
         unAuthorizedUser()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
@@ -122,16 +139,39 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
         authorizedUser()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user tries to display an non existent partner" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
+
+        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user submits an amendment to a non existent partner" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+        mockRegistrationUpdate()
+
+        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
+          postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)
+        )
 
         intercept[RuntimeException](status(result))
       }
 
       "user submits form and the registration update fails" in {
         authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdateFailure()
+
         val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
         intercept[DownstreamServiceError](status(result))
       }

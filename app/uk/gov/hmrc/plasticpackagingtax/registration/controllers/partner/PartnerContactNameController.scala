@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
@@ -27,7 +27,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerContactDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnerContactDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
@@ -46,67 +49,111 @@ class PartnerContactNameController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(): Action[AnyContent] =
+  def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        val existingNameFields = for {
-          contactDetails <- partner.contactDetails
-          firstName      <- contactDetails.firstName
-          lastName       <- contactDetails.lastName
-        } yield (firstName, lastName)
-
-        val form = existingNameFields match {
-          case Some(data) =>
-            MemberName.form().fill(MemberName(data._1, data._2))
-          case None =>
-            MemberName.form()
-        }
-
-        Ok(
-          page(form,
-               partner.name,
-               partnerRoutes.NominatedPartnerTypeController.displayPage(),
-               partnerRoutes.PartnerContactNameController.submit()
-          )
+        renderPageFor(partner,
+                      partnerRoutes.NominatedPartnerTypeController.displayPage(),
+                      partnerRoutes.PartnerContactNameController.submitNewPartner()
         )
-
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  def submit(): Action[AnyContent] =
+  def displayExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.findPartner(partnerId).map { partner =>
+        renderPageFor(partner,
+                      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                      partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
+        )
+      }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
+    }
+
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result = {
+    val existingNameFields = for {
+      contactDetails <- partner.contactDetails
+      firstName      <- contactDetails.firstName
+      lastName       <- contactDetails.lastName
+    } yield (firstName, lastName)
+
+    val form = existingNameFields match {
+      case Some(data) =>
+        MemberName.form().fill(MemberName(data._1, data._2))
+      case None =>
+        MemberName.form()
+    }
+
+    Ok(page(form, partner.name, backCall, submitCall))
+  }
+
+  def submitNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        MemberName.form()
-          .bindFromRequest()
-          .fold(
-            (formWithErrors: Form[MemberName]) =>
-              Future.successful(
-                BadRequest(
-                  page(formWithErrors,
-                       partner.name,
-                       partnerRoutes.NominatedPartnerTypeController.displayPage(),
-                       partnerRoutes.PartnerContactNameController.submit()
-                  )
-                )
-              ),
-            fullName =>
-              updateRegistration(fullName).map {
-                case Right(_) =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      Redirect(routes.PartnerEmailAddressController.displayPage())
-                    case _ =>
-                      Redirect(partnerRoutes.PartnerContactNameController.displayPage())
-                  }
-                case Left(error) => throw error
-              }
-          )
+        handleSubmission(partner,
+                         partnerRoutes.NominatedPartnerTypeController.displayPage(),
+                         partnerRoutes.PartnerContactNameController.submitNewPartner(),
+                         partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
+                         partnerRoutes.PartnerContactNameController.displayNewPartner(),
+                         updateInflightPartner
+        )
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected inflight partner missing"))
       )
     }
 
-  private def updateRegistration(
+  def submitExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      def updateAction(memberName: MemberName): Future[Either[ServiceError, Registration]] =
+        updateExistingPartner(memberName, partnerId)
+
+      request.registration.findPartner(partnerId).map { partner =>
+        handleSubmission(partner,
+                         partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
+                           partnerId
+                         ),
+                         partnerRoutes.PartnerContactNameController.submitExistingPartner(
+                           partnerId
+                         ),
+                         routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+                         partnerRoutes.PartnerContactNameController.displayExistingPartner(
+                           partnerId
+                         ),
+                         updateAction
+        )
+      }.getOrElse(
+        Future.successful(throw new IllegalStateException("Expected existing partner missing"))
+      )
+    }
+
+  private def handleSubmission(
+    partner: Partner,
+    backCall: Call,
+    submitCall: Call,
+    onwardsCall: Call,
+    dropoutCall: Call,
+    updateAction: MemberName => Future[Either[ServiceError, Registration]]
+  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
+    MemberName.form()
+      .bindFromRequest()
+      .fold(
+        (formWithErrors: Form[MemberName]) =>
+          Future.successful(BadRequest(page(formWithErrors, partner.name, backCall, submitCall))),
+        fullName =>
+          updateAction(fullName).map {
+            case Right(_) =>
+              FormAction.bindFromRequest match {
+                case SaveAndContinue =>
+                  Redirect(onwardsCall)
+                case _ =>
+                  Redirect(dropoutCall)
+              }
+            case Left(error) => throw error
+          }
+      )
+
+  private def updateInflightPartner(
     formData: MemberName
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
@@ -122,6 +169,22 @@ class PartnerContactNameController @Inject() (
       }.getOrElse {
         registration
       }
+    }
+
+  private def updateExistingPartner(formData: MemberName, partnerId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.withUpdatedPartner(partnerId,
+                                      partner =>
+                                        partner.copy(contactDetails =
+                                          partner.contactDetails.map(
+                                            _.copy(firstName = Some(formData.firstName),
+                                                   lastName = Some(formData.lastName)
+                                            )
+                                          )
+                                        )
+      )
     }
 
 }

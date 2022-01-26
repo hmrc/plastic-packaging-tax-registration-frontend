@@ -131,7 +131,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
               val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
               status(result) mustBe SEE_OTHER
               redirectLocation(result) mustBe Some(
-                partnerRoutes.PartnerContactNameController.displayPage().url
+                partnerRoutes.PartnerContactNameController.displayNewPartner().url
               )
           }
 
