@@ -22,22 +22,21 @@ import org.mockito.Mockito.when
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 
-class NominatedPartnerTypeControllerSpec extends ControllerSpec {
+class PartnerTypeControllerSpec extends ControllerSpec {
 
   private val page = mock[partner_type]
   private val mcc  = stubMessagesControllerComponents()
 
-  private val controller = new NominatedPartnerTypeController(
+  private val controller = new PartnerTypeController(
     authenticate = mockAuthAction,
     journeyAction = mockJourneyAction,
     appConfig = appConfig,
@@ -58,7 +57,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     authorizedUser()
-    when(page.apply(any())(any(), any())).thenReturn(
+    when(page.apply(any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Nominated partner type capture")
     )
     mockRegistrationFind(partnershipRegistration)
@@ -86,7 +85,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayNewPartner()(getRequest())
 
         status(result) mustBe OK
       }
@@ -101,13 +100,13 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayExistingPartner("123")(getRequest())
 
         status(result) mustBe OK
       }
     }
 
-    "redirect to partnership GRS" when {
+    "redirect to partnership GRS for new partner" when {
       forAll(
         Seq(
           (SCOTTISH_LIMITED_PARTNERSHIP,
@@ -158,7 +157,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
           val correctForm =
             Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
-          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
           partnershipDetails._1 match {
             case SOLE_TRADER =>
               redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
@@ -176,6 +175,24 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
       }
     }
 
+    "redirect to partnership GRS " when {
+      "for existing partner" in {
+        val registration =
+          aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
+
+        authorizedUser()
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+        mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
+
+        val correctForm =
+          Seq("answer" -> SOLE_TRADER.toString, saveAndContinueFormAction)
+        val result =
+          controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
+        redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+      }
+    }
+
     "redirect to registration main page" when {
       "save and come back later button is used" in {
         val registration = aRegistration(
@@ -190,28 +207,9 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
         val correctForm =
           Seq("answer" -> LIMITED_LIABILITY_PARTNERSHIP.toString, saveAndComeBackLaterFormAction)
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
 
         redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-      }
-    }
-
-    "throw errors resulting from failed registration updates for LLP" in {
-      val registration = aRegistration(
-        withPartnershipDetails(
-          Some(llpPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
-        )
-      )
-
-      authorizedUser()
-      mockRegistrationFind(registration)
-      mockRegistrationUpdateFailure()
-
-      val correctForm =
-        Seq("answer" -> LIMITED_LIABILITY_PARTNERSHIP.toString, saveAndContinueFormAction)
-
-      intercept[DownstreamServiceError] {
-        await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
       }
     }
 
@@ -228,7 +226,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
 
       val incompleteForm = Seq(saveAndContinueFormAction)
 
-      val result = controller.submit()(postJsonRequestEncoded(incompleteForm: _*))
+      val result = controller.submitNewPartner()(postJsonRequestEncoded(incompleteForm: _*))
 
       status(result) mustBe BAD_REQUEST
     }
@@ -236,7 +234,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
     "display nominated partner type capture page" when {
       "user is authorized" when {
         "registration does not contain partnership partner" in {
-          val resp = controller.displayPage()(getRequest())
+          val resp = controller.displayNewPartner()(getRequest())
 
           contentAsString(resp) mustBe "Nominated partner type capture"
         }
@@ -253,7 +251,7 @@ class NominatedPartnerTypeControllerSpec extends ControllerSpec {
             )
           )
 
-          val resp = controller.displayPage()(getRequest())
+          val resp = controller.displayNewPartner()(getRequest())
 
           contentAsString(resp) mustBe "Nominated partner type capture"
         }

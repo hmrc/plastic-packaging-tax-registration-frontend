@@ -121,74 +121,62 @@ case class OrganisationDetails(
   lazy val inflightPartner: Option[Partner] =
     partnershipDetails.flatMap(_.inflightPartner)
 
-  lazy val nominatedPartnerType: Option[PartnerTypeEnum] = nominatedPartner.flatMap(_.partnerType)
+  def partnerType(partnerId: Option[String]): Option[PartnerTypeEnum] =
+    partnerId match {
+      case Some(partnerId) =>
+        partnershipDetails.flatMap(_.findPartner(partnerId)).flatMap(_.partnerType)
+      case None => inflightPartner.flatMap(_.partnerType)
+    }
 
-  lazy val inflightPartnerType: Option[PartnerTypeEnum] = inflightPartner.flatMap(_.partnerType)
+  def partnerGrsRegistration(partnerId: Option[String]): Option[RegistrationDetails] =
+    partnerId match {
+      case Some(partnerId) =>
+        partnershipDetails.flatMap(_.findPartner(partnerId)) match {
+          case Some(partner) => partnerGrsRegistrationDetails(partner)
+          case _             => None
+        }
+      case _ =>
+        inflightPartner match {
+          case Some(partner) => partnerGrsRegistrationDetails(partner)
+          case None          => None
+        }
+    }
 
-  lazy val nominatedPartnerGrsRegistration: Option[RegistrationDetails] = nominatedPartner match {
-    case Some(partner) =>
-      partner.partnerType match {
-        case Some(partnerType) =>
-          partnerType match {
-            case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
-            case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
-              partner.incorporationDetails.flatMap(_.registration)
-            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
-                SCOTTISH_LIMITED_PARTNERSHIP =>
-              partner.partnerPartnershipDetails.flatMap(
-                _.partnershipBusinessDetails.flatMap(_.registration)
-              )
-            case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
-            case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
-          }
-        case _ => None
-      }
-    case _ => None
-  }
+  def partnerGrsRegistrationDetails(partner: Partner): Option[RegistrationDetails] =
+    partner.partnerType match {
+      case Some(partnerType) =>
+        partnerType match {
+          case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
+          case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
+            partner.incorporationDetails.flatMap(_.registration)
+          case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
+              SCOTTISH_LIMITED_PARTNERSHIP =>
+            partner.partnerPartnershipDetails.flatMap(
+              _.partnershipBusinessDetails.flatMap(_.registration)
+            )
+          case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
+          case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
+        }
+      case _ => None
+    }
 
-  lazy val inflightPartnerGrsRegistration: Option[RegistrationDetails] = inflightPartner match {
-    case Some(partner) =>
-      partner.partnerType match {
-        case Some(partnerType) =>
-          partnerType match {
-            case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
-            case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
-              partner.incorporationDetails.flatMap(_.registration)
-            case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
-                SCOTTISH_LIMITED_PARTNERSHIP =>
-              partner.partnerPartnershipDetails.flatMap(
-                _.partnershipBusinessDetails.flatMap(_.registration)
-              )
-            case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
-            case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
-          }
-        case _ => None
-      }
-    case _ => None
-  }
-
-  lazy val nominatedPartnerRegistrationStatus: Option[String] =
-    nominatedPartnerGrsRegistration.map { reg =>
+  def partnerRegistrationStatus(partnerId: Option[String]): Option[String] =
+    partnerGrsRegistration(partnerId).map { reg =>
       reg.registrationStatus
     }
 
-  lazy val nominatedPartnerBusinessVerificationFailed: Boolean =
-    nominatedPartnerRegistrationStatus.contains(
-      "REGISTRATION_NOT_CALLED"
-    ) && nominatedPartnerVerificationStatus.contains("FAIL")
+  def partnerBusinessVerificationFailed(partnerId: Option[String]): Boolean =
+    partnerGrsRegistration(partnerId).map(
+      _.registrationStatus.contains("REGISTRATION_NOT_CALLED")
+    ).get && partnerVerificationStatus(partnerId).contains("FAIL")
 
-  lazy val nominatedPartnerVerificationStatus: Option[String] =
-    nominatedPartnerGrsRegistration.flatMap { reg =>
+  def partnerVerificationStatus(partnerId: Option[String]): Option[String] =
+    partnerGrsRegistration(partnerId).flatMap { reg =>
       reg.verificationStatus
     }
 
-  lazy val nominatedPartnerBusinessPartnerId: Option[String] =
-    nominatedPartnerGrsRegistration.flatMap { reg =>
-      reg.registeredBusinessPartnerId
-    }
-
-  lazy val inflightPartnerBusinessPartnerId: Option[String] =
-    inflightPartnerGrsRegistration.flatMap { reg =>
+  def partnerBusinessPartnerId(partnerId: Option[String]): Option[String] =
+    partnerGrsRegistration(partnerId).flatMap { reg =>
       reg.registeredBusinessPartnerId
     }
 

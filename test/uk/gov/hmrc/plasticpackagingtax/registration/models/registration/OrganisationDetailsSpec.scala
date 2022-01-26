@@ -107,6 +107,47 @@ class OrganisationDetailsSpec
       }
     }
 
+    "identify that partner business partner id is present for existing partner" in {
+      aRegistration(
+        withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+      ).organisationDetails.partnerGrsRegistration(Some("123")) mustBe Some(
+        RegistrationDetails(true, Some("Verified"), "REGISTERED", Some("XM654321"))
+      )
+    }
+
+    "identify that partner business verification failed " in {
+      val partnerWithVerificationFailed = aSoleTraderPartner().copy(soleTraderDetails =
+        Some(
+          soleTraderDetails.copy(registration =
+            Some(
+              RegistrationDetails(identifiersMatch = true,
+                                  verificationStatus =
+                                    Some("FAIL"),
+                                  registrationStatus =
+                                    "REGISTRATION_NOT_CALLED",
+                                  registeredBusinessPartnerId = None
+              )
+            )
+          )
+        )
+      )
+      aRegistration(
+        withPartnershipDetails(
+          Some(
+            generalPartnershipDetailsWithPartners.copy(partners =
+              Seq(partnerWithVerificationFailed)
+            )
+          )
+        )
+      ).organisationDetails.partnerBusinessVerificationFailed(Some("123")) mustBe true
+    }
+
+    "identify that partner business partner verification status" in {
+      aRegistration(
+        withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+      ).organisationDetails.partnerVerificationStatus(Some("123")) mustBe Some("Verified")
+    }
+
     "identify that business partner id is absent" in {
       forAll(unregisteredOrgs) { organisationDetails =>
         organisationDetails.businessPartnerId mustBe None

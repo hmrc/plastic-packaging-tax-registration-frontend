@@ -53,7 +53,7 @@ class PartnerContactNameController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
         renderPageFor(partner,
-                      partnerRoutes.NominatedPartnerTypeController.displayPage(),
+                      partnerRoutes.PartnerTypeController.displayNewPartner(),
                       partnerRoutes.PartnerContactNameController.submitNewPartner()
         )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
@@ -92,7 +92,7 @@ class PartnerContactNameController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
         handleSubmission(partner,
-                         partnerRoutes.NominatedPartnerTypeController.displayPage(),
+                         partnerRoutes.PartnerTypeController.displayNewPartner(),
                          partnerRoutes.PartnerContactNameController.submitNewPartner(),
                          partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
                          partnerRoutes.PartnerContactNameController.displayNewPartner(),

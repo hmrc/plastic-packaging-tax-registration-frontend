@@ -31,15 +31,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
   UNSUPPORTED_ORGANISATION
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Cacheable,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
@@ -63,21 +59,33 @@ class PartnerGrsController @Inject() (
 
   private val logger = Logger(this.getClass)
 
-  def grsCallback(journeyId: String): Action[AnyContent] =
+  def grsCallbackNewPartner(journeyId: String): Action[AnyContent] = grsCallback(journeyId, None)
+
+  def grsCallbackExistingPartner(journeyId: String, partnerId: String): Action[AnyContent] =
+    grsCallback(journeyId, Some(partnerId))
+
+  private def grsCallback(journeyId: String, partnerId: Option[String]): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        saveRegistrationDetails(journeyId).flatMap {
+        saveRegistrationDetails(journeyId, partnerId).flatMap {
           case Right(registration) =>
-            registrationStatus(registration).map { status =>
+            registrationStatus(registration, partnerId).map { status =>
               logger.info(
                 s"PPT GRS callback for journeyId [$journeyId] " +
-                  s"and organisation type [${registration.organisationDetails.nominatedPartnerType.getOrElse("")}] " +
+                  s"and partner type [${registration.organisationDetails.inflightPartner.getOrElse("")}] " +
                   s"had registration status [$status] " +
-                  s"and details [${registration.organisationDetails.nominatedPartnerRegistrationStatus.getOrElse("None")}]"
+                  s"and details [${registration.organisationDetails.partnerRegistrationStatus(partnerId).getOrElse("None")}]"
               )
               status match {
                 case STATUS_OK =>
-                  Redirect(partnerRoutes.PartnerContactNameController.displayNewPartner())
+                  partnerId match {
+                    case Some(partnerId) =>
+                      Redirect(
+                        partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+                      )
+                    case None =>
+                      Redirect(partnerRoutes.PartnerContactNameController.displayNewPartner())
+                  }
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
@@ -88,10 +96,10 @@ class PartnerGrsController @Inject() (
         }
     }
 
-  private def registrationStatus(
-    registration: Registration
-  )(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    registration.organisationDetails.inflightPartnerBusinessPartnerId match {
+  private def registrationStatus(registration: Registration, partnerId: Option[String])(implicit
+    hc: HeaderCarrier
+  ): Future[RegistrationStatus] =
+    registration.organisationDetails.partnerBusinessPartnerId(partnerId) match {
       case Some(businessPartnerId) =>
         checkSubscriptionStatus(businessPartnerId).map {
           case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
@@ -106,60 +114,63 @@ class PartnerGrsController @Inject() (
   )(implicit hc: HeaderCarrier): Future[SubscriptionStatus.Status] =
     subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map(_.status)
 
-  private def saveRegistrationDetails(journeyId: String)(implicit
+  private def saveRegistrationDetails(journeyId: String, partnerId: Option[String])(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] = {
-    request.registration.organisationDetails.inflightPartner.flatMap(_.partnerType) match {
+    val partnerType: Option[PartnerTypeEnum] = partnerId match {
+      case Some(partnerId) => request.registration.findPartner(partnerId).flatMap(_.partnerType)
+      case None            => request.registration.inflightPartner.flatMap(_.partnerType)
+    }
+    partnerType match {
       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-        updateUkCompanyDetails(journeyId)
-      case Some(SOLE_TRADER) => updateSoleTraderDetails(journeyId)
-      case Some(LIMITED_LIABILITY_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) |
-          Some(SCOTTISH_PARTNERSHIP) =>
-        updatePartnershipDetails(journeyId)
+        updateUkCompanyDetails(journeyId, partnerId)
+      case Some(SOLE_TRADER) => updateSoleTraderDetails(journeyId, partnerId)
+      case Some(LIMITED_LIABILITY_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) | Some(
+            SCOTTISH_PARTNERSHIP
+          ) =>
+        updatePartnershipDetails(journeyId, partnerId)
       case _ => throw new InternalServerException(s"Invalid organisation type")
     }
-  }.flatMap(updatedRegistration => update(_ => updatedRegistration))
+  }
 
-  private def updateUkCompanyDetails(
-    journeyId: String
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
-    updateIncorporationDetails(journeyId, ukCompanyGrsConnector.getDetails)
+  private def updateUkCompanyDetails(journeyId: String, partnerId: Option[String])(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    updateIncorporationDetails(journeyId, partnerId, ukCompanyGrsConnector.getDetails)
 
   private def updateIncorporationDetails(
     journeyId: String,
+    partnerId: Option[String],
     getDetails: String => Future[IncorporationDetails]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Registration] =
+  )(implicit request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     getDetails(journeyId).map { incorporationDetails =>
-      request.registration.copy(organisationDetails =
-        updateOrganisationDetails(request.registration.organisationDetails,
-                                  soleTraderDetails = None,
-                                  incorporationDetails = Some(incorporationDetails),
-                                  partnershipDetails = None
-        )
+      updateRegistration(soleTraderDetails = None,
+                         incorporationDetails = Some(incorporationDetails),
+                         partnershipDetails = None,
+                         partnerId = partnerId
       )
-    }
+    }.flatMap(result => result)
 
-  private def updateSoleTraderDetails(
-    journeyId: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateSoleTraderDetails(journeyId: String, partnerId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     soleTraderGrsConnector.getDetails(journeyId).map { soleTraderDetails =>
-      request.registration.copy(organisationDetails =
-        updateOrganisationDetails(request.registration.organisationDetails,
-                                  soleTraderDetails = Some(soleTraderDetails),
-                                  incorporationDetails = None,
-                                  partnershipDetails = None
-        )
+      updateRegistration(soleTraderDetails = Some(soleTraderDetails),
+                         incorporationDetails = None,
+                         partnershipDetails = None,
+                         partnerId = partnerId
       )
-    }
+    }.flatMap(result => result)
 
-  private def updatePartnershipDetails(
-    journeyId: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updatePartnershipDetails(journeyId: String, partnerId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     partnershipGrsConnector.getDetails(journeyId).map { partnershipBusinessDetails =>
       val partnershipDetails = Some(
         PartnerPartnershipDetails(
-          partnershipType = request.registration.organisationDetails.inflightPartnerType.get,
+          partnershipType = request.registration.organisationDetails.partnerType(partnerId).get,
           partnershipName =
             Some(
               "TODO Screen needed to prompt for Partner partnership name"
@@ -167,51 +178,61 @@ class PartnerGrsController @Inject() (
           partnershipBusinessDetails = Some(partnershipBusinessDetails)
         )
       )
-      request.registration.copy(organisationDetails =
-        updateOrganisationDetails(organisationDetails = request.registration.organisationDetails,
-                                  soleTraderDetails = None,
-                                  incorporationDetails = None,
-                                  partnershipDetails = partnershipDetails
-        )
+      updateRegistration(soleTraderDetails = None,
+                         incorporationDetails = None,
+                         partnershipDetails = partnershipDetails,
+                         partnerId = partnerId
       )
+    }.flatMap(result => result)
+
+  private def updateRegistration(
+    soleTraderDetails: Option[SoleTraderDetails],
+    incorporationDetails: Option[IncorporationDetails],
+    partnershipDetails: Option[PartnerPartnershipDetails],
+    partnerId: Option[String]
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    partnerId match {
+      case Some(partnerId) =>
+        updateExistingPartner(soleTraderDetails,
+                              incorporationDetails,
+                              partnershipDetails,
+                              partnerId
+        )
+      case None =>
+        updateInflightPartner(soleTraderDetails, incorporationDetails, partnershipDetails)
     }
 
-  private def updateOrganisationDetails(
-    organisationDetails: OrganisationDetails,
+  private def updateInflightPartner(
     soleTraderDetails: Option[SoleTraderDetails],
     incorporationDetails: Option[IncorporationDetails],
     partnershipDetails: Option[PartnerPartnershipDetails]
-  ) =
-    organisationDetails.copy(partnershipDetails =
-      Some(
-        organisationDetails.partnershipDetails.map(
-          details =>
-            details.copy(inflightPartner =
-              updatedPartner(details = details,
-                             soleTraderDetails = soleTraderDetails,
-                             incorporationDetails = incorporationDetails,
-                             partnershipDetails = partnershipDetails
-              )
-            )
-        ).getOrElse(throw new IllegalStateException("No partnership details found"))
-      )
-    )
-
-  private def updatedPartner(
-    details: PartnershipDetails,
-    soleTraderDetails: Option[SoleTraderDetails],
-    incorporationDetails: Option[IncorporationDetails],
-    partnershipDetails: Option[PartnerPartnershipDetails]
-  ): Option[Partner] =
-    details.inflightPartner match {
-      case Some(partner) =>
-        Some(
-          partner.copy(soleTraderDetails = soleTraderDetails,
-                       incorporationDetails = incorporationDetails,
-                       partnerPartnershipDetails = partnershipDetails
-          )
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.inflightPartner.map { partner =>
+        val withPartnerType = partner.copy(soleTraderDetails = soleTraderDetails,
+                                           incorporationDetails = incorporationDetails,
+                                           partnerPartnershipDetails = partnershipDetails
         )
-      case _ => throw new IllegalStateException("No inflight partner found")
+        registration.withInflightPartner(Some(withPartnerType))
+      }.getOrElse {
+        registration
+      }
+    }
+
+  private def updateExistingPartner(
+    soleTraderDetails: Option[SoleTraderDetails],
+    incorporationDetails: Option[IncorporationDetails],
+    partnershipDetails: Option[PartnerPartnershipDetails],
+    partnerId: String
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.withUpdatedPartner(partnerId,
+                                      partner =>
+                                        partner.copy(soleTraderDetails = soleTraderDetails,
+                                                     incorporationDetails = incorporationDetails,
+                                                     partnerPartnershipDetails = partnershipDetails
+                                        )
+      )
     }
 
 }

@@ -342,6 +342,7 @@ partner.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or plac
 
 nominated.partner.type.title = What type of organisation is the nominated partner?
 nominated.partner.name.empty.error = Please select an entity type from the options above
+other.partner.type.title = What type of organisation is the next partner you want to add?
 
 partnerships.otherPartners.title = You have {0} partners in your partnership
 partnership.otherPartners.contactNamePage.title = Who is the main contact for {0}?

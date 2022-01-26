@@ -523,6 +523,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected def aSoleTraderPartner() =
     Partner(partnerType = Some(PartnerTypeEnum.SOLE_TRADER),
+            id = "123",
             soleTraderDetails = Some(
               SoleTraderDetails(firstName = "Ben",
                                 lastName = "Benkson",

@@ -56,7 +56,7 @@ class PartnerListController @Inject() (
             addPartner.answer match {
               case Some(true) =>
                 Redirect(
-                  commonRoutes.TaskListController.displayPage()
+                  routes.PartnerTypeController.displayNewPartner()
                 ) // TODO: redirect to the select new partner type page when available
               case _ => Redirect(commonRoutes.TaskListController.displayPage())
             }

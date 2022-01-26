@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 @this(
     formHelper: FormWithCSRF,
@@ -32,25 +33,37 @@
 )
 
 
-@(form: Form[PartnerType])(implicit request: Request[_], messages: Messages)
-    
+@(form: Form[PartnerType], partnerId: Option[String])(implicit request: JourneyRequest[_], messages: Messages)
+
+    @titleMessage = @{
+        request.registration.isNominatedPartner(partnerId) match {
+            case Some(false) => "other.partner.type.title"
+            case _ => "nominated.partner.type.title"
+        }}
+
+    @submitLink = @{
+        partnerId match {
+            case Some(partnerId) => partnerRoutes.PartnerTypeController.submitExistingPartner(partnerId)
+            case _ => partnerRoutes.PartnerTypeController.submitNewPartner()
+        }
+    }
     @radioItem(ppType: PartnerTypeEnum) = @{
         RadioItem(content = Text(displayName(ppType)), value = Some(ppType), checked = form("answer").value.contains(ppType.toString))
     }
 
     @govukLayout(
-        title = Title("nominated.partner.type.title"),
+        title = Title(titleMessage),
         backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 
-        @pageHeading(messages("nominated.partner.type.title"))
+        @pageHeading(messages(titleMessage))
 
-        @formHelper(action = partnerRoutes.NominatedPartnerTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = submitLink, 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = Text(messages("nominated.partner.type.title")),
+                        content = Text(messages(titleMessage)),
                         classes = "govuk-visually-hidden",
                         isPageHeading = false
                     ))
