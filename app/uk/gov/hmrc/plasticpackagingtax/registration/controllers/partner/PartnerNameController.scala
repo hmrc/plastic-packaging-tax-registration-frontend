@@ -32,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   LIMITED_LIABILITY_PARTNERSHIP,
   PartnerTypeEnum,
@@ -62,6 +63,12 @@ class PartnerNameController @Inject() (
   page: partner_name_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
+
+  private val partnerTypesWhichPermitUserSuppliedNames = Set(
+    PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
+    PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP,
+    PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+  )
 
   def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -123,15 +130,17 @@ class PartnerNameController @Inject() (
 
   private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
     request: JourneyRequest[AnyContent]
-  ): Result = {
-    val form = partner.userSuppliedName match {
-      case Some(data) =>
-        PartnerName.form().fill(PartnerName(data))
-      case None =>
-        PartnerName.form()
-    }
-    Ok(page(form, backCall, submitCall))
-  }
+  ): Result =
+    if (partner.partnerType.exists(isPartnerTypeWhichPermitsUserSuppliedNames)) {
+      val form = partner.userSuppliedName match {
+        case Some(data) =>
+          PartnerName.form().fill(PartnerName(data))
+        case None =>
+          PartnerName.form()
+      }
+      Ok(page(form, backCall, submitCall))
+    } else
+      throw new IllegalStateException("Partner type does not permit user supplied names")
 
   private def handleSubmission(
     partnerType: PartnerTypeEnum,
@@ -141,45 +150,48 @@ class PartnerNameController @Inject() (
     dropoutCall: Call,
     updateAction: PartnerName => Future[Either[ServiceError, Registration]]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
-    PartnerName.form()
-      .bindFromRequest()
-      .fold(
-        (formWithErrors: Form[PartnerName]) =>
-          Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
-        fullName =>
-          updateAction(fullName).flatMap {
-            case Right(_) =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  // Select GRS journey type based on selected partner type
-                  partnerType match {
-                    // TODO deduplicate this with PartnerTypeController
-                    case LIMITED_LIABILITY_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(existingPartnerId,
-                                                appConfig.limitedLiabilityPartnershipJourneyUrl
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case SCOTTISH_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(existingPartnerId,
-                                                appConfig.scottishPartnershipJourneyUrl
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case SCOTTISH_LIMITED_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(existingPartnerId,
-                                                appConfig.scottishLimitedPartnershipJourneyUrl
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case _ =>
-                      //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
-                      Future(
-                        Redirect(
-                          organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+    if (isPartnerTypeWhichPermitsUserSuppliedNames(partnerType))
+      PartnerName.form()
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[PartnerName]) =>
+            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
+          partnerName =>
+            updateAction(partnerName).flatMap {
+              case Right(_) =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    // Select GRS journey type based on selected partner type
+                    partnerType match {
+                      // TODO deduplicate this with PartnerTypeController
+                      case LIMITED_LIABILITY_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(existingPartnerId,
+                                                  appConfig.limitedLiabilityPartnershipJourneyUrl
+                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case SCOTTISH_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(existingPartnerId,
+                                                  appConfig.scottishPartnershipJourneyUrl
+                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case SCOTTISH_LIMITED_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(existingPartnerId,
+                                                  appConfig.scottishLimitedPartnershipJourneyUrl
+                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case _ =>
+                        //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
+                        Future(
+                          Redirect(
+                            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                          )
                         )
-                      )
-                  }
-                case _ =>
-                  Future.successful(Redirect(dropoutCall))
-              }
-            case Left(error) => throw error
-          }
-      )
+                    }
+                  case _ =>
+                    Future.successful(Redirect(dropoutCall))
+                }
+              case Left(error) => throw error
+            }
+        )
+    else
+      throw new IllegalStateException("Partner type does not permit user supplied names")
 
   private def updateInflightPartner(
     formData: PartnerName
@@ -218,5 +230,8 @@ class PartnerNameController @Inject() (
       createJourneyUrlForPartnershipType
     )
   }
+
+  private def isPartnerTypeWhichPermitsUserSuppliedNames(partnerType: PartnerTypeEnum): Boolean =
+    partnerTypesWhichPermitUserSuppliedNames.contains(partnerType)
 
 }
