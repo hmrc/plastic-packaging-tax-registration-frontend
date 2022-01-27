@@ -16,36 +16,209 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_name
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.PartnershipGrsConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
+  LIMITED_LIABILITY_PARTNERSHIP,
+  PartnerTypeEnum,
+  SCOTTISH_LIMITED_PARTNERSHIP,
+  SCOTTISH_PARTNERSHIP
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnershipGrsCreateRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerNameController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
+  appConfig: AppConfig,
+  partnershipGrsConnector: PartnershipGrsConnector,
   mcc: MessagesControllerComponents,
-  page: partnership_name
+  page: partner_name_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+      request.registration.inflightPartner.map { partner =>
+        renderPageFor(partner,
+                      partnerRoutes.PartnerTypeController.displayNewPartner(),
+                      partnerRoutes.PartnerNameController.submitNewPartner()
+        )
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+      request.registration.findPartner(partnerId).map { partner =>
+        renderPageFor(partner,
+                      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                      partnerRoutes.PartnerNameController.submitExistingPartner(partnerId)
+        )
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
+
+  def submitNewPartner(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.inflightPartner.map { partner =>
+        partner.partnerType.map { partnerType =>
+          handleSubmission(partnerType,
+                           None,
+                           partnerRoutes.PartnerTypeController.displayNewPartner(),
+                           partnerRoutes.PartnerNameController.submitNewPartner(),
+                           commonRoutes.TaskListController.displayPage(),
+                           updateInflightPartner
+          )
+        }.getOrElse(
+          Future.successful(throw new IllegalStateException("Expected partner type missing"))
+        )
+      }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner missing")))
+    }
+
+  def submitExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.findPartner(partnerId).map { partner =>
+        partner.partnerType.map { partnerType =>
+          def updateAction(
+            partnershipName: PartnershipName
+          ): Future[Either[ServiceError, Registration]] =
+            updateExistingPartner(partnershipName, partnerId)
+          handleSubmission(partnerType,
+                           Some(partner.id),
+                           partnerRoutes.PartnerTypeController.displayExistingPartner(partnerId),
+                           partnerRoutes.PartnerNameController.submitExistingPartner(partnerId),
+                           commonRoutes.TaskListController.displayPage(),
+                           updateAction
+          )
+        }.getOrElse(
+          Future.successful(throw new IllegalStateException("Expected partner type missing"))
+        )
+      }.getOrElse {
+        Future.successful(throw new IllegalStateException("Expected partner missing"))
+      }
+    }
+
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Result = {
+    val form = partner.userSuppliedName match {
+      case Some(data) =>
+        PartnershipName.form().fill(PartnershipName(data))
+      case None =>
+        PartnershipName.form()
+    }
+    Ok(page(form, backCall, submitCall))
+  }
+
+  private def handleSubmission(
+    partnerType: PartnerTypeEnum,
+    existingPartnerId: Option[String],
+    backCall: Call,
+    submitCall: Call,
+    dropoutCall: Call,
+    updateAction: PartnershipName => Future[Either[ServiceError, Registration]]
+  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
+    PartnershipName.form()
+      .bindFromRequest()
+      .fold(
+        (formWithErrors: Form[PartnershipName]) =>
+          Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
+        fullName =>
+          updateAction(fullName).flatMap {
+            case Right(_) =>
+              FormAction.bindFromRequest match {
+                case SaveAndContinue =>
+                  // Select GRS journey type based on selected partner type
+                  partnerType match {
+                    // TODO deduplicate this with PartnerTypeController
+                    case LIMITED_LIABILITY_PARTNERSHIP =>
+                      getPartnershipRedirectUrl(existingPartnerId,
+                                                appConfig.limitedLiabilityPartnershipJourneyUrl
+                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case SCOTTISH_PARTNERSHIP =>
+                      getPartnershipRedirectUrl(existingPartnerId,
+                                                appConfig.scottishPartnershipJourneyUrl
+                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case SCOTTISH_LIMITED_PARTNERSHIP =>
+                      getPartnershipRedirectUrl(existingPartnerId,
+                                                appConfig.scottishLimitedPartnershipJourneyUrl
+                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                    case _ =>
+                      //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
+                      Future(
+                        Redirect(
+                          organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                        )
+                      )
+                  }
+                case _ =>
+                  Future.successful(Redirect(dropoutCall))
+              }
+            case Left(error) => throw error
+          }
+      )
+
+  private def updateInflightPartner(
+    formData: PartnershipName
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.inflightPartner.map { partner =>
+        val withName = partner.copy(userSuppliedName = Some(formData.value))
+        registration.withInflightPartner(Some(withName))
+      }.getOrElse {
+        registration
+      }
+    }
+
+  private def updateExistingPartner(formData: PartnershipName, partnerId: String)(implicit
+    req: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.withUpdatedPartner(
+        partnerId,
+        partner => partner.copy(userSuppliedName = Some(formData.value))
+      )
+    }
+
+  private def getPartnershipRedirectUrl(
+    existingPartnerId: Option[String],
+    createJourneyUrlForPartnershipType: String
+  )(implicit request: JourneyRequest[AnyContent]): Future[String] = {
+    val callbackUrl = appConfig.partnerGrsCallbackUrl(existingPartnerId)
+    partnershipGrsConnector.createJourney(
+      PartnershipGrsCreateRequest(callbackUrl,
+                                  Some(request2Messages(request)("service.name")),
+                                  appConfig.serviceIdentifier,
+                                  appConfig.signOutLink,
+                                  appConfig.grsAccessibilityStatementPath
+      ),
+      createJourneyUrlForPartnershipType
+    )
+  }
 
 }

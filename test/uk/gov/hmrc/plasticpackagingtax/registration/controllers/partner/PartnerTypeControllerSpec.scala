@@ -43,7 +43,6 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     appConfig = appConfig,
     soleTraderGrsConnector = mockSoleTraderGrsConnector,
     ukCompanyGrsConnector = mockUkCompanyGrsConnector,
-    partnershipGrsConnector = mockPartnershipGrsConnector,
     registrationConnector = mockRegistrationConnector,
     mcc = mcc,
     page = page

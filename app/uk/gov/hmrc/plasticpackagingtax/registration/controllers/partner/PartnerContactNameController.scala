@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   Partner,
@@ -95,7 +96,7 @@ class PartnerContactNameController @Inject() (
                          partnerRoutes.PartnerTypeController.displayNewPartner(),
                          partnerRoutes.PartnerContactNameController.submitNewPartner(),
                          partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
-                         partnerRoutes.PartnerContactNameController.displayNewPartner(),
+                         commonRoutes.TaskListController.displayPage(),
                          updateInflightPartner
         )
       }.getOrElse(

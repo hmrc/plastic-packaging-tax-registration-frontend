@@ -340,7 +340,7 @@ organisationDetails.type.GroupNominatedPartnership = Limited liability partnersh
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected
 
-partnership.name.title = What's the name of the partnership?
+partnership.name.title = What’s the name of the partnership?
 partnership.name.empty.error = Please enter your partnership name
 partnership.name.format.error = Please enter your partnership name in correct format
 
@@ -614,6 +614,10 @@ partner.check.contact.name = Contact name
 partner.check.contact.email = Contact email
 partner.check.contact.phone = Phone number
 partner.check.contact.address = Contact address
+
+partner.name.title = What’s the name of the partner?
+partner.name.empty.error = Please enter your partner name
+partner.name.format.error = Please enter your partner name in correct format
 
 partnership.partnerList.title = You have added {0} partners
 partnership.partnerList.nominatedPartner = Nominated partner

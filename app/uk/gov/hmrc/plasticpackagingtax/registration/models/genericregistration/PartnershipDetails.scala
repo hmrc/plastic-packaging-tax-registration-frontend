@@ -89,7 +89,7 @@ case class PartnerPartnershipDetails(
       if (partnershipName.isDefined)
         partnershipName
       else
-        Some("TODO: Capture Non-Incorp Partnership Name")
+        Some("TODO: Capture Non-Incorp Partnership Name") // TODO Confirm is this is still active
     case _ => partnershipBusinessDetails.flatMap(_.companyProfile.map(_.companyName))
   }
 

@@ -30,8 +30,7 @@ case class Partner(
   incorporationDetails: Option[IncorporationDetails] = None,
   partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None,
   contactDetails: Option[PartnerContactDetails] = None,
-  organisationName: Option[String] =
-    None // TODO remove in favour of partner.name
+  userSuppliedName: Option[String] = None
 ) {
 
   lazy val name: String = {
@@ -45,7 +44,8 @@ case class Partner(
       case _ =>
         incorporationDetails.map(_.companyName)
     }
-    grsProvidedName.getOrElse(throw new IllegalStateException("Partner name absent"))
+    val availableNames = Seq(userSuppliedName, grsProvidedName).flatten
+    availableNames.headOption.getOrElse(throw new IllegalStateException("Partner name absent"))
   }
 
   def withContactAddress(contactAddress: Address): Partner =

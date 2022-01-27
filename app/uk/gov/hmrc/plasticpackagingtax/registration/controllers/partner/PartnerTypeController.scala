@@ -22,7 +22,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
-  PartnershipGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
@@ -48,7 +47,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorpEntityGrsCreateRequest,
   Partner,
-  PartnershipGrsCreateRequest,
   SoleTraderGrsCreateRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
@@ -66,7 +64,6 @@ class PartnerTypeController @Inject() (
   appConfig: AppConfig,
   soleTraderGrsConnector: SoleTraderGrsConnector,
   ukCompanyGrsConnector: UkCompanyGrsConnector,
-  partnershipGrsConnector: PartnershipGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partner_type
@@ -146,19 +143,6 @@ class PartnerTypeController @Inject() (
                                    appConfig.signOutLink,
                                    appConfig.grsAccessibilityStatementPath,
                                    businessVerificationCheck = false
-      ),
-      url
-    )
-
-  private def getPartnershipRedirectUrl(url: String, partnerId: Option[String])(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.signOutLink,
-                                  appConfig.grsAccessibilityStatementPath
       ),
       url
     )
