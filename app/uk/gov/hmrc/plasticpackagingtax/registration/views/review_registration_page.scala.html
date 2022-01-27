@@ -63,7 +63,7 @@
         @liabilityDetails(registration.liabilityDetails, Some(liabilityStartLink), registration.registrationType, registration.groupDetail)
         @organisationDetails(registration.organisationDetails, registration.registrationType, Some(orgRoutes.OrganisationDetailsTypeController.displayPage()), addressChangeLink)
         @if(registration.isPartnershipWithPartnerCollection) {
-            @partnerListDetails(registration.nominatedPartner.get, registration.otherPartners))
+            @partnerListDetails(registration.nominatedPartner.get, registration.otherPartners)
         }else{
             @primaryContactDetails(registration.primaryContactDetails)
         }
