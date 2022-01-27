@@ -21,12 +21,8 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
-  partner_email_address_page,
-  partner_name_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
@@ -37,7 +33,7 @@ class PartnerNamePageViewSpec extends UnitViewSpec with Matchers {
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
-  private def createView(form: Form[PartnershipName] = PartnershipName.form()): Document =
+  private def createView(form: Form[PartnerName] = PartnerName.form()): Document =
     page(form, backLink, updateLink)(journeyRequest, messages)
 
   "Email address View" should {
@@ -80,9 +76,9 @@ class PartnerNamePageViewSpec extends UnitViewSpec with Matchers {
   "display error" when {
     "name is not entered" in {
 
-      val form = PartnershipName
+      val form = PartnerName
         .form()
-        .fillAndValidate(PartnershipName(""))
+        .fillAndValidate(PartnerName(""))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
@@ -90,8 +86,8 @@ class PartnerNamePageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(PartnershipName.form(), backLink, updateLink)(journeyRequest, messages)
-    page.render(PartnershipName.form(), backLink, updateLink, journeyRequest, messages)
+    page.f(PartnerName.form(), backLink, updateLink)(journeyRequest, messages)
+    page.render(PartnerName.form(), backLink, updateLink, journeyRequest, messages)
   }
 
 }

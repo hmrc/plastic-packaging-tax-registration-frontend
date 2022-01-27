@@ -19,12 +19,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   LIMITED_PARTNERSHIP,
   PartnerTypeEnum,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
+  SCOTTISH_LIMITED_PARTNERSHIP
 }
 
 case class PartnershipDetails(

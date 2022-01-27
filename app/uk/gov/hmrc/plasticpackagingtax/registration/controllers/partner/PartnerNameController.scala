@@ -27,6 +27,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
@@ -35,7 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   Partner,
   PartnershipGrsCreateRequest
@@ -44,9 +47,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheab
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -104,10 +104,8 @@ class PartnerNameController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
         partner.partnerType.map { partnerType =>
-          def updateAction(
-            partnershipName: PartnershipName
-          ): Future[Either[ServiceError, Registration]] =
-            updateExistingPartner(partnershipName, partnerId)
+          def updateAction(partnerName: PartnerName): Future[Either[ServiceError, Registration]] =
+            updateExistingPartner(partnerName, partnerId)
           handleSubmission(partnerType,
                            Some(partner.id),
                            partnerRoutes.PartnerTypeController.displayExistingPartner(partnerId),
@@ -128,9 +126,9 @@ class PartnerNameController @Inject() (
   ): Result = {
     val form = partner.userSuppliedName match {
       case Some(data) =>
-        PartnershipName.form().fill(PartnershipName(data))
+        PartnerName.form().fill(PartnerName(data))
       case None =>
-        PartnershipName.form()
+        PartnerName.form()
     }
     Ok(page(form, backCall, submitCall))
   }
@@ -141,12 +139,12 @@ class PartnerNameController @Inject() (
     backCall: Call,
     submitCall: Call,
     dropoutCall: Call,
-    updateAction: PartnershipName => Future[Either[ServiceError, Registration]]
+    updateAction: PartnerName => Future[Either[ServiceError, Registration]]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
-    PartnershipName.form()
+    PartnerName.form()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[PartnershipName]) =>
+        (formWithErrors: Form[PartnerName]) =>
           Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
         fullName =>
           updateAction(fullName).flatMap {
@@ -184,7 +182,7 @@ class PartnerNameController @Inject() (
       )
 
   private def updateInflightPartner(
-    formData: PartnershipName
+    formData: PartnerName
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.inflightPartner.map { partner =>
@@ -195,7 +193,7 @@ class PartnerNameController @Inject() (
       }
     }
 
-  private def updateExistingPartner(formData: PartnershipName, partnerId: String)(implicit
+  private def updateExistingPartner(formData: PartnerName, partnerId: String)(implicit
     req: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     update { registration =>

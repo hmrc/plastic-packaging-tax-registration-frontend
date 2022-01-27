@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
@@ -30,7 +30,7 @@
     errorSummary: errorSummary
 )
 
-@(form: Form[PartnershipName], backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[PartnerName], backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
 
 @partnerNameField = @{form("value")}
 
