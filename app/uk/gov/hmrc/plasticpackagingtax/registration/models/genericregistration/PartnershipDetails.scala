@@ -82,18 +82,7 @@ case class PartnerPartnershipDetails(
   partnershipType: PartnerTypeEnum,
   partnershipName: Option[String] = None,
   partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
-) {
-
-  lazy val name: Option[String] = partnershipType match {
-    case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
-      if (partnershipName.isDefined)
-        partnershipName
-      else
-        Some("TODO: Capture Non-Incorp Partnership Name") // TODO Confirm is this is still active
-    case _ => partnershipBusinessDetails.flatMap(_.companyProfile.map(_.companyName))
-  }
-
-}
+)
 
 object PartnerPartnershipDetails {
   implicit val format: OFormat[PartnerPartnershipDetails] = Json.format[PartnerPartnershipDetails]
