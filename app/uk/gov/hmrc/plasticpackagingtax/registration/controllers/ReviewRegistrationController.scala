@@ -23,13 +23,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  OVERSEAS_COMPANY_UK_BRANCH,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  UK_COMPANY
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -41,8 +34,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -69,39 +62,15 @@ class ReviewRegistrationController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       if (request.registration.isCheckAndSubmitReady)
         markRegistrationAsReviewed().map { _ =>
-          // The call to check that the registration is in a suitable state before this means that
-          // exhaustive matching is not needed
-          (request.registration.organisationDetails.organisationType: @unchecked) match {
-            case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-              incorpEntityReview()
-            case Some(SOLE_TRADER) => soleTraderReview()
-            case Some(PARTNERSHIP) => partnershipReview()
-          }
+          Ok(
+            reviewRegistrationPage(registration = request.registration,
+                                   liabilityStartLink = startRegistrationController.startLink
+            )
+          )
         }
       else
         Future(Redirect(routes.TaskListController.displayPage()))
     }
-
-  private def soleTraderReview()(implicit request: JourneyRequest[AnyContent]) =
-    Ok(
-      reviewRegistrationPage(registration = request.registration,
-                             liabilityStartLink = startRegistrationController.startLink
-      )
-    )
-
-  private def partnershipReview()(implicit request: JourneyRequest[AnyContent]) =
-    Ok(
-      reviewRegistrationPage(registration = request.registration,
-                             liabilityStartLink = startRegistrationController.startLink
-      )
-    )
-
-  private def incorpEntityReview()(implicit request: JourneyRequest[AnyContent]) =
-    Ok(
-      reviewRegistrationPage(registration = request.registration,
-                             liabilityStartLink = startRegistrationController.startLink
-      )
-    )
 
   private def markRegistrationAsReviewed()(implicit
     req: JourneyRequest[AnyContent]

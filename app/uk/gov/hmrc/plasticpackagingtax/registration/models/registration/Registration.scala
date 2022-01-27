@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
@@ -60,9 +60,9 @@ case class Registration(
   def numberOfCompletedSections: Int =
     Array(isLiabilityDetailsComplete,
           isCompanyDetailsComplete,
-          isPrimaryContactDetailsComplete,
+          !isPartnershipWithPartnerCollection && isPrimaryContactDetailsComplete,
           isGroup && isOtherOrganisationsInGroupComplete,
-          isPartnership && isNominatedPartnerDetailsComplete,
+          isPartnershipWithPartnerCollection && isNominatedPartnerDetailsComplete && isOtherPartnersDetailsComplete,
           isRegistrationComplete
     ).count(isComplete => isComplete)
 
@@ -70,13 +70,31 @@ case class Registration(
 
   def isPartnership: Boolean = organisationDetails.organisationType.contains(OrgType.PARTNERSHIP)
 
+  def isPartnershipWithPartnerCollection: Boolean =
+    organisationDetails.organisationType.contains(OrgType.PARTNERSHIP) &&
+      (
+        organisationDetails.partnershipDetails.exists(
+          _.partnershipType.contains(PartnerTypeEnum.GENERAL_PARTNERSHIP)
+        ) ||
+          organisationDetails.partnershipDetails.exists(
+            _.partnershipType.contains(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)
+          ) ||
+          organisationDetails.partnershipDetails.exists(
+            _.partnershipType.contains(PartnerTypeEnum.LIMITED_PARTNERSHIP)
+          ) ||
+          organisationDetails.partnershipDetails.exists(
+            _.partnershipType.contains(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
+          )
+      )
+
   def numberOfSections: Int = if (isGroup) 5 else 4
 
   def isRegistrationComplete: Boolean =
     isCheckAndSubmitReady && metaData.registrationCompleted
 
   def isCheckAndSubmitReady: Boolean =
-    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete && isOtherOrganisationsInGroupComplete
+    isCompanyDetailsComplete && isLiabilityDetailsComplete && isPrimaryContactDetailsComplete &&
+      isOtherOrganisationsInGroupComplete && isPartnerCollectionComplete
 
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
 
@@ -104,16 +122,39 @@ case class Registration(
     if (companyDetailsStatus != TaskStatus.Completed)
       TaskStatus.CannotStartYet
     else
-      this.primaryContactDetails.status(metaData.emailVerified)
+    // TODO: update when we're verifying emails for nominated partners
+    if (isPartnershipWithPartnerCollection) TaskStatus.Completed
+    else this.primaryContactDetails.status(metaData.emailVerified)
 
   def nominatedPartnerDetailsStatus: TaskStatus =
     this.organisationDetails.nominatedPartner match {
-      case Some(value) => if (value.isCompleted) TaskStatus.Completed else TaskStatus.InProgress
-      case _           => TaskStatus.NotStarted
+      case Some(_) => TaskStatus.Completed
+      case _ =>
+        if (companyDetailsStatus == TaskStatus.Completed)
+          TaskStatus.NotStarted
+        else
+          TaskStatus.CannotStartYet
     }
 
-  def isOtherOrganisationsInGroupComplete: Boolean =
+  private def isOtherPartnersDetailsComplete: Boolean =
+    otherPartnersDetailsStatus == TaskStatus.Completed
+
+  def otherPartnersDetailsStatus: TaskStatus =
+    this.organisationDetails.partnershipDetails.map(_.partners.size) match {
+      case Some(numPartners) =>
+        numPartners match {
+          case 0 => TaskStatus.CannotStartYet
+          case 1 => TaskStatus.NotStarted
+          case _ => TaskStatus.Completed
+        }
+      case _ => TaskStatus.CannotStartYet
+    }
+
+  private def isOtherOrganisationsInGroupComplete: Boolean =
     !isGroup || otherOrganisationsInGroupStatus == TaskStatus.Completed
+
+  private def isPartnerCollectionComplete: Boolean =
+    !isPartnershipWithPartnerCollection || otherPartnersDetailsStatus == TaskStatus.Completed
 
   def otherOrganisationsInGroupStatus: TaskStatus =
     if (!isGroup || primaryContactDetailsStatus != TaskStatus.Completed)
