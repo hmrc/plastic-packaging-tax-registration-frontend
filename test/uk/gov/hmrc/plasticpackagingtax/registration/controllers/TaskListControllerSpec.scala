@@ -123,15 +123,15 @@ class TaskListControllerSpec extends ControllerSpec {
           contentAsString(result) mustBe "Partnership Page"
         }
 
-        "show single entity task-list when an LLP registration is being preformed" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
-
-          val result = controller.displayPage()(getRequest())
-
-          status(result) mustBe OK
-          contentAsString(result) mustBe "Single Entity Page"
-        }
+//        "show single entity task-list when an LLP registration is being preformed" in {
+//          authorizedUser()
+//          mockRegistrationFind(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
+//
+//          val result = controller.displayPage()(getRequest())
+//
+//          status(result) mustBe OK
+//          contentAsString(result) mustBe "Single Entity Page"
+//        }
       }
     }
 
