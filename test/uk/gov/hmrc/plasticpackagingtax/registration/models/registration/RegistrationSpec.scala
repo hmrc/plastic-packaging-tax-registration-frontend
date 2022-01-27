@@ -271,43 +271,93 @@ class RegistrationSpec
 
   "Registration for partnership organisation" should {
 
+    "should report number of completed sections" when {
+
+      val generalPartnershipRegistration =
+        aRegistration(
+          withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)),
+          withMetaData(MetaData(registrationReviewed = true, registrationCompleted = true))
+        )
+
+      "registration is complete" in {
+        generalPartnershipRegistration.numberOfCompletedSections mustBe 4
+      }
+      "registration has not been reviewed" in {
+        generalPartnershipRegistration.copy(metaData =
+          MetaData()
+        ).numberOfCompletedSections mustBe 3
+      }
+      "registration does not have other partners" in {
+        generalPartnershipRegistration.copy(organisationDetails =
+          generalPartnershipRegistration.organisationDetails.copy(partnershipDetails =
+            generalPartnershipRegistration.organisationDetails.partnershipDetails.map(
+              _.copy(partners = Seq(aLimitedCompanyPartner()))
+            )
+          )
+        ).numberOfCompletedSections mustBe 2
+      }
+      "registration does not have nominated partner" in {
+        generalPartnershipRegistration.copy(organisationDetails =
+          generalPartnershipRegistration.organisationDetails.copy(partnershipDetails =
+            generalPartnershipRegistration.organisationDetails.partnershipDetails.map(
+              _.copy(partners = Seq())
+            )
+          )
+        ).numberOfCompletedSections mustBe 2
+      }
+      "registration does not have partnership details" in {
+        generalPartnershipRegistration.copy(organisationDetails =
+          generalPartnershipRegistration.organisationDetails.copy(partnershipDetails = None)
+        ).numberOfCompletedSections mustBe 1
+      }
+      "registration not started" in {
+        Registration("123").numberOfCompletedSections mustBe 0
+      }
+    }
+
     "identify partnerships from registration organisation type" in {
       val aPartnershipRegistration = aRegistration(
         withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP)))
       )
       aPartnershipRegistration.isPartnership mustBe true
     }
-    "nominated partner details is complete" in {
+    "report nominated partner details as complete when we have a complete nominated partner" in {
       aRegistration(
         withPartnershipDetails(
           Some(
             scottishPartnershipDetails.copy(partners =
-              Seq(
-                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                                 soleTraderDetails = Some(soleTraderDetails)
-                )
-              )
+              Seq(aLimitedCompanyPartner())
             )
           )
         )
       ).nominatedPartnerDetailsStatus mustBe TaskStatus.Completed
     }
-    "nominated partner details not complete" in {
+    "report nominated partner details as not started before we have a complete nominated partner" in {
+      aRegistration(
+        withPartnershipDetails(Some(scottishPartnershipDetails))
+      ).nominatedPartnerDetailsStatus mustBe TaskStatus.NotStarted
+    }
+    "report other partner details as complete when we have a complete nominated partner and 1 other partner" in {
       aRegistration(
         withPartnershipDetails(
           Some(
             scottishPartnershipDetails.copy(partners =
-              Seq(
-                nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                                 soleTraderDetails = None,
-                                 incorporationDetails = None,
-                                 partnerPartnershipDetails = None
-                )
-              )
+              Seq(aLimitedCompanyPartner(), aSoleTraderPartner())
             )
           )
         )
-      ).nominatedPartnerDetailsStatus mustBe TaskStatus.InProgress
+      ).otherPartnersDetailsStatus mustBe TaskStatus.Completed
+    }
+    "report other partner details as not started before we have at least 1 complete other partner" in {
+      aRegistration(
+        withPartnershipDetails(
+          Some(
+            scottishPartnershipDetails.copy(partners =
+              Seq(aLimitedCompanyPartner())
+            )
+          )
+        )
+      ).otherPartnersDetailsStatus mustBe TaskStatus.NotStarted
     }
   }
 

@@ -51,9 +51,6 @@ case class Partner(
       )
   }
 
-  def isCompleted: Boolean =
-    partnerType.nonEmpty && (soleTraderDetails.nonEmpty || incorporationDetails.nonEmpty || partnerPartnershipDetails.nonEmpty)
-
   def withContactAddress(contactAddress: Address): Partner =
     this.copy(contactDetails = this.contactDetails.map(_.withUpdatedAddress(contactAddress)))
 

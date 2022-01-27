@@ -80,8 +80,8 @@
             TaskSection(
                 title = "registrationPage.task.contactDetails.partnership.otherPartners",
                 link = partnerRoutes.PartnerListController.displayPage(),
-                showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
-                status = registration.primaryContactDetailsStatus
+                showLink = registration.isNominatedPartnerDetailsComplete,
+                status = registration.otherPartnersDetailsStatus
             )
         ))
         </li>
