@@ -34,6 +34,11 @@ case class Partner(
 ) {
 
   lazy val name: String = {
+    val availableNames = Seq(userSuppliedName, grsProvidedName).flatten
+    availableNames.headOption.getOrElse(throw new IllegalStateException("Partner name absent"))
+  }
+
+  def grsProvidedName: Option[String] = {
     val grsProvidedName = partnerType match {
       case Some(PartnerTypeEnum.SOLE_TRADER) =>
         soleTraderDetails.map(_.name)
@@ -44,8 +49,7 @@ case class Partner(
       case _ =>
         incorporationDetails.map(_.companyName)
     }
-    val availableNames = Seq(userSuppliedName, grsProvidedName).flatten
-    availableNames.headOption.getOrElse(throw new IllegalStateException("Partner name absent"))
+    grsProvidedName
   }
 
   def withContactAddress(contactAddress: Address): Partner =

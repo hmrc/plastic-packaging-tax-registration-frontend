@@ -241,10 +241,18 @@ class PartnerGrsController @Inject() (
     soleTraderDetails: Option[SoleTraderDetails],
     incorporationDetails: Option[IncorporationDetails],
     partnershipDetails: Option[PartnerPartnershipDetails]
-  ) =
+  ): Partner =
     partner.copy(soleTraderDetails = soleTraderDetails,
                  incorporationDetails = incorporationDetails,
-                 partnerPartnershipDetails = partnershipDetails
+                 partnerPartnershipDetails = partnershipDetails,
+                 userSuppliedName =
+                   // If this GRS return has supplied a GRS provided name then we should clear
+                   // any existing user supplied name; switching the partner type could cause
+                   // a sticky name
+                   if (partner.grsProvidedName.isEmpty)
+                     partner.userSuppliedName
+                   else
+                     None
     )
 
 }
