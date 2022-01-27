@@ -47,7 +47,7 @@ class TaskListController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       if (request.registration.isGroup)
         Ok(groupPage(request.registration, startLink))
-      else if (request.registration.isPartnership)
+      else if (request.registration.isPartnershipWithPartnerCollection)
         Ok(partnershipPage(request.registration, startLink))
       else
         Ok(singleEntityPage(request.registration, startLink))

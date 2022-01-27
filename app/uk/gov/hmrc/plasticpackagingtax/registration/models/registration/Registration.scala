@@ -136,7 +136,7 @@ case class Registration(
           TaskStatus.CannotStartYet
     }
 
-  def isOtherPartnersDetailsComplete: Boolean =
+  private def isOtherPartnersDetailsComplete: Boolean =
     otherPartnersDetailsStatus == TaskStatus.Completed
 
   def otherPartnersDetailsStatus: TaskStatus =
@@ -150,10 +150,10 @@ case class Registration(
       case _ => TaskStatus.CannotStartYet
     }
 
-  def isOtherOrganisationsInGroupComplete: Boolean =
+  private def isOtherOrganisationsInGroupComplete: Boolean =
     !isGroup || otherOrganisationsInGroupStatus == TaskStatus.Completed
 
-  def isPartnerCollectionComplete: Boolean =
+  private def isPartnerCollectionComplete: Boolean =
     !isPartnershipWithPartnerCollection || otherPartnersDetailsStatus == TaskStatus.Completed
 
   def otherOrganisationsInGroupStatus: TaskStatus =

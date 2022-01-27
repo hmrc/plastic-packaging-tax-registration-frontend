@@ -32,7 +32,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWei
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
-  MetaData,
   OrganisationDetails,
   Registration
 }
