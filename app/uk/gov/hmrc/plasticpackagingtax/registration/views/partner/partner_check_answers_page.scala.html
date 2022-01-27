@@ -71,7 +71,7 @@
     SummaryList(
         rows = Seq(
             viewUtils.summaryListRow("partner.check.orgType", partner.partnerType.map(displayName(_)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
-            viewUtils.summaryListRow("partner.check.orgName", Some(partner.name), Some(partnerRoutes.PartnerNameController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("partner.check.orgName", Some(partner.name), partner.userSuppliedName.map(_ => partnerRoutes.PartnerNameController.displayExistingPartner(partner.id))),
             viewUtils.summaryListRow("partner.check.sautr", partner.partnerPartnershipDetails.flatMap(_.partnershipBusinessDetails.map(_.sautr)), None),
         ) ++ partnerContactRows().filterNot(_.value.content == Empty)
     )
