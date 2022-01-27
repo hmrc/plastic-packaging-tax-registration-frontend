@@ -111,12 +111,12 @@ class TaskListControllerSpec extends ControllerSpec {
           contentAsString(result) mustBe "Group Page"
         }
 
-        "show partnership tasklist when a partnership registration is been preformed" in {
+        "show partnership task-list when a partnership with partners registration is being preformed" in {
           authorizedUser()
           mockRegistrationFind(
             aRegistration(
-              withOrganisationDetails(
-                OrganisationDetails(organisationType = Some(OrgType.PARTNERSHIP))
+              withPartnershipDetails(
+                Some(generalPartnershipDetails)
               )
             )
           )
@@ -125,6 +125,22 @@ class TaskListControllerSpec extends ControllerSpec {
 
           status(result) mustBe OK
           contentAsString(result) mustBe "Partnership Page"
+        }
+
+        "show single entity task-list when an LLP registration is being preformed" in {
+          authorizedUser()
+          mockRegistrationFind(
+            aRegistration(
+              withPartnershipDetails(
+                Some(llpPartnershipDetails)
+              )
+            )
+          )
+
+          val result = controller.displayPage()(getRequest())
+
+          status(result) mustBe OK
+          contentAsString(result) mustBe "Single Entity Page"
         }
       }
     }
