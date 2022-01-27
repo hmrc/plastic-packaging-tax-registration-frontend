@@ -114,11 +114,7 @@ class TaskListControllerSpec extends ControllerSpec {
         "show partnership task-list when a partnership with partners registration is being preformed" in {
           authorizedUser()
           mockRegistrationFind(
-            aRegistration(
-              withPartnershipDetails(
-                Some(generalPartnershipDetails)
-              )
-            )
+            aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
           )
 
           val result = controller.displayPage()(getRequest())
@@ -129,13 +125,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
         "show single entity task-list when an LLP registration is being preformed" in {
           authorizedUser()
-          mockRegistrationFind(
-            aRegistration(
-              withPartnershipDetails(
-                Some(llpPartnershipDetails)
-              )
-            )
-          )
+          mockRegistrationFind(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
 
           val result = controller.displayPage()(getRequest())
 
