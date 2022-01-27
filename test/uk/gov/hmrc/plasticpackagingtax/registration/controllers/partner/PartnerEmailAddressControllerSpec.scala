@@ -75,7 +75,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
     )
 
-  "PartnershipOtherPartnerEmailAddressController" should {
+  "PartnerEmailAddressController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected contact name and display page method is invoked" in {

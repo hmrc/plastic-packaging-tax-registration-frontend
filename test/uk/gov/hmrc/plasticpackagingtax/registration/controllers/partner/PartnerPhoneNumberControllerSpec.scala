@@ -86,7 +86,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
     )
 
-  "PartnershipOtherPartnerPhoneNumberController" should {
+  "PartnerPhoneNumberController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected contact name and display page method is invoked" in {

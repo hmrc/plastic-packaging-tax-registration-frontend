@@ -22,13 +22,12 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
   OVERSEAS_COMPANY_NO_UK_BRANCH,
   OVERSEAS_COMPANY_UK_BRANCH,
   SCOTTISH_LIMITED_PARTNERSHIP,

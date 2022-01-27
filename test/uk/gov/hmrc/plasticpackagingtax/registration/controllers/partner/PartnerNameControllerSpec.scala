@@ -27,27 +27,29 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerContactDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnershipName
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
+class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[partner_member_name_page]
+  private val page = mock[partner_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerContactNameController(authenticate = mockAuthAction,
-                                     journeyAction = mockJourneyAction,
-                                     registrationConnector =
-                                       mockRegistrationConnector,
-                                     mcc = mcc,
-                                     page = page
+    new PartnerNameController(authenticate = mockAuthAction,
+                              journeyAction = mockJourneyAction,
+                              registrationConnector =
+                                mockRegistrationConnector,
+                              config,
+                              mockPartnershipGrsConnector,
+                              mcc = mcc,
+                              page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -61,7 +63,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     )
 
   private val existingPartner =
-    aLimitedCompanyPartner()
+    aLimitedCompanyPartner() // TODO Wants to be a non GRS named type
 
   private def registrationWithExistingPartner =
     aRegistration(
@@ -71,7 +73,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
   "PartnerEmailAddressController" should {
 
     "return 200" when {
-      "user is authorised, a registration already exists with already collected nominated partner" in {
+      "user is authorised, a registration already exists with inflight partner" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
@@ -80,7 +82,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         status(result) mustBe OK
       }
 
-      "displaying an existing partner to edit their contact name" in {
+      "displaying an existing partner to edit their name" in {
         authorizedUser()
         mockRegistrationFind(registrationWithExistingPartner)
 
@@ -91,23 +93,18 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     }
 
     "update inflight registration" when {
-      "user submits a complete contact name" in {
+      "user submits a valid name" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(PartnershipName("Test Partner"), saveAndContinueFormAction)
         )
 
         status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.firstName)
-        ) mustBe Some("John")
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.lastName)
-        ) mustBe Some("Smith")
+        modifiedRegistration.inflightPartner.flatMap(_.userSuppliedName) mustBe Some("Test Partner")
       }
 
       "user submits an amendment to an existing partners contact name" in {
@@ -116,15 +113,14 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequest(Json.toJson(MemberName("Jane", "Smith")))
+          postRequest(Json.toJson(PartnershipName("Test Partner")))
         )
 
         status(result) mustBe SEE_OTHER
 
-        val modifiedContactDetails: Option[PartnerContactDetails] =
-          modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails)
-        modifiedContactDetails.flatMap(_.firstName) mustBe Some("Jane")
-        modifiedContactDetails.flatMap(_.lastName) mustBe Some("Smith")
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(
+          _.userSuppliedName
+        ) mustBe Some("Test Partner")
       }
     }
 
@@ -135,7 +131,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction)
+            postRequestEncoded(PartnershipName(""), saveAndContinueFormAction)
           )
 
         status(result) mustBe BAD_REQUEST
@@ -146,22 +142,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(PartnershipName("abced" * 40), saveAndContinueFormAction)
         )
-
-        status(result) mustBe BAD_REQUEST
-      }
-
-      "user enters non-alphabetic characters" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
-
-        val result =
-          controller.submitNewPartner()(
-            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
-                               saveAndContinueFormAction
-            )
-          )
 
         status(result) mustBe BAD_REQUEST
       }
@@ -204,7 +186,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdateFailure()
 
         val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(MemberName("John", "Smith"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(PartnershipName("Test Partner"))))
 
         intercept[DownstreamServiceError](status(result))
       }
