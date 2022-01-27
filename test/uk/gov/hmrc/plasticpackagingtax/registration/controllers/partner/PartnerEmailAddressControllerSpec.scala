@@ -120,9 +120,23 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.emailAddress)
-        ) mustBe Some("test@localhost")
+        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress))
+      }
+
+      "user submits an amendment to an existing partners email address" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartner)
+        mockRegistrationUpdate()
+
+        val result = controller.submitExistingPartner(existingPartner.id)(
+          postRequestEncoded(EmailAddress("amended@localhost"))
+        )
+
+        status(result) mustBe SEE_OTHER
+
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails).flatMap(
+          _.emailAddress
+        ) mustBe Some("amended@localhost")
       }
     }
 
