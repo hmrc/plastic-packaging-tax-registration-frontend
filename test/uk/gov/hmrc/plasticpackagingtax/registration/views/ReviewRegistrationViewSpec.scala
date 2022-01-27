@@ -27,6 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes =>
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
@@ -35,7 +36,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
@@ -61,9 +62,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
   private val page = instanceOf[review_registration_page]
 
-  private val liabilitySection      = 0
-  private val organisationSection   = 1
-  private val contactDetailsSection = 2
+  private val liabilitySection        = 0
+  private val organisationSection     = 1
+  private val contactDetailsSection   = 2
+  private val nominatedPartnerSection = 2
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
@@ -397,7 +399,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               val partnershipRegistration = registration.copy(organisationDetails =
                 OrganisationDetails(organisationType = Some(PARTNERSHIP),
                                     businessRegisteredAddress = Some(testBusinessAddress),
-                                    partnershipDetails = Some(generalPartnershipDetails),
+                                    partnershipDetails =
+                                      Some(generalPartnershipDetailsWithPartners),
                                     incorporationDetails = None
                 )
               )
@@ -417,7 +420,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           1,
                           partnershipView
-              ) mustBe generalPartnershipDetails.partnershipName.get
+              ) mustBe generalPartnershipDetailsWithPartners.partnershipOrCompanyName.get
               getValueFor(organisationSection,
                           2,
                           partnershipView
@@ -557,6 +560,154 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             }
           }
 
+          "displaying nominated partner details" in {
+            val partnershipRegistration = registration.copy(organisationDetails =
+              OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                                  businessRegisteredAddress = Some(testBusinessAddress),
+                                  partnershipDetails =
+                                    Some(generalPartnershipDetailsWithPartners),
+                                  incorporationDetails = None
+              )
+            )
+            val partnershipView = createView(partnershipRegistration)
+
+            getKeyFor(nominatedPartnerSection, 0, partnershipView) must containMessage(
+              "reviewRegistration.partner.orgType"
+            )
+            getKeyFor(nominatedPartnerSection, 1, partnershipView) must containMessage(
+              "reviewRegistration.partner.name"
+            )
+            getKeyFor(nominatedPartnerSection, 2, partnershipView) must containMessage(
+              "reviewRegistration.partner.dob"
+            )
+            getKeyFor(nominatedPartnerSection, 3, partnershipView) must containMessage(
+              "reviewRegistration.partner.nino"
+            )
+            getKeyFor(nominatedPartnerSection, 4, partnershipView) must containMessage(
+              "reviewRegistration.partner.utr"
+            )
+            getKeyFor(nominatedPartnerSection, 5, partnershipView) must containMessage(
+              "reviewRegistration.partner.contact.name"
+            )
+            getKeyFor(nominatedPartnerSection, 6, partnershipView) must containMessage(
+              "reviewRegistration.partner.contact.email"
+            )
+            getKeyFor(nominatedPartnerSection, 7, partnershipView) must containMessage(
+              "reviewRegistration.partner.contact.phone"
+            )
+            getKeyFor(nominatedPartnerSection, 8, partnershipView) must containMessage(
+              "reviewRegistration.partner.contact.address"
+            )
+            val nominatedPartner = partnershipRegistration.nominatedPartner.get
+            getValueFor(nominatedPartnerSection,
+                        0,
+                        partnershipView
+            ) mustBe PartnerTypeEnum.displayName(nominatedPartner.partnerType.get)
+            getValueFor(nominatedPartnerSection, 1, partnershipView) mustBe nominatedPartner.name
+            getValueFor(nominatedPartnerSection,
+                        2,
+                        partnershipView
+            ) mustBe nominatedPartner.soleTraderDetails.get.dateOfBirth.get
+            getValueFor(nominatedPartnerSection,
+                        3,
+                        partnershipView
+            ) mustBe nominatedPartner.soleTraderDetails.get.ninoOrTrn
+            getValueFor(nominatedPartnerSection,
+                        4,
+                        partnershipView
+            ) mustBe nominatedPartner.soleTraderDetails.get.sautr.get
+            getValueFor(nominatedPartnerSection,
+                        5,
+                        partnershipView
+            ) mustBe nominatedPartner.contactDetails.get.name.get
+            getValueFor(nominatedPartnerSection,
+                        6,
+                        partnershipView
+            ) mustBe nominatedPartner.contactDetails.get.emailAddress.get
+            getValueFor(nominatedPartnerSection,
+                        7,
+                        partnershipView
+            ) mustBe nominatedPartner.contactDetails.get.phoneNumber.get
+            getValueFor(nominatedPartnerSection,
+                        8,
+                        partnershipView
+            ) mustBe "1 High Street Leeds LS1 1AA United Kingdom"
+
+          }
+
+          "displaying other partner details" in {
+            val partnershipRegistration = registration.copy(organisationDetails =
+              OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                                  businessRegisteredAddress = Some(testBusinessAddress),
+                                  partnershipDetails =
+                                    Some(
+                                      generalPartnershipDetails.copy(partners =
+                                        Seq(aSoleTraderPartner(), aLimitedCompanyPartner())
+                                      )
+                                    ),
+                                  incorporationDetails = None
+              )
+            )
+            val otherPartnersView = createView(partnershipRegistration)
+
+            partnershipRegistration.otherPartners.zipWithIndex.foreach {
+              case (partner, idx) =>
+                otherPartnersView.getElementById(
+                  s"other-partners-heading-${idx + 1}"
+                ).text() must include(partner.name)
+
+                val otherPartnerRows =
+                  otherPartnersView.select(s"div#other-partners-content-${idx + 1} dl div")
+
+                verifyRowContent(otherPartnerRows.get(0),
+                                 messages("reviewRegistration.partner.orgType"),
+                                 PartnerTypeEnum.displayName(partner.partnerType.get),
+                                 None
+                )
+                verifyRowContent(otherPartnerRows.get(1),
+                                 messages("reviewRegistration.partner.companyNumber"),
+                                 partner.incorporationDetails.get.companyNumber,
+                                 None
+                )
+                verifyRowContent(otherPartnerRows.get(4),
+                                 messages("reviewRegistration.partner.contact.name"),
+                                 partner.contactDetails.get.name.get,
+                                 Some(
+                                   partnerRoutes.PartnerContactNameController.displayExistingPartner(
+                                     partner.id
+                                   )
+                                 )
+                )
+                verifyRowContent(otherPartnerRows.get(5),
+                                 messages("reviewRegistration.partner.contact.email"),
+                                 partner.contactDetails.get.emailAddress.get,
+                                 Some(
+                                   partnerRoutes.PartnerEmailAddressController.displayExistingPartner(
+                                     partner.id
+                                   )
+                                 )
+                )
+                verifyRowContent(otherPartnerRows.get(6),
+                                 messages("reviewRegistration.partner.contact.phone"),
+                                 partner.contactDetails.get.phoneNumber.get,
+                                 Some(
+                                   partnerRoutes.PartnerPhoneNumberController.displayExistingPartner(
+                                     partner.id
+                                   )
+                                 )
+                )
+                verifyRowContent(otherPartnerRows.get(7),
+                                 messages("reviewRegistration.partner.contact.address"),
+                                 partner.contactDetails.get.address.get.addressLine1,
+                                 Some(
+                                   partnerRoutes.PartnerContactAddressController.captureExistingPartner(
+                                     partner.id
+                                   )
+                                 )
+                )
+
+            }
+          }
         }
       }
     }

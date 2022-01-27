@@ -269,6 +269,21 @@ reviewRegistration.organisationDetails.soleTrader.dob = Date of birth
 reviewRegistration.organisationDetails.soleTrader.nino = National insurance number
 
 reviewRegistration.organisationDetails.partnership.name = Partnership name
+reviewRegistration.organisationDetails.check.label.partnership = Partnership details
+reviewRegistration.organisationDetails.check.label.nominatedPartner = Nominated partner
+reviewRegistration.organisationDetails.check.label.otherPartners = Other partners in partnership
+reviewRegistration.partner.orgType = Organisation type
+reviewRegistration.partner.companyNumber = Company number
+reviewRegistration.partner.orgName = Organisation name
+reviewRegistration.partner.utr = Unique Taxpayer Reference
+reviewRegistration.partner.sautr = Self Assessment Unique Taxpayer Reference
+reviewRegistration.partner.dob = Date of birth
+reviewRegistration.partner.name = Name
+reviewRegistration.partner.nino = National Insurance Number
+reviewRegistration.partner.contact.name = Contact name
+reviewRegistration.partner.contact.email = Contact email
+reviewRegistration.partner.contact.phone = Phone number
+reviewRegistration.partner.contact.address = Contact address
 
 reviewRegistration.member.orgType = Organisation type
 reviewRegistration.member.companyNumber = Company number
