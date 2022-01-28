@@ -43,6 +43,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     appConfig = appConfig,
     soleTraderGrsConnector = mockSoleTraderGrsConnector,
     ukCompanyGrsConnector = mockUkCompanyGrsConnector,
+    partnershipGrsConnector = mockPartnershipGrsConnector,
     registrationConnector = mockRegistrationConnector,
     mcc = mcc,
     page = page
@@ -110,6 +111,11 @@ class PartnerTypeControllerSpec extends ControllerSpec {
       "user selected a type which has a GRS provided name" when {
         forAll(
           Seq(
+            (LIMITED_LIABILITY_PARTNERSHIP,
+             llpPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
+             )
+            ),
             (SOLE_TRADER,
              scottishPartnershipDetails.copy(partners =
                Seq(nominatedPartner(PartnerTypeEnum.SOLE_TRADER))
@@ -147,8 +153,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                 redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
               case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
                 redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
-              case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
-                  SCOTTISH_LIMITED_PARTNERSHIP =>
+              case LIMITED_LIABILITY_PARTNERSHIP =>
                 redirectLocation(result) mustBe Some("http://test/redirect/partnership")
               case _ =>
                 redirectLocation(result) mustBe Some(
@@ -167,11 +172,6 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             (SCOTTISH_LIMITED_PARTNERSHIP,
              scottishPartnershipDetails.copy(partners =
                Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
-             )
-            ),
-            (LIMITED_LIABILITY_PARTNERSHIP,
-             llpPartnershipDetails.copy(partners =
-               Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
              )
             ),
             (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails)

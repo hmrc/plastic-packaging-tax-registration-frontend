@@ -34,7 +34,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
-  LIMITED_LIABILITY_PARTNERSHIP,
   PartnerTypeEnum,
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
@@ -64,11 +63,8 @@ class PartnerNameController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  private val partnerTypesWhichPermitUserSuppliedNames = Set(
-    PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
-    PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP,
-    PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-  )
+  private val partnerTypesWhichPermitUserSuppliedNames =
+    Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
 
   def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -163,11 +159,6 @@ class PartnerNameController @Inject() (
                   case SaveAndContinue =>
                     // Select GRS journey type based on selected partner type
                     partnerType match {
-                      // TODO deduplicate this with PartnerTypeController
-                      case LIMITED_LIABILITY_PARTNERSHIP =>
-                        getPartnershipRedirectUrl(existingPartnerId,
-                                                  appConfig.limitedLiabilityPartnershipJourneyUrl
-                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case SCOTTISH_PARTNERSHIP =>
                         getPartnershipRedirectUrl(existingPartnerId,
                                                   appConfig.scottishPartnershipJourneyUrl
@@ -215,6 +206,7 @@ class PartnerNameController @Inject() (
       )
     }
 
+  // TODO deduplicate GRS redirects with PartnerTypeController
   private def getPartnershipRedirectUrl(
     existingPartnerId: Option[String],
     createJourneyUrlForPartnershipType: String
