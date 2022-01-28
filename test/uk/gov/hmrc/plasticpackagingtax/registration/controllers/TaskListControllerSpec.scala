@@ -30,8 +30,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   task_list_group,
   task_list_partnership,

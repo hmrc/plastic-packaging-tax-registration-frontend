@@ -36,7 +36,8 @@
         liabilityDetails: liabilityDetails,
         organisationDetails: organisationDetails,
         groupMemberListDetails: groupMemberListDetails,
-        primaryContactDetails: primaryContactDetails
+        primaryContactDetails: primaryContactDetails,
+        partnerListDetails : partnerListDetails
 )
 
 @(
@@ -61,7 +62,11 @@
 
         @liabilityDetails(registration.liabilityDetails, Some(liabilityStartLink), registration.registrationType, registration.groupDetail)
         @organisationDetails(registration.organisationDetails, registration.registrationType, Some(orgRoutes.OrganisationDetailsTypeController.displayPage()), addressChangeLink)
-        @primaryContactDetails(registration.primaryContactDetails)
+        @if(registration.isPartnershipWithPartnerCollection) {
+            @partnerListDetails(registration.nominatedPartner.get, registration.otherPartners)
+        }else{
+            @primaryContactDetails(registration.primaryContactDetails)
+        }
 
         @if(registration.registrationType.contains(GROUP)) {
             @groupMemberListDetails(registration.groupDetail.get)

@@ -68,10 +68,14 @@
 }
 
 @organisationSectionSubHeading() = @{
+  if(request.registration.isPartnershipWithPartnerCollection) {
+      subHeading(messages("reviewRegistration.organisationDetails.check.label.partnership"))
+  } else {
     registrationType match {
         case Some(GROUP) => subHeading(messages("reviewRegistration.organisationDetails.check.label.group"))
         case _ => subHeading(messages("reviewRegistration.organisationDetails.check.label.singleEntity"))
     }
+  }
 }
 
 @organisationSectionSubHeading()
