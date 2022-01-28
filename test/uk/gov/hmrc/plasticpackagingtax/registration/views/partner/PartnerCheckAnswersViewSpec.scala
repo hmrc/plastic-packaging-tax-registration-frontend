@@ -158,10 +158,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
           PartnerTypeEnum.displayName(partnershipPartner.partnerType.get),
           None: Option[Call]
          ),
-         (messages("partner.check.orgName"),
-          partnershipPartner.partnerPartnershipDetails.get.partnershipName.get,
-          None: Option[Call]
-         ),
+         (messages("partner.check.orgName"), partnershipPartner.name, None: Option[Call]),
          (messages("partner.check.sautr"),
           partnershipPartner.partnerPartnershipDetails.get.partnershipBusinessDetails.get.sautr,
           None: Option[Call]

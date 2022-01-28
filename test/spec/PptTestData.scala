@@ -590,7 +590,6 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     Partner(partnerType = Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP),
             partnerPartnershipDetails = Some(
               PartnerPartnershipDetails(partnershipType = PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
-                                        partnershipName = Some("The Plastic Partnership"),
                                         partnershipBusinessDetails = Some(
                                           PartnershipBusinessDetails(sautr = "234923487362",
                                                                      postcode = "LS1 1HS",
@@ -622,7 +621,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                       )
                                     )
               )
-            )
+            ),
+            userSuppliedName = Some("The Plastic Partnership")
     )
 
 }

@@ -30,7 +30,6 @@ class PartnershipDetailsSpec extends AnyWordSpec with Matchers {
                   partnerPartnershipDetails = Some(
                     PartnerPartnershipDetails(partnershipType =
                                                 PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
-                                              partnershipName = Some("Company 2"),
                                               partnershipBusinessDetails =
                                                 Some(
                                                   PartnershipBusinessDetails("123456789",
