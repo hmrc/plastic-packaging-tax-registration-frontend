@@ -42,10 +42,8 @@ case class Partner(
     val grsProvidedName = partnerType match {
       case Some(PartnerTypeEnum.SOLE_TRADER) =>
         soleTraderDetails.map(_.name)
-      case Some(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP) | Some(
-            PartnerTypeEnum.SCOTTISH_PARTNERSHIP
-          ) | Some(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP) =>
-        partnerPartnershipDetails.flatMap(_.partnershipName)
+      case Some(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP) =>
+        partnerPartnershipDetails.flatMap(_.partnershipBusinessDetails.flatMap(_.companyName))
       case _ =>
         incorporationDetails.map(_.companyName)
     }
