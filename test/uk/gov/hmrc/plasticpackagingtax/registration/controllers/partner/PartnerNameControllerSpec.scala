@@ -76,7 +76,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
     )
 
-  "PartnerEmailAddressController" should {
+  "PartnerNameController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with inflight partner" in {
