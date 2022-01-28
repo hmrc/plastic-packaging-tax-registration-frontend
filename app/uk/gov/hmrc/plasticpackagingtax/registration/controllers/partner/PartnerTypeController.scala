@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  PartnershipGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
@@ -44,11 +45,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorpEntityGrsCreateRequest,
-  Partner,
-  SoleTraderGrsCreateRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
@@ -61,14 +58,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnerTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  appConfig: AppConfig,
-  soleTraderGrsConnector: SoleTraderGrsConnector,
-  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val appConfig: AppConfig,
+  val soleTraderGrsConnector: SoleTraderGrsConnector,
+  val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val partnershipGrsConnector: PartnershipGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partner_type
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with PartnerGRSRedirections {
 
   def displayNewPartner(): Action[AnyContent] = displayPage()
 
@@ -111,14 +109,12 @@ class PartnerTypeController @Inject() (
                       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
                         getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl, partnerId)
                           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-
                       case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
+                        getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                                                  partnerId
+                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case Some(SCOTTISH_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
                         redirectToPartnerNamePrompt(partnerId)
-                      case Some(SCOTTISH_PARTNERSHIP) =>
-                        redirectToPartnerNamePrompt(partnerId)
-                      case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                        redirectToPartnerNamePrompt(partnerId)
-
                       case _ =>
                         //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
                         Future(
@@ -132,33 +128,6 @@ class PartnerTypeController @Inject() (
               }
           )
     }
-
-  private def getUkCompanyRedirectUrl(url: String, partnerId: Option[String])(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    ukCompanyGrsConnector.createJourney(
-      IncorpEntityGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
-                                   Some(request2Messages(request)("service.name")),
-                                   appConfig.serviceIdentifier,
-                                   appConfig.signOutLink,
-                                   appConfig.grsAccessibilityStatementPath,
-                                   businessVerificationCheck = false
-      ),
-      url
-    )
-
-  private def getSoleTraderRedirectUrl(url: String, partnerId: Option[String])(implicit
-    request: JourneyRequest[AnyContent]
-  ): Future[String] =
-    soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
-                                 Some(request2Messages(request)("service.name")),
-                                 appConfig.serviceIdentifier,
-                                 appConfig.signOutLink,
-                                 appConfig.grsAccessibilityStatementPath
-      ),
-      url
-    )
 
   private def updatePartnerType(partnerType: PartnerType, partnerId: Option[String])(implicit
     request: JourneyRequest[AnyContent]

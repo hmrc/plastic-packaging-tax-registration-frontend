@@ -41,6 +41,8 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
                               registrationConnector =
                                 mockRegistrationConnector,
                               config,
+                              soleTraderGrsConnector = mockSoleTraderGrsConnector,
+                              ukCompanyGrsConnector = mockUkCompanyGrsConnector,
                               mockPartnershipGrsConnector,
                               mcc = mcc,
                               page = page

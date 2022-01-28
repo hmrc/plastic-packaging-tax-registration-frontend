@@ -21,7 +21,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.PartnershipGrsConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  PartnershipGrsConnector,
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
@@ -56,12 +60,14 @@ class PartnerNameController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
-  appConfig: AppConfig,
-  partnershipGrsConnector: PartnershipGrsConnector,
+  val appConfig: AppConfig,
+  val soleTraderGrsConnector: SoleTraderGrsConnector,
+  val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val partnershipGrsConnector: PartnershipGrsConnector,
   mcc: MessagesControllerComponents,
   page: partner_name_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with PartnerGRSRedirections {
 
   private val partnerTypesWhichPermitUserSuppliedNames =
     Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
@@ -160,12 +166,12 @@ class PartnerNameController @Inject() (
                     // Select GRS journey type based on selected partner type
                     partnerType match {
                       case SCOTTISH_PARTNERSHIP =>
-                        getPartnershipRedirectUrl(existingPartnerId,
-                                                  appConfig.scottishPartnershipJourneyUrl
+                        getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
+                                                  existingPartnerId
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case SCOTTISH_LIMITED_PARTNERSHIP =>
-                        getPartnershipRedirectUrl(existingPartnerId,
-                                                  appConfig.scottishLimitedPartnershipJourneyUrl
+                        getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
+                                                  existingPartnerId
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case _ =>
                         //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
@@ -205,23 +211,6 @@ class PartnerNameController @Inject() (
         partner => partner.copy(userSuppliedName = Some(formData.value))
       )
     }
-
-  // TODO deduplicate GRS redirects with PartnerTypeController
-  private def getPartnershipRedirectUrl(
-    existingPartnerId: Option[String],
-    createJourneyUrlForPartnershipType: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[String] = {
-    val callbackUrl = appConfig.partnerGrsCallbackUrl(existingPartnerId)
-    partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(callbackUrl,
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.signOutLink,
-                                  appConfig.grsAccessibilityStatementPath
-      ),
-      createJourneyUrlForPartnershipType
-    )
-  }
 
   private def isPartnerTypeWhichPermitsUserSuppliedNames(partnerType: PartnerTypeEnum): Boolean =
     partnerTypesWhichPermitUserSuppliedNames.contains(partnerType)
