@@ -21,16 +21,20 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.PartnershipGrsConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  PartnershipGrsConnector,
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthAction,
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
@@ -39,12 +43,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  PartnershipDetails,
-  PartnershipGrsCreateRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.GRSRedirections
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partnership_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -55,13 +57,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class PartnershipTypeController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  appConfig: AppConfig,
-  partnershipGrsConnector: PartnershipGrsConnector,
+  val appConfig: AppConfig,
+  val soleTraderGrsConnector: SoleTraderGrsConnector,
+  val ukCompanyGrsConnector: UkCompanyGrsConnector,
+  val partnershipGrsConnector: PartnershipGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partnership_type
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
@@ -88,13 +92,21 @@ class PartnershipTypeController @Inject() (
                           case Some(GENERAL_PARTNERSHIP) | Some(SCOTTISH_PARTNERSHIP) =>
                             Future(Redirect(routes.PartnershipNameController.displayPage().url))
                           case Some(LIMITED_PARTNERSHIP) =>
-                            getRedirectUrl(appConfig.limitedPartnershipJourneyUrl)
+                            getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
+                                                      appConfig.grsCallbackUrl
+                            )
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                            getRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl)
+                            getPartnershipRedirectUrl(
+                              appConfig.scottishLimitedPartnershipJourneyUrl,
+                              appConfig.grsCallbackUrl
+                            )
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-                            getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl)
+                            getPartnershipRedirectUrl(
+                              appConfig.limitedLiabilityPartnershipJourneyUrl,
+                              appConfig.grsCallbackUrl
+                            )
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                           case _ =>
                             Future(
@@ -109,19 +121,6 @@ class PartnershipTypeController @Inject() (
                 }
         )
     }
-
-  private def getRedirectUrl(
-    url: String
-  )(implicit request: JourneyRequest[AnyContent]): Future[String] =
-    partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.grsCallbackUrl,
-                                  Some(request2Messages(request)("service.name")),
-                                  appConfig.serviceIdentifier,
-                                  appConfig.signOutLink,
-                                  appConfig.grsAccessibilityStatementPath
-      ),
-      url
-    )
 
   private def updateRegistration(
     formData: PartnerType

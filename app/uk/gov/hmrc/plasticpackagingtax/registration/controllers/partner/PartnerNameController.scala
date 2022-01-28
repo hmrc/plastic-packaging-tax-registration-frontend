@@ -43,12 +43,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnershipGrsCreateRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.GRSRedirections
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -67,7 +65,7 @@ class PartnerNameController @Inject() (
   mcc: MessagesControllerComponents,
   page: partner_name_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with PartnerGRSRedirections {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
   private val partnerTypesWhichPermitUserSuppliedNames =
     Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
@@ -167,11 +165,11 @@ class PartnerNameController @Inject() (
                     partnerType match {
                       case SCOTTISH_PARTNERSHIP =>
                         getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
-                                                  existingPartnerId
+                                                  appConfig.partnerGrsCallbackUrl(existingPartnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case SCOTTISH_LIMITED_PARTNERSHIP =>
                         getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
-                                                  existingPartnerId
+                                                  appConfig.partnerGrsCallbackUrl(existingPartnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case _ =>
                         //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page

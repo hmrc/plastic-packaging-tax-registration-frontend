@@ -48,6 +48,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.GRSRedirections
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -66,7 +67,7 @@ class PartnerTypeController @Inject() (
   mcc: MessagesControllerComponents,
   page: partner_type
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with PartnerGRSRedirections {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
   def displayNewPartner(): Action[AnyContent] = displayPage()
 
@@ -104,14 +105,18 @@ class PartnerTypeController @Inject() (
                   case SaveAndContinue =>
                     partnershipPartnerType.answer match {
                       case Some(SOLE_TRADER) =>
-                        getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl, partnerId)
+                        getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl,
+                                                 appConfig.partnerGrsCallbackUrl(partnerId)
+                        )
                           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-                        getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl, partnerId)
+                        getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl,
+                                                appConfig.partnerGrsCallbackUrl(partnerId)
+                        )
                           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
                         getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                                                  partnerId
+                                                  appConfig.partnerGrsCallbackUrl(partnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case Some(SCOTTISH_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
                         redirectToPartnerNamePrompt(partnerId)

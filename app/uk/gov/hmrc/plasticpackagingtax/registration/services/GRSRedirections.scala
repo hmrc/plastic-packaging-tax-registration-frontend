@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
+package uk.gov.hmrc.plasticpackagingtax.registration.services
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.AnyContent
@@ -34,54 +34,55 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyReques
 
 import scala.concurrent.Future
 
-trait PartnerGRSRedirections extends I18nSupport {
+// Can be migrated from trait to a service to reduce dependency injections in callers
+trait GRSRedirections extends I18nSupport {
 
   def appConfig: AppConfig
   def soleTraderGrsConnector: SoleTraderGrsConnector
   def ukCompanyGrsConnector: UkCompanyGrsConnector
   def partnershipGrsConnector: PartnershipGrsConnector
 
-  def getUkCompanyRedirectUrl(url: String, partnerId: Option[String])(implicit
+  def getUkCompanyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
     request: JourneyRequest[AnyContent],
     hc: HeaderCarrier
   ): Future[String] =
     ukCompanyGrsConnector.createJourney(
-      IncorpEntityGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
+      IncorpEntityGrsCreateRequest(callbackUrl,
                                    Some(request2Messages(request)("service.name")),
                                    appConfig.serviceIdentifier,
                                    appConfig.signOutLink,
                                    appConfig.grsAccessibilityStatementPath,
                                    businessVerificationCheck = false
       ),
-      url
+      grsUrl
     )
 
-  def getPartnershipRedirectUrl(url: String, partnerId: Option[String])(implicit
+  def getPartnershipRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
     request: JourneyRequest[AnyContent],
     hc: HeaderCarrier
   ): Future[String] =
     partnershipGrsConnector.createJourney(
-      PartnershipGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
+      PartnershipGrsCreateRequest(callbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.signOutLink,
                                   appConfig.grsAccessibilityStatementPath
       ),
-      url
+      grsUrl
     )
 
-  def getSoleTraderRedirectUrl(url: String, partnerId: Option[String])(implicit
+  def getSoleTraderRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
     request: JourneyRequest[AnyContent],
     hc: HeaderCarrier
   ): Future[String] =
     soleTraderGrsConnector.createJourney(
-      SoleTraderGrsCreateRequest(appConfig.partnerGrsCallbackUrl(partnerId),
+      SoleTraderGrsCreateRequest(callbackUrl,
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
                                  appConfig.grsAccessibilityStatementPath
       ),
-      url
+      grsUrl
     )
 
 }
