@@ -59,7 +59,7 @@ class PartnerNamePageViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("partner.name.title"))
+      view.select("title").text() must include(messages("partnership.name.title"))
     }
 
     "display name input box" in {
