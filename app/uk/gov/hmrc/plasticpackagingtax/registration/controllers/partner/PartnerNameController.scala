@@ -68,7 +68,7 @@ class PartnerNameController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
   private val partnerTypesWhichPermitUserSuppliedNames =
-    Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
+    Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.GENERAL_PARTNERSHIP)
 
   def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
