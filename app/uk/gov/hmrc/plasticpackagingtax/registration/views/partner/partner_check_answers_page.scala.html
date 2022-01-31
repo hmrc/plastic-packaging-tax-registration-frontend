@@ -34,6 +34,15 @@
 
 @(partner: Partner)(implicit request: JourneyRequest[_], messages: Messages)
 
+@changePartnerNameLink = @{
+    if(partner.canEditName) {
+        Some(partnerRoutes.PartnerNameController.displayExistingPartner(partner.id))
+    } else {
+        None
+    }
+}
+
+
 @partnerContactRows() = @{
     Seq(
         viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.PartnerContactNameController.displayExistingPartner(partner.id))),
@@ -71,7 +80,7 @@
     SummaryList(
         rows = Seq(
             viewUtils.summaryListRow("partner.check.orgType", partner.partnerType.map(displayName(_)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
-            viewUtils.summaryListRow("partner.check.orgName", Some(partner.name), None),
+            viewUtils.summaryListRow("partner.check.orgName", Some(partner.name), changePartnerNameLink),
             viewUtils.summaryListRow("partner.check.sautr", partner.partnerPartnershipDetails.flatMap(_.partnershipBusinessDetails.map(_.sautr)), None),
         ) ++ partnerContactRows().filterNot(_.value.content == Empty)
     )

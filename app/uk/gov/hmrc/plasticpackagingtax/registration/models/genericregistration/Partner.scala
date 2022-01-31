@@ -53,6 +53,14 @@ case class Partner(
   def withContactAddress(contactAddress: Address): Partner =
     this.copy(contactDetails = this.contactDetails.map(_.withUpdatedAddress(contactAddress)))
 
+  def canEditName: Boolean = {
+    val partnerTypesWhichPermitUserSuppliedNames =
+      Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.GENERAL_PARTNERSHIP)
+    partnerType.exists { partnerType =>
+      partnerTypesWhichPermitUserSuppliedNames.contains(partnerType)
+    }
+  }
+
 }
 
 object Partner {

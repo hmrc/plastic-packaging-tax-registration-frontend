@@ -36,10 +36,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
-  PartnerTypeEnum,
-  SCOTTISH_LIMITED_PARTNERSHIP,
+  GENERAL_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
@@ -70,9 +68,6 @@ class PartnerNameController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
-  private val partnerTypesWhichPermitUserSuppliedNames =
-    Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.GENERAL_PARTNERSHIP)
-
   def displayNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
@@ -97,7 +92,7 @@ class PartnerNameController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
         partner.partnerType.map { partnerType =>
-          handleSubmission(partnerType,
+          handleSubmission(partner,
                            None,
                            partnerRoutes.PartnerTypeController.displayNewPartner(),
                            partnerRoutes.PartnerNameController.submitNewPartner(),
@@ -116,7 +111,7 @@ class PartnerNameController @Inject() (
         partner.partnerType.map { partnerType =>
           def updateAction(partnerName: PartnerName): Future[Either[ServiceError, Registration]] =
             updateExistingPartner(partnerName, partnerId)
-          handleSubmission(partnerType,
+          handleSubmission(partner,
                            Some(partner.id),
                            partnerRoutes.PartnerTypeController.displayExistingPartner(partnerId),
                            partnerRoutes.PartnerNameController.submitExistingPartner(partnerId),
@@ -134,7 +129,7 @@ class PartnerNameController @Inject() (
   private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
     request: JourneyRequest[AnyContent]
   ): Result =
-    if (partner.partnerType.exists(isPartnerTypeWhichPermitsUserSuppliedNames)) {
+    if (partner.canEditName) {
       val form = partner.partnerPartnershipDetails.flatMap(_.partnershipName) match {
         case Some(data) =>
           PartnerName.form().fill(PartnerName(data))
@@ -146,14 +141,14 @@ class PartnerNameController @Inject() (
       throw new IllegalStateException("Partner type does not permit user supplied names")
 
   private def handleSubmission(
-    partnerType: PartnerTypeEnum,
+    partner: Partner,
     existingPartnerId: Option[String],
     backCall: Call,
     submitCall: Call,
     dropoutCall: Call,
     updateAction: PartnerName => Future[Either[ServiceError, Registration]]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
-    if (isPartnerTypeWhichPermitsUserSuppliedNames(partnerType))
+    if (partner.canEditName)
       PartnerName.form()
         .bindFromRequest()
         .fold(
@@ -165,13 +160,13 @@ class PartnerNameController @Inject() (
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
                     // Select GRS journey type based on selected partner type
-                    partnerType match {
-                      case SCOTTISH_PARTNERSHIP =>
+                    partner.partnerType match {
+                      case Some(SCOTTISH_PARTNERSHIP) =>
                         getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
                                                   appConfig.partnerGrsCallbackUrl(existingPartnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                      case SCOTTISH_LIMITED_PARTNERSHIP =>
-                        getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
+                      case Some(GENERAL_PARTNERSHIP) =>
+                        getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
                                                   appConfig.partnerGrsCallbackUrl(existingPartnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case _ =>
@@ -210,9 +205,6 @@ class PartnerNameController @Inject() (
                                       partner => setPartnershipNameFor(partner, formData)
       )
     }
-
-  private def isPartnerTypeWhichPermitsUserSuppliedNames(partnerType: PartnerTypeEnum): Boolean =
-    partnerTypesWhichPermitUserSuppliedNames.contains(partnerType)
 
   private def setPartnershipNameFor(partner: Partner, formData: PartnerName) = {
     val partnershipDetailsWithPartnershipName: Option[PartnerPartnershipDetails] =
