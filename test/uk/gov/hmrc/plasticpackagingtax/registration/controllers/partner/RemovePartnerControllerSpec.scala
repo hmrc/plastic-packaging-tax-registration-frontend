@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -26,7 +25,6 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.remove_partner_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -93,14 +91,31 @@ class RemovePartnerControllerSpec extends ControllerSpec {
         )
       )
 
-      val registrationCaptor: ArgumentCaptor[Registration] =
-        ArgumentCaptor.forClass(classOf[Registration])
-      verify(mockRegistrationConnector).update(registrationCaptor.capture())(any())
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size mustBe 2
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head mustBe
+        partnershipRegistration.organisationDetails.partnershipDetails.get.partners.lift(1).get
+    }
 
-      registrationCaptor.getValue.organisationDetails.partnershipDetails.get.partners.size mustBe 2
-      registrationCaptor.getValue.organisationDetails.partnershipDetails.get.partners.head mustBe partnershipRegistration.organisationDetails.partnershipDetails.get.partners.lift(
-        1
-      ).get
+    "removing last other partner should redirect to PartnerType selection page" in {
+      authorizedUser()
+      mockRegistrationFind(partnershipRegistration)
+      mockRegistrationUpdate()
+
+      await(
+        removePartnerController.submit(soleTraderPartner.id)(
+          postJsonRequestEncoded(("value", "yes"))
+        )
+      )
+
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.size mustBe 2
+      modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head mustBe
+        partnershipRegistration.organisationDetails.partnershipDetails.get.partners.lift(1).get
+
+      mockRegistrationFind(modifiedRegistration)
+      mockRegistrationUpdate()
+      val result = removePartnerController.submit("456")(postJsonRequestEncoded(("value", "yes")))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.PartnerTypeController.displayNewPartner().url)
     }
 
     "leave registration unchanged when unknown partner id specified" in {
@@ -132,8 +147,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
     "redirect to partner list when partner removal fails" in {
       authorizedUser()
+      mockRegistrationUpdate()
       mockRegistrationFind(partnershipRegistration)
-
       mockRegistrationUpdateFailure()
 
       val result =

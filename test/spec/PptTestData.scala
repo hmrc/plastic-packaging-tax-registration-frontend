@@ -556,6 +556,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   protected def aLimitedCompanyPartner() =
     Partner(partnerType = Some(PartnerTypeEnum.UK_COMPANY),
+            id = "456",
             incorporationDetails = Some(
               IncorporationDetails(companyNumber = "123456",
                                    companyName = "Plastic Packaging Ltd",

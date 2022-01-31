@@ -66,8 +66,11 @@ class RemovePartnerController @Inject() (
                 partner.value match {
                   case Some(true) =>
                     removePartner(partnerId).map {
-                      case Right(_) =>
-                        Redirect(routes.PartnerListController.displayPage())
+                      case Right(registration) =>
+                        if (registration.otherPartners.isEmpty)
+                          Redirect(routes.PartnerTypeController.displayNewPartner())
+                        else
+                          Redirect(routes.PartnerListController.displayPage())
                       case Left(error) =>
                         logger.warn(
                           s"Failed to remove partner [$partnerName] with id [$partnerId] - ${error.getMessage}",
