@@ -241,10 +241,23 @@ class PartnerGrsController @Inject() (
     soleTraderDetails: Option[SoleTraderDetails],
     incorporationDetails: Option[IncorporationDetails],
     partnershipDetails: Option[PartnerPartnershipDetails]
-  ): Partner =
+  ): Partner = {
+    // If we previously prompted the user to supply the name of this partnership,
+    // then we persisted it in a location which is about to be overwritten by this fresh GRS callback.
+    val partnershipDetailsWithPreservedPartnershipName =
+      partnershipDetails.map(
+        _.copy(partnershipName =
+          if (partner.canEditName)
+            partner.partnerPartnershipDetails.flatMap(_.partnershipName)
+          else
+            None
+        )
+      )
+
     partner.copy(soleTraderDetails = soleTraderDetails,
                  incorporationDetails = incorporationDetails,
-                 partnerPartnershipDetails = partnershipDetails
+                 partnerPartnershipDetails = partnershipDetailsWithPreservedPartnershipName
     )
+  }
 
 }

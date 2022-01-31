@@ -73,7 +73,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     )
   }
 
-  "Partnership Partner Type Controller" should {
+  "Partner Type Controller" should {
 
     "successfully return partnership partner type selection page" when {
       "no previous partnership partner type in registration" in {
@@ -114,6 +114,11 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             (LIMITED_LIABILITY_PARTNERSHIP,
              llpPartnershipDetails.copy(partners =
                Seq(nominatedPartner(LIMITED_LIABILITY_PARTNERSHIP))
+             )
+            ),
+            (SCOTTISH_LIMITED_PARTNERSHIP,
+             scottishPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
              )
             ),
             (SOLE_TRADER,
@@ -168,13 +173,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     "redirect to capture partner name for new partner" when {
       "user selected a type which has no GRS provided name" when {
         forAll(
-          Seq(
-            (SCOTTISH_LIMITED_PARTNERSHIP,
-             scottishPartnershipDetails.copy(partners =
-               Seq(nominatedPartner(SCOTTISH_LIMITED_PARTNERSHIP))
-             )
-            ),
-            (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails)
+          Seq((GENERAL_PARTNERSHIP, generalPartnershipDetails),
+              (SCOTTISH_PARTNERSHIP, scottishPartnershipDetails)
           )
         ) { partnershipDetails =>
           s"a ${partnershipDetails._1} type was selected" in {
@@ -229,7 +229,6 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
-        mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
 
         val correctForm =
           Seq("answer" -> SCOTTISH_PARTNERSHIP.toString, saveAndContinueFormAction)

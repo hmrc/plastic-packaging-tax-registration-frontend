@@ -27,7 +27,6 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -121,7 +120,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         status(result) mustBe SEE_OTHER
 
-        val modifiedContactDetails: Option[PartnerContactDetails] =
+        val modifiedContactDetails =
           modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails)
         modifiedContactDetails.flatMap(_.firstName) mustBe Some("Jane")
         modifiedContactDetails.flatMap(_.lastName) mustBe Some("Smith")

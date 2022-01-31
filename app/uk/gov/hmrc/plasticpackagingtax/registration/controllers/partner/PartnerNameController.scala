@@ -41,10 +41,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnerPartnershipDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.GRSRedirections
@@ -91,7 +88,7 @@ class PartnerNameController @Inject() (
   def submitNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        partner.partnerType.map { partnerType =>
+        partner.partnerType.map { _ =>
           handleSubmission(partner,
                            None,
                            partnerRoutes.PartnerTypeController.displayNewPartner(),
@@ -206,11 +203,10 @@ class PartnerNameController @Inject() (
       )
     }
 
-  private def setPartnershipNameFor(partner: Partner, formData: PartnerName) = {
-    val partnershipDetailsWithPartnershipName: Option[PartnerPartnershipDetails] =
+  private def setPartnershipNameFor(partner: Partner, formData: PartnerName): Partner = {
+    val partnershipDetailsWithPartnershipName =
       partner.partnerPartnershipDetails.map(_.copy(partnershipName = Some(formData.value)))
-    val withName = partner.copy(partnerPartnershipDetails = partnershipDetailsWithPartnershipName)
-    withName
+    partner.copy(partnerPartnershipDetails = partnershipDetailsWithPartnershipName)
   }
 
 }

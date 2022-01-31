@@ -35,18 +35,18 @@ case class Partner(
   lazy val name: String = partnerType match {
     case Some(PartnerTypeEnum.SOLE_TRADER) =>
       soleTraderDetails.map(_.name).getOrElse(
-        throw new IllegalStateException("Sole Trader details absent")
+        throw new IllegalStateException("Sole Trader details name absent")
       )
     case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) | Some(PartnerTypeEnum.GENERAL_PARTNERSHIP) |
         Some(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP) | Some(
           PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP
         ) =>
       partnerPartnershipDetails.flatMap(_.name).getOrElse(
-        throw new IllegalStateException("Partnership details absent")
+        throw new IllegalStateException("Partnership details name absent")
       )
     case _ =>
       incorporationDetails.map(_.companyName).getOrElse(
-        throw new IllegalStateException("Incorporation details absent")
+        throw new IllegalStateException("Incorporation details name absent")
       )
   }
 

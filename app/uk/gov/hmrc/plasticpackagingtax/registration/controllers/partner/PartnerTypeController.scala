@@ -38,9 +38,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
+  GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   OVERSEAS_COMPANY_UK_BRANCH,
-  SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
@@ -118,7 +118,7 @@ class PartnerTypeController @Inject() (
                         getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                                                   appConfig.partnerGrsCallbackUrl(partnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                      case Some(SCOTTISH_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
+                      case Some(SCOTTISH_PARTNERSHIP) | Some(GENERAL_PARTNERSHIP) =>
                         redirectToPartnerNamePrompt(partnerId)
                       case _ =>
                         //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
