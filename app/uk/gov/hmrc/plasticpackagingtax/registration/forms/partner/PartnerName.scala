@@ -31,8 +31,8 @@ case class PartnerName(value: String)
 object PartnerName {
 
   implicit val format: OFormat[PartnerName] = Json.format[PartnerName]
-  val partnerNameEmptyError                 = "partner.name.empty.error"
-  val partnerNameFormatError                = "partner.name.format.error"
+  val partnerNameEmptyError                 = "partnership.name.empty.error"
+  val partnerNameFormatError                = "partnership.name.format.error"
 
   private val PARTNER_NAME_REGEX =
     Pattern.compile("""^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\[\]£€¥\\—–‐-]{1,160}$""")
