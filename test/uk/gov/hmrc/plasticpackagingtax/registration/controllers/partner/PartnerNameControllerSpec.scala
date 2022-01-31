@@ -111,7 +111,9 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
-        modifiedRegistration.inflightPartner.flatMap(_.userSuppliedName) mustBe Some("Test Partner")
+        modifiedRegistration.inflightPartner.flatMap(
+          _.partnerPartnershipDetails.flatMap(_.partnershipName)
+        ) mustBe Some("Test Partner")
       }
 
       "user submits an amendment to an existing partners name" in {
@@ -127,7 +129,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
         modifiedRegistration.findPartner(existingPartner.id).flatMap(
-          _.userSuppliedName
+          _.partnerPartnershipDetails.flatMap(_.partnershipName)
         ) mustBe Some("Test Partner")
       }
     }

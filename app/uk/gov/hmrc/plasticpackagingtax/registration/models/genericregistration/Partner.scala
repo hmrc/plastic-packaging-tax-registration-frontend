@@ -29,25 +29,25 @@ case class Partner(
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None,
-  contactDetails: Option[PartnerContactDetails] = None,
-  userSuppliedName: Option[String] = None
+  contactDetails: Option[PartnerContactDetails] = None
 ) {
 
-  lazy val name: String = {
-    val availableNames = Seq(userSuppliedName, grsProvidedName).flatten
-    availableNames.headOption.getOrElse(throw new IllegalStateException("Partner name absent"))
-  }
-
-  def grsProvidedName: Option[String] = {
-    val grsProvidedName = partnerType match {
-      case Some(PartnerTypeEnum.SOLE_TRADER) =>
-        soleTraderDetails.map(_.name)
-      case Some(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP) =>
-        partnerPartnershipDetails.flatMap(_.partnershipBusinessDetails.flatMap(_.companyName))
-      case _ =>
-        incorporationDetails.map(_.companyName)
-    }
-    grsProvidedName
+  lazy val name: String = partnerType match {
+    case Some(PartnerTypeEnum.SOLE_TRADER) =>
+      soleTraderDetails.map(_.name).getOrElse(
+        throw new IllegalStateException("Sole Trader details absent")
+      )
+    case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) | Some(PartnerTypeEnum.GENERAL_PARTNERSHIP) |
+        Some(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP) | Some(
+          PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP
+        ) =>
+      partnerPartnershipDetails.flatMap(_.name).getOrElse(
+        throw new IllegalStateException("Partnership details absent")
+      )
+    case _ =>
+      incorporationDetails.map(_.companyName).getOrElse(
+        throw new IllegalStateException("Incorporation details absent")
+      )
   }
 
   def withContactAddress(contactAddress: Address): Partner =

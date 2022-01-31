@@ -43,7 +43,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnerPartnershipDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.GRSRedirections
@@ -132,7 +135,7 @@ class PartnerNameController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Result =
     if (partner.partnerType.exists(isPartnerTypeWhichPermitsUserSuppliedNames)) {
-      val form = partner.userSuppliedName match {
+      val form = partner.partnerPartnershipDetails.flatMap(_.partnershipName) match {
         case Some(data) =>
           PartnerName.form().fill(PartnerName(data))
         case None =>
@@ -192,9 +195,8 @@ class PartnerNameController @Inject() (
     formData: PartnerName
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.inflightPartner.map { partner =>
-        val withName = partner.copy(userSuppliedName = Some(formData.value))
-        registration.withInflightPartner(Some(withName))
+      registration.inflightPartner.map { partner: Partner =>
+        registration.withInflightPartner(Some(setPartnershipNameFor(partner, formData)))
       }.getOrElse {
         registration
       }
@@ -204,13 +206,19 @@ class PartnerNameController @Inject() (
     req: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.withUpdatedPartner(
-        partnerId,
-        partner => partner.copy(userSuppliedName = Some(formData.value))
+      registration.withUpdatedPartner(partnerId,
+                                      partner => setPartnershipNameFor(partner, formData)
       )
     }
 
   private def isPartnerTypeWhichPermitsUserSuppliedNames(partnerType: PartnerTypeEnum): Boolean =
     partnerTypesWhichPermitUserSuppliedNames.contains(partnerType)
+
+  private def setPartnershipNameFor(partner: Partner, formData: PartnerName) = {
+    val partnershipDetailsWithPartnershipName: Option[PartnerPartnershipDetails] =
+      partner.partnerPartnershipDetails.map(_.copy(partnershipName = Some(formData.value)))
+    val withName = partner.copy(partnerPartnershipDetails = partnershipDetailsWithPartnershipName)
+    withName
+  }
 
 }
