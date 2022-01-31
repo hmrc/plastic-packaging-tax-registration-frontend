@@ -53,7 +53,7 @@
                 ListMember(
                     name = partner.name,
                     change = Some(partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partner.id)),
-                    remove = None // TODO: add a remove link
+                    remove = Some(partnerRoutes.RemovePartnerController.displayPage(partner.id))
                 )
             )
 }

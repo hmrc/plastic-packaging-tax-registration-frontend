@@ -123,7 +123,8 @@ GET        /partner-contact-address-callback/:partnerId     uk.gov.hmrc.plasticp
 GET        /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.displayPage()
 POST       /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.submit()
 
-
+GET        /partnership-remove-partner/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.RemovePartnerController.displayPage(partnerId)
+POST       /partnership-remove-partner/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.RemovePartnerController.submit(partnerId)
 
 # Others
 GET        /task-list            uk.gov.hmrc.plasticpackagingtax.registration.controllers.TaskListController.displayPage()
