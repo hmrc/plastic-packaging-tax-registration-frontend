@@ -41,6 +41,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   OVERSEAS_COMPANY_UK_BRANCH,
+  SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
@@ -116,6 +117,10 @@ class PartnerTypeController @Inject() (
                           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
                         getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                                                  appConfig.partnerGrsCallbackUrl(partnerId)
+                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
+                        getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
                                                   appConfig.partnerGrsCallbackUrl(partnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                       case Some(SCOTTISH_PARTNERSHIP) | Some(GENERAL_PARTNERSHIP) =>

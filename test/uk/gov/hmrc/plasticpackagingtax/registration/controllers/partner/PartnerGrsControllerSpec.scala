@@ -36,10 +36,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnerPartnershipDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerPartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   NOT_SUBSCRIBED,
   SUBSCRIBED

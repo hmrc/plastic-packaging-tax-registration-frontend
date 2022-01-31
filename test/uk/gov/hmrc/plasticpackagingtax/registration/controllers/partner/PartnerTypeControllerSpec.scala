@@ -158,7 +158,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                 redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
               case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
                 redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
-              case LIMITED_LIABILITY_PARTNERSHIP =>
+              case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
                 redirectLocation(result) mustBe Some("http://test/redirect/partnership")
               case _ =>
                 redirectLocation(result) mustBe Some(
