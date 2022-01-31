@@ -29,7 +29,7 @@ object RemovePartner extends CommonFormValidators {
     Form(
       mapping(
         "value" -> optional(text)
-          .verifying("group.removeMember.error.empty", _.nonEmpty)
+          .verifying("partnership.removePartner.error.empty", _.nonEmpty)
       )(RemovePartner.toForm)(RemovePartner.fromForm)
     )
 
