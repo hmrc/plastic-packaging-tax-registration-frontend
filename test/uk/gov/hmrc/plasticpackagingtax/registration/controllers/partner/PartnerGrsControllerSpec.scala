@@ -191,6 +191,36 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         )
       }
     }
+
+    "update registration" when {
+      "called back to with a supported partner type" in {
+        val registration = aRegistration(
+          withPartnershipDetails(
+            Some(
+              scottishPartnershipDetails.copy(inflightPartner =
+                Some(nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP))
+              )
+            )
+          )
+        )
+        authorizedUser()
+        mockGetUkCompanyDetails(incorporationDetails)
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+        mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
+        mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
+
+        val result =
+          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        // businessPartnerId is an example of a field we would expect to have captured from GRS
+        modifiedRegistration.organisationDetails.partnerBusinessPartnerId(None) mustBe Some(
+          "XXPPTP123456789"
+        )
+      }
+    }
   }
 
 }
