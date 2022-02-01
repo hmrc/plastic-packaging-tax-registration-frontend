@@ -77,7 +77,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
        limitedCompanyPartner,
        Seq(
          (messages("partner.check.orgType"),
-          PartnerTypeEnum.displayName(limitedCompanyPartner.partnerType.get),
+          PartnerTypeEnum.displayName(limitedCompanyPartner.partnerType),
           None: Option[Call]
          ),
          (messages("partner.check.companyNumber"),
@@ -114,7 +114,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
        soleTraderPartner,
        Seq(
          (messages("partner.check.orgType"),
-          PartnerTypeEnum.displayName(soleTraderPartner.partnerType.get),
+          PartnerTypeEnum.displayName(soleTraderPartner.partnerType),
           None: Option[Call]
          ),
          (messages("partner.check.name"),
@@ -155,7 +155,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
        partnershipPartner,
        Seq(
          (messages("partner.check.orgType"),
-          PartnerTypeEnum.displayName(partnershipPartner.partnerType.get),
+          PartnerTypeEnum.displayName(partnershipPartner.partnerType),
           None: Option[Call]
          ),
          (messages("partner.check.orgName"), partnershipPartner.name, None: Option[Call]),

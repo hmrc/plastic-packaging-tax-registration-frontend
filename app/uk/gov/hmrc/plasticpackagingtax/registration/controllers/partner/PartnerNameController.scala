@@ -91,35 +91,28 @@ class PartnerNameController @Inject() (
   def submitNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        partner.partnerType.map { _ =>
-          handleSubmission(partner,
-                           None,
-                           partnerRoutes.PartnerTypeController.displayNewPartner(),
-                           partnerRoutes.PartnerNameController.submitNewPartner(),
-                           commonRoutes.TaskListController.displayPage(),
-                           updateInflightPartner
-          )
-        }.getOrElse(
-          Future.successful(throw new IllegalStateException("Expected partner type missing"))
+        handleSubmission(partner,
+                         None,
+                         partnerRoutes.PartnerTypeController.displayNewPartner(),
+                         partnerRoutes.PartnerNameController.submitNewPartner(),
+                         commonRoutes.TaskListController.displayPage(),
+                         updateInflightPartner
         )
+
       }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner missing")))
     }
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
-        partner.partnerType.map { partnerType =>
-          def updateAction(partnerName: PartnerName): Future[Either[ServiceError, Registration]] =
-            updateExistingPartner(partnerName, partnerId)
-          handleSubmission(partner,
-                           Some(partner.id),
-                           partnerRoutes.PartnerTypeController.displayExistingPartner(partnerId),
-                           partnerRoutes.PartnerNameController.submitExistingPartner(partnerId),
-                           commonRoutes.TaskListController.displayPage(),
-                           updateAction
-          )
-        }.getOrElse(
-          Future.successful(throw new IllegalStateException("Expected partner type missing"))
+        def updateAction(partnerName: PartnerName): Future[Either[ServiceError, Registration]] =
+          updateExistingPartner(partnerName, partnerId)
+        handleSubmission(partner,
+                         Some(partner.id),
+                         partnerRoutes.PartnerTypeController.displayExistingPartner(partnerId),
+                         partnerRoutes.PartnerNameController.submitExistingPartner(partnerId),
+                         commonRoutes.TaskListController.displayPage(),
+                         updateAction
         )
       }.getOrElse {
         Future.successful(throw new IllegalStateException("Expected partner missing"))
@@ -161,11 +154,11 @@ class PartnerNameController @Inject() (
                   case SaveAndContinue =>
                     // Select GRS journey type based on selected partner type
                     partner.partnerType match {
-                      case Some(SCOTTISH_PARTNERSHIP) =>
+                      case SCOTTISH_PARTNERSHIP =>
                         getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
                                                   appConfig.partnerGrsCallbackUrl(existingPartnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                      case Some(GENERAL_PARTNERSHIP) =>
+                      case GENERAL_PARTNERSHIP =>
                         getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
                                                   appConfig.partnerGrsCallbackUrl(existingPartnerId)
                         ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())

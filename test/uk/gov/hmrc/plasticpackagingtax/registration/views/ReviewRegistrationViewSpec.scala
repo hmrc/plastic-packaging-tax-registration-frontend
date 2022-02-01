@@ -602,7 +602,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             getValueFor(nominatedPartnerSection,
                         0,
                         partnershipView
-            ) mustBe PartnerTypeEnum.displayName(nominatedPartner.partnerType.get)
+            ) mustBe PartnerTypeEnum.displayName(nominatedPartner.partnerType)
             getValueFor(nominatedPartnerSection, 1, partnershipView) mustBe nominatedPartner.name
             getValueFor(nominatedPartnerSection,
                         2,
@@ -661,7 +661,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
                 verifyRowContent(otherPartnerRows.get(0),
                                  messages("reviewRegistration.partner.orgType"),
-                                 PartnerTypeEnum.displayName(partner.partnerType.get),
+                                 PartnerTypeEnum.displayName(partner.partnerType),
                                  None
                 )
                 verifyRowContent(otherPartnerRows.get(1),

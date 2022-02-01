@@ -26,7 +26,7 @@ class PartnershipDetailsSpec extends AnyWordSpec with Matchers {
       "premises is provided" in {
         val nominatePartner =
           Partner(id = "3534345",
-                  partnerType = Some(PartnerTypeEnum.UK_COMPANY),
+                  partnerType = PartnerTypeEnum.UK_COMPANY,
                   partnerPartnershipDetails = Some(
                     PartnerPartnershipDetails(partnershipName = Some("A named partnership"),
                                               partnershipBusinessDetails =

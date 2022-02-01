@@ -124,8 +124,8 @@ case class OrganisationDetails(
   def partnerType(partnerId: Option[String]): Option[PartnerTypeEnum] =
     partnerId match {
       case Some(partnerId) =>
-        partnershipDetails.flatMap(_.findPartner(partnerId)).flatMap(_.partnerType)
-      case None => inflightPartner.flatMap(_.partnerType)
+        partnershipDetails.flatMap(_.findPartner(partnerId)).map(_.partnerType)
+      case None => inflightPartner.map(_.partnerType)
     }
 
   def partnerGrsRegistration(partnerId: Option[String]): Option[RegistrationDetails] =
@@ -144,20 +144,16 @@ case class OrganisationDetails(
 
   def partnerGrsRegistrationDetails(partner: Partner): Option[RegistrationDetails] =
     partner.partnerType match {
-      case Some(partnerType) =>
-        partnerType match {
-          case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
-          case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
-            partner.incorporationDetails.flatMap(_.registration)
-          case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
-              SCOTTISH_LIMITED_PARTNERSHIP =>
-            partner.partnerPartnershipDetails.flatMap(
-              _.partnershipBusinessDetails.flatMap(_.registration)
-            )
-          case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
-          case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
-        }
-      case _ => None
+      case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
+      case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
+        partner.incorporationDetails.flatMap(_.registration)
+      case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
+        partner.partnerPartnershipDetails.flatMap(
+          _.partnershipBusinessDetails.flatMap(_.registration)
+        )
+      case PartnerTypeEnum.CHARITABLE_INCORPORATED_ORGANISATION => None
+      case PartnerTypeEnum.OVERSEAS_COMPANY_NO_UK_BRANCH        => None
+      case _                                                    => None
     }
 
   def partnerRegistrationStatus(partnerId: Option[String]): Option[String] =

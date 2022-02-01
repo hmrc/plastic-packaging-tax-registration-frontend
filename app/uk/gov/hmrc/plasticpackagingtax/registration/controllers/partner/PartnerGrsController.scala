@@ -119,8 +119,8 @@ class PartnerGrsController @Inject() (
     request: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] = {
     val partnerType: Option[PartnerTypeEnum] = partnerId match {
-      case Some(partnerId) => request.registration.findPartner(partnerId).flatMap(_.partnerType)
-      case None            => request.registration.inflightPartner.flatMap(_.partnerType)
+      case Some(partnerId) => request.registration.findPartner(partnerId).map(_.partnerType)
+      case None            => request.registration.inflightPartner.map(_.partnerType)
     }
     partnerType match {
       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>

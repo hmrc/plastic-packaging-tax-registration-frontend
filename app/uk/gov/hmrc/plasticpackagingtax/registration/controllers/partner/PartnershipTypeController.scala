@@ -71,9 +71,7 @@ class PartnershipTypeController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
-          Future(
-            Ok(page(PartnerType.form().fill(PartnerType(Some(partnershipDetails.partnershipType)))))
-          )
+          Future(Ok(page(PartnerType.form().fill(PartnerType(partnershipDetails.partnershipType)))))
         case _ => Future(Ok(page(PartnerType.form())))
       }
     }
@@ -89,20 +87,20 @@ class PartnershipTypeController @Inject() (
                     FormAction.bindFromRequest match {
                       case SaveAndContinue =>
                         partnerType.answer match {
-                          case Some(GENERAL_PARTNERSHIP) | Some(SCOTTISH_PARTNERSHIP) =>
+                          case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
                             Future(Redirect(routes.PartnershipNameController.displayPage().url))
-                          case Some(LIMITED_PARTNERSHIP) =>
+                          case LIMITED_PARTNERSHIP =>
                             getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
                                                       appConfig.grsCallbackUrl
                             )
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
+                          case SCOTTISH_LIMITED_PARTNERSHIP =>
                             getPartnershipRedirectUrl(
                               appConfig.scottishLimitedPartnershipJourneyUrl,
                               appConfig.grsCallbackUrl
                             )
                               .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
+                          case LIMITED_LIABILITY_PARTNERSHIP =>
                             getPartnershipRedirectUrl(
                               appConfig.limitedLiabilityPartnershipJourneyUrl,
                               appConfig.grsCallbackUrl
@@ -124,30 +122,30 @@ class PartnershipTypeController @Inject() (
 
   private def updateRegistration(
     formData: PartnerType
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    formData.answer match {
-      case Some(partnershipType) =>
-        update { registration =>
-          registration.organisationDetails.partnershipDetails match {
-            case Some(_) =>
-              registration.copy(organisationDetails =
-                registration.organisationDetails.copy(partnershipDetails =
-                  Some(
-                    registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
-                      partnershipType
-                    )
-                  )
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] = {
+
+    val partnershipType = formData.answer
+    update { registration =>
+      registration.organisationDetails.partnershipDetails match {
+        case Some(_) =>
+          registration.copy(organisationDetails =
+            registration.organisationDetails.copy(partnershipDetails =
+              Some(
+                registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
+                  partnershipType
                 )
               )
-            case _ =>
-              registration.copy(organisationDetails =
-                registration.organisationDetails.copy(partnershipDetails =
-                  Some(PartnershipDetails(partnershipType = partnershipType))
-                )
-              )
-          }
-        }
-      case _ => throw new IllegalStateException("No partnership type selected")
+            )
+          )
+        case _ =>
+          registration.copy(organisationDetails =
+            registration.organisationDetails.copy(partnershipDetails =
+              Some(PartnershipDetails(partnershipType = partnershipType))
+            )
+          )
+      }
+
     }
+  }
 
 }

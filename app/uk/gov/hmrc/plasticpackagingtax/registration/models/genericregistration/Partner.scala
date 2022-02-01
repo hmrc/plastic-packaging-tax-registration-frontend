@@ -25,7 +25,7 @@ import java.util.UUID
 
 case class Partner(
   id: String = UUID.randomUUID().toString,
-  partnerType: Option[PartnerTypeEnum],
+  partnerType: PartnerTypeEnum,
   soleTraderDetails: Option[SoleTraderDetails] = None,
   incorporationDetails: Option[IncorporationDetails] = None,
   partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None,
@@ -33,14 +33,13 @@ case class Partner(
 ) {
 
   lazy val name: String = partnerType match {
-    case Some(PartnerTypeEnum.SOLE_TRADER) =>
+    case PartnerTypeEnum.SOLE_TRADER =>
       soleTraderDetails.map(_.name).getOrElse(
         throw new IllegalStateException("Sole Trader details name absent")
       )
-    case Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP) | Some(PartnerTypeEnum.GENERAL_PARTNERSHIP) |
-        Some(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP) | Some(
-          PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP
-        ) =>
+    case PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP |
+        PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
+        PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
       partnerPartnershipDetails.flatMap(_.name).getOrElse(
         throw new IllegalStateException("Partnership details name absent")
       )
@@ -56,9 +55,7 @@ case class Partner(
   def canEditName: Boolean = {
     val partnerTypesWhichPermitUserSuppliedNames =
       Set(PartnerTypeEnum.SCOTTISH_PARTNERSHIP, PartnerTypeEnum.GENERAL_PARTNERSHIP)
-    partnerType.exists { partnerType =>
-      partnerTypesWhichPermitUserSuppliedNames.contains(partnerType)
-    }
+    partnerTypesWhichPermitUserSuppliedNames.contains(partnerType)
   }
 
 }

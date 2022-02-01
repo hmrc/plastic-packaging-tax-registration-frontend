@@ -95,48 +95,53 @@ class PartnerTypeController @Inject() (
   private def submit(partnerId: Option[String] = None): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        PartnerType.form()
+        val x: Future[Result] = PartnerType.form()
           .bindFromRequest()
           .fold(
             (formWithErrors: Form[PartnerType]) =>
               Future(BadRequest(page(formWithErrors, partnerId))),
-            (partnershipPartnerType: PartnerType) =>
-              updatePartnerType(partnershipPartnerType, partnerId).flatMap { _ =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    partnershipPartnerType.answer match {
-                      case Some(SOLE_TRADER) =>
-                        getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl,
-                                                 appConfig.partnerGrsCallbackUrl(partnerId)
-                        )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                      case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-                        getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl,
-                                                appConfig.partnerGrsCallbackUrl(partnerId)
-                        )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                      case Some(LIMITED_LIABILITY_PARTNERSHIP) =>
-                        getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                                                  appConfig.partnerGrsCallbackUrl(partnerId)
-                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                      case Some(SCOTTISH_LIMITED_PARTNERSHIP) =>
-                        getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
-                                                  appConfig.partnerGrsCallbackUrl(partnerId)
-                        ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                      case Some(SCOTTISH_PARTNERSHIP) | Some(GENERAL_PARTNERSHIP) =>
-                        redirectToPartnerNamePrompt(partnerId)
-                      case _ =>
-                        //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
-                        Future(
-                          Redirect(
-                            organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+            (partnershipPartnerType: PartnerType) => {
+
+              val z: Future[Result] = updatePartnerType(partnershipPartnerType, partnerId).flatMap {
+                _ =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      partnershipPartnerType.answer match {
+                        case SOLE_TRADER =>
+                          getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl,
+                                                   appConfig.partnerGrsCallbackUrl(partnerId)
                           )
-                        )
-                    }
-                  case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
-                }
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
+                          getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl,
+                                                  appConfig.partnerGrsCallbackUrl(partnerId)
+                          )
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case LIMITED_LIABILITY_PARTNERSHIP =>
+                          getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                                                    appConfig.partnerGrsCallbackUrl(partnerId)
+                          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case SCOTTISH_LIMITED_PARTNERSHIP =>
+                          getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
+                                                    appConfig.partnerGrsCallbackUrl(partnerId)
+                          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case SCOTTISH_PARTNERSHIP | GENERAL_PARTNERSHIP =>
+                          redirectToPartnerNamePrompt(partnerId)
+                        case _ =>
+                          //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
+                          Future(
+                            Redirect(
+                              organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                            )
+                          )
+                      }
+                    case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
+                  }
               }
+              z
+            }
           )
+        x
     }
 
   private def updatePartnerType(partnerType: PartnerType, partnerId: Option[String])(implicit
