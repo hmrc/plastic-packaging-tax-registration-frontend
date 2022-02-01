@@ -77,7 +77,6 @@ object PartnershipDetails {
 }
 
 case class PartnerPartnershipDetails(
-  partnershipType: PartnerTypeEnum,
   partnershipName: Option[String] = None,
   partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
 ) {

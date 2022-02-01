@@ -28,8 +28,7 @@ class PartnershipDetailsSpec extends AnyWordSpec with Matchers {
           Partner(id = "3534345",
                   partnerType = Some(PartnerTypeEnum.UK_COMPANY),
                   partnerPartnershipDetails = Some(
-                    PartnerPartnershipDetails(partnershipType =
-                                                PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
+                    PartnerPartnershipDetails(partnershipName = Some("A named partnership"),
                                               partnershipBusinessDetails =
                                                 Some(
                                                   PartnershipBusinessDetails("123456789",
@@ -83,7 +82,9 @@ class PartnershipDetailsSpec extends AnyWordSpec with Matchers {
                                                       ),
                                                     partners = Seq(nominatePartner)
         )
-        partnershipDetails.nominatedPartner.get.partnerPartnershipDetails.get.partnershipType mustBe PartnerTypeEnum.SCOTTISH_PARTNERSHIP
+        partnershipDetails.nominatedPartner.get.partnerPartnershipDetails.get.partnershipName mustBe Some(
+          "A named partnership"
+        )
       }
     }
   }

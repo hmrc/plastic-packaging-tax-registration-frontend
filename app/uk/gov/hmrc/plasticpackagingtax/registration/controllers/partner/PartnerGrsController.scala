@@ -169,10 +169,7 @@ class PartnerGrsController @Inject() (
   ): Future[Either[ServiceError, Registration]] =
     partnershipGrsConnector.getDetails(journeyId).map { partnershipBusinessDetails =>
       val partnershipDetails = Some(
-        PartnerPartnershipDetails(
-          partnershipType = request.registration.organisationDetails.partnerType(partnerId).get,
-          partnershipBusinessDetails = Some(partnershipBusinessDetails)
-        )
+        PartnerPartnershipDetails(partnershipBusinessDetails = Some(partnershipBusinessDetails))
       )
       updateRegistration(soleTraderDetails = None,
                          incorporationDetails = None,

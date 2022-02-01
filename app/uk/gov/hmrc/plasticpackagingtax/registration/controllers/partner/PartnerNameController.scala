@@ -207,23 +207,14 @@ class PartnerNameController @Inject() (
     }
 
   private def setPartnershipNameFor(partner: Partner, formData: PartnerName): Partner = {
-    val partnershipDetailsWithPartnershipName = {
-      partner.partnerPartnershipDetails match {
-        case Some(partnerPartnershipDetails) =>
-          Some(partnerPartnershipDetails.copy(partnershipName = Some(formData.value)))
-        case None =>
-          // Partnership detail has not been created yet; we need to create a minimal one to carry the user supplied name
-          // until the GRS callback can fully populate it
-          partner.partnerType.map { partnerType =>
-            // This does not look like a good fit; the optionally on one of these can probably be relaxed or tightened.
-            PartnerPartnershipDetails(partnershipType = partnerType,
-                                      partnershipName = Some(formData.value)
-            )
-          }
-      }
+    val partnershipDetailsWithPartnershipName = partner.partnerPartnershipDetails.map(
+      _.copy(partnershipName = Some(formData.value))
+    ).getOrElse {
+      // Partnership details have not been created yet; we need to create a minimal one to carry the user supplied name
+      // until the GRS callback can fully populate it
+      PartnerPartnershipDetails(partnershipName = Some(formData.value))
     }
-
-    partner.copy(partnerPartnershipDetails = partnershipDetailsWithPartnershipName)
+    partner.copy(partnerPartnershipDetails = Some(partnershipDetailsWithPartnershipName))
   }
 
 }

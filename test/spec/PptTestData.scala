@@ -590,8 +590,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected def aPartnershipPartner() =
     Partner(partnerType = Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP),
             partnerPartnershipDetails = Some(
-              PartnerPartnershipDetails(partnershipType = PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
-                                        partnershipName = Some("The Plastic Partnership"),
+              PartnerPartnershipDetails(partnershipName = Some("The Plastic Partnership"),
                                         partnershipBusinessDetails = Some(
                                           PartnershipBusinessDetails(sautr = "234923487362",
                                                                      postcode = "LS1 1HS",

@@ -225,7 +225,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         val partnerWithUserSuppliedName =
           nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP).copy(partnerPartnershipDetails =
             Some(
-              PartnerPartnershipDetails(PartnerTypeEnum.SCOTTISH_PARTNERSHIP).copy(partnershipName =
+              PartnerPartnershipDetails().copy(partnershipName =
                 Some("User supplied partnership name")
               )
             )
