@@ -95,14 +95,13 @@ class PartnerTypeController @Inject() (
   private def submit(partnerId: Option[String] = None): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        val x: Future[Result] = PartnerType.form()
+        PartnerType.form()
           .bindFromRequest()
           .fold(
             (formWithErrors: Form[PartnerType]) =>
               Future(BadRequest(page(formWithErrors, partnerId))),
-            (partnershipPartnerType: PartnerType) => {
-
-              val z: Future[Result] = updatePartnerType(partnershipPartnerType, partnerId).flatMap {
+            (partnershipPartnerType: PartnerType) =>
+              updatePartnerType(partnershipPartnerType, partnerId).flatMap {
                 _ =>
                   FormAction.bindFromRequest match {
                     case SaveAndContinue =>
@@ -138,10 +137,7 @@ class PartnerTypeController @Inject() (
                     case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
                   }
               }
-              z
-            }
           )
-        x
     }
 
   private def updatePartnerType(partnerType: PartnerType, partnerId: Option[String])(implicit
