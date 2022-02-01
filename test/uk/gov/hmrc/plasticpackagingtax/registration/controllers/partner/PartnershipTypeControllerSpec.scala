@@ -46,6 +46,9 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   val controller = new PartnershipTypeController(authenticate = mockAuthAction,
                                                  journeyAction = mockJourneyAction,
                                                  appConfig = config,
+                                                 soleTraderGrsConnector =
+                                                   mockSoleTraderGrsConnector,
+                                                 ukCompanyGrsConnector = mockUkCompanyGrsConnector,
                                                  partnershipGrsConnector =
                                                    mockPartnershipGrsConnector,
                                                  registrationConnector = mockRegistrationConnector,

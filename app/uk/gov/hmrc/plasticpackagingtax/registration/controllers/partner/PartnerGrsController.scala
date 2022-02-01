@@ -205,11 +205,15 @@ class PartnerGrsController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.inflightPartner.map { partner =>
-        val withPartnerType = partner.copy(soleTraderDetails = soleTraderDetails,
-                                           incorporationDetails = incorporationDetails,
-                                           partnerPartnershipDetails = partnershipDetails
+        registration.withInflightPartner(
+          Some(
+            partnerWithUpdatedGRSDetails(partner,
+                                         soleTraderDetails,
+                                         incorporationDetails,
+                                         partnershipDetails
+            )
+          )
         )
-        registration.withInflightPartner(Some(withPartnerType))
       }.getOrElse {
         registration
       }
@@ -224,11 +228,36 @@ class PartnerGrsController @Inject() (
     update { registration =>
       registration.withUpdatedPartner(partnerId,
                                       partner =>
-                                        partner.copy(soleTraderDetails = soleTraderDetails,
-                                                     incorporationDetails = incorporationDetails,
-                                                     partnerPartnershipDetails = partnershipDetails
+                                        partnerWithUpdatedGRSDetails(partner,
+                                                                     soleTraderDetails,
+                                                                     incorporationDetails,
+                                                                     partnershipDetails
                                         )
       )
     }
+
+  private def partnerWithUpdatedGRSDetails(
+    partner: Partner,
+    soleTraderDetails: Option[SoleTraderDetails],
+    incorporationDetails: Option[IncorporationDetails],
+    partnershipDetails: Option[PartnerPartnershipDetails]
+  ): Partner = {
+    // If we previously prompted the user to supply the name of this partnership,
+    // then we persisted it in a location which is about to be overwritten by this fresh GRS callback.
+    val partnershipDetailsWithPreservedPartnershipName =
+      partnershipDetails.map(
+        _.copy(partnershipName =
+          if (partner.canEditName)
+            partner.partnerPartnershipDetails.flatMap(_.partnershipName)
+          else
+            None
+        )
+      )
+
+    partner.copy(soleTraderDetails = soleTraderDetails,
+                 incorporationDetails = incorporationDetails,
+                 partnerPartnershipDetails = partnershipDetailsWithPreservedPartnershipName
+    )
+  }
 
 }

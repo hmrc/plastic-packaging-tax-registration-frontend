@@ -22,8 +22,8 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   CHARITABLE_INCORPORATED_ORGANISATION,
@@ -36,6 +36,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   SOLE_TRADER,
   UK_COMPANY
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerPartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   NOT_SUBSCRIBED,
   SUBSCRIBED
@@ -60,7 +61,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
 
   "PartnerGrsController " should {
     mockGetSubscriptionStatus(SubscriptionStatusResponse(NOT_SUBSCRIBED, None))
-    "redirect from GRS to task list or error page" when {
+    "redirect from GRS to partner contact name or error page" when {
       forAll(
         Seq(
           (SCOTTISH_LIMITED_PARTNERSHIP,
@@ -107,7 +108,6 @@ class PartnerGrsControllerSpec extends ControllerSpec {
       ) { partnershipDetails =>
         s"${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
-
           authorizedUser()
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
@@ -122,6 +122,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             case _ => None
           }
 
+          // TODO This indicates that the controller code is inside out
           partnershipDetails._1 match {
             case CHARITABLE_INCORPORATED_ORGANISATION | OVERSEAS_COMPANY_NO_UK_BRANCH =>
               intercept[InternalServerException](
@@ -142,7 +143,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirect from GRS to task list or error page" when {
+    "redirect from GRS to partner contact name or error page" when {
       s"for an existing partner" in {
         val registration =
           aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
@@ -188,6 +189,76 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         )
       }
     }
+
+    "update registration" when {
+      "called back to with a supported partner type" in {
+        val registration = aRegistration(
+          withPartnershipDetails(
+            Some(
+              scottishPartnershipDetails.copy(inflightPartner =
+                Some(nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP))
+              )
+            )
+          )
+        )
+        authorizedUser()
+        mockGetUkCompanyDetails(incorporationDetails)
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+        mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
+        mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
+
+        val result =
+          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        // businessPartnerId is an example of a field we would expect to have captured from GRS
+        modifiedRegistration.organisationDetails.partnerBusinessPartnerId(None) mustBe Some(
+          "XXPPTP123456789"
+        )
+      }
+    }
+
+    "update registration" when {
+      "preserve user supplied partner name for partner types which do not have a GRS supplied name" in {
+        val partnerWithUserSuppliedName =
+          nominatedPartner(PartnerTypeEnum.SCOTTISH_PARTNERSHIP).copy(partnerPartnershipDetails =
+            Some(
+              PartnerPartnershipDetails(PartnerTypeEnum.SCOTTISH_PARTNERSHIP).copy(partnershipName =
+                Some("User supplied partnership name")
+              )
+            )
+          )
+
+        val registration = aRegistration(
+          withPartnershipDetails(
+            Some(
+              generalPartnershipDetails.copy(inflightPartner =
+                Some(partnerWithUserSuppliedName)
+              )
+            )
+          )
+        )
+        authorizedUser()
+        mockGetUkCompanyDetails(incorporationDetails)
+        mockRegistrationFind(registration)
+        mockRegistrationUpdate()
+        mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
+        mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
+
+        val result =
+          controller.grsCallbackNewPartner(registration.incorpJourneyId.get)(getRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        // businessPartnerId is an example of a field we would expect to have captured from GRS
+        modifiedRegistration.inflightPartner.flatMap(
+          _.partnerPartnershipDetails.flatMap(_.partnershipName)
+        ) mustBe Some("User supplied partnership name")
+      }
+    }
+
   }
 
 }

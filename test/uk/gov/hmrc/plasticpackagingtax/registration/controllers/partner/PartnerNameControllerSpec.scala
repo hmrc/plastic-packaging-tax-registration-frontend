@@ -23,30 +23,34 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
+class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[partner_member_name_page]
+  private val page = mock[partner_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerContactNameController(authenticate = mockAuthAction,
-                                     journeyAction = mockJourneyAction,
-                                     registrationConnector =
-                                       mockRegistrationConnector,
-                                     mcc = mcc,
-                                     page = page
+    new PartnerNameController(authenticate = mockAuthAction,
+                              journeyAction = mockJourneyAction,
+                              registrationConnector =
+                                mockRegistrationConnector,
+                              config,
+                              soleTraderGrsConnector = mockSoleTraderGrsConnector,
+                              ukCompanyGrsConnector = mockUkCompanyGrsConnector,
+                              mockPartnershipGrsConnector,
+                              mcc = mcc,
+                              page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -56,21 +60,26 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
   private def registrationWithPartnershipDetailsAndInflightPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
+      Some(aPartnershipPartner())
+    )
+
+  private def registrationWithPartnershipDetailsAndInflightIncorporatedPartner =
+    aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).withInflightPartner(
       Some(aLimitedCompanyPartner())
     )
 
   private val existingPartner =
-    aLimitedCompanyPartner()
+    aPartnershipPartner()
 
   private def registrationWithExistingPartner =
     aRegistration(
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
     )
 
-  "PartnerContactNameController" should {
+  "PartnerNameController" should {
 
     "return 200" when {
-      "user is authorised, a registration already exists with already collected nominated partner" in {
+      "user is authorised, a registration already exists with inflight partner" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
@@ -79,7 +88,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         status(result) mustBe OK
       }
 
-      "displaying an existing partner to edit their contact name" in {
+      "displaying an existing partner to edit their name" in {
         authorizedUser()
         mockRegistrationFind(registrationWithExistingPartner)
 
@@ -90,40 +99,38 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     }
 
     "update inflight registration" when {
-      "user submits a complete contact name" in {
+      "user submits a valid name" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
+        mockCreatePartnershipGrsJourneyCreation("https://test/redirect/grs/identify-partnership")
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(PartnerName("Test Partner"), saveAndContinueFormAction)
         )
 
         status(result) mustBe SEE_OTHER
-
+        redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
         modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.firstName)
-        ) mustBe Some("John")
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.lastName)
-        ) mustBe Some("Smith")
+          _.partnerPartnershipDetails.flatMap(_.partnershipName)
+        ) mustBe Some("Test Partner")
       }
 
-      "user submits an amendment to an existing partners contact name" in {
+      "user submits an amendment to an existing partners name" in {
         authorizedUser()
         mockRegistrationFind(registrationWithExistingPartner)
         mockRegistrationUpdate()
+        mockCreatePartnershipGrsJourneyCreation("https://test/redirect/grs/identify-partnership")
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequest(Json.toJson(MemberName("Jane", "Smith")))
+          postRequestEncoded(PartnerName("Test Partner"), saveAndContinueFormAction)
         )
 
         status(result) mustBe SEE_OTHER
-
-        val modifiedContactDetails =
-          modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails)
-        modifiedContactDetails.flatMap(_.firstName) mustBe Some("Jane")
-        modifiedContactDetails.flatMap(_.lastName) mustBe Some("Smith")
+        redirectLocation(result) mustBe Some("https://test/redirect/grs/identify-partnership")
+        modifiedRegistration.findPartner(existingPartner.id).flatMap(
+          _.partnerPartnershipDetails.flatMap(_.partnershipName)
+        ) mustBe Some("Test Partner")
       }
     }
 
@@ -134,7 +141,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction)
+            postRequestEncoded(PartnerName(""), saveAndContinueFormAction)
           )
 
         status(result) mustBe BAD_REQUEST
@@ -145,22 +152,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(PartnerName("abced" * 40), saveAndContinueFormAction)
         )
-
-        status(result) mustBe BAD_REQUEST
-      }
-
-      "user enters non-alphabetic characters" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
-
-        val result =
-          controller.submitNewPartner()(
-            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
-                               saveAndContinueFormAction
-            )
-          )
 
         status(result) mustBe BAD_REQUEST
       }
@@ -191,8 +184,28 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(MemberName("Jane", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(PartnerName("Amended name"), saveAndContinueFormAction)
         )
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user tries to set a name on a partner with a type which has a GRS provided name" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
+
+        val result = controller.displayNewPartner()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user tries to submit a name on a partner with a type which has a GRS provided name" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
+        mockRegistrationUpdate()
+
+        val result =
+          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
 
         intercept[RuntimeException](status(result))
       }
@@ -203,7 +216,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdateFailure()
 
         val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(MemberName("John", "Smith"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
 
         intercept[DownstreamServiceError](status(result))
       }
