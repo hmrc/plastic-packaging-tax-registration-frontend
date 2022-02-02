@@ -34,11 +34,34 @@
         errorSummary: errorSummary
 )
 
-@(member: GroupMember)(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(member: GroupMember, removeMember: Form[RemoveMember])(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
     title = Title("amend.group.remove.title"),
-    backButton = Some(BackButton(messages("site.back"), routes.GroupMembersListController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), routes.ConfirmRemoveMemberController.displayPage(member.id), messages("site.back.hiddenText")))) {
 
     @pageHeading(text = messages("amend.group.remove.title", member.businessName))
+
+    @formHelper(action = routes.ConfirmRemoveMemberController.submit(member.id), 'autoComplete -> "off") {
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("group.removeMember.title", member.businessName)),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
+            html = govukRadios(Radios(
+                hint = None,
+                name = "value",
+                items = Seq(
+                    RadioItem(content = HtmlContent(messages("general.true")), value = Some(YES), checked = removeMember.value.contains(YES)),
+                    RadioItem(content = HtmlContent(messages("general.false")), value = Some(NO), checked = removeMember.value.contains(NO))
+                ),
+                classes = "govuk-radios--inline",
+                errorMessage = removeMember("value").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            ))
+        ))
+
+        @saveButtons()
+    }
+
 }

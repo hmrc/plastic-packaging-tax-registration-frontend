@@ -20,6 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.confirm_remove_member_page
@@ -39,7 +40,7 @@ class ConfirmRemoveMemberController @Inject() (
   def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       request.registration.findMember(memberId).map { member =>
-        Ok(page(member))
+        Ok(page(member, RemoveMember.form()))
       }.getOrElse {
         throw new IllegalStateException("Could not find member")
       }
@@ -49,7 +50,7 @@ class ConfirmRemoveMemberController @Inject() (
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       // TODO: handle form submission and remove member
       request.registration.findMember(memberId).map { member =>
-        Ok(page(member))
+        Ok(page(member, RemoveMember.form()))
       }.getOrElse {
         throw new IllegalStateException("Could not find member")
       }
