@@ -50,7 +50,7 @@ object PartnerTypeEnum extends Enumeration {
 
 }
 
-case class PartnerType(answer: Option[PartnerTypeEnum])
+case class PartnerType(answer: PartnerTypeEnum)
 
 object PartnerType extends CommonFormValidators {
   lazy val emptyError = "partnership.partner.name.empty.error"
@@ -64,9 +64,9 @@ object PartnerType extends CommonFormValidators {
     )
 
   def apply(value: String): PartnerType =
-    PartnerType(PartnerTypeEnum.withNameOpt(value))
+    PartnerType(PartnerTypeEnum.withName(value))
 
   def unapply(partnerType: PartnerType): Option[String] =
-    partnerType.answer.map(_.toString)
+    Some(partnerType.answer.toString)
 
 }

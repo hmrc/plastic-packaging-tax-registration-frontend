@@ -269,7 +269,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     partnerPartnershipDetails: Option[PartnerPartnershipDetails] = None
   ): Partner =
     Partner(id = "3534345",
-            partnerType = Some(partnerTypeEnum),
+            partnerType = partnerTypeEnum,
             soleTraderDetails = soleTraderDetails,
             partnerPartnershipDetails = partnerPartnershipDetails,
             incorporationDetails = incorporationDetails
@@ -522,7 +522,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected def aSoleTraderPartner() =
-    Partner(partnerType = Some(PartnerTypeEnum.SOLE_TRADER),
+    Partner(partnerType = PartnerTypeEnum.SOLE_TRADER,
             id = "123",
             soleTraderDetails = Some(
               SoleTraderDetails(firstName = "Ben",
@@ -555,7 +555,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected def aLimitedCompanyPartner() =
-    Partner(partnerType = Some(PartnerTypeEnum.UK_COMPANY),
+    Partner(partnerType = PartnerTypeEnum.UK_COMPANY,
             id = "456",
             incorporationDetails = Some(
               IncorporationDetails(companyNumber = "123456",
@@ -588,10 +588,9 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected def aPartnershipPartner() =
-    Partner(partnerType = Some(PartnerTypeEnum.SCOTTISH_PARTNERSHIP),
+    Partner(partnerType = PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
             partnerPartnershipDetails = Some(
-              PartnerPartnershipDetails(partnershipType = PartnerTypeEnum.SCOTTISH_PARTNERSHIP,
-                                        partnershipName = Some("The Plastic Partnership"),
+              PartnerPartnershipDetails(partnershipName = Some("The Plastic Partnership"),
                                         partnershipBusinessDetails = Some(
                                           PartnershipBusinessDetails(sautr = "234923487362",
                                                                      postcode = "LS1 1HS",

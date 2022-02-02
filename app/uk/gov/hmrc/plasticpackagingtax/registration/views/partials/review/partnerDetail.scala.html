@@ -43,7 +43,7 @@
 @ukCompanySummary() = @{
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("reviewRegistration.partner.orgType", partner.partnerType.map(displayName(_)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.orgType", Some(displayName(partner.partnerType)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
             viewUtils.summaryListRow("reviewRegistration.partner.companyNumber", partner.incorporationDetails.map(_.companyNumber), None),
             viewUtils.summaryListRow("reviewRegistration.partner.orgName", partner.incorporationDetails.map(_.companyName), None),
             viewUtils.summaryListRow("reviewRegistration.partner.utr", partner.incorporationDetails.map(_.ctutr), None),
@@ -54,7 +54,7 @@
 @soleTraderSummary() = @{
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("reviewRegistration.partner.orgType", partner.partnerType.map(displayName(_)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.orgType", Some(displayName(partner.partnerType)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
             viewUtils.summaryListRow("reviewRegistration.partner.name", partner.soleTraderDetails.map(_.name), None),
             viewUtils.summaryListRow("reviewRegistration.partner.dob", partner.soleTraderDetails.flatMap(_.dateOfBirth), None),
             viewUtils.summaryListRow("reviewRegistration.partner.nino", partner.soleTraderDetails.map(_.ninoOrTrn), None),
@@ -66,7 +66,7 @@
 @partnershipSummary() = @{
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("reviewRegistration.partner.orgType", partner.partnerType.map(displayName(_)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.orgType", Some(displayName(partner.partnerType)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
             viewUtils.summaryListRow("reviewRegistration.partner.orgName", partner.partnerPartnershipDetails.flatMap(_.name), None),
             viewUtils.summaryListRow("reviewRegistration.partner.sautr", partner.partnerPartnershipDetails.flatMap(_.partnershipBusinessDetails.map(_.sautr)), None),
         ) ++ partnerContactRows().filterNot(_.value.content == Empty)
