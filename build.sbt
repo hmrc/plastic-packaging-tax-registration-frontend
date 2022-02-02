@@ -55,7 +55,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.group.ManageGroupMembersController",
     ".*.views.html.amendment.group.confirm_remove_member_page.*",
     ".*.views.html.amendment.group.list_group_members_page.*",
-    ".*.views.html.amendment.group.manage_registration_page.*",
+    ".*.views.html.amendment.group.manage_group_members_page.*",
   ).mkString(";"),
   coverageMinimum := 95.0,
   coverageFailOnMinimum := true,
