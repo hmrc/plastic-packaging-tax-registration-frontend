@@ -216,6 +216,15 @@ GET        /enrolment-reference-number-already-used     uk.gov.hmrc.plasticpacka
 GET        /amend-registration          uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.displayPage()
 GET        /amend-registration-failed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.registrationUpdateFailed()
 
+GET        /manage-group-members    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ManageGroupMembersController.displayPage()
+
+GET        /list-group-members      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.GroupMembersListController.displayPage()
+POST       /add-group-member        uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberController.submit()
+# TODO: think about how we reuse in flow to add new group member
+
+GET        /confirm-remove-member/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ConfirmRemoveMemberController.displayPage(memberId)
+POST       /confirm-remove-member/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ConfirmRemoveMemberController.submit(memberId)
+
 GET        /amend-business-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.changeBusinessAddress()
 GET        /amend-registration-business-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.alfCallback(id: Option[String])
 
