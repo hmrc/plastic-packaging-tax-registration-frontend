@@ -28,7 +28,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Organis
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.manage_group_members_page
 
 class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting {
-  override def exerciseGeneratedRenderingMethods(): Unit = ()
 
   val view: manage_group_members_page = inject[manage_group_members_page]
   val realAppConfig: AppConfig = inject[AppConfig]
@@ -70,5 +69,10 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
       changeLink.text() mustBe messages("site.link.change") + " " + messages("amend.group.manage.members")
       changeLink must haveHref(routes.GroupMembersListController.displayPage())
     }
+  }
+
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    view.f(registration)(journeyRequest, messages)
+    view.render(registration, journeyRequest, messages)
   }
 }
