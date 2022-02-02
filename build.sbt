@@ -48,6 +48,8 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "test\\..*",
     ".*(BuildInfo|Routes|Options).*",
     "logger.*\\(.*\\)",
+    ".*.controllers.amendment.group\\..*",
+    ".*.views.html.amendment.group\\..*",
   ).mkString(";"),
   coverageMinimum := 95.0,
   coverageFailOnMinimum := true,
