@@ -38,13 +38,21 @@ class ConfirmRemoveMemberController @Inject() (
 
   def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page())
+      request.registration.findMember(memberId).map { member =>
+        Ok(page(member))
+      }.getOrElse {
+        throw new IllegalStateException("Could not find member")
+      }
     }
 
   def submit(memberId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       // TODO: handle form submission and remove member
-      Ok(page())
+      request.registration.findMember(memberId).map { member =>
+        Ok(page(member))
+      }.getOrElse {
+        throw new IllegalStateException("Could not find member")
+      }
     }
 
 }
