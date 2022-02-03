@@ -18,13 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import org.mockito.Mockito.when
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
 import play.api.http.Status.OK
-import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 import play.api.test.Helpers.{contentAsString, status}
-import play.api.test.{FakeRequest, Helpers, Injecting}
+import play.api.test.Helpers
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
@@ -35,13 +34,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.m
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendmentJourneyAction with Injecting {
+class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendmentJourneyAction {
 
-  val registration: Registration = aRegistration()
   val authRequest = new AuthenticatedRequest(request, newUser())
-  val journeyReq = new JourneyRequest(authRequest, registration, appConfig)
 
   val view: manage_group_members_page = mock[manage_group_members_page]
+
   when(view.apply(any())(any(), any())).thenReturn(Html("view"))
 
   val sut = new ManageGroupMembersController(FakeAuthNoEnrolmentCheckAction, FakeAmendmentJourneyAction, Helpers.stubMessagesControllerComponents(), view)
@@ -51,8 +49,8 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendment
       val result: Future[Result] = sut.displayPage()(request)
 
       status(result) shouldBe OK
-
       contentAsString(result) shouldBe "view"
+      verify(view).apply(refEq(journeyRequest.registration))(refEq(journeyRequest), any())
     }
   }
 
@@ -67,7 +65,7 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendment
 
   object FakeAmendmentJourneyAction extends AmendmentJourneyAction {
     override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, JourneyRequest[A]]] =
-      Future.successful(Right(journeyReq.asInstanceOf[JourneyRequest[A]]))
+      Future.successful(Right(journeyRequest.asInstanceOf[JourneyRequest[A]]))
 
     override protected def executionContext: ExecutionContext = ExecutionContext.global
     override def updateLocalRegistration(updateFunction: Registration => Registration)(implicit request: AuthenticatedRequest[Any]): Future[Registration] = ???
