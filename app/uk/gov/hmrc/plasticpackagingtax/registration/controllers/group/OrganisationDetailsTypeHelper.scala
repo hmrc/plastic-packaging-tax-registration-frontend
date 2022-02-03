@@ -32,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
   OrgType,
@@ -82,7 +83,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
         if (request.registration.isGroup) {
-          updateRegistration(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
+          updateRegistration(organisationType.answer, PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
           getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                          businessVerificationCheck,
                          memberId
@@ -150,7 +151,10 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       url
     )
 
-  private def updateRegistration(partnershipType: PartnerTypeEnum)(implicit
+  private def updateRegistration(
+    organisationType: Option[OrgType],
+    partnershipType: PartnerTypeEnum
+  )(implicit
     req: JourneyRequest[AnyContent],
     headerCarrier: HeaderCarrier,
     executionContext: ExecutionContext
@@ -159,18 +163,22 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
       registration.organisationDetails.partnershipDetails match {
         case Some(_) =>
           registration.copy(organisationDetails =
-            registration.organisationDetails.copy(partnershipDetails =
-              Some(
-                registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
-                  partnershipType
-                )
-              )
+            registration.organisationDetails.copy(
+              partnershipDetails =
+                Some(
+                  registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
+                    partnershipType
+                  )
+                ),
+              organisationType = organisationType
             )
           )
         case _ =>
           registration.copy(organisationDetails =
-            registration.organisationDetails.copy(partnershipDetails =
-              Some(PartnershipDetails(partnershipType = partnershipType))
+            registration.organisationDetails.copy(
+              partnershipDetails =
+                Some(PartnershipDetails(partnershipType = partnershipType)),
+              organisationType = organisationType
             )
           )
       }

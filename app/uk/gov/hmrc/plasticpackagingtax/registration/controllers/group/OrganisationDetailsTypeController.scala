@@ -84,7 +84,12 @@ class OrganisationDetailsTypeController @Inject() (
             ),
           organisationType =>
             updateRegistration(organisationType).flatMap {
-              case Right(_)    => handleOrganisationType(organisationType, false, memberId)
+              case Right(registration) =>
+                handleOrganisationType(organisationType, false, memberId)(
+                  new JourneyRequest[AnyContent](request, registration, appConfig),
+                  ec,
+                  hc
+                )
               case Left(error) => throw error
             }
         )
