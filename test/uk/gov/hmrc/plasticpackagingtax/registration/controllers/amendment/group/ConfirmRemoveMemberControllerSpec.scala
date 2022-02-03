@@ -45,7 +45,6 @@ class ConfirmRemoveMemberControllerSpec
   private val controller =
     new ConfirmRemoveMemberController(mockAuthAllowEnrolmentAction,
                                       mockAmendmentJourneyAction,
-                                      mockRegistrationConnector,
                                       mcc,
                                       page
     )

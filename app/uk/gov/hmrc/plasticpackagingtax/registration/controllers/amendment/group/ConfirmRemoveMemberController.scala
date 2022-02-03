@@ -18,26 +18,30 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendmentController
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AmendmentJourneyAction,
+  JourneyRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.confirm_remove_member_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmRemoveMemberController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   amendmentJourneyAction: AmendmentJourneyAction,
-  override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: confirm_remove_member_page
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends AmendmentController(mcc, amendmentJourneyAction) with I18nSupport {
+
+  private val onwardCall = routes.GroupMembersListController.displayPage()
 
   def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
@@ -56,13 +60,35 @@ class ConfirmRemoveMemberController @Inject() (
             Future.successful(BadRequest(page(formWithErrors, member)))
           },
           { removeMember: RemoveMember =>
-            // TODO: handle form submission and remove member
-            Future.successful(Ok(page(RemoveMember.form(), member)))
+            removeMember.value match {
+              case Some(true) =>
+                val eventualResult = removeGroupMember(member.id)
+                eventualResult
+              case _ =>
+                Future.successful(Redirect(onwardCall))
+            }
           }
         )
       }.getOrElse {
         throw new IllegalStateException("Could not find member")
       }
     }
+
+  private def removeGroupMember(
+    groupMemberId: String
+  )(implicit req: JourneyRequest[AnyContent]): Future[Result] = {
+    // TODO Duplication with RemoveMemberController
+    def doAction(registration: Registration): Registration =
+      req.registration.copy(groupDetail =
+        registration.groupDetail.map(
+          groupDetail =>
+            groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId))
+        )
+      )
+
+    updateRegistration(doAction).map { _ =>
+      Redirect(onwardCall)
+    }
+  }
 
 }
