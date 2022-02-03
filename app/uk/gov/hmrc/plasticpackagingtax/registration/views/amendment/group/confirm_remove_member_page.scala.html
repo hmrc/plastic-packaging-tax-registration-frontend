@@ -30,11 +30,12 @@
         govukFieldset: GovukFieldset,
         govukRadios: GovukRadios,
         paragraph: paragraph,
+        saveButtons: saveButtons,
         errorSummary: errorSummary,
         continueButton: continue
 )
 
-@(member: GroupMember, removeMember: Form[RemoveMember])(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(removeMember: Form[RemoveMember], member: GroupMember)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
     title = Title("amend.group.remove.title"),
