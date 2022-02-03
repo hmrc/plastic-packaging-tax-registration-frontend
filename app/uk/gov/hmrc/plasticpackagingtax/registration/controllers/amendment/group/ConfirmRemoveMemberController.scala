@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
@@ -27,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.c
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class ConfirmRemoveMemberController @Inject() (
@@ -47,10 +49,17 @@ class ConfirmRemoveMemberController @Inject() (
     }
 
   def submit(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
-      // TODO: handle form submission and remove member
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
       request.registration.findMember(memberId).map { member =>
-        Ok(page(member, RemoveMember.form()))
+        RemoveMember.form().bindFromRequest().fold(
+          { formWithErrors: Form[RemoveMember] =>
+            Future.successful(BadRequest(page(member, formWithErrors)))
+          },
+          { removeMember: RemoveMember =>
+            // TODO: handle form submission and remove member
+            Future.successful(Ok(page(member, RemoveMember.form())))
+          }
+        )
       }.getOrElse {
         throw new IllegalStateException("Could not find member")
       }

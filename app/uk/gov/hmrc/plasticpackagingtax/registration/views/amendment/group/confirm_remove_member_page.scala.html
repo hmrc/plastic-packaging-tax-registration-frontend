@@ -30,25 +30,20 @@
         govukFieldset: GovukFieldset,
         govukRadios: GovukRadios,
         paragraph: paragraph,
-        saveButtons: saveButtons,
-        errorSummary: errorSummary
+        errorSummary: errorSummary,
+        continueButton: continue
 )
 
 @(member: GroupMember, removeMember: Form[RemoveMember])(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
     title = Title("amend.group.remove.title"),
-    backButton = Some(BackButton(messages("site.back"), routes.ConfirmRemoveMemberController.displayPage(member.id), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), routes.GroupMembersListController.displayPage(), messages("site.back.hiddenText")))) {
 
     @pageHeading(text = messages("amend.group.remove.title", member.businessName))
 
     @formHelper(action = routes.ConfirmRemoveMemberController.submit(member.id), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("group.removeMember.title", member.businessName)),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = true
-            )),
             html = govukRadios(Radios(
                 hint = None,
                 name = "value",
@@ -61,7 +56,7 @@
             ))
         ))
 
-        @saveButtons()
+        @continueButton()
     }
 
 }
