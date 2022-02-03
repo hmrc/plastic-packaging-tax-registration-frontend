@@ -16,24 +16,25 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
-import org.mockito.Mockito.{verify, when}
 import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{verify, when}
 import play.api.http.Status.OK
 import play.api.mvc.Result
-import play.api.test.Helpers.{contentAsString, status}
 import play.api.test.Helpers
+import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.manage_group_members_page
+
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
 
 import scala.concurrent.Future
 
-class ManageGroupMembersControllerSpec extends AmendGroupControllerSpec {
+class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
 
-  val view: manage_group_members_page = mock[manage_group_members_page]
+  val view: list_group_members_page = mock[list_group_members_page]
 
-  when(view.apply(any())(any(), any())).thenReturn(Html("view"))
+  when(view.apply(any(), any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new ManageGroupMembersController(FakeAuthNoEnrolmentCheckAction, FakeAmendmentJourneyAction, Helpers.stubMessagesControllerComponents(), view)
+  val sut = new GroupMembersListController(FakeAuthNoEnrolmentCheckAction, FakeAmendmentJourneyAction, Helpers.stubMessagesControllerComponents(), view)
 
   "displayPage" must {
     "return 200 with view" in {
@@ -41,7 +42,7 @@ class ManageGroupMembersControllerSpec extends AmendGroupControllerSpec {
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "view"
-      verify(view).apply(refEq(journeyRequest.registration))(refEq(journeyRequest), any())
+      verify(view).apply(any(), refEq(journeyRequest.registration))(refEq(journeyRequest), any())
     }
   }
 }

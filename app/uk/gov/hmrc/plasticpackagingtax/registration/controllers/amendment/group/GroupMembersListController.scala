@@ -18,13 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import javax.inject.{Inject, Singleton}
 
@@ -32,13 +32,30 @@ import javax.inject.{Inject, Singleton}
 class GroupMembersListController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   amendmentJourneyAction: AmendmentJourneyAction,
-  override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: list_group_members_page
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
+      val registration = request.registration
+
+      //todo do logic in controllers not views
+      //todo when view is tested.
+      val listMembers: Seq[ListMember] = Seq(
+        ListMember(
+          name = registration.organisationDetails.businessName.get,
+          subHeading = Some(request.messages.apply("amend.group.manage.representativeMember")),
+          change = None
+        )) ++
+        registration.groupDetail.toSeq.flatMap(_.members.map(member =>
+          ListMember(
+            name = member.businessName,
+            change = Some(controllers.group.routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
+            remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+          ))
+        )
+
       Ok(page(AddOrganisation.form(), request.registration))
     }
 
