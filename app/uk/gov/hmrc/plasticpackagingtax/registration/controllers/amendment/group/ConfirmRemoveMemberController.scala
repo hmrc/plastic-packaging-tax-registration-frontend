@@ -79,7 +79,7 @@ class ConfirmRemoveMemberController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Result] = {
     // TODO Duplication with RemoveMemberController
     def doAction(registration: Registration): Registration =
-      req.registration.copy(groupDetail =
+      registration.copy(groupDetail =
         registration.groupDetail.map(
           groupDetail =>
             groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId))

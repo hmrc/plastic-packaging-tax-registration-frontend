@@ -22,12 +22,13 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{await, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
@@ -79,9 +80,9 @@ class ConfirmRemoveMemberControllerSpec
     when(page.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Confirm remove member"))
   }
 
-  "Confirm Remove Member Controller" should {
-    "show page" when {
-      "signed in user has a ppt registration to amend" in { // TODO what if it isn't a group registration?
+  "Confirm Remove Member Controller" when {
+    "signed in user has a ppt registration to amend" should { // TODO what if it isn't a group registration?
+      "show page" in {
         authorisedUserWithPptSubscription()
         simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
 
@@ -90,17 +91,43 @@ class ConfirmRemoveMemberControllerSpec
 
         status(resp) mustBe OK
       }
+
+      "update registration" when {
+        "signed in user when a ppt registration requests removal of an existing group member" in {
+          authorisedUserWithPptSubscription()
+          simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
+
+          val resp =
+            controller.submit(groupMember.id)(
+              postRequestEncoded(RemoveMember.toForm(value = Some("yes")), continueFormAction, "ABC")
+            )
+
+          status(resp) mustBe SEE_OTHER
+          val updatedReg = await(inMemoryRegistrationAmendmentRepository.get("ABC")).get
+          updatedReg.groupDetail.map(_.members.size) mustBe 1
+        }
+      }
     }
   }
 
   "return an error" when {
 
-    "user is not authorised" in {
-      unAuthorizedUser()
+    "user is not authorised" when {
+      "tries to display page" in {
+        unAuthorizedUser()
 
-      val result = controller.displayPage(groupMember.id)(getRequest())
+        val result = controller.displayPage(groupMember.id)(getRequest())
 
-      intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(result))
+      }
+
+      "tries to submit" in {
+        unAuthorizedUser()
+
+        val result = controller.submit(groupMember.id)(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
     }
 
     "user tries to display an non existent group member" in {
