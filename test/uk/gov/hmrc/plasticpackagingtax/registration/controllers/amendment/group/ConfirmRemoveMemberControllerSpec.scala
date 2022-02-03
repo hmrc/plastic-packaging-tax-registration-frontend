@@ -29,6 +29,7 @@ import play.api.test.Helpers.{await, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember.fromForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
@@ -37,11 +38,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.c
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
+import java.util.UUID
+
 class ConfirmRemoveMemberControllerSpec
     extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {
 
   private val mcc  = stubMessagesControllerComponents()
   private val page = mock[confirm_remove_member_page]
+
+  private val sessionId = UUID.randomUUID().toString
 
   private val controller =
     new ConfirmRemoveMemberController(mockAuthAllowEnrolmentAction,
@@ -97,14 +102,16 @@ class ConfirmRemoveMemberControllerSpec
           authorisedUserWithPptSubscription()
           simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
 
-          val resp =
-            controller.submit(groupMember.id)(
-              postRequestEncoded(RemoveMember.toForm(value = Some("yes")), continueFormAction, "ABC")
-            )
+          // postRequestEncoded will not encode a yes form correctly
+          val correctlyEncodedForm = Seq("value" -> "yes")
+          val resp = controller.submit(groupMember.id)(
+            postRequestTuplesEncoded(correctlyEncodedForm, continueFormAction, sessionId)
+          )
 
           status(resp) mustBe SEE_OTHER
-          val updatedReg = await(inMemoryRegistrationAmendmentRepository.get("ABC")).get
-          updatedReg.groupDetail.map(_.members.size) mustBe 1
+          val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(sessionId)).get
+          updatedReg.groupDetail.get.members.size mustBe 1
+          updatedReg.groupDetail.get.members.head mustBe groupMember
         }
       }
     }
@@ -137,7 +144,6 @@ class ConfirmRemoveMemberControllerSpec
 
       intercept[RuntimeException](status(result))
     }
-
   }
 
   private def getRequest(): Request[AnyContentAsEmpty.type] =
