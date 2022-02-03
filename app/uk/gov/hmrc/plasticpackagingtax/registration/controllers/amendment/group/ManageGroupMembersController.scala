@@ -31,10 +31,9 @@ import javax.inject.{Inject, Singleton}
 class ManageGroupMembersController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   amendmentJourneyAction: AmendmentJourneyAction,
-  override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: manage_group_members_page
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>

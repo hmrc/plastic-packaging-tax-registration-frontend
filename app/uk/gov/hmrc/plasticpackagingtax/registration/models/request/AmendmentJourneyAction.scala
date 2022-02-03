@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
+import com.google.inject.ImplementedBy
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, SessionRecordNotFound}
@@ -24,18 +25,18 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction.SessionId
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionCreateOrUpdateResponse
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.RegistrationAmendmentRepository
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AmendmentJourneyAction @Inject() (
+class AmendmentJourneyActionImpl @Inject() (
   appConfig: AppConfig,
   subscriptionsConnector: SubscriptionsConnector,
   registrationAmendmentRepository: RegistrationAmendmentRepository
-)(implicit val exec: ExecutionContext)
-    extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
+)(implicit val exec: ExecutionContext) extends AmendmentJourneyAction {
 
   private val logger = Logger(this.getClass)
 
@@ -101,4 +102,14 @@ class AmendmentJourneyAction @Inject() (
 
 object AmendmentJourneyAction {
   val SessionId = "sessionId"
+}
+
+@ImplementedBy(classOf[AmendmentJourneyActionImpl])
+trait AmendmentJourneyAction extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
+  def updateLocalRegistration(
+                               updateFunction: Registration => Registration
+                             )(implicit request: AuthenticatedRequest[Any]): Future[Registration]
+  def updateRegistration(
+                          updateFunction: Registration => Registration
+                        )(implicit request: AuthenticatedRequest[Any], headerCarrier: HeaderCarrier): Future[SubscriptionCreateOrUpdateResponse]
 }
