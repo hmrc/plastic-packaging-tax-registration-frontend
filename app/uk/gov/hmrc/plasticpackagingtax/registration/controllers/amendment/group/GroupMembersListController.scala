@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,12 +38,12 @@ class GroupMembersListController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page(AddOrganisation.form(), request.registration))
+      Ok(page(AddOrganisationForm.form(), request.registration))
     }
 
   def onSubmit(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      AddOrganisation
+      AddOrganisationForm
         .form()
         .bindFromRequest()
         .fold(
@@ -51,7 +51,7 @@ class GroupMembersListController @Inject() (
             BadRequest(page(error, request.registration))
           },
           add =>
-            if (add.answer) {
+            if (add) {
               Redirect(group.routes.OrganisationDetailsTypeController.displayPageNewMember()) //todo update this route, when merged with other ticket.
               // Redirect(routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()) <- to this
             } else

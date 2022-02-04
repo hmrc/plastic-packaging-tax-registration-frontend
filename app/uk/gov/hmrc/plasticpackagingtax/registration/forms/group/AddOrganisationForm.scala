@@ -20,21 +20,19 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
 
-final case class AddOrganisation(answer: Boolean) //todo is this object even needed?
-
-object AddOrganisation extends CommonFormValidators with CommonFormValues {
+object AddOrganisationForm extends CommonFormValidators with CommonFormValues {
 
   val emptyError = "addOrganisation.empty.error"
   val field      = "addOrganisation"
 
-  def form(): Form[AddOrganisation] =
+  def form(): Form[Boolean] =
     Form(
       mapping(
         field -> optional(text)
           .verifying(emptyError, _.nonEmpty)
           .transform[String](_.get, Some.apply)
           .transform[Boolean](_ == YES, _.toString)
-      )(AddOrganisation.apply)(AddOrganisation.unapply)
+      )(identity)(Some.apply)
     )
 
 }

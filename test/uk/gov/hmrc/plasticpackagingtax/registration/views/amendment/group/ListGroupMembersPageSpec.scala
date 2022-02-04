@@ -30,14 +30,14 @@ import play.api.test.Injecting
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{listMembers, saveButtons}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm._
 
 class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting with BeforeAndAfterEach {
 
@@ -65,7 +65,7 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
     organisationDetails = OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails)),
     groupDetail = Some(groupDetails.copy(members = Seq(groupMember, groupMember)))
   )
-  val form: Form[AddOrganisation] = AddOrganisation.form()
+  val form: Form[Boolean] = AddOrganisationForm.form()
 
 
   "manage_group_members_page" must {

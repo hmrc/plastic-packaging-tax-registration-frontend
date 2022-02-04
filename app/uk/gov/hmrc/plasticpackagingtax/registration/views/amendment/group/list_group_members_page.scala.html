@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
@@ -36,7 +36,7 @@
         viewUtils: ViewUtils
 )
 
-@(form: Form[AddOrganisation], registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(form: Form[Boolean], registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @groupMemberCount = @{
     registration.groupDetail.map(_.members.size).getOrElse(0)
@@ -79,8 +79,8 @@
             idPrefix = Some(form("addOrganisation").name),
             name = form("addOrganisation").name,
             items = Seq(
-                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisation.YES), checked = form("addOrganisation").value.contains(AddOrganisation.YES)),
-                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisation.NO), checked = form("addOrganisation").value.contains(AddOrganisation.NO))
+                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisationForm.YES), checked = form("addOrganisation").value.contains(AddOrganisationForm.YES)),
+                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisationForm.NO), checked = form("addOrganisation").value.contains(AddOrganisationForm.NO))
             ),
             classes = "govuk-radios--inline",
             errorMessage = form("addOrganisation").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
