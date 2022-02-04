@@ -68,8 +68,15 @@ abstract class OrganisationDetailsTypeControllerBase(
               )
             ),
           organisationType =>
-            updateRegistration(organisationType).flatMap { _ =>
-              handleOrganisationType(organisationType, false, memberId)
+            updateRegistration(organisationType).flatMap { registration =>
+              handleOrganisationType(organisationType, false, memberId)(
+                new JourneyRequest[AnyContent](authenticatedRequest = request.authenticatedRequest,
+                                               registration = registration,
+                                               appConfig = appConfig
+                ),
+                ec,
+                hc
+              )
             }
         )
     }

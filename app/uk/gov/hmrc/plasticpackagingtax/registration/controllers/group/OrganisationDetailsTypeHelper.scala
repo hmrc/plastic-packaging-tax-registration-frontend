@@ -86,7 +86,9 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
       case (Some(OrgType.PARTNERSHIP), false) =>
         if (request.registration.isGroup)
           for {
-            _ <- updateRegistration(organisationType.answer, PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
+            _ <- updateRegistration(organisationType.answer,
+                                    PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+            )
             res <- getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                                   businessVerificationCheck,
                                   memberId
