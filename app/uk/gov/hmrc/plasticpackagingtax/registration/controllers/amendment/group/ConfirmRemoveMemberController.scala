@@ -62,8 +62,7 @@ class ConfirmRemoveMemberController @Inject() (
           { removeMember: RemoveMember =>
             removeMember.value match {
               case Some(true) =>
-                val eventualResult = removeGroupMember(member.id)
-                eventualResult
+                removeGroupMember(member.id)
               case _ =>
                 Future.successful(Redirect(onwardCall))
             }
