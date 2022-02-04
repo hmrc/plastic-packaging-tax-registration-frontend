@@ -52,7 +52,7 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
     withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners))
   )
 
-  val journeyReqForOthers = new JourneyRequest(
+  val journeyReqForOthers = JourneyRequest(
     new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser()),
     registrationWithOtherPartners,
     appConfig

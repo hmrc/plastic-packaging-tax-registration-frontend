@@ -219,8 +219,7 @@ GET        /amend-registration-failed   uk.gov.hmrc.plasticpackagingtax.registra
 GET        /manage-group-members    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ManageGroupMembersController.displayPage()
 
 GET        /list-group-members      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.GroupMembersListController.displayPage()
-POST       /add-group-member        uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberController.submit()
-# TODO: think about how we reuse in flow to add new group member
+POST       /list-group-members      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.GroupMembersListController.onSubmit()
 
 GET        /confirm-remove-member/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ConfirmRemoveMemberController.displayPage(memberId)
 POST       /confirm-remove-member/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ConfirmRemoveMemberController.submit(memberId)

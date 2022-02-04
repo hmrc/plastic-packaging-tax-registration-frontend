@@ -54,13 +54,13 @@ class AmendmentJourneyActionImpl @Inject() (
                 registrationAmendmentRepository.get(sessionId).flatMap {
                   case Some(registration) =>
                     Future.successful(
-                      Right(new JourneyRequest[A](request, registration, appConfig))
+                      Right(JourneyRequest[A](request, registration, appConfig))
                     )
                   case _ =>
                     subscriptionsConnector.getSubscription(pptReference).flatMap { registration =>
                       registrationAmendmentRepository.put(sessionId, registration).map {
                         registration =>
-                          Right(new JourneyRequest[A](request, registration, appConfig))
+                          Right(JourneyRequest[A](request, registration, appConfig))
                       }
                     }
                 }

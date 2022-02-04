@@ -46,7 +46,7 @@ class JourneyAction @Inject() (
     request.user.identityData.internalId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
         loadOrCreateRegistration(id).map {
-          case Right(reg)  => Right(new JourneyRequest[A](request, reg, appConfig))
+          case Right(reg)  => Right(JourneyRequest[A](request, reg, appConfig))
           case Left(error) => throw error
         }
       case None =>

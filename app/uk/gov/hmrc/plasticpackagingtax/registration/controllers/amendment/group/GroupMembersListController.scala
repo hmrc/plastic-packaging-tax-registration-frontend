@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import javax.inject.{Inject, Singleton}
 
@@ -38,25 +38,25 @@ class GroupMembersListController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      val registration = request.registration
-
-      //todo do logic in controllers not views
-      //todo when view is tested.
-      val listMembers: Seq[ListMember] = Seq(
-        ListMember(
-          name = registration.organisationDetails.businessName.get,
-          subHeading = Some(request.messages.apply("amend.group.manage.representativeMember")),
-          change = None
-        )) ++
-        registration.groupDetail.toSeq.flatMap(_.members.map(member =>
-          ListMember(
-            name = member.businessName,
-            change = Some(controllers.group.routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-            remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-          ))
-        )
-
       Ok(page(AddOrganisation.form(), request.registration))
     }
+
+  def onSubmit(): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      AddOrganisation
+        .form()
+        .bindFromRequest()
+        .fold(
+          error => {
+            BadRequest(page(error, request.registration))
+          },
+          add =>
+            if (add.answer) {
+              Redirect(group.routes.OrganisationDetailsTypeController.displayPageNewMember()) //todo update this route, when merged with other ticket.
+              // Redirect(routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()) <- to this
+            } else
+              Redirect(routes.ManageGroupMembersController.displayPage())
+        )
+  }
 
 }

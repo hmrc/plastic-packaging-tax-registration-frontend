@@ -41,7 +41,7 @@ class ManageGroupMembersControllerSpec extends AmendGroupControllerSpec {
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "view"
-      verify(view).apply(refEq(journeyRequest.registration))(refEq(journeyRequest), any())
+      verify(view).apply(refEq(registration))(any(), any())
     }
   }
 }

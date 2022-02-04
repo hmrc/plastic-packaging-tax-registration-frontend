@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
 
-case class AddOrganisation(answer: Option[Boolean])
+final case class AddOrganisation(answer: Boolean) //todo is this object even needed?
 
 object AddOrganisation extends CommonFormValidators with CommonFormValues {
 
@@ -32,17 +32,9 @@ object AddOrganisation extends CommonFormValidators with CommonFormValues {
       mapping(
         field -> optional(text)
           .verifying(emptyError, _.nonEmpty)
-      )(AddOrganisation.toForm)(AddOrganisation.fromForm)
+          .transform[String](_.get, Some.apply)
+          .transform[Boolean](_ == YES, _.toString)
+      )(AddOrganisation.apply)(AddOrganisation.unapply)
     )
-
-  def toForm(value: Option[String]): AddOrganisation =
-    value match {
-      case Some(YES) => AddOrganisation(Some(true))
-      case Some(NO)  => AddOrganisation(Some(false))
-      case _         => AddOrganisation(None)
-    }
-
-  def fromForm(addOrganisation: AddOrganisation): Option[Option[String]] =
-    addOrganisation.answer.map(value => if (value) Some(YES) else Some(NO))
 
 }
