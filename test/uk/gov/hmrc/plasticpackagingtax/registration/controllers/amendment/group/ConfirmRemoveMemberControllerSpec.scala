@@ -118,8 +118,7 @@ class ConfirmRemoveMemberControllerSpec
           updatedReg.groupDetail.get.members.size mustBe 1
           updatedReg.groupDetail.get.members.head mustBe groupMember
 
-          // Redirect back to manage group members so that the user can see the change
-          redirectLocation(resp) mustBe Some(routes.GroupMembersListController.displayPage())
+          redirectLocation(resp) mustBe Some(routes.GroupMembersListController.displayPage().url)
         }
       }
     }

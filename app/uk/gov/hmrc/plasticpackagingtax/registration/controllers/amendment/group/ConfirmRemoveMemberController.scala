@@ -41,7 +41,7 @@ class ConfirmRemoveMemberController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) with I18nSupport {
 
-  private val onwardCall = routes.GroupMembersListController.displayPage()
+  private val onwardCall = routes.GroupMembersListController.displayPage().url
 
   def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
