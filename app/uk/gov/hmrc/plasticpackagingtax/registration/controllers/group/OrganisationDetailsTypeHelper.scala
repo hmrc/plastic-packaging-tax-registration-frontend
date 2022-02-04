@@ -18,10 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.Results.{Redirect, SeeOther}
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
   RegisteredSocietyGrsConnector,
@@ -44,19 +43,22 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   PartnershipGrsCreateRequest,
   SoleTraderGrsCreateRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Registration,
+  RegistrationUpdater
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
+trait OrganisationDetailsTypeHelper extends I18nSupport {
 
   def soleTraderGrsConnector: SoleTraderGrsConnector
   def ukCompanyGrsConnector: UkCompanyGrsConnector
   def partnershipGrsConnector: PartnershipGrsConnector
   def registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
-  def registrationConnector: RegistrationConnector
   def appConfig: AppConfig
+  def registrationUpdater: RegistrationUpdater
 
   protected def handleOrganisationType(
     organisationType: OrganisationType,
@@ -66,7 +68,7 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
     request: JourneyRequest[AnyContent],
     executionContext: ExecutionContext,
     headerCarrier: HeaderCarrier
-  ) =
+  ): Future[Result] =
     (organisationType.answer, request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta)) match {
       case (Some(OrgType.UK_COMPANY), _) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
@@ -81,13 +83,15 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
         getRegisteredSocietyRedirectUrl(memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
-        if (request.registration.isGroup) {
-          updateRegistration(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
-          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                         businessVerificationCheck,
-                         memberId
-          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-        } else
+        if (request.registration.isGroup)
+          for {
+            _ <- updateRegistration(PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP)
+            res <- getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                                  businessVerificationCheck,
+                                  memberId
+            ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+          } yield res
+        else
           Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
       case _ =>
         Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
@@ -154,8 +158,8 @@ trait OrganisationDetailsTypeHelper extends Cacheable with I18nSupport {
     req: JourneyRequest[AnyContent],
     headerCarrier: HeaderCarrier,
     executionContext: ExecutionContext
-  ): Future[Either[ServiceError, Registration]] =
-    update { registration =>
+  ): Future[Registration] =
+    registrationUpdater.updateRegistration { registration =>
       registration.organisationDetails.partnershipDetails match {
         case Some(_) =>
           registration.copy(organisationDetails =

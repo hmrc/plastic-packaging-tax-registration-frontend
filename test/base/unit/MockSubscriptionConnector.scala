@@ -22,7 +22,11 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionCreateOrUpdateResponseSuccess
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  EisError,
+  SubscriptionCreateOrUpdateResponseFailure,
+  SubscriptionCreateOrUpdateResponseSuccess
+}
 
 import java.time.ZonedDateTime
 import scala.concurrent.Future
@@ -41,6 +45,20 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
                                                   nrsSubmissionId = Some("NRS123"),
                                                   nrsFailureReason = None,
                                                   enrolmentInitiatedSuccessfully = Some(true)
+        )
+      )
+    )
+
+  protected def simulateUpdateSubscriptionFailure(ex: Exception) =
+    when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
+      Future.failed(ex)
+    )
+
+  protected def simulateUpdateSubscriptionFailureReturnedError() =
+    when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
+      Future.successful(
+        SubscriptionCreateOrUpdateResponseFailure(failures =
+          Seq(EisError("E1", "Big Error Number 1"))
         )
       )
     )

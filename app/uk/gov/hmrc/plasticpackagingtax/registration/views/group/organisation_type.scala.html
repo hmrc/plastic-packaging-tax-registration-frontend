@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
 @this(
         formHelper: FormWithCSRF,
@@ -31,7 +30,7 @@
         errorSummary: errorSummary
 )
 
-@(form: Form[OrganisationType], isFirstMember: Boolean, memberId: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[OrganisationType], isFirstMember: Boolean, memberId: Option[String], submit: Call)(implicit request: Request[_], messages: Messages)
 
 @title = @{
     if(isFirstMember) "organisationDetails.other.group.title" else "organisationDetails.other.next.group.title"
@@ -67,7 +66,7 @@
 
     @sectionHeader(messages("organisationDetails.other.organisation.sectionHeader"))
 
-    @formHelper(action = memberId.fold(groupRoutes.OrganisationDetailsTypeController.submitNewMember())(memberId => groupRoutes.OrganisationDetailsTypeController.submitAmendMember(memberId)), 'autoComplete -> "off") {
+    @formHelper(action = memberId.fold(submit)(memberId => groupRoutes.OrganisationDetailsTypeController.submitAmendMember(memberId)), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(

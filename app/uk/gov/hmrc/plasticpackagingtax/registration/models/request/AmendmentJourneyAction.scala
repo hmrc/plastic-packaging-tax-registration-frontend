@@ -83,12 +83,12 @@ class AmendmentJourneyAction @Inject() (
 
   def updateLocalRegistration(
     updateFunction: Registration => Registration
-  )(implicit request: AuthenticatedRequest[Any]) =
+  )(implicit request: JourneyRequest[_]) =
     registrationAmendmentRepository.update(updateFunction)
 
   def updateRegistration(
-    updateFunction: Registration => Registration
-  )(implicit request: AuthenticatedRequest[Any], headerCarrier: HeaderCarrier) =
+    updateFunction: Registration => Registration = reg => reg
+  )(implicit request: JourneyRequest[_], headerCarrier: HeaderCarrier) =
     registrationAmendmentRepository.update(updateFunction).flatMap { registration =>
       subscriptionsConnector.updateSubscription(
         request.pptReference.getOrElse(throw new IllegalStateException("Missing PPT enrolment")),

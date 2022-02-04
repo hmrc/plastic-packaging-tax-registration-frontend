@@ -28,8 +28,8 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY_UK_BRANCH,
@@ -41,13 +41,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.OrganisationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  NewRegistrationUpdateService,
+  OrganisationDetails
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
   private val mcc  = stubMessagesControllerComponents()
+
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
 
   private val controller =
     new OrganisationDetailsTypeController(authenticate = mockAuthAction,
@@ -60,7 +67,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                             mockRegisteredSocietyGrsConnector,
                                           soleTraderGrsConnector = mockSoleTraderGrsConnector,
                                           appConfig = config,
-                                          partnershipGrsConnector = mockPartnershipGrsConnector
+                                          partnershipGrsConnector = mockPartnershipGrsConnector,
+                                          registrationUpdater = mockNewRegistrationUpdater
     )
 
   override protected def beforeEach(): Unit = {
