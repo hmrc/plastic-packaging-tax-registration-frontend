@@ -86,7 +86,7 @@ class ConfirmRemoveMemberControllerSpec
   }
 
   "Confirm Remove Member Controller" when {
-    "signed in user has a ppt registration to amend" should { // TODO what if it isn't a group registration?
+    "signed in user has a ppt registration to amend" should {
       "show page" in {
         authorisedUserWithPptSubscription()
         simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
