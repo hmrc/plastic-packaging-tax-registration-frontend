@@ -84,12 +84,18 @@ trait ControllerSpec
     form: AnyRef,
     formAction: (String, String) = saveAndContinueFormAction,
     sessionId: String = "123"
-  ): Request[AnyContentAsFormUrlEncoded] = {
-    val bodyForm: Seq[(String, String)] = getTuples(form) :+ formAction
+  ): Request[AnyContentAsFormUrlEncoded] =
+    postRequestTuplesEncoded(getTuples(form), formAction, sessionId)
+
+  // This function exists because getTuples used in the above may not always encode values correctly
+  protected def postRequestTuplesEncoded(
+    formTuples: Seq[(String, String)],
+    formAction: (String, String) = saveAndContinueFormAction,
+    sessionId: String = "123"
+  ): Request[AnyContentAsFormUrlEncoded] =
     postRequest(sessionId)
-      .withFormUrlEncodedBody(bodyForm: _*)
+      .withFormUrlEncodedBody(formTuples :+ formAction: _*)
       .withCSRFToken
-  }
 
   protected def getTuples(cc: AnyRef): Seq[(String, String)] =
     cc.getClass.getDeclaredFields.foldLeft(Map.empty[String, String]) { (a, f) =>
@@ -99,9 +105,16 @@ trait ControllerSpec
 
   private def getValue(field: Field, cc: AnyRef): String =
     field.get(cc) match {
-      case c: Option[_] if c.isDefined => c.get.toString
-      case c: String                   => c
-      case _                           => ""
+      case c: Option[_] if c.isDefined =>
+        c.get match {
+          case _: Boolean =>
+            throw new RuntimeException(
+              "This test helper function was probably about to bypass fromForm and return 'true' rather than 'yes' and is not able to properly encode boolean forms where the controller expects yes"
+            )
+          case v => v.toString
+        }
+      case c: String => c
+      case _         => ""
     }
 
   protected def postJsonRequestEncoded(

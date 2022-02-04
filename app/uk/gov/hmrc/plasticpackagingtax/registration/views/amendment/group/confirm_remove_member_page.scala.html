@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.ConfirmAddress.{NO, YES}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -30,14 +31,33 @@
         govukRadios: GovukRadios,
         paragraph: paragraph,
         saveButtons: saveButtons,
-        errorSummary: errorSummary
+        errorSummary: errorSummary,
+        continueButton: continue
 )
 
-@()(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(removeMember: Form[RemoveMember], member: GroupMember)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
-    title = Title("amend.group.remove.title"),
+    title = Title(headingKey = "amend.group.remove.title", member.businessName),
     backButton = Some(BackButton(messages("site.back"), routes.GroupMembersListController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @pageHeading(text = messages("amend.group.remove.title", "TODO"))
+    @pageHeading(text = messages("amend.group.remove.title", member.businessName))
+
+    @formHelper(action = routes.ConfirmRemoveMemberController.submit(member.id), 'autoComplete -> "off") {
+        @govukFieldset(Fieldset(
+            html = govukRadios(Radios(
+                hint = None,
+                name = "value",
+                items = Seq(
+                    RadioItem(content = HtmlContent(messages("general.true")), value = Some(YES), checked = removeMember.value.contains(YES)),
+                    RadioItem(content = HtmlContent(messages("general.false")), value = Some(NO), checked = removeMember.value.contains(NO))
+                ),
+                classes = "govuk-radios--inline",
+                errorMessage = removeMember("value").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            ))
+        ))
+
+        @continueButton()
+    }
+
 }

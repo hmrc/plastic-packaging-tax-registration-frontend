@@ -47,10 +47,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "features\\..*",
     "test\\..*",
     ".*(BuildInfo|Routes|Options).*",
-    "logger.*\\(.*\\)",
-    // TODO: remove these as required as we build out the post reg group amendment
-    ".*.controllers.amendment.group.ConfirmRemoveMemberController",
-    ".*.views.html.amendment.group.confirm_remove_member_page.*",
+    "logger.*\\(.*\\)"
   ).mkString(";"),
   coverageMinimum := 95.0,
   coverageFailOnMinimum := true,
