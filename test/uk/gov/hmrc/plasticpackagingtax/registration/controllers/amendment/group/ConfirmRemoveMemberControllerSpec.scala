@@ -26,7 +26,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, status}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
@@ -117,6 +117,9 @@ class ConfirmRemoveMemberControllerSpec
           val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(sessionId)).get
           updatedReg.groupDetail.get.members.size mustBe 1
           updatedReg.groupDetail.get.members.head mustBe groupMember
+
+          // Redirect back to manage group members so that the user can see the change
+          redirectLocation(resp) mustBe Some(routes.GroupMembersListController.displayPage())
         }
       }
     }
