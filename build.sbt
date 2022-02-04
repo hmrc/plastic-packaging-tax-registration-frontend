@@ -52,7 +52,6 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.group.AddGroupMemberController",
     ".*.controllers.amendment.group.GroupMembersListController",
     ".*.controllers.amendment.group.ManageGroupMembersController",
-    ".*.views.html.amendment.group.confirm_remove_member_page.*",
     ".*.views.html.amendment.group.list_group_members_page.*",
     ".*.views.html.amendment.group.manage_group_members_page.*",
   ).mkString(";"),
