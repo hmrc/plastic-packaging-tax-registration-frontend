@@ -18,8 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -28,11 +29,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember.fromForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.confirm_remove_member_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -55,7 +54,7 @@ class ConfirmRemoveMemberControllerSpec
                                       page
     )
 
-  private def authorisedUserWithPptSubscription() =
+  private def authorisedUserWithPptSubscription(): Unit =
     authorizedUser(user =
       newUser().copy(enrolments =
         Enrolments(
@@ -69,10 +68,10 @@ class ConfirmRemoveMemberControllerSpec
       )
     )
 
-  val anotherGroupMember                     = groupMember.copy(id = "another-group-member-id")
+  private val anotherGroupMember             = groupMember.copy(id = "another-group-member-id")
   private val groupMembers: Seq[GroupMember] = Seq(groupMember, anotherGroupMember)
 
-  val populatedGroupDetails =
+  private val populatedGroupDetails =
     GroupDetail(membersUnderGroupControl = Some(true), members = groupMembers)
 
   private val populatedRegistrationWithGroupMembers =
@@ -102,13 +101,19 @@ class ConfirmRemoveMemberControllerSpec
           authorisedUserWithPptSubscription()
           simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
 
-          // postRequestEncoded will not encode a yes form correctly
+          // postRequestEncoded will not encode a yes form correctly so we have to manually construct this
           val correctlyEncodedForm = Seq("value" -> "yes")
           val resp = controller.submit(groupMember.id)(
             postRequestTuplesEncoded(correctlyEncodedForm, continueFormAction, sessionId)
           )
 
           status(resp) mustBe SEE_OTHER
+
+          // Assert that the backend subscription was updated via a call through the subscription connector
+          verifySubscriptionUpdateWasSubmittedToETMP(
+            reg => reg.groupDetail.get.members.size == 1 || reg.groupDetail.get.members.head == groupMember
+          )
+          // And that the RegistrationAmendmentRepository was also updated.
           val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(sessionId)).get
           updatedReg.groupDetail.get.members.size mustBe 1
           updatedReg.groupDetail.get.members.head mustBe groupMember
@@ -144,6 +149,16 @@ class ConfirmRemoveMemberControllerSpec
 
       intercept[RuntimeException](status(result))
     }
+  }
+
+  private def verifySubscriptionUpdateWasSubmittedToETMP(
+    registrationCheck: Registration => Boolean
+  ) = {
+    val registrationCaptor: ArgumentCaptor[Registration] =
+      ArgumentCaptor.forClass(classOf[Registration])
+    verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(any())
+
+    registrationCheck(registrationCaptor.getValue) mustBe true
   }
 
   private def getRequest(): Request[AnyContentAsEmpty.type] =
