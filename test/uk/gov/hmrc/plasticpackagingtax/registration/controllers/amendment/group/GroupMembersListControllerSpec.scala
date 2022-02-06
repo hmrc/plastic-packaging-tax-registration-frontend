@@ -23,7 +23,12 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, redirectLocation, status, stubMessagesControllerComponents}
+import play.api.test.Helpers.{
+  contentAsString,
+  redirectLocation,
+  status,
+  stubMessagesControllerComponents
+}
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
@@ -36,7 +41,11 @@ class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
 
   when(view.apply(any(), any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new GroupMembersListController(FakeAuthNoEnrolmentCheckAction, FakeAmendmentJourneyAction, stubMessagesControllerComponents(), view)
+  val sut = new GroupMembersListController(FakeAuthNoEnrolmentCheckAction,
+                                           FakeAmendmentJourneyAction,
+                                           stubMessagesControllerComponents(),
+                                           view
+  )
 
   "displayPage" must {
     "return 200 with view" in {
@@ -51,19 +60,25 @@ class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
   "onSubmit" must {
     "bind the form and redirect" when {
       "submitted yes" in {
-        val request: Request[AnyContent] = FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "yes").withCSRFToken
+        val request: Request[AnyContent] =
+          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "yes").withCSRFToken
 
         val result: Future[Result] = sut.onSubmit()(request)
 
-        redirectLocation(result) shouldBe Some(group.routes.OrganisationDetailsTypeController.displayPageNewMember().url) //todo update this route, when merged with other ticket.
+        redirectLocation(result) shouldBe Some(
+          group.routes.OrganisationDetailsTypeController.displayPageNewMember().url
+        ) //todo update this route, when merged with other ticket.
       }
 
       "submitted no" in {
-        val myRequest = FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "no").withCSRFToken
+        val myRequest =
+          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "no").withCSRFToken
 
         val result: Future[Result] = sut.onSubmit()(myRequest)
 
-        redirectLocation(result) shouldBe Some(routes.ManageGroupMembersController.displayPage().url)
+        redirectLocation(result) shouldBe Some(
+          routes.ManageGroupMembersController.displayPage().url
+        )
       }
     }
 

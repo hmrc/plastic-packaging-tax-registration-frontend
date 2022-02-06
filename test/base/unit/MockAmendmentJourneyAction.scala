@@ -18,7 +18,10 @@ package base.unit
 
 import base.MockAuthAction
 import org.scalatest.wordspec.AnyWordSpecLike
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, AmendmentJourneyActionImpl}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AmendmentJourneyAction,
+  AmendmentJourneyActionImpl
+}
 
 import scala.concurrent.ExecutionContext
 
@@ -28,8 +31,8 @@ trait MockAmendmentJourneyAction
 
   protected val mockAmendmentJourneyAction: AmendmentJourneyAction =
     new AmendmentJourneyActionImpl(appConfig,
-                               mockSubscriptionConnector,
-                               inMemoryRegistrationAmendmentRepository
+                                   mockSubscriptionConnector,
+                                   inMemoryRegistrationAmendmentRepository
     )(ExecutionContext.global)
 
 }

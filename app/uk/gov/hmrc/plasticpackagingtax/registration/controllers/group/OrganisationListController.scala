@@ -75,9 +75,10 @@ class OrganisationListController @Inject() (
           ),
         addOrganisation =>
           FormAction.bindFromRequest match {
-            case SaveAndContinue if addOrganisation => Redirect(
-              pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
-            )
+            case SaveAndContinue if addOrganisation =>
+              Redirect(
+                pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
+              )
             case _ => Redirect(pptControllers.routes.TaskListController.displayPage())
           }
       )

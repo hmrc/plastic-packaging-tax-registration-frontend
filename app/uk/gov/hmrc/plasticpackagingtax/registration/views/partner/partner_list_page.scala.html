@@ -16,7 +16,6 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -79,8 +78,8 @@
             idPrefix = Some(form("addPartner").name),
             name = form("addPartner").name,
             items = Seq(
-                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisation.YES), checked = form("addPartner").value.contains(AddPartner.YES)),
-                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisation.NO), checked = form("addPartner").value.contains(AddPartner.NO))
+                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddPartner.YES), checked = form("addPartner").value.contains(AddPartner.YES)),
+                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddPartner.NO), checked = form("addPartner").value.contains(AddPartner.NO))
             ),
             classes = "govuk-radios--inline",
             errorMessage = form("addPartner").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

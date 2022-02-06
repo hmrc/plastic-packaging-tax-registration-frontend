@@ -24,18 +24,29 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.UK_COMPANY
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.manage_group_members_page
 
 class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting {
 
   val view: manage_group_members_page = inject[manage_group_members_page]
-  val realAppConfig: AppConfig = inject[AppConfig]
+  val realAppConfig: AppConfig        = inject[AppConfig]
 
   val registration: Registration = Registration("someID",
-    organisationDetails = OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails)),
-    groupDetail = Some(groupDetails.copy(members = Seq(groupMember, groupMember)))
+                                                organisationDetails = OrganisationDetails(
+                                                  organisationType = Some(UK_COMPANY),
+                                                  incorporationDetails = Some(incorporationDetails)
+                                                ),
+                                                groupDetail = Some(
+                                                  groupDetails.copy(members =
+                                                    Seq(groupMember, groupMember)
+                                                  )
+                                                )
   )
+
   val sut: HtmlFormat.Appendable = view(registration)(journeyRequest, messages)
 
   "manage_group_members_page" must {
@@ -52,7 +63,7 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
     }
 
     "display representative organisation details" in {
-      val key = sut.select("dt").get(0).text()
+      val key   = sut.select("dt").get(0).text()
       val value = sut.select("dd").get(0).text()
 
       key must include(messages("amend.group.manage.representativeMember"))
@@ -60,13 +71,15 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
     }
 
     "display the other organisations" in {
-      val key = sut.select("dt").get(1).text()
-      val value = sut.select("dd").get(1).text()
+      val key        = sut.select("dt").get(1).text()
+      val value      = sut.select("dd").get(1).text()
       val changeLink = sut.select("dd").get(2).select("a").get(0)
 
       key must include(messages("amend.group.manage.members"))
       value mustBe s"${groupMember.businessName} ${groupMember.businessName}"
-      changeLink.text() mustBe messages("site.link.change") + " " + messages("amend.group.manage.members")
+      changeLink.text() mustBe messages("site.link.change") + " " + messages(
+        "amend.group.manage.members"
+      )
       changeLink must haveHref(routes.GroupMembersListController.displayPage())
     }
   }
@@ -75,4 +88,5 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
     view.f(registration)(journeyRequest, messages)
     view.render(registration, journeyRequest, messages)
   }
+
 }

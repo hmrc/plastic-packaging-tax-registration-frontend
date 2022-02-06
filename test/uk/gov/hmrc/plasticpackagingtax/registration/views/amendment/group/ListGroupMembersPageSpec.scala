@@ -31,7 +31,10 @@ import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.UK_COMPANY
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{listMembers, saveButtons}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
@@ -39,14 +42,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes =>
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm._
 
-class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting with BeforeAndAfterEach {
+class ListGroupMembersPageSpec
+    extends UnitViewSpec with Matchers with Injecting with BeforeAndAfterEach {
 
   override def fakeApplication(): Application = {
     SharedMetricRegistries.clear() //todo turn jvm metrics off for local.
     new GuiceApplicationBuilder()
-      .overrides(
-        api.inject.bind[listMembers].toInstance(mockListComponent),
-        api.inject.bind[saveButtons].toInstance(mockSaveButton)
+      .overrides(api.inject.bind[listMembers].toInstance(mockListComponent),
+                 api.inject.bind[saveButtons].toInstance(mockSaveButton)
       )
       .build()
   }
@@ -56,17 +59,24 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
     reset(mockListComponent, mockSaveButton)
   }
 
-  val mockListComponent: listMembers = mock[listMembers]
-  val mockSaveButton: saveButtons = mock[saveButtons]
+  val mockListComponent: listMembers     = mock[listMembers]
+  val mockSaveButton: saveButtons        = mock[saveButtons]
   lazy val view: list_group_members_page = inject[list_group_members_page]
-  lazy val realAppConfig: AppConfig = inject[AppConfig]
+  lazy val realAppConfig: AppConfig      = inject[AppConfig]
 
   val registration: Registration = Registration("someID",
-    organisationDetails = OrganisationDetails(organisationType = Some(UK_COMPANY), incorporationDetails = Some(incorporationDetails)),
-    groupDetail = Some(groupDetails.copy(members = Seq(groupMember, groupMember)))
+                                                organisationDetails = OrganisationDetails(
+                                                  organisationType = Some(UK_COMPANY),
+                                                  incorporationDetails = Some(incorporationDetails)
+                                                ),
+                                                groupDetail = Some(
+                                                  groupDetails.copy(members =
+                                                    Seq(groupMember, groupMember)
+                                                  )
+                                                )
   )
-  val form: Form[Boolean] = AddOrganisationForm.form()
 
+  val form: Form[Boolean] = AddOrganisationForm.form()
 
   "manage_group_members_page" must {
     "have the back button" in {
@@ -92,18 +102,25 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
 
       val sut: HtmlFormat.Appendable = view(form, registration)(journeyRequest, messages)
 
-      val representativeMember = ListMember(
-        name = registration.organisationDetails.businessName.get,
-        subHeading = Some(messages("amend.group.manage.representativeMember")),
-        change = None
-      )
-      val listMember = ListMember(
-        groupMember.businessName,
-        change = Some(groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id)),
-        remove = Some(routes.ConfirmRemoveMemberController.displayPage(groupMember.id))
+      val representativeMember =
+        ListMember(name = registration.organisationDetails.businessName.get,
+                   subHeading = Some(messages("amend.group.manage.representativeMember")),
+                   change = None
+        )
+      val listMember = ListMember(groupMember.businessName,
+                                  change = Some(
+                                    groupRoutes.ContactDetailsCheckAnswersController.displayPage(
+                                      groupMember.id
+                                    )
+                                  ),
+                                  remove = Some(
+                                    routes.ConfirmRemoveMemberController.displayPage(groupMember.id)
+                                  )
       )
 
-      verify(mockListComponent).apply(refEq(Seq(representativeMember, listMember, listMember)))(any())
+      verify(mockListComponent).apply(refEq(Seq(representativeMember, listMember, listMember)))(
+        any()
+      )
       sut.toString() must include("listed members component")
     }
 
@@ -114,10 +131,10 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
       sut.select("form").attr("method") mustBe "POST"
       sut.select("form").attr("action") mustBe routes.GroupMembersListController.onSubmit().url
       sut.select("legend").text() mustBe messages("addOrganisation.add.heading")
-      sut.getElementById("addOrganisation").attr("value")  mustBe YES
-      sut.getElementById("addOrganisation-2").attr("value")  mustBe NO
+      sut.getElementById("addOrganisation").attr("value") mustBe YES
+      sut.getElementById("addOrganisation-2").attr("value") mustBe NO
 
-      withClue("should have the save button"){
+      withClue("should have the save button") {
         verify(mockSaveButton).apply(any(), any())(any())
         sut.toString() must include("save button")
       }
@@ -128,4 +145,5 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
     view.f(form, registration)(journeyRequest, messages)
     view.render(form, registration, journeyRequest, messages)
   }
+
 }

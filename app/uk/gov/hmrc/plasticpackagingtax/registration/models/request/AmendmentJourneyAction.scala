@@ -36,7 +36,8 @@ class AmendmentJourneyActionImpl @Inject() (
   appConfig: AppConfig,
   subscriptionsConnector: SubscriptionsConnector,
   registrationAmendmentRepository: RegistrationAmendmentRepository
-)(implicit val exec: ExecutionContext) extends AmendmentJourneyAction {
+)(implicit val exec: ExecutionContext)
+    extends AmendmentJourneyAction {
 
   private val logger = Logger(this.getClass)
 
@@ -53,9 +54,7 @@ class AmendmentJourneyActionImpl @Inject() (
               case Some(sessionId) =>
                 registrationAmendmentRepository.get(sessionId).flatMap {
                   case Some(registration) =>
-                    Future.successful(
-                      Right(JourneyRequest[A](request, registration, appConfig))
-                    )
+                    Future.successful(Right(JourneyRequest[A](request, registration, appConfig)))
                   case _ =>
                     subscriptionsConnector.getSubscription(pptReference).flatMap { registration =>
                       registrationAmendmentRepository.put(sessionId, registration).map {
@@ -106,10 +105,14 @@ object AmendmentJourneyAction {
 
 @ImplementedBy(classOf[AmendmentJourneyActionImpl])
 trait AmendmentJourneyAction extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
-  def updateLocalRegistration(
-                               updateFunction: Registration => Registration
-                             )(implicit request: AuthenticatedRequest[Any]): Future[Registration]
-  def updateRegistration(
-                          updateFunction: Registration => Registration
-                        )(implicit request: AuthenticatedRequest[Any], headerCarrier: HeaderCarrier): Future[SubscriptionCreateOrUpdateResponse]
+
+  def updateLocalRegistration(updateFunction: Registration => Registration)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[Registration]
+
+  def updateRegistration(updateFunction: Registration => Registration)(implicit
+    request: AuthenticatedRequest[Any],
+    headerCarrier: HeaderCarrier
+  ): Future[SubscriptionCreateOrUpdateResponse]
+
 }
