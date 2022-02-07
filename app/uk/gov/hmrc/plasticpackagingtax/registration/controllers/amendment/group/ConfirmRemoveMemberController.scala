@@ -21,6 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendmentController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
@@ -39,7 +40,8 @@ class ConfirmRemoveMemberController @Inject() (
   mcc: MessagesControllerComponents,
   page: confirm_remove_member_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with I18nSupport {
+    extends AmendmentController(mcc, amendmentJourneyAction) with I18nSupport
+    with RemoveMemberAction {
 
   private def onwardCall = routes.GroupMembersListController.displayPage()
 
@@ -76,15 +78,8 @@ class ConfirmRemoveMemberController @Inject() (
   private def removeGroupMember(
     groupMemberId: String
   )(implicit req: JourneyRequest[AnyContent]): Future[Result] = {
-    // TODO Duplication with RemoveMemberController
     def doAction(registration: Registration): Registration =
-      registration.copy(groupDetail =
-        registration.groupDetail.map(
-          groupDetail =>
-            groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId))
-        )
-      )
-
+      doRemoveMemberAction(registration, groupMemberId)
     updateRegistration(doAction, onwardCall)
   }
 

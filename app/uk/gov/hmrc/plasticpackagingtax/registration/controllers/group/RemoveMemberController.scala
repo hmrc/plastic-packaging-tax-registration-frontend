@@ -39,7 +39,7 @@ class RemoveMemberController @Inject() (
   mcc: MessagesControllerComponents,
   page: remove_group_member_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport with RemoveMemberAction {
 
   private val logger = Logger(this.getClass)
 
@@ -94,12 +94,7 @@ class RemoveMemberController @Inject() (
     groupMemberId: String
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      req.registration.copy(groupDetail =
-        registration.groupDetail.map(
-          groupDetail =>
-            groupDetail.copy(members = groupDetail.members.filter(_.id != groupMemberId))
-        )
-      )
+      doRemoveMemberAction(registration, groupMemberId)
     }
 
 }
