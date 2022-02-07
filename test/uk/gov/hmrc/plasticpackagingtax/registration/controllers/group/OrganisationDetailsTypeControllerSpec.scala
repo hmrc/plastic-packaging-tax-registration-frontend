@@ -46,7 +46,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   OrganisationDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  GroupDetail,
+  NewRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -54,10 +58,13 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
   private val mcc  = stubMessagesControllerComponents()
 
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
+
   private val controller =
     new OrganisationDetailsTypeController(authenticate = mockAuthAction,
                                           journeyAction = mockJourneyAction,
-                                          registrationConnector = mockRegistrationConnector,
                                           mcc = mcc,
                                           page = page,
                                           ukCompanyGrsConnector = mockUkCompanyGrsConnector,
@@ -65,12 +72,13 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                             mockRegisteredSocietyGrsConnector,
                                           soleTraderGrsConnector = mockSoleTraderGrsConnector,
                                           appConfig = config,
-                                          partnershipGrsConnector = mockPartnershipGrsConnector
+                                          partnershipGrsConnector = mockPartnershipGrsConnector,
+                                          registrationUpdater = mockNewRegistrationUpdater
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[OrganisationType]], any(), any())(any(), any())).thenReturn(
+    when(page.apply(any[Form[OrganisationType]], any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.empty
     )
   }

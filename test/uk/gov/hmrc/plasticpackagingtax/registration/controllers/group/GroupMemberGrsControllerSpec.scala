@@ -43,7 +43,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   OrganisationDetails => GroupOrgDetails
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  GroupDetail,
+  NewRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   NOT_SUBSCRIBED,
   SUBSCRIBED
@@ -55,13 +59,17 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
+
   private val controller =
     new GroupMemberGrsController(authenticate = mockAuthAction,
                                  mockJourneyAction,
-                                 mockRegistrationConnector,
                                  mockUkCompanyGrsConnector,
                                  mockSubscriptionsConnector,
                                  mockPartnershipGrsConnector,
+                                 mockNewRegistrationUpdater,
                                  mcc
     )(ec)
 

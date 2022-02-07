@@ -14,12 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, sectionHeader}
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 
 @this(
         formHelper: FormWithCSRF,
@@ -63,13 +61,12 @@
 ))
 }
 
-
 @govukLayout(
     title = Title("contactDetails.member.name.title", organisationName),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
-    @formHelper(action = groupRoutes.ContactDetailsNameController.submit(memberId), 'autoComplete -> "off") {
+    @formHelper(action = updateCall, 'autoComplete -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

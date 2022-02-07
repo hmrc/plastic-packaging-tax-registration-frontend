@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJour
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberController @Inject() (
@@ -32,12 +33,12 @@ class AddGroupMemberController @Inject() (
   amendmentJourneyAction: AmendmentJourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def submit(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      // TODO: handle form submission and route accordingly
-      Redirect(routes.GroupMembersListController.displayPage())
+      Redirect(routes.AddGroupMemberOrganisationDetailsTypeController.displayPage())
     }
 
 }

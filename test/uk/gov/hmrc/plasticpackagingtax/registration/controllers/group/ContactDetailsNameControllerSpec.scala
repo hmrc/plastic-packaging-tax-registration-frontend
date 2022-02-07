@@ -31,6 +31,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -39,12 +40,16 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
   private val page = mock[member_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
+
   private val controller =
     new ContactDetailsNameController(authenticate = mockAuthAction,
                                      journeyAction = mockJourneyAction,
-                                     registrationConnector = mockRegistrationConnector,
                                      mcc = mcc,
-                                     page = page
+                                     page = page,
+                                     registrationUpdater = mockNewRegistrationUpdater
     )
 
   override protected def beforeEach(): Unit = {
