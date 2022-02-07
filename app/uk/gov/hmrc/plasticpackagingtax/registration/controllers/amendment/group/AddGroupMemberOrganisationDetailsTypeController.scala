@@ -14,36 +14,39 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
   RegisteredSocietyGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class OrganisationDetailsTypeController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
+class AddGroupMemberOrganisationDetailsTypeController @Inject() (
+  authenticate: AuthNoEnrolmentCheckAction,
+  journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig,
   page: organisation_type,
-  registrationUpdater: NewRegistrationUpdateService,
+  registrationUpdater: AmendRegistrationUpdateService,
   val soleTraderGrsConnector: SoleTraderGrsConnector,
   val ukCompanyGrsConnector: UkCompanyGrsConnector,
   val partnershipGrsConnector: PartnershipGrsConnector,
-  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
+  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
     extends OrganisationDetailsTypeControllerBase(authenticate,
                                                   journeyAction,
@@ -53,20 +56,12 @@ class OrganisationDetailsTypeController @Inject() (
                                                   mcc
     ) {
 
-  def displayPageNewMember() =
-    doDisplayPage(None, routes.OrganisationDetailsTypeController.submitNewMember())
+  def displayPage(): Action[AnyContent] =
+    doDisplayPage(None, routes.AddGroupMemberOrganisationDetailsTypeController.submit())
 
-  def displayPageAmendMember(memberId: String) =
-    doDisplayPage(Some(memberId),
-                  routes.OrganisationDetailsTypeController.submitAmendMember(memberId)
-    )
-
-  def submitNewMember() = doSubmit(None, routes.OrganisationDetailsTypeController.submitNewMember())
-
-  def submitAmendMember(memberId: String) =
-    doSubmit(Some(memberId), routes.OrganisationDetailsTypeController.submitAmendMember(memberId))
+  def submit() = doSubmit(None, routes.AddGroupMemberOrganisationDetailsTypeController.submit())
 
   override def grsCallbackUrl(organisationId: Option[String]): String =
-    appConfig.groupMemberGrsCallbackUrl(organisationId)
+    appConfig.amendGroupMemberGrsCallbackUrl()
 
 }

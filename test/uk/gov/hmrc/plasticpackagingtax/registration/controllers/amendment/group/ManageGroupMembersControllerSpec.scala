@@ -42,11 +42,10 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendment
 
   when(view.apply(any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new ManageGroupMembersController(
-    mockAuthAllowEnrolmentAction,
-    mockAmendmentJourneyAction,
-    Helpers.stubMessagesControllerComponents(),
-    view
+  val sut = new ManageGroupMembersController(mockAuthAllowEnrolmentAction,
+                                             mockAmendmentJourneyAction,
+                                             Helpers.stubMessagesControllerComponents(),
+                                             view
   )
 
   "displayPage" must {
@@ -54,7 +53,8 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendment
       simulateGetSubscriptionSuccess(registration)
       authorisedUserWithPptSubscription()
 
-      val result: Future[Result] = sut.displayPage()(FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")))
+      val result: Future[Result] =
+        sut.displayPage()(FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")))
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "view"

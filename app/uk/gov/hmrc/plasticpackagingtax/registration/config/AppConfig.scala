@@ -121,6 +121,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       case None => config.get[String]("urls.groupMemberGrsCallback")
     }
 
+  def amendGroupMemberGrsCallbackUrl(): String =
+    config.get[String]("urls.amendGroupMemberGrsCallback")
+
   def partnerGrsCallbackUrl(partnerId: Option[String]): String =
     partnerId match {
       case Some(partnerId) =>

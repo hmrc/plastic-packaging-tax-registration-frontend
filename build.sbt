@@ -47,7 +47,9 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "features\\..*",
     "test\\..*",
     ".*(BuildInfo|Routes|Options).*",
-    "logger.*\\(.*\\)"
+    "logger.*\\(.*\\)",
+    // These are being excluded since all logic has been pushed to base class and they are tested by their non-post-registration associates
+    ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
   ).mkString(";"),
   coverageMinimum := 95.0,
   coverageFailOnMinimum := true,

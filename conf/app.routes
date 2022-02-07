@@ -180,6 +180,9 @@ POST       /group-member-check-answers              uk.gov.hmrc.plasticpackaging
 GET        /group-member-contact-address/:memberId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.displayPage(memberId)
 GET        /group-member-contact-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.alfCallback(id: Option[String], memberId: String)
 
+GET        /group-member-check-answers/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.displayPage(memberId)
+POST       /group-member-check-answers              uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.submit()
+
 GET        /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.displayPage()
 POST       /group-organisation-list     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationListController.submit()
 
@@ -220,6 +223,26 @@ GET        /manage-group-members    uk.gov.hmrc.plasticpackagingtax.registration
 
 GET        /list-group-members      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.GroupMembersListController.displayPage()
 POST       /list-group-members      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.GroupMembersListController.onSubmit()
+
+GET        /amend-group-member-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberOrganisationDetailsTypeController.displayPage()
+POST       /amend-group-member-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberOrganisationDetailsTypeController.submit()
+
+GET        /amend-group-member-grs-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberGrsController.grsCallbackNewMember(journeyId)
+
+GET        /amend-group-member-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsNameController.displayPage(memberId)
+POST       /amend-group-member-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsNameController.submit(memberId)
+
+GET        /amend-group-member-contact-email/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsEmailAddressController.displayPage(memberId)
+POST       /amend-group-member-contact-email/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsEmailAddressController.submit(memberId)
+
+GET        /amend-group-member-contact-telephone/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsTelephoneNumberController.displayPage(memberId)
+POST       /amend-group-member-contact-telephone/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsTelephoneNumberController.submit(memberId)
+
+GET        /amend-group-member-contact-address/:memberId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsConfirmAddressController.displayPage(memberId)
+GET        /amend-group-member-contact-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsConfirmAddressController.alfCallback(id: Option[String], memberId: String)
+
+GET        /amend-group-member-check-answers/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId)
+POST       /amend-group-member-check-answers              uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsCheckAnswersController.submit()
 
 GET        /confirm-remove-member/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ConfirmRemoveMemberController.displayPage(memberId)
 POST       /confirm-remove-member/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ConfirmRemoveMemberController.submit(memberId)

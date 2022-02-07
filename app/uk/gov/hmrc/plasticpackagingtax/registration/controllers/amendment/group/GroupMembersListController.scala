@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group.ListGroupMembersViewModel
@@ -50,9 +50,8 @@ class GroupMembersListController @Inject() (
               add =>
                 if (add)
                   Redirect(
-                    group.routes.OrganisationDetailsTypeController.displayPageNewMember()
-                  ) //todo update this route, when merged with other ticket.
-                // Redirect(routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()) <- to this
+                    group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()
+                  )
                 else
                   Redirect(routes.ManageGroupMembersController.displayPage())
         )

@@ -159,12 +159,12 @@ abstract class AuthActionBase @Inject() (
 
 }
 
-@ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction
+trait AuthActioning
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]
 
+@ImplementedBy(classOf[AuthActionImpl])
+trait AuthAction extends AuthActioning
+
 @ImplementedBy(classOf[AuthNoEnrolmentCheckActionImpl])
-trait AuthNoEnrolmentCheckAction
-    extends ActionBuilder[AuthenticatedRequest, AnyContent]
-    with ActionFunction[Request, AuthenticatedRequest]
+trait AuthNoEnrolmentCheckAction extends AuthActioning

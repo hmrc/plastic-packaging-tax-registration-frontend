@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ContactDetailsConfirmAddressController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
+class AddGroupMemberContactDetailsConfirmAddressController @Inject() (
+  authenticate: AuthNoEnrolmentCheckAction,
+  journeyAction: AmendmentJourneyAction,
   addressLookupFrontendConnector: AddressLookupFrontendConnector,
   appConfig: AppConfig,
   mcc: MessagesControllerComponents,
-  registrationUpdater: NewRegistrationUpdateService
+  registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsConfirmAddressControllerBase(authenticate,
                                                        journeyAction,
@@ -49,9 +50,9 @@ class ContactDetailsConfirmAddressController @Inject() (
     doAlfCallback(id, memberId)
 
   override protected def getAlfCallback(memberId: String): Call =
-    routes.ContactDetailsConfirmAddressController.alfCallback(None, memberId)
+    routes.AddGroupMemberContactDetailsConfirmAddressController.alfCallback(None, memberId)
 
   override protected def getSuccessfulRedirect(memberId: String): Call =
-    routes.ContactDetailsCheckAnswersController.displayPage(memberId)
+    routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId)
 
 }

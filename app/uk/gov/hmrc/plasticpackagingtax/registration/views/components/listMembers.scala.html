@@ -35,7 +35,7 @@
             @member.change.map { call =>
                 <a class="govuk-link govuk-link--no-visited-state" href="@call.url" data-loop-position="0">
                     <span aria-hidden="true">@messages("site.link.change")</span>
-                    <span class="govuk-visually-hidden">@member.name</span>
+                    <span class="govuk-visually-hidden">@messages("site.link.change.hidden", member.name)</span>
                 </a>
             }
             </span>

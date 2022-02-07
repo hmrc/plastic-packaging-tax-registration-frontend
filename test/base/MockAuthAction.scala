@@ -30,7 +30,11 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AllowedUsers, AuthActionImpl, AuthNoEnrolmentCheckActionImpl}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AllowedUsers,
+  AuthActionImpl,
+  AuthNoEnrolmentCheckActionImpl
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 
@@ -160,7 +164,9 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 }
 
 object MockAuthAction {
+
   implicit class RichRet[+A](val a: A) extends AnyVal {
     def ~~[B](b: B): A ~ B = new ~(a, b)
   }
+
 }

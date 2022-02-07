@@ -73,6 +73,7 @@ class AmendOrganisationDetailsControllerSpec
     authorisedUserWithPptSubscription()
     inMemoryRegistrationAmendmentRepository.reset()
     simulateGetSubscriptionSuccess(aRegistration())
+    simulateUpdateSubscriptionSuccess()
     when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
       Future(AddressLookupOnRamp("/on-ramp"))
     )

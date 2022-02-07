@@ -438,53 +438,54 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
       Some(RegistrationDate(DateData("1", "2", "2021")))
   )
 
-  protected val groupMember = GroupMember(customerIdentification1 = testCompanyNumber,
-                                          customerIdentification2 = Some("id2"),
-                                          organisationDetails =
-                                            Some(
-                                              GroupOrgDetails(OrgType.UK_COMPANY.toString,
-                                                              "Company Name",
-                                                              Some(safeNumber)
+  protected val groupMember = aGroupMember()
+
+  protected def aGroupMember() =
+    GroupMember(customerIdentification1 = testCompanyNumber,
+                customerIdentification2 = Some("id2"),
+                organisationDetails =
+                  Some(
+                    GroupOrgDetails(OrgType.UK_COMPANY.toString, "Company Name", Some(safeNumber))
+                  ),
+                contactDetails = Some(
+                  GroupMemberContactDetails(phoneNumber = Some("077123"),
+                                            firstName = "Test",
+                                            lastName = "User",
+                                            email = Some("test@test.com"),
+                                            address = Some(
+                                              Address(
+                                                addressLine1 =
+                                                  "ContactAddressLine1",
+                                                addressLine2 = Some("ContactAddressLine2"),
+                                                addressLine3 = Some("ContactAddressLine3"),
+                                                townOrCity =
+                                                  "ContactAddressLine4",
+                                                postCode = Some("EF34GH"),
+                                                countryCode = "GB"
                                               )
-                                            ),
-                                          contactDetails = Some(
-                                            GroupMemberContactDetails(phoneNumber = Some("077123"),
-                                                                      firstName = "Test",
-                                                                      lastName = "User",
-                                                                      email = Some("test@test.com"),
-                                                                      address = Some(
-                                                                        Address(
-                                                                          addressLine1 =
-                                                                            "ContactAddressLine1",
-                                                                          addressLine2 = Some(
-                                                                            "ContactAddressLine2"
-                                                                          ),
-                                                                          addressLine3 = Some(
-                                                                            "ContactAddressLine3"
-                                                                          ),
-                                                                          townOrCity =
-                                                                            "ContactAddressLine4",
-                                                                          postCode = Some("EF34GH"),
-                                                                          countryCode = "GB"
-                                                                        )
-                                                                      )
                                             )
-                                          ),
-                                          addressDetails = Address(addressLine1 =
-                                                                     "BusinessAddressLine1",
-                                                                   addressLine2 =
-                                                                     Some("BusinessAddressLine2"),
-                                                                   addressLine3 =
-                                                                     Some("BusinessAddressLine3"),
-                                                                   townOrCity =
-                                                                     "BusinessAddressLine4",
-                                                                   postCode = Some("AB12CD"),
-                                                                   countryCode = "GB"
-                                          )
-  )
+                  )
+                ),
+                addressDetails = Address(addressLine1 =
+                                           "BusinessAddressLine1",
+                                         addressLine2 =
+                                           Some("BusinessAddressLine2"),
+                                         addressLine3 =
+                                           Some("BusinessAddressLine3"),
+                                         townOrCity =
+                                           "BusinessAddressLine4",
+                                         postCode = Some("AB12CD"),
+                                         countryCode = "GB"
+                )
+    )
 
   protected val groupDetails =
     GroupDetail(membersUnderGroupControl = Some(true), members = Seq.empty)
+
+  protected val groupDetailsWithMembers =
+    GroupDetail(membersUnderGroupControl = Some(true),
+                members = Seq(aGroupMember(), aGroupMember())
+    )
 
   protected val addressDetails = Address(addressLine1 = "Street1",
                                          addressLine2 = Some("Street2"),

@@ -20,7 +20,8 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY_NO_UK_BRANCH,
@@ -42,10 +43,11 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     form: Form[OrganisationType] = OrganisationType.form(),
     isFirstMember: Boolean = true
   ): Document =
-    page(form = form, isFirstMember = isFirstMember, memberId = Some(groupMember.id))(
-      journeyRequest,
-      messages
-    )
+    page(form = form,
+         isFirstMember = isFirstMember,
+         memberId = Some(groupMember.id),
+         routes.OrganisationDetailsTypeController.submitNewMember()
+    )(journeyRequest, messages)
 
   "Confirm Organisation Type View" should {
 
@@ -63,7 +65,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
+      view.getElementById("back-link") must haveHref(commonRoutes.TaskListController.displayPage())
     }
 
     "display title" in {
@@ -109,7 +111,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
+      view.getElementById("back-link") must haveHref(commonRoutes.TaskListController.displayPage())
     }
 
     "display title" in {
@@ -176,10 +178,15 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(OrganisationType.form(), true, Some(groupMember.id))(request, messages)
+    page.f(OrganisationType.form(),
+           true,
+           Some(groupMember.id),
+           routes.OrganisationDetailsTypeController.submitNewMember()
+    )(request, messages)
     page.render(OrganisationType.form(),
                 isFirstMember = true,
                 Some(groupMember.id),
+                routes.OrganisationDetailsTypeController.submitNewMember(),
                 request,
                 messages
     )

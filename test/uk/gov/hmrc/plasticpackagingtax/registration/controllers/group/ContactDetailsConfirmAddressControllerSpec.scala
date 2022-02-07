@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.Add
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
@@ -34,14 +35,18 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
   private val mcc                                = stubMessagesControllerComponents()
   private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
 
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
+
   private val controller =
     new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
                                                journeyAction = mockJourneyAction,
-                                               registrationConnector = mockRegistrationConnector,
                                                addressLookupFrontendConnector =
                                                  mockAddressLookupFrontendConnector,
                                                appConfig,
-                                               mcc = mcc
+                                               mcc = mcc,
+                                               mockNewRegistrationUpdater
     )
 
   private val alfAddress = AddressLookupConfirmation(auditRef = "auditRef",
