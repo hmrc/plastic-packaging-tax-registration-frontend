@@ -22,6 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
+  AuthenticatedRequest,
   JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
@@ -55,7 +56,7 @@ abstract class AmendmentController(
   protected def updateGroupMemberRegistration(
     registrationAmendment: Registration => Registration,
     memberId: String
-  )(implicit request: AuthenticatedRequest[Any], hc: HeaderCarrier) =
+  )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
     amendmentJourneyAction.updateRegistration(registrationAmendment)
       .map(
         _ => Redirect(amendGroupRoutes.ContactDetailsCheckAnswersController.displayPage(memberId))

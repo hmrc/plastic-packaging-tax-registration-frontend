@@ -31,7 +31,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
