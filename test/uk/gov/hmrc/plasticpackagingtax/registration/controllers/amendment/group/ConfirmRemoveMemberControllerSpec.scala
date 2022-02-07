@@ -54,20 +54,6 @@ class ConfirmRemoveMemberControllerSpec
                                       page
     )
 
-  private def authorisedUserWithPptSubscription(): Unit =
-    authorizedUser(user =
-      newUser().copy(enrolments =
-        Enrolments(
-          Set(
-            new Enrolment(PptEnrolment.Identifier,
-                          Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
-                          "activated"
-            )
-          )
-        )
-      )
-    )
-
   private val anotherGroupMember             = groupMember.copy(id = "another-group-member-id")
   private val groupMembers: Seq[GroupMember] = Seq(groupMember, anotherGroupMember)
 

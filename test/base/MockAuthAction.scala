@@ -17,6 +17,7 @@
 package base
 
 import base.PptTestData.newUser
+import MockAuthAction.RichRet
 import org.joda.time.DateTimeZone.UTC
 import org.joda.time.{DateTime, LocalDate}
 import org.mockito.ArgumentMatchers
@@ -29,12 +30,9 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AllowedUsers,
-  AuthActionImpl,
-  AuthNoEnrolmentCheckActionImpl
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AllowedUsers, AuthActionImpl, AuthNoEnrolmentCheckActionImpl}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 
 import scala.concurrent.Future
 
@@ -83,6 +81,21 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   private val exampleUser         = newUser()
 
   // format: off
+
+  def authorisedUserWithPptSubscription(): Unit =
+    authorizedUser(user =
+      newUser().copy(enrolments =
+        Enrolments(
+          Set(
+            new Enrolment(PptEnrolment.Identifier,
+              Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
+              "activated"
+            )
+          )
+        )
+      )
+    )
+
   def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPreLaunch -> true)): Unit = {
     when(appConfig.defaultFeatures).thenReturn(features)
     when(
@@ -96,67 +109,13 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
       )(any(), any())
     ).thenReturn(
       Future.successful(
-        new ~(
-          new ~(
-            new ~(
-              new ~(
-                new ~(
-                  new ~(
-                    new ~(
-                      new ~(
-                        new ~(
-                          new ~(
-                            new ~(
-                              new ~(
-                                new ~(
-                                  new ~(
-                                    new ~(
-                                      new ~(
-                                        new ~(
-                                          new ~(
-                                            new ~(
-                                              new ~(
-                                                user.identityData.credentials,
-                                                user.identityData.name
-                                              ),
-                                              user.identityData.email
-                                            ),
-                                            user.identityData.externalId
-                                          ),
-                                          user.identityData.internalId
-                                        ),
-                                        user.identityData.affinityGroup
-                                      ),
-                                      user.enrolments
-                                    ),
-                                    user.identityData.agentCode
-                                  ),
-                                  user.identityData.confidenceLevel.get
-                                ),
-                                user.identityData.nino
-                              ),
-                              user.identityData.saUtr
-                            ),
-                            user.identityData.dateOfBirth
-                          ),
-                          user.identityData.agentInformation.get
-                        ),
-                        nrsGroupIdentifierValue
-                      ),
-                      nrsCredentialRole
-                    ),
-                    Some(nrsMdtpInformation)
-                  ),
-                  Some(nrsItmpName)
-                ),
-                nrsDateOfBirth
-              ),
-              Some(nrsItmpAddress)
-            ),
-            nrsCredentialStrength
-          ),
-          nrsLoginTimes
-        )
+        user.identityData.credentials ~~ user.identityData.name ~~ user.identityData.email ~~
+          user.identityData.externalId ~~ user.identityData.internalId ~~ user.identityData.affinityGroup ~~
+          user.enrolments ~~ user.identityData.agentCode ~~ user.identityData.confidenceLevel.get ~~
+          user.identityData.nino ~~ user.identityData.saUtr ~~ user.identityData.dateOfBirth ~~
+          user.identityData.agentInformation.get ~~ nrsGroupIdentifierValue ~~ nrsCredentialRole ~~
+          Some(nrsMdtpInformation) ~~ Some(nrsItmpName) ~~ nrsDateOfBirth ~~ Some(nrsItmpAddress) ~~
+          nrsCredentialStrength ~~ nrsLoginTimes
       )
     )
   }
@@ -173,67 +132,12 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
       )(any(), any())
     ).thenReturn(
       Future.successful(
-        new ~(
-          new ~(
-            new ~(
-              new ~(
-                new ~(
-                  new ~(
-                    new ~(
-                      new ~(
-                        new ~(
-                          new ~(
-                            new ~(
-                              new ~(
-                                new ~(
-                                  new ~(
-                                    new ~(
-                                      new ~(
-                                        new ~(
-                                          new ~(
-                                            new ~(
-                                              new ~(
-                                                None,
-                                                user.identityData.name
-                                              ),
-                                              user.identityData.email
-                                            ),
-                                            user.identityData.externalId
-                                          ),
-                                          user.identityData.internalId
-                                        ),
-                                        user.identityData.affinityGroup
-                                      ),
-                                      user.enrolments
-                                    ),
-                                    user.identityData.agentCode
-                                  ),
-                                  user.identityData.confidenceLevel.get
-                                ),
-                                user.identityData.nino
-                              ),
-                              user.identityData.saUtr
-                            ),
-                            user.identityData.dateOfBirth
-                          ),
-                          user.identityData.agentInformation.get
-                        ),
-                        nrsGroupIdentifierValue
-                      ),
-                      nrsCredentialRole
-                    ),
-                    Some(nrsMdtpInformation)
-                  ),
-                  Some(nrsItmpName)
-                ),
-                nrsDateOfBirth
-              ),
-              Some(nrsItmpAddress)
-            ),
-            nrsCredentialStrength
-          ),
-          nrsLoginTimes
-        )
+        None ~~ user.identityData.name ~~ user.identityData.email ~~ user.identityData.externalId ~~
+        user.identityData.internalId ~~ user.identityData.affinityGroup ~~ user.enrolments ~~ user.identityData.agentCode
+        ~~ user.identityData.confidenceLevel.get ~~ user.identityData.nino ~~ user.identityData.saUtr ~~
+        user.identityData.dateOfBirth ~~ user.identityData.agentInformation.get ~~ nrsGroupIdentifierValue
+        ~~ nrsCredentialRole ~~ Some(nrsMdtpInformation) ~~ Some(nrsItmpName) ~~ nrsDateOfBirth ~~ Some(nrsItmpAddress)
+        ~~ nrsCredentialStrength ~~ nrsLoginTimes
       )
     )
   // format: on
@@ -253,4 +157,10 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
     when(mockAuthConnector.authorise(any(), any())(any(), any()))
       .thenReturn(Future.failed(exc))
 
+}
+
+object MockAuthAction {
+  implicit class RichRet[+A](val a: A) extends AnyVal {
+    def ~~[B](b: B): A ~ B = new ~(a, b)
+  }
 }

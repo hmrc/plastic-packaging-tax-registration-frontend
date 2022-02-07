@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
+import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.CSRFTokenHelper.CSRFRequest
@@ -25,28 +27,39 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group.ListGroupMembersViewModel
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
 
 import scala.concurrent.Future
 
-class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
+class GroupMembersListControllerSpec extends ControllerSpec with MockAmendmentJourneyAction with BeforeAndAfterEach {
+
+  val registration: Registration = aRegistration()
 
   val view: list_group_members_page = mock[list_group_members_page]
 
   when(view.apply(any(), any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new GroupMembersListController(FakeAuthNoEnrolmentCheckAction,
-                                           FakeAmendmentJourneyAction,
-                                           stubMessagesControllerComponents(),
-                                           view
+  val sut = new GroupMembersListController(
+    mockAuthAllowEnrolmentAction,
+    mockAmendmentJourneyAction,
+    stubMessagesControllerComponents(),
+    view
   )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    authorisedUserWithPptSubscription()
+    simulateGetSubscriptionSuccess(registration)
+  }
 
   val viewModel = new ListGroupMembersViewModel(registration)
 
   "displayPage" must {
     "return 200 with view" in {
-      val result: Future[Result] = sut.displayPage()(request)
+      val result: Future[Result] = sut.displayPage()(FakeRequest().withSession(AmendmentJourneyAction.SessionId -> "123"))
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "view"
@@ -58,7 +71,7 @@ class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
     "bind the form and redirect" when {
       "submitted yes" in {
         val request: Request[AnyContent] =
-          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "yes").withCSRFToken
+          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "yes").withSession(AmendmentJourneyAction.SessionId-> "123").withCSRFToken
 
         val result: Future[Result] = sut.onSubmit()(request)
 
@@ -69,7 +82,7 @@ class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
 
       "submitted no" in {
         val myRequest =
-          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "no").withCSRFToken
+          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "no").withSession(AmendmentJourneyAction.SessionId-> "123").withCSRFToken
 
         val result: Future[Result] = sut.onSubmit()(myRequest)
 
@@ -81,7 +94,7 @@ class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
 
     "fail binding and return errored form" when {
       "no form submission" in {
-        val request = FakeRequest()
+        val request = FakeRequest().withSession(AmendmentJourneyAction.SessionId-> "123").withCSRFToken
 
         val result: Future[Result] = sut.onSubmit()(request)
 
@@ -89,7 +102,7 @@ class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
         contentAsString(result) shouldBe "view"
       }
       "bad form submission" in {
-        val request = FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "")
+        val request = FakeRequest().withSession(AmendmentJourneyAction.SessionId-> "123").withFormUrlEncodedBody("addOrganisation" -> "")
 
         val result: Future[Result] = sut.onSubmit()(request)
 
