@@ -21,7 +21,6 @@ import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -30,8 +29,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.amend_member_contact_check_answers_page
@@ -133,9 +132,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec
         )
       }
       "redirect to the post reg amend error page" when {
-        // TODO : Reinstate when we can work out why this test does not work. There's something amiss with our use of
-        //        mocks and futures!
-        "update fails due to exception being thrown" ignore {
+        "update fails due to exception being thrown" in {
           authorisedUserWithPptSubscription()
           simulateUpdateSubscriptionFailure(new RuntimeException("BANG!"))
 

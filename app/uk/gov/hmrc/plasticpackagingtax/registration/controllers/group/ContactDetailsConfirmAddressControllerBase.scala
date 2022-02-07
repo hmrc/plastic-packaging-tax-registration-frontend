@@ -87,5 +87,3 @@ abstract class ContactDetailsConfirmAddressControllerBase(
 
   protected def getSuccessfulRedirect(memberId: String): Call
 }
-
-case class RegistrationException(message: String) extends Exception

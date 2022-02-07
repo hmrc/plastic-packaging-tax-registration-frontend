@@ -49,7 +49,7 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
       )
     )
 
-  protected def simulateUpdateSubscriptionFailure(ex: Exception) =
+  protected def simulateUpdateSubscriptionFailure(ex: RuntimeException) =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
       Future.failed(ex)
     )

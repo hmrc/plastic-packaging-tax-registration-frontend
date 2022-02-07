@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
@@ -44,9 +43,9 @@ abstract class AmendmentController(
     successfulRedirect: Call = routes.AmendRegistrationController.displayPage()
   )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
     amendmentJourneyAction.updateRegistration(registrationAmendment).map {
-      case SubscriptionCreateOrUpdateResponseSuccess(_, _, _, _, _, _, _) =>
+      case _: SubscriptionCreateOrUpdateResponseSuccess =>
         Redirect(successfulRedirect)
-      case SubscriptionCreateOrUpdateResponseFailure(_) =>
+      case _: SubscriptionCreateOrUpdateResponseFailure =>
         Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
     }
 

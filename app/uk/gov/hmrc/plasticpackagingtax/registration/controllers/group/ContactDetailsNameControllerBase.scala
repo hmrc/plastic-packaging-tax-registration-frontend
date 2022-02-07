@@ -41,7 +41,7 @@ abstract class ContactDetailsNameControllerBase(
   page: member_name_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with ContactDetailsControllerBase with I18nSupport {
 
   protected def doDisplayPage(
     memberId: String,
@@ -97,10 +97,6 @@ abstract class ContactDetailsNameControllerBase(
             }
         )
     }
-
-  protected def getBackLink(memberId: String): Call
-  protected def getSubmitCall(memberId: String): Call
-  protected def getSuccessfulRedirect(memberId: String): Call
 
   private def updateRegistration(formData: MemberName, memberId: String)(implicit
     req: JourneyRequest[AnyContent]

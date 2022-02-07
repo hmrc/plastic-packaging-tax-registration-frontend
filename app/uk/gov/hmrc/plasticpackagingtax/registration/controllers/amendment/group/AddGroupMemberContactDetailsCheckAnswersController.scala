@@ -55,9 +55,12 @@ class AddGroupMemberContactDetailsCheckAnswersController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       journeyAction.updateRegistration().map {
-        case SubscriptionCreateOrUpdateResponseSuccess(_, _, _, _, _, _, _) =>
+        case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManageGroupMembersController.displayPage())
-        case SubscriptionCreateOrUpdateResponseFailure(errors) =>
+        case _: SubscriptionCreateOrUpdateResponseFailure =>
+          Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
+      }.recover {
+        case _: Exception =>
           Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
       }
     }

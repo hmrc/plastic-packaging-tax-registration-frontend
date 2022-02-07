@@ -24,14 +24,11 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{
   MEMBER_IN_GROUP,
   MEMBER_IS_ALREADY_REGISTERED
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  GroupDetail,
-  NewRegistrationUpdateService
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
   group_member_already_registered_page,
@@ -49,10 +46,6 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   private val organisationAlreadyInGroupPage   = mock[organisation_already_in_group_page]
   private val groupMemberAlreadyRegisteredPage = mock[group_member_already_registered_page]
-
-  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
 
   private val controller =
     new NotableErrorController(authenticate = mockAuthAllowEnrolmentAction,

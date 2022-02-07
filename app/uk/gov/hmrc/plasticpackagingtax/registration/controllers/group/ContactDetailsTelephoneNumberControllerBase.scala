@@ -41,7 +41,7 @@ abstract class ContactDetailsTelephoneNumberControllerBase(
   page: member_phone_number_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with ContactDetailsControllerBase with I18nSupport {
 
   protected def doDisplayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -79,10 +79,6 @@ abstract class ContactDetailsTelephoneNumberControllerBase(
             }
         )
     }
-
-  protected def getBackLink(memberId: String): Call
-  protected def getSubmitCall(memberId: String): Call
-  protected def getSuccessfulRedirect(memberId: String): Call
 
   private def updateRegistration(phoneNumber: PhoneNumber, memberId: String)(implicit
     req: JourneyRequest[AnyContent]
