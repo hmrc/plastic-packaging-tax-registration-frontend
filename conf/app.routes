@@ -220,6 +220,21 @@ GET        /manage-group-members    uk.gov.hmrc.plasticpackagingtax.registration
 
 GET        /list-group-members      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.GroupMembersListController.displayPage()
 POST       /add-group-member        uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberController.submit()
+
+GET       /amend-group-member-check-answers/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ContactDetailsCheckAnswersController.displayPage(memberId)
+POST       /amend-group-member-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ContactDetailsCheckAnswersController.submit()
+
+GET        /amend-group-member-contact-name/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.contactName(memberId)
+POST       /amend-group-member-contact-name/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.updateContactName(memberId)
+
+GET        /amend-group-member-contact-email/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.email(memberId)
+POST       /amend-group-member-contact-email/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.updateEmail(memberId)
+
+GET        /amend-group-member-contact-phone-number/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.phoneNumber(memberId)
+POST       /amend-group-member-contact-phone-number/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.updatePhoneNumber(memberId)
+
+GET        /amend-group-member-contact-address/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.address(memberId)
+POST       /amend-group-member-contact-address/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.updateAddress(memberId)
 # TODO: think about how we reuse in flow to add new group member
 
 GET        /confirm-remove-member/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.ConfirmRemoveMemberController.displayPage(memberId)

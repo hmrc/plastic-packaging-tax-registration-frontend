@@ -180,7 +180,7 @@ class GroupMemberGrsController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]): GroupMember =
     memberId match {
       case Some(memberId) =>
-        request.registration.groupDetail.flatMap(gd => gd.findGroupMember(memberId)) match {
+        request.registration.findMember(memberId) match {
           case Some(groupMember) =>
             groupMember.copy(customerIdentification1 = details.companyNumber,
                              customerIdentification2 = Some(details.ctutr),

@@ -25,6 +25,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.{
+  routes => amendGroupRoutes
+}
 
 import scala.concurrent.ExecutionContext
 
@@ -39,6 +42,18 @@ abstract class AmendmentController(
   )(implicit request: AuthenticatedRequest[Any], hc: HeaderCarrier) =
     amendmentJourneyAction.updateRegistration(registrationAmendment)
       .map(_ => Redirect(routes.AmendRegistrationController.displayPage()))
+      .recover {
+        case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
+      }
+
+  protected def updateGroupMemberRegistration(
+    registrationAmendment: Registration => Registration,
+    memberId: String
+  )(implicit request: AuthenticatedRequest[Any], hc: HeaderCarrier) =
+    amendmentJourneyAction.updateRegistration(registrationAmendment)
+      .map(
+        _ => Redirect(amendGroupRoutes.ContactDetailsCheckAnswersController.displayPage(memberId))
+      )
       .recover {
         case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
       }

@@ -69,7 +69,7 @@
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
-    @formHelper(action = groupRoutes.ContactDetailsNameController.submit(memberId), 'autoComplete -> "off") {
+    @formHelper(action = updateCall, 'autoComplete -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(
