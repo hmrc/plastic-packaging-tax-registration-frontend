@@ -97,6 +97,16 @@ class ListGroupMembersPageSpec
       sut.select("h1").text() mustBe messages("amend.group.listMembers.title", 2)
     }
 
+    "include the error summary" when {
+      "the form has errors" in {
+        val sut = view(form.withError("foo", "site.button.tryAgain"), registration)(journeyRequest,
+                                                                                    messages
+        )
+
+        sut.select("#error-summary-title").size() mustBe 1
+      }
+    }
+
     "list the members" in {
       when(mockListComponent.apply(any())(any())).thenReturn(Html("listed members component"))
 

@@ -30,6 +30,7 @@
         pageHeading: pageHeading,
         formHelper: FormWithCSRF,
         govukLayout: main_template,
+        errorSummary: errorSummary,
         listMembers: listMembers,
         govukRadios: GovukRadios,
         saveButtons: saveButtons,
@@ -57,10 +58,15 @@
                 ))
             ).getOrElse(Seq())
 }
-
+@*
+*<!--todo title should change for an errored form?-->
+*@
 @govukLayout(
     title = Title("amend.group.listMembers.title", groupMemberCount.toString),
-    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))
+) {
+
+    @errorSummary(form.errors)
 
     @pageHeading(text = messages("amend.group.listMembers.title", groupMemberCount.toString))
 
