@@ -85,9 +85,7 @@ class ConfirmRemoveMemberController @Inject() (
         )
       )
 
-    updateRegistration(doAction).map { _ =>
-      Redirect(onwardCall)
-    }
+    updateRegistration(doAction, onwardCall)
   }
 
 }
