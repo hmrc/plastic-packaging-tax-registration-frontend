@@ -13,6 +13,7 @@ site.button.acceptAndSend = Accept and send
 site.button.saveAndComeBackLater = Save and come back later
 site.error.summary.title = There is a problem
 site.link.change = Change
+site.link.change.hidden = Change {0}
 site.link.remove = Remove
 site.link.remove.hidden = Remove {0} from the list
 site.button.continue = Continue
