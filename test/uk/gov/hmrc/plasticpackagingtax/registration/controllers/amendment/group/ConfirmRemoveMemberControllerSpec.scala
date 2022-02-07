@@ -100,6 +100,7 @@ class ConfirmRemoveMemberControllerSpec
         "signed in user when a ppt registration requests removal of an existing group member" in {
           authorisedUserWithPptSubscription()
           simulateGetSubscriptionSuccess(populatedRegistrationWithGroupMembers)
+          simulateUpdateSubscriptionSuccess()
 
           // postRequestEncoded will not encode a yes form correctly so we have to manually construct this
           val correctlyEncodedForm = Seq("value" -> "yes")

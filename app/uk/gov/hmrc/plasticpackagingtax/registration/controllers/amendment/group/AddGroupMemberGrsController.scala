@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.GroupMemberGrsControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class GroupMemberGrsController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
+class AddGroupMemberGrsController @Inject() (
+  authenticate: AuthNoEnrolmentCheckAction,
+  journeyAction: AmendmentJourneyAction,
   ukCompanyGrsConnector: UkCompanyGrsConnector,
   subscriptionsConnector: SubscriptionsConnector,
   partnershipGrsConnector: PartnershipGrsConnector,
-  registrationUpdater: NewRegistrationUpdateService,
+  registrationUpdater: AmendRegistrationUpdateService,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends GroupMemberGrsControllerBase(authenticate,
@@ -48,10 +49,7 @@ class GroupMemberGrsController @Inject() (
   def grsCallbackNewMember(journeyId: String): Action[AnyContent] =
     grsCallback(journeyId, None, nameCaptureRedirect)
 
-  def grsCallbackAmendMember(journeyId: String, memberId: String): Action[AnyContent] =
-    grsCallback(journeyId, Some(memberId), nameCaptureRedirect)
-
   private def nameCaptureRedirect(memberId: String) =
-    routes.ContactDetailsNameController.displayPage(memberId)
+    routes.AddGroupMemberContactDetailsNameController.displayPage(memberId)
 
 }

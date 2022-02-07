@@ -17,12 +17,16 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
-  AuthenticatedRequest
+  JourneyRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  SubscriptionCreateOrUpdateResponseFailure,
+  SubscriptionCreateOrUpdateResponseSuccess
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.{
@@ -38,13 +42,15 @@ abstract class AmendmentController(
     extends FrontendController(mcc) with I18nSupport {
 
   protected def updateRegistration(
-    registrationAmendment: Registration => Registration
-  )(implicit request: AuthenticatedRequest[Any], hc: HeaderCarrier) =
-    amendmentJourneyAction.updateRegistration(registrationAmendment)
-      .map(_ => Redirect(routes.AmendRegistrationController.displayPage()))
-      .recover {
-        case _ => Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
-      }
+    registrationAmendment: Registration => Registration,
+    successfulRedirect: Call = routes.AmendRegistrationController.displayPage()
+  )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
+    amendmentJourneyAction.updateRegistration(registrationAmendment).map {
+      case _: SubscriptionCreateOrUpdateResponseSuccess =>
+        Redirect(successfulRedirect)
+      case _: SubscriptionCreateOrUpdateResponseFailure =>
+        Redirect(routes.AmendRegistrationController.registrationUpdateFailed())
+    }
 
   protected def updateGroupMemberRegistration(
     registrationAmendment: Registration => Registration,

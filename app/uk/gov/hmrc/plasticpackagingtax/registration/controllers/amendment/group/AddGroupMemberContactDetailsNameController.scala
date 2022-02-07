@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsNameControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_name_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ContactDetailsNameController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
+class AddGroupMemberContactDetailsNameController @Inject() (
+  authenticate: AuthNoEnrolmentCheckAction,
+  journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
   page: member_name_page,
-  registrationUpdater: NewRegistrationUpdateService
+  registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsNameControllerBase(authenticate,
                                              journeyAction,
@@ -46,13 +47,13 @@ class ContactDetailsNameController @Inject() (
   def submit(memberId: String): Action[AnyContent] =
     doSubmit(memberId, getBackLink, getSubmitCall, getSuccessfulRedirect)
 
-  override protected def getBackLink(memberId: String): Call =
-    routes.OrganisationDetailsTypeController.displayPageAmendMember(memberId)
+  protected def getBackLink(memberId: String): Call =
+    routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()
 
-  override protected def getSubmitCall(memberId: String): Call =
-    routes.ContactDetailsNameController.submit(memberId)
+  protected def getSubmitCall(memberId: String): Call =
+    routes.AddGroupMemberContactDetailsNameController.submit(memberId)
 
-  override protected def getSuccessfulRedirect(memberId: String): Call =
-    routes.ContactDetailsEmailAddressController.displayPage(memberId)
+  protected def getSuccessfulRedirect(memberId: String): Call =
+    routes.AddGroupMemberContactDetailsEmailAddressController.displayPage(memberId)
 
 }

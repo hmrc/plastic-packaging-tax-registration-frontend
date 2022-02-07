@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_email_address_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ContactDetailsEmailAddressController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
+class AddGroupMemberContactDetailsEmailAddressController @Inject() (
+  authenticate: AuthNoEnrolmentCheckAction,
+  journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
   page: member_email_address_page,
-  registrationUpdater: NewRegistrationUpdateService
+  registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsEmailAddressControllerBase(authenticate,
                                                      journeyAction,
@@ -45,12 +46,12 @@ class ContactDetailsEmailAddressController @Inject() (
   def submit(memberId: String): Action[AnyContent] = doSubmit(memberId)
 
   override protected def getBackLink(memberId: String): Call =
-    routes.ContactDetailsNameController.displayPage(memberId)
+    routes.AddGroupMemberContactDetailsNameController.displayPage(memberId)
 
   override protected def getSubmitCall(memberId: String): Call =
-    routes.ContactDetailsEmailAddressController.submit(memberId)
+    routes.AddGroupMemberContactDetailsEmailAddressController.submit(memberId)
 
   override protected def getSuccessfulRedirect(memberId: String): Call =
-    routes.ContactDetailsTelephoneNumberController.displayPage(memberId)
+    routes.AddGroupMemberContactDetailsTelephoneNumberController.displayPage(memberId)
 
 }

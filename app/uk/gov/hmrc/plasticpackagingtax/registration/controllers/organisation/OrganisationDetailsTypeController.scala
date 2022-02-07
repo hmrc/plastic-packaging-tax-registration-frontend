@@ -26,7 +26,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Cacheable,
+  NewRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -44,6 +48,7 @@ class OrganisationDetailsTypeController @Inject() (
   override val partnershipGrsConnector: PartnershipGrsConnector,
   override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   override val registrationConnector: RegistrationConnector,
+  override val registrationUpdater: NewRegistrationUpdateService,
   mcc: MessagesControllerComponents,
   page: organisation_type
 )(implicit ec: ExecutionContext)
