@@ -16,21 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
-import base.PptTestData.newUser
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{
-  contentAsString,
-  redirectLocation,
-  status,
-  stubMessagesControllerComponents
-}
+import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group.ListGroupMembersViewModel
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
 
 import scala.concurrent.Future
@@ -47,13 +42,15 @@ class GroupMembersListControllerSpec extends AmendGroupControllerSpec {
                                            view
   )
 
+  val viewModel = new ListGroupMembersViewModel(registration)
+
   "displayPage" must {
     "return 200 with view" in {
       val result: Future[Result] = sut.displayPage()(request)
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "view"
-      verify(view).apply(any(), refEq(registration))(any(), any())
+      verify(view).apply(any(), refEq(viewModel))(any(), any())
     }
   }
 

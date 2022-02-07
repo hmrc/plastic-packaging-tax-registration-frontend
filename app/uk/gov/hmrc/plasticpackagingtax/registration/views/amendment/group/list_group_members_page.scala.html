@@ -16,11 +16,11 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group.ListGroupMembersViewModel
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, ListMember, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
@@ -37,40 +37,18 @@
         viewUtils: ViewUtils
 )
 
-@(form: Form[Boolean], registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(form: Form[Boolean], viewModel: ListGroupMembersViewModel)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@groupMemberCount = @{
-    registration.groupDetail.map(_.members.size).getOrElse(0)
-}
-
-@listofMembers = @{
-    Seq(
-        ListMember(
-            name = registration.organisationDetails.businessName.get,
-            subHeading = Some(messages("amend.group.manage.representativeMember")),
-            change = None
-        )) ++
-            registration.groupDetail.map(gd => gd.members.map(member =>
-                ListMember(
-                    name = member.businessName,
-                    change = Some(groupRoutes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-                    remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-                ))
-            ).getOrElse(Seq())
-}
-@*
-*<!--todo title should change for an errored form?-->
-*@
 @govukLayout(
-    title = Title("amend.group.listMembers.title", groupMemberCount.toString),
+    title = Title("amend.group.listMembers.title", viewModel.groupMemberCount),
     backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))
 ) {
 
     @errorSummary(form.errors)
 
-    @pageHeading(text = messages("amend.group.listMembers.title", groupMemberCount.toString))
+    @pageHeading(text = messages("amend.group.listMembers.title", viewModel.groupMemberCount))
 
-    @listMembers(listofMembers)
+    @listMembers(viewModel.listMembers)
 
     @formHelper(action = routes.GroupMembersListController.onSubmit(), 'autoComplete -> "off") {
 
@@ -91,6 +69,7 @@
             classes = "govuk-radios--inline",
             errorMessage = form("addOrganisation").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
         ))
+
         @saveButtons()
     }
 
