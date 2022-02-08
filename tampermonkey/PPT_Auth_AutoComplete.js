@@ -31,16 +31,12 @@ function pptPanel() {
     let text = [
         "Uk Company Private Beta",
         "Pre-Launch",
-        "Post-Launch",
-        "Pre-Launch Groups",
-        "Post-Launch Groups"
+        "Post-Launch"
     ];
     let value = [
         "test.ukCompanyPrivateBeta@ppt.test",
         "test.preLaunch@ppt.test",
-        "test.postLaunch@ppt.test",
-        "test.preLaunchGroupRegistration@ppt.test",
-        "test.postLaunchGroupRegistration@ppt.test"
+        "test.postLaunch@ppt.test"
     ]
 
     // create and append select list
