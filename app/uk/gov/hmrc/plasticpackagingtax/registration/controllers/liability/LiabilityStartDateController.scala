@@ -67,10 +67,8 @@ class LiabilityStartDateController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    if (isGroupRegistrationEnabled)
-                      Redirect(routes.RegistrationTypeController.displayPage())
-                    else
-                      Redirect(routes.CheckLiabilityDetailsAnswersController.displayPage())
+                    Redirect(routes.RegistrationTypeController.displayPage())
+
                   case _ =>
                     Redirect(commonRoutes.TaskListController.displayPage())
                 }

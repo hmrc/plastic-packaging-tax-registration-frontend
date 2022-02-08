@@ -92,14 +92,14 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     "set expected page links" when {
 
       "group registration enabled" in {
-        authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+        authorizedUser()
         verifyExpectedLinks(backLink = routes.RegistrationTypeController.displayPage().url,
                             changeLiabilityLink = startLiabilityLink.url
         )
       }
 
       "group registration enabled and group of organisation is selected" in {
-        authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+        authorizedUser()
 
         val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)))
         mockRegistrationFind(registration)
@@ -112,14 +112,6 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
                             changeLiabilityLink = startLiabilityLink.url
         )
       }
-
-      "group registration not enabled" in {
-        authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> false))
-        verifyExpectedLinks(backLink = routes.LiabilityStartDateController.displayPage().url,
-                            changeLiabilityLink = startLiabilityLink.url
-        )
-      }
-
     }
 
     "return an error" when {

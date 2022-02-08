@@ -30,7 +30,4 @@ abstract class LiabilityController(mcc: MessagesControllerComponents)
   protected def isPreLaunch(implicit request: JourneyRequest[AnyContent]) =
     request.isFeatureFlagEnabled(Features.isPreLaunch)
 
-  protected def isGroupRegistrationEnabled(implicit request: JourneyRequest[AnyContent]) =
-    request.isFeatureFlagEnabled(Features.isGroupRegistrationEnabled)
-
 }

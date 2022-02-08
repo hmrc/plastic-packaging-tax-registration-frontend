@@ -21,7 +21,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectedWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
@@ -84,10 +83,7 @@ class LiabilityWeightExpectedController @Inject() (
     formData: LiabilityExpectedWeight
   )(implicit req: JourneyRequest[AnyContent]): Result =
     if (formData.overLiabilityThreshold)
-      if (isGroupRegistrationEnabled)
-        Redirect(routes.RegistrationTypeController.displayPage())
-      else
-        Redirect(commonRoutes.TaskListController.displayPage())
+      Redirect(routes.RegistrationTypeController.displayPage())
     else
       Redirect(routes.NotLiableController.displayPage())
 

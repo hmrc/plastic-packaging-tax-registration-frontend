@@ -28,7 +28,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
@@ -125,18 +124,10 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       "update registration and redirect on " + formAction._1 when {
         "groups enabled" in {
-          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+          authorizedUser()
 
           verifyRegistrationUpdateAndRedirect(routes.RegistrationTypeController.displayPage().url,
                                               pptRoutes.TaskListController.displayPage().url
-          )(formAction)
-        }
-        "groups not enabled" in {
-          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> false))
-
-          verifyRegistrationUpdateAndRedirect(
-            routes.CheckLiabilityDetailsAnswersController.displayPage().url,
-            pptRoutes.TaskListController.displayPage().url
           )(formAction)
         }
       }
