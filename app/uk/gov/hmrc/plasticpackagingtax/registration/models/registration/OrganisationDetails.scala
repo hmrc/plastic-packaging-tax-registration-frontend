@@ -145,7 +145,8 @@ case class OrganisationDetails(
   def partnerGrsRegistrationDetails(partner: Partner): Option[RegistrationDetails] =
     partner.partnerType match {
       case PartnerTypeEnum.SOLE_TRADER => partner.soleTraderDetails.flatMap(_.registration)
-      case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH =>
+      case PartnerTypeEnum.UK_COMPANY | PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH |
+          PartnerTypeEnum.REGISTERED_SOCIETY =>
         partner.incorporationDetails.flatMap(_.registration)
       case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
         partner.partnerPartnershipDetails.flatMap(

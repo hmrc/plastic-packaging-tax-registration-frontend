@@ -20,8 +20,17 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorpEntityGrsCreateRequest, PartnershipGrsCreateRequest, SoleTraderGrsCreateRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  PartnershipGrsConnector,
+  RegisteredSocietyGrsConnector,
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorpEntityGrsCreateRequest,
+  PartnershipGrsCreateRequest,
+  SoleTraderGrsCreateRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 import scala.concurrent.Future
@@ -78,16 +87,18 @@ trait GRSRedirections extends I18nSupport {
       grsUrl
     )
 
-  def getRegisteredSocietyRedirectUrl(grsUrl: String, callbackUrl: String
-                                             )(implicit request: Request[_], headerCarrier: HeaderCarrier): Future[String] =
+  def getRegisteredSocietyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
+    request: Request[_],
+    headerCarrier: HeaderCarrier
+  ): Future[String] =
     registeredSocietyGrsConnector.createJourney(
       IncorpEntityGrsCreateRequest(callbackUrl,
-        Some(request2Messages(request)("service.name")),
-        appConfig.serviceIdentifier,
-        appConfig.signOutLink,
-        appConfig.grsAccessibilityStatementPath,
-        businessVerificationCheck =
-          false
+                                   Some(request2Messages(request)("service.name")),
+                                   appConfig.serviceIdentifier,
+                                   appConfig.signOutLink,
+                                   appConfig.grsAccessibilityStatementPath,
+                                   businessVerificationCheck =
+                                     false
       ),
       grsUrl
     )

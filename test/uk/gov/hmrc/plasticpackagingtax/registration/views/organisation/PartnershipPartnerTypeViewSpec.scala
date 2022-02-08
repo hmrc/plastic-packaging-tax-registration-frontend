@@ -30,6 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   OVERSEAS_COMPANY_NO_UK_BRANCH,
   OVERSEAS_COMPANY_UK_BRANCH,
   PartnerTypeEnum,
+  REGISTERED_SOCIETY,
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP,
   SOLE_TRADER,
@@ -92,12 +93,13 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
       radioInputMustBe(1, SOLE_TRADER)
       radioInputMustBe(2, UK_COMPANY)
-      radioInputMustBe(3, LIMITED_LIABILITY_PARTNERSHIP)
-      radioInputMustBe(4, SCOTTISH_PARTNERSHIP)
-      radioInputMustBe(5, SCOTTISH_LIMITED_PARTNERSHIP)
-      radioInputMustBe(6, CHARITABLE_INCORPORATED_ORGANISATION)
-      radioInputMustBe(7, OVERSEAS_COMPANY_UK_BRANCH)
-      radioInputMustBe(8, OVERSEAS_COMPANY_NO_UK_BRANCH)
+      radioInputMustBe(3, REGISTERED_SOCIETY)
+      radioInputMustBe(4, LIMITED_LIABILITY_PARTNERSHIP)
+      radioInputMustBe(5, SCOTTISH_PARTNERSHIP)
+      radioInputMustBe(6, SCOTTISH_LIMITED_PARTNERSHIP)
+      radioInputMustBe(7, CHARITABLE_INCORPORATED_ORGANISATION)
+      radioInputMustBe(8, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputMustBe(9, OVERSEAS_COMPANY_NO_UK_BRANCH)
     }
 
     "display 'Save and continue' button" in {
@@ -136,12 +138,13 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
       radioInputMustBe(1, SOLE_TRADER)
       radioInputMustBe(2, UK_COMPANY)
-      radioInputMustBe(3, LIMITED_LIABILITY_PARTNERSHIP)
-      radioInputMustBe(4, SCOTTISH_PARTNERSHIP)
-      radioInputMustBe(5, SCOTTISH_LIMITED_PARTNERSHIP)
-      radioInputMustBe(6, CHARITABLE_INCORPORATED_ORGANISATION)
-      radioInputMustBe(7, OVERSEAS_COMPANY_UK_BRANCH)
-      radioInputMustBe(8, OVERSEAS_COMPANY_NO_UK_BRANCH)
+      radioInputMustBe(3, REGISTERED_SOCIETY)
+      radioInputMustBe(4, LIMITED_LIABILITY_PARTNERSHIP)
+      radioInputMustBe(5, SCOTTISH_PARTNERSHIP)
+      radioInputMustBe(6, SCOTTISH_LIMITED_PARTNERSHIP)
+      radioInputMustBe(7, CHARITABLE_INCORPORATED_ORGANISATION)
+      radioInputMustBe(8, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputMustBe(9, OVERSEAS_COMPANY_NO_UK_BRANCH)
     }
 
     "display 'Save and continue' button" in {

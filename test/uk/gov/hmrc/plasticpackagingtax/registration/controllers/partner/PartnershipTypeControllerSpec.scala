@@ -51,6 +51,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
                                                  ukCompanyGrsConnector = mockUkCompanyGrsConnector,
                                                  partnershipGrsConnector =
                                                    mockPartnershipGrsConnector,
+                                                 registeredSocietyGrsConnector =
+                                                   mockRegisteredSocietyGrsConnector,
                                                  registrationConnector = mockRegistrationConnector,
                                                  mcc = mcc,
                                                  page = page

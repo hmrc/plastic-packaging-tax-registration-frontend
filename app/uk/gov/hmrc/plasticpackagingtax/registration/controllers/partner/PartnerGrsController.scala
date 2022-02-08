@@ -24,7 +24,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{DUPLICATE_SUBSCRIPTION, RegistrationStatus, STATUS_OK, UNSUPPORTED_ORGANISATION}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
+  DUPLICATE_SUBSCRIPTION,
+  RegistrationStatus,
+  STATUS_OK,
+  UNSUPPORTED_ORGANISATION
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
@@ -122,7 +127,7 @@ class PartnerGrsController @Inject() (
       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
         updateUkCompanyDetails(journeyId, partnerId)
       case Some(REGISTERED_SOCIETY) => updateRegisteredSocietyDetails(journeyId, partnerId)
-      case Some(SOLE_TRADER) => updateSoleTraderDetails(journeyId, partnerId)
+      case Some(SOLE_TRADER)        => updateSoleTraderDetails(journeyId, partnerId)
       case Some(LIMITED_LIABILITY_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) | Some(
             SCOTTISH_PARTNERSHIP
           ) =>
@@ -150,12 +155,11 @@ class PartnerGrsController @Inject() (
       )
     }.flatMap(result => result)
 
-  private def updateRegisteredSocietyDetails(
-                                              journeyId: String,
-                                              partnerId: Option[String],
-                                            )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+  private def updateRegisteredSocietyDetails(journeyId: String, partnerId: Option[String])(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
     updateIncorporationDetails(journeyId, partnerId, registeredSocietyGrsConnector.getDetails)
-
 
   private def updateSoleTraderDetails(journeyId: String, partnerId: Option[String])(implicit
     request: JourneyRequest[AnyContent]
