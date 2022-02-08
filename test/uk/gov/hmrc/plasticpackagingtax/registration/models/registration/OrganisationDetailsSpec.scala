@@ -43,7 +43,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.Subscri
   Status,
   UNKNOWN
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 class OrganisationDetailsSpec
     extends AnyWordSpec with Matchers with TableDrivenPropertyChecks with PptTestData {

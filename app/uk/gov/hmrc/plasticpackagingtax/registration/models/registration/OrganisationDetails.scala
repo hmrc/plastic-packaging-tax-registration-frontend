@@ -38,7 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.Subscri
   SUBSCRIBED,
   Status
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class OrganisationDetails(
   organisationType: Option[OrgType] = None,

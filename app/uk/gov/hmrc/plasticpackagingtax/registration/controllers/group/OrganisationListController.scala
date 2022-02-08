@@ -26,8 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation.form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm.form
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
@@ -67,7 +66,7 @@ class OrganisationListController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       form().bindFromRequest().fold(
-        (formWithErrors: Form[AddOrganisation]) =>
+        (formWithErrors: Form[Boolean]) =>
           BadRequest(
             page(formWithErrors,
                  request.registration.organisationDetails.businessName.get,
@@ -76,12 +75,10 @@ class OrganisationListController @Inject() (
           ),
         addOrganisation =>
           FormAction.bindFromRequest match {
-            case SaveAndContinue =>
-              if (addOrganisation.answer.getOrElse(true))
-                Redirect(
-                  pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
-                )
-              else Redirect(pptControllers.routes.TaskListController.displayPage())
+            case SaveAndContinue if addOrganisation =>
+              Redirect(
+                pptControllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
+              )
             case _ => Redirect(pptControllers.routes.TaskListController.displayPage())
           }
       )

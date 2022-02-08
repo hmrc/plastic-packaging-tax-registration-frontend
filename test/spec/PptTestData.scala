@@ -69,21 +69,22 @@ import scala.language.implicitConversions
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   implicit val journeyRequest: JourneyRequest[AnyContent] =
-    new JourneyRequest(authenticatedRequest =
-                         new AuthenticatedRequest(FakeRequest().withCSRFToken, TestData.newUser()),
-                       registration = aRegistration(),
-                       appConfig = appConfig
+    JourneyRequest(authenticatedRequest =
+                     new AuthenticatedRequest(FakeRequest().withCSRFToken, TestData.newUser()),
+                   registration = aRegistration(),
+                   appConfig = appConfig
     )
 
   implicit def generateRequest(
     userFeatureFlags: Map[String, Boolean] = testUserFeatures
   ): JourneyRequest[AnyContent] =
-    new JourneyRequest(authenticatedRequest =
-                         new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                                                  TestData.newUser(featureFlags = userFeatureFlags)
-                         ),
-                       registration = aRegistration(),
-                       appConfig = appConfig
+    JourneyRequest(
+      authenticatedRequest =
+        new AuthenticatedRequest(FakeRequest().withCSRFToken,
+                                 TestData.newUser(featureFlags = userFeatureFlags)
+        ),
+      registration = aRegistration(),
+      appConfig = appConfig
     )
 
   val request: Request[AnyContent] = FakeRequest().withCSRFToken

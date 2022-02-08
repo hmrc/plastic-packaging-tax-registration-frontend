@@ -22,7 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupError,
   GroupMember
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class GroupDetail(
   membersUnderGroupControl: Option[Boolean] = None,

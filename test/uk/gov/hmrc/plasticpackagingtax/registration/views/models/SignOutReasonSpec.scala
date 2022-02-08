@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model
+package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
 import org.scalatest.EitherValues
 import org.scalatest.matchers.must.Matchers

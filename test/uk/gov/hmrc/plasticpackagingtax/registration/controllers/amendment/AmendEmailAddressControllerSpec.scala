@@ -86,20 +86,6 @@ class AmendEmailAddressControllerSpec
   private val pptReference = "XMPPT0000000123"
   private val sessionId    = "ABC"
 
-  private def authorisedUserWithPptSubscription(): Unit =
-    authorizedUser(user =
-      newUser().copy(enrolments =
-        Enrolments(
-          Set(
-            new Enrolment(PptEnrolment.Identifier,
-                          Seq(EnrolmentIdentifier(PptEnrolment.Key, pptReference)),
-                          "activated"
-            )
-          )
-        )
-      )
-    )
-
   private val populatedRegistration = {
     val basicRegistration = aRegistration()
     basicRegistration.copy(primaryContactDetails =

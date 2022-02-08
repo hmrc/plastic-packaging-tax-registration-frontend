@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.session_timed_out
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 class SignOutController @Inject() (

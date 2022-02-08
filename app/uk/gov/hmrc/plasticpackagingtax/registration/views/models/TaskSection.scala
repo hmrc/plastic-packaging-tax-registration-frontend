@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model
+package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
-sealed trait TaskStatus
+import play.api.mvc.Call
 
-object TaskStatus {
-
-  case object CannotStartYet extends TaskStatus {}
-
-  case object NotStarted extends TaskStatus {}
-
-  case object InProgress extends TaskStatus {}
-
-  case object Completed extends TaskStatus {}
-
-}
+case class TaskSection(
+  title: String = "",
+  link: Call,
+  showLink: Boolean = true,
+  status: TaskStatus = TaskStatus.NotStarted
+)

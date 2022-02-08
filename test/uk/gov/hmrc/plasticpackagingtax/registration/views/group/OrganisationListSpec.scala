@@ -22,7 +22,7 @@ import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
 
 class OrganisationListSpec extends UnitViewSpec with Matchers {
@@ -32,7 +32,7 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
   private val singleMember = Seq(groupMember)
 
   private def createView(): Document =
-    page(AddOrganisation.form(), "ACME Inc", singleMember)(journeyRequest, messages)
+    page(AddOrganisationForm.form(), "ACME Inc", singleMember)(journeyRequest, messages)
 
   "OrganisationList View" should {
 
@@ -113,8 +113,8 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(AddOrganisation.form(), "Org", singleMember)(journeyRequest, messages)
-    page.render(AddOrganisation.form(), "Org", singleMember, journeyRequest, messages)
+    page.f(AddOrganisationForm.form(), "Org", singleMember)(journeyRequest, messages)
+    page.render(AddOrganisationForm.form(), "Org", singleMember, journeyRequest, messages)
   }
 
 }

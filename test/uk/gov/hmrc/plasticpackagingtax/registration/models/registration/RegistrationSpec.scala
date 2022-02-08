@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityWeight
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 class RegistrationSpec
     extends AnyWordSpec with Matchers with MockitoSugar with RegistrationBuilder with PptTestData {

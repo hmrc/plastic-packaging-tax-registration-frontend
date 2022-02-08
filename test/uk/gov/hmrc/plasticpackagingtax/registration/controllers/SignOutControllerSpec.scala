@@ -27,7 +27,7 @@ import play.api.test.Helpers.{redirectLocation, session, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.session_timed_out
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class SignOutControllerSpec extends ControllerSpec {

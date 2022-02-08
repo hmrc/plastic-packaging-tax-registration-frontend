@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model
+package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
-import play.api.i18n.Messages
+sealed trait TaskStatus
 
-case class Title(
-  headingKey: String,
-  headingArg: String = "",
-  headingArgs: Option[Seq[String]] = None
-) {
+object TaskStatus {
 
-  def toString(implicit messages: Messages): String = {
-    def args = headingArgs.getOrElse(Seq(headingArg))
+  case object CannotStartYet extends TaskStatus {}
 
-    messages("title.format", messages(headingKey, args: _*), messages("service.name"))
-  }
+  case object NotStarted extends TaskStatus {}
+
+  case object InProgress extends TaskStatus {}
+
+  case object Completed extends TaskStatus {}
 
 }
