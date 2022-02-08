@@ -56,7 +56,7 @@
             registration.groupDetail.map(gd => gd.members.map(member =>
                 ListMember(
                     name = member.businessName,
-                    change = Some(groupRoutes.ContactDetailsCheckAnswersController.displayPage(member.id)),
+                    change = Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
                     remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
                 ))
             ).getOrElse(Seq())
