@@ -68,20 +68,6 @@ class AmendOrganisationDetailsControllerSpec
                                                      )
   )
 
-  private def authorisedUserWithPptSubscription() =
-    authorizedUser(user =
-      newUser().copy(enrolments =
-        Enrolments(
-          Set(
-            new Enrolment(PptEnrolment.Identifier,
-                          Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
-                          "activated"
-            )
-          )
-        )
-      )
-    )
-
   override protected def beforeEach(): Unit = {
     reset(mockSubscriptionConnector)
     authorisedUserWithPptSubscription()

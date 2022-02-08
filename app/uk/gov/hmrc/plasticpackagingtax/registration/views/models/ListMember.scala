@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model
+package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
-import base.unit.MessagesSpec
-import org.scalatest.matchers.must.Matchers
-import spec.PptTestData
+import play.api.mvc.Call
 
-class TitleSpec extends MessagesSpec with Matchers with PptTestData {
-
-  val serviceName = messages("service.name")
-
-  "Title" should {
-
-    "format title without section" in {
-      Title("notLiable.pageTitle").toString(messages) must equal(
-        s"${messages("notLiable.pageTitle")} - $serviceName - GOV.UK"
-      )
-    }
-  }
-}
+case class ListMember(
+  name: String,
+  subHeading: Option[String] = None,
+  change: Option[Call] = None,
+  remove: Option[Call] = None
+)

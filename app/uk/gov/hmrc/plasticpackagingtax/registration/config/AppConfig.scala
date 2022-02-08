@@ -71,7 +71,7 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val signOutLink = {
     val signOutUrl = routes.SignOutController.signOut(
-      uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction
+      uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason.UserAction
     )
     if (isRunningLocally())
       selfUrl(signOutUrl)

@@ -16,61 +16,41 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListGroupMembersViewModel
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, ListMember, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, ListMember, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
         appConfig: AppConfig,
         pageHeading: pageHeading,
-        link: link,
         formHelper: FormWithCSRF,
         govukLayout: main_template,
-        listMembers: listMembers,
-        govukFieldset: GovukFieldset,
-        govukRadios: GovukRadios,
-        paragraph: paragraph,
-        saveButtons: saveButtons,
         errorSummary: errorSummary,
+        listMembers: listMembers,
+        govukRadios: GovukRadios,
+        saveButtons: saveButtons,
         viewUtils: ViewUtils
 )
 
-@(form: Form[AddOrganisation], registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
-
-@groupMemberCount = @{
-    registration.groupDetail.map(_.members.size).getOrElse(0)
-}
-
-@listofMembers = @{
-    Seq(
-        ListMember(
-            name = registration.organisationDetails.businessName.get,
-            subHeading = Some(messages("amend.group.manage.representativeMember")),
-            change = None
-        )) ++
-            registration.groupDetail.map(gd => gd.members.map(member =>
-                ListMember(
-                    name = member.businessName,
-                    change = Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-                    remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-                ))
-            ).getOrElse(Seq())
-}
+@(form: Form[Boolean], viewModel: ListGroupMembersViewModel)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
-    title = Title("amend.group.listMembers.title", groupMemberCount.toString),
-    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
+    title = Title("amend.group.listMembers.title", viewModel.groupMemberCount),
+    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))
+) {
 
-    @pageHeading(text = messages("amend.group.listMembers.title", groupMemberCount.toString))
+    @errorSummary(form.errors)
 
-    @listMembers(listofMembers)
+    @pageHeading(text = messages("amend.group.listMembers.title", viewModel.groupMemberCount))
 
-    @formHelper(action = routes.AddGroupMemberController.submit(), 'autoComplete -> "off") {
+    @listMembers(viewModel.listMembers)
+
+    @formHelper(action = routes.GroupMembersListController.onSubmit(), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
@@ -83,12 +63,13 @@
             idPrefix = Some(form("addOrganisation").name),
             name = form("addOrganisation").name,
             items = Seq(
-                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisation.YES), checked = form("addOrganisation").value.contains(AddOrganisation.YES)),
-                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisation.NO), checked = form("addOrganisation").value.contains(AddOrganisation.NO))
+                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisationForm.YES), checked = form("addOrganisation").value.contains(AddOrganisationForm.YES)),
+                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisationForm.NO), checked = form("addOrganisation").value.contains(AddOrganisationForm.NO))
             ),
             classes = "govuk-radios--inline",
             errorMessage = form("addOrganisation").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
         ))
+
         @saveButtons()
     }
 

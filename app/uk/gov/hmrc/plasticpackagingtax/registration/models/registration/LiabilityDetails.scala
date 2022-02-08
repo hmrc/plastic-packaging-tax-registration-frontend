@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityWeight
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails.minimumLiabilityWeightKg
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class LiabilityDetails(
   weight: Option[LiabilityWeight] = None,

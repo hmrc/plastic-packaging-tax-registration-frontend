@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
-import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -28,9 +27,7 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.amend_member_contact_check_answers_page
@@ -46,22 +43,6 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec
   when(cyaPage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("Amend Reg - New Group Member CYA")
   )
-
-  private val pptReference = "XMPPT0000000123"
-
-  private def authorisedUserWithPptSubscription(): Unit =
-    authorizedUser(user =
-      newUser().copy(enrolments =
-        Enrolments(
-          Set(
-            new Enrolment(PptEnrolment.Identifier,
-                          Seq(EnrolmentIdentifier(PptEnrolment.Key, pptReference)),
-                          "activated"
-            )
-          )
-        )
-      )
-    )
 
   private val controller = new AddGroupMemberContactDetailsCheckAnswersController(
     authenticate = mockAuthAllowEnrolmentAction,

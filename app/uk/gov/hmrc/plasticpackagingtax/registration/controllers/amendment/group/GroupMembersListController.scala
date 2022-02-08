@@ -18,12 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListGroupMembersViewModel
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -32,14 +32,29 @@ import javax.inject.{Inject, Singleton}
 class GroupMembersListController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   amendmentJourneyAction: AmendmentJourneyAction,
-  override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: list_group_members_page
-) extends FrontendController(mcc) with Cacheable with I18nSupport {
+) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page(AddOrganisation.form(), request.registration))
+      Ok(page(AddOrganisationForm.form(), new ListGroupMembersViewModel(request.registration)))
+    }
+
+  def onSubmit(): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      AddOrganisationForm
+        .form()
+        .bindFromRequest()
+        .fold(error => BadRequest(page(error, new ListGroupMembersViewModel(request.registration))),
+              add =>
+                if (add)
+                  Redirect(
+                    group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()
+                  )
+                else
+                  Redirect(routes.ManageGroupMembersController.displayPage())
+        )
     }
 
 }

@@ -81,20 +81,6 @@ class AmendContactDetailsControllerSpec
                                       countryService
     )
 
-  private def authorisedUserWithPptSubscription() =
-    authorizedUser(user =
-      newUser().copy(enrolments =
-        Enrolments(
-          Set(
-            new Enrolment(PptEnrolment.Identifier,
-                          Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
-                          "activated"
-            )
-          )
-        )
-      )
-    )
-
   private val populatedRegistration = aRegistration()
 
   override protected def beforeEach(): Unit = {

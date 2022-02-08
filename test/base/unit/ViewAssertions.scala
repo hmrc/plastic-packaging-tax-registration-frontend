@@ -20,7 +20,7 @@ import org.jsoup.nodes.Element
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import spec.ViewMatchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason
 
 trait ViewAssertions extends ViewMatchers {
 

@@ -48,16 +48,8 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "test\\..*",
     ".*(BuildInfo|Routes|Options).*",
     "logger.*\\(.*\\)",
-    // TODO: remove these as required as we build out the post reg group amendment
-    ".*.controllers.amendment.group.AddGroupMemberController",
-    ".*.controllers.amendment.group.GroupMembersListController",
-    ".*.controllers.amendment.group.ManageGroupMembersController",
-
     // These are being excluded since all logic has been pushed to base class and they are tested by their non-post-registration associates
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
-
-    ".*.views.html.amendment.group.list_group_members_page.*",
-    ".*.views.html.amendment.group.manage_group_members_page.*",
   ).mkString(";"),
   coverageMinimum := 95.0,
   coverageFailOnMinimum := true,

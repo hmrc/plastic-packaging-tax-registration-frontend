@@ -20,29 +20,19 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
 
-case class AddOrganisation(answer: Option[Boolean])
-
-object AddOrganisation extends CommonFormValidators with CommonFormValues {
+object AddOrganisationForm extends CommonFormValidators with CommonFormValues {
 
   val emptyError = "addOrganisation.empty.error"
   val field      = "addOrganisation"
 
-  def form(): Form[AddOrganisation] =
+  def form(): Form[Boolean] =
     Form(
       mapping(
         field -> optional(text)
           .verifying(emptyError, _.nonEmpty)
-      )(AddOrganisation.toForm)(AddOrganisation.fromForm)
+          .transform[String](_.get, Some.apply)
+          .transform[Boolean](_ == YES, _.toString)
+      )(identity)(Some.apply)
     )
-
-  def toForm(value: Option[String]): AddOrganisation =
-    value match {
-      case Some(YES) => AddOrganisation(Some(true))
-      case Some(NO)  => AddOrganisation(Some(false))
-      case _         => AddOrganisation(None)
-    }
-
-  def fromForm(addOrganisation: AddOrganisation): Option[Option[String]] =
-    addOrganisation.answer.map(value => if (value) Some(YES) else Some(NO))
 
 }

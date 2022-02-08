@@ -15,12 +15,12 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.{controllers => pptControllers}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisation
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.BackButton
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 
 @this(
@@ -34,7 +34,7 @@
         govukSummaryList: GovukSummaryList
 )
 
-@(form: Form[AddOrganisation], nominatedOrganisation: String, members: Seq[GroupMember])(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(form: Form[Boolean], nominatedOrganisation: String, members: Seq[GroupMember])(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @numOrganisations = @{
     {
@@ -82,8 +82,8 @@
             idPrefix = Some(form("addOrganisation").name),
             name = form("addOrganisation").name,
             items = Seq(
-                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisation.YES), checked = form("addOrganisation").value.contains(AddOrganisation.YES)),
-                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisation.NO), checked = form("addOrganisation").value.contains(AddOrganisation.NO))
+                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisationForm.YES), checked = form("addOrganisation").value.contains(AddOrganisationForm.YES)),
+                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisationForm.NO), checked = form("addOrganisation").value.contains(AddOrganisationForm.NO))
             ),
             classes = "govuk-radios--inline",
             errorMessage = form("addOrganisation").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
