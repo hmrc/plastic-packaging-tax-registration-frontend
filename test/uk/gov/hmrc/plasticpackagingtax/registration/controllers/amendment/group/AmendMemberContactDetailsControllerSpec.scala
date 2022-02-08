@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
@@ -32,37 +32,43 @@ import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
+  member_email_address_page,
+  member_name_page,
+  member_phone_number_page
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 import scala.concurrent.Future
 
-class AmendContactDetailsControllerSpec
+class AmendMemberContactDetailsControllerSpec
     extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {
 
   private val countryService = instanceOf[CountryService]
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val amendNamePage        = mock[full_name_page]
-  private val amendJobTitlePage    = mock[job_title_page]
-  private val amendPhoneNumberPage = mock[phone_number_page]
-  private val amendAddressPage     = mock[address_page]
+  private val amendNamePage         = mock[member_name_page]
+  private val amendPhoneNumberPage  = mock[member_phone_number_page]
+  private val amendEmailAddressPage = mock[member_email_address_page]
+  private val amendAddressPage      = mock[address_page]
 
-  when(amendNamePage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(amendNamePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("name amendment")
   )
 
-  when(amendJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("job title amendment")
+  when(amendEmailAddressPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+    HtmlFormat.raw("email address amendment")
   )
 
-  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(amendPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("phone number amendment")
   )
 
@@ -71,14 +77,14 @@ class AmendContactDetailsControllerSpec
   )
 
   private val controller =
-    new AmendContactDetailsController(mockAuthAllowEnrolmentAction,
-                                      mcc,
-                                      mockAmendmentJourneyAction,
-                                      amendNamePage,
-                                      amendJobTitlePage,
-                                      amendPhoneNumberPage,
-                                      amendAddressPage,
-                                      countryService
+    new AmendMemberContactDetailsController(mockAuthAllowEnrolmentAction,
+                                            mcc,
+                                            mockAmendmentJourneyAction,
+                                            amendNamePage,
+                                            amendPhoneNumberPage,
+                                            amendEmailAddressPage,
+                                            amendAddressPage,
+                                            countryService
     )
 
   private def authorisedUserWithPptSubscription() =
@@ -95,34 +101,37 @@ class AmendContactDetailsControllerSpec
       )
     )
 
-  private val populatedRegistration = aRegistration()
+  private val populatedRegistration = aRegistration(
+    withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
+  )
+
+  private val memberId = groupMember.id
 
   override protected def beforeEach(): Unit = {
     inMemoryRegistrationAmendmentRepository.reset()
     reset(mockSubscriptionConnector)
     simulateGetSubscriptionSuccess(populatedRegistration)
-    simulateUpdateSubscriptionSuccess()
   }
 
-  "Amend Contact Details Controller" should {
+  "Amend Member Contact Details Controller" should {
 
     "show page" when {
       val showPageTestData =
         Table(("Test Name", "Display Call", "Expected Page Content"),
               ("main contact name",
-               (req: Request[AnyContent]) => controller.contactName()(req),
+               (req: Request[AnyContent]) => controller.contactName(memberId)(req),
                "name amendment"
               ),
-              ("job title",
-               (req: Request[AnyContent]) => controller.jobTitle()(req),
-               "job title amendment"
-              ),
-              ("phone number",
-               (req: Request[AnyContent]) => controller.phoneNumber()(req),
+              ("member phone number",
+               (req: Request[AnyContent]) => controller.phoneNumber(memberId)(req),
                "phone number amendment"
               ),
+              ("member email address",
+               (req: Request[AnyContent]) => controller.email(memberId)(req),
+               "email address amendment"
+              ),
               ("address",
-               (req: Request[AnyContent]) => controller.address()(req),
+               (req: Request[AnyContent]) => controller.address(memberId)(req),
                "address amendment"
               )
         )
@@ -170,31 +179,37 @@ class AmendContactDetailsControllerSpec
          "Invalid Expected Page Content"
         ),
         ("main contact name",
-         () => FullName(""),
-         () => FullName("John Johnson"),
-         (req: Request[AnyContent]) => controller.updateContactName()(req),
-         (reg: Registration) => reg.primaryContactDetails.name mustBe Some("John Johnson"),
+         () => MemberName("", ""),
+         () => MemberName("John", "Johnson"),
+         (req: Request[AnyContent]) => controller.updateContactName(memberId)(req),
+         (reg: Registration) =>
+           reg.groupDetail.get.members.head.contactDetails.get.firstName mustBe "John",
          "name amendment"
         ),
-        ("job title",
-         () => JobTitle(""),
-         () => JobTitle("CEO"),
-         (req: Request[AnyContent]) => controller.updateJobTitle()(req),
-         (reg: Registration) => reg.primaryContactDetails.jobTitle mustBe Some("CEO"),
-         "job title amendment"
-        ),
-        ("phone number",
+        ("member phone number",
          () => PhoneNumber("xxx"),
          () => PhoneNumber("07123 123456"),
-         (req: Request[AnyContent]) => controller.updatePhoneNumber()(req),
-         (reg: Registration) => reg.primaryContactDetails.phoneNumber mustBe Some("07123 123456"),
+         (req: Request[AnyContent]) => controller.updatePhoneNumber(memberId)(req),
+         (reg: Registration) =>
+           reg.groupDetail.get.members.head.contactDetails.get.phoneNumber mustBe Some(
+             "07123 123456"
+           ),
          "phone number amendment"
+        ),
+        ("member email address",
+         () => EmailAddress(""),
+         () => EmailAddress("test@test.com"),
+         (req: Request[AnyContent]) => controller.updateEmail(memberId)(req),
+         (reg: Registration) =>
+           reg.groupDetail.get.members.head.contactDetails.get.email mustBe Some("test@test.com"),
+         "email address amendment"
         ),
         ("address",
          () => invalidAddress,
          () => validAddress,
-         (req: Request[AnyContent]) => controller.updateAddress()(req),
-         (reg: Registration) => reg.primaryContactDetails.address mustBe Some(validAddress),
+         (req: Request[AnyContent]) => controller.updateAddress(memberId)(req),
+         (reg: Registration) =>
+           reg.groupDetail.get.members.head.contactDetails.get.address mustBe Some(validAddress),
          "address amendment"
         )
       )
@@ -233,7 +248,9 @@ class AmendContactDetailsControllerSpec
           _
         ) =>
           s"$testName updated" in {
-            val registration = aRegistration()
+            val registration = aRegistration(
+              withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
+            )
             authorisedUserWithPptSubscription()
             inMemoryRegistrationAmendmentRepository.put("123", registration)
 
