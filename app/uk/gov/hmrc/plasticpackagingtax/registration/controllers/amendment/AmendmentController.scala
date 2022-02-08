@@ -22,7 +22,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
-  AuthenticatedRequest,
   JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{

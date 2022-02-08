@@ -34,12 +34,6 @@
 
 @(groupMember: GroupMember)(implicit request: JourneyRequest[_], messages: Messages)
 
-@organisationTypeName = @{
-    groupMember.businessType match {
-        case Some(orgType) => OrgType.withNameOpt(orgType).getOrElse(OrgType.UK_COMPANY)
-        case _ => OrgType.UK_COMPANY
-    }
-}
 
 @govukLayout(
     title = Title("contactDetails.member.check.title"),
@@ -52,7 +46,7 @@
         @govukSummaryList(
             SummaryList(
                 rows = Seq(
-                    viewUtils.summaryListRow("contactDetails.member.check.orgType", Some(messages(s"organisationDetails.type.$organisationTypeName")), Some(groupRoutes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.orgType", Some(messages(s"organisationDetails.type.${groupMember.businessTypeDisplayName}")), Some(groupRoutes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id))),
                     viewUtils.summaryListRow("contactDetails.member.check.companyNumber", Some(groupMember.customerIdentification1), None),
                     viewUtils.summaryListRow("contactDetails.member.check.orgName", Some(groupMember.businessName), None),
                     viewUtils.summaryListRow("contactDetails.member.check.utr", groupMember.customerIdentification2, None),
