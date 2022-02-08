@@ -25,7 +25,7 @@ class ListGroupMembersViewModel(registration: Registration) {
   val groupMemberCount: String = registration.groupDetail.map(_.members.size).getOrElse(0).toString
 
   def listMembers(implicit messages: Messages): Seq[ListMember] =
-    ListMember(name = registration.organisationDetails.businessName.get, //todo hmmmm
+    ListMember(name = registration.organisationDetails.businessName.getOrElse(throw new IllegalStateException("Missing Business Name")),
                subHeading = Some(messages("amend.group.manage.representativeMember"))
     ) +:
       registration.groupDetail.toSeq.flatMap(
