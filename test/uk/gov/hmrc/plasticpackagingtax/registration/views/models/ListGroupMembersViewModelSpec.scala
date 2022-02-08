@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group
+package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
+import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.play.PlaySpec
-import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import play.api.i18n.Messages
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
 
 class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
 

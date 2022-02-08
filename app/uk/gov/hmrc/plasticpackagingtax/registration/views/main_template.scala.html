@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.{phaseBanner, siteHeader}
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 
 @this(
         govukHeader: GovukHeader,
@@ -55,8 +55,8 @@
           timeout = Some(timeoutDialogConfig.timeoutSecs),
           countdown = Some(timeoutDialogConfig.countdownSecs),
           keepAliveUrl = Some(request.uri),
-          signOutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.UserAction).url),
-          timeoutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.model.SignOutReason.SessionTimeout).url),
+          signOutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason.UserAction).url),
+          timeoutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason.SessionTimeout).url),
           title = Some(messages("timeoutDialog.title")),
           message = Some(messages("timeoutDialog.message")),
           messageSuffix = Some(messages("timeoutDialog.messageSuffix")),

@@ -22,8 +22,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEn
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group.ListGroupMembersViewModel
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListGroupMembersViewModel
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}

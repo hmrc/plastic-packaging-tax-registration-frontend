@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class PrimaryContactDetails(
   name: Option[String] = None,

@@ -22,7 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GRO
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.TaskStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class Registration(
   id: String,

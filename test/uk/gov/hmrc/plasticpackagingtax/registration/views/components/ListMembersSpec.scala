@@ -21,7 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.listMembers
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListMember
 
 class ListMembersSpec extends UnitViewSpec with Matchers {
 

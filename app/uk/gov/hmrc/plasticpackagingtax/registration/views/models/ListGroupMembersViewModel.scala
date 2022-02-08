@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group
+package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
 
 class ListGroupMembersViewModel(registration: Registration) {
   val groupMemberCount: String = registration.groupDetail.map(_.members.size).getOrElse(0).toString

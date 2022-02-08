@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.model
+package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
-import play.api.mvc.Call
+import play.api.i18n.Messages
 
-case class ListMember(
-  name: String,
-  subHeading: Option[String] = None,
-  change: Option[Call] = None,
-  remove: Option[Call] = None
-)
+case class Title(
+  headingKey: String,
+  headingArg: String = "",
+  headingArgs: Option[Seq[String]] = None
+) {
+
+  def toString(implicit messages: Messages): String = {
+    def args = headingArgs.getOrElse(Seq(headingArg))
+
+    messages("title.format", messages(headingKey, args: _*), messages("service.name"))
+  }
+
+}

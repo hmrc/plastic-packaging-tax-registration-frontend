@@ -25,7 +25,10 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.model.ListMember
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{
+  ListGroupMembersViewModel,
+  ListMember
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm._
 

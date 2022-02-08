@@ -29,8 +29,8 @@ import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group.ListGroupMembersViewModel
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListGroupMembersViewModel
 
 import scala.concurrent.Future
 
