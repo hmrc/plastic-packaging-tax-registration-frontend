@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 
 import java.util.UUID
 
@@ -36,6 +37,15 @@ case class GroupMember(
 
   lazy val businessType: Option[String] =
     organisationDetails.map(_.organisationType)
+
+  lazy val businessTypeDisplayName: String =
+    businessType match {
+      case Some(organisationType) =>
+        OrgType.withNameOpt(organisationType).getOrElse(
+          throw new IllegalStateException("Organisation type is absent")
+        )
+      case None => throw new IllegalStateException("Organisation type is absent")
+    }
 
   override def equals(o: Any): Boolean =
     o match {

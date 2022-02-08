@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.{routes => amendGroupRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.model.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 
@@ -34,26 +34,25 @@
 
 @(groupMember: GroupMember)(implicit request: JourneyRequest[_], messages: Messages)
 
-
 @govukLayout(
     title = Title("contactDetails.member.check.title"),
-    backButton = Some(BackButton(messages("site.back"), groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), amendGroupRoutes.GroupMembersListController.displayPage(), messages("site.back.hiddenText")))) {
 
     @pageHeading(messages("contactDetails.member.check.title"))
 
-    @formHelper(action = groupRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = amendGroupRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
 
         @govukSummaryList(
             SummaryList(
                 rows = Seq(
-                    viewUtils.summaryListRow("contactDetails.member.check.orgType", Some(messages(s"organisationDetails.type.${groupMember.businessTypeDisplayName}")), Some(groupRoutes.OrganisationDetailsTypeController.displayPageAmendMember(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.orgType", Some(messages(s"organisationDetails.type.${groupMember.businessTypeDisplayName}")), None),
                     viewUtils.summaryListRow("contactDetails.member.check.companyNumber", Some(groupMember.customerIdentification1), None),
                     viewUtils.summaryListRow("contactDetails.member.check.orgName", Some(groupMember.businessName), None),
                     viewUtils.summaryListRow("contactDetails.member.check.utr", groupMember.customerIdentification2, None),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.name", groupMember.contactDetails.map(_.groupMemberName), Some(groupRoutes.ContactDetailsNameController.displayPage(groupMember.id))),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.email", groupMember.contactDetails.flatMap(_.email), Some(groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id))),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.phone", groupMember.contactDetails.flatMap(_.phoneNumber), Some(groupRoutes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id))),
-                    viewUtils.summaryListRow("contactDetails.member.check.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), Some(groupRoutes.ContactDetailsConfirmAddressController.displayPage(groupMember.id)))
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.name", groupMember.contactDetails.map(_.groupMemberName), Some(amendGroupRoutes.AmendMemberContactDetailsController.contactName(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.email", groupMember.contactDetails.flatMap(_.email), Some(amendGroupRoutes.AmendMemberContactDetailsController.email(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.phone", groupMember.contactDetails.flatMap(_.phoneNumber), Some(amendGroupRoutes.AmendMemberContactDetailsController.phoneNumber(groupMember.id))),
+                    viewUtils.summaryListRow("contactDetails.member.check.contact.address", groupMember.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), Some(amendGroupRoutes.AmendMemberContactDetailsController.address(groupMember.id)))
                 ).filterNot(_.value.content == Empty)
             )
         )
