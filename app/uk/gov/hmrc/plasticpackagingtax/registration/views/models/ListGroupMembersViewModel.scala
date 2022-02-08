@@ -34,7 +34,8 @@ class ListGroupMembersViewModel(registration: Registration) {
         _.members.map(
           member =>
             ListMember(name = member.businessName,
-                       change = Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
+                       change =
+                         Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
                        remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
             )
         )
