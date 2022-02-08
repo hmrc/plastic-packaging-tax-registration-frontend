@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 class ListGroupMembersViewModel(registration: Registration) {
@@ -35,9 +34,8 @@ class ListGroupMembersViewModel(registration: Registration) {
         _.members.map(
           member =>
             ListMember(name = member.businessName,
-                       change = Some(
-                         group.routes.ContactDetailsCheckAnswersController.displayPage(member.id)
-                       ),
+                       change =
+                         Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
                        remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
             )
         )
