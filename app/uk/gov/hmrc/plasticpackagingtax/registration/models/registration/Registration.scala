@@ -28,7 +28,7 @@ import java.time.LocalDate
 
 case class Registration(
   id: String,
-  dateOfRegistration: LocalDate = LocalDate.now(),
+  dateOfRegistration: Option[LocalDate] = Some(LocalDate.now()),
   incorpJourneyId: Option[String] = None,
   registrationType: Option[RegType] = None,
   groupDetail: Option[GroupDetail] = None,
