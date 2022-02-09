@@ -92,9 +92,9 @@ class ViewUtils @Inject() (countryService: CountryService) {
     if (!journeyRequest.isFeatureFlagEnabled(isUkCompanyPrivateBeta)) Some(call) else None
 
   def displayDate(date: Option[Date]): Option[String] =
-    date.map(date => displayDate(date.asLocalDate))
+    displayLocalDate(date.map(_.asLocalDate))
 
-  def displayDate(date: LocalDate): String =
-    date.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+  def displayLocalDate(date: Option[LocalDate]): Option[String] =
+    date.map(_.format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
 
 }
