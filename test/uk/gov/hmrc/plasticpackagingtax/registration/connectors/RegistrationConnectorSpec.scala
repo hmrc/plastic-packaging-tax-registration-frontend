@@ -98,7 +98,9 @@ class RegistrationConnectorSpec
 
         givenGetRegistrationReturns(
           Status.OK,
-          Json.toJsObject(Registration("123", Some("incorpJourneyId"))).toString()
+          Json.toJsObject(
+            Registration(id = "123", incorpJourneyId = Some("incorpJourneyId"))
+          ).toString()
         )
 
         val res = await(connector.find("123"))
@@ -155,10 +157,11 @@ class RegistrationConnectorSpec
         givenPutToRegistrationReturns(
           Status.CREATED,
           "123",
-          Json.toJsObject(Registration("123", Some("incorpId"))).toString
+          Json.toJsObject(Registration(id = "123", incorpJourneyId = Some("incorpId"))).toString
         )
 
-        val res = await(connector.update(Registration("123", Some("incorpId"))))
+        val res =
+          await(connector.update(Registration(id = "123", incorpJourneyId = Some("incorpId"))))
 
         res.value.id mustBe "123"
         res.value.incorpJourneyId mustBe Some("incorpId")

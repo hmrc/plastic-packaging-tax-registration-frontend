@@ -24,8 +24,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.P
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
+import java.time.LocalDate
+
 case class Registration(
   id: String,
+  dateOfRegistration: LocalDate = LocalDate.now(),
   incorpJourneyId: Option[String] = None,
   registrationType: Option[RegType] = None,
   groupDetail: Option[GroupDetail] = None,

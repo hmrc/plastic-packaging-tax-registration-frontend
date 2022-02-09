@@ -86,19 +86,18 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   // format: off
 
-  def authorisedUserWithPptSubscription(): Unit =
-    authorizedUser(user =
-      newUser().copy(enrolments =
-        Enrolments(
-          Set(
-            new Enrolment(PptEnrolment.Identifier,
-              Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
-              "activated"
-            )
-          )
+  val userWithPPTEnrolment = newUser().copy(enrolments =
+    Enrolments(
+      Set(
+        new Enrolment(PptEnrolment.Identifier,
+          Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
+          "activated"
         )
       )
     )
+  )
+
+  def authorisedUserWithPptSubscription(): Unit = authorizedUser(user = userWithPPTEnrolment)
 
   def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPreLaunch -> true)): Unit = {
     when(appConfig.defaultFeatures).thenReturn(features)

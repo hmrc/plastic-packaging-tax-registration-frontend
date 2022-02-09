@@ -15,47 +15,45 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.primaryContactDetails
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.review.{groupMemberListDetails, liabilityDetails, organisationDetails}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.{organisationDetails, primaryContactDetails}
 
 @this(
         formHelper: FormWithCSRF,
         govukLayout: main_template,
-        govukSummaryList: GovukSummaryList,
         pageHeading: pageHeading,
-        saveAndContinue: saveAndContinue,
-        paragraphBody: paragraphBody,
-        subHeading: subHeading,
         appConfig: AppConfig,
         organisationDetails: organisationDetails,
-        groupMemberListDetails: groupMemberListDetails,
         primaryContactDetails: primaryContactDetails
 )
+@(registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@(
-        registration: Registration
-)(implicit request: JourneyRequest[AnyContent], messages: Messages)
-
-@govukLayout(
-    title = Title("amendRegistration.organisationDetails.title"),
-    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
-
-    @pageHeading(s"${messages("amendRegistration.organisationDetails.title")} - ${request.pptReference.getOrElse("<missing ppt reference>")}")
-
-    @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
-
-        @organisationDetails(registration.organisationDetails, registration.registrationType, None, Some(amendRoutes.AmendOrganisationDetailsController.changeBusinessAddress()))
-        @primaryContactDetails(registration.primaryContactDetails)
-
-        @if(registration.registrationType.contains(GROUP)) {
-            @groupMemberListDetails(registration.groupDetail.get)
+@titleMessageKey() = @{
+    if(registration.isPartnershipWithPartnerCollection) {
+        "amend.partnership.title"
+    } else {
+        registration.registrationType match {
+            case Some(GROUP) => "amend.group.title"
+            case _ => registration.organisationDetails.organisationType match {
+                case Some(SOLE_TRADER) => "amend.individual.title"
+                case _ => "amend.organisation.title"
+            }
         }
     }
+}
+
+@govukLayout(
+    title = Title(titleMessageKey),
+    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
+
+    @pageHeading(messages(titleMessageKey()))
+
+    @organisationDetails(request.pptReference, registration, Some(amendRoutes.AmendOrganisationDetailsController.changeBusinessAddress()))
+    @primaryContactDetails(registration)
 }
