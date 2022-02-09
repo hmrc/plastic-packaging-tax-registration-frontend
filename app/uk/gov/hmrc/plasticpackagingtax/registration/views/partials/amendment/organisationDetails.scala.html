@@ -1,0 +1,67 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
+
+@this(
+        subHeading: subHeading,
+        govukSummaryList: GovukSummaryList,
+        countryService: CountryService,
+        viewUtils: ViewUtils
+)
+
+@(pptReferenceNumber: Option[String], registration: Registration, addressChangeLink: Option[Call])(implicit request: JourneyRequest[_], messages: Messages)
+
+@registrationDetailsSubHeading() = @{
+    if(registration.isPartnershipWithPartnerCollection) {
+        subHeading(messages("amend.partnership.subheading"))
+    } else {
+        registration.registrationType match {
+            case Some(GROUP) => subHeading(messages("amend.group.subheading"))
+            case _ => registration.organisationDetails.organisationType match {
+                case Some(SOLE_TRADER) => subHeading(messages("amend.individual.subheading"))
+                case _ => subHeading(messages("amend.organisation.subheading"))
+            }
+        }
+    }
+}
+
+@organisationNameMessageKey = @{
+    registration.organisationDetails.organisationType match {
+        case Some(SOLE_TRADER) => "amend.individual.label"
+        case _ => "amend.organisation.label"
+    }
+}
+
+@registrationDetailsSubHeading()
+
+@govukSummaryList({
+    SummaryList(
+        rows = Seq(
+            viewUtils.summaryListRow(organisationNameMessageKey, registration.organisationDetails.businessName, None),
+            viewUtils.summaryListRow("amend.pptRef.label", pptReferenceNumber, None),
+            viewUtils.summaryListRow("amend.taxStartDate.label", viewUtils.displayDate(registration.liabilityDetails.startDate), None),
+            viewUtils.summaryListRow("amend.dateOfRegistration.label", Some(viewUtils.displayDate(registration.dateOfRegistration)), None),
+            viewUtils.summaryListRow("amend.registeredAddress.label", registration.organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress), None),
+        ).filterNot(_.value.content == Empty)
+    )
+})

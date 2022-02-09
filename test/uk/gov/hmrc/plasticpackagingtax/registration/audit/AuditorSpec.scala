@@ -25,7 +25,7 @@ import org.scalatest.concurrent.Eventually.eventually
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import play.api.libs.json.Json
 
 class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with RegistrationBuilder {
 
@@ -55,7 +55,7 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
         auditor.registrationSubmitted(registration)
 
         eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, registration) mustBe true
+          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None)) mustBe true
         }
       }
     }
@@ -68,7 +68,7 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
         auditor.registrationSubmitted(registration)
 
         eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, registration) mustBe true
+          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None)) mustBe true
         }
       }
     }
@@ -80,7 +80,7 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
         auditor.newRegistrationStarted()
 
         eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
+          verifyEventSentToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
         }
       }
     }
@@ -92,7 +92,7 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
         auditor.newRegistrationStarted()
 
         eventually(timeout(Span(5, Seconds))) {
-          eventSendToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
+          verifyEventSentToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
         }
       }
     }
@@ -107,13 +107,25 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
         )
     )
 
-  private def eventSendToAudit(url: String, registration: Registration): Boolean =
-    eventSendToAudit(url,
-                     CreateRegistrationEvent.eventType,
-                     Registration.format.writes(registration).toString()
+  private def verifyEventSentToAudit(
+    url: String,
+    createRegistrationEvent: CreateRegistrationEvent
+  ): Boolean =
+    verifyEventSentToAudit(url,
+                           CreateRegistrationEvent.eventType,
+                           Json.toJson(createRegistrationEvent).toString
     )
 
-  private def eventSendToAudit(url: String, eventType: String, body: String): Boolean =
+  private def verifyEventSentToAudit(
+    url: String,
+    startRegistrationEvent: StartRegistrationEvent
+  ): Boolean =
+    verifyEventSentToAudit(url,
+                           StartRegistrationEvent.eventType,
+                           Json.toJson(startRegistrationEvent).toString()
+    )
+
+  private def verifyEventSentToAudit(url: String, eventType: String, body: String): Boolean =
     try {
       verify(
         postRequestedFor(urlEqualTo(url))
@@ -139,14 +151,5 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
     } catch {
       case _: VerificationException => false
     }
-
-  private def eventSendToAudit(
-    url: String,
-    startRegistrationEvent: StartRegistrationEvent
-  ): Boolean =
-    eventSendToAudit(url,
-                     StartRegistrationEvent.eventType,
-                     StartRegistrationEvent.format.writes(startRegistrationEvent).toString()
-    )
 
 }

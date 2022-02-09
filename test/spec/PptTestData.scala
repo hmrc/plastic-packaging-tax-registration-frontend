@@ -75,6 +75,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                    appConfig = appConfig
     )
 
+  val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
+    JourneyRequest(authenticatedRequest =
+                     new AuthenticatedRequest(FakeRequest().withCSRFToken, userWithPPTEnrolment),
+                   registration = aRegistration(),
+                   appConfig = appConfig
+    )
+
   implicit def generateRequest(
     userFeatureFlags: Map[String, Boolean] = testUserFeatures
   ): JourneyRequest[AnyContent] =

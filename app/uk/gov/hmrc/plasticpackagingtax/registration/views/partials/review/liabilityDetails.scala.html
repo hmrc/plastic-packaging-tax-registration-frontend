@@ -22,8 +22,6 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
-@import java.time.format.DateTimeFormatter
-
 @this(
         subHeading: subHeading,
         govukSummaryList: GovukSummaryList,
@@ -76,7 +74,7 @@
             content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                 Empty
             } else {
-                Text(liabilityDetails.startDate.map(_.asLocalDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))).getOrElse(""))
+                Text(viewUtils.displayDate(liabilityDetails.startDate).getOrElse(""))
             }
         ),
         call = Some(pptRoutes.LiabilityStartDateController.displayPage())

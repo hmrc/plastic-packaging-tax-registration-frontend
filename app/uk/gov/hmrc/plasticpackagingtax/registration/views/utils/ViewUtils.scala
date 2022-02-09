@@ -28,9 +28,13 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
   SummaryListRow
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features.isUkCompanyPrivateBeta
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Singleton
 class ViewUtils @Inject() (countryService: CountryService) {
@@ -86,5 +90,11 @@ class ViewUtils @Inject() (countryService: CountryService) {
 
   def showChangeLink(call: Call)(implicit journeyRequest: JourneyRequest[_]): Option[Call] =
     if (!journeyRequest.isFeatureFlagEnabled(isUkCompanyPrivateBeta)) Some(call) else None
+
+  def displayDate(date: Option[Date]): Option[String] =
+    date.map(date => displayDate(date.asLocalDate))
+
+  def displayDate(date: LocalDate): String =
+    date.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
 
 }

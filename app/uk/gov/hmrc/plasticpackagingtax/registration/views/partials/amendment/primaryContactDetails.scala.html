@@ -14,11 +14,13 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{ routes => pptRoutes }
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.subHeading
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 @this(
         subHeading: subHeading,
@@ -26,17 +28,32 @@
         viewUtils: ViewUtils
 )
 
-@(primaryContactDetails: PrimaryContactDetails)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
 
-@subHeading(messages("primaryContactDetails.check.label"))
+@contactDetailsSubHeading() = @{
+    if(registration.isPartnershipWithPartnerCollection) {
+        subHeading(messages("amend.contactDetails.partnership.subheading"))
+    } else {
+        registration.registrationType match {
+            case Some(GROUP) => subHeading(messages("amend.contactDetails.group.subheading"))
+            case _ => registration.organisationDetails.organisationType match {
+                case Some(SOLE_TRADER) => subHeading(messages("amend.contactDetails.individual.subheading"))
+                case _ => subHeading(messages("amend.contactDetails.organisation.subheading"))
+            }
+        }
+    }
+}
+
+@contactDetailsSubHeading()
+
 @govukSummaryList(
     SummaryList(
         rows = Seq(
-            viewUtils.summaryListRow("primaryContactDetails.check.fullName", primaryContactDetails.name, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateContactName())),
-            viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", primaryContactDetails.jobTitle, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateJobTitle())),
-            viewUtils.summaryListRow("primaryContactDetails.check.email", primaryContactDetails.email, viewUtils.showChangeLink(pptRoutes.AmendEmailAddressController.updateEmail())),
-            viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", primaryContactDetails.phoneNumber, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updatePhoneNumber())),
-            viewUtils.summaryListRow("primaryContactDetails.check.address", primaryContactDetails.address.map(viewUtils.extractAddress), viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateAddress()))
+            viewUtils.summaryListRow("primaryContactDetails.check.fullName", registration.primaryContactDetails.name, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateContactName())),
+            viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateJobTitle())),
+            viewUtils.summaryListRow("primaryContactDetails.check.email", registration.primaryContactDetails.email, viewUtils.showChangeLink(pptRoutes.AmendEmailAddressController.updateEmail())),
+            viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updatePhoneNumber())),
+            viewUtils.summaryListRow("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(viewUtils.extractAddress), viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateAddress()))
         ).filterNot(_.value.content == Empty)
     )
 )
