@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
+  RegisteredSocietyGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
@@ -41,6 +42,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   OVERSEAS_COMPANY_UK_BRANCH,
+  REGISTERED_SOCIETY,
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP,
   SOLE_TRADER,
@@ -64,6 +66,7 @@ class PartnerTypeController @Inject() (
   val soleTraderGrsConnector: SoleTraderGrsConnector,
   val ukCompanyGrsConnector: UkCompanyGrsConnector,
   val partnershipGrsConnector: PartnershipGrsConnector,
+  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
   page: partner_type
@@ -114,6 +117,11 @@ class PartnerTypeController @Inject() (
                         case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
                           getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl,
                                                   appConfig.partnerGrsCallbackUrl(partnerId)
+                          )
+                            .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        case REGISTERED_SOCIETY =>
+                          getRegisteredSocietyRedirectUrl(appConfig.incorpRegistedSocietyJourneyUrl,
+                                                          appConfig.partnerGrsCallbackUrl(partnerId)
                           )
                             .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                         case LIMITED_LIABILITY_PARTNERSHIP =>

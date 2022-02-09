@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   LIMITED_PARTNERSHIP,
   OVERSEAS_COMPANY_NO_UK_BRANCH,
   OVERSEAS_COMPANY_UK_BRANCH,
+  REGISTERED_SOCIETY,
   SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP,
   SOLE_TRADER,
@@ -55,6 +56,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
                              mockUkCompanyGrsConnector,
                              mockSoleTraderGrsConnector,
                              mockPartnershipGrsConnector,
+                             mockRegisteredSocietyGrsConnector,
                              mockSubscriptionsConnector,
                              mcc
     )(ec)
@@ -82,6 +84,11 @@ class PartnerGrsControllerSpec extends ControllerSpec {
           (UK_COMPANY,
            scottishPartnershipDetails.copy(inflightPartner =
              Some(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
+           )
+          ),
+          (REGISTERED_SOCIETY,
+           scottishPartnershipDetails.copy(inflightPartner =
+             Some(nominatedPartner(PartnerTypeEnum.REGISTERED_SOCIETY))
            )
           ),
           (OVERSEAS_COMPANY_UK_BRANCH,
@@ -116,6 +123,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             case SOLE_TRADER => mockGetSoleTraderDetails(soleTraderDetails)
             case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
               mockGetUkCompanyDetails(incorporationDetails)
+            case REGISTERED_SOCIETY =>
+              mockGetRegisteredSocietyDetails(incorporationDetails)
             case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_PARTNERSHIP |
                 SCOTTISH_LIMITED_PARTNERSHIP =>
               mockGetPartnershipBusinessDetails(partnershipBusinessDetails)

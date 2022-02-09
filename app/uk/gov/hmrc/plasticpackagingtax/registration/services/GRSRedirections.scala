@@ -17,11 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.AnyContent
+import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
+  RegisteredSocietyGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
@@ -41,21 +42,13 @@ trait GRSRedirections extends I18nSupport {
   def soleTraderGrsConnector: SoleTraderGrsConnector
   def ukCompanyGrsConnector: UkCompanyGrsConnector
   def partnershipGrsConnector: PartnershipGrsConnector
+  def registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
 
   def getUkCompanyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
     request: JourneyRequest[AnyContent],
     hc: HeaderCarrier
   ): Future[String] =
-    ukCompanyGrsConnector.createJourney(
-      IncorpEntityGrsCreateRequest(callbackUrl,
-                                   Some(request2Messages(request)("service.name")),
-                                   appConfig.serviceIdentifier,
-                                   appConfig.signOutLink,
-                                   appConfig.grsAccessibilityStatementPath,
-                                   businessVerificationCheck = false
-      ),
-      grsUrl
-    )
+    ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest(callbackUrl), grsUrl)
 
   def getPartnershipRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
     request: JourneyRequest[AnyContent],
@@ -83,6 +76,24 @@ trait GRSRedirections extends I18nSupport {
                                  appConfig.grsAccessibilityStatementPath
       ),
       grsUrl
+    )
+
+  def getRegisteredSocietyRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
+    request: JourneyRequest[_],
+    headerCarrier: HeaderCarrier
+  ): Future[String] =
+    registeredSocietyGrsConnector.createJourney(incorpEntityGrsCreateRequest(callbackUrl), grsUrl)
+
+  private def incorpEntityGrsCreateRequest(
+    callbackUrl: String
+  )(implicit request: JourneyRequest[_]) =
+    IncorpEntityGrsCreateRequest(callbackUrl,
+                                 Some(request2Messages(request)("service.name")),
+                                 appConfig.serviceIdentifier,
+                                 appConfig.signOutLink,
+                                 appConfig.grsAccessibilityStatementPath,
+                                 businessVerificationCheck =
+                                   false
     )
 
 }

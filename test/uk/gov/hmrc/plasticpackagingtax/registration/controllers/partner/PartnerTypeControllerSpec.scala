@@ -44,6 +44,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     soleTraderGrsConnector = mockSoleTraderGrsConnector,
     ukCompanyGrsConnector = mockUkCompanyGrsConnector,
     partnershipGrsConnector = mockPartnershipGrsConnector,
+    registeredSocietyGrsConnector = mockRegisteredSocietyGrsConnector,
     registrationConnector = mockRegistrationConnector,
     mcc = mcc,
     page = page
@@ -131,6 +132,11 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                Seq(nominatedPartner(PartnerTypeEnum.UK_COMPANY))
              )
             ),
+            (REGISTERED_SOCIETY,
+             scottishPartnershipDetails.copy(partners =
+               Seq(nominatedPartner(PartnerTypeEnum.REGISTERED_SOCIETY))
+             )
+            ),
             (OVERSEAS_COMPANY_UK_BRANCH,
              scottishPartnershipDetails.copy(partners =
                Seq(nominatedPartner(PartnerTypeEnum.OVERSEAS_COMPANY_UK_BRANCH))
@@ -148,6 +154,9 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
             mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
             mockCreateUkCompanyPartnershipGrsJourneyCreation("http://test/redirect/ukCompany")
+            mockCreateRegisteredSocietyPartnershipGrsJourneyCreation(
+              "http://test/redirect/registeredSociety"
+            )
             mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
             val correctForm =
@@ -158,6 +167,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                 redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
               case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
                 redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
+              case REGISTERED_SOCIETY =>
+                redirectLocation(result) mustBe Some("http://test/redirect/registeredSociety")
               case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
                 redirectLocation(result) mustBe Some("http://test/redirect/partnership")
               case _ =>

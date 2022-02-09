@@ -52,6 +52,7 @@ class PartnerGrsController @Inject() (
   ukCompanyGrsConnector: UkCompanyGrsConnector,
   soleTraderGrsConnector: SoleTraderGrsConnector,
   partnershipGrsConnector: PartnershipGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   subscriptionsConnector: SubscriptionsConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
@@ -125,7 +126,8 @@ class PartnerGrsController @Inject() (
     partnerType match {
       case Some(UK_COMPANY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
         updateUkCompanyDetails(journeyId, partnerId)
-      case Some(SOLE_TRADER) => updateSoleTraderDetails(journeyId, partnerId)
+      case Some(REGISTERED_SOCIETY) => updateRegisteredSocietyDetails(journeyId, partnerId)
+      case Some(SOLE_TRADER)        => updateSoleTraderDetails(journeyId, partnerId)
       case Some(LIMITED_LIABILITY_PARTNERSHIP) | Some(SCOTTISH_LIMITED_PARTNERSHIP) | Some(
             SCOTTISH_PARTNERSHIP
           ) =>
@@ -152,6 +154,12 @@ class PartnerGrsController @Inject() (
                          partnerId = partnerId
       )
     }.flatMap(result => result)
+
+  private def updateRegisteredSocietyDetails(journeyId: String, partnerId: Option[String])(implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent]
+  ): Future[Either[ServiceError, Registration]] =
+    updateIncorporationDetails(journeyId, partnerId, registeredSocietyGrsConnector.getDetails)
 
   private def updateSoleTraderDetails(journeyId: String, partnerId: Option[String])(implicit
     request: JourneyRequest[AnyContent]

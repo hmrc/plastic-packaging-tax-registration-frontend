@@ -347,6 +347,7 @@ partnership.name.format.error = Please enter your partnership name in correct fo
 
 partner.type.SoleTrader = Sole trader
 partner.type.UkCompany = UK limited company
+partner.type.RegisteredSociety = Registered society
 partner.type.GeneralPartnership = General partnership
 partner.type.LimitedLiabilityPartnership = Limited liability partnership
 partner.type.LimitedPartnership = Limited partnership

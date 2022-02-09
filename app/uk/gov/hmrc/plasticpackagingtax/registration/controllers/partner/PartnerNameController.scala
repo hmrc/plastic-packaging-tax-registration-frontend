@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
+  RegisteredSocietyGrsConnector,
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
@@ -63,6 +64,7 @@ class PartnerNameController @Inject() (
   val soleTraderGrsConnector: SoleTraderGrsConnector,
   val ukCompanyGrsConnector: UkCompanyGrsConnector,
   val partnershipGrsConnector: PartnershipGrsConnector,
+  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   mcc: MessagesControllerComponents,
   page: partner_name_page
 )(implicit ec: ExecutionContext)
