@@ -114,7 +114,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
               Seq(registration.organisationDetails.businessName.get,
                   journeyRequestWithEnrolledUser.pptReference.get,
                   viewUtils.displayDate(registration.liabilityDetails.startDate).get,
-                  viewUtils.displayDate(registration.dateOfRegistration),
+                  viewUtils.displayLocalDate(registration.dateOfRegistration).get,
                   registration.organisationDetails.businessRegisteredAddress.map(
                     bra => bra.addressLine1
                   ).get,
