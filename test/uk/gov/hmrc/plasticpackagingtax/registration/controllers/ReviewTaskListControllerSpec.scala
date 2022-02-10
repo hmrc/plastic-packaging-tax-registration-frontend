@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -39,11 +39,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   EisError,
   SubscriptionCreateOrUpdateResponseFailure
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationFilterService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   duplicate_subscription_page,
   review_registration_page
@@ -57,6 +59,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   private val mockDuplicateSubscriptionPage   = mock[duplicate_subscription_page]
   private val mcc                             = stubMessagesControllerComponents()
   private val mockStartRegistrationController = mock[StartRegistrationController]
+  private val mockRegistrationFilterService   = mock[RegistrationFilterService]
   private val liabilityStartLink              = Call("GET", "/startRegistrationLink")
 
   private val controller =
@@ -68,21 +71,20 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                      auditor = mockAuditor,
                                      reviewRegistrationPage = mockReviewRegistrationPage,
                                      metrics = metricsMock,
-                                     startRegistrationController = mockStartRegistrationController
+                                     startRegistrationController = mockStartRegistrationController,
+                                     registrationFilterService = mockRegistrationFilterService
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    val registration = aRegistration()
-
-    mockRegistrationFind(registration)
+    authorizedUser()
     given(mockReviewRegistrationPage.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     given(mockStartRegistrationController.startLink(any())).willReturn(liabilityStartLink)
   }
 
   override protected def afterEach(): Unit = {
-    reset(mockReviewRegistrationPage)
+    reset(mockReviewRegistrationPage, mockRegistrationFilterService)
     super.afterEach()
   }
 
@@ -108,7 +110,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             )
           )
         )
-        authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
 
@@ -121,6 +122,36 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         )(any(), any())
       }
 
+      "user is authorised and registration contains a partial group member" in {
+
+        val registration: Registration =
+          createRegistrationWithGroupMember(groupMember,
+                                            groupMember.copy(customerIdentification1 = "")
+          )
+
+        val expectedReg: Registration = registration.copy(groupDetail =
+          Some(GroupDetail(membersUnderGroupControl = Some(true), members = List(groupMember)))
+        )
+
+        mockRegistrationFind(registration)
+        when(mockRegistrationFilterService.filterByGroupMembers(any())).thenReturn(expectedReg)
+        mockRegistrationUpdate()
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(expectedReg),
+                                                 liabilityStartLink =
+                                                   ArgumentMatchers.eq(liabilityStartLink)
+        )(any(), any())
+
+        verify(mockRegistrationConnector).update(
+          ArgumentMatchers.eq(
+            expectedReg.copy(metaData = registration.metaData.copy(registrationReviewed = true))
+          )
+        )(any())
+      }
+
       "user is authorised and display page method is invoked with sole trader" in {
         val registration = aRegistration(
           withOrganisationDetails(
@@ -130,7 +161,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             )
           )
         )
-        authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
 
@@ -152,7 +182,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             )
           )
         )
-        authorizedUser()
         mockRegistrationFind(registration)
         mockRegistrationUpdate()
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
@@ -176,7 +205,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         var submissionCount = 0
 
         forAll(registrations) { registration =>
-          authorizedUser()
           val completedRegistration =
             registration.copy(incorpJourneyId = Some(UUID.randomUUID().toString))
           mockRegistrationFind(completedRegistration)
@@ -200,7 +228,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       }
 
       "display page and registration not in ready state" in {
-        authorizedUser()
         val unreadyRegistration =
           aCompletedGeneralPartnershipRegistration
             .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
@@ -217,11 +244,37 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
       }
 
+      "display task list page when all groupMember are removed" in {
+        val registrationRequest: Registration =
+          createRegistrationWithGroupMember(groupMember.copy(customerIdentification1 = ""))
+
+        val sanitisedReg = registrationRequest.copy(groupDetail =
+          registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
+        );
+
+        when(mockRegistrationFilterService.filterByGroupMembers(any()))
+          .thenReturn(sanitisedReg)
+        mockRegistrationFind(registrationRequest)
+        mockRegistrationUpdate
+
+        val result = controller.displayPage()(postRequest(JsObject.empty))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+
+        verify(mockRegistrationConnector).update(
+          ArgumentMatchers.eq(
+            sanitisedReg.copy(metaData =
+              registrationRequest.metaData.copy(registrationReviewed = true)
+            )
+          )
+        )(any())
+      }
+
     }
 
     "throw exceptions" when {
       "display page and get details fails for uk company" in {
-        authorizedUser()
         mockRegistrationFindFailure()
 
         val result = controller.displayPage()(getRequest())
@@ -230,7 +283,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       }
 
       "display page and get details fails for sole trader" in {
-        authorizedUser()
         mockRegistrationFindFailure()
 
         val result = controller.displayPage()(getRequest())
@@ -239,7 +291,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       }
 
       "display page and get details fails for partnership" in {
-        authorizedUser()
         mockRegistrationFindFailure()
 
         val result = controller.displayPage()(getRequest())
@@ -247,8 +298,26 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         intercept[Exception](status(result))
       }
 
+      "display page and update cache fail" in {
+        val registrationRequest: Registration =
+          createRegistrationWithGroupMember(groupMember.copy(customerIdentification1 = ""))
+        mockRegistrationFind(registrationRequest)
+
+        val sanitisedReg = registrationRequest.copy(groupDetail =
+          registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
+        );
+
+        when(mockRegistrationFilterService.filterByGroupMembers(any()))
+          .thenReturn(sanitisedReg)
+
+        mockRegistrationException
+
+        val result = controller.displayPage()(getRequest())
+
+        intercept[Exception](status(result))
+      }
+
       "submit registration with missing business partner id" in {
-        authorizedUser()
         val registrationWithMissingBusinessPartnerId =
           aCompletedUkCompanyRegistration
             .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
@@ -275,7 +344,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
     "send audit event" when {
       "submission of audit event" in {
-        authorizedUser()
 
         val completedRegistration = aCompletedUkCompanyRegistration
         mockRegistrationFind(completedRegistration)
@@ -313,7 +381,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     "redirect to the error page" when {
 
       "user submits form and the submission fails with an exception" in {
-        authorizedUser()
         mockRegistrationFind(aCompletedUkCompanyRegistration)
         mockSubscriptionSubmitFailure(new IllegalStateException("BANG!"))
         val result =
@@ -331,7 +398,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "user submits form and the submission fails with an error response" in {
         val registration = aCompletedUkCompanyRegistration
-        authorizedUser()
         mockRegistrationFind(registration)
         mockSubscriptionSubmitFailure(
           SubscriptionCreateOrUpdateResponseFailure(
@@ -353,7 +419,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "user submits form and the enrolment initiation fails" in {
         val registration = aCompletedUkCompanyRegistration
-        authorizedUser()
         mockRegistrationFind(registration)
         mockSubscriptionSubmit(subscriptionCreateWithEnrolmentFailure)
 
@@ -365,7 +430,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "duplicate subscription detected at the back end" in {
         val registration = aCompletedUkCompanyRegistration
-        authorizedUser()
         mockRegistrationFind(registration)
         mockSubscriptionSubmitFailure(
           SubscriptionCreateOrUpdateResponseFailure(
@@ -431,5 +495,25 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                                               )
                                                             )
   )
+
+  def createRegistrationWithGroupMember(members: GroupMember*): Registration =
+    aRegistration(
+      withOrganisationDetails(
+        OrganisationDetails(organisationType = Some(UK_COMPANY),
+                            incorporationDetails =
+                              Some(
+                                IncorporationDetails(companyNumber = "123456",
+                                                     companyName = "NewPlastics",
+                                                     ctutr = "1890894",
+                                                     companyAddress = testCompanyAddress,
+                                                     registration =
+                                                       Some(registrationDetails)
+                                )
+                              ),
+                            subscriptionStatus = Some(NOT_SUBSCRIBED)
+        )
+      ),
+      withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true), members = members)))
+    )
 
 }
