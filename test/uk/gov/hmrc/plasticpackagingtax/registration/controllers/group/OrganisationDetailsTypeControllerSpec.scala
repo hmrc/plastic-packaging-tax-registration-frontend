@@ -106,9 +106,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
         "amending existing group member" in {
           authorizedUser()
-          mockRegistrationFind(aRegistration())
+          mockRegistrationFind(
+            aRegistration(withGroupDetail(groupDetail = Some(groupDetailsWithMembers)))
+          )
           mockRegistrationUpdate()
-          val result = controller.displayPageAmendMember(groupMember.id)(getRequest())
+          val result = controller.displayPageAmendMember("123456ABC")(getRequest())
 
           status(result) mustBe OK
         }

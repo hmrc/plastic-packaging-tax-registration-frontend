@@ -448,7 +448,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   protected val groupMember = aGroupMember()
 
   protected def aGroupMember() =
-    GroupMember(customerIdentification1 = testCompanyNumber,
+    GroupMember(id = "123456ABC",
+                customerIdentification1 = testCompanyNumber,
                 customerIdentification2 = Some("id2"),
                 organisationDetails =
                   Some(

@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   GroupDetail,
   Registration,
@@ -49,7 +49,23 @@ abstract class OrganisationDetailsTypeControllerBase(
   protected def doDisplayPage(memberId: Option[String], submitCall: Call): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       val isFirstMember: Boolean = request.registration.isFirstGroupMember
-      Ok(page(form = OrganisationType.form(), isFirstMember, memberId, submitCall))
+      memberId match {
+        case Some(memberId) =>
+          val organisationType: String = request.registration.findMember(memberId).flatMap(
+            _.organisationDetails.map(_.organisationType)
+          ).getOrElse(throw new IllegalStateException("Organisation type is absent"))
+          Ok(
+            page(form = OrganisationType.form().fill(
+                   OrganisationType(OrgType.withNameOpt(organisationType))
+                 ),
+                 isFirstMember,
+                 Some(memberId),
+                 submitCall
+            )
+          )
+        case None => Ok(page(form = OrganisationType.form(), isFirstMember, memberId, submitCall))
+      }
+
     }
 
   protected def doSubmit(memberId: Option[String], submitCall: Call): Action[AnyContent] =
