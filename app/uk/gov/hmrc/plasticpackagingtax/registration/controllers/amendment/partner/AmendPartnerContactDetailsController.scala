@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PartnerAmendContactDetailsController @Inject() (
+class AmendPartnerContactDetailsController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   mcc: MessagesControllerComponents,
   amendmentJourneyAction: AmendmentJourneyAction,
@@ -60,7 +60,7 @@ class PartnerAmendContactDetailsController @Inject() (
   ) =
     contactNamePage(form,
                     routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId),
-                    routes.PartnerAmendContactDetailsController.updateContactName(partnerId)
+                    routes.AmendPartnerContactDetailsController.updateContactName(partnerId)
     )
 
   // TODO: support other contact details

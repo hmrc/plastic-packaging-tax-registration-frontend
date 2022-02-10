@@ -62,7 +62,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController",
     ".*.controllers.amendment.partner.ConfirmRemovePartnerController",
     ".*.controllers.amendment.partner.ManagePartnersController",
-    ".*.controllers.amendment.partner.PartnerAmendContactDetailsController",
+    ".*.controllers.amendment.partner.AmendPartnerContactDetailsController",
     ".*.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController",
     ".*.controllers.amendment.partner.PartnersListController",
     ".*.views.html.amendment.partner.amend_add_partner_contact_check_answers_page",

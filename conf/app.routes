@@ -300,17 +300,17 @@ POST       /list-partners      uk.gov.hmrc.plasticpackagingtax.registration.cont
 GET        /amend-partner-check-answers/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController.displayPage(partnerId)
 POST       /amend-partner-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController.submit()
 
-GET        /amend-partner-contact-name/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.contactName(partnerId)
-POST       /amend-partner-contact-name/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.updateContactName(partnerId)
+GET        /amend-partner-contact-name/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.contactName(partnerId)
+POST       /amend-partner-contact-name/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateContactName(partnerId)
 
-GET        /amend-partner-email/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.contactName(partnerId)
-POST       /amend-partner-email/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.updateContactName(partnerId)
+GET        /amend-partner-email/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.contactName(partnerId)
+POST       /amend-partner-email/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateContactName(partnerId)
 
-GET        /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.contactName(partnerId)
-POST       /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.updateContactName(partnerId)
+GET        /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.contactName(partnerId)
+POST       /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateContactName(partnerId)
 
-GET        /amend-partner-address/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.contactName(partnerId)
-POST       /amend-partner-address/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerAmendContactDetailsController.updateContactName(partnerId)
+GET        /amend-partner-address/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.contactName(partnerId)
+POST       /amend-partner-address/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateContactName(partnerId)
 
 GET        /amend-add-partner-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController.displayPage()
 POST       /amend-add-partner-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController.submit()
