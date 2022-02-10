@@ -17,8 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -28,31 +29,17 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  CHARITABLE_INCORPORATED_ORGANISATION,
-  OVERSEAS_COMPANY_NO_UK_BRANCH,
-  OVERSEAS_COMPANY_UK_BRANCH,
-  OrgType,
-  PARTNERSHIP,
-  UK_COMPANY
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  GroupMember,
-  OrganisationDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  GroupDetail,
-  NewRegistrationUpdateService,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupMember, OrganisationDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import java.util
 
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
@@ -151,7 +138,15 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
           redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+
+          val registrationCaptor: ArgumentCaptor[Registration] =
+            ArgumentCaptor.forClass(classOf[Registration])
+          verify(mockRegistrationConnector, times(2)).update(registrationCaptor.capture())(any())
+
+          val values: util.List[Registration] = registrationCaptor.getAllValues
+          values.get(1).organisationDetails.organisationType mustBe Some(OrgType.UK_COMPANY)
         }
+
         "user submits organisation type: " + PARTNERSHIP in {
           val registration: Registration =
             aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))

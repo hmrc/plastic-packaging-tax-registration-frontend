@@ -45,6 +45,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   SoleTraderGrsCreateRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  OrganisationDetails,
   Registration,
   RegistrationUpdater
 }
@@ -64,7 +65,8 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
   protected def handleOrganisationType(
     organisationType: OrganisationType,
     businessVerificationCheck: Boolean = true,
-    memberId: Option[String]
+    memberId: Option[String],
+    isGroupMember: Boolean = false
   )(implicit
     request: JourneyRequest[AnyContent],
     executionContext: ExecutionContext,
@@ -87,7 +89,8 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         if (request.registration.isGroup)
           for {
             _ <- updateRegistration(organisationType.answer,
-                                    PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+                                    PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP,
+                                    isGroupMember
             )
             res <- getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                                   businessVerificationCheck,
@@ -159,35 +162,35 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
 
   private def updateRegistration(
     organisationType: Option[OrgType],
-    partnershipType: PartnerTypeEnum
+    partnershipType: PartnerTypeEnum,
+    isGroupMember: Boolean
   )(implicit
     req: JourneyRequest[AnyContent],
     headerCarrier: HeaderCarrier,
     executionContext: ExecutionContext
   ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
-      registration.organisationDetails.partnershipDetails match {
-        case Some(_) =>
-          registration.copy(organisationDetails =
-            registration.organisationDetails.copy(
-              partnershipDetails =
-                Some(
-                  registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
-                    partnershipType
-                  )
-                ),
-              organisationType = organisationType
+      val updatedOrganisationDetails: OrganisationDetails =
+        registration.organisationDetails.partnershipDetails match {
+          case Some(_) =>
+            registration.organisationDetails.copy(partnershipDetails =
+              Some(
+                registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
+                  partnershipType
+                )
+              )
             )
-          )
-        case _ =>
-          registration.copy(organisationDetails =
-            registration.organisationDetails.copy(
-              partnershipDetails =
-                Some(PartnershipDetails(partnershipType = partnershipType)),
-              organisationType = organisationType
+          case _ =>
+            registration.organisationDetails.copy(partnershipDetails =
+              Some(PartnershipDetails(partnershipType = partnershipType))
             )
-          )
-      }
+        }
+      if (isGroupMember)
+        registration.copy(organisationDetails = updatedOrganisationDetails)
+      else
+        registration.copy(organisationDetails =
+          updatedOrganisationDetails.copy(organisationType = organisationType)
+        )
     }
 
 }
