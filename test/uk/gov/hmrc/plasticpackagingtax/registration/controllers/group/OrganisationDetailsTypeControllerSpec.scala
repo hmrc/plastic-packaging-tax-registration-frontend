@@ -29,13 +29,29 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
+  CHARITABLE_INCORPORATED_ORGANISATION,
+  OVERSEAS_COMPANY_NO_UK_BRANCH,
+  OVERSEAS_COMPANY_UK_BRANCH,
+  OrgType,
+  PARTNERSHIP,
+  UK_COMPANY
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupMember, OrganisationDetails}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
+  GroupMember,
+  OrganisationDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  GroupDetail,
+  NewRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

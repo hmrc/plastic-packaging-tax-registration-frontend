@@ -186,6 +186,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
             )
         }
       if (isGroupMember)
+        //Not required to set organisation type for a group member
         registration.copy(organisationDetails = updatedOrganisationDetails)
       else
         registration.copy(organisationDetails =
