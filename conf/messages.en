@@ -660,3 +660,6 @@ amend.partner.manage.partners = Other partners in the partnership
 
 amend.partner.listPartners.title = You have {0} partners in your partnership
 amend.partner.listPartners.question = Do you need to add another partner?
+
+amend.partner.remove.title = Are you sure you want to remove {0} from the partnership?
+removePartner.empty.error = Please select Yes or No

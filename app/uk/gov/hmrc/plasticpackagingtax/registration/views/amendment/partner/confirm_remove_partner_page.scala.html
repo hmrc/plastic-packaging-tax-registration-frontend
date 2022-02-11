@@ -14,14 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.ConfirmAddress.{NO, YES}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.routes
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner.YES
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner.NO
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
 
 @this(
         pageHeading: pageHeading,
@@ -35,8 +36,30 @@
         continueButton: continue
 )
 
-@()(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(form: Form[RemovePartner], partner: Partner)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@govukLayout(Title("xxx")) {
-    <h1>Confirm remove partner</h1>
+@govukLayout(
+    title = Title(messages("amend.partner.remove.title", partner.name)),
+    backButton = Some(BackButton(messages("site.back"), routes.PartnersListController.displayPage(), messages("site.back.hiddenText")))
+) {
+
+    @pageHeading(text = messages("amend.partner.remove.title", partner.name))
+
+    @formHelper(action = routes.ConfirmRemovePartnerController.submit(partner.id), 'autoComplete -> "off") {
+        @govukFieldset(Fieldset(
+            html = govukRadios(Radios(
+                hint = None,
+                name = "value",
+                items = Seq(
+                    RadioItem(content = HtmlContent(messages("general.true")), value = Some(YES), checked = form.value.contains(YES)),
+                    RadioItem(content = HtmlContent(messages("general.false")), value = Some(NO), checked = form.value.contains(NO))
+                ),
+                classes = "govuk-radios--inline",
+                errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            ))
+        ))
+
+        @continueButton()
+    }
+
 }
