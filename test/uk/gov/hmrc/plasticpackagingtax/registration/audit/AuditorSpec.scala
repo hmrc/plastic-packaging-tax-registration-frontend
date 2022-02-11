@@ -26,6 +26,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
 import play.api.libs.json.Json
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 
 class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with RegistrationBuilder {
 
@@ -51,6 +52,21 @@ class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with Re
       "registrationSubmitted invoked" in {
         givenAuditReturns(Status.NO_CONTENT)
         val registration = aRegistration()
+
+        auditor.registrationSubmitted(registration)
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None)) mustBe true
+        }
+      }
+    }
+
+    "post group registration event" when {
+      "registrationSubmitted invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+        val registration = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)),
+                                         withRegistrationType(Some(RegType.GROUP))
+        )
 
         auditor.registrationSubmitted(registration)
 
