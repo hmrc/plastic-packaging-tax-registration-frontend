@@ -32,11 +32,20 @@
         link: link
 )
 
-@()(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@govukLayout(Title("xxx")) {
-    <h1>Manage Partners</h1>
-   <p>
-   @link(text = "List Partners", call = routes.PartnersListController.displayPage())
-   </p>
+@govukLayout(
+    title = Title("amend.partner.manage.title"),
+    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
+
+    @pageHeading(text = messages("amend.partner.manage.title"))
+
+    @govukSummaryList(
+        SummaryList(
+            rows = Seq(
+                viewUtils.summaryListRow("amend.partner.manage.nominated", registration.nominatedPartner.map(_.name), None),
+                viewUtils.summaryListRow("amend.partner.manage.partners", Some(registration.otherPartners.map(_.name).mkString("<br>")), Some(routes.PartnersListController.displayPage()))
+            )
+        )
+    )
 }

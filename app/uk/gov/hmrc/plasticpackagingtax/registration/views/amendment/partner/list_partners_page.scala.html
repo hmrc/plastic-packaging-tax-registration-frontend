@@ -14,19 +14,16 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.routes
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListGroupMembersViewModel
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, ListMember, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
-        appConfig: AppConfig,
         pageHeading: pageHeading,
         formHelper: FormWithCSRF,
         govukLayout: main_template,
@@ -37,8 +34,59 @@
         viewUtils: ViewUtils
 )
 
-@()(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(form: Form[Boolean], registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@govukLayout(Title("xxx")) {
-    <h1>List Partners</h1>
+@numPartners = @{ (registration.otherPartners.size + 1).toString }
+
+@partners = @{
+    ListMember(
+        name = registration.nominatedPartner.map(_.name).getOrElse(
+            throw new IllegalStateException("Missing Nominated Partner")
+        ),
+        subHeading = Some(messages("amend.partner.manage.nominated"))
+    ) +:
+            registration.otherPartners.map(
+                    partner =>
+                        ListMember(name = partner.name,
+                            change =
+                                Some(routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id)),
+                            remove = Some(routes.ConfirmRemovePartnerController.displayPage(partner.id))
+                        )
+                )
+}
+
+@govukLayout(
+    title = Title("amend.partner.listPartners.title", numPartners),
+    backButton = Some(BackButton(messages("site.back"), routes.ManagePartnersController.displayPage(), messages("site.back.hiddenText")))
+) {
+
+    @errorSummary(form.errors)
+
+    @pageHeading(text = messages("amend.partner.listPartners.title", numPartners))
+
+    @listMembers(partners)
+
+    @formHelper(action = routes.PartnersListController.submit(), 'autoComplete -> "off") {
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("amend.partner.listPartners.question")),
+                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                    isPageHeading = false
+                ))
+            )),
+            idPrefix = Some(form("addOrganisation").name),
+            name = form("addOrganisation").name,
+            items = Seq(
+                RadioItem(content = HtmlContent(messages("general.true")), value = Some(AddOrganisationForm.YES), checked = form("addOrganisation").value.contains(AddOrganisationForm.YES)),
+                RadioItem(content = HtmlContent(messages("general.false")), value = Some(AddOrganisationForm.NO), checked = form("addOrganisation").value.contains(AddOrganisationForm.NO))
+            ),
+            classes = "govuk-radios--inline",
+            errorMessage = form("addOrganisation").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+        ))
+
+        @saveButtons()
+    }
+
 }
