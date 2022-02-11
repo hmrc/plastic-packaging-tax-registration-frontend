@@ -41,10 +41,13 @@
     title = Title(headingKey = "amend.group.remove.title", member.businessName),
     backButton = Some(BackButton(messages("site.back"), routes.GroupMembersListController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @pageHeading(text = messages("amend.group.remove.title", member.businessName))
-
     @formHelper(action = routes.ConfirmRemoveMemberController.submit(member.id), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("amend.group.remove.title", member.businessName)),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
             html = govukRadios(Radios(
                 hint = None,
                 name = "value",

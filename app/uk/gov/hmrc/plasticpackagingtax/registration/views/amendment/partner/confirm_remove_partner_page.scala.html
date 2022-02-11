@@ -43,10 +43,13 @@
     backButton = Some(BackButton(messages("site.back"), routes.PartnersListController.displayPage(), messages("site.back.hiddenText")))
 ) {
 
-    @pageHeading(text = messages("amend.partner.remove.title", partner.name))
-
     @formHelper(action = routes.ConfirmRemovePartnerController.submit(partner.id), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("amend.partner.remove.title", partner.name)),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            )),
             html = govukRadios(Radios(
                 hint = None,
                 name = "value",
