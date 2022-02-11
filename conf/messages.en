@@ -653,3 +653,10 @@ amend.group.manage.members = Other organisations in the group
 
 amend.group.listMembers.title = You have {0} organisations in your group
 amend.group.remove.title = Are you sure you want to remove {0} from the group?
+
+amend.partner.manage.title = Manage partners in the partnership
+amend.partner.manage.nominated = Nominated partner
+amend.partner.manage.partners = Other partners in the partnership
+
+amend.partner.listPartners.title = You have {0} partners in your partnership
+amend.partner.listPartners.question = Do you need to add another partner?

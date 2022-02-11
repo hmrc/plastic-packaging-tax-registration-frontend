@@ -22,7 +22,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEn
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.list_partners_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListGroupMembersViewModel
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -37,12 +36,21 @@ class PartnersListController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page())
+      Ok(page(AddOrganisationForm.form(), request.registration))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page())
+      AddOrganisationForm
+        .form()
+        .bindFromRequest()
+        .fold(error => BadRequest(page(error, request.registration)),
+              add =>
+                if (add)
+                  Redirect(routes.AddPartnerOrganisationDetailsTypeController.displayPage())
+                else
+                  Redirect(routes.ManagePartnersController.displayPage())
+        )
     }
 
 }

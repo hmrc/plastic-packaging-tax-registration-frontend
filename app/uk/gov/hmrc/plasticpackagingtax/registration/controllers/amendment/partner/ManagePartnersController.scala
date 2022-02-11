@@ -35,7 +35,7 @@ class ManagePartnersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page())
+      Ok(page(request.registration))
     }
 
 }
