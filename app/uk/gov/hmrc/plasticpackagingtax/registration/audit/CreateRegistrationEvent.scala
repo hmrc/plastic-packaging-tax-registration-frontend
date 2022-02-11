@@ -17,15 +17,21 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.audit
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
+
+import java.time.LocalDate
 
 case class CreateRegistrationEvent(
   id: String,
   pptReference: Option[String],
+  dateOfRegistration: Option[LocalDate],
   incorpJourneyId: Option[String] = None,
+  registrationType: Option[RegType],
   liabilityDetails: LiabilityDetails = LiabilityDetails(),
   primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
   organisationDetails: OrganisationDetails = OrganisationDetails(),
+  groupDetail: Option[GroupDetail],
   metaData: MetaData = MetaData(),
   userHeaders: Map[String, String] = Map.empty
 )
@@ -37,10 +43,13 @@ object CreateRegistrationEvent {
   def apply(registration: Registration, pptReference: Option[String]): CreateRegistrationEvent =
     CreateRegistrationEvent(id = registration.id,
                             pptReference = pptReference,
+                            dateOfRegistration = registration.dateOfRegistration,
                             incorpJourneyId = registration.incorpJourneyId,
+                            registrationType = registration.registrationType,
                             liabilityDetails = registration.liabilityDetails,
                             primaryContactDetails = registration.primaryContactDetails,
                             organisationDetails = registration.organisationDetails,
+                            groupDetail = registration.groupDetail,
                             metaData = registration.metaData
     )
 
