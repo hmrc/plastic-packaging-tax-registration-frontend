@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
-import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -27,8 +26,6 @@ import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.member_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents

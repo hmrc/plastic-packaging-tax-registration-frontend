@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.group
 
 import base.unit.UnitViewSpec
-import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.test.Injecting
 import play.twirl.api.HtmlFormat

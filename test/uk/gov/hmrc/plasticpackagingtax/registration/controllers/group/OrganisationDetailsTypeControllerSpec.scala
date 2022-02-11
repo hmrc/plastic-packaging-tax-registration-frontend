@@ -156,13 +156,6 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
           redirectLocation(result) mustBe Some("http://test/redirect/partnership")
-
-          val registrationCaptor: ArgumentCaptor[Registration] =
-            ArgumentCaptor.forClass(classOf[Registration])
-          verify(mockRegistrationConnector, times(2)).update(registrationCaptor.capture())(any())
-
-          val values: util.List[Registration] = registrationCaptor.getAllValues
-          values.get(1).organisationDetails.organisationType mustBe Some(OrgType.UK_COMPANY)
         }
 
         "user submits organisation type: " + PARTNERSHIP in {

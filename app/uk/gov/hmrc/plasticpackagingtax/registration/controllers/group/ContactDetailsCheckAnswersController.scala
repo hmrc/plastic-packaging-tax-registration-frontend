@@ -48,7 +48,7 @@ class ContactDetailsCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen journeyAction) { _ =>
       Redirect(routes.OrganisationListController.displayPage())
     }
 

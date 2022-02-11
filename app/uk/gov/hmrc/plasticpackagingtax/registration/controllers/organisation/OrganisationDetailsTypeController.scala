@@ -25,10 +25,16 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  OrgType,
+  OrganisationType,
+  PartnerTypeEnum
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
   NewRegistrationUpdateService,
+  OrganisationDetails,
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -96,9 +102,37 @@ class OrganisationDetailsTypeController @Inject() (
     formData: OrganisationType
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedOrganisationDetails =
-        registration.organisationDetails.copy(organisationType = formData.answer)
-      registration.copy(organisationDetails = updatedOrganisationDetails)
+      if (registration.isGroup && formData.answer.exists(_.equals(OrgType.PARTNERSHIP))) {
+        val updatedOrganisationDetails: OrganisationDetails =
+          registration.organisationDetails.partnershipDetails match {
+            case Some(_) =>
+              registration.organisationDetails.copy(
+                partnershipDetails =
+                  Some(
+                    registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
+                      PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+                    )
+                  ),
+                organisationType = formData.answer
+              )
+            case _ =>
+              registration.organisationDetails.copy(
+                partnershipDetails =
+                  Some(
+                    PartnershipDetails(partnershipType =
+                      PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+                    )
+                  ),
+                organisationType = formData.answer
+              )
+          }
+        registration.copy(organisationDetails = updatedOrganisationDetails)
+      } else {
+        val updatedOrganisationDetails =
+          registration.organisationDetails.copy(organisationType = formData.answer)
+        registration.copy(organisationDetails = updatedOrganisationDetails)
+      }
+
     }
 
   override def grsCallbackUrl(organisationId: Option[String]): String =

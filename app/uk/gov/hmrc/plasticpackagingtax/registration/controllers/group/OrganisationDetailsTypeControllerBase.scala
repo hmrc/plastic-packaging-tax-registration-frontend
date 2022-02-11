@@ -85,11 +85,8 @@ abstract class OrganisationDetailsTypeControllerBase(
             ),
           organisationType =>
             updateRegistration(organisationType).flatMap { registration =>
-              handleOrganisationType(organisationType,
-                                     false,
-                                     memberId,
-                                     isGroupMember = registration.isGroup
-              )(new JourneyRequest[AnyContent](authenticatedRequest = request.authenticatedRequest,
+              handleOrganisationType(organisationType, false, memberId)(
+                new JourneyRequest[AnyContent](authenticatedRequest = request.authenticatedRequest,
                                                registration = registration,
                                                appConfig = appConfig
                 ),
