@@ -22,7 +22,6 @@ import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 
 class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {

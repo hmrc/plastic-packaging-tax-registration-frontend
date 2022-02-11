@@ -31,23 +31,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
-  OrgType,
-  OrganisationType,
-  PartnerTypeEnum
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   IncorpEntityGrsCreateRequest,
-  PartnershipDetails,
   PartnershipGrsCreateRequest,
   SoleTraderGrsCreateRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Registration,
-  RegistrationUpdater
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.RegistrationUpdater
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -85,15 +75,10 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
         if (request.registration.isGroup)
-          for {
-            _ <- updateRegistration(organisationType.answer,
-                                    PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-            )
-            res <- getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                                  businessVerificationCheck,
-                                  memberId
-            ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-          } yield res
+          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                         businessVerificationCheck,
+                         memberId
+          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
         else
           Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
       case _ =>
@@ -156,38 +141,5 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
       ),
       url
     )
-
-  private def updateRegistration(
-    organisationType: Option[OrgType],
-    partnershipType: PartnerTypeEnum
-  )(implicit
-    req: JourneyRequest[AnyContent],
-    headerCarrier: HeaderCarrier,
-    executionContext: ExecutionContext
-  ): Future[Registration] =
-    registrationUpdater.updateRegistration { registration =>
-      registration.organisationDetails.partnershipDetails match {
-        case Some(_) =>
-          registration.copy(organisationDetails =
-            registration.organisationDetails.copy(
-              partnershipDetails =
-                Some(
-                  registration.organisationDetails.partnershipDetails.get.copy(partnershipType =
-                    partnershipType
-                  )
-                ),
-              organisationType = organisationType
-            )
-          )
-        case _ =>
-          registration.copy(organisationDetails =
-            registration.organisationDetails.copy(
-              partnershipDetails =
-                Some(PartnershipDetails(partnershipType = partnershipType)),
-              organisationType = organisationType
-            )
-          )
-      }
-    }
 
 }

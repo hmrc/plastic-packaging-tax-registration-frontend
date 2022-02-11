@@ -30,6 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   OVERSEAS_COMPANY_UK_BRANCH,
@@ -40,7 +41,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   TRUST,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  OrgType,
+  OrganisationType,
+  PartnerTypeEnum
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   NewRegistrationUpdateService,
   OrganisationDetails
@@ -127,6 +132,58 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           assertRedirectForOrgType(PARTNERSHIP,
                                    partnerRoutes.PartnershipTypeController.displayPage().url
           )
+        }
+
+        "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          authorizedUser()
+          mockRegistrationFind(aRegistration(withRegistrationType(Some(RegType.GROUP))))
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+          status(result) mustBe SEE_OTHER
+          modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
+          modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+          }
+        }
+
+        "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          authorizedUser()
+          mockRegistrationFind(
+            aRegistration(withRegistrationType(Some(RegType.GROUP)),
+                          withPartnershipDetails(
+                            Some(
+                              partnershipDetailsWithBusinessAddress(partnerTypeEnum =
+                                PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+                              )
+                            )
+                          )
+            )
+          )
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+          status(result) mustBe SEE_OTHER
+          modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
+          modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+          }
         }
 
         "user submits organisation type: " + REGISTERED_SOCIETY in {

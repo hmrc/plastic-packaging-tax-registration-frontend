@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{

@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
-import base.PptTestData.newUser
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, verify, verifyNoInteractions, when}
+import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -28,7 +27,6 @@ import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddress,
   EmailAddressPasscode
@@ -40,7 +38,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   JOURNEY_NOT_FOUND,
   TOO_MANY_ATTEMPTS
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService

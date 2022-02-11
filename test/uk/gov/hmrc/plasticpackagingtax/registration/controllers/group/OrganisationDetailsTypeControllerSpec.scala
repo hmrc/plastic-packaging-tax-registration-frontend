@@ -17,8 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -53,6 +54,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import java.util
 
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
@@ -103,9 +106,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
         "amending existing group member" in {
           authorizedUser()
-          mockRegistrationFind(aRegistration())
+          mockRegistrationFind(
+            aRegistration(withGroupDetail(groupDetail = Some(groupDetailsWithMembers)))
+          )
           mockRegistrationUpdate()
-          val result = controller.displayPageAmendMember(groupMember.id)(getRequest())
+          val result = controller.displayPageAmendMember("123456ABC")(getRequest())
 
           status(result) mustBe OK
         }
@@ -152,6 +157,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
           redirectLocation(result) mustBe Some("http://test/redirect/partnership")
         }
+
         "user submits organisation type: " + PARTNERSHIP in {
           val registration: Registration =
             aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
