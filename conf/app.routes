@@ -315,7 +315,7 @@ POST       /amend-partner-address/:partnerId      uk.gov.hmrc.plasticpackagingta
 GET        /amend-add-partner-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController.displayPage()
 POST       /amend-add-partner-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController.submit()
 
-GET        /amend-add-partner-grs-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerGrsController.grsCallback(journeyId)
+GET        /amend-add-partner-grs-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerGrsController.grsCallbackNewPartner(journeyId)
 
 GET        /amend-add-partner-contact-name     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsNameController.displayPage()
 POST       /amend-add-partner-contact-name     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsNameController.submit()

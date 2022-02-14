@@ -131,6 +131,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       case None => config.get[String]("urls.partnerGrsCallback")
     }
 
+  def amendPartnerGrsCallbackUrl(): String =
+    config.get[String]("urls.amendPartnerGrsCallback")
+
   lazy val pptServiceHost: String =
     servicesConfig.baseUrl("plastic-packaging-tax-registration")
 

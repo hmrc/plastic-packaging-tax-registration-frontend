@@ -33,7 +33,7 @@
 )
 
 
-@(form: Form[PartnerType], partnerId: Option[String])(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[PartnerType], partnerId: Option[String], submit: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
     @titleMessage = @{
         request.registration.isNominatedPartner(partnerId) match {
@@ -41,12 +41,6 @@
             case _ => "nominated.partner.type.title"
         }}
 
-    @submitLink = @{
-        partnerId match {
-            case Some(partnerId) => partnerRoutes.PartnerTypeController.submitExistingPartner(partnerId)
-            case _ => partnerRoutes.PartnerTypeController.submitNewPartner()
-        }
-    }
     @radioItem(ppType: PartnerTypeEnum) = @{
         RadioItem(content = Text(displayName(ppType)), value = Some(ppType), checked = form("answer").value.contains(ppType.toString))
     }
@@ -58,7 +52,7 @@
 
         @pageHeading(messages(titleMessage))
 
-        @formHelper(action = submitLink, 'autoComplete -> "off") {
+        @formHelper(action = submit, 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(

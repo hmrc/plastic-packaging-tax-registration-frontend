@@ -16,9 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
   RegisteredSocietyGrsConnector,
@@ -26,10 +25,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   UkCompanyGrsConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -38,25 +37,29 @@ import scala.concurrent.ExecutionContext
 class AddPartnerOrganisationDetailsTypeController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
+  registrationUpdater: AmendRegistrationUpdateService,
   mcc: MessagesControllerComponents,
   page: partner_type,
+  val appConfig: AppConfig,
   val soleTraderGrsConnector: SoleTraderGrsConnector,
   val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  val partnershipGrsConnector: PartnershipGrsConnector,
   val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  val registrationConnector: RegistrationConnector
+  val partnershipGrsConnector: PartnershipGrsConnector
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends PartnerTypeControllerBase(authenticate,
+                                      journeyAction = journeyAction,
+                                      mcc,
+                                      page,
+                                      registrationUpdater
+    ) {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(PartnerType.form(), None))
-    }
+    doDisplayPage(submitCall = routes.AddPartnerOrganisationDetailsTypeController.submit())
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      // TODO: validate input, update inflight partner and initiate GRS journey
-      Redirect(routes.AddPartnerGrsController.grsCallback("123"))
-    }
+    doSubmit(submitCall = routes.AddPartnerOrganisationDetailsTypeController.submit())
+
+  override def grsCallbackUrl(partnerId: Option[String]): String =
+    appConfig.amendPartnerGrsCallbackUrl()
 
 }
