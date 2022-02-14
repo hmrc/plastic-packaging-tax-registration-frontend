@@ -62,7 +62,7 @@ class PartnersListControllerSpec extends ControllerSpec with MockAmendmentJourne
       contentAsString(resp) mustBe "List Partners Page"
     }
 
-    "reject unselected submission" in {
+    "reject unselected submission and redisplay page" in {
       authorisedUserWithPptSubscription()
       simulateGetSubscriptionSuccess(partnershipRegistration)
 
