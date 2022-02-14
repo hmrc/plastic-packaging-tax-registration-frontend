@@ -22,14 +22,13 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.start_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class StartController @Inject() (mcc: MessagesControllerComponents, startPage: start_page)
     extends FrontendController(mcc) with I18nSupport {
 
-  val displayStartPage: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(startPage()))
+  val displayStartPage: Action[AnyContent] = Action { implicit request =>
+    Ok(startPage())
   }
 
 }

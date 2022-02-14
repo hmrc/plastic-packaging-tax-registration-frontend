@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.test.FakeRequest
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.start_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -27,42 +28,50 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
   private val startPage = instanceOf[start_page]
 
-  private def createView(): Html = startPage()(request, messages)
+  private def createView(): Html =
+    startPage()(request, messages)
 
   "Start Page view" should {
 
     val view: Html = createView()
 
     "not contain timeout dialog function" in {
-
       containTimeoutDialogFunction(view) mustBe false
     }
 
     "display title" in {
-
       view.select("title").text() must include(messages("startPage.title"))
     }
 
     "display header" in {
-
-      view.getElementsByTag("h1") must containMessageForElements("startPage.title")
+      view.getElementsByTag("h1") must containMessageForElements("startPage.heading")
     }
 
     "display general description" in {
-
       view.getElementById("description") must containMessage("startPage.description")
     }
 
-    "display 'When to register' section" in {
+    "display 'Who should register' section" in {
 
-      view.getElementById("when-to-register") must containMessage("startPage.whenToRegister")
+      view.getElementById("who-should-register") must containMessage("startPage.whoShouldRegister")
 
       view.getElementsByClass("govuk-body").text() must include(
-        messages("startPage.whenToRegister.line.1",
-                 "startPage.whenToRegister.line.2",
-                 "startPage.registration.guidance.description"
-        )
+        messages("startPage.whoShouldRegister.inset.para.1")
       )
+
+      val bulletList = view.getElementsByClass("govuk-list--bullet").get(0)
+
+      bulletList.child(0) must containMessage("startPage.whoShouldRegister.inset.bullet.1")
+      bulletList.child(1) must containMessage("startPage.whoShouldRegister.inset.bullet.2")
+    }
+
+    "display the read more link" in {
+      val link = view.getElementById("whoShouldRegister-readMore-link")
+
+      link must containMessage("startPage.whoShouldRegister.readMore.link")
+      link must haveHref(messages("startPage.whoShouldRegister.readMore.href"))
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") mustBe "noopener noreferrer"
     }
 
     "display 'Before you start' section" in {
@@ -70,52 +79,26 @@ class StartViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("before-you-start") must containMessage("startPage.beforeYouStart")
 
       view.getElementsByClass("govuk-body").text() must include(
-        messages("startPage.beforeYouStart.line.1",
-                 "startPage.beforeYouStart.line.2",
-                 "startPage.business.guidance.description"
-        )
-      )
-    }
-
-    "display bullet list section" in {
-
-      view.getElementsByClass("govuk-body").get(5).text() must include(
-        messages("startPage.informationYouNeed")
+        messages("startPage.beforeYouStart.para.1")
       )
 
-      val bulletList = view.getElementsByClass("govuk-list--bullet").get(0)
+      val bulletList = view.getElementsByClass("govuk-list--bullet").get(1)
 
-      bulletList must haveChildCount(4)
       bulletList.child(0).text() must include(
-        messages("startPage.informationYouNeed.listItem.1",
-                 "look up the company number if you are unsure (opens in a new tab)"
+        messages("startPage.beforeYouStart.bullet.1",
+                 messages("startPage.beforeYouStart.bullet.1.link")
         )
       )
-      bulletList.child(1) must containMessage("startPage.informationYouNeed.listItem.2")
-      bulletList.child(2) must containMessage("startPage.informationYouNeed.listItem.3")
-      bulletList.child(3) must containMessage("startPage.informationYouNeed.listItem.4")
+      bulletList.child(1) must containMessage("startPage.beforeYouStart.bullet.2")
+      bulletList.child(2) must containMessage("startPage.beforeYouStart.bullet.3")
+      bulletList.child(3) must containMessage("startPage.beforeYouStart.bullet.4")
     }
 
-    "display registration guidance link" in {
+    "display company look up link" in {
+      val link = view.getElementById("beforeYouStart-bullet-1-link")
 
-      val link = view.getElementById("registration-guidance-link")
-      link must haveHref(messages("startPage.registration.guidance.href"))
-      link.attr("target") mustBe "_blank"
-      link.attr("rel") mustBe "noopener noreferrer"
-    }
-
-    "display business guidance link" in {
-
-      val link = view.getElementById("business-guidance-link")
-      link must haveHref(messages("startPage.business.guidance.href"))
-      link.attr("target") mustBe "_blank"
-      link.attr("rel") mustBe "noopener noreferrer"
-    }
-
-    "display company number link" in {
-
-      val link = view.getElementById("company-number-link")
-      link must haveHref(messages("startPage.companyNumber.href"))
+      link must containMessage("startPage.beforeYouStart.bullet.1.link")
+      link must haveHref(messages("startPage.beforeYouStart.bullet.1.href"))
       link.attr("target") mustBe "_blank"
       link.attr("rel") mustBe "noopener noreferrer"
     }
@@ -124,7 +107,7 @@ class StartViewSpec extends UnitViewSpec with Matchers {
 
       view.getElementsByClass("govuk-button").first() must containMessage("startPage.buttonName")
       view.getElementsByClass("govuk-button").first() must haveHref(
-        uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.StartRegistrationController.startRegistration().url
+        uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.StartRegistrationController.startRegistration()
       )
     }
   }
