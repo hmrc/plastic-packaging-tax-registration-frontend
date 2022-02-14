@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class IsUkAddressViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[is_uk_address_page]
+  private val page = inject[is_uk_address_page]
 
   private def createView(form: Form[IsUkAddress] = IsUkAddress.form()): Document =
     page(form)(journeyRequest, messages)

@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class GrsFailureViewSpec extends UnitViewSpec with Matchers {
 
   private val page: grs_failure_page =
-    instanceOf[grs_failure_page]
+    inject[grs_failure_page]
 
   private def createView(): Html = page()(journeyRequest, messages)
 

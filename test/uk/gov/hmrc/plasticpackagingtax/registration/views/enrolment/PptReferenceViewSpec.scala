@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class PptReferenceViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[ppt_reference_page]
+  private val page = inject[ppt_reference_page]
 
   private def createView(form: Form[PptReference] = PptReference.form()): Document =
     page(form)(journeyRequest, messages)

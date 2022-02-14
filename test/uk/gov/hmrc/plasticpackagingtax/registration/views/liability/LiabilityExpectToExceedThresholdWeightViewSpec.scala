@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[liability_expect_to_exceed_threshold_weight_page]
+  private val page = inject[liability_expect_to_exceed_threshold_weight_page]
 
   private def createView(
     form: Form[ExpectToExceedThresholdWeight] = ExpectToExceedThresholdWeight.form()

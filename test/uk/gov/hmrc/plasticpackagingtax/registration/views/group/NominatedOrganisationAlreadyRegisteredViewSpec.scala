@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class NominatedOrganisationAlreadyRegisteredViewSpec extends UnitViewSpec with Matchers {
 
   private val page: nominated_organisation_already_registered_page =
-    instanceOf[nominated_organisation_already_registered_page]
+    inject[nominated_organisation_already_registered_page]
 
   private def createView(): Html = page()(journeyRequest, messages)
 

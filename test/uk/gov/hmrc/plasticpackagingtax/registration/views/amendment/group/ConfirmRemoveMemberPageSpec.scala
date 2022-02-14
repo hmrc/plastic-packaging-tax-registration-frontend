@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ConfirmRemoveMemberPageSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[confirm_remove_member_page]
+  private val page = inject[confirm_remove_member_page]
 
   private def createView(form: Form[RemoveMember] = RemoveMember.form()): Document =
     page(form, groupMember)(journeyRequest, messages)

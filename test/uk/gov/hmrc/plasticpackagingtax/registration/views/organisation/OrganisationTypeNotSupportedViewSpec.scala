@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
 
-  private val page                   = instanceOf[organisation_type_not_supported]
+  private val page                   = inject[organisation_type_not_supported]
   private def createView(): Document = page()(journeyRequest, messages)
 
   "Organisation Type Not Supported View" should {

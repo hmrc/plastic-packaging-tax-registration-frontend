@@ -16,23 +16,22 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.testOnly
 
-import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{await, OK}
+import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   ServiceError
 }
 
 class EmailTestOnlyPasscodeConnectorISpec
-    extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
+    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
-  lazy val connector: EmailTestOnlyPasscodeConnector =
-    app.injector.instanceOf[EmailTestOnlyPasscodeConnector]
+  lazy val connector: EmailTestOnlyPasscodeConnector = inject[EmailTestOnlyPasscodeConnector]
 
   "getTestOnlyPasscode" when {
     "returns passcode" in {

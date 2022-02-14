@@ -21,6 +21,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
+import play.api.test.Injecting
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
@@ -45,7 +46,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   private val BUSINESS_DETAILS                        = 1
   private val PARTNER_DETAILS                         = 2
   private val CHECK_AND_SUBMIT                        = 3
-  private val registrationPage: task_list_partnership = instanceOf[task_list_partnership]
+  private val registrationPage: task_list_partnership = inject[task_list_partnership]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 

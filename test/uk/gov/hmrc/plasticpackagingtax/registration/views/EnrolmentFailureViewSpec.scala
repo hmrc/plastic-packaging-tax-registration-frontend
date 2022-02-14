@@ -29,7 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class EnrolmentFailureViewSpec extends UnitViewSpec with Matchers {
 
   private val page: enrolment_failure_page =
-    instanceOf[enrolment_failure_page]
+    inject[enrolment_failure_page]
 
   private def createView(flash: Flash = Flash(Map.empty)): Html =
     page()(journeyRequest, messages, flash)

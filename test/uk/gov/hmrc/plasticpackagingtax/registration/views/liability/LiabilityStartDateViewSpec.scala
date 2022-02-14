@@ -33,7 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[liability_start_date_page]
+  private val page = inject[liability_start_date_page]
 
   private def createView(
     form: Form[Date] = LiabilityStartDate.form(),

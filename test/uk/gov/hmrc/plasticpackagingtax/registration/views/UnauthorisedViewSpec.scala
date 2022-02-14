@@ -26,8 +26,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
 
-  private val page       = instanceOf[unauthorised]
-  override val appConfig = instanceOf[AppConfig] // Use real AppConfig rather than inherited mock
+  private val page       = inject[unauthorised]
+  override val appConfig = inject[AppConfig] // Use real AppConfig rather than inherited mock
 
   private def createView(): Document =
     page()(journeyRequest, messages)

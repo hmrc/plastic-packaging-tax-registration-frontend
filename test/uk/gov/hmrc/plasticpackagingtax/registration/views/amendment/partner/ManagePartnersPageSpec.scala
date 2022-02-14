@@ -27,8 +27,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ManagePartnersPageSpec extends UnitViewSpec with Matchers {
 
-  private val page: manage_partners_page = instanceOf[manage_partners_page]
-  private val realAppConfig              = instanceOf[AppConfig]
+  private val page: manage_partners_page = inject[manage_partners_page]
+  private val realAppConfig              = inject[AppConfig]
 
   private val partnershipRegistration = aRegistration(
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))

@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[liability_weight_page]
+  private val page = inject[liability_weight_page]
 
   private def createView(form: Form[LiabilityWeight] = LiabilityWeight.form()): Document =
     page(form)(journeyRequest, messages)
