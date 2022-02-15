@@ -45,13 +45,15 @@
 
 @partnerContactRows() = @{
     Seq(
-        viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.PartnerContactNameController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("partner.check.contact.jobTitle", partner.contactDetails.flatMap(_.jobTitle), Some(partnerRoutes.PartnerJobTitleController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("partner.check.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("partner.check.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), Some(partnerRoutes.PartnerPhoneNumberController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("partner.check.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)),
-            Some(partnerRoutes.PartnerContactAddressController.captureExistingPartner(partner.id))),
-    )
+        Some(viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.PartnerContactNameController.displayExistingPartner(partner.id)))),
+        partner.contactDetails.flatMap(_.jobTitle).map { jobTitle =>
+            viewUtils.summaryListRow("partner.check.contact.jobTitle", Some(jobTitle), Some(partnerRoutes.PartnerJobTitleController.displayExistingPartner(partner.id)))
+        },
+        Some(viewUtils.summaryListRow("partner.check.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partner.id)))),
+        Some(viewUtils.summaryListRow("partner.check.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), Some(partnerRoutes.PartnerPhoneNumberController.displayExistingPartner(partner.id)))),
+        Some(viewUtils.summaryListRow("partner.check.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)),
+            Some(partnerRoutes.PartnerContactAddressController.captureExistingPartner(partner.id)))),
+    ).flatten
 }
 
 @ukCompanySummary() = @{

@@ -141,10 +141,6 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
           soleTraderPartner.contactDetails.get.name.get,
           None: Option[Call]
          ),
-         (messages("partner.check.contact.jobTitle"),
-          limitedCompanyPartner.contactDetails.get.jobTitle.getOrElse(""),
-          None: Option[Call]
-         ),
          (messages("partner.check.contact.email"),
           soleTraderPartner.contactDetails.get.emailAddress.get,
           None: Option[Call]
@@ -173,10 +169,6 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
          ),
          (messages("partner.check.contact.name"),
           partnershipPartner.contactDetails.get.name.get,
-          None: Option[Call]
-         ),
-         (messages("partner.check.contact.jobTitle"),
-          limitedCompanyPartner.contactDetails.get.jobTitle.getOrElse(""),
           None: Option[Call]
          ),
          (messages("partner.check.contact.email"),
