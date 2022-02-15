@@ -92,13 +92,10 @@ class PartnerContactNameController @Inject() (
   def submitNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        val nextPage =
-          partnerRoutes.PartnerJobTitleController.displayNewPartner() // TODO make conditional on is nominated partner
-
         handleSubmission(partner,
                          partnerRoutes.PartnerTypeController.displayNewPartner(),
                          partnerRoutes.PartnerContactNameController.submitNewPartner(),
-                         nextPage,
+                         nextPage(request, partner),
                          commonRoutes.TaskListController.displayPage(),
                          updateInflightPartner
         )
@@ -120,7 +117,7 @@ class PartnerContactNameController @Inject() (
                          partnerRoutes.PartnerContactNameController.submitExistingPartner(
                            partnerId
                          ),
-                         routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+                         nextPage(request, partner),
                          partnerRoutes.PartnerContactNameController.displayExistingPartner(
                            partnerId
                          ),
@@ -190,5 +187,14 @@ class PartnerContactNameController @Inject() (
                                         )
       )
     }
+
+  private def nextPage(request: JourneyRequest[AnyContent], partner: Partner) =
+    if (isEditingNominatedPartner(request, partner))
+      partnerRoutes.PartnerJobTitleController.displayNewPartner()
+    else
+      partnerRoutes.PartnerEmailAddressController.displayNewPartner()
+
+  private def isEditingNominatedPartner(request: JourneyRequest[AnyContent], partner: Partner) =
+    request.registration.nominatedPartner.forall(_.id == partner.id)
 
 }
