@@ -29,6 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -36,6 +37,10 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
   private val page = mock[partner_type]
   private val mcc  = stubMessagesControllerComponents()
+
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
 
   private val controller = new PartnerTypeController(
     authenticate = mockAuthAction,
@@ -45,7 +50,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
     ukCompanyGrsConnector = mockUkCompanyGrsConnector,
     partnershipGrsConnector = mockPartnershipGrsConnector,
     registeredSocietyGrsConnector = mockRegisteredSocietyGrsConnector,
-    registrationConnector = mockRegistrationConnector,
+    registrationUpdater =
+      mockNewRegistrationUpdater,
     mcc = mcc,
     page = page
   )
@@ -59,7 +65,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     authorizedUser()
-    when(page.apply(any(), any())(any(), any())).thenReturn(
+    when(page.apply(any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Nominated partner type capture")
     )
     mockRegistrationFind(partnershipRegistration)
