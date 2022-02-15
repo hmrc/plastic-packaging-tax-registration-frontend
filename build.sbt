@@ -52,11 +52,10 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "logger.*\\(.*\\)",
     // These are being excluded since all logic has been pushed to base class and they are tested by their non-post-registration associates
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
-    ".*.controllers.amendment.partner.AddPartner(OrganisationDetailsType|Grs|ContactDetailsConfirmAddress|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
+    ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsConfirmAddress|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
     // TODO: reintroduce as we build the post reg partnership amendment functionality out for real
     ".*.controllers.amendment.partner.AmendPartnerContactDetailsController",
     ".*.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController",
-    ".*.views.html.amendment.partner.amend_add_partner_contact_check_answers_page",
     ".*.views.html.amendment.partner.amend_partner_contact_check_answers_page",
   ).mkString(";"),
   coverageMinimum := 95.0,
