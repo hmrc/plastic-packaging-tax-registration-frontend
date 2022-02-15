@@ -92,10 +92,16 @@ class PartnerContactNameController @Inject() (
   def submitNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
+        val nextPage =
+          if (isEditingNominatedPartner(request, partner))
+            partnerRoutes.PartnerJobTitleController.displayNewPartner()
+          else
+            partnerRoutes.PartnerEmailAddressController.displayNewPartner()
+
         handleSubmission(partner,
                          partnerRoutes.PartnerTypeController.displayNewPartner(),
                          partnerRoutes.PartnerContactNameController.submitNewPartner(),
-                         nextPage(request, partner),
+                         nextPage,
                          commonRoutes.TaskListController.displayPage(),
                          updateInflightPartner
         )
@@ -110,6 +116,13 @@ class PartnerContactNameController @Inject() (
         updateExistingPartner(memberName, partnerId)
 
       request.registration.findPartner(partnerId).map { partner =>
+        val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
+        val nextPage =
+          if (isEditingNominatedPartner(request, partner) || alreadyHasJobTitle)
+            partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId)
+          else
+            partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
+
         handleSubmission(partner,
                          partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
                            partnerId
@@ -117,7 +130,7 @@ class PartnerContactNameController @Inject() (
                          partnerRoutes.PartnerContactNameController.submitExistingPartner(
                            partnerId
                          ),
-                         nextPage(request, partner),
+                         nextPage,
                          partnerRoutes.PartnerContactNameController.displayExistingPartner(
                            partnerId
                          ),
@@ -187,14 +200,6 @@ class PartnerContactNameController @Inject() (
                                         )
       )
     }
-
-  private def nextPage(request: JourneyRequest[AnyContent], partner: Partner) = {
-    val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
-    if (isEditingNominatedPartner(request, partner) || alreadyHasJobTitle)
-      partnerRoutes.PartnerJobTitleController.displayNewPartner()
-    else
-      partnerRoutes.PartnerEmailAddressController.displayNewPartner()
-  }
 
   private def isEditingNominatedPartner(request: JourneyRequest[AnyContent], partner: Partner) =
     request.registration.nominatedPartner.forall(_.id == partner.id)

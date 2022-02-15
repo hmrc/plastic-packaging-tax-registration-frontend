@@ -90,7 +90,7 @@ class PartnerJobTitleController @Inject() (
       request.registration.inflightPartner.map { partner =>
         handleSubmission(partner,
                          partnerRoutes.PartnerTypeController.displayNewPartner(),
-                         partnerRoutes.PartnerContactNameController.submitNewPartner(),
+                         partnerRoutes.PartnerJobTitleController.submitNewPartner(),
                          partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
                          commonRoutes.TaskListController.displayPage(),
                          updateInflightPartner
@@ -127,7 +127,7 @@ class PartnerJobTitleController @Inject() (
     onwardsCall: Call,
     dropoutCall: Call,
     updateAction: JobTitle => Future[Either[ServiceError, Registration]]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
+  )(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
     JobTitle.form()
       .bindFromRequest()
       .fold(
@@ -152,6 +152,7 @@ class PartnerJobTitleController @Inject() (
             case Left(error) => throw error
           }
       )
+  }
 
   private def updateInflightPartner(
     formData: JobTitle
