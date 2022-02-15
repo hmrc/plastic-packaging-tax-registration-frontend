@@ -21,7 +21,6 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
-import play.api.test.Injecting
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
@@ -342,7 +341,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
       "Nominated partner complete but other partners not started" when {
 
-        val registration = aRegistration(
+        val registration: Registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
                              startDate = Some(Date(Some(1), Some(4), Some(2022)))
@@ -407,7 +406,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerListController.displayPage()
           )
           sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.partnership.otherPartners"
@@ -497,7 +496,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerListController.displayPage()
           )
           sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.partnership.otherPartners"
@@ -594,7 +593,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerListController.displayPage()
           )
           sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.partnership.otherPartners"
