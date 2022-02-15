@@ -95,7 +95,7 @@ abstract class PartnerNameControllerBase(
             case Some(partnerId) => updateExistingPartner(partnerName, partnerId)
             case _               => updateInflightPartner(partnerName)
           }
-        handleSubmission(partner, Some(partner.id), backCall, submitCall, dropoutCall, updateAction)
+        handleSubmission(partner, partnerId, backCall, submitCall, dropoutCall, updateAction)
       }.getOrElse {
         Future.successful(throw new IllegalStateException("Expected partner missing"))
       }
@@ -141,7 +141,7 @@ abstract class PartnerNameControllerBase(
                       ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                     case GENERAL_PARTNERSHIP =>
                       getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
-                                                appConfig.partnerGrsCallbackUrl(existingPartnerId)
+                                                grsCallbackUrl(existingPartnerId)
                       ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                     case _ =>
                       //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
