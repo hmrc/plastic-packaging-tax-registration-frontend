@@ -62,7 +62,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
   private def registrationWithPartnershipDetailsAndNonNominatedInflightPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).addOtherPartner(
       aSoleTraderPartner
-    ).withInflightPartner(Some(aLimitedCompanyPartner()))
+    ).withInflightPartner(Some(aPartnershipPartner()))
 
   private val existingPartner =
     aLimitedCompanyPartner()
