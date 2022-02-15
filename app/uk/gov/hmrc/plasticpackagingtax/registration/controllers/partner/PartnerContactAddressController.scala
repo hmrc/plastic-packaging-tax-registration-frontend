@@ -17,19 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import com.google.inject.{Inject, Singleton}
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
 
@@ -37,88 +30,34 @@ import scala.concurrent.ExecutionContext
 class PartnerContactAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
   addressLookupFrontendConnector: AddressLookupFrontendConnector,
   appConfig: AppConfig,
-  mcc: MessagesControllerComponents
+  mcc: MessagesControllerComponents,
+  registrationUpdater: NewRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
-    extends FrontendController(mcc) with AddressLookupIntegration with Cacheable with I18nSupport {
+    extends PartnerContactAddressControllerBase(authenticate,
+                                                journeyAction,
+                                                addressLookupFrontendConnector,
+                                                mcc,
+                                                appConfig,
+                                                registrationUpdater
+    ) {
 
   def captureNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      val newPartner = request.registration.inflightPartner
-      initialiseAlf(routes.PartnerContactAddressController.alfCallbackNewPartner(None),
-                    newPartner.map(_.name)
-      )
-    }
+    doDisplayPage(None, routes.PartnerContactAddressController.alfCallbackNewPartner(None))
 
   def captureExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      val existingPartner = request.registration.findPartner(partnerId)
-      initialiseAlf(
-        routes.PartnerContactAddressController.alfCallbackExistingPartner(partnerId, None),
-        existingPartner.map(_.name)
-      )
-    }
-
-  private def initialiseAlf(callback: Call, businessName: Option[String])(implicit
-    ec: ExecutionContext,
-    hc: HeaderCarrier
-  ) =
-    initialiseAddressLookup(addressLookupFrontendConnector,
-                            appConfig,
-                            callback,
-                            "addressLookup.partner",
-                            businessName
-    ).map(onRamp => Redirect(onRamp.redirectUrl))
+    doDisplayPage(Some(partnerId),
+                  routes.PartnerContactAddressController.alfCallbackExistingPartner(partnerId, None)
+    )
 
   def alfCallbackNewPartner(id: Option[String]): Action[AnyContent] =
-    updateRegistrationAndRedirect(id,
-                                  (updatedAddress, reg) => {
-                                    val updatedInflightPartner = reg.withInflightPartner(
-                                      reg.inflightPartner.map(_.withContactAddress(updatedAddress))
-                                    )
-                                    updatedInflightPartner.withPromotedInflightPartner()
-                                  },
-                                  routes.PartnerCheckAnswersController.displayNewPartner()
-    )
+    doAlfCallback(None, id, routes.PartnerCheckAnswersController.displayNewPartner())
 
   def alfCallbackExistingPartner(partnerId: String, id: Option[String]): Action[AnyContent] =
-    updateRegistrationAndRedirect(id,
-                                  (updatedAddress, reg) =>
-                                    reg.withUpdatedPartner(
-                                      partnerId,
-                                      partner =>
-                                        partner.copy(contactDetails =
-                                          partner.contactDetails.map(
-                                            _.copy(address = Some(updatedAddress))
-                                          )
-                                        )
-                                    ),
-                                  routes.PartnerCheckAnswersController.displayExistingPartner(
-                                    partnerId
-                                  )
+    doAlfCallback(Some(partnerId),
+                  id,
+                  routes.PartnerCheckAnswersController.displayExistingPartner(partnerId)
     )
-
-  private def updateRegistrationAndRedirect(
-    id: Option[String],
-    registrationUpdater: (Address, Registration) => Registration,
-    redirect: Call
-  ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      addressLookupFrontendConnector.getAddress(
-        id.getOrElse(throw new MissingAddressIdException)
-      ).flatMap {
-        // TODO: consider re-validating here as we do for contact address. The code there suggests that ALF might return
-        //       an address which we consider invalid. Need to check this out!
-        confirmedAddress =>
-          update { registration =>
-            registrationUpdater(Address(confirmedAddress), registration)
-          }.map {
-            case Right(_) =>
-              Redirect(redirect)
-          }
-      }
-    }
 
 }

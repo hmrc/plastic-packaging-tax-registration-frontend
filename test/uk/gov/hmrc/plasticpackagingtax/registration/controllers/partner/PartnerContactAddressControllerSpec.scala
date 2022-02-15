@@ -26,12 +26,8 @@ import play.api.test.Helpers.{redirectLocation, status}
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
-  AddressLookupAddress,
-  AddressLookupConfirmation,
-  AddressLookupCountry,
-  AddressLookupOnRamp
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{AddressLookupAddress, AddressLookupConfirmation, AddressLookupCountry, AddressLookupOnRamp}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
@@ -41,11 +37,13 @@ class PartnerContactAddressControllerSpec
 
   private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
   private val mcc                                = stubMessagesControllerComponents()
-
+  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
   private val controller =
     new PartnerContactAddressController(authenticate = mockAuthAction,
                                         journeyAction = mockJourneyAction,
-                                        registrationConnector = mockRegistrationConnector,
+                                        registrationUpdater = mockNewRegistrationUpdater,
                                         addressLookupFrontendConnector =
                                           mockAddressLookupFrontendConnector,
                                         appConfig = appConfig,

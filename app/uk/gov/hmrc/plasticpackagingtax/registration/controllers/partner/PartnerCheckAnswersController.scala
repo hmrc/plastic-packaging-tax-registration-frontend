@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheabl
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 
 @Singleton
 class PartnerCheckAnswersController @Inject() (
@@ -41,7 +42,9 @@ class PartnerCheckAnswersController @Inject() (
         page(
           request.registration.newPartner.getOrElse(
             throw new IllegalStateException("New partner absent")
-          )
+          ),
+          commonRoutes.TaskListController.displayPage(),
+          routes.PartnerCheckAnswersController.continue()
         )
       )
     }
@@ -51,7 +54,12 @@ class PartnerCheckAnswersController @Inject() (
       val partner = request.registration.organisationDetails.partnershipDetails.flatMap(
         _.findPartner(partnerId)
       ).getOrElse(throw new IllegalStateException(s"Partner with id [$partnerId] absent"))
-      Ok(page(partner))
+      Ok(
+        page(partner,
+             commonRoutes.TaskListController.displayPage(),
+             routes.PartnerCheckAnswersController.continue()
+        )
+      )
     }
 
   def continue(): Action[AnyContent] =

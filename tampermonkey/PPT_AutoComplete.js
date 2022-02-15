@@ -438,7 +438,7 @@ const partnerOrganisation = () => {
 }
 
 const partnerContactName = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-contact-name')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/.*partner-contact-name')) {
 
         document.getElementById('firstName').value = "James"
         document.getElementById('lastName').value = "Sparrow"
@@ -447,7 +447,9 @@ const partnerContactName = () => {
 }
 
 const partnerContactEmailAddress = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-email-address')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-email-address')
+        || currentPageIs('/register-for-plastic-packaging-tax/amend-partner-email')
+        || currentPageIs('/register-for-plastic-packaging-tax/amend-add-partner-contact-email')) {
 
         document.getElementById('value').value = "test@test.com"
         document.getElementsByClassName('govuk-button')[0].click()
@@ -455,7 +457,9 @@ const partnerContactEmailAddress = () => {
 }
 
 const partnerContactPhoneNumber = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-phone-number')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-phone-number')
+    || currentPageIs('/register-for-plastic-packaging-tax/amend-partner-phone-number')
+    || currentPageIs('/register-for-plastic-packaging-tax/amend-add-partner-contact-telephone')) {
 
         document.getElementById('value').value = "07712345677"
         document.getElementsByClassName('govuk-button')[0].click()
@@ -463,7 +467,7 @@ const partnerContactPhoneNumber = () => {
 }
 
 const partnerContactCheckAnswers = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-check-answers')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/.*partner-check-answers')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }

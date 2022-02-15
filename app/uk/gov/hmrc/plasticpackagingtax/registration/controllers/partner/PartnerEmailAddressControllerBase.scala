@@ -24,11 +24,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnerContactDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration,
   RegistrationUpdater
@@ -37,16 +34,16 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest,
   JourneyRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class PartnerContactNameControllerBase(
+abstract class PartnerEmailAddressControllerBase(
   val authenticate: AuthActioning,
   val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
   mcc: MessagesControllerComponents,
-  page: partner_member_name_page,
+  page: partner_email_address_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -64,24 +61,20 @@ abstract class PartnerContactNameControllerBase(
 
   private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
     request: JourneyRequest[AnyContent]
-  ): Result = {
-    val existingNameFields = for {
-      contactDetails <- partner.contactDetails
-      firstName      <- contactDetails.firstName
-      lastName       <- contactDetails.lastName
-    } yield (firstName, lastName)
+  ): Result =
+    partner.contactDetails.map { contactDetails =>
+      contactDetails.name.map { contactName =>
+        val form = contactDetails.emailAddress match {
+          case Some(data) =>
+            EmailAddress.form().fill(EmailAddress(data))
+          case _ =>
+            EmailAddress.form()
+        }
+        Ok(page(form, backCall, submitCall, contactName))
+      }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
+    }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
-    val form = existingNameFields match {
-      case Some(data) =>
-        MemberName.form().fill(MemberName(data._1, data._2))
-      case None =>
-        MemberName.form()
-    }
-
-    Ok(page(form, partner.name, backCall, submitCall))
-  }
-
-  protected def doSubmit(
+  def doSubmit(
     partnerId: Option[String],
     backCall: Call,
     submitCall: Call,
@@ -89,10 +82,10 @@ abstract class PartnerContactNameControllerBase(
     dropoutCall: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      def updateAction(memberName: MemberName): Future[Registration] =
+      def updateAction(emailAddress: EmailAddress): Future[Registration] =
         partnerId match {
-          case Some(partnerId) => updateExistingPartner(memberName, partnerId)
-          case _               => updateInflightPartner(memberName)
+          case Some(partnerId) => updateExistingPartner(emailAddress, partnerId)
+          case _               => updateInflightPartner(emailAddress)
         }
       getPartner(partnerId).map { partner =>
         handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, updateAction)
@@ -105,20 +98,27 @@ abstract class PartnerContactNameControllerBase(
     partner: Partner,
     backCall: Call,
     submitCall: Call,
-    onwardsCall: Call,
+    onwardCall: Call,
     dropoutCall: Call,
-    updateAction: MemberName => Future[Registration]
+    updateAction: EmailAddress => Future[Registration]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
-    MemberName.form()
+    EmailAddress.form()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[MemberName]) =>
-          Future.successful(BadRequest(page(formWithErrors, partner.name, backCall, submitCall))),
-        fullName =>
-          updateAction(fullName).map { _ =>
+        (formWithErrors: Form[EmailAddress]) =>
+          partner.contactDetails.flatMap(_.name).map {
+            contactName =>
+              Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName)))
+          }.getOrElse(
+            Future.successful(
+              throw new IllegalStateException("Expected partner contact name missing")
+            )
+          ),
+        emailAddress =>
+          updateAction(emailAddress).map { _ =>
             FormAction.bindFromRequest match {
               case SaveAndContinue =>
-                Redirect(onwardsCall)
+                Redirect(onwardCall)
               case _ =>
                 Redirect(dropoutCall)
             }
@@ -126,36 +126,32 @@ abstract class PartnerContactNameControllerBase(
       )
 
   private def updateInflightPartner(
-    formData: MemberName
+    formData: EmailAddress
   )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.inflightPartner.map { partner =>
-        val withContactName = partner.copy(contactDetails =
-          Some(
-            PartnerContactDetails(firstName = Some(formData.firstName),
-                                  lastName = Some(formData.lastName)
-            )
-          )
-        )
-        registration.withInflightPartner(Some(withContactName))
+        val withEmailAddress =
+          partner.contactDetails.map { contactDetails =>
+            val updatedContactDetailsWithEmailAddress =
+              contactDetails.copy(emailAddress = Some(formData.value))
+            partner.copy(contactDetails = Some(updatedContactDetailsWithEmailAddress))
+          }
+        registration.withInflightPartner(withEmailAddress)
       }.getOrElse {
         registration
       }
     }
 
-  private def updateExistingPartner(formData: MemberName, partnerId: String)(implicit
+  private def updateExistingPartner(formData: EmailAddress, partnerId: String)(implicit
     req: JourneyRequest[AnyContent]
   ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
-      registration.withUpdatedPartner(partnerId,
-                                      partner =>
-                                        partner.copy(contactDetails =
-                                          partner.contactDetails.map(
-                                            _.copy(firstName = Some(formData.firstName),
-                                                   lastName = Some(formData.lastName)
-                                            )
-                                          )
-                                        )
+      registration.withUpdatedPartner(
+        partnerId,
+        partner =>
+          partner.copy(contactDetails =
+            partner.contactDetails.map(_.copy(emailAddress = Some(formData.value)))
+          )
       )
     }
 

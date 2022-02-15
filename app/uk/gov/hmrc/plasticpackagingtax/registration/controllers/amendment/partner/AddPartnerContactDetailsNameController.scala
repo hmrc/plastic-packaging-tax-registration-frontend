@@ -19,10 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameControllerBase
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  AmendRegistrationUpdateService,
-  NewRegistrationUpdateService
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
 

@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -30,19 +31,23 @@ import scala.concurrent.ExecutionContext
 class AddPartnerContactDetailsConfirmAddressController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with AddressLookupIntegration with I18nSupport {
+  addressLookupFrontendConnector: AddressLookupFrontendConnector,
+  appConfig: AppConfig,
+  mcc: MessagesControllerComponents,
+  registrationUpdater: AmendRegistrationUpdateService
+)(implicit val ec: ExecutionContext)
+    extends PartnerContactAddressControllerBase(authenticate,
+                                                journeyAction,
+                                                addressLookupFrontendConnector,
+                                                mcc,
+                                                appConfig,
+                                                registrationUpdater
+    ) {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Redirect(routes.AddPartnerContactDetailsConfirmAddressController.alfCallback(Some("123")))
-    }
+    doDisplayPage(None, routes.AddPartnerContactDetailsConfirmAddressController.alfCallback(None))
 
   def alfCallback(id: Option[String]): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      // TODO: get address details from ALF and update inflight partner
-      Redirect(routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
-    }
+    doAlfCallback(None, id, routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
 
 }

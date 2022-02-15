@@ -16,13 +16,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -32,32 +31,28 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
-  page: partner_email_address_page
+  page: partner_email_address_page,
+  registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends PartnerEmailAddressControllerBase(authenticate = authenticate,
+                                              journeyAction = journeyAction,
+                                              mcc = mcc,
+                                              page = page,
+                                              registrationUpdater = registrationUpdateService
+    ) {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok(
-        page(
-          EmailAddress.form().fill(
-            EmailAddress(
-              request.registration.inflightPartner.flatMap(
-                _.contactDetails.flatMap(_.emailAddress)
-              ).getOrElse("")
-            )
-          ),
-          routes.AddPartnerContactDetailsNameController.displayPage(),
-          routes.AddPartnerContactDetailsEmailAddressController.submit(),
-          "Contact Name"
-        )
-      )
-    }
+    doDisplay(None,
+              routes.AddPartnerContactDetailsNameController.displayPage(),
+              routes.AddPartnerContactDetailsEmailAddressController.submit()
+    )
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      // TODO: validate input and update inflight partner
-      Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
-    }
+    doSubmit(None,
+             routes.AddPartnerContactDetailsNameController.displayPage(),
+             routes.AddPartnerContactDetailsEmailAddressController.submit(),
+             routes.AddPartnerContactDetailsTelephoneNumberController.displayPage(),
+             routes.PartnersListController.displayPage()
+    )
 
 }

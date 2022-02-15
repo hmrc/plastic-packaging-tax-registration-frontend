@@ -50,7 +50,7 @@ class PartnerCheckAnswersControllerSpec
     super.beforeEach()
     authorizedUser()
     mockRegistrationFind(partnershipRegistration)
-    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Partner check answers"))
+    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Partner check answers"))
   }
 
   override protected def afterEach(): Unit = {
