@@ -45,7 +45,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
   private val BUSINESS_DETAILS                          = 1
   private val PRIMARY_CONTACT_DETAILS                   = 2
   private val CHECK_AND_SUBMIT                          = 3
-  private val registrationPage: task_list_single_entity = instanceOf[task_list_single_entity]
+  private val registrationPage: task_list_single_entity = inject[task_list_single_entity]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 

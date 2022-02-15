@@ -22,7 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.pptHelpl
 
 class PptHelplineDetailsSpec extends UnitViewSpec with Matchers {
 
-  private val pptHelplinePartial = instanceOf[pptHelplineDetails]
+  private val pptHelplinePartial = inject[pptHelplineDetails]
 
   private def pageParagraphMessageKeys =
     List("pptHelpline.intro",

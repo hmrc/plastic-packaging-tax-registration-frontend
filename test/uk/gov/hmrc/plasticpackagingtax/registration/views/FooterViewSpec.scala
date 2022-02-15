@@ -25,7 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class FooterViewSpec extends UnitViewSpec with Matchers {
 
-  private val startPage          = instanceOf[start_page]
+  private val startPage          = inject[start_page]
   private def createView(): Html = startPage()
 
   "Footer" should {

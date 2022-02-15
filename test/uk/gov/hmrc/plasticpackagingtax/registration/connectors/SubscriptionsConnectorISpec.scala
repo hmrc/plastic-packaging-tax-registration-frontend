@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
-import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put, urlMatching}
 import org.scalatest.concurrent.ScalaFutures
@@ -24,15 +23,16 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
+import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateOrUpdateResponseSuccess,
   SubscriptionStatusResponse
 }
 
-class SubscriptionsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class SubscriptionsConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures {
 
-  lazy val connector: SubscriptionsConnector = app.injector.instanceOf[SubscriptionsConnector]
+  lazy val connector: SubscriptionsConnector = inject[SubscriptionsConnector]
   val incorpId                               = "uuid-id"
 
   "SubscriptionConnector" when {

@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisatio
 
 class OrganisationListSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[organisation_list]
+  private val page = inject[organisation_list]
 
   private val singleMember = Seq(groupMember)
 

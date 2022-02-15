@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class MembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[members_under_group_control_page]
+  private val page = inject[members_under_group_control_page]
 
   private def createView(
     form: Form[MembersUnderGroupControl] = MembersUnderGroupControl.form()

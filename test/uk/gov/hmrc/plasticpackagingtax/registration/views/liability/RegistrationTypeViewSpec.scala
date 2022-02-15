@@ -31,7 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class RegistrationTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val backLink = Call("GET", "/backLink")
-  private val page     = instanceOf[registration_type_page]
+  private val page     = inject[registration_type_page]
 
   private def createView(form: Form[RegistrationType] = RegistrationType.form()): Document =
     page(form, backLink)(journeyRequest, messages)

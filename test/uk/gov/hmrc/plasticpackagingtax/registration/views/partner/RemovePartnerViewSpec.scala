@@ -31,7 +31,7 @@ import java.util.UUID
 @ViewTest
 class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[remove_partner_page]
+  private val page = inject[remove_partner_page]
 
   private val partnerName = "Plastic Packaging Partner"
   private val partnerId   = UUID.randomUUID.toString

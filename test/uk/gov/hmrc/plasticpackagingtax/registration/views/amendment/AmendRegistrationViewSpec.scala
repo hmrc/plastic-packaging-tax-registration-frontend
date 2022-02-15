@@ -43,11 +43,11 @@ object RegistrationType extends Enumeration {
 @ViewTest
 class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
 
-  private val page: amend_registration_page = instanceOf[amend_registration_page]
-  private val viewUtils: ViewUtils          = instanceOf[ViewUtils]
+  private val page: amend_registration_page = inject[amend_registration_page]
+  private val viewUtils: ViewUtils          = inject[ViewUtils]
   private val registration                  = aRegistration()
-  private val realAppConfig                 = instanceOf[AppConfig]
-  private val countryService                = instanceOf[CountryService]
+  private val realAppConfig                 = inject[AppConfig]
+  private val countryService                = inject[CountryService]
 
   private val singleOrganisationRegistration = aRegistration()
   private val soleTraderRegistration         = aRegistration(withSoleTraderDetails(Some(soleTraderDetails)))

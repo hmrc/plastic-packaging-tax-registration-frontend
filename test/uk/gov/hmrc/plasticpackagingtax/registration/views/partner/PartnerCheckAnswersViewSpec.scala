@@ -31,8 +31,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val page           = instanceOf[partner_check_answers_page]
-  private val countryService = instanceOf[CountryService]
+  private val page           = inject[partner_check_answers_page]
+  private val countryService = inject[CountryService]
 
   private val limitedCompanyPartner = aLimitedCompanyPartner()
   private val soleTraderPartner     = aSoleTraderPartner()

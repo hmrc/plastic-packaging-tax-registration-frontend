@@ -50,7 +50,7 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 @ViewTest
 class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
 
-  private val page = instanceOf[check_answers_page]
+  private val page = inject[check_answers_page]
 
   private def createView(): Document =
     page()(journeyRequest, messages)

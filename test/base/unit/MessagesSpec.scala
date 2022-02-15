@@ -16,7 +16,6 @@
 
 package base.unit
 
-import base.Injector
 import com.codahale.metrics.SharedMetricRegistries
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -24,15 +23,16 @@ import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Request
+import play.api.test.Injecting
 
-abstract class MessagesSpec extends AnyWordSpec with GuiceOneAppPerSuite with Injector {
+abstract class MessagesSpec extends AnyWordSpec with GuiceOneAppPerSuite with Injecting {
 
   override def fakeApplication(): Application = {
     SharedMetricRegistries.clear() //todo turn jvm metrics off for local.
     new GuiceApplicationBuilder().build()
   }
 
-  private val realMessagesApi: MessagesApi = MessagesSpec.realMessagesApi
+  private val realMessagesApi: MessagesApi = inject[MessagesApi]
 
   protected implicit def messages(implicit request: Request[_]): Messages =
     new AllMessageKeysAreMandatoryMessages(realMessagesApi.preferred(request))
@@ -40,10 +40,6 @@ abstract class MessagesSpec extends AnyWordSpec with GuiceOneAppPerSuite with In
   protected def messages(key: String, args: Any*)(implicit request: Request[_]): String =
     messages(request)(key, args: _*)
 
-}
-
-object MessagesSpec extends Injector {
-  val realMessagesApi: MessagesApi = instanceOf[MessagesApi]
 }
 
 private class AllMessageKeysAreMandatoryMessages(msg: Messages) extends Messages {

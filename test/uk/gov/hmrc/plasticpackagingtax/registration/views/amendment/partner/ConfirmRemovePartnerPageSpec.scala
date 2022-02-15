@@ -26,7 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[confirm_remove_partner_page]
+  private val page = inject[confirm_remove_partner_page]
 
   private val partner = aLimitedCompanyPartner()
 

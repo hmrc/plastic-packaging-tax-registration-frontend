@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
-import base.Injector
 import base.unit.MessagesSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.data.FormError
@@ -24,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.Registration
 
 import java.time.LocalDate
 
-class RegistrationDateSpec extends MessagesSpec with Matchers with Injector {
+class RegistrationDateSpec extends MessagesSpec with Matchers {
 
   private val year  = "date.year"
   private val month = "date.month"

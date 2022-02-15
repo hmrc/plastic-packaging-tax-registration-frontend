@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class PostcodeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[postcode_page]
+  private val page = inject[postcode_page]
 
   private def createView(form: Form[Postcode] = Postcode.form()): Document =
     page(form)(journeyRequest, messages)

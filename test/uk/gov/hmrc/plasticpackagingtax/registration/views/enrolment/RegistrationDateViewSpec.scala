@@ -29,7 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class RegistrationDateViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[registration_date_page]
+  private val page = inject[registration_date_page]
 
   private val previousPage = Call("GET", "/some-back")
 

@@ -41,7 +41,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
   private val NOMINATED_PRIMARY_CONTACT_DETAILS = 2
   private val OTHER_BUSINESS_DETAILS            = 3
   private val CHECK_AND_SUBMIT                  = 4
-  private val registrationPage: task_list_group = instanceOf[task_list_group]
+  private val registrationPage: task_list_group = inject[task_list_group]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 

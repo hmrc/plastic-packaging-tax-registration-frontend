@@ -37,7 +37,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[organisation_type]
+  private val page = inject[organisation_type]
 
   private def createView(
     form: Form[OrganisationType] = OrganisationType.form(),

@@ -26,7 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class SoleTraderVerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
   private val page: sole_trader_verification_failure_page =
-    instanceOf[sole_trader_verification_failure_page]
+    inject[sole_trader_verification_failure_page]
 
   private def createView(): Html = page()(journeyRequest, messages)
 

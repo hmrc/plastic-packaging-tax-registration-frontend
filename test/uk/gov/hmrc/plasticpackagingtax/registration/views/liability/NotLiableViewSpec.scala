@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[not_liable]
+  private val page = inject[not_liable]
 
   private def createView(): Document =
     page()(journeyRequest, messages)

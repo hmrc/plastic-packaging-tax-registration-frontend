@@ -25,7 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class AmendErrorPageSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[amend_error_page]
+  private val page = inject[amend_error_page]
 
   private def createView(): Document =
     page()(journeyRequest, messages)

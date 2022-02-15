@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class TooManyAttemptsPasscodeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[too_many_attempts_passcode_page]
+  private val page = inject[too_many_attempts_passcode_page]
 
   "Too Many Attempts Passcode View" should {
 

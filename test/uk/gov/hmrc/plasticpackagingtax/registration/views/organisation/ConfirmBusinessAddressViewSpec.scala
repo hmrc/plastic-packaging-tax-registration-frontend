@@ -26,7 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ConfirmBusinessAddressViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[confirm_business_address]
+  private val page = inject[confirm_business_address]
 
   private val incorporationAddressDetails = IncorporationAddressDetails(
     address_line_1 = Some("testLine1"),

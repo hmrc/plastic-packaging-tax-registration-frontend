@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.audit
 
-import base.Injector
 import base.it.ConnectorISpec
 import builders.RegistrationBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -26,11 +25,12 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
 import play.api.libs.json.Json
+import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 
-class AuditorSpec extends ConnectorISpec with Injector with ScalaFutures with RegistrationBuilder {
+class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with RegistrationBuilder {
 
-  val auditor: Auditor = app.injector.instanceOf[Auditor]
+  val auditor: Auditor = inject[Auditor]
   val auditUrl         = "/write/audit"
 
   override def overrideConfig: Map[String, Any] =

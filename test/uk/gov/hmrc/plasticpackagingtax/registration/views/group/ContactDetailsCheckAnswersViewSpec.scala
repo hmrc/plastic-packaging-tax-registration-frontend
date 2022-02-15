@@ -31,8 +31,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val page           = instanceOf[member_contact_check_answers_page]
-  private val countryService = instanceOf[CountryService]
+  private val page           = inject[member_contact_check_answers_page]
+  private val countryService = inject[CountryService]
 
   private def createView(form: Form[MemberName] = MemberName.form()): Document =
     page(groupMember)(journeyRequest, messages)

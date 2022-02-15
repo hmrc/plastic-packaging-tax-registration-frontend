@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
-import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlMatching}
 import org.scalatest.EitherValues
@@ -26,6 +25,7 @@ import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
+import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
   COMPLETE,
   INCORRECT_PASSCODE,
@@ -35,10 +35,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification._
 
 class EmailVerificationConnectorISpec
-    extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
+    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
   lazy val connector: EmailVerificationConnector =
-    app.injector.instanceOf[EmailVerificationConnector]
+    inject[EmailVerificationConnector]
 
   val emailVerificationRequest = CreateEmailVerificationRequest(credId = "credId",
                                                                 continueUrl = "http://continue",

@@ -31,7 +31,7 @@ import java.util.UUID
 @ViewTest
 class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[remove_group_member_page]
+  private val page = inject[remove_group_member_page]
 
   private val memberName = "Plastic Packaging Subsidiary"
   private val memberId   = UUID.randomUUID.toString
