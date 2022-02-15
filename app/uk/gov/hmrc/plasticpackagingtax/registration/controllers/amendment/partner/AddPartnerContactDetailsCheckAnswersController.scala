@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateOrUpdateResponseFailure,
   SubscriptionCreateOrUpdateResponseSuccess
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_check_answers_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -37,7 +37,7 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
-  page: partner_check_answers_page
+  page: amend_add_partner_contact_check_answers_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, journeyAction) {
 
@@ -47,9 +47,7 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
         page(
           request.registration.newPartner.getOrElse(
             throw new IllegalStateException("Missing partner")
-          ),
-          routes.AddPartnerContactDetailsConfirmAddressController.displayPage(),
-          routes.AddPartnerContactDetailsCheckAnswersController.submit()
+          )
         )
       )
     }

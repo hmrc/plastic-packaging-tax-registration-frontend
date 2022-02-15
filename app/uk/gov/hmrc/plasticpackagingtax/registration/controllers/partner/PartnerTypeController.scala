@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerTypeController @Inject() (
@@ -70,5 +70,12 @@ class PartnerTypeController @Inject() (
 
   override def grsCallbackUrl(partnerId: Option[String]): String =
     appConfig.partnerGrsCallbackUrl(partnerId)
+
+  override def redirectToPartnerNamePrompt(existingPartnerId: Option[String]): Future[Result] =
+    Future {
+      Redirect(existingPartnerId.map { partnerId =>
+        routes.PartnerNameController.displayExistingPartner(partnerId)
+      }.getOrElse(routes.PartnerNameController.displayNewPartner()))
+    }
 
 }

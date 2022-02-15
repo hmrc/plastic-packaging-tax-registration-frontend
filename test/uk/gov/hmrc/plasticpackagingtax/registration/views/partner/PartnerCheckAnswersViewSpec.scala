@@ -34,15 +34,12 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   private val page           = instanceOf[partner_check_answers_page]
   private val countryService = instanceOf[CountryService]
 
-  private val backLink   = Call("GET", "/back")
-  private val submitLink = Call("POST", "/submit")
-
   private val limitedCompanyPartner = aLimitedCompanyPartner()
   private val soleTraderPartner     = aSoleTraderPartner()
   private val partnershipPartner    = aPartnershipPartner()
 
   private def createView(partner: Partner): Document =
-    page(partner, backLink, submitLink)(journeyRequest, messages)
+    page(partner)(journeyRequest, messages)
 
   "Partner Check Answers View" should {
 
@@ -57,7 +54,9 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref("/back")
+      view.getElementById("back-link") must haveHref(
+        commonRoutes.TaskListController.displayPage().url
+      )
     }
 
     "display title" in {
@@ -210,8 +209,8 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(limitedCompanyPartner, backLink, submitLink)(journeyRequest, messages)
-    page.render(limitedCompanyPartner, backLink, submitLink, journeyRequest, messages)
+    page.f(limitedCompanyPartner)(journeyRequest, messages)
+    page.render(limitedCompanyPartner, journeyRequest, messages)
   }
 
 }

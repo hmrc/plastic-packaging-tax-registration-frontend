@@ -52,14 +52,8 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "logger.*\\(.*\\)",
     // These are being excluded since all logic has been pushed to base class and they are tested by their non-post-registration associates
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
+    ".*.controllers.amendment.partner.AddPartner(OrganisationDetailsType|Grs|ContactDetailsConfirmAddress|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
     // TODO: reintroduce as we build the post reg partnership amendment functionality out for real
-    ".*.controllers.amendment.partner.AddPartnerContactDetailsCheckAnswersController",
-    ".*.controllers.amendment.partner.AddPartnerContactDetailsConfirmAddressController",
-    ".*.controllers.amendment.partner.AddPartnerContactDetailsEmailAddressController",
-    ".*.controllers.amendment.partner.AddPartnerContactDetailsNameController",
-    ".*.controllers.amendment.partner.AddPartnerContactDetailsTelephoneNumberController",
-    ".*.controllers.amendment.partner.AddPartnerGrsController",
-    ".*.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController",
     ".*.controllers.amendment.partner.AmendPartnerContactDetailsController",
     ".*.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController",
     ".*.views.html.amendment.partner.amend_add_partner_contact_check_answers_page",

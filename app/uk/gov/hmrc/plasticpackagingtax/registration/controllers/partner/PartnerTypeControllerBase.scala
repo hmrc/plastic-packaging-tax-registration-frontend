@@ -27,7 +27,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
@@ -161,12 +160,7 @@ abstract class PartnerTypeControllerBase(
       )
     }
 
-  private def redirectToPartnerNamePrompt(existingParterId: Option[String]): Future[Result] =
-    Future {
-      Redirect(existingParterId.map { partnerId =>
-        partnerRoutes.PartnerNameController.displayExistingPartner(partnerId)
-      }.getOrElse(partnerRoutes.PartnerNameController.displayNewPartner()))
-    }
+  def redirectToPartnerNamePrompt(existingParterId: Option[String]): Future[Result]
 
   def grsCallbackUrl(partnerId: Option[String] = None): String
 }

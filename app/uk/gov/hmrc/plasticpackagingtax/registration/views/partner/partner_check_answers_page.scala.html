@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -31,7 +32,7 @@
         viewUtils: ViewUtils
 )
 
-@(partner: Partner, backLink: Call, submit: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(partner: Partner)(implicit request: JourneyRequest[_], messages: Messages)
 
 @changePartnerNameLink = @{
     if(partner.canEditName) {
@@ -87,11 +88,11 @@
 
 @govukLayout(
     title = Title("partner.check.title"),
-    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"), commonRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
 
     @pageHeading(messages("partner.check.title"))
 
-    @formHelper(action = submit, 'autoComplete -> "off") {
+    @formHelper(action = partnerRoutes.PartnerCheckAnswersController.continue(), 'autoComplete -> "off") {
 
         @govukSummaryList(
             if(partner.incorporationDetails.isDefined)
