@@ -73,7 +73,7 @@
         @task(3, "registrationPage.task.contactDetails.heading.partnership", Set(
             TaskSection(
                 title = "registrationPage.task.contactDetails.partnership",
-                link = partnerRoutes.PartnerTypeController.displayNewPartner(),
+                link = if (registration.nominatedPartner.isDefined) partnerRoutes.PartnerListController.displayPage() else partnerRoutes.PartnerTypeController.displayNewPartner(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.nominatedPartnerDetailsStatus
             ),
