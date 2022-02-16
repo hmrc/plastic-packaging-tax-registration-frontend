@@ -96,6 +96,10 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
           limitedCompanyPartner.contactDetails.get.name.get,
           None: Option[Call]
          ),
+         (messages("partner.check.contact.jobTitle"),
+          limitedCompanyPartner.contactDetails.get.jobTitle.getOrElse(""),
+          None: Option[Call]
+         ),
          (messages("partner.check.contact.email"),
           limitedCompanyPartner.contactDetails.get.emailAddress.get,
           None: Option[Call]

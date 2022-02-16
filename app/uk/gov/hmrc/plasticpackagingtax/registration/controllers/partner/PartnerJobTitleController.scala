@@ -27,26 +27,26 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   Partner,
   PartnerContactDetails
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_job_title_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnerContactNameController @Inject() (
+class PartnerJobTitleController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: partner_member_name_page
+  page: partner_job_title_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -54,8 +54,8 @@ class PartnerContactNameController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
         renderPageFor(partner,
-                      partnerRoutes.PartnerTypeController.displayNewPartner(),
-                      partnerRoutes.PartnerContactNameController.submitNewPartner()
+                      partnerRoutes.PartnerContactNameController.displayNewPartner(),
+                      partnerRoutes.PartnerJobTitleController.submitNewPartner()
         )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
@@ -65,43 +65,33 @@ class PartnerContactNameController @Inject() (
       request.registration.findPartner(partnerId).map { partner =>
         renderPageFor(partner,
                       partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-                      partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
+                      partnerRoutes.PartnerJobTitleController.submitExistingPartner(partnerId)
         )
       }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
     }
 
   private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
     request: JourneyRequest[AnyContent]
-  ): Result = {
-    val existingNameFields = for {
-      contactDetails <- partner.contactDetails
-      firstName      <- contactDetails.firstName
-      lastName       <- contactDetails.lastName
-    } yield (firstName, lastName)
-
-    val form = existingNameFields match {
-      case Some(data) =>
-        MemberName.form().fill(MemberName(data._1, data._2))
-      case None =>
-        MemberName.form()
-    }
-
-    Ok(page(form, partner.name, backCall, submitCall))
-  }
+  ): Result =
+    partner.contactDetails.map { contactDetails =>
+      contactDetails.name.map { contactName =>
+        val form = contactDetails.jobTitle match {
+          case Some(data) =>
+            JobTitle.form().fill(JobTitle(data))
+          case None =>
+            JobTitle.form()
+        }
+        Ok(page(form, contactName, backCall, submitCall))
+      }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
+    }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
   def submitNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        val nextPage =
-          if (isEditingNominatedPartner(request, partner))
-            partnerRoutes.PartnerJobTitleController.displayNewPartner()
-          else
-            partnerRoutes.PartnerEmailAddressController.displayNewPartner()
-
         handleSubmission(partner,
                          partnerRoutes.PartnerTypeController.displayNewPartner(),
-                         partnerRoutes.PartnerContactNameController.submitNewPartner(),
-                         nextPage,
+                         partnerRoutes.PartnerJobTitleController.submitNewPartner(),
+                         partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
                          commonRoutes.TaskListController.displayPage(),
                          updateInflightPartner
         )
@@ -112,28 +102,17 @@ class PartnerContactNameController @Inject() (
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      def updateAction(memberName: MemberName): Future[Either[ServiceError, Registration]] =
-        updateExistingPartner(memberName, partnerId)
+      def updateAction(jobTitle: JobTitle): Future[Either[ServiceError, Registration]] =
+        updateExistingPartner(jobTitle, partnerId)
 
       request.registration.findPartner(partnerId).map { partner =>
-        val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
-        val nextPage =
-          if (isEditingNominatedPartner(request, partner) || alreadyHasJobTitle)
-            partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId)
-          else
-            partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
-
         handleSubmission(partner,
                          partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
                            partnerId
                          ),
-                         partnerRoutes.PartnerContactNameController.submitExistingPartner(
-                           partnerId
-                         ),
-                         nextPage,
-                         partnerRoutes.PartnerContactNameController.displayExistingPartner(
-                           partnerId
-                         ),
+                         partnerRoutes.PartnerJobTitleController.submitExistingPartner(partnerId),
+                         routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+                         partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId),
                          updateAction
         )
       }.getOrElse(
@@ -147,15 +126,22 @@ class PartnerContactNameController @Inject() (
     submitCall: Call,
     onwardsCall: Call,
     dropoutCall: Call,
-    updateAction: MemberName => Future[Either[ServiceError, Registration]]
+    updateAction: JobTitle => Future[Either[ServiceError, Registration]]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
-    MemberName.form()
+    JobTitle.form()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[MemberName]) =>
-          Future.successful(BadRequest(page(formWithErrors, partner.name, backCall, submitCall))),
-        fullName =>
-          updateAction(fullName).map {
+        (formWithErrors: Form[JobTitle]) =>
+          partner.contactDetails.flatMap(_.name).map {
+            contactName =>
+              Future.successful(BadRequest(page(formWithErrors, contactName, backCall, submitCall)))
+          }.getOrElse(
+            Future.successful(
+              throw new IllegalStateException("Expected partner contact name missing")
+            )
+          ),
+        jobTitle =>
+          updateAction(jobTitle).map {
             case Right(_) =>
               FormAction.bindFromRequest match {
                 case SaveAndContinue =>
@@ -168,40 +154,28 @@ class PartnerContactNameController @Inject() (
       )
 
   private def updateInflightPartner(
-    formData: MemberName
+    formData: JobTitle
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.inflightPartner.map { partner =>
-        val withContactName = partner.copy(contactDetails =
-          Some(
-            PartnerContactDetails(firstName = Some(formData.firstName),
-                                  lastName = Some(formData.lastName)
-            )
-          )
-        )
-        registration.withInflightPartner(Some(withContactName))
+        registration.withInflightPartner(Some(withJobTitle(partner, formData)))
       }.getOrElse {
         registration
       }
     }
 
-  private def updateExistingPartner(formData: MemberName, partnerId: String)(implicit
+  private def updateExistingPartner(formData: JobTitle, partnerId: String)(implicit
     req: JourneyRequest[AnyContent]
   ): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.withUpdatedPartner(partnerId,
-                                      partner =>
-                                        partner.copy(contactDetails =
-                                          partner.contactDetails.map(
-                                            _.copy(firstName = Some(formData.firstName),
-                                                   lastName = Some(formData.lastName)
-                                            )
-                                          )
-                                        )
-      )
+      registration.withUpdatedPartner(partnerId, partner => withJobTitle(partner, formData))
     }
 
-  private def isEditingNominatedPartner(request: JourneyRequest[AnyContent], partner: Partner) =
-    request.registration.nominatedPartner.forall(_.id == partner.id)
+  private def withJobTitle(partner: Partner, formData: JobTitle) = {
+    val withJobTitle = partner.contactDetails.getOrElse(PartnerContactDetails()).copy(jobTitle =
+      Some(formData.value)
+    )
+    partner.copy(contactDetails = Some(withJobTitle))
+  }
 
 }

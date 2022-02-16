@@ -363,6 +363,7 @@ other.partner.type.title = What type of organisation is the next partner you wan
 
 partnerships.otherPartners.title = You have {0} partners in your partnership
 partnership.otherPartners.contactNamePage.title = Who is the main contact for {0}?
+partnership.otherPartners.jobTitlePage.title = What is {0}’s job title?
 partnership.otherPartners.contactEmailAddressPage.title = What is {0}’s email address?
 partnership.otherPartners.contactPhoneNumberPage.title = What is {0}’s telephone number?
 partnership.otherPartners.checkAnswers.contactName = Name
@@ -614,6 +615,7 @@ partner.check.name = Name
 partner.check.nino = National Insurance Number
 partner.check.contact.name = Contact name
 partner.check.contact.email = Contact email
+partner.check.contact.jobTitle = Job title
 partner.check.contact.phone = Phone number
 partner.check.contact.address = Contact address
 
