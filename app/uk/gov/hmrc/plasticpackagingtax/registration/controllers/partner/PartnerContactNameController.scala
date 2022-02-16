@@ -70,4 +70,7 @@ class PartnerContactNameController @Inject() (
              partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
     )
 
+  private def isEditingNominatedPartner(request: JourneyRequest[AnyContent], partner: Partner) =
+    request.registration.nominatedPartner.forall(_.id == partner.id)
+
 }

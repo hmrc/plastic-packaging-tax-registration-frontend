@@ -26,27 +26,22 @@ import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_job_title_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
+class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
-  private val page = mock[partner_member_name_page]
+  private val page = mock[partner_job_title_page]
   private val mcc  = stubMessagesControllerComponents()
 
-  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
-
   private val controller =
-    new PartnerContactNameController(authenticate = mockAuthAction,
-                                     journeyAction = mockJourneyAction,
-                                     registrationUpdateService =
-                                       mockNewRegistrationUpdater,
-                                     mcc = mcc,
-                                     page = page
+    new PartnerJobTitleController(authenticate = mockAuthAction,
+                                  journeyAction = mockJourneyAction,
+                                  registrationConnector =
+                                    mockRegistrationConnector,
+                                  mcc = mcc,
+                                  page = page
     )
 
   override protected def beforeEach(): Unit = {
@@ -67,7 +62,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
   private def registrationWithPartnershipDetailsAndNonNominatedInflightPartner =
     aRegistration(withPartnershipDetails(Some(generalPartnershipDetails))).addOtherPartner(
       aSoleTraderPartner
-    ).withInflightPartner(Some(aPartnershipPartner()))
+    ).withInflightPartner(Some(aLimitedCompanyPartner()))
 
   private val existingPartner =
     aLimitedCompanyPartner()
@@ -77,7 +72,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
     )
 
-  "PartnerContactNameController" should {
+  "PartnerJobTitleController" should {
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected nominated partner" in {
@@ -89,7 +84,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         status(result) mustBe OK
       }
 
-      "displaying an existing partner to edit their contact name" in {
+      "displaying an existing partner to edit their job title" in {
         authorizedUser()
         mockRegistrationFind(registrationWithExistingPartner)
 
@@ -100,13 +95,13 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     }
 
     "update inflight registration" when {
-      "user submits a complete contact name" in {
+      "user submits a complete job title" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("Director"), saveAndContinueFormAction)
         )
 
         status(result) mustBe SEE_OTHER
@@ -115,43 +110,24 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         )
 
         modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.firstName)
-        ) mustBe Some("John")
-        modifiedRegistration.inflightPartner.flatMap(
-          _.contactDetails.flatMap(_.lastName)
-        ) mustBe Some("Smith")
+          _.contactDetails.flatMap(_.jobTitle)
+        ) mustBe Some("Director")
       }
 
-      "nominated partner submits a contact name and is prompted for job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
-        mockRegistrationUpdate()
-
-        val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
-        )
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.PartnerJobTitleController.displayNewPartner().url
-        )
-      }
-
-      "user submits an amendment to an existing partners contact name" in {
+      "user submits an amendment to an existing partners job title" in {
         authorizedUser()
         mockRegistrationFind(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequest(Json.toJson(MemberName("Jane", "Smith")))
+          postRequest(Json.toJson(JobTitle("Company secretary")))
         )
 
         status(result) mustBe SEE_OTHER
 
         val modifiedContactDetails =
           modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails)
-        modifiedContactDetails.flatMap(_.firstName) mustBe Some("Jane")
-        modifiedContactDetails.flatMap(_.lastName) mustBe Some("Smith")
+        modifiedContactDetails.flatMap(_.jobTitle) mustBe Some("Company secretary")
       }
     }
 
@@ -161,19 +137,17 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submitNewPartner()(
-            postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction)
-          )
+          controller.submitNewPartner()(postRequestEncoded(JobTitle(""), saveAndContinueFormAction))
 
         status(result) mustBe BAD_REQUEST
       }
 
-      "user enters a long name" in {
+      "user enters a long title" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("abced" * 40), saveAndContinueFormAction)
         )
 
         status(result) mustBe BAD_REQUEST
@@ -185,9 +159,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
-                               saveAndContinueFormAction
-            )
+            postRequestEncoded(JobTitle("Director 123"), saveAndContinueFormAction)
           )
 
         status(result) mustBe BAD_REQUEST
@@ -219,7 +191,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(MemberName("Jane", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("Director"), saveAndContinueFormAction)
         )
 
         intercept[RuntimeException](status(result))
@@ -231,7 +203,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdateFailure()
 
         val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(MemberName("John", "Smith"))))
+          controller.submitNewPartner()(postRequest(Json.toJson(JobTitle("Director"))))
 
         intercept[DownstreamServiceError](status(result))
       }
