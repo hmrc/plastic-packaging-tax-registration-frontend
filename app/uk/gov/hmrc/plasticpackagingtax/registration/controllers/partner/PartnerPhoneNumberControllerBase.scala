@@ -91,7 +91,7 @@ abstract class PartnerPhoneNumberControllerBase(
       getPartner(partnerId).map { partner =>
         handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, updateAction)
       }.getOrElse(
-        Future.successful(throw new IllegalStateException("Expected existing partner missing"))
+        Future.failed(throw new IllegalStateException("Expected existing partner missing"))
       )
     }
 

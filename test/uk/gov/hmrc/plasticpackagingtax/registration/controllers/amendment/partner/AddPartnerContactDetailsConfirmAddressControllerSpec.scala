@@ -22,22 +22,17 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{AnyContentAsEmpty, Request}
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
   AddressLookupAddress,
   AddressLookupConfirmation,
   AddressLookupCountry,
   AddressLookupOnRamp
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  AmendRegistrationUpdateService,
-  NewRegistrationUpdateService,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.RegistrationAmendmentRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents

@@ -43,14 +43,12 @@ class PartnerContactAddressControllerSpec
   private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
   private val mcc                                = stubMessagesControllerComponents()
 
-  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  protected val newRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
     new PartnerContactAddressController(authenticate = mockAuthAction,
                                         journeyAction = mockJourneyAction,
-                                        registrationUpdater = mockNewRegistrationUpdater,
+                                        registrationUpdater = newRegistrationUpdater,
                                         addressLookupFrontendConnector =
                                           mockAddressLookupFrontendConnector,
                                         appConfig = appConfig,

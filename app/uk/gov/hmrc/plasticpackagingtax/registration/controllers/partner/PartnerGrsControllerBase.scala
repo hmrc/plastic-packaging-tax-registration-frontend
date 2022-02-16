@@ -171,7 +171,7 @@ abstract class PartnerGrsControllerBase(
                          partnershipDetails = None,
                          partnerId = partnerId
       )
-    }.flatMap(result => result)
+    }.flatten
 
   private def updatePartnershipDetails(journeyId: String, partnerId: Option[String])(implicit
     request: JourneyRequest[AnyContent]
