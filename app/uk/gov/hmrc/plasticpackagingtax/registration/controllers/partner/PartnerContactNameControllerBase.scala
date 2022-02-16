@@ -130,12 +130,18 @@ abstract class PartnerContactNameControllerBase(
   )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
       registration.inflightPartner.map { partner =>
-        val withContactName = partner.copy(contactDetails =
-          Some(
+        val updateContactDetails: PartnerContactDetails = partner.contactDetails match {
+          case Some(contactDetails) =>
+            contactDetails.copy(firstName = Some(formData.firstName),
+                                lastName = Some(formData.lastName)
+            )
+          case None =>
             PartnerContactDetails(firstName = Some(formData.firstName),
                                   lastName = Some(formData.lastName)
             )
-          )
+        }
+        val withContactName = partner.copy(contactDetails =
+          Some(updateContactDetails)
         )
         registration.withInflightPartner(Some(withContactName))
       }.getOrElse {
