@@ -25,7 +25,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
+import play.api.mvc.{AnyContent, AnyContentAsEmpty, Call, Request, Result}
 import play.api.test.{FakeRequest, Injecting}
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
@@ -283,9 +283,10 @@ class AmendPartnerContactDetailsControllerSpec
          "Valid Form",
          "Update Call",
          "Update Test",
+         "Redirect Location",
          "Invalid Expected Page Content"
         ),
-        ("partner contact name",
+        ("nominated partner contact name",
          () => MemberName("", ""),
          () => MemberName("John", "Johnson"),
          (req: Request[AnyContent]) => controller.updateContactName(nominatedPartner.id)(req),
@@ -293,24 +294,58 @@ class AmendPartnerContactDetailsControllerSpec
            reg.nominatedPartner.get.contactDetails.get.firstName.get mustBe "John"
            reg.nominatedPartner.get.contactDetails.get.lastName.get mustBe "Johnson"
          },
+         amendmentRoutes.AmendRegistrationController.displayPage(),
          "Amend Partner Contact Name"
         ),
-        ("partner email address",
+        ("other partner contact name",
+         () => MemberName("", ""),
+         () => MemberName("Gerald", "Gebritte"),
+         (req: Request[AnyContent]) => controller.updateContactName(otherPartner.id)(req),
+         (reg: Registration) => {
+           reg.otherPartners.head.contactDetails.get.firstName.get mustBe "Gerald"
+           reg.otherPartners.head.contactDetails.get.lastName.get mustBe "Gebritte"
+         },
+         routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+         "Amend Partner Contact Name"
+        ),
+        ("nominated partner email address",
          () => EmailAddress("xxx"),
          () => EmailAddress("updated-email@ppt.com"),
          (req: Request[AnyContent]) => controller.updateEmailAddress(nominatedPartner.id)(req),
          (reg: Registration) => {
            reg.nominatedPartner.get.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
          },
+         amendmentRoutes.AmendRegistrationController.displayPage(),
          "Amend Partner Contact Email Address"
         ),
-        ("partner phone number",
+        ("other partner email address",
+         () => EmailAddress("xxx"),
+         () => EmailAddress("updated-email@ppt.com"),
+         (req: Request[AnyContent]) => controller.updateEmailAddress(otherPartner.id)(req),
+         (reg: Registration) => {
+           reg.otherPartners.head.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
+         },
+         routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+         "Amend Partner Contact Email Address"
+        ),
+        ("nominated partner phone number",
          () => PhoneNumber("xxx"),
          () => PhoneNumber("075792743"),
          (req: Request[AnyContent]) => controller.updatePhoneNumber(nominatedPartner.id)(req),
          (reg: Registration) => {
            reg.nominatedPartner.get.contactDetails.get.phoneNumber.get mustBe "075792743"
          },
+         amendmentRoutes.AmendRegistrationController.displayPage(),
+         "Amend Partner Contact Phone Number"
+        ),
+        ("other partner phone number",
+         () => PhoneNumber("xxx"),
+         () => PhoneNumber("075792743"),
+         (req: Request[AnyContent]) => controller.updatePhoneNumber(otherPartner.id)(req),
+         (reg: Registration) => {
+           reg.otherPartners.head.contactDetails.get.phoneNumber.get mustBe "075792743"
+         },
+         routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
          "Amend Partner Contact Phone Number"
         )
       )
@@ -322,6 +357,7 @@ class AmendPartnerContactDetailsControllerSpec
           createInvalidForm: () => AnyRef,
           _,
           call: Request[AnyContent] => Future[Result],
+          _,
           _,
           expectedPageContent
         ) =>
@@ -342,10 +378,14 @@ class AmendPartnerContactDetailsControllerSpec
           createValidForm: () => AnyRef,
           call: Request[AnyContent] => Future[Result],
           test: Registration => scalatest.Assertion,
+          redirect: Call,
           _
         ) =>
           s"$testName updated" in {
-            await(call(postRequestEncoded(form = createValidForm(), sessionId = "123")))
+            val resp = call(postRequestEncoded(form = createValidForm(), sessionId = "123"))
+
+            status(resp) mustBe SEE_OTHER
+            redirectLocation(resp) mustBe Some(redirect.url)
 
             val registrationCaptor: ArgumentCaptor[Registration] =
               ArgumentCaptor.forClass(classOf[Registration])
@@ -357,40 +397,63 @@ class AmendPartnerContactDetailsControllerSpec
           }
       }
 
-      "contact address updated" in {
-        val alfJourneyId = "123"
-        val updatedAddress =
-          AddressLookupAddress(lines = List("100 High Street", "Lindley", "Huddersfield"),
-                               postcode = Some("HD1 1GH"),
-                               country = None
-          )
-        val addressConfirmation = AddressLookupConfirmation(auditRef = "ABC123",
-                                                            id = Some(alfJourneyId),
-                                                            address = updatedAddress
-        )
-        when(
-          mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq(alfJourneyId))(any(),
-                                                                                           any()
-          )
-        )
-          .thenReturn(Future.successful(addressConfirmation))
-
-        val resp = controller.updateAddress(nominatedPartner.id, Some(alfJourneyId))(getRequest())
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(
-          amendmentRoutes.AmendRegistrationController.displayPage().url
+      val updateAddressTestData =
+        Table(("Partner Type", "Partner ID", "Redirect", "Updated Address Extractor"),
+              ("nominated",
+               nominatedPartner.id,
+               amendmentRoutes.AmendRegistrationController.displayPage(),
+               (registration: Registration) =>
+                 registration.nominatedPartner.get.contactDetails.get.address.get
+              ),
+              ("other",
+               otherPartner.id,
+               routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+               (registration: Registration) =>
+                 registration.otherPartners.head.contactDetails.get.address.get
+              )
         )
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
-          any()
-        )
+      "contact address updated" when {
+        forAll(updateAddressTestData) {
+          (
+            partnerType: String,
+            partnerId: String,
+            redirect: Call,
+            addressExtractor: Registration => Address
+          ) =>
+            s"amending $partnerType partner" in {
+              val alfJourneyId = "123"
+              val updatedAddress =
+                AddressLookupAddress(lines = List("100 High Street", "Lindley", "Huddersfield"),
+                                     postcode = Some("HD1 1GH"),
+                                     country = None
+                )
+              val addressConfirmation = AddressLookupConfirmation(auditRef = "ABC123",
+                                                                  id = Some(alfJourneyId),
+                                                                  address = updatedAddress
+              )
+              when(
+                mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq(alfJourneyId))(
+                  any(),
+                  any()
+                )
+              )
+                .thenReturn(Future.successful(addressConfirmation))
 
-        val updatedRegistration = registrationCaptor.getValue
-        updatedRegistration.nominatedPartner.get.contactDetails.get.address.get mustBe Address(
-          addressConfirmation
-        )
+              val resp = controller.updateAddress(partnerId, Some(alfJourneyId))(getRequest())
+              status(resp) mustBe SEE_OTHER
+              redirectLocation(resp) mustBe Some(redirect.url)
+
+              val registrationCaptor: ArgumentCaptor[Registration] =
+                ArgumentCaptor.forClass(classOf[Registration])
+              verify(mockSubscriptionConnector).updateSubscription(any(),
+                                                                   registrationCaptor.capture()
+              )(any())
+
+              val updatedRegistration = registrationCaptor.getValue
+              addressExtractor(updatedRegistration) mustBe Address(addressConfirmation)
+            }
+        }
       }
     }
   }

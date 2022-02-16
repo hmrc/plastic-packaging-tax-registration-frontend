@@ -90,18 +90,22 @@ class AmendPartnerContactDetailsController @Inject() (
               )
             ),
           partnerName =>
-            updateRegistration { registration: Registration =>
-              registration.withUpdatedPartner(partnerId,
-                                              partner =>
-                                                partner.copy(contactDetails =
-                                                  partner.contactDetails.map(
-                                                    _.copy(firstName = Some(partnerName.firstName),
-                                                           lastName = Some(partnerName.lastName)
+            updateRegistration(
+              { registration: Registration =>
+                registration.withUpdatedPartner(partnerId,
+                                                partner =>
+                                                  partner.copy(contactDetails =
+                                                    partner.contactDetails.map(
+                                                      _.copy(firstName =
+                                                               Some(partnerName.firstName),
+                                                             lastName = Some(partnerName.lastName)
+                                                      )
                                                     )
                                                   )
-                                                )
-              )
-            }
+                )
+              },
+              successfulRedirect(partnerId)
+            )
         )
     }
 
@@ -142,15 +146,18 @@ class AmendPartnerContactDetailsController @Inject() (
               )
             ),
           emailAddress =>
-            updateRegistration { registration: Registration =>
-              registration.withUpdatedPartner(
-                partnerId,
-                partner =>
-                  partner.copy(contactDetails =
-                    partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress.value)))
-                  )
-              )
-            }
+            updateRegistration(
+              { registration: Registration =>
+                registration.withUpdatedPartner(
+                  partnerId,
+                  partner =>
+                    partner.copy(contactDetails =
+                      partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress.value)))
+                    )
+                )
+              },
+              successfulRedirect(partnerId)
+            )
         )
     }
 
@@ -197,15 +204,18 @@ class AmendPartnerContactDetailsController @Inject() (
               )
             ),
           phoneNumber =>
-            updateRegistration { registration: Registration =>
-              registration.withUpdatedPartner(
-                partnerId,
-                partner =>
-                  partner.copy(contactDetails =
-                    partner.contactDetails.map(_.copy(phoneNumber = Some(phoneNumber.value)))
-                  )
-              )
-            }
+            updateRegistration(
+              { registration: Registration =>
+                registration.withUpdatedPartner(
+                  partnerId,
+                  partner =>
+                    partner.copy(contactDetails =
+                      partner.contactDetails.map(_.copy(phoneNumber = Some(phoneNumber.value)))
+                    )
+                )
+              },
+              successfulRedirect(partnerId)
+            )
         )
     }
 
@@ -248,15 +258,17 @@ class AmendPartnerContactDetailsController @Inject() (
         id.getOrElse(throw new MissingAddressIdException)
       ).flatMap {
         confirmedAddress =>
-          updateRegistration { registration =>
-            registration.withUpdatedPartner(
-              partnerId,
-              partner =>
-                partner.copy(contactDetails =
-                  partner.contactDetails.map(_.copy(address = Some(Address(confirmedAddress))))
-                )
-            )
-          }
+          updateRegistration(
+            registration =>
+              registration.withUpdatedPartner(
+                partnerId,
+                partner =>
+                  partner.copy(contactDetails =
+                    partner.contactDetails.map(_.copy(address = Some(Address(confirmedAddress))))
+                  )
+              ),
+            successfulRedirect(partnerId)
+          )
       }
     }
 
@@ -267,5 +279,9 @@ class AmendPartnerContactDetailsController @Inject() (
 
   private def isNominated(partnerId: String)(implicit request: JourneyRequest[_]) =
     request.registration.isNominatedPartner(Some(partnerId)).getOrElse(false)
+
+  private def successfulRedirect(partnerId: String)(implicit request: JourneyRequest[_]) =
+    if (isNominated(partnerId)) amendmentRoutes.AmendRegistrationController.displayPage()
+    else routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId)
 
 }

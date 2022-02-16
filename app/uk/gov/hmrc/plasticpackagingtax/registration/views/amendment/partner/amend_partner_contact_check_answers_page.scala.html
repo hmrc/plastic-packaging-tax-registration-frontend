@@ -14,9 +14,11 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.routes
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
@@ -28,9 +30,29 @@
         viewUtils: ViewUtils
 )
 
+@(partner: Partner)(implicit request: JourneyRequest[_], messages: Messages)
 
-@()(implicit request: JourneyRequest[_], messages: Messages)
+@govukLayout(
+    title = Title("partner.check.title"),
+    backButton = Some(BackButton(messages("site.back"), routes.PartnersListController.displayPage(), messages("site.back.hiddenText")))) {
 
-@govukLayout(Title("xxx")) {
-    <h1>Amend Partner - CYAs</h1>
+    @pageHeading(messages("partner.check.title"))
+
+    @formHelper(action = routes.PartnerContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {
+
+           @govukSummaryList(
+            SummaryList(
+                rows = Seq(
+                    viewUtils.summaryListRow("partner.check.orgType", Some(messages(s"partner.type.${partner.partnerType.toString}")), None),
+                    viewUtils.summaryListRow("partner.check.orgName", Some(partner.name), None),
+                    viewUtils.summaryListRow("partner.check.contact.name", partner.contactDetails.flatMap(_.name), Some(routes.AmendPartnerContactDetailsController.contactName(partner.id))),
+                    viewUtils.summaryListRow("partner.check.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(routes.AmendPartnerContactDetailsController.emailAddress(partner.id))),
+                    viewUtils.summaryListRow("partner.check.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), Some(routes.AmendPartnerContactDetailsController.phoneNumber(partner.id))),
+                    viewUtils.summaryListRow("partner.check.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)), Some(routes.AmendPartnerContactDetailsController.address(partner.id))),
+                ).filterNot(_.value.content == Empty)
+            )
+        )
+
+        @saveButtons()
+    }
 }
