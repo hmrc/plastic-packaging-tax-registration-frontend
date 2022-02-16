@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class SessionTimedOutViewSpec extends UnitViewSpec with Matchers {
 
-  private val page                   = instanceOf[session_timed_out]
+  private val page                   = inject[session_timed_out]
   private def createView(): Document = page()(request, messages)
 
   "Session Timeout View" should {

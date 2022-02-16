@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors
 
-import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, put}
 import org.scalatest.EitherValues
@@ -24,12 +23,13 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
+import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 class RegistrationConnectorSpec
-    extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
+    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
-  lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
+  lazy val connector: RegistrationConnector = inject[RegistrationConnector]
 
   "create registration" should {
 

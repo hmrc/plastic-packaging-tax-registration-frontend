@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.phaseBan
 
 class PhaseBannerSpec extends UnitViewSpec with Matchers {
 
-  private val bannerPartial = instanceOf[phaseBanner]
+  private val bannerPartial = inject[phaseBanner]
 
   private val requestPath          = "/plastic-packaging-tax/some-page"
   private implicit val fakeRequest = FakeRequest("GET", requestPath)

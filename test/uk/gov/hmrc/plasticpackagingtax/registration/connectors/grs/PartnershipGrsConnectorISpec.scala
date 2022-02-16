@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs
 
-import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlMatching}
@@ -25,12 +24,13 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.await
 import play.api.test.Helpers._
+import play.api.test.Injecting
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 
 import java.util.UUID
 
-class PartnershipGrsConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class PartnershipGrsConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures {
 
   val connector: PartnershipGrsConnector =
     app.injector.instanceOf[PartnershipGrsConnector]

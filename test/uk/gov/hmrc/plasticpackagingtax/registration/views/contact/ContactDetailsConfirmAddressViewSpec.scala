@@ -29,7 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[confirm_address]
+  private val page = inject[confirm_address]
 
   private val incorporationAddressDetails = IncorporationAddressDetails(
     address_line_1 = Some("testLine1"),

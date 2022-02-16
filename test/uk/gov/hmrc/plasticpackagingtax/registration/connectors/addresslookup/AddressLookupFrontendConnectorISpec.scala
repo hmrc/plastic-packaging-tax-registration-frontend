@@ -16,19 +16,19 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup
 
-import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.HeaderNames.LOCATION
 import play.api.http.Status
 import play.api.test.Helpers.await
+import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup._
 
-class AddressLookupFrontendConnectorISpec extends ConnectorISpec with Injector with ScalaFutures {
+class AddressLookupFrontendConnectorISpec extends ConnectorISpec with Injecting with ScalaFutures {
 
   lazy val connector: AddressLookupFrontendConnector =
-    app.injector.instanceOf[AddressLookupFrontendConnector]
+    inject[AddressLookupFrontendConnector]
 
   val initialiseRequest = AddressLookupConfigV2(
     options =

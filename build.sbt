@@ -54,7 +54,6 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
     ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsConfirmAddress|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
     // TODO: reintroduce as we build the post reg partnership amendment functionality out for real
-    ".*.controllers.amendment.partner.AmendPartnerContactDetailsController",
     ".*.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController",
     ".*.views.html.amendment.partner.amend_partner_contact_check_answers_page",
   ).mkString(";"),

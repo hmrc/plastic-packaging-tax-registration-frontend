@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[email_address_page]
+  private val page = inject[email_address_page]
 
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")

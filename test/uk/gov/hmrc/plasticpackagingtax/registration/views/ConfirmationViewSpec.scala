@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ConfirmationViewSpec extends UnitViewSpec with Matchers {
 
-  private val page: confirmation_page = instanceOf[confirmation_page]
+  private val page: confirmation_page = inject[confirmation_page]
 
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
     page()(journeyRequest, messages, flash)

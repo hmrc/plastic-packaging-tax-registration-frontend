@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment
 
-import base.Injector
 import base.it.ConnectorISpec
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlMatching}
 import org.scalatest.EitherValues
@@ -25,13 +24,14 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json.toJson
 import play.api.test.Helpers.{await, OK}
+import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector.UserEnrolmentTimer
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment._
 
 class UserEnrolmentConnectorISpec
-    extends ConnectorISpec with Injector with ScalaFutures with EitherValues {
+    extends ConnectorISpec with Injecting with ScalaFutures with EitherValues {
 
-  lazy val connector: UserEnrolmentConnector = app.injector.instanceOf[UserEnrolmentConnector]
+  lazy val connector: UserEnrolmentConnector = inject[UserEnrolmentConnector]
 
   private val enrolmentUrl       = "/enrolment"
   private val pptReferenceNumber = "XPPT000123456789"

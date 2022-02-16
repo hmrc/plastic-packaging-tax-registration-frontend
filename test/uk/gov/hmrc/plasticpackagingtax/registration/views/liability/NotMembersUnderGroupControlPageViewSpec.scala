@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class NotMembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[not_members_under_group_control_page]
+  private val page = inject[not_members_under_group_control_page]
 
   private def createView(): Document =
     page()(journeyRequest, messages)

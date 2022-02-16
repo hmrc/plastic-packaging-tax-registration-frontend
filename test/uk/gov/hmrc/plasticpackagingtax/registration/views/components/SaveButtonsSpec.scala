@@ -29,8 +29,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
 
 class SaveButtonsSpec extends UnitViewSpec with Matchers {
 
-  private val saveAndContinueButton      = instanceOf[saveAndContinue]
-  private val saveAndComeBackLaterButton = instanceOf[saveAndComeBackLater]
+  private val saveAndContinueButton      = inject[saveAndContinue]
+  private val saveAndComeBackLaterButton = inject[saveAndComeBackLater]
   private val mockConfig                 = mock[AppConfig]
 
   protected val component: saveButtons =

@@ -26,7 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
 
   private val page: duplicate_subscription_page =
-    instanceOf[duplicate_subscription_page]
+    inject[duplicate_subscription_page]
 
   private def createView(): Html = page()(journeyRequest, messages)
 

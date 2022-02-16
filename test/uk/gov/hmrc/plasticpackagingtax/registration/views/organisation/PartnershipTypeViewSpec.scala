@@ -41,7 +41,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[partnership_type]
+  private val page = inject[partnership_type]
 
   private def createView(form: Form[PartnerType] = PartnerType.form()): Document =
     page(form)(journeyRequest, messages)

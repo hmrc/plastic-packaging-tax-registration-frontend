@@ -45,7 +45,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   private val BUSINESS_DETAILS                        = 1
   private val PARTNER_DETAILS                         = 2
   private val CHECK_AND_SUBMIT                        = 3
-  private val registrationPage: task_list_partnership = instanceOf[task_list_partnership]
+  private val registrationPage: task_list_partnership = inject[task_list_partnership]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
@@ -341,7 +341,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
       "Nominated partner complete but other partners not started" when {
 
-        val registration = aRegistration(
+        val registration: Registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
                              startDate = Some(Date(Some(1), Some(4), Some(2022)))
@@ -406,7 +406,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerListController.displayPage()
           )
           sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.partnership.otherPartners"
@@ -496,7 +496,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerListController.displayPage()
           )
           sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.partnership.otherPartners"
@@ -593,7 +593,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            partnerRoutes.PartnerTypeController.displayNewPartner()
+            partnerRoutes.PartnerListController.displayPage()
           )
           sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.partnership.otherPartners"

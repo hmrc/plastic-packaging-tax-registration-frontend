@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ListPartnersPageSpec extends UnitViewSpec with Matchers {
 
-  private val page: list_partners_page = instanceOf[list_partners_page]
+  private val page: list_partners_page = inject[list_partners_page]
 
   private val partnershipRegistration = aRegistration(
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))

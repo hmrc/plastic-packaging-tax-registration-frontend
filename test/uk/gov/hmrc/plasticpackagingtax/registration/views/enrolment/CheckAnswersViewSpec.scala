@@ -29,7 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
 
-  private val page = instanceOf[check_answers_page]
+  private val page = inject[check_answers_page]
 
   private def createView(answers: UserEnrolmentDetails = UserEnrolmentDetails()): Document =
     page(answers)(journeyRequest, messages)

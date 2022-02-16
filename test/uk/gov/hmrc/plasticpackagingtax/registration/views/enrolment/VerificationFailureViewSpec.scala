@@ -25,7 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class VerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[verification_failure_page]
+  private val page = inject[verification_failure_page]
 
   private def createView(): Document =
     page()(journeyRequest, messages)

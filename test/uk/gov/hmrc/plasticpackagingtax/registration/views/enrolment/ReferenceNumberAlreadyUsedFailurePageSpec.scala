@@ -25,7 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class ReferenceNumberAlreadyUsedFailurePageSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[reference_number_already_used_failure_page]
+  private val page = inject[reference_number_already_used_failure_page]
 
   private def createView(): Document =
     page()(journeyRequest, messages)

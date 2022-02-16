@@ -44,7 +44,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   private val backLink         = Call("GET", "backLink")
   private val changeWeightLink = Call("GET", "changeWeightLink")
 
-  private val page = instanceOf[check_liability_details_answers_page]
+  private val page = inject[check_liability_details_answers_page]
 
   private val populatedRegistration   = aRegistration()
   private val unpopulatedRegistration = Registration("id")

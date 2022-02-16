@@ -32,7 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class OrganisationAlreadyInGroupViewSpec extends UnitViewSpec with Matchers {
 
   private val page: organisation_already_in_group_page =
-    instanceOf[organisation_already_in_group_page]
+    inject[organisation_already_in_group_page]
 
   private val groupError = GroupError(MEMBER_IN_GROUP, "Member Name")
 

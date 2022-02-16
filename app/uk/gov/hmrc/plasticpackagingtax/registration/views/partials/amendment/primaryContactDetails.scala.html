@@ -14,7 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{ routes => pptRoutes }
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{ routes => amendRoutes }
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.{ routes => partnerAmendRoutes }
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -46,14 +47,30 @@
 
 @contactDetailsSubHeading()
 
+@nominatedPartnerContactDetails() = @{
+    registration.nominatedPartner.map { nominatedPartner =>
+        Seq(
+            viewUtils.summaryListRow("primaryContactDetails.check.fullName", nominatedPartner.contactDetails.flatMap(_.name), viewUtils.showChangeLink(partnerAmendRoutes.AmendPartnerContactDetailsController.contactName(nominatedPartner.id))),
+            viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", None, None),
+            viewUtils.summaryListRow("primaryContactDetails.check.email", registration.nominatedPartner.flatMap(_.contactDetails.flatMap(_.emailAddress)), viewUtils.showChangeLink(partnerAmendRoutes.AmendPartnerContactDetailsController.emailAddress(nominatedPartner.id))),
+            viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", registration.nominatedPartner.flatMap(_.contactDetails.flatMap(_.phoneNumber)), viewUtils.showChangeLink(partnerAmendRoutes.AmendPartnerContactDetailsController.phoneNumber(nominatedPartner.id))),
+            viewUtils.summaryListRow("primaryContactDetails.check.address", registration.nominatedPartner.flatMap(_.contactDetails.flatMap(_.address.map(viewUtils.extractAddress))), viewUtils.showChangeLink(partnerAmendRoutes.AmendPartnerContactDetailsController.address(nominatedPartner.id)))
+        ).filterNot(_.value.content == Empty)
+    }.getOrElse(Seq[SummaryListRow]())
+}
+
+@contactDetails() = @{
+    Seq(
+        viewUtils.summaryListRow("primaryContactDetails.check.fullName", registration.primaryContactDetails.name, viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.updateContactName())),
+        viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.updateJobTitle())),
+        viewUtils.summaryListRow("primaryContactDetails.check.email", registration.primaryContactDetails.email, viewUtils.showChangeLink(amendRoutes.AmendEmailAddressController.updateEmail())),
+        viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.updatePhoneNumber())),
+        viewUtils.summaryListRow("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(viewUtils.extractAddress), viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.updateAddress()))
+    ).filterNot(_.value.content == Empty)
+}
+
 @govukSummaryList(
     SummaryList(
-        rows = Seq(
-            viewUtils.summaryListRow("primaryContactDetails.check.fullName", registration.primaryContactDetails.name, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateContactName())),
-            viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateJobTitle())),
-            viewUtils.summaryListRow("primaryContactDetails.check.email", registration.primaryContactDetails.email, viewUtils.showChangeLink(pptRoutes.AmendEmailAddressController.updateEmail())),
-            viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updatePhoneNumber())),
-            viewUtils.summaryListRow("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(viewUtils.extractAddress), viewUtils.showChangeLink(pptRoutes.AmendContactDetailsController.updateAddress()))
-        ).filterNot(_.value.content == Empty)
+        rows = if (registration.isPartnershipWithPartnerCollection) nominatedPartnerContactDetails() else contactDetails()
     )
 )
