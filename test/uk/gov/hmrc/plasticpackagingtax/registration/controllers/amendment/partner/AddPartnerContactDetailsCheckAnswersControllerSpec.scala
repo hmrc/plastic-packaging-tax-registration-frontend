@@ -50,7 +50,9 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
   )
 
   private val partnerRegistrationInAmendment = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
+    withPartnershipDetails(
+      Some(generalPartnershipDetails.copy(inflightPartner = Some(aSoleTraderPartner())))
+    )
   )
 
   override protected def beforeEach(): Unit = {
@@ -66,7 +68,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
       "display successfully" when {
         "partner present" in {
           authorisedUserWithPptSubscription()
-
+          mockRegistrationFind(partnerRegistrationInAmendment)
           val resp = controller.displayPage()(getRequest())
 
           status(resp) mustBe OK
@@ -87,7 +89,8 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
           any()
         )
 
-        registrationCaptor.getValue mustBe partnerRegistrationInAmendment
+        registrationCaptor.getValue.inflightPartner mustBe None
+        registrationCaptor.getValue.newPartner mustBe Some(aSoleTraderPartner())
       }
 
       "redirect to the manage group page when update successful" in {

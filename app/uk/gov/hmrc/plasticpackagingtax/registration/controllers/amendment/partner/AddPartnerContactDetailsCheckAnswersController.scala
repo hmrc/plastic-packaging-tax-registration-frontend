@@ -45,7 +45,7 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
         page(
-          request.registration.newPartner.getOrElse(
+          request.registration.inflightPartner.getOrElse(
             throw new IllegalStateException("Missing partner")
           )
         )
@@ -54,7 +54,9 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      journeyAction.updateRegistration().map {
+      journeyAction.updateRegistration(
+        _ => request.registration.withPromotedInflightPartner()
+      ).map {
         case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManagePartnersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>

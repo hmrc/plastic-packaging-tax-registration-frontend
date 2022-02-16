@@ -49,7 +49,7 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val submitLink = Call("POST", "/submit")
-  private val page = inject[partner_type]
+  private val page       = inject[partner_type]
 
   private val registrationWithOtherPartners = aRegistration(
     withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners))

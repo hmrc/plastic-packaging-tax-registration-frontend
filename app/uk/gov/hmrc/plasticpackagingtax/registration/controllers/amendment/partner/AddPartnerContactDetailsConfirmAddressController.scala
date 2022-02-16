@@ -16,13 +16,20 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressControllerBase
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -36,18 +43,40 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
   mcc: MessagesControllerComponents,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
-    extends PartnerContactAddressControllerBase(authenticate,
-                                                journeyAction,
-                                                addressLookupFrontendConnector,
-                                                mcc,
-                                                appConfig,
-                                                registrationUpdater
-    ) {
+    extends FrontendController(mcc) with I18nSupport with AddressLookupIntegration {
 
   def displayPage(): Action[AnyContent] =
-    doDisplayPage(None, routes.AddPartnerContactDetailsConfirmAddressController.alfCallback(None))
+    (authenticate andThen journeyAction).async { implicit request =>
+      initialiseAddressLookup(addressLookupFrontendConnector,
+                              appConfig,
+                              routes.AddPartnerContactDetailsConfirmAddressController.alfCallback(
+                                None
+                              ),
+                              "addressLookup.partner",
+                              request.registration.inflightPartner.map(_.name)
+      ).map(onRamp => Redirect(onRamp.redirectUrl))
+    }
 
   def alfCallback(id: Option[String]): Action[AnyContent] =
-    doAlfCallback(None, id, routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
+    (authenticate andThen journeyAction).async { implicit request =>
+      addressLookupFrontendConnector.getAddress(
+        id.getOrElse(throw new MissingAddressIdException)
+      ).flatMap {
+        // TODO: consider re-validating here as we do for contact address. The code there suggests that ALF might return
+        //       an address which we consider invalid. Need to check this out!
+        confirmedAddress =>
+          registrationUpdater.updateRegistration { registration =>
+            update(Address(confirmedAddress))(registration)
+          }.map {
+            _ =>
+              Redirect(routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
+          }
+      }
+    }
+
+  private def update(address: Address)(implicit registration: Registration): Registration =
+    registration.withInflightPartner(
+      registration.inflightPartner.map(_.withContactAddress(address))
+    )
 
 }
