@@ -36,12 +36,18 @@ class PartnerContactDetailsCheckAnswersController @Inject() (
 
   def displayPage(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page())
+      Ok(
+        page(
+          request.registration.findPartner(partnerId).getOrElse(
+            throw new IllegalStateException("Partner not found")
+          )
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(page())
+      Redirect(routes.PartnersListController.displayPage())
     }
 
 }

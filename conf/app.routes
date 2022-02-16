@@ -297,8 +297,8 @@ GET        /manage-partners    uk.gov.hmrc.plasticpackagingtax.registration.cont
 GET        /list-partners      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnersListController.displayPage()
 POST       /list-partners      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnersListController.submit()
 
-GET        /amend-partner-check-answers/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController.displayPage(partnerId)
-POST       /amend-partner-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController.submit()
+GET        /amend-partner-check-answers/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController.displayPage(partnerId)
+POST       /amend-partner-check-answers             uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.PartnerContactDetailsCheckAnswersController.submit()
 
 GET        /amend-partner-contact-name/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.contactName(partnerId)
 POST       /amend-partner-contact-name/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateContactName(partnerId)
