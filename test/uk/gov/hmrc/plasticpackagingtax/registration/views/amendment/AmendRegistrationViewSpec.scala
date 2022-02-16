@@ -20,9 +20,11 @@ import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.GENERAL_PARTNERSHIP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.{
+  routes => partnerAmendRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.RegistrationType.{
   Group,
@@ -54,7 +56,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
   private val groupRegistration              = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)))
 
   private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(partnershipDetailsWithBusinessAddress(GENERAL_PARTNERSHIP)))
+    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
   )
 
   private def createView(registration: Registration): Html =
@@ -141,54 +143,93 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             )
           }
 
-          "display main contact details" in {
+          "display main contact details subheading" in {
             view.select("h2").get(1).text() must include(messages(organisationType match {
               case Organisation => "amend.contactDetails.organisation.subheading"
               case SoleTrader   => "amend.contactDetails.individual.subheading"
               case Group        => "amend.contactDetails.group.subheading"
               case Partnership  => "amend.contactDetails.partnership.subheading"
             }))
+          }
+
+          "display main contact details" in {
             val descriptionList = view.select("dl").get(1).text()
-            val expectedContactDetails = Seq(registration.primaryContactDetails.name.get,
-                                             registration.primaryContactDetails.jobTitle.get,
-                                             registration.primaryContactDetails.email.get,
-                                             registration.primaryContactDetails.phoneNumber.get,
-                                             registration.primaryContactDetails.address.map(
-                                               a => a.addressLine1
-                                             ).get,
-                                             registration.primaryContactDetails.address.map(
-                                               a => a.addressLine2.getOrElse("")
-                                             ).get,
-                                             registration.primaryContactDetails.address.map(
-                                               a => a.addressLine3.getOrElse("")
-                                             ).get,
-                                             registration.primaryContactDetails.address.map(
-                                               a => a.townOrCity
-                                             ).get,
-                                             registration.primaryContactDetails.address.map(
-                                               a => a.postCode.getOrElse("")
-                                             ).get,
-                                             countryService.getName(
-                                               registration.primaryContactDetails.address.map(
-                                                 a => a.countryCode
-                                               ).get
-                                             )
-            ).filter(_.nonEmpty)
+            val expectedContactDetails =
+              organisationType match {
+                case Partnership =>
+                  val nominatedPartner = registration.nominatedPartner.get
+                  Seq(nominatedPartner.contactDetails.get.name.get,
+                      nominatedPartner.contactDetails.get.emailAddress.get,
+                      nominatedPartner.contactDetails.get.phoneNumber.get,
+                      nominatedPartner.contactDetails.get.address.get.addressLine1,
+                      nominatedPartner.contactDetails.get.address.get.addressLine2.getOrElse(""),
+                      nominatedPartner.contactDetails.get.address.get.addressLine3.getOrElse(""),
+                      nominatedPartner.contactDetails.get.address.get.townOrCity,
+                      nominatedPartner.contactDetails.get.address.get.postCode.getOrElse(""),
+                      countryService.getName(
+                        registration.primaryContactDetails.address.get.countryCode
+                      )
+                  ).filter(_.nonEmpty)
+                case _ =>
+                  Seq(registration.primaryContactDetails.name.get,
+                      registration.primaryContactDetails.jobTitle.get,
+                      registration.primaryContactDetails.email.get,
+                      registration.primaryContactDetails.phoneNumber.get,
+                      registration.primaryContactDetails.address.get.addressLine1,
+                      registration.primaryContactDetails.address.get.addressLine2.getOrElse(""),
+                      registration.primaryContactDetails.address.get.addressLine3.getOrElse(""),
+                      registration.primaryContactDetails.address.get.townOrCity,
+                      registration.primaryContactDetails.address.get.postCode.getOrElse(""),
+                      countryService.getName(
+                        registration.primaryContactDetails.address.get.countryCode
+                      )
+                  ).filter(_.nonEmpty)
+              }
+
             expectedContactDetails.foreach(orgDetail => descriptionList must include(orgDetail))
           }
 
           "have change links" in {
             val contactDetailsSection = view.select("dl").get(1)
             val changeLinks           = contactDetailsSection.select("a")
-            changeLinks.get(0) must haveHref(
-              amendRoutes.AmendContactDetailsController.contactName()
-            )
-            changeLinks.get(1) must haveHref(amendRoutes.AmendContactDetailsController.jobTitle())
-            changeLinks.get(2) must haveHref(amendRoutes.AmendEmailAddressController.email())
-            changeLinks.get(3) must haveHref(
-              amendRoutes.AmendContactDetailsController.phoneNumber()
-            )
-            changeLinks.get(4) must haveHref(amendRoutes.AmendContactDetailsController.address())
+            organisationType match {
+              case Partnership =>
+                val nominatedPartner = registration.nominatedPartner.get
+                changeLinks.get(0) must haveHref(
+                  partnerAmendRoutes.AmendPartnerContactDetailsController.contactName(
+                    nominatedPartner.id
+                  )
+                )
+                changeLinks.get(1) must haveHref(
+                  partnerAmendRoutes.AmendPartnerContactDetailsController.emailAddress(
+                    nominatedPartner.id
+                  )
+                )
+                changeLinks.get(2) must haveHref(
+                  partnerAmendRoutes.AmendPartnerContactDetailsController.phoneNumber(
+                    nominatedPartner.id
+                  )
+                )
+                changeLinks.get(3) must haveHref(
+                  partnerAmendRoutes.AmendPartnerContactDetailsController.address(
+                    nominatedPartner.id
+                  )
+                )
+              case _ =>
+                changeLinks.get(0) must haveHref(
+                  amendRoutes.AmendContactDetailsController.contactName()
+                )
+                changeLinks.get(1) must haveHref(
+                  amendRoutes.AmendContactDetailsController.jobTitle()
+                )
+                changeLinks.get(2) must haveHref(amendRoutes.AmendEmailAddressController.email())
+                changeLinks.get(3) must haveHref(
+                  amendRoutes.AmendContactDetailsController.phoneNumber()
+                )
+                changeLinks.get(4) must haveHref(
+                  amendRoutes.AmendContactDetailsController.address()
+                )
+            }
           }
         }
       }
