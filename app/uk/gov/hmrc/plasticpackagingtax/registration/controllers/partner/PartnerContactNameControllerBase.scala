@@ -85,7 +85,6 @@ abstract class PartnerContactNameControllerBase(
     partnerId: Option[String],
     backCall: Call,
     submitCall: Call,
-    onwardsCall: Call,
     dropoutCall: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
@@ -94,8 +93,13 @@ abstract class PartnerContactNameControllerBase(
           case Some(partnerId) => updateExistingPartner(memberName, partnerId)
           case _               => updateInflightPartner(memberName)
         }
+
       getPartner(partnerId).map { partner =>
-        handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, updateAction)
+        val nextPage = partnerId match {
+          case Some(partnerId) => onwardCallExistingPartner(partnerId)
+          case _               => onwardCallNewPartner()
+        }
+        handleSubmission(partner, backCall, submitCall, nextPage, dropoutCall, updateAction)
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected existing partner missing"))
       )
@@ -172,5 +176,11 @@ abstract class PartnerContactNameControllerBase(
       case Some(partnerId) => request.registration.findPartner(partnerId)
       case _               => request.registration.inflightPartner
     }
+
+  def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call
+
+  def onwardCallExistingPartner(partnerId: String)(implicit
+    request: JourneyRequest[AnyContent]
+  ): Call
 
 }

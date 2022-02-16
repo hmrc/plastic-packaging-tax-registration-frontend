@@ -20,8 +20,9 @@ import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
 
 import javax.inject.{Inject, Singleton}
@@ -58,7 +59,6 @@ class PartnerContactNameController @Inject() (
     doSubmit(None,
              partnerRoutes.PartnerTypeController.displayNewPartner(),
              partnerRoutes.PartnerContactNameController.submitNewPartner(),
-             partnerRoutes.PartnerEmailAddressController.displayNewPartner(),
              commonRoutes.TaskListController.displayPage()
     )
 
@@ -66,9 +66,27 @@ class PartnerContactNameController @Inject() (
     doSubmit(Some(partnerId),
              partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
              partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId),
-             routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
              partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
     )
+
+  override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =
+    request.registration.inflightPartner.map { partner =>
+      if (isEditingNominatedPartner(request, partner))
+        routes.PartnerJobTitleController.displayNewPartner()
+      else
+        routes.PartnerEmailAddressController.displayNewPartner()
+    }.getOrElse(routes.PartnerEmailAddressController.displayNewPartner())
+
+  override def onwardCallExistingPartner(
+    partnerId: String
+  )(implicit request: JourneyRequest[AnyContent]): Call =
+    request.registration.findPartner(partnerId).map { partner =>
+      val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
+      if (isEditingNominatedPartner(request, partner) || alreadyHasJobTitle)
+        partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId)
+      else
+        partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
+    }.getOrElse(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId))
 
   private def isEditingNominatedPartner(request: JourneyRequest[AnyContent], partner: Partner) =
     request.registration.nominatedPartner.forall(_.id == partner.id)

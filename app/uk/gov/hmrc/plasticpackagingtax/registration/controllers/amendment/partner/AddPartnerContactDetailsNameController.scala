@@ -16,11 +16,14 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AmendmentJourneyAction,
+  JourneyRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
 
 import javax.inject.{Inject, Singleton}
@@ -51,8 +54,15 @@ class AddPartnerContactDetailsNameController @Inject() (
     doSubmit(None,
              routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
              routes.AddPartnerContactDetailsNameController.submit(),
-             routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
              routes.PartnersListController.displayPage()
     )
+
+  override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =
+    routes.AddPartnerContactDetailsEmailAddressController.displayPage()
+
+  override def onwardCallExistingPartner(
+    partnerId: String
+  )(implicit request: JourneyRequest[AnyContent]): Call =
+    routes.AddPartnerContactDetailsEmailAddressController.displayPage()
 
 }
