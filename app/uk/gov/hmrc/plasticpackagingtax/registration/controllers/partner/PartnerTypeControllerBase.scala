@@ -70,7 +70,7 @@ abstract class PartnerTypeControllerBase(
     (authenticate andThen journeyAction) { implicit request =>
       val partner = partnerId match {
         case Some(partnerId) => request.registration.findPartner(partnerId)
-        case _               => None
+        case _               => request.registration.inflightPartner
       }
       partner match {
         case Some(partner) =>
