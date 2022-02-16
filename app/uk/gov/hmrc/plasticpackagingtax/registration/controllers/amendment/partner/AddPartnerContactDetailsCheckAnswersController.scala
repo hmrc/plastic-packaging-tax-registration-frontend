@@ -23,6 +23,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   routes => amendRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+  SubscriptionCreateOrUpdateResponseFailure,
+  SubscriptionCreateOrUpdateResponseSuccess
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 
 import javax.inject.{Inject, Singleton}
@@ -39,13 +43,28 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page())
+      Ok(
+        page(
+          request.registration.inflightPartner.getOrElse(
+            throw new IllegalStateException("Missing partner")
+          )
+        )
+      )
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      // TODO: promote inflight partner and update subscription
-      Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
+    (authenticate andThen journeyAction).async { implicit request =>
+      journeyAction.updateRegistration(
+        _ => request.registration.withPromotedInflightPartner()
+      ).map {
+        case _: SubscriptionCreateOrUpdateResponseSuccess =>
+          Redirect(routes.ManagePartnersController.displayPage())
+        case _: SubscriptionCreateOrUpdateResponseFailure =>
+          Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
+      }.recover {
+        case _: Exception =>
+          Redirect(amendRoutes.AmendRegistrationController.registrationUpdateFailed())
+      }
     }
 
 }

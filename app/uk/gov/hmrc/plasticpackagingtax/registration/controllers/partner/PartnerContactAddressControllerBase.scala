@@ -14,50 +14,54 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  AmendRegistrationUpdateService,
-  Registration
+  Registration,
+  RegistrationUpdater
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AuthenticatedRequest,
+  JourneyRequest
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
-@Singleton
-class AddPartnerContactDetailsConfirmAddressController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
+abstract class PartnerContactAddressControllerBase(
+  val authenticate: AuthActioning,
+  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
   addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
   mcc: MessagesControllerComponents,
-  registrationUpdater: AmendRegistrationUpdateService
-)(implicit val ec: ExecutionContext)
+  appConfig: AppConfig,
+  registrationUpdater: RegistrationUpdater
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with AddressLookupIntegration {
 
-  def displayPage(): Action[AnyContent] =
+  protected def doDisplayPage(partnerId: Option[String], alfCallback: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       initialiseAddressLookup(addressLookupFrontendConnector,
                               appConfig,
-                              routes.AddPartnerContactDetailsConfirmAddressController.alfCallback(
-                                None
-                              ),
+                              alfCallback,
                               "addressLookup.partner",
-                              request.registration.inflightPartner.map(_.name)
+                              getPartner(partnerId).map(_.name)
       ).map(onRamp => Redirect(onRamp.redirectUrl))
     }
 
-  def alfCallback(id: Option[String]): Action[AnyContent] =
+  protected def doAlfCallback(
+    partnerId: Option[String],
+    id: Option[String],
+    successfulRedirect: Call
+  ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       addressLookupFrontendConnector.getAddress(
         id.getOrElse(throw new MissingAddressIdException)
@@ -66,17 +70,39 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
         //       an address which we consider invalid. Need to check this out!
         confirmedAddress =>
           registrationUpdater.updateRegistration { registration =>
-            update(Address(confirmedAddress))(registration)
+            update(partnerId, Address(confirmedAddress))(registration)
           }.map {
             _ =>
-              Redirect(routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
+              Redirect(successfulRedirect)
           }
       }
     }
 
-  private def update(address: Address)(implicit registration: Registration): Registration =
-    registration.withInflightPartner(
-      registration.inflightPartner.map(_.withContactAddress(address))
-    )
+  private def update(partnerId: Option[String], address: Address)(implicit
+    registration: Registration
+  ): Registration =
+    partnerId match {
+      case Some(partnerId) =>
+        registration.withUpdatedPartner(
+          partnerId,
+          partner =>
+            partner.copy(contactDetails =
+              partner.contactDetails.map(_.copy(address = Some(address)))
+            )
+        )
+      case _ =>
+        val updatedInflightPartner = registration.withInflightPartner(
+          registration.inflightPartner.map(_.withContactAddress(address))
+        )
+        updatedInflightPartner.withPromotedInflightPartner()
+    }
+
+  private def getPartner(
+    partnerId: Option[String]
+  )(implicit request: JourneyRequest[_]): Option[Partner] =
+    partnerId match {
+      case Some(partnerId) => request.registration.findPartner(partnerId)
+      case _               => request.registration.inflightPartner
+    }
 
 }

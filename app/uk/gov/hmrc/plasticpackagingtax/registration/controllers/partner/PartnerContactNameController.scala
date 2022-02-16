@@ -16,190 +16,77 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnerContactDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerContactNameController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: partner_member_name_page
+  page: partner_member_name_page,
+  registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+    extends PartnerContactNameControllerBase(authenticate = authenticate,
+                                             journeyAction = journeyAction,
+                                             mcc = mcc,
+                                             page = page,
+                                             registrationUpdater = registrationUpdateService
+    ) {
 
   def displayNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      request.registration.inflightPartner.map { partner =>
-        renderPageFor(partner,
-                      partnerRoutes.PartnerTypeController.displayNewPartner(),
-                      partnerRoutes.PartnerContactNameController.submitNewPartner()
-        )
-      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
-    }
+    doDisplay(None,
+              partnerRoutes.PartnerTypeController.displayNewPartner(),
+              partnerRoutes.PartnerContactNameController.submitNewPartner()
+    )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      request.registration.findPartner(partnerId).map { partner =>
-        renderPageFor(partner,
-                      partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-                      partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
-        )
-      }.getOrElse(throw new IllegalStateException("Expected existing partner missing"))
-    }
-
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
-    request: JourneyRequest[AnyContent]
-  ): Result = {
-    val existingNameFields = for {
-      contactDetails <- partner.contactDetails
-      firstName      <- contactDetails.firstName
-      lastName       <- contactDetails.lastName
-    } yield (firstName, lastName)
-
-    val form = existingNameFields match {
-      case Some(data) =>
-        MemberName.form().fill(MemberName(data._1, data._2))
-      case None =>
-        MemberName.form()
-    }
-
-    Ok(page(form, partner.name, backCall, submitCall))
-  }
+    doDisplay(Some(partnerId),
+              partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+              partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
+    )
 
   def submitNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.inflightPartner.map { partner =>
-        val nextPage =
-          if (isEditingNominatedPartner(request, partner))
-            partnerRoutes.PartnerJobTitleController.displayNewPartner()
-          else
-            partnerRoutes.PartnerEmailAddressController.displayNewPartner()
-
-        handleSubmission(partner,
-                         partnerRoutes.PartnerTypeController.displayNewPartner(),
-                         partnerRoutes.PartnerContactNameController.submitNewPartner(),
-                         nextPage,
-                         commonRoutes.TaskListController.displayPage(),
-                         updateInflightPartner
-        )
-      }.getOrElse(
-        Future.successful(throw new IllegalStateException("Expected inflight partner missing"))
-      )
-    }
+    doSubmit(None,
+             partnerRoutes.PartnerTypeController.displayNewPartner(),
+             partnerRoutes.PartnerContactNameController.submitNewPartner(),
+             commonRoutes.TaskListController.displayPage()
+    )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      def updateAction(memberName: MemberName): Future[Either[ServiceError, Registration]] =
-        updateExistingPartner(memberName, partnerId)
+    doSubmit(Some(partnerId),
+             partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+             partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId),
+             partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+    )
 
-      request.registration.findPartner(partnerId).map { partner =>
-        val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
-        val nextPage =
-          if (isEditingNominatedPartner(request, partner) || alreadyHasJobTitle)
-            partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId)
-          else
-            partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
+  override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =
+    request.registration.inflightPartner.map { partner =>
+      if (isEditingNominatedPartner(request, partner))
+        routes.PartnerJobTitleController.displayNewPartner()
+      else
+        routes.PartnerEmailAddressController.displayNewPartner()
+    }.getOrElse(routes.PartnerEmailAddressController.displayNewPartner())
 
-        handleSubmission(partner,
-                         partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(
-                           partnerId
-                         ),
-                         partnerRoutes.PartnerContactNameController.submitExistingPartner(
-                           partnerId
-                         ),
-                         nextPage,
-                         partnerRoutes.PartnerContactNameController.displayExistingPartner(
-                           partnerId
-                         ),
-                         updateAction
-        )
-      }.getOrElse(
-        Future.successful(throw new IllegalStateException("Expected existing partner missing"))
-      )
-    }
-
-  private def handleSubmission(
-    partner: Partner,
-    backCall: Call,
-    submitCall: Call,
-    onwardsCall: Call,
-    dropoutCall: Call,
-    updateAction: MemberName => Future[Either[ServiceError, Registration]]
-  )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
-    MemberName.form()
-      .bindFromRequest()
-      .fold(
-        (formWithErrors: Form[MemberName]) =>
-          Future.successful(BadRequest(page(formWithErrors, partner.name, backCall, submitCall))),
-        fullName =>
-          updateAction(fullName).map {
-            case Right(_) =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  Redirect(onwardsCall)
-                case _ =>
-                  Redirect(dropoutCall)
-              }
-            case Left(error) => throw error
-          }
-      )
-
-  private def updateInflightPartner(
-    formData: MemberName
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    update { registration =>
-      registration.inflightPartner.map { partner =>
-        val withContactName = partner.copy(contactDetails =
-          Some(
-            PartnerContactDetails(firstName = Some(formData.firstName),
-                                  lastName = Some(formData.lastName)
-            )
-          )
-        )
-        registration.withInflightPartner(Some(withContactName))
-      }.getOrElse {
-        registration
-      }
-    }
-
-  private def updateExistingPartner(formData: MemberName, partnerId: String)(implicit
-    req: JourneyRequest[AnyContent]
-  ): Future[Either[ServiceError, Registration]] =
-    update { registration =>
-      registration.withUpdatedPartner(partnerId,
-                                      partner =>
-                                        partner.copy(contactDetails =
-                                          partner.contactDetails.map(
-                                            _.copy(firstName = Some(formData.firstName),
-                                                   lastName = Some(formData.lastName)
-                                            )
-                                          )
-                                        )
-      )
-    }
+  override def onwardCallExistingPartner(
+    partnerId: String
+  )(implicit request: JourneyRequest[AnyContent]): Call =
+    request.registration.findPartner(partnerId).map { partner =>
+      val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
+      if (isEditingNominatedPartner(request, partner) || alreadyHasJobTitle)
+        partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId)
+      else
+        partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
+    }.getOrElse(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId))
 
   private def isEditingNominatedPartner(request: JourneyRequest[AnyContent], partner: Partner) =
     request.registration.nominatedPartner.forall(_.id == partner.id)

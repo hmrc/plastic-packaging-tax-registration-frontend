@@ -21,6 +21,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
@@ -47,7 +48,8 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 @ViewTest
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[partner_type]
+  private val submitLink = Call("POST", "/submit")
+  private val page       = inject[partner_type]
 
   private val registrationWithOtherPartners = aRegistration(
     withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners))
@@ -60,10 +62,10 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createViewNominated(form: Form[PartnerType] = PartnerType.form()): Document =
-    page(form, None)(journeyRequest, messages)
+    page(form, None, submitLink)(journeyRequest, messages)
 
   private def createViewForOthers(form: Form[PartnerType] = PartnerType.form()): Document =
-    page(form, None)(journeyReqForOthers, messages)
+    page(form, None, submitLink)(journeyReqForOthers, messages)
 
   "Confirm Partnership Type View for Nominated" should {
 
@@ -156,8 +158,8 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PartnerType.form(), None)(journeyRequest, messages)
-    page.render(PartnerType.form(), None, journeyRequest, messages)
+    page.f(PartnerType.form(), None, submitLink)(journeyRequest, messages)
+    page.render(PartnerType.form(), None, submitLink, journeyRequest, messages)
   }
 
   def radioInputMustBe(

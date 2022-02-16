@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = instanceOf[partner_job_title_page]
+  private val page = inject[partner_job_title_page]
 
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
