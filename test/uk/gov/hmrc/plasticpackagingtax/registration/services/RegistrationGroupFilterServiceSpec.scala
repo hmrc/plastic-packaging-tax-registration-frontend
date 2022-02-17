@@ -30,11 +30,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 
-class RegistrationFilterServiceSpec extends PlaySpec with PptTestData with MockitoSugar {
+class RegistrationGroupFilterServiceSpec extends PlaySpec with PptTestData with MockitoSugar {
 
-  val sut: RegistrationFilterService = new RegistrationFilterService()
+  val sut: RegistrationGroupFilterService = new RegistrationGroupFilterService()
 
-  "filterByGroupMembers" must {
+  "removePartialGroupMembers" must {
 
     "return a registration with only valid group members" in {
       val mockInvalidGroupMember            = createAndSetExpectation(false)
@@ -42,7 +42,7 @@ class RegistrationFilterServiceSpec extends PlaySpec with PptTestData with Mocki
 
       val reg = createDefaultOrganisationalDetails(mockValidGroupMember, mockInvalidGroupMember)
 
-      sut.filterByGroupMembers(reg) mustBe createExpectedResultFrom(reg, mockValidGroupMember)
+      sut.removePartialGroupMembers(reg) mustBe createExpectedResultFrom(reg, mockValidGroupMember)
     }
 
     "return a registration with no group members" in {
@@ -50,13 +50,13 @@ class RegistrationFilterServiceSpec extends PlaySpec with PptTestData with Mocki
 
       val reg = createDefaultOrganisationalDetails(mockInvalidGroupMember, mockInvalidGroupMember)
 
-      sut.filterByGroupMembers(reg) mustBe createExpectedResultFrom(reg)
+      sut.removePartialGroupMembers(reg) mustBe createExpectedResultFrom(reg)
     }
 
     "return the current registration if groupDetails does not exist" in {
       val reg = createDefaultOrganisationalDetails().copy(groupDetail = None)
 
-      sut.filterByGroupMembers(reg) mustBe reg
+      sut.removePartialGroupMembers(reg) mustBe reg
     }
   }
 

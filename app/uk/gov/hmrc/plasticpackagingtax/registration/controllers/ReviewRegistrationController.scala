@@ -32,7 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateOrUpdateResponseFailure,
   SubscriptionCreateOrUpdateResponseSuccess
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationFilterService
+import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFilterService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -50,7 +50,7 @@ class ReviewRegistrationController @Inject() (
   auditor: Auditor,
   startRegistrationController: StartRegistrationController,
   reviewRegistrationPage: review_registration_page,
-  registrationFilterService: RegistrationFilterService
+  registrationFilterService: RegistrationGroupFilterService
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -166,7 +166,7 @@ class ReviewRegistrationController @Inject() (
 
   private def removePartialGroupMembers(registration: Registration) =
     if (registration.isGroup)
-      registrationFilterService.filterByGroupMembers(registration)
+      registrationFilterService.removePartialGroupMembers(registration)
     else registration
 
 }

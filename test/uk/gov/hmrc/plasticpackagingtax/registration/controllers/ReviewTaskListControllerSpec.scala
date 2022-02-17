@@ -45,7 +45,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   EisError,
   SubscriptionCreateOrUpdateResponseFailure
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationFilterService
+import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFilterService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   duplicate_subscription_page,
   review_registration_page
@@ -59,7 +59,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   private val mockDuplicateSubscriptionPage   = mock[duplicate_subscription_page]
   private val mcc                             = stubMessagesControllerComponents()
   private val mockStartRegistrationController = mock[StartRegistrationController]
-  private val mockRegistrationFilterService   = mock[RegistrationFilterService]
+  private val mockRegistrationFilterService   = mock[RegistrationGroupFilterService]
   private val liabilityStartLink              = Call("GET", "/startRegistrationLink")
 
   private val controller =
@@ -134,7 +134,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         )
 
         mockRegistrationFind(registration)
-        when(mockRegistrationFilterService.filterByGroupMembers(any())).thenReturn(expectedReg)
+        when(mockRegistrationFilterService.removePartialGroupMembers(any())).thenReturn(expectedReg)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -252,7 +252,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
         );
 
-        when(mockRegistrationFilterService.filterByGroupMembers(any()))
+        when(mockRegistrationFilterService.removePartialGroupMembers(any()))
           .thenReturn(sanitisedReg)
         mockRegistrationFind(registrationRequest)
         mockRegistrationUpdate
@@ -307,10 +307,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
         );
 
-        when(mockRegistrationFilterService.filterByGroupMembers(any()))
+        when(mockRegistrationFilterService.removePartialGroupMembers(any()))
           .thenReturn(sanitisedReg)
 
-        mockRegistrationException
+        mockRegistrationException()
 
         val result = controller.displayPage()(getRequest())
 

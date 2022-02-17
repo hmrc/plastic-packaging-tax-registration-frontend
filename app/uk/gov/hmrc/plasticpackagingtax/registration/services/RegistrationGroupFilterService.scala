@@ -16,24 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 
-class RegistrationFilterService {
+class RegistrationGroupFilterService {
 
-  def filterByGroupMembers(registration: Registration): Registration = {
-    val groupDetail: Option[GroupDetail] = registration.groupDetail
-
-    if (groupDetail.isEmpty) return registration
-    else
-      registration.copy(groupDetail =
-        Some(groupDetail.get.copy(members = filterByValidGroupMember(groupDetail)))
-      )
-  }
-
-  def filterByValidGroupMember(groupDetail: Option[GroupDetail]): Seq[GroupMember] =
-    groupDetail.toSeq
-      .flatMap(_.members)
-      .filter(_.isValid)
+  def removePartialGroupMembers(registration: Registration): Registration =
+    registration.copy(groupDetail =
+      registration.groupDetail.map(gd => gd.copy(members = gd.members.filter(_.isValid)))
+    )
 
 }
