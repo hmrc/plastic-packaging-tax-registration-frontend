@@ -124,7 +124,9 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdate()
-        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(Future.successful(false))
+        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
+          Future.successful(false)
+        )
 
         val result = controller.submitNewPartner()(
           postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)

@@ -75,34 +75,18 @@ class AmendEmailAddressController @Inject() (
               isEmailVerificationRequired(email.value, isEmailChanged).flatMap {
                 case false => updateRegistration(updateEmail(email.value))
                 case true =>
-                  emailVerificationService.sendVerificationCode(
-                    email.value,
-                    request.user.credId,
-                    "/register-for-plastic-packaging-tax/amend-registration"
-                  ).map { journeyId =>
-                    amendmentJourneyAction.updateLocalRegistration(
-                      updateProspectiveEmail(journeyId, email.value)
-                    )
-                    Redirect(routes.AmendEmailAddressController.emailVerificationCode())
-                  }
+                  promptForAmendmentEmailVerificationCode(request,
+                                                          email,
+                                                          "/register-for-plastic-packaging-tax/amend-registration",
+                                                          routes.AmendEmailAddressController.emailVerificationCode(),
+                                                          amendmentJourneyAction
+                  )
               }
         )
     }
 
   private def isEmailChanged(newEmail: String)(implicit request: JourneyRequest[AnyContent]) =
     !request.registration.primaryContactDetails.email.contains(newEmail)
-
-  private def updateProspectiveEmail(
-    journeyId: String,
-    updatedEmail: String
-  ): Registration => Registration = {
-    registration: Registration =>
-      registration.copy(primaryContactDetails =
-        registration.primaryContactDetails.copy(journeyId = Some(journeyId),
-                                                prospectiveEmail = Some(updatedEmail)
-        )
-      )
-  }
 
   private def updateEmail(updatedEmail: String): Registration => Registration = {
     registration: Registration =>
