@@ -69,6 +69,11 @@
     @sectionHeader(messages("liabilityExpectedWeightPage.sectionHeader"))
 
     @formHelper(action = pptRoutes.LiabilityWeightExpectedController.submit(), 'autoComplete -> "off") {
+
+        @paragraph(
+            content = Html(messages("liabilityExpectedWeightPage.info"))
+        )
+
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

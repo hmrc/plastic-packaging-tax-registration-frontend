@@ -146,9 +146,10 @@ liabilityWeight.trailingBlankSpace.error = Weight must not have trailing spaces
 liabilityWeight.decimal.error = Weight must not include decimals
 
 liabilityExpectedWeightPage.sectionHeader = Eligibility check
-liabilityExpectedWeightPage.title = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
+liabilityExpectedWeightPage.title = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022? - Register for Plastic Packaging Tax - GOV.UK
 liabilityExpectedWeightPage.label = Expected weight, in kilograms
-liabilityExpectedWeightPage.question = Do you expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
+liabilityExpectedWeightPage.question = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
+liabilityExpectedWeightPage.info = If you’re registering as a group, each member must expect to meet this threshold.
 liabilityExpectedWeight.answer.empty.error = Select yes if you expect to process 10,000kg or more of plastic packaging
 liabilityExpectedWeight.below.threshold.error = Expected weight must be 10,000kg or more
 liabilityExpectedWeight.format.error = Expected weight must be entered as numbers only
