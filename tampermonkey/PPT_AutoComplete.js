@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      16.0
+// @version      15.9
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -459,7 +459,6 @@ const partnerContactName = () => {
 
 const partnerJobTitle = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/partner-job-title')) {
-
         document.getElementById('value').value = "Director"
         document.getElementsByClassName('govuk-button')[0].click()
     }
