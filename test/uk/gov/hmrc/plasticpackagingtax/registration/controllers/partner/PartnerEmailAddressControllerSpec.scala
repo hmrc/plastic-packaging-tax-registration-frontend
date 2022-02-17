@@ -32,6 +32,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationSe
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import scala.concurrent.Future
+
 class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
   private val page = mock[partner_email_address_page]
@@ -118,10 +120,11 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     }
 
     "update inflight registration" when {
-      "user submits a valid email address" in {
+      "user submits a valid email address for first parter and is prompted for email validation" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdate()
+        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(Future.successful(false))
 
         val result = controller.submitNewPartner()(
           postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)
