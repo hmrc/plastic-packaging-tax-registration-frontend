@@ -308,6 +308,9 @@ POST       /amend-partner-check-answers             uk.gov.hmrc.plasticpackaging
 GET        /amend-partner-contact-name/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.contactName(partnerId)
 POST       /amend-partner-contact-name/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateContactName(partnerId)
 
+GET        /amend-partner-job-title/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.jobTitle(partnerId)
+POST       /amend-partner-job-title/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateJobTitle(partnerId)
+
 GET        /amend-partner-email/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.emailAddress(partnerId)
 POST       /amend-partner-email/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateEmailAddress(partnerId)
 

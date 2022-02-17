@@ -554,6 +554,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
                                     lastName = Some("Benkson"),
                                     emailAddress = Some("ben@benksons.com"),
                                     phoneNumber = Some("076542345687"),
+                jobTitle = Some("CEO"),
                                     address = Some(
                                       Address(addressLine1 = "1 High Street",
                                               townOrCity = "Leeds",
