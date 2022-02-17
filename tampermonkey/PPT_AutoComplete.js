@@ -258,7 +258,7 @@ const organisationType = () => {
     }
 }
 
-const partnershipType = () => {
+const partnership = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/partnership$')) {
         document.getElementById('answer').checked = true
         document.getElementsByClassName('govuk-button')[0].click()
@@ -823,7 +823,7 @@ function completeJourney(manualJourney) {
 
     // Business Details
     organisationType()
-    partnershipType()
+    partnership()
     partnershipName()
     confirmBusinessAddress()
 
