@@ -236,8 +236,8 @@ case class Registration(
   def findPartner(partnerId: String): Option[Partner] =
     organisationDetails.partnershipDetails.flatMap(_.findPartner(partnerId))
 
-  def isNominatedPartner(partnerId: Option[String]): Option[Boolean] =
-    organisationDetails.partnershipDetails.map(_.isNominatedPartner(partnerId))
+  def isNominatedPartner(partnerId: Option[String]): Boolean =
+    organisationDetails.partnershipDetails.exists(_.isNominatedPartner(partnerId))
 
   def isNominatedPartnerOrFirstInflightPartner(partner: Partner) =
     nominatedPartner.forall(_.id == partner.id)

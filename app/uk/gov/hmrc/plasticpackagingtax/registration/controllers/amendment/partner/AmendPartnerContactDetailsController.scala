@@ -336,7 +336,7 @@ class AmendPartnerContactDetailsController @Inject() (
     )
 
   private def isNominated(partnerId: String)(implicit request: JourneyRequest[_]) =
-    request.registration.isNominatedPartner(Some(partnerId)).getOrElse(false)
+    request.registration.isNominatedPartner(Some(partnerId))
 
   private def successfulRedirect(partnerId: String)(implicit request: JourneyRequest[_]) =
     if (isNominated(partnerId)) amendmentRoutes.AmendRegistrationController.displayPage()

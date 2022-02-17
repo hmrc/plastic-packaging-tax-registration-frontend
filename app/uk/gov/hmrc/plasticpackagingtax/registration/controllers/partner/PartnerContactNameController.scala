@@ -81,11 +81,7 @@ class PartnerContactNameController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]): Call =
     request.registration.findPartner(partnerId).map { partner =>
       val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
-      if (
-        request.registration.isNominatedPartner(Some(partner.id)).getOrElse(
-          false
-        ) || alreadyHasJobTitle
-      )
+      if (request.registration.isNominatedPartner(Some(partner.id)) || alreadyHasJobTitle)
         partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId)
       else
         partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
