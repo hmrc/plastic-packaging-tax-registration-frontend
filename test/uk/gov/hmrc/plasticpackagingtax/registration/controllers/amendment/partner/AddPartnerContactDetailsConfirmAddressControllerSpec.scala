@@ -14,45 +14,53 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import base.unit.ControllerSpec
+import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
-import play.api.test.DefaultAwaitTimeout
+import play.api.mvc.{AnyContentAsEmpty, Request}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, status}
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
   AddressLookupAddress,
   AddressLookupConfirmation,
   AddressLookupCountry,
   AddressLookupOnRamp
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.RegistrationAmendmentRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 import scala.concurrent.Future
 
-class PartnerContactAddressControllerSpec
-    extends ControllerSpec with DefaultAwaitTimeout with PptTestData {
+class AddPartnerContactDetailsConfirmAddressControllerSpec
+    extends ControllerSpec with MockAmendmentJourneyAction with PptTestData {
 
   private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
   private val mcc                                = stubMessagesControllerComponents()
 
-  protected val newRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
+  private val mockRegistrationAmendmentRepository = mock[RegistrationAmendmentRepository]
+
+  protected val mockAmendRegistrationUpdater = new AmendRegistrationUpdateService(
+    mockRegistrationAmendmentRepository
+  )
 
   private val controller =
-    new PartnerContactAddressController(authenticate = mockAuthAction,
-                                        journeyAction = mockJourneyAction,
-                                        registrationUpdater = newRegistrationUpdater,
-                                        addressLookupFrontendConnector =
-                                          mockAddressLookupFrontendConnector,
-                                        appConfig = appConfig,
-                                        mcc = mcc
+    new AddPartnerContactDetailsConfirmAddressController(
+      authenticate = mockAuthAllowEnrolmentAction,
+      journeyAction = mockAmendmentJourneyAction,
+      registrationUpdater = mockAmendRegistrationUpdater,
+      addressLookupFrontendConnector =
+        mockAddressLookupFrontendConnector,
+      appConfig = appConfig,
+      mcc = mcc
     )
 
   private val partnershipRegistrationWithInflightPartner = aRegistration(
@@ -68,10 +76,6 @@ class PartnerContactAddressControllerSpec
         )
       )
     )
-  )
-
-  private val partnershipRegistrationWithExistingPartner = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
   )
 
   private val alfAddress = AddressLookupConfirmation(auditRef = "auditRef",
@@ -93,8 +97,9 @@ class PartnerContactAddressControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
-    mockRegistrationUpdate()
+    inMemoryRegistrationAmendmentRepository.reset()
+    reset(mockSubscriptionConnector)
+    simulateGetSubscriptionSuccess(partnershipRegistrationWithInflightPartner)
     when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
       Future(AddressLookupOnRamp("/on-ramp"))
     )
@@ -109,56 +114,34 @@ class PartnerContactAddressControllerSpec
   "Partner Contact Address Controller" should {
     "Redirect to the ALF address lookup page" when {
       "capturing address for new partner" in {
-        mockRegistrationFind(partnershipRegistrationWithInflightPartner)
+        authorisedUserWithPptSubscription()
 
-        val resp = controller.captureNewPartner()(getRequest())
-
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some("/on-ramp")
-      }
-      "capturing address for existing partner" in {
-        mockRegistrationFind(partnershipRegistrationWithExistingPartner)
-
-        val resp = controller.captureExistingPartner(
-          partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
-        )(getRequest())
+        val resp = controller.displayPage()(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some("/on-ramp")
       }
     }
 
-    "Populate returned address, promote inflight and redirect to partner check answers" when {
+    "Populate returned address redirect to partner check answers" when {
       "receive ALF callback for new partner" in {
-        mockRegistrationFind(partnershipRegistrationWithInflightPartner)
-
-        val resp = controller.alfCallbackNewPartner(Some("123"))(getRequest())
-
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(
-          routes.PartnerCheckAnswersController.displayNewPartner().url
-        )
-
-        modifiedRegistration.newPartner.get.contactDetails.get.address mustBe Some(
-          Address(alfAddress)
-        )
-      }
-      "receive ALF callback for existing partner" in {
-        val nominatedPartnerId = partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
-        mockRegistrationFind(partnershipRegistrationWithExistingPartner)
-
-        val resp =
-          controller.alfCallbackExistingPartner(nominatedPartnerId, Some("123"))(getRequest())
+        authorisedUserWithPptSubscription()
+        when(
+          mockAmendRegistrationUpdater.updateRegistration(
+            _ => partnershipRegistrationWithInflightPartner
+          )(any(), any())
+        ).thenReturn(Future.successful(partnershipRegistrationWithInflightPartner))
+        val resp = controller.alfCallback(Some("123"))(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(
-          routes.PartnerCheckAnswersController.displayExistingPartner(nominatedPartnerId).url
-        )
-
-        modifiedRegistration.nominatedPartner.get.contactDetails.get.address mustBe Some(
-          Address(alfAddress)
+          routes.AddPartnerContactDetailsCheckAnswersController.displayPage().url
         )
       }
     }
   }
+
+  private def getRequest(): Request[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
+
 }

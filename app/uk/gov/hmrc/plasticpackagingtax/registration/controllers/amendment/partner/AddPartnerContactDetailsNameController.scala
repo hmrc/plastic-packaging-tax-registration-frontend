@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AmendmentJourneyAction,
+  JourneyRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -32,31 +34,35 @@ class AddPartnerContactDetailsNameController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
-  page: partner_name_page
+  page: partner_member_name_page,
+  registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends PartnerContactNameControllerBase(authenticate = authenticate,
+                                             journeyAction = journeyAction,
+                                             mcc = mcc,
+                                             page = page,
+                                             registrationUpdater = registrationUpdateService
+    ) {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok(
-        page(
-          PartnerName.form().fill(
-            PartnerName(
-              request.registration.inflightPartner.flatMap(
-                _.contactDetails.flatMap(_.name)
-              ).getOrElse("")
-            )
-          ),
-          routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
-          routes.AddPartnerContactDetailsNameController.submit()
-        )
-      )
-    }
+    doDisplay(None,
+              routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+              routes.AddPartnerContactDetailsNameController.submit()
+    )
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      // TODO: validate input and update inflight partner
-      Redirect(routes.AddPartnerContactDetailsEmailAddressController.displayPage())
-    }
+    doSubmit(None,
+             routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+             routes.AddPartnerContactDetailsNameController.submit(),
+             routes.PartnersListController.displayPage()
+    )
+
+  override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =
+    routes.AddPartnerContactDetailsEmailAddressController.displayPage()
+
+  override def onwardCallExistingPartner(
+    partnerId: String
+  )(implicit request: JourneyRequest[AnyContent]): Call =
+    routes.AddPartnerContactDetailsEmailAddressController.displayPage()
 
 }

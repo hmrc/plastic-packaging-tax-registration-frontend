@@ -27,6 +27,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -35,11 +36,15 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   private val page = mock[partner_name_page]
   private val mcc  = stubMessagesControllerComponents()
 
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
+
   private val controller =
     new PartnerNameController(authenticate = mockAuthAction,
                               journeyAction = mockJourneyAction,
-                              registrationConnector =
-                                mockRegistrationConnector,
+                              registrationUpdater =
+                                mockNewRegistrationUpdater,
                               config,
                               soleTraderGrsConnector = mockSoleTraderGrsConnector,
                               ukCompanyGrsConnector = mockUkCompanyGrsConnector,
