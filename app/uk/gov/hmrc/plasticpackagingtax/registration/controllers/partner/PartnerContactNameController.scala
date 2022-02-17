@@ -20,7 +20,6 @@ import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
@@ -71,7 +70,7 @@ class PartnerContactNameController @Inject() (
 
   override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =
     request.registration.inflightPartner.map { partner =>
-      if (isEditingNominatedPartner(request, partner))
+      if (request.registration.isNominatedPartnerOrFirstInflightPartner(partner))
         routes.PartnerJobTitleController.displayNewPartner()
       else
         routes.PartnerEmailAddressController.displayNewPartner()
@@ -82,13 +81,14 @@ class PartnerContactNameController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]): Call =
     request.registration.findPartner(partnerId).map { partner =>
       val alreadyHasJobTitle = partner.contactDetails.flatMap(_.jobTitle).nonEmpty
-      if (isEditingNominatedPartner(request, partner) || alreadyHasJobTitle)
+      if (
+        request.registration.isNominatedPartner(Some(partner.id)).getOrElse(
+          false
+        ) || alreadyHasJobTitle
+      )
         partnerRoutes.PartnerJobTitleController.displayExistingPartner(partnerId)
       else
         partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
     }.getOrElse(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId))
-
-  private def isEditingNominatedPartner(request: JourneyRequest[AnyContent], partner: Partner) =
-    request.registration.nominatedPartner.forall(_.id == partner.id)
 
 }
