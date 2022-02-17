@@ -277,26 +277,6 @@ class AmendPartnerContactDetailsControllerSpec
                )(any(), any())
                formCaptor.getValue.value mustBe Some(JobTitle(nominatedPartnerJobTitle))
              }
-            ),
-            ("other partner job title",
-             (req: Request[AnyContent]) => controller.jobTitle(otherPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[JobTitle]] =
-                 ArgumentCaptor.forClass(classOf[Form[JobTitle]])
-               verify(mockJobTitlePage, never()).apply(formCaptor.capture(),
-                                                       ArgumentMatchers.eq(otherPartner.name),
-                                                       ArgumentMatchers.eq(
-                                                         routes.PartnerContactDetailsCheckAnswersController.displayPage(
-                                                           otherPartner.id
-                                                         )
-                                                       ),
-                                                       ArgumentMatchers.eq(
-                                                         routes.AmendPartnerContactDetailsController.updatePhoneNumber(
-                                                           otherPartner.id
-                                                         )
-                                                       )
-               )(any(), any())
-             }
             )
       )
 
