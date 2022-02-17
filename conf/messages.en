@@ -636,6 +636,7 @@ amend.organisation.subheading = Organisation details
 amend.individual.subheading = Your details
 amend.group.subheading = Organisation details
 amend.partnership.subheading = Partnership details
+amend.backButton.text = Back to account homepage
 
 amend.organisation.label = Organisation name
 amend.individual.label = Your name
