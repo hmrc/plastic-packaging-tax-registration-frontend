@@ -201,16 +201,21 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                   )
                 )
                 changeLinks.get(1) must haveHref(
-                  partnerAmendRoutes.AmendPartnerContactDetailsController.emailAddress(
+                  partnerAmendRoutes.AmendPartnerContactDetailsController.jobTitle(
                     nominatedPartner.id
                   )
                 )
                 changeLinks.get(2) must haveHref(
-                  partnerAmendRoutes.AmendPartnerContactDetailsController.phoneNumber(
+                  partnerAmendRoutes.AmendPartnerContactDetailsController.emailAddress(
                     nominatedPartner.id
                   )
                 )
                 changeLinks.get(3) must haveHref(
+                  partnerAmendRoutes.AmendPartnerContactDetailsController.phoneNumber(
+                    nominatedPartner.id
+                  )
+                )
+                changeLinks.get(4) must haveHref(
                   partnerAmendRoutes.AmendPartnerContactDetailsController.address(
                     nominatedPartner.id
                   )

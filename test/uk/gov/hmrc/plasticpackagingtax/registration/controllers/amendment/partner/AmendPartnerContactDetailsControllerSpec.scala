@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -37,6 +37,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   Address,
   EmailAddress,
+  JobTitle,
   PhoneNumber
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
@@ -50,6 +51,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registra
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
+  partner_job_title_page,
   partner_member_name_page,
   partner_phone_number_page
 }
@@ -70,6 +72,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val mockContactNamePage        = mock[partner_member_name_page]
   private val mockContactEmailPage       = mock[partner_email_address_page]
   private val mockContactPhoneNumberPage = mock[partner_phone_number_page]
+  private val mockJobTitlePage           = mock[partner_job_title_page]
 
   private val partnershipRegistration = aRegistration(
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
@@ -80,6 +83,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val nominatedPartnerLastName     = nominatedPartner.contactDetails.get.lastName.get
   private val nominatedPartnerEmailAddress = nominatedPartner.contactDetails.get.emailAddress.get
   private val nominatedPartnerPhoneNumber  = nominatedPartner.contactDetails.get.phoneNumber.get
+  private val nominatedPartnerJobTitle     = nominatedPartner.contactDetails.get.jobTitle.get
 
   private val otherPartner             = partnershipRegistration.otherPartners.head
   private val otherPartnerFirstName    = otherPartner.contactDetails.get.firstName.get
@@ -94,6 +98,7 @@ class AmendPartnerContactDetailsControllerSpec
     contactNamePage = mockContactNamePage,
     contactEmailPage = mockContactEmailPage,
     contactPhoneNumberPage = mockContactPhoneNumberPage,
+    jobTitlePage = mockJobTitlePage,
     addressLookupFrontendConnector = mockAddressLookupFrontendConnector,
     appConfig = realAppConfig
   )
@@ -111,6 +116,9 @@ class AmendPartnerContactDetailsControllerSpec
     )
     when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Amend Partner Contact Phone Number")
+    )
+    when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.raw("Amend Partner Job Title")
     )
     when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
       Future(AddressLookupOnRamp("/on-ramp"))
@@ -249,6 +257,25 @@ class AmendPartnerContactDetailsControllerSpec
                                                         ArgumentMatchers.eq(otherPartner.name)
                )(any(), any())
                formCaptor.getValue.value mustBe Some(PhoneNumber(otherPartnerPhoneNumber))
+             }
+            ),
+            ("nominated partner job title",
+             (req: Request[AnyContent]) => controller.jobTitle(nominatedPartner.id)(req),
+             () => {
+               val formCaptor: ArgumentCaptor[Form[JobTitle]] =
+                 ArgumentCaptor.forClass(classOf[Form[JobTitle]])
+               verify(mockJobTitlePage).apply(formCaptor.capture(),
+                                              ArgumentMatchers.eq(nominatedPartner.name),
+                                              ArgumentMatchers.eq(
+                                                amendmentRoutes.AmendRegistrationController.displayPage()
+                                              ),
+                                              ArgumentMatchers.eq(
+                                                routes.AmendPartnerContactDetailsController.updateJobTitle(
+                                                  nominatedPartner.id
+                                                )
+                                              )
+               )(any(), any())
+               formCaptor.getValue.value mustBe Some(JobTitle(nominatedPartnerJobTitle))
              }
             )
       )

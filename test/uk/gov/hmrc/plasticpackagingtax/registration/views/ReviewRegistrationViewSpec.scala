@@ -20,7 +20,8 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import play.api.mvc.Call
+import play.api.mvc.{AnyContent, Call}
+import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
@@ -52,6 +53,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   OrganisationDetails,
   Registration
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AuthenticatedRequest,
+  JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsPageHeading
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
@@ -569,7 +574,16 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                   incorporationDetails = None
               )
             )
-            val partnershipView = createView(partnershipRegistration)
+            val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
+              JourneyRequest(authenticatedRequest =
+                               new AuthenticatedRequest(FakeRequest(), userWithPPTEnrolment),
+                             registration = partnershipRegistration,
+                             appConfig = appConfig
+              )
+            val partnershipView =
+              page(partnershipRegistration, liabilityStartLink)(journeyRequestWithEnrolledUser,
+                                                                messages
+              )
 
             getKeyFor(nominatedPartnerSection, 0, partnershipView) must containMessage(
               "reviewRegistration.partner.orgType"
@@ -590,12 +604,15 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               "reviewRegistration.partner.contact.name"
             )
             getKeyFor(nominatedPartnerSection, 6, partnershipView) must containMessage(
-              "reviewRegistration.partner.contact.email"
+              "reviewRegistration.partner.contact.jobTitle"
             )
             getKeyFor(nominatedPartnerSection, 7, partnershipView) must containMessage(
-              "reviewRegistration.partner.contact.phone"
+              "reviewRegistration.partner.contact.email"
             )
             getKeyFor(nominatedPartnerSection, 8, partnershipView) must containMessage(
+              "reviewRegistration.partner.contact.phone"
+            )
+            getKeyFor(nominatedPartnerSection, 9, partnershipView) must containMessage(
               "reviewRegistration.partner.contact.address"
             )
             val nominatedPartner = partnershipRegistration.nominatedPartner.get
@@ -623,13 +640,17 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             getValueFor(nominatedPartnerSection,
                         6,
                         partnershipView
-            ) mustBe nominatedPartner.contactDetails.get.emailAddress.get
+            ) mustBe nominatedPartner.contactDetails.get.jobTitle.get
             getValueFor(nominatedPartnerSection,
                         7,
                         partnershipView
-            ) mustBe nominatedPartner.contactDetails.get.phoneNumber.get
+            ) mustBe nominatedPartner.contactDetails.get.emailAddress.get
             getValueFor(nominatedPartnerSection,
                         8,
+                        partnershipView
+            ) mustBe nominatedPartner.contactDetails.get.phoneNumber.get
+            getValueFor(nominatedPartnerSection,
+                        9,
                         partnershipView
             ) mustBe "1 High Street Leeds LS1 1AA United Kingdom"
 
@@ -648,7 +669,16 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                   incorporationDetails = None
               )
             )
-            val otherPartnersView = createView(partnershipRegistration)
+            val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
+              JourneyRequest(authenticatedRequest =
+                               new AuthenticatedRequest(FakeRequest(), userWithPPTEnrolment),
+                             registration = partnershipRegistration,
+                             appConfig = appConfig
+              )
+            val otherPartnersView =
+              page(partnershipRegistration, liabilityStartLink)(journeyRequestWithEnrolledUser,
+                                                                messages
+              )
 
             partnershipRegistration.otherPartners.zipWithIndex.foreach {
               case (partner, idx) =>

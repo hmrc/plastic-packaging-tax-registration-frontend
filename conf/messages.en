@@ -282,6 +282,7 @@ reviewRegistration.partner.dob = Date of birth
 reviewRegistration.partner.name = Name
 reviewRegistration.partner.nino = National Insurance Number
 reviewRegistration.partner.contact.name = Contact name
+reviewRegistration.partner.contact.jobTitle = Job Title
 reviewRegistration.partner.contact.email = Contact email
 reviewRegistration.partner.contact.phone = Phone number
 reviewRegistration.partner.contact.address = Contact address
