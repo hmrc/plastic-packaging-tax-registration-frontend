@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.{organisationDetails, primaryContactDetails}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.linkButton
 
 @this(
         formHelper: FormWithCSRF,
@@ -30,7 +31,8 @@
         pageHeading: pageHeading,
         appConfig: AppConfig,
         organisationDetails: organisationDetails,
-        primaryContactDetails: primaryContactDetails
+        primaryContactDetails: primaryContactDetails,
+        returnToAccountButton: linkButton
 )
 @(registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
@@ -56,4 +58,5 @@
 
     @organisationDetails(request.pptReference, registration, Some(amendRoutes.AmendOrganisationDetailsController.changeBusinessAddress()))
     @primaryContactDetails(registration)
+    @returnToAccountButton("amend.backButton.text", appConfig.pptAccountUrl, "hello")
 }
