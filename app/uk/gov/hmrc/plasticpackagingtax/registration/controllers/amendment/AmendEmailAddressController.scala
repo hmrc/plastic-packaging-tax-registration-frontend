@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.data.Form
 import play.api.mvc._
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.EmailVerificationActions
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
@@ -45,9 +46,9 @@ class AmendEmailAddressController @Inject() (
   emailPasscodePage: email_address_passcode_page,
   emailCorrectPasscodePage: email_address_passcode_confirmation_page,
   emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
-  emailVerificationService: EmailVerificationService
+  val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendmentJourneyAction) with EmailVerificationActions {
 
   def email(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
@@ -67,10 +68,13 @@ class AmendEmailAddressController @Inject() (
           (formWithErrors: Form[EmailAddress]) =>
             Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           email =>
-            if (isEmailChanged(email.value))
-              emailVerificationService.isEmailVerified(email.value, request.user.credId).flatMap {
-                case true => updateRegistration(updateEmail(email.value))
-                case false =>
+            if (!isEmailChanged(email.value))
+              // Not update required; we can exit straight to the next screen
+              Future.successful(Redirect(routes.AmendRegistrationController.displayPage()))
+            else
+              isEmailVerificationRequired(email.value, isEmailChanged).flatMap {
+                case false => updateRegistration(updateEmail(email.value))
+                case true =>
                   emailVerificationService.sendVerificationCode(
                     email.value,
                     request.user.credId,
@@ -82,8 +86,6 @@ class AmendEmailAddressController @Inject() (
                     Redirect(routes.AmendEmailAddressController.emailVerificationCode())
                   }
               }
-            else
-              Future.successful(Redirect(routes.AmendRegistrationController.displayPage()))
         )
     }
 
