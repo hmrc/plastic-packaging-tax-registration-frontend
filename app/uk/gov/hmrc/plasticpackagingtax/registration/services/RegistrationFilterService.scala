@@ -34,6 +34,6 @@ class RegistrationFilterService {
   def filterByValidGroupMember(groupDetail: Option[GroupDetail]): Seq[GroupMember] =
     groupDetail.toSeq
       .flatMap(_.members)
-      .filter(_.isValid())
+      .filter(_.isValid)
 
 }

@@ -20,14 +20,9 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.UK_COMPANY
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  GroupMember,
-  GroupMemberContactDetails,
-  OrganisationDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   GroupDetail,
   Registration,
@@ -67,7 +62,7 @@ class RegistrationFilterServiceSpec extends PlaySpec with PptTestData with Mocki
 
   private def createAndSetExpectation(boolean: Boolean): GroupMember = {
     val mockValidGroupMember = mock[GroupMember]
-    when(mockValidGroupMember.isValid()).thenReturn(boolean)
+    when(mockValidGroupMember.isValid).thenReturn(boolean)
     mockValidGroupMember
   }
 

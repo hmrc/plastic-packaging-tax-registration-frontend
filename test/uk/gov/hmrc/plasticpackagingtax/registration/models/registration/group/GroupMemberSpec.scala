@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
@@ -170,7 +169,7 @@ class GroupMemberSpec extends PlaySpec with TableDrivenPropertyChecks {
                                         countryCode
             )
 
-            sut.isValid() mustBe false
+            sut.isValid mustBe false
           }
       }
     }
@@ -188,7 +187,7 @@ class GroupMemberSpec extends PlaySpec with TableDrivenPropertyChecks {
                                     "countryCode"
         )
 
-        sut.isValid() mustBe true
+        sut.isValid mustBe true
       }
 
     }

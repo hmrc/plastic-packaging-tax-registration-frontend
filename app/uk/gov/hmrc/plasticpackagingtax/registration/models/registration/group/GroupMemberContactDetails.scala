@@ -28,7 +28,7 @@ case class GroupMemberContactDetails(
 ) {
   val groupMemberName = s"$firstName $lastName"
 
-  def isValid(): Boolean =
+  def isValid: Boolean =
     firstName.trim.nonEmpty &&
       lastName.trim.nonEmpty &&
       phoneNumber.exists(_.trim.nonEmpty) &&

@@ -68,11 +68,11 @@ case class GroupMember(
   def withUpdatedGroupMemberAddress(address: Address): GroupMember =
     withUpdatedContactDetails(cd => cd.copy(address = Some(address)))
 
-  def isValid(): Boolean =
+  def isValid: Boolean =
     customerIdentification1.trim.nonEmpty &&
-      organisationDetails.exists(x => x.organisationName.trim.nonEmpty) &&
-      contactDetails.exists(_.isValid()) &&
-      addressDetails.isValid()
+      organisationDetails.exists(_.organisationName.trim.nonEmpty) &&
+      contactDetails.exists(_.isValid) &&
+      addressDetails.isValid
 
   private def withUpdatedContactDetails(
     update: GroupMemberContactDetails => GroupMemberContactDetails
