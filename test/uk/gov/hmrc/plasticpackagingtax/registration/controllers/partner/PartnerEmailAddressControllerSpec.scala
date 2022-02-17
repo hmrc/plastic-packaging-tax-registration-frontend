@@ -23,7 +23,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
@@ -120,22 +120,30 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     }
 
     "update inflight registration" when {
-      "user submits a valid email address for first parter and is prompted for email validation" in {
+      "user submits a valid email address for first partner and is prompted for email validation" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
-        mockRegistrationUpdate()
+        //mockRegistrationUpdate()
         when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
           Future.successful(false)
         )
+        when(
+          mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())
+        ).thenReturn(Future.successful("an-email-verification-code"))
 
         val result = controller.submitNewPartner()(
           postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)
         )
 
         status(result) mustBe SEE_OTHER
-
-        modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress))
+        redirectLocation(result) mustBe Some(
+          routes.PartnerEmailAddressController.confirmNewPartnerEmailCode().url
+        )
+        // TODO assert that the prospective email is been persisted
+        //modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress))
       }
+
+      //"user submits a valid email address for non nominated partner and is not prompted for email validation"
 
       "user submits an amendment to an existing partners email address" in {
         authorizedUser()

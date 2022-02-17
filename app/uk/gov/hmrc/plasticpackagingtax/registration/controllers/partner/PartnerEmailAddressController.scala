@@ -72,4 +72,11 @@ class PartnerEmailAddressController @Inject() (
              partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
     )
 
+  def confirmNewPartnerEmailCode(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.inflightPartner.map { partner =>
+        Ok("TODO")
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
 }

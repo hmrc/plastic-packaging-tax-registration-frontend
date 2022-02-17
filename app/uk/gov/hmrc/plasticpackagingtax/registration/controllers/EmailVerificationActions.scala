@@ -43,7 +43,25 @@ trait EmailVerificationActions {
     else
       Future.successful(false)
 
-  def promptForAmendmentEmailVerificationCode(
+  def promptForRegistrationJourneyEmailVerificationCode(
+    request: JourneyRequest[AnyContent],
+    email: EmailAddress,
+    continueUrl: String,
+    enterVerificationCodeCall: Call
+  )(implicit
+    journeyRequest: JourneyRequest[AnyContent],
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Result] =
+    emailVerificationService.sendVerificationCode(email.value,
+                                                  request.user.credId,
+                                                  continueUrl
+    ).map { journeyId =>
+      //journeyAction.updateLocalRegistration(updateProspectiveEmail(journeyId, email.value)) TODO
+      Redirect(enterVerificationCodeCall)
+    }
+
+  def promptForAmendmentJourneyEmailVerificationCode(
     request: JourneyRequest[AnyContent],
     email: EmailAddress,
     continueUrl: String,

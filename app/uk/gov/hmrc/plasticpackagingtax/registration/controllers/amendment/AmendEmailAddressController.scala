@@ -75,11 +75,11 @@ class AmendEmailAddressController @Inject() (
               isEmailVerificationRequired(email.value, isEmailChanged).flatMap {
                 case false => updateRegistration(updateEmail(email.value))
                 case true =>
-                  promptForAmendmentEmailVerificationCode(request,
-                                                          email,
-                                                          "/register-for-plastic-packaging-tax/amend-registration",
-                                                          routes.AmendEmailAddressController.emailVerificationCode(),
-                                                          amendmentJourneyAction
+                  promptForAmendmentJourneyEmailVerificationCode(request,
+                                                                 email,
+                                                                 "/register-for-plastic-packaging-tax/amend-registration",
+                                                                 routes.AmendEmailAddressController.emailVerificationCode(),
+                                                                 amendmentJourneyAction
                   )
               }
         )

@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -129,18 +130,23 @@ abstract class PartnerEmailAddressControllerBase(
               Future.successful(false)
           }
 
-          eventualEmailVerificationDecision.flatMap { isEmailVerificationRequired =>
-            if (!isEmailVerificationRequired)
-              updateAction(emailAddress).map { _ =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(onwardCall)
-                  case _ =>
-                    Redirect(dropoutCall)
+          eventualEmailVerificationDecision.flatMap {
+            isEmailVerificationRequired =>
+              if (!isEmailVerificationRequired)
+                updateAction(emailAddress).map { _ =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      Redirect(onwardCall)
+                    case _ =>
+                      Redirect(dropoutCall)
+                  }
                 }
-              }
-            else
-              throw new IllegalStateException("TODO We need to verify this address")
+              else
+                promptForRegistrationJourneyEmailVerificationCode(request,
+                                                                  emailAddress,
+                                                                  "/register-for-plastic-packaging-tax/amend-registration", // TODO what does continue URL mean?
+                                                                  routes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
+                )
           }
         }
       )
