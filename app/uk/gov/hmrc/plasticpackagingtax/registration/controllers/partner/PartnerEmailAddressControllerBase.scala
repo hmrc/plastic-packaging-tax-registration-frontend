@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.EmailVerificationActions
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthActioning,
   FormAction,
@@ -46,7 +47,7 @@ abstract class PartnerEmailAddressControllerBase(
   page: partner_email_address_page,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with EmailVerificationActions {
 
   protected def doDisplay(
     partnerId: Option[String],
@@ -114,15 +115,34 @@ abstract class PartnerEmailAddressControllerBase(
               throw new IllegalStateException("Expected partner contact name missing")
             )
           ),
-        emailAddress =>
-          updateAction(emailAddress).map { _ =>
-            FormAction.bindFromRequest match {
-              case SaveAndContinue =>
-                Redirect(onwardCall)
-              case _ =>
-                Redirect(dropoutCall)
-            }
+        emailAddress => {
+          def emailHasChanged(newEmailAddress: String): Boolean = {
+            val existingEmailAddress = partner.contactDetails.flatMap(_.emailAddress)
+            !existingEmailAddress.contains(newEmailAddress)
           }
+
+          val eventualEmailVerificationDecision = {
+            // Only required for nominated partner
+            if (request.registration.isNominatedPartnerOrFirstInflightPartner(partner))
+              isEmailVerificationRequired(emailAddress.value, emailHasChanged)
+            else
+              Future.successful(false)
+          }
+
+          eventualEmailVerificationDecision.flatMap { isEmailVerificationRequired =>
+            if (!isEmailVerificationRequired)
+              updateAction(emailAddress).map { _ =>
+                FormAction.bindFromRequest match {
+                  case SaveAndContinue =>
+                    Redirect(onwardCall)
+                  case _ =>
+                    Redirect(dropoutCall)
+                }
+              }
+            else
+              throw new IllegalStateException("TODO We need to verify this address")
+          }
+        }
       )
 
   private def updateInflightPartner(

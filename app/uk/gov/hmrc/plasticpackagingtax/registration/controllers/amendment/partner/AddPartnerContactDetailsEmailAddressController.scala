@@ -21,6 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEn
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
@@ -32,7 +33,8 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
-  registrationUpdateService: AmendRegistrationUpdateService
+  registrationUpdateService: AmendRegistrationUpdateService,
+  val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
     extends PartnerEmailAddressControllerBase(authenticate = authenticate,
                                               journeyAction = journeyAction,

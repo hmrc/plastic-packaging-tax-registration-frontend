@@ -22,6 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
@@ -33,7 +34,8 @@ class PartnerEmailAddressController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
-  registrationUpdateService: NewRegistrationUpdateService
+  registrationUpdateService: NewRegistrationUpdateService,
+  val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
     extends PartnerEmailAddressControllerBase(authenticate = authenticate,
                                               journeyAction = journeyAction,

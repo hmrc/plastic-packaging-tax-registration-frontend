@@ -28,6 +28,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -40,13 +41,16 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     mockRegistrationConnector
   )
 
+  private val mockEmailVerificationService = mock[EmailVerificationService]
+
   private val controller =
     new PartnerEmailAddressController(authenticate = mockAuthAction,
                                       journeyAction = mockJourneyAction,
                                       registrationUpdateService =
                                         mockNewRegistrationUpdater,
                                       mcc = mcc,
-                                      page = page
+                                      page = page,
+                                      emailVerificationService = mockEmailVerificationService
     )
 
   override protected def beforeEach(): Unit = {
