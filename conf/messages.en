@@ -64,7 +64,7 @@ error.title = Sorry, there is a problem with the service
 error.detail1 = Try again later.
 error.detail2 = Your answers have been saved. They will be available for 30 days.
 
-startPage.title = Register for Plastic Packaging Tax (PPT) - Register for Plastic Packaging Tax - GOV.UK
+startPage.title = Register for Plastic Packaging Tax (PPT)
 startPage.heading = Register for Plastic Packaging Tax (PPT)
 startPage.description = Use this service to register a business for Plastic Packaging Tax (PPT) with HM Revenue & Customs.
 startPage.whoShouldRegister = Who should register
@@ -146,7 +146,7 @@ liabilityWeight.trailingBlankSpace.error = Weight must not have trailing spaces
 liabilityWeight.decimal.error = Weight must not include decimals
 
 liabilityExpectedWeightPage.sectionHeader = Eligibility check
-liabilityExpectedWeightPage.title = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022? - Register for Plastic Packaging Tax - GOV.UK
+liabilityExpectedWeightPage.title = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
 liabilityExpectedWeightPage.label = Expected weight, in kilograms
 liabilityExpectedWeightPage.question = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
 liabilityExpectedWeightPage.info = If you’re registering as a group, each member must expect to meet this threshold.
