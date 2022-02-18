@@ -110,11 +110,13 @@ abstract class PartnerTypeControllerBase(
                             .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                         case LIMITED_LIABILITY_PARTNERSHIP =>
                           getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                                                    grsCallbackUrl(partnerId)
+                                                    grsCallbackUrl(partnerId),
+                                                    businessVerification = false
                           ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                         case SCOTTISH_LIMITED_PARTNERSHIP =>
                           getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
-                                                    grsCallbackUrl(partnerId)
+                                                    grsCallbackUrl(partnerId),
+                                                    businessVerification = false
                           ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                         case SCOTTISH_PARTNERSHIP | GENERAL_PARTNERSHIP =>
                           redirectToPartnerNamePrompt(partnerId)

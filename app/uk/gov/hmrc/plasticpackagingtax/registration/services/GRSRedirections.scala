@@ -50,16 +50,18 @@ trait GRSRedirections extends I18nSupport {
   ): Future[String] =
     ukCompanyGrsConnector.createJourney(incorpEntityGrsCreateRequest(callbackUrl), grsUrl)
 
-  def getPartnershipRedirectUrl(grsUrl: String, callbackUrl: String)(implicit
-    request: JourneyRequest[AnyContent],
-    hc: HeaderCarrier
-  ): Future[String] =
+  def getPartnershipRedirectUrl(
+    grsUrl: String,
+    callbackUrl: String,
+    businessVerification: Boolean = true
+  )(implicit request: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[String] =
     partnershipGrsConnector.createJourney(
       PartnershipGrsCreateRequest(callbackUrl,
                                   Some(request2Messages(request)("service.name")),
                                   appConfig.serviceIdentifier,
                                   appConfig.signOutLink,
-                                  appConfig.grsAccessibilityStatementPath
+                                  appConfig.grsAccessibilityStatementPath,
+                                  businessVerificationCheck = businessVerification
       ),
       grsUrl
     )
@@ -73,7 +75,8 @@ trait GRSRedirections extends I18nSupport {
                                  Some(request2Messages(request)("service.name")),
                                  appConfig.serviceIdentifier,
                                  appConfig.signOutLink,
-                                 appConfig.grsAccessibilityStatementPath
+                                 appConfig.grsAccessibilityStatementPath,
+                                 businessVerificationCheck = false
       ),
       grsUrl
     )
