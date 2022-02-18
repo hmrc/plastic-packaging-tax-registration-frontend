@@ -236,6 +236,11 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                 )
             }
           }
+
+          "display the back to account page button" in {
+            val element = view.getElementById("return-to-account-page")
+            element must haveHref(realAppConfig.pptAccountUrl)
+          }
         }
       }
   }
