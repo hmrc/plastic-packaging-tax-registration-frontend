@@ -124,16 +124,16 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "user is authorised and registration contains a partial group member" in {
 
-        val registration: Registration =
+        val registrationWitPartialGroupMembers: Registration =
           createRegistrationWithGroupMember(groupMember,
                                             groupMember.copy(customerIdentification1 = "")
           )
 
-        val expectedReg: Registration = registration.copy(groupDetail =
+        val expectedReg: Registration = registrationWitPartialGroupMembers.copy(groupDetail =
           Some(GroupDetail(membersUnderGroupControl = Some(true), members = List(groupMember)))
         )
 
-        mockRegistrationFind(registration)
+        mockRegistrationFind(registrationWitPartialGroupMembers)
         when(mockRegistrationFilterService.removePartialGroupMembers(any())).thenReturn(expectedReg)
         mockRegistrationUpdate()
 
@@ -147,7 +147,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         verify(mockRegistrationConnector).update(
           ArgumentMatchers.eq(
-            expectedReg.copy(metaData = registration.metaData.copy(registrationReviewed = true))
+            expectedReg.copy(metaData = registrationWitPartialGroupMembers.metaData.copy(registrationReviewed = true))
           )
         )(any())
       }
