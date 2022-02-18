@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 class RegistrationGroupFilterService {
 

@@ -265,12 +265,13 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         verify(mockRegistrationConnector).update(
           ArgumentMatchers.eq(
             sanitisedReg.copy(metaData =
-              registrationRequest.metaData.copy(registrationReviewed = true)
+              registrationRequest.metaData.copy(registrationReviewed = false,
+                                                registrationCompleted = false
+              )
             )
           )
         )(any())
       }
-
     }
 
     "throw exceptions" when {
