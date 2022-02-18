@@ -20,11 +20,11 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Call, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Registration,
+  RegistrationUpdater
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,6 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait EmailVerificationActions {
 
   def emailVerificationService: EmailVerificationService
+  def registrationUpdater: RegistrationUpdater
 
   def isEmailVerificationRequired(email: String, isEmailChanged: String => Boolean)(implicit
     request: JourneyRequest[AnyContent],
@@ -43,7 +44,7 @@ trait EmailVerificationActions {
     else
       Future.successful(false)
 
-  def promptForRegistrationJourneyEmailVerificationCode(
+  def promptForEmailVerificationCode(
     request: JourneyRequest[AnyContent],
     email: EmailAddress,
     continueUrl: String,
@@ -57,30 +58,20 @@ trait EmailVerificationActions {
                                                   request.user.credId,
                                                   continueUrl
     ).map { journeyId =>
-      //journeyAction.updateLocalRegistration(updateProspectiveEmail(journeyId, email.value)) TODO
+      persistProspectiveEmailAddress(email, journeyId)
       Redirect(enterVerificationCodeCall)
     }
 
-  def promptForAmendmentJourneyEmailVerificationCode(
-    request: JourneyRequest[AnyContent],
-    email: EmailAddress,
-    continueUrl: String,
-    enterVerificationCodeCall: Call,
-    amendmentJourneyAction: AmendmentJourneyAction
-  )(implicit
+  private def persistProspectiveEmailAddress(email: EmailAddress, journeyId: String)(implicit
     journeyRequest: JourneyRequest[AnyContent],
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[Result] =
-    emailVerificationService.sendVerificationCode(email.value,
-                                                  request.user.credId,
-                                                  continueUrl
-    ).map { journeyId =>
-      amendmentJourneyAction.updateLocalRegistration(updateProspectiveEmail(journeyId, email.value))
-      Redirect(enterVerificationCodeCall)
-    }
+    hc: HeaderCarrier
+  ): Future[Registration] =
+    // By updating and persisting the entire registration; all the way back to ETMP in the case of an amendment
+    registrationUpdater.updateRegistration(
+      setProspectiveEmailOnRegistration(journeyId, email.value)
+    )
 
-  private def updateProspectiveEmail(
+  private def setProspectiveEmailOnRegistration(
     journeyId: String,
     updatedEmail: String
   ): Registration => Registration = {

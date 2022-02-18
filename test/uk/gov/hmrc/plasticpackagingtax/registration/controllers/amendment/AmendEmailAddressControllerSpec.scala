@@ -38,7 +38,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   JOURNEY_NOT_FOUND,
   TOO_MANY_ATTEMPTS
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
@@ -79,6 +82,7 @@ class AmendEmailAddressControllerSpec
   )
 
   private val mockEmailVerificationService = mock[EmailVerificationService]
+  private val mockRegistrationUpdater      = mock[AmendRegistrationUpdateService]
 
   private val pptReference = "XMPPT0000000123"
   private val sessionId    = "ABC"
@@ -119,7 +123,8 @@ class AmendEmailAddressControllerSpec
                                                      amendEmailPasscodePage,
                                                      amendEmailConfirmationPage,
                                                      amendEmailTooManyAttemptsPage,
-                                                     mockEmailVerificationService
+                                                     mockEmailVerificationService,
+                                                     mockRegistrationUpdater
     )
 
     "show page" when {

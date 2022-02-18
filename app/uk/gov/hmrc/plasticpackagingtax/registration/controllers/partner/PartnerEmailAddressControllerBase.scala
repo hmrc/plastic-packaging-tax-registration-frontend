@@ -25,7 +25,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   FormAction,
   SaveAndContinue
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -46,7 +45,7 @@ abstract class PartnerEmailAddressControllerBase(
   val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
-  registrationUpdater: RegistrationUpdater
+  val registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with EmailVerificationActions {
 
@@ -142,10 +141,10 @@ abstract class PartnerEmailAddressControllerBase(
                   }
                 }
               else
-                promptForRegistrationJourneyEmailVerificationCode(request,
-                                                                  emailAddress,
-                                                                  "/register-for-plastic-packaging-tax/amend-registration", // TODO what does continue URL mean?
-                                                                  routes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
+                promptForEmailVerificationCode(request,
+                                               emailAddress,
+                                               "/register-for-plastic-packaging-tax/amend-registration", // TODO what does continue URL mean?
+                                               routes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
                 )
           }
         }

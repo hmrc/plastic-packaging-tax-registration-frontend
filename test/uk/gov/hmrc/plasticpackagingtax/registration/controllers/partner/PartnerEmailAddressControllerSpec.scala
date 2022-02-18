@@ -123,7 +123,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       "user submits a valid email address for first partner and is prompted for email validation" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
-        //mockRegistrationUpdate()
+        mockRegistrationUpdate()
         when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
           Future.successful(false)
         )
@@ -140,7 +140,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           routes.PartnerEmailAddressController.confirmNewPartnerEmailCode().url
         )
         // TODO assert that the prospective email is been persisted
-        //modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress))
+        // modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress))
       }
 
       //"user submits a valid email address for non nominated partner and is not prompted for email validation"

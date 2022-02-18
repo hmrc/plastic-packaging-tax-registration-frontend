@@ -34,7 +34,7 @@ class PartnerEmailAddressController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
-  registrationUpdateService: NewRegistrationUpdateService,
+  val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
     extends PartnerEmailAddressControllerBase(authenticate = authenticate,

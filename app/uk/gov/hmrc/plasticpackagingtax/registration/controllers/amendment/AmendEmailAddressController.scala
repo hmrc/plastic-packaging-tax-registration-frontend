@@ -26,7 +26,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   INCORRECT_PASSCODE,
   TOO_MANY_ATTEMPTS
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
@@ -46,7 +49,8 @@ class AmendEmailAddressController @Inject() (
   emailPasscodePage: email_address_passcode_page,
   emailCorrectPasscodePage: email_address_passcode_confirmation_page,
   emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
-  val emailVerificationService: EmailVerificationService
+  val emailVerificationService: EmailVerificationService,
+  val registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) with EmailVerificationActions {
 
@@ -75,11 +79,11 @@ class AmendEmailAddressController @Inject() (
               isEmailVerificationRequired(email.value, isEmailChanged).flatMap {
                 case false => updateRegistration(updateEmail(email.value))
                 case true =>
-                  promptForAmendmentJourneyEmailVerificationCode(request,
-                                                                 email,
-                                                                 "/register-for-plastic-packaging-tax/amend-registration",
-                                                                 routes.AmendEmailAddressController.emailVerificationCode(),
-                                                                 amendmentJourneyAction
+                  promptForEmailVerificationCode(
+                    request,
+                    email,
+                    "/register-for-plastic-packaging-tax/amend-registration",
+                    routes.AmendEmailAddressController.emailVerificationCode()
                   )
               }
         )
