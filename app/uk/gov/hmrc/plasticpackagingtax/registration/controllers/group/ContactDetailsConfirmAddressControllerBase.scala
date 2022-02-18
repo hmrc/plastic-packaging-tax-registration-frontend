@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.RegistrationUpdater
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
@@ -40,7 +39,7 @@ abstract class ContactDetailsConfirmAddressControllerBase(
   mcc: MessagesControllerComponents,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with AddressLookupIntegration with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport {
 
   protected def doDisplayPage(memberId: String, backLink: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>

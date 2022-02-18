@@ -49,7 +49,7 @@ POST       /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.con
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationTypeNotSupportedController.onPageLoad()
 
 GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
-GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.alfCallback(id: Option[String])
+GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.addressCaptureCallback()
 GET        /edit-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.changeBusinessAddress()
 
 GET        /organisation-check-answers  uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.CheckAnswersController.displayPage()
@@ -230,7 +230,7 @@ GET        /amend-registration          uk.gov.hmrc.plasticpackagingtax.registra
 GET        /amend-registration-failed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.registrationUpdateFailed()
 
 GET        /amend-business-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.changeBusinessAddress()
-GET        /amend-registration-business-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.alfCallback(id: Option[String])
+GET        /amend-registration-business-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.addressCaptureCallback()
 
 GET        /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.contactName()
 POST       /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateContactName()
