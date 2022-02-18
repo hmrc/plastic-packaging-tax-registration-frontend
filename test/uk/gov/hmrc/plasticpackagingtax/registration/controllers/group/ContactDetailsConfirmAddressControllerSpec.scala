@@ -100,7 +100,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
           )
         )
-        val resp = controller.alfCallback(Some("123"), groupMember.id)(getRequest())
+        val resp = controller.addressCaptureCallback(Some("123"), groupMember.id)(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(
@@ -115,14 +115,14 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
     "throw MissingAddressIdException if return from address lookup is missing a journey id" in {
       intercept[MissingAddressIdException] {
-        await(controller.alfCallback(None, groupMember.id)(getRequest()))
+        await(controller.addressCaptureCallback(None, groupMember.id)(getRequest()))
       }
     }
 
     "throw IllegalStateException" when {
       "group member cannot be found in registration" in {
         intercept[IllegalStateException] {
-          await(controller.alfCallback(Some("123"), "XXX")(getRequest()))
+          await(controller.addressCaptureCallback(Some("123"), "XXX")(getRequest()))
         }
       }
     }

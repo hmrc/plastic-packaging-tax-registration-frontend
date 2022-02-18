@@ -17,12 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -31,26 +30,27 @@ import scala.concurrent.ExecutionContext
 class AddGroupMemberContactDetailsConfirmAddressController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
+  addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsConfirmAddressControllerBase(authenticate,
                                                        journeyAction,
-                                                       addressLookupFrontendConnector,
-                                                       appConfig,
+                                                       addressCaptureService,
                                                        mcc,
                                                        registrationUpdater
     ) {
 
-  def displayPage(memberId: String): Action[AnyContent] = doDisplayPage(memberId)
+  def displayPage(memberId: String): Action[AnyContent] =
+    doDisplayPage(memberId,
+                  routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId)
+    )
 
-  def alfCallback(id: Option[String], memberId: String): Action[AnyContent] =
-    doAlfCallback(id, memberId)
+  def addressCaptureCallback(memberId: String): Action[AnyContent] =
+    onAddressCaptureCallback(memberId)
 
-  override protected def getAlfCallback(memberId: String): Call =
-    routes.AddGroupMemberContactDetailsConfirmAddressController.alfCallback(None, memberId)
+  override protected def getAddressCaptureCallback(memberId: String): Call =
+    routes.AddGroupMemberContactDetailsConfirmAddressController.addressCaptureCallback(memberId)
 
   override protected def getSuccessfulRedirect(memberId: String): Call =
     routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId)

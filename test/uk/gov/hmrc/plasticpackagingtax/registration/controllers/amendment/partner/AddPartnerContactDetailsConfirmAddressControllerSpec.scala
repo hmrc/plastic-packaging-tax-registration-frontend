@@ -131,7 +131,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
             _ => partnershipRegistrationWithInflightPartner
           )(any(), any())
         ).thenReturn(Future.successful(partnershipRegistrationWithInflightPartner))
-        val resp = controller.alfCallback(Some("123"))(getRequest())
+        val resp = controller.addressCaptureCallback(Some("123"))(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(

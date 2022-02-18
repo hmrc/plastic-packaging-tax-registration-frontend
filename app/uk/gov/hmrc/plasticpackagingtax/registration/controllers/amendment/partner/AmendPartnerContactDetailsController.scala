@@ -23,7 +23,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   AmendmentController,
   routes => amendmentRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress,JobTitle, PhoneNumber}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
+  EmailAddress,
+  JobTitle,
+  PhoneNumber
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration

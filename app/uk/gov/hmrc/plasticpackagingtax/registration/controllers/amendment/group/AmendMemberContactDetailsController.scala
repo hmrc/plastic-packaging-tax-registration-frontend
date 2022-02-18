@@ -244,7 +244,7 @@ class AmendMemberContactDetailsController @Inject() (
           registration.groupDetail.map(
             _.withUpdatedOrNewMember(
               registration.findMember(memberId).map(
-                _.withUpdatedGroupMemberAddress(updatedAddress)
+                _.withUpdatedGroupMemberAddress(Some(updatedAddress))
               ).getOrElse(throw new IllegalStateException("Expected group member absent"))
             )
           )
