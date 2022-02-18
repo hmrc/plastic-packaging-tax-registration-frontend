@@ -31,13 +31,24 @@
 @(partner: Partner)(implicit request: JourneyRequest[_], messages: Messages)
 
 @partnerContactRows() = @{
-    Seq(
-        viewUtils.summaryListRow("reviewRegistration.partner.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.PartnerContactNameController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("reviewRegistration.partner.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("reviewRegistration.partner.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), Some(partnerRoutes.PartnerPhoneNumberController.displayExistingPartner(partner.id))),
-        viewUtils.summaryListRow("reviewRegistration.partner.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)),
-            Some(partnerRoutes.PartnerContactAddressController.captureExistingPartner(partner.id))),
-    )
+    request.registration.isNominatedPartner(Some(partner.id)) match {
+        case Some(true) =>     Seq(
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.PartnerContactNameController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.jobTitle", partner.contactDetails.flatMap(_.jobTitle), Some(partnerRoutes.PartnerJobTitleController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), Some(partnerRoutes.PartnerPhoneNumberController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)),
+                Some(partnerRoutes.PartnerContactAddressController.captureExistingPartner(partner.id))),
+        )
+        case _ =>     Seq(
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.name", partner.contactDetails.flatMap(_.name), Some(partnerRoutes.PartnerContactNameController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.email", partner.contactDetails.flatMap(_.emailAddress), Some(partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.phone", partner.contactDetails.flatMap(_.phoneNumber), Some(partnerRoutes.PartnerPhoneNumberController.displayExistingPartner(partner.id))),
+            viewUtils.summaryListRow("reviewRegistration.partner.contact.address", partner.contactDetails.flatMap(_.address.map(viewUtils.extractAddress)),
+                Some(partnerRoutes.PartnerContactAddressController.captureExistingPartner(partner.id))),
+        )
+    }
+
 }
 
 @ukCompanySummary() = @{

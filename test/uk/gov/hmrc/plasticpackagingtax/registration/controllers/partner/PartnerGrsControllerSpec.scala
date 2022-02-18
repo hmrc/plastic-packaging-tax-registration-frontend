@@ -38,6 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnerPartnershipDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
   NOT_SUBSCRIBED,
   SUBSCRIBED
@@ -49,14 +50,18 @@ class PartnerGrsControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
+
   private val controller =
     new PartnerGrsController(authenticate = mockAuthAction,
                              mockJourneyAction,
-                             mockRegistrationConnector,
                              mockUkCompanyGrsConnector,
                              mockSoleTraderGrsConnector,
                              mockPartnershipGrsConnector,
                              mockRegisteredSocietyGrsConnector,
+                             mockNewRegistrationUpdater,
                              mockSubscriptionsConnector,
                              mcc
     )(ec)

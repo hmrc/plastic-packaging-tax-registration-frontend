@@ -17,9 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -54,8 +53,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-
-import java.util
 
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]

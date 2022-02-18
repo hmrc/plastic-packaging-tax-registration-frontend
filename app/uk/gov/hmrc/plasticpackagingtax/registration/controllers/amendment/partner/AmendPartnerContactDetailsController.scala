@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   AmendmentController,
   routes => amendmentRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, PhoneNumber}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress,JobTitle, PhoneNumber}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -37,6 +37,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.services.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
+  partner_job_title_page,
   partner_member_name_page,
   partner_phone_number_page
 }
@@ -52,6 +53,7 @@ class AmendPartnerContactDetailsController @Inject() (
   contactNamePage: partner_member_name_page,
   contactEmailPage: partner_email_address_page,
   contactPhoneNumberPage: partner_phone_number_page,
+  jobTitlePage: partner_job_title_page,
   addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) {
@@ -266,6 +268,63 @@ class AmendPartnerContactDetailsController @Inject() (
           )
       }
     }
+
+  def jobTitle(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      val partner = getPartner(partnerId)
+      val form = JobTitle.form().fill(
+        JobTitle(value =
+          partner.contactDetails.flatMap(_.jobTitle).getOrElse(
+            throw new IllegalStateException("Nominated Partner job title absent")
+          )
+        )
+      )
+
+      Ok(buildJobTitlePage(form, partner, isNominated(partnerId)))
+    }
+
+  def updateJobTitle(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      JobTitle.form()
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[JobTitle]) =>
+            Future.successful(
+              BadRequest(
+                buildJobTitlePage(formWithErrors, getPartner(partnerId), isNominated(partnerId))
+              )
+            ),
+          jobTitle =>
+            updateRegistration(
+              { registration: Registration =>
+                registration.withUpdatedPartner(partnerId,
+                                                partner =>
+                                                  partner.copy(contactDetails =
+                                                    partner.contactDetails.map(
+                                                      _.copy(jobTitle =
+                                                        Some(jobTitle.value)
+                                                      )
+                                                    )
+                                                  )
+                )
+              },
+              successfulRedirect(partnerId)
+            )
+        )
+    }
+
+  private def buildJobTitlePage(form: Form[JobTitle], partner: Partner, isNominated: Boolean)(
+    implicit request: JourneyRequest[_]
+  ) =
+    jobTitlePage(form = form,
+                 contactName = partner.name,
+                 backLink =
+                   if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
+                   else
+                     routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
+                 updateCall =
+                   routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
+    )
 
   private def getPartner(partnerId: String)(implicit request: JourneyRequest[_]) =
     request.registration.findPartner(partnerId).getOrElse(

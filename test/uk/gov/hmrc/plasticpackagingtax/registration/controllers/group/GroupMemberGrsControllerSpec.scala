@@ -59,7 +59,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
     mockRegistrationConnector
   )
 

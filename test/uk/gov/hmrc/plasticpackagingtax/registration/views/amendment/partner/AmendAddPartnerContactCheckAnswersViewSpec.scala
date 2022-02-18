@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.partner
+package uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.partner
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.{
+  routes => partnerRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_check_answers_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
+class AmendAddPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val page           = inject[partner_check_answers_page]
+  private val page           = inject[amend_add_partner_contact_check_answers_page]
   private val countryService = inject[CountryService]
 
   private val limitedCompanyPartner = aLimitedCompanyPartner()
@@ -41,7 +43,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   private def createView(partner: Partner): Document =
     page(partner)(journeyRequest, messages)
 
-  "Partner Check Answers View" should {
+  "Amend Add Partner Check Answers View" should {
 
     val view = createView(limitedCompanyPartner)
 
@@ -55,7 +57,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
       view.getElementById("back-link") must haveHref(
-        commonRoutes.TaskListController.displayPage().url
+        partnerRoutes.AddPartnerContactDetailsConfirmAddressController.displayPage().url
       )
     }
 
@@ -135,10 +137,6 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
          ),
          (messages("partner.check.contact.name"),
           soleTraderPartner.contactDetails.get.name.get,
-          None: Option[Call]
-         ),
-         (messages("partner.check.contact.jobTitle"),
-          soleTraderPartner.contactDetails.get.jobTitle.get,
           None: Option[Call]
          ),
          (messages("partner.check.contact.email"),

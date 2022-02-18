@@ -16,13 +16,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_phone_number_page
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -32,32 +31,28 @@ class AddPartnerContactDetailsTelephoneNumberController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
-  page: partner_phone_number_page
+  page: partner_phone_number_page,
+  registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends PartnerPhoneNumberControllerBase(authenticate = authenticate,
+                                             journeyAction = journeyAction,
+                                             mcc = mcc,
+                                             page = page,
+                                             registrationUpdater = registrationUpdateService
+    ) {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok(
-        page(
-          PhoneNumber.form().fill(
-            PhoneNumber(
-              request.registration.inflightPartner.flatMap(
-                _.contactDetails.flatMap(_.phoneNumber)
-              ).getOrElse("")
-            )
-          ),
-          routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-          routes.AddPartnerContactDetailsTelephoneNumberController.submit(),
-          "Contact Name"
-        )
-      )
-    }
+    doDisplay(None,
+              routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+              routes.AddPartnerContactDetailsTelephoneNumberController.submit()
+    )
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      // TODO: validate input and update inflight partner
-      Redirect(routes.AddPartnerContactDetailsConfirmAddressController.displayPage())
-    }
+    doSubmit(None,
+             routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+             routes.AddPartnerContactDetailsTelephoneNumberController.submit(),
+             routes.AddPartnerContactDetailsConfirmAddressController.displayPage(),
+             routes.PartnersListController.displayPage()
+    )
 
 }

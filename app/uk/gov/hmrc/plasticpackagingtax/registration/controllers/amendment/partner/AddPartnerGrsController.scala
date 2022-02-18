@@ -16,11 +16,18 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.i18n.I18nSupport
 import play.api.mvc.MessagesControllerComponents
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
+  PartnershipGrsConnector,
+  RegisteredSocietyGrsConnector,
+  SoleTraderGrsConnector,
+  UkCompanyGrsConnector
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerGrsControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -29,14 +36,26 @@ import scala.concurrent.ExecutionContext
 class AddPartnerGrsController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  soleTraderGrsConnector: SoleTraderGrsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+  registrationUpdater: AmendRegistrationUpdateService,
+  subscriptionsConnector: SubscriptionsConnector,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends PartnerGrsControllerBase(authenticate = authenticate,
+                                     journeyAction = journeyAction,
+                                     ukCompanyGrsConnector = ukCompanyGrsConnector,
+                                     soleTraderGrsConnector = soleTraderGrsConnector,
+                                     partnershipGrsConnector = partnershipGrsConnector,
+                                     registeredSocietyGrsConnector = registeredSocietyGrsConnector,
+                                     subscriptionsConnector = subscriptionsConnector,
+                                     registrationUpdater = registrationUpdater,
+                                     mcc = mcc
+    ) {
 
-  def grsCallback(journeyId: String) =
-    (authenticate andThen journeyAction) { implicit request =>
-      // TODO: obtain captured GRS data and update inflight partner
-      Redirect(routes.AddPartnerContactDetailsNameController.displayPage())
-    }
+  def grsCallbackNewPartner(journeyId: String) =
+    grsCallback(journeyId, None, routes.AddPartnerContactDetailsNameController.displayPage)
 
 }

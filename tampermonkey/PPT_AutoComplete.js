@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.8
+// @version      15.9
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -48,7 +48,7 @@ function setup() {
     panel.appendChild(createQuickButton())
     panel.appendChild(createAutoCompleteCheckbox())
     panel.appendChild(createDropDown("Journey", ["Single","Group"]))
-    panel.appendChild(createDropDown("Organisation", ["UKCompany","OverseasUK"]))
+    panel.appendChild(createDropDown("Organisation", ["UKCompany","Partnership","OverseasUK"]))
     panel.appendChild(createGRSFeatureFlagsLink())
     panel.appendChild(document.createElement('br'))
     panel.appendChild(createSoleTraderGRSFeatureFlagsLink())
@@ -242,25 +242,32 @@ const registrationPage = () => {
 const organisationType = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/organisation-type')) {
 
-        document.getElementById('answer').checked = true
-
         if(optionSelected("Organisation", "OverseasUK")){
             if(optionSelected("Journey", "Single")){
                 document.getElementById('answer-2').checked = true
             } else {
-                document.getElementById('answer-4').checked = true
+                document.getElementById('answer-3').checked = true
             }
+        } else if(optionSelected("Organisation", "Partnership")){
+            document.getElementById('answer-4').checked = true
+        } else {
+            document.getElementById('answer').checked = true
         }
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
 
+const partnership = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partnership$')) {
+        document.getElementById('answer').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const partnershipName = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/partnership-name')) {
-
         document.getElementById('value').value = 'Partners in Plastic'
-
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -423,7 +430,11 @@ const grsPartnershipCheckYourAnswers = () => {
 const partnerOrganisationList = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/partnership-partners-list')) {
 
-        document.getElementById('addOrganisation-2').checked = true
+        if (document.getElementById('main-content').getElementsByTagName('li').length >= 2) {
+            document.getElementById('addPartner-2').checked = true
+        } else {
+            document.getElementById('addPartner').checked = true
+        }
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -438,7 +449,7 @@ const partnerOrganisation = () => {
 }
 
 const partnerContactName = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-contact-name')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/.*partner-contact-name')) {
 
         document.getElementById('firstName').value = "James"
         document.getElementById('lastName').value = "Sparrow"
@@ -446,8 +457,17 @@ const partnerContactName = () => {
     }
 }
 
+const partnerJobTitle = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-job-title')) {
+        document.getElementById('value').value = "Director"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const partnerContactEmailAddress = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-email-address')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-email-address')
+        || currentPageIs('/register-for-plastic-packaging-tax/amend-partner-email')
+        || currentPageIs('/register-for-plastic-packaging-tax/amend-add-partner-contact-email')) {
 
         document.getElementById('value').value = "test@test.com"
         document.getElementsByClassName('govuk-button')[0].click()
@@ -455,7 +475,9 @@ const partnerContactEmailAddress = () => {
 }
 
 const partnerContactPhoneNumber = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-phone-number')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partner-phone-number')
+    || currentPageIs('/register-for-plastic-packaging-tax/amend-partner-phone-number')
+    || currentPageIs('/register-for-plastic-packaging-tax/amend-add-partner-contact-telephone')) {
 
         document.getElementById('value').value = "07712345677"
         document.getElementsByClassName('govuk-button')[0].click()
@@ -463,7 +485,7 @@ const partnerContactPhoneNumber = () => {
 }
 
 const partnerContactCheckAnswers = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partner-check-answers')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/.*partner-check-answers')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -508,7 +530,7 @@ const liabilityExpectedWeight = () => {
 const registrationType = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/registration-type')) {
 
-        if(optionSelected("Journey", "Single")){
+        if(optionSelected("Journey", "Single")||optionSelected("Journey", "Partnership")){
             document.getElementById('value').checked = true
         } else {
             document.getElementById('value-2').checked = true
@@ -797,12 +819,14 @@ function completeJourney(manualJourney) {
     partnerOrganisationList()
     partnerOrganisation()
     partnerContactName()
+    partnerJobTitle()
     partnerContactEmailAddress()
     partnerContactPhoneNumber()
     partnerContactCheckAnswers()
 
     // Business Details
     organisationType()
+    partnership()
     partnershipName()
     confirmBusinessAddress()
 

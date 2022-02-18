@@ -27,6 +27,7 @@ import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -35,11 +36,15 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
   private val page = mock[partner_phone_number_page]
   private val mcc  = stubMessagesControllerComponents()
 
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
+    mockRegistrationConnector
+  )
+
   private val controller =
     new PartnerPhoneNumberController(authenticate = mockAuthAction,
                                      journeyAction = mockJourneyAction,
-                                     registrationConnector =
-                                       mockRegistrationConnector,
+                                     registrationUpdateService =
+                                       mockNewRegistrationUpdater,
                                      mcc = mcc,
                                      page = page
     )

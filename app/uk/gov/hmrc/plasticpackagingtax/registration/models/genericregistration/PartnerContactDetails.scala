@@ -24,7 +24,8 @@ case class PartnerContactDetails(
   lastName: Option[String] = None,
   emailAddress: Option[String] = None,
   phoneNumber: Option[String] = None,
-  address: Option[Address] = None
+  address: Option[Address] = None,
+  jobTitle: Option[String] = None
 ) {
 
   lazy val name: Option[String] =

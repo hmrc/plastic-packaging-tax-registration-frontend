@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper

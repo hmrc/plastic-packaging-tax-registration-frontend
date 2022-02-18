@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   PartnershipGrsConnector,
@@ -25,44 +25,53 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   UkCompanyGrsConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerNameControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_name_page
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class AddPartnerOrganisationDetailsTypeController @Inject() (
+class AddPartnerNameController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
+  override val appConfig: AppConfig,
+  ukCompanyGrsConnector: UkCompanyGrsConnector,
+  soleTraderGrsConnector: SoleTraderGrsConnector,
+  partnershipGrsConnector: PartnershipGrsConnector,
+  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   registrationUpdater: AmendRegistrationUpdateService,
   mcc: MessagesControllerComponents,
-  page: partner_type,
-  val appConfig: AppConfig,
-  val soleTraderGrsConnector: SoleTraderGrsConnector,
-  val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  val partnershipGrsConnector: PartnershipGrsConnector
-)(implicit ec: ExecutionContext)
-    extends PartnerTypeControllerBase(authenticate,
+  page: partner_name_page
+)(implicit val executionContext: ExecutionContext)
+    extends PartnerNameControllerBase(authenticate = authenticate,
                                       journeyAction = journeyAction,
-                                      mcc,
-                                      page,
-                                      registrationUpdater
+                                      ukCompanyGrsConnector = ukCompanyGrsConnector,
+                                      soleTraderGrsConnector = soleTraderGrsConnector,
+                                      partnershipGrsConnector = partnershipGrsConnector,
+                                      registeredSocietyGrsConnector = registeredSocietyGrsConnector,
+                                      registrationUpdater = registrationUpdater,
+                                      mcc = mcc,
+                                      appConfig = appConfig,
+                                      page = page
     ) {
 
   def displayPage(): Action[AnyContent] =
-    doDisplayPage(submitCall = routes.AddPartnerOrganisationDetailsTypeController.submit())
+    doDisplay(None,
+              routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+              routes.AddPartnerNameController.submit()
+    )
 
   def submit(): Action[AnyContent] =
-    doSubmit(submitCall = routes.AddPartnerOrganisationDetailsTypeController.submit())
+    doSubmit(None,
+             routes.AddPartnerOrganisationDetailsTypeController.displayPage(),
+             routes.AddPartnerNameController.submit(),
+             routes.PartnersListController.displayPage()
+    )
 
   override def grsCallbackUrl(partnerId: Option[String]): String =
     appConfig.amendPartnerGrsCallbackUrl()
-
-  override def redirectToPartnerNamePrompt(existingPartnerId: Option[String]): Future[Result] =
-    Future.successful(Redirect(routes.AddPartnerNameController.displayPage()))
 
 }
