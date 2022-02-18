@@ -75,7 +75,7 @@ class LiabilityExpectedWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display liability weight info" in {
-      view.getElementsByClass("govuk-body").text() must include(
+      view.getElementById("answer-hint").text() must include(
         messages("liabilityExpectedWeightPage.info")
       )
     }
