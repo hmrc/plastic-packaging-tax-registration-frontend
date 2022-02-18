@@ -17,8 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK}
@@ -29,7 +30,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  IncorpEntityGrsCreateRequest,
+  PartnershipGrsCreateRequest,
+  SoleTraderGrsCreateRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  NewRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -171,12 +180,43 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             partnershipDetails._1 match {
               case SOLE_TRADER =>
                 redirectLocation(result) mustBe Some("http://test/redirect/soletrader")
+                val soleTraderGrsCreateRequest: ArgumentCaptor[SoleTraderGrsCreateRequest] =
+                  ArgumentCaptor.forClass(classOf[SoleTraderGrsCreateRequest])
+                val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+                verify(mockSoleTraderGrsConnector).createJourney(
+                  soleTraderGrsCreateRequest.capture(),
+                  grsUrlCaptor.capture()
+                )(any(), any())
+                soleTraderGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
                 redirectLocation(result) mustBe Some("http://test/redirect/ukCompany")
+                val incorpEntityGrsCreateRequest: ArgumentCaptor[IncorpEntityGrsCreateRequest] =
+                  ArgumentCaptor.forClass(classOf[IncorpEntityGrsCreateRequest])
+                val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+                verify(mockUkCompanyGrsConnector).createJourney(
+                  incorpEntityGrsCreateRequest.capture(),
+                  grsUrlCaptor.capture()
+                )(any(), any())
+                incorpEntityGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case REGISTERED_SOCIETY =>
                 redirectLocation(result) mustBe Some("http://test/redirect/registeredSociety")
+                val incorpEntityGrsCreateRequest: ArgumentCaptor[IncorpEntityGrsCreateRequest] =
+                  ArgumentCaptor.forClass(classOf[IncorpEntityGrsCreateRequest])
+                val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+                verify(mockRegisteredSocietyGrsConnector).createJourney(
+                  incorpEntityGrsCreateRequest.capture(),
+                  grsUrlCaptor.capture()
+                )(any(), any())
+                incorpEntityGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case LIMITED_LIABILITY_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
                 redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+                val partnerGrsCreateRequest: ArgumentCaptor[PartnershipGrsCreateRequest] =
+                  ArgumentCaptor.forClass(classOf[PartnershipGrsCreateRequest])
+                val grsUrlCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+                verify(mockPartnershipGrsConnector).createJourney(partnerGrsCreateRequest.capture(),
+                                                                  grsUrlCaptor.capture()
+                )(any(), any())
+                partnerGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case _ =>
                 redirectLocation(result) mustBe Some(
                   orgRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
