@@ -129,7 +129,7 @@ class PartnerContactAddressControllerSpec
       "receive ALF callback for new partner" in {
         mockRegistrationFind(partnershipRegistrationWithInflightPartner)
 
-        val resp = controller.alfCallbackNewPartner(Some("123"))(getRequest())
+        val resp = controller.addressCaptureCallbackNewPartner(Some("123"))(getRequest())
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(
@@ -145,7 +145,9 @@ class PartnerContactAddressControllerSpec
         mockRegistrationFind(partnershipRegistrationWithExistingPartner)
 
         val resp =
-          controller.alfCallbackExistingPartner(nominatedPartnerId, Some("123"))(getRequest())
+          controller.addressCaptureCallbackExistingPartner(nominatedPartnerId, Some("123"))(
+            getRequest()
+          )
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(

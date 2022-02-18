@@ -68,4 +68,9 @@ class UserDataRepository @Inject() (
   def deleteData[A: Writes](id: String, key: String): Future[Unit] =
     delete[A](id)(DataKey(key))
 
+  def updateData[A: Reads: Writes](key: String, updater: A => A)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[Unit] =
+    getData(key).map(data => data.map(data => putData(key, updater(data))))
+
 }
