@@ -70,10 +70,6 @@
 
     @formHelper(action = pptRoutes.LiabilityWeightExpectedController.submit(), 'autoComplete -> "off") {
 
-        @paragraph(
-            content = Html(messages("liabilityExpectedWeightPage.info"))
-        )
-
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -82,7 +78,7 @@
                     isPageHeading = true
                 ))
             )),
-            hint = None,
+            hint = Some(Hint(content = Text(messages("liabilityExpectedWeightPage.info")))),
             idPrefix = Some("answer"),
             name = "answer",
             items = Seq(
