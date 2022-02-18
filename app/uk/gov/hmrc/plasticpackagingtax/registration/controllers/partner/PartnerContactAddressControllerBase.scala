@@ -55,10 +55,10 @@ abstract class PartnerContactAddressControllerBase(
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(backLink = backLink.url,
                              successLink = captureAddressCallback.url,
-                             alfHeadingsPrefix = "addressLookup.partner",
+                             alfHeadingsPrefix = "addressLookup.contact",
                              entityName =
                                getPartner(partnerId).flatMap(_.contactDetails.flatMap(_.name)),
-                             pptHeadingKey = "addressLookup.partner.lookup.heading",
+                             pptHeadingKey = "addressLookup.contact.lookup.heading",
                              pptHintKey = None
         )
       ).map(redirect => Redirect(redirect))

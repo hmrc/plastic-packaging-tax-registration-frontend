@@ -20,6 +20,8 @@ import play.api.data.Form
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendmentController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -27,8 +29,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  AddressCaptureService
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
   member_email_address_page,
   member_name_page,
@@ -43,11 +47,10 @@ class AmendMemberContactDetailsController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   mcc: MessagesControllerComponents,
   amendmentJourneyAction: AmendmentJourneyAction,
+  addressCaptureService: AddressCaptureService,
   contactNamePage: member_name_page,
   phoneNumberPage: member_phone_number_page,
-  emailAddressPage: member_email_address_page,
-  addressPage: address_page,
-  countryService: CountryService
+  emailAddressPage: member_email_address_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) {
 
@@ -227,24 +230,31 @@ class AmendMemberContactDetailsController @Inject() (
     )
 
   def address(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
-      request.registration.findMember(memberId).flatMap(_.contactDetails).flatMap(_.address) match {
-        case Some(address) =>
-          Ok(buildAddressPage(Address.form().fill(address), memberId))
-        case _ =>
-          Ok(buildAddressPage(Address.form(), memberId))
-      }
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      addressCaptureService.initAddressCapture(
+        AddressCaptureConfig(backLink = amendRoutes.AmendRegistrationController.displayPage().url,
+                             successLink = routes.AmendMemberContactDetailsController.updateAddress(
+                               memberId
+                             ).url,
+                             alfHeadingsPrefix = "addressLookup.contact",
+                             entityName = request.registration.findMember(memberId).flatMap(
+                               _.contactDetails.map(_.groupMemberName)
+                             ),
+                             pptHeadingKey = "primaryContactDetails.address.title",
+                             pptHintKey = None
+        )
+      ).map(redirect => Redirect(redirect))
     }
 
   def updateAddress(memberId: String): Action[AnyContent] = {
 
-    def updateAddress(updatedAddress: Address): Registration => Registration = {
+    def updateAddress(updatedAddress: Option[Address]): Registration => Registration = {
       registration: Registration =>
         registration.copy(groupDetail =
           registration.groupDetail.map(
             _.withUpdatedOrNewMember(
               registration.findMember(memberId).map(
-                _.withUpdatedGroupMemberAddress(Some(updatedAddress))
+                _.withUpdatedGroupMemberAddress(updatedAddress)
               ).getOrElse(throw new IllegalStateException("Expected group member absent"))
             )
           )
@@ -252,23 +262,11 @@ class AmendMemberContactDetailsController @Inject() (
     }
 
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      Address.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[Address]) =>
-            Future.successful(BadRequest(buildAddressPage(formWithErrors, memberId))),
-          address => updateGroupMemberRegistration(updateAddress(address), memberId)
-        )
+      addressCaptureService.getCapturedAddress().flatMap {
+        capturedAddress => updateGroupMemberRegistration(updateAddress(capturedAddress), memberId)
+      }
     }
-  }
 
-  private def buildAddressPage(form: Form[Address], memberId: String)(implicit
-    request: JourneyRequest[AnyContent]
-  ) =
-    addressPage(form,
-                countryService.getAll(),
-                routes.ContactDetailsCheckAnswersController.displayPage(memberId),
-                routes.AmendMemberContactDetailsController.updateAddress(memberId)
-    )
+  }
 
 }
