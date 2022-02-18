@@ -80,7 +80,8 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardsCall: Call,
-    dropoutCall: Call
+    dropoutCall: Call,
+    emailVerificationContinueUrl: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       def updateAction(emailAddress: EmailAddress): Future[Registration] =
@@ -89,7 +90,14 @@ abstract class PartnerEmailAddressControllerBase(
           case _               => updateInflightPartner(emailAddress)
         }
       getPartner(partnerId).map { partner =>
-        handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, updateAction)
+        handleSubmission(partner,
+                         backCall,
+                         submitCall,
+                         onwardsCall,
+                         dropoutCall,
+                         updateAction,
+                         emailVerificationContinueUrl
+        )
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected existing partner missing"))
       )
@@ -101,7 +109,8 @@ abstract class PartnerEmailAddressControllerBase(
     submitCall: Call,
     onwardCall: Call,
     dropoutCall: Call,
-    updateAction: EmailAddress => Future[Registration]
+    updateAction: EmailAddress => Future[Registration],
+    emailVerificationContinueUrl: Call // TODO what does continue URL mean? Why are existing users supplying a string rather than a route?
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     EmailAddress.form()
       .bindFromRequest()
@@ -143,7 +152,7 @@ abstract class PartnerEmailAddressControllerBase(
               else
                 promptForEmailVerificationCode(request,
                                                emailAddress,
-                                               "/register-for-plastic-packaging-tax/amend-registration", // TODO what does continue URL mean?
+                                               emailVerificationContinueUrl.url, // TODO why is every one else treating this as a String not a route?
                                                routes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
                 )
           }
