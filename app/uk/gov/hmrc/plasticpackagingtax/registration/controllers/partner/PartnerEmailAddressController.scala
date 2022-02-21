@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commo
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
@@ -34,6 +35,7 @@ class PartnerEmailAddressController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
+  email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
   val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
@@ -79,11 +81,38 @@ class PartnerEmailAddressController @Inject() (
   def confirmNewPartnerEmailCode(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
+        Ok(
+          email_address_passcode_confirmation_page(
+            routes.PartnerEmailAddressController.displayNewPartner(),
+            routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
+          )
+        )
+
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def checkNewPartnerEmailVerificationCode(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.inflightPartner.map { partner =>
         Ok("TODO")
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
   def confirmExistingPartnerEmailCode(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      getPartner(Some(partnerId)).map { partner =>
+        Ok(
+          email_address_passcode_confirmation_page(
+            routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+            routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
+              partnerId
+            )
+          )
+        )
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def checkExistingPartnerEmailVerificationCode(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       getPartner(Some(partnerId)).map { partner =>
         Ok("TODO")
