@@ -112,11 +112,6 @@ class AmendEmailAddressController @Inject() (
       Ok(buildEmailVerificationCodePage(EmailAddressPasscode.form(), getProspectiveEmail()))
     }
 
-  private def getProspectiveEmail()(implicit req: JourneyRequest[AnyContent]) =
-    req.registration.primaryContactDetails.prospectiveEmail.getOrElse(
-      throw new IllegalStateException("Prospective email expected in registration")
-    )
-
   def checkEmailVerificationCode(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
       EmailAddressPasscode.form()

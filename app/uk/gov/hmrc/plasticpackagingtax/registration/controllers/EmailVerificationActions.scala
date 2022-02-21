@@ -62,6 +62,11 @@ trait EmailVerificationActions {
       Redirect(enterVerificationCodeCall)
     }
 
+  protected def getProspectiveEmail()(implicit req: JourneyRequest[AnyContent]): String =
+    req.registration.primaryContactDetails.prospectiveEmail.getOrElse(
+      throw new IllegalStateException("Prospective email expected in registration")
+    )
+
   private def persistProspectiveEmailAddress(email: EmailAddress, journeyId: String)(implicit
     journeyRequest: JourneyRequest[AnyContent],
     hc: HeaderCarrier
