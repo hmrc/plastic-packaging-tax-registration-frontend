@@ -121,16 +121,23 @@ class AmendEmailAddressController @Inject() (
             Future.successful(
               BadRequest(buildEmailVerificationCodePage(formWithErrors, getProspectiveEmail()))
             ),
-          verificationCode => checkEmailVerificationCode(verificationCode.value)
+          verificationCode =>
+            handleEmailVerificationCode(
+              verificationCode.value,
+              routes.AmendEmailAddressController.emailVerified(),
+              routes.AmendEmailAddressController.emailVerificationTooManyAttempts()
+            )
         )
     }
 
-  private def checkEmailVerificationCode(
-    verificationCode: String
+  private def handleEmailVerificationCode(
+    verificationCode: String,
+    successCall: Call,
+    tooManyAttemptsCall: Call
   )(implicit journeyRequest: JourneyRequest[AnyContent]): Future[Result] =
     checkVerificationCode(verificationCode).map {
       case COMPLETE =>
-        Redirect(routes.AmendEmailAddressController.emailVerified())
+        Redirect(successCall)
       case INCORRECT_PASSCODE =>
         BadRequest(
           buildEmailVerificationCodePage(
@@ -139,7 +146,7 @@ class AmendEmailAddressController @Inject() (
           )
         )
       case TOO_MANY_ATTEMPTS =>
-        Redirect(routes.AmendEmailAddressController.emailVerificationTooManyAttempts())
+        Redirect(tooManyAttemptsCall)
       case _ =>
         BadRequest(
           buildEmailVerificationCodePage(
