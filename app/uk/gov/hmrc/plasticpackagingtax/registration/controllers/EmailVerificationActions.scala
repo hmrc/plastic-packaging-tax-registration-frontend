@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.mvc.Results.Redirect
+import play.api.mvc.Results.{BadRequest, Redirect}
 import play.api.mvc.{AnyContent, Call, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,6 +27,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddressPasscode
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
+  COMPLETE,
+  INCORRECT_PASSCODE,
+  TOO_MANY_ATTEMPTS
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration,
   RegistrationUpdater
@@ -69,6 +74,45 @@ trait EmailVerificationActions {
     ).map { emailVerificationJourneyId =>
       persistProspectiveEmailAddress(email, emailVerificationJourneyId)
       Redirect(enterVerificationCodeCall)
+    }
+
+  def handleEmailVerificationCodeSubmission(
+    verificationCode: String,
+    successCall: Call,
+    tooManyAttemptsCall: Call,
+    backCall: Call,
+    submitCall: Call
+  )(implicit
+    journeyRequest: JourneyRequest[AnyContent],
+    messages: Messages,
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Result] =
+    checkVerificationCode(verificationCode).map {
+      case COMPLETE =>
+        Redirect(successCall)
+      case INCORRECT_PASSCODE =>
+        BadRequest(
+          renderEnterEmailVerificationCodePage(
+            EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
+            getProspectiveEmail(),
+            backCall,
+            submitCall
+          )
+        )
+      case TOO_MANY_ATTEMPTS =>
+        Redirect(tooManyAttemptsCall)
+      case _ =>
+        BadRequest(
+          renderEnterEmailVerificationCodePage(
+            EmailAddressPasscode.form().withError("journeyNotFound",
+                                                  "Passcode for email address is not found"
+            ),
+            getProspectiveEmail(),
+            backCall,
+            submitCall
+          )
+        )
     }
 
   def checkVerificationCode(verificationCode: String)(implicit

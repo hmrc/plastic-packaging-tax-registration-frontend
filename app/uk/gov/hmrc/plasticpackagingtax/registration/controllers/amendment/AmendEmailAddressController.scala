@@ -21,11 +21,6 @@ import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.EmailVerificationActions
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  TOO_MANY_ATTEMPTS
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   AmendRegistrationUpdateService,
   Registration
@@ -125,46 +120,12 @@ class AmendEmailAddressController @Inject() (
               BadRequest(buildEmailVerificationCodePage(formWithErrors, getProspectiveEmail()))
             ),
           verificationCode =>
-            handleEmailVerificationCode(verificationCode.value,
-                                        routes.AmendEmailAddressController.emailVerified(),
-                                        routes.AmendEmailAddressController.emailVerificationTooManyAttempts(),
-                                        backCall,
-                                        submitCall
+            handleEmailVerificationCodeSubmission(verificationCode.value,
+                                                  routes.AmendEmailAddressController.emailVerified(),
+                                                  routes.AmendEmailAddressController.emailVerificationTooManyAttempts(),
+                                                  backCall,
+                                                  submitCall
             )
-        )
-    }
-
-  private def handleEmailVerificationCode(
-    verificationCode: String,
-    successCall: Call,
-    tooManyAttemptsCall: Call,
-    backCall: Call,
-    submitCall: Call
-  )(implicit journeyRequest: JourneyRequest[AnyContent]): Future[Result] =
-    checkVerificationCode(verificationCode).map {
-      case COMPLETE =>
-        Redirect(successCall)
-      case INCORRECT_PASSCODE =>
-        BadRequest(
-          renderEnterEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
-            getProspectiveEmail(),
-            backCall,
-            submitCall
-          )
-        )
-      case TOO_MANY_ATTEMPTS =>
-        Redirect(tooManyAttemptsCall)
-      case _ =>
-        BadRequest(
-          renderEnterEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("journeyNotFound",
-                                                  "Passcode for email address is not found"
-            ),
-            getProspectiveEmail(),
-            backCall,
-            submitCall
-          )
         )
     }
 

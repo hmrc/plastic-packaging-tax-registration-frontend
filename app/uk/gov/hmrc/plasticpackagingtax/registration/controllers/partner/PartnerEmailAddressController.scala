@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
   email_address_passcode_confirmation_page,
@@ -115,10 +115,25 @@ class PartnerEmailAddressController @Inject() (
                 )
               ),
             verificationCode =>
-              Future.successful(Ok("TODO")) // checkEmailVerificationCode(verificationCode.value)
+              handleEmailVerificationCodeSubmission(verificationCode.value,
+                                                    routes.PartnerEmailAddressController.emailVerified(),
+                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttempts(),
+                                                    routes.PartnerEmailAddressController.displayNewPartner(),
+                                                    routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
+              )
           )
 
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def emailVerified(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok("TODO")
+    }
+
+  def emailVerificationTooManyAttempts(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok("TODO")
     }
 
   def confirmExistingPartnerEmailCode(partnerId: String): Action[AnyContent] =
