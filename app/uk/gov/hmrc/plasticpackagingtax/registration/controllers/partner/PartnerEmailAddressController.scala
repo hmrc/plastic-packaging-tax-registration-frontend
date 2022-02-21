@@ -40,7 +40,7 @@ class PartnerEmailAddressController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
-  email_address_passcode_page: email_address_passcode_page,
+  val emailPasscodePage: email_address_passcode_page,
   email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
   val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
@@ -125,14 +125,12 @@ class PartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       getPartner(Some(partnerId)).map { partner =>
         Ok(
-          email_address_passcode_page(EmailAddressPasscode.form(),
-                                      Some(getProspectiveEmail()),
-                                      routes.PartnerEmailAddressController.displayExistingPartner(
-                                        partnerId
-                                      ),
-                                      routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
-                                        partnerId
-                                      )
+          emailPasscodePage(EmailAddressPasscode.form(),
+                            Some(getProspectiveEmail()),
+                            routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+                            routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
+                              partnerId
+                            )
           )
         )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
@@ -144,13 +142,5 @@ class PartnerEmailAddressController @Inject() (
         Ok("TODO")
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
-
-  private def renderEnterEmailVerificationCodePage(
-    form: Form[EmailAddressPasscode],
-    prospectiveEmailAddress: String,
-    backCall: Call,
-    submitCall: Call
-  )(implicit request: JourneyRequest[AnyContent]) =
-    email_address_passcode_page(form, Some(prospectiveEmailAddress), backCall, submitCall)
 
 }

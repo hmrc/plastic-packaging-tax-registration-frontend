@@ -16,10 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Call, Result}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
+  EmailAddress,
+  EmailAddressPasscode
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration,
@@ -27,6 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,6 +41,7 @@ trait EmailVerificationActions {
 
   def emailVerificationService: EmailVerificationService
   def registrationUpdater: RegistrationUpdater
+  def emailPasscodePage: email_address_passcode_page
 
   def isEmailVerificationRequired(email: String, isEmailChanged: String => Boolean)(implicit
     request: JourneyRequest[AnyContent],
@@ -102,5 +110,16 @@ trait EmailVerificationActions {
     req.registration.primaryContactDetails.journeyId.getOrElse(
       throw new IllegalStateException("Journey id expected in registration")
     )
+
+  protected def renderEnterEmailVerificationCodePage(
+    form: Form[EmailAddressPasscode],
+    prospectiveEmailAddress: String,
+    backCall: Call,
+    submitCall: Call
+  )(implicit
+    request: JourneyRequest[AnyContent],
+    messages: Messages
+  ): HtmlFormat.Appendable = // TODO will end up private
+    emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall)
 
 }

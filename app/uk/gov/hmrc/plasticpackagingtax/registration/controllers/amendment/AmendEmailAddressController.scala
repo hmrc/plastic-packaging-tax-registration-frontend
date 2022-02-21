@@ -46,7 +46,7 @@ class AmendEmailAddressController @Inject() (
   mcc: MessagesControllerComponents,
   amendmentJourneyAction: AmendmentJourneyAction,
   emailPage: email_address_page,
-  emailPasscodePage: email_address_passcode_page,
+  val emailPasscodePage: email_address_passcode_page,
   emailCorrectPasscodePage: email_address_passcode_confirmation_page,
   emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   val emailVerificationService: EmailVerificationService,
@@ -161,10 +161,11 @@ class AmendEmailAddressController @Inject() (
   private def buildEmailVerificationCodePage(form: Form[EmailAddressPasscode], email: String)(
     implicit request: JourneyRequest[AnyContent]
   ) =
-    emailPasscodePage(form,
-                      Some(email),
-                      routes.AmendEmailAddressController.email(),
-                      routes.AmendEmailAddressController.checkEmailVerificationCode()
+    renderEnterEmailVerificationCodePage(
+      form,
+      email,
+      routes.AmendEmailAddressController.email(),
+      routes.AmendEmailAddressController.checkEmailVerificationCode()
     )
 
   def emailVerified(): Action[AnyContent] =

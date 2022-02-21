@@ -61,7 +61,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
                                         mockNewRegistrationUpdater,
                                       mcc = mcc,
                                       page = page,
-                                      email_address_passcode_page = email_address_passcode_page,
+                                      emailPasscodePage = email_address_passcode_page,
                                       email_address_passcode_confirmation_page =
                                         email_address_passcode_confirmation_page,
                                       emailVerificationService = mockEmailVerificationService
