@@ -55,7 +55,13 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
              routes.AddPartnerContactDetailsEmailAddressController.submit(),
              routes.AddPartnerContactDetailsTelephoneNumberController.displayPage(),
              routes.PartnersListController.displayPage(),
-             routes.AddPartnerContactDetailsEmailAddressController.displayPage()
+             routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+             routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode()
     )
+
+  def confirmEmailCode(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok("TODO")
+    }
 
 }

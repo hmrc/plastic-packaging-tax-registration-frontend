@@ -81,7 +81,8 @@ abstract class PartnerEmailAddressControllerBase(
     submitCall: Call,
     onwardsCall: Call,
     dropoutCall: Call,
-    emailVerificationContinueUrl: Call
+    emailVerificationContinueUrl: Call,
+    confirmEmailAddressCall: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       def updateAction(emailAddress: EmailAddress): Future[Registration] =
@@ -96,7 +97,8 @@ abstract class PartnerEmailAddressControllerBase(
                          onwardsCall,
                          dropoutCall,
                          updateAction,
-                         emailVerificationContinueUrl
+                         emailVerificationContinueUrl,
+                         confirmEmailAddressCall
         )
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected existing partner missing"))
@@ -110,7 +112,8 @@ abstract class PartnerEmailAddressControllerBase(
     onwardCall: Call,
     dropoutCall: Call,
     updateAction: EmailAddress => Future[Registration],
-    emailVerificationContinueUrl: Call // TODO what does continue URL mean? Why are existing users supplying a string rather than a route?
+    emailVerificationContinueUrl: Call, // TODO what does continue URL mean? Why are existing users supplying a string rather than a route?
+    confirmEmailAddressCall: Call
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     EmailAddress.form()
       .bindFromRequest()
@@ -150,10 +153,11 @@ abstract class PartnerEmailAddressControllerBase(
                   }
                 }
               else
-                promptForEmailVerificationCode(request,
-                                               emailAddress,
-                                               emailVerificationContinueUrl.url, // TODO why is every one else treating this as a String not a route?
-                                               routes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
+                promptForEmailVerificationCode(
+                  request,
+                  emailAddress,
+                  emailVerificationContinueUrl.url, // TODO why is every one else treating this as a String not a route?
+                  confirmEmailAddressCall
                 )
           }
         }
@@ -189,7 +193,7 @@ abstract class PartnerEmailAddressControllerBase(
       )
     }
 
-  private def getPartner(
+  protected def getPartner( // TODO back to private
     partnerId: Option[String]
   )(implicit request: JourneyRequest[_]): Option[Partner] =
     partnerId match {

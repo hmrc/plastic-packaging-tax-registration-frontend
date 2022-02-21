@@ -62,7 +62,8 @@ class PartnerEmailAddressController @Inject() (
              partnerRoutes.PartnerEmailAddressController.submitNewPartner(),
              partnerRoutes.PartnerPhoneNumberController.displayNewPartner(),
              commonRoutes.TaskListController.displayPage(),
-             partnerRoutes.PartnerContactNameController.displayNewPartner()
+             partnerRoutes.PartnerContactNameController.displayNewPartner(),
+             partnerRoutes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
     )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
@@ -71,12 +72,20 @@ class PartnerEmailAddressController @Inject() (
              partnerRoutes.PartnerEmailAddressController.submitExistingPartner(partnerId),
              routes.PartnerPhoneNumberController.displayExistingPartner(partnerId),
              partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId),
-             partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
+             partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+             partnerRoutes.PartnerEmailAddressController.confirmExistingPartnerEmailCode(partnerId)
     )
 
   def confirmNewPartnerEmailCode(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
+        Ok("TODO")
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def confirmExistingPartnerEmailCode(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      getPartner(Some(partnerId)).map { partner =>
         Ok("TODO")
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
