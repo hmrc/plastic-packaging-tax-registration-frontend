@@ -411,13 +411,13 @@ grs.failure.heading = Sorry, there is a problem with the service.
 grs.failure.detail.1 = Try again later.
 grs.failure.detail.2 = Your answers have not been saved. When the service is available, you will have to start again.
 
-businessEntityVerification.failure.title = Sorry, your business could not be verified
-businessEntityVerification.failure.heading = Sorry, your business could not be verified
-businessEntityVerification.failure.detail = You can try again after 24 hours.
+businessEntityVerification.failure.title = The details you’ve entered do not match our records
+businessEntityVerification.failure.heading = The details you’ve entered do not match our records
+businessEntityVerification.failure.detail = Check your company’s Corporation Tax records and try again after 24 hours.
 
-soleTraderEntityVerification.failure.title = Sorry, your business could not be verified
-soleTraderEntityVerification.failure.heading = Sorry, your business could not be verified
-soleTraderEntityVerification.failure.detail = You can try again after 24 hours.
+soleTraderEntityVerification.failure.title = The details you’ve entered do not match our records
+soleTraderEntityVerification.failure.heading = The details you’ve entered do not match our records
+soleTraderEntityVerification.failure.detail = Check your Self Assessment records and try again after 24 hours.
 
 duplicateSubscription.title = Your organisation is already registered
 duplicateSubscription.detail = Someone in {0} has already registered for Plastic Packaging Tax (PPT).
@@ -433,16 +433,16 @@ pptHelpline.openingTimes.title = Opening times:
 pptHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 8pm
 pptHelpline.openingTimes.detail.2 = Closed Easter Sunday, Christmas Day, Boxing Day and New Year’s Day.
 
-corpTaxHelpline.intro = Contact the corporation tax helpline if you have any questions.
+corpTaxHelpline.intro = If you’re still having problems, contact the Corporation Tax helpline.
 corpTaxHelpline.telephone.title = Telephone:
 corpTaxHelpline.telephone.detail = 0300 200 3410
 corpTaxHelpline.telephone.outsideUK.title = Outside UK:
-corpTaxHelpline.telephone.outsideUK.detail = +44 151 268 0571
+corpTaxHelpline.telephone.outsideUK.detail = +44 161 931 9070
 corpTaxHelpline.openingTimes.title = Opening times:
 corpTaxHelpline.openingTimes.detail.1 = Monday to Friday: 8am to 6pm
 corpTaxHelpline.openingTimes.detail.2 = Closed on weekends and bank holidays.
 
-selfAssessmentHelpline.intro = Contact the Self Assessment helpline if you have any questions.
+selfAssessmentHelpline.intro = If you’re still having problems, contact the Self Assessment helpline.
 selfAssessmentHelpline.telephone.title = Telephone:
 selfAssessmentHelpline.telephone.detail = 0300 200 3410
 selfAssessmentHelpline.telephone.outsideUK.title = Outside UK:
