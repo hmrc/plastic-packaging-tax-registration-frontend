@@ -27,8 +27,16 @@ case class GroupMemberContactDetails(
   address: Option[Address] = None
 ) {
   val groupMemberName = s"$firstName $lastName"
+
+  def isValid: Boolean =
+    firstName.trim.nonEmpty &&
+      lastName.trim.nonEmpty &&
+      phoneNumber.exists(_.trim.nonEmpty) &&
+      email.exists(_.trim.nonEmpty)
+
 }
 
 object GroupMemberContactDetails {
   implicit val format: OFormat[GroupMemberContactDetails] = Json.format[GroupMemberContactDetails]
+
 }

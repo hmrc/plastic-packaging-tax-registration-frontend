@@ -30,7 +30,14 @@ case class Address(
   townOrCity: String,
   postCode: Option[String],
   countryCode: String = "GB"
-)
+) {
+
+  def isValid: Boolean =
+    addressLine1.trim.nonEmpty &&
+      addressLine2.exists(_.trim.nonEmpty) &&
+      countryCode.trim.nonEmpty
+
+}
 
 object Address extends CommonFormValidators {
   implicit val format: OFormat[Address] = Json.format[Address]

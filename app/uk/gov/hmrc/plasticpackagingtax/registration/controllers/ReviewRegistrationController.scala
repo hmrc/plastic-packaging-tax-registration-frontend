@@ -32,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateOrUpdateResponseFailure,
   SubscriptionCreateOrUpdateResponseSuccess
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFilterService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -48,7 +49,8 @@ class ReviewRegistrationController @Inject() (
   override val registrationConnector: RegistrationConnector,
   auditor: Auditor,
   startRegistrationController: StartRegistrationController,
-  reviewRegistrationPage: review_registration_page
+  reviewRegistrationPage: review_registration_page,
+  registrationFilterService: RegistrationGroupFilterService
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -60,25 +62,9 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      if (request.registration.isCheckAndSubmitReady)
-        markRegistrationAsReviewed().map { _ =>
-          Ok(
-            reviewRegistrationPage(registration = request.registration,
-                                   liabilityStartLink = startRegistrationController.startLink
-            )
-          )
-        }
+      if (request.registration.isCheckAndSubmitReady) reviewRegistration()
       else
-        Future(Redirect(routes.TaskListController.displayPage()))
-    }
-
-  private def markRegistrationAsReviewed()(implicit
-    req: JourneyRequest[AnyContent]
-  ): Future[Either[ServiceError, Registration]] =
-    update { registration =>
-      val updatedMetaData =
-        registration.metaData.copy(registrationReviewed = true)
-      registration.copy(metaData = updatedMetaData)
+        Future.successful(Redirect(routes.TaskListController.displayPage()))
     }
 
   def submit(): Action[AnyContent] =
@@ -155,5 +141,47 @@ class ReviewRegistrationController @Inject() (
     registration.organisationDetails.businessPartnerId.getOrElse(
       throw new IllegalStateException("Safe Id is required for a Subscription create")
     )
+
+  private def reviewRegistration()(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
+
+    val reg: Registration = removePartialGroupMembersIfGroup(request.registration)
+
+    if (reg.isFirstGroupMember)
+      markAsCannotYetStarted(reg).map { _ =>
+        Redirect(routes.TaskListController.displayPage())
+      }
+    else
+      markRegistrationAsReviewed(reg).map(
+        _ =>
+          Ok(
+            reviewRegistrationPage(registration = reg,
+                                   liabilityStartLink = startRegistrationController.startLink
+            )
+          )
+      )
+  }
+
+  private def markRegistrationAsReviewed(
+    registration: Registration
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { _ =>
+      val updatedMetaData =
+        registration.metaData.copy(registrationReviewed = true)
+      registration.copy(metaData = updatedMetaData)
+    }
+
+  private def markAsCannotYetStarted(
+    registration: Registration
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { _ =>
+      val updatedMetaData =
+        registration.metaData.copy(registrationReviewed = false, registrationCompleted = false)
+      registration.copy(metaData = updatedMetaData)
+    }
+
+  private def removePartialGroupMembersIfGroup(registration: Registration): Registration =
+    if (registration.isGroup)
+      registrationFilterService.removePartialGroupMembers(registration)
+    else registration
 
 }
