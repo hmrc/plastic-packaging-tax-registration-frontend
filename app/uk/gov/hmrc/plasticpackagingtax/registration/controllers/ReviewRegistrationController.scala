@@ -62,27 +62,9 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      if (request.registration.isCheckAndSubmitReady) reviewRegistration
+      if (request.registration.isCheckAndSubmitReady) reviewRegistration()
       else
         Future.successful(Redirect(routes.TaskListController.displayPage()))
-    }
-
-  private def markRegistrationAsReviewed(
-    registration: Registration
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    update { _ =>
-      val updatedMetaData =
-        registration.metaData.copy(registrationReviewed = true)
-      registration.copy(metaData = updatedMetaData)
-    }
-
-  private def markAsCannotYetStarted(
-    registration: Registration
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    update { _ =>
-      val updatedMetaData =
-        registration.metaData.copy(registrationReviewed = false, registrationCompleted = false)
-      registration.copy(metaData = updatedMetaData)
     }
 
   def submit(): Action[AnyContent] =
@@ -160,7 +142,7 @@ class ReviewRegistrationController @Inject() (
       throw new IllegalStateException("Safe Id is required for a Subscription create")
     )
 
-  private def reviewRegistration(implicit request: JourneyRequest[AnyContent]) = {
+  private def reviewRegistration()(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
 
     val reg: Registration = removePartialGroupMembersIfGroup(request.registration)
 
@@ -178,6 +160,24 @@ class ReviewRegistrationController @Inject() (
           )
       )
   }
+
+  private def markRegistrationAsReviewed(
+    registration: Registration
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { _ =>
+      val updatedMetaData =
+        registration.metaData.copy(registrationReviewed = true)
+      registration.copy(metaData = updatedMetaData)
+    }
+
+  private def markAsCannotYetStarted(
+    registration: Registration
+  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { _ =>
+      val updatedMetaData =
+        registration.metaData.copy(registrationReviewed = false, registrationCompleted = false)
+      registration.copy(metaData = updatedMetaData)
+    }
 
   private def removePartialGroupMembersIfGroup(registration: Registration): Registration =
     if (registration.isGroup)
