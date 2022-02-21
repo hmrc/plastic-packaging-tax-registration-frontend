@@ -116,22 +116,21 @@ class PartnerEmailAddressController @Inject() (
               ),
             verificationCode =>
               handleEmailVerificationCodeSubmission(verificationCode.value,
-                                                    routes.PartnerEmailAddressController.emailVerified(),
-                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttempts(),
+                                                    routes.PartnerEmailAddressController.emailVerifiedNewPartner(),
+                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttemptsNewPartner(),
                                                     routes.PartnerEmailAddressController.displayNewPartner(),
                                                     routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
               )
           )
-
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  def emailVerified(): Action[AnyContent] =
+  def emailVerifiedNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok("TODO")
     }
 
-  def emailVerificationTooManyAttempts(): Action[AnyContent] =
+  def emailVerificationTooManyAttemptsNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok("TODO")
     }
@@ -152,10 +151,52 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def checkExistingPartnerEmailVerificationCode(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen journeyAction).async { implicit request =>
       getPartner(Some(partnerId)).map { partner =>
-        Ok("TODO")
+        EmailAddressPasscode.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[EmailAddressPasscode]) =>
+              Future.successful(
+                BadRequest(
+                  renderEnterEmailVerificationCodePage(formWithErrors,
+                                                       getProspectiveEmail(),
+                                                       routes.PartnerEmailAddressController.displayExistingPartner(
+                                                         partnerId
+                                                       ),
+                                                       routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
+                                                         partnerId
+                                                       )
+                  )
+                )
+              ),
+            verificationCode =>
+              handleEmailVerificationCodeSubmission(verificationCode.value,
+                                                    routes.PartnerEmailAddressController.emailVerifiedExistingPartner(
+                                                      partnerId
+                                                    ),
+                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttemptsExistingPartner(
+                                                      partnerId
+                                                    ),
+                                                    routes.PartnerEmailAddressController.displayExistingPartner(
+                                                      partnerId
+                                                    ),
+                                                    routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
+                                                      partnerId
+                                                    )
+              )
+          )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def emailVerifiedExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok("TODO")
+    }
+
+  def emailVerificationTooManyAttemptsExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      Ok("TODO")
     }
 
 }
