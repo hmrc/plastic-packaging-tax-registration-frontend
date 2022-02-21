@@ -54,6 +54,9 @@ class AmendEmailAddressController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) with EmailVerificationActions {
 
+  private val backCall   = routes.AmendEmailAddressController.email()
+  private val submitCall = routes.AmendEmailAddressController.checkEmailVerificationCode()
+
   def email(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       request.registration.primaryContactDetails.email match {
@@ -122,10 +125,11 @@ class AmendEmailAddressController @Inject() (
               BadRequest(buildEmailVerificationCodePage(formWithErrors, getProspectiveEmail()))
             ),
           verificationCode =>
-            handleEmailVerificationCode(
-              verificationCode.value,
-              routes.AmendEmailAddressController.emailVerified(),
-              routes.AmendEmailAddressController.emailVerificationTooManyAttempts()
+            handleEmailVerificationCode(verificationCode.value,
+                                        routes.AmendEmailAddressController.emailVerified(),
+                                        routes.AmendEmailAddressController.emailVerificationTooManyAttempts(),
+                                        backCall,
+                                        submitCall
             )
         )
     }
@@ -133,27 +137,33 @@ class AmendEmailAddressController @Inject() (
   private def handleEmailVerificationCode(
     verificationCode: String,
     successCall: Call,
-    tooManyAttemptsCall: Call
+    tooManyAttemptsCall: Call,
+    backCall: Call,
+    submitCall: Call
   )(implicit journeyRequest: JourneyRequest[AnyContent]): Future[Result] =
     checkVerificationCode(verificationCode).map {
       case COMPLETE =>
         Redirect(successCall)
       case INCORRECT_PASSCODE =>
         BadRequest(
-          buildEmailVerificationCodePage(
+          renderEnterEmailVerificationCodePage(
             EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
-            getProspectiveEmail()
+            getProspectiveEmail(),
+            backCall,
+            submitCall
           )
         )
       case TOO_MANY_ATTEMPTS =>
         Redirect(tooManyAttemptsCall)
       case _ =>
         BadRequest(
-          buildEmailVerificationCodePage(
+          renderEnterEmailVerificationCodePage(
             EmailAddressPasscode.form().withError("journeyNotFound",
                                                   "Passcode for email address is not found"
             ),
-            getProspectiveEmail()
+            getProspectiveEmail(),
+            backCall,
+            submitCall
           )
         )
     }
@@ -161,12 +171,7 @@ class AmendEmailAddressController @Inject() (
   private def buildEmailVerificationCodePage(form: Form[EmailAddressPasscode], email: String)(
     implicit request: JourneyRequest[AnyContent]
   ) =
-    renderEnterEmailVerificationCodePage(
-      form,
-      email,
-      routes.AmendEmailAddressController.email(),
-      routes.AmendEmailAddressController.checkEmailVerificationCode()
-    )
+    renderEnterEmailVerificationCodePage(form, email, backCall, submitCall)
 
   def emailVerified(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
