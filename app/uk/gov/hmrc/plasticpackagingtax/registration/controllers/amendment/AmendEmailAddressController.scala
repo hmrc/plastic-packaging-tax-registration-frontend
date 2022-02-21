@@ -128,10 +128,7 @@ class AmendEmailAddressController @Inject() (
   private def checkEmailVerificationCode(
     verificationCode: String
   )(implicit journeyRequest: JourneyRequest[AnyContent]): Future[Result] =
-    emailVerificationService.checkVerificationCode(verificationCode,
-                                                   getProspectiveEmail(),
-                                                   getJourneyId()
-    ).map {
+    checkEmailVerificationCode(verificationCode).map {
       case COMPLETE =>
         Redirect(routes.AmendEmailAddressController.emailVerified())
       case INCORRECT_PASSCODE =>
@@ -153,11 +150,6 @@ class AmendEmailAddressController @Inject() (
           )
         )
     }
-
-  private def getJourneyId()(implicit req: JourneyRequest[AnyContent]) =
-    req.registration.primaryContactDetails.journeyId.getOrElse(
-      throw new IllegalStateException("Journey id expected in registration")
-    )
 
   private def buildEmailVerificationCodePage(form: Form[EmailAddressPasscode], email: String)(
     implicit request: JourneyRequest[AnyContent]

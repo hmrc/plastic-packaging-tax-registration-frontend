@@ -20,6 +20,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Call, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration,
   RegistrationUpdater
@@ -62,6 +63,15 @@ trait EmailVerificationActions {
       Redirect(enterVerificationCodeCall)
     }
 
+  def checkEmailVerificationCode(verificationCode: String)(implicit
+    req: JourneyRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[EmailVerificationJourneyStatus.Value] =
+    emailVerificationService.checkVerificationCode(verificationCode,
+                                                   getProspectiveEmail(),
+                                                   getJourneyId()
+    )
+
   protected def getProspectiveEmail()(implicit req: JourneyRequest[AnyContent]): String =
     req.registration.primaryContactDetails.prospectiveEmail.getOrElse(
       throw new IllegalStateException("Prospective email expected in registration")
@@ -87,5 +97,12 @@ trait EmailVerificationActions {
         )
       )
   }
+
+  private def getJourneyId()(implicit
+    req: JourneyRequest[AnyContent]
+  ) = // TODO what type of journey id is this?
+    req.registration.primaryContactDetails.journeyId.getOrElse(
+      throw new IllegalStateException("Journey id expected in registration")
+    )
 
 }
