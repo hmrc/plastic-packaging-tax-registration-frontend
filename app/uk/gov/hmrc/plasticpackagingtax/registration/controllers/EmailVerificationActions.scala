@@ -58,18 +58,18 @@ trait EmailVerificationActions {
     emailVerificationService.sendVerificationCode(email.value,
                                                   request.user.credId,
                                                   continueUrl
-    ).map { journeyId =>
-      persistProspectiveEmailAddress(email, journeyId)
+    ).map { emailVerificationJourneyId =>
+      persistProspectiveEmailAddress(email, emailVerificationJourneyId)
       Redirect(enterVerificationCodeCall)
     }
 
-  def checkEmailVerificationCode(verificationCode: String)(implicit
+  def checkVerificationCode(verificationCode: String)(implicit
     req: JourneyRequest[AnyContent],
     hc: HeaderCarrier
   ): Future[EmailVerificationJourneyStatus.Value] =
     emailVerificationService.checkVerificationCode(verificationCode,
                                                    getProspectiveEmail(),
-                                                   getJourneyId()
+                                                   getEmailVerificationJourneyId()
     )
 
   protected def getProspectiveEmail()(implicit req: JourneyRequest[AnyContent]): String =
@@ -77,30 +77,28 @@ trait EmailVerificationActions {
       throw new IllegalStateException("Prospective email expected in registration")
     )
 
-  private def persistProspectiveEmailAddress(email: EmailAddress, journeyId: String)(implicit
-    journeyRequest: JourneyRequest[AnyContent],
-    hc: HeaderCarrier
-  ): Future[Registration] =
+  private def persistProspectiveEmailAddress(
+    email: EmailAddress,
+    emailVerificationJourneyId: String
+  )(implicit journeyRequest: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[Registration] =
     // By updating and persisting the entire registration; all the way back to ETMP in the case of an amendment
     registrationUpdater.updateRegistration(
-      setProspectiveEmailOnRegistration(journeyId, email.value)
+      setProspectiveEmailOnRegistration(email.value, emailVerificationJourneyId)
     )
 
   private def setProspectiveEmailOnRegistration(
-    journeyId: String,
-    updatedEmail: String
-  ): Registration => Registration = {
+    prospectiveEmail: String,
+    emailVerificationJourneyId: String
+  ) = {
     registration: Registration =>
       registration.copy(primaryContactDetails =
-        registration.primaryContactDetails.copy(journeyId = Some(journeyId),
-                                                prospectiveEmail = Some(updatedEmail)
+        registration.primaryContactDetails.copy(journeyId = Some(emailVerificationJourneyId),
+                                                prospectiveEmail = Some(prospectiveEmail)
         )
       )
   }
 
-  private def getJourneyId()(implicit
-    req: JourneyRequest[AnyContent]
-  ) = // TODO what type of journey id is this?
+  private def getEmailVerificationJourneyId()(implicit req: JourneyRequest[AnyContent]) =
     req.registration.primaryContactDetails.journeyId.getOrElse(
       throw new IllegalStateException("Journey id expected in registration")
     )

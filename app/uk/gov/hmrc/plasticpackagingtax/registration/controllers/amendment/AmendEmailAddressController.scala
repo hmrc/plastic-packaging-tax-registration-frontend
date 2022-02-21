@@ -128,7 +128,7 @@ class AmendEmailAddressController @Inject() (
   private def checkEmailVerificationCode(
     verificationCode: String
   )(implicit journeyRequest: JourneyRequest[AnyContent]): Future[Result] =
-    checkEmailVerificationCode(verificationCode).map {
+    checkVerificationCode(verificationCode).map {
       case COMPLETE =>
         Redirect(routes.AmendEmailAddressController.emailVerified())
       case INCORRECT_PASSCODE =>
