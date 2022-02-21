@@ -22,7 +22,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActi
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
+  Partner,
+  PartnerContactDetails
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  NewRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
@@ -126,8 +133,14 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def emailVerifiedNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+    (authenticate andThen journeyAction).async { implicit request =>
+      request.registration.inflightPartner.map { partner =>
+        registrationUpdater.updateRegistration(
+          updatePartnersEmail(partner, getProspectiveEmail())
+        ).map { _ =>
+          Redirect(routes.PartnerPhoneNumberController.displayNewPartner())
+        }
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
   def emailVerificationTooManyAttemptsNewPartner(): Action[AnyContent] =
@@ -190,13 +203,34 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def emailVerifiedExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+    (authenticate andThen journeyAction).async { implicit request =>
+      getPartner(Some(partnerId)).map { partner =>
+        registrationUpdater.updateRegistration(
+          updatePartnersEmail(partner, getProspectiveEmail())
+        ).map { _ =>
+          Redirect(routes.PartnerPhoneNumberController.displayNewPartner())
+        }
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
   def emailVerificationTooManyAttemptsExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok("TODO")
     }
+
+  private def updatePartnersEmail(
+    partner: Partner,
+    updatedEmail: String
+  ): Registration => Registration = {
+    registration: Registration =>
+      val withEmailAddress = {
+        val updatedContactDetails =
+          partner.contactDetails.getOrElse(PartnerContactDetails()).copy(emailAddress =
+            Some(updatedEmail)
+          )
+        partner.copy(contactDetails = Some(updatedContactDetails))
+      }
+      registration.withInflightPartner(Some(withEmailAddress))
+  }
 
 }
