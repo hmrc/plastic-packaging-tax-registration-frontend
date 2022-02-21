@@ -16,18 +16,23 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
+import play.api.data.Form
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
+  email_address_passcode_page
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerEmailAddressController @Inject() (
@@ -35,6 +40,7 @@ class PartnerEmailAddressController @Inject() (
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
+  email_address_passcode_page: email_address_passcode_page,
   email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
   val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
@@ -82,9 +88,10 @@ class PartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { partner =>
         Ok(
-          email_address_passcode_confirmation_page(
-            routes.PartnerEmailAddressController.displayNewPartner(),
-            routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
+          renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
+                                               getProspectiveEmail(),
+                                               routes.PartnerEmailAddressController.displayNewPartner(),
+                                               routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
           )
         )
 
@@ -92,9 +99,25 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def checkNewPartnerEmailVerificationCode(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
-        Ok("TODO")
+        EmailAddressPasscode.form()
+          .bindFromRequest()
+          .fold(
+            (formWithErrors: Form[EmailAddressPasscode]) =>
+              Future.successful(
+                BadRequest(
+                  renderEnterEmailVerificationCodePage(formWithErrors,
+                                                       getProspectiveEmail(),
+                                                       routes.PartnerEmailAddressController.displayNewPartner(),
+                                                       routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
+                  )
+                )
+              ),
+            verificationCode =>
+              Future.successful(Ok("TODO")) // checkEmailVerificationCode(verificationCode.value)
+          )
+
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
@@ -102,11 +125,14 @@ class PartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       getPartner(Some(partnerId)).map { partner =>
         Ok(
-          email_address_passcode_confirmation_page(
-            routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
-            routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
-              partnerId
-            )
+          email_address_passcode_page(EmailAddressPasscode.form(),
+                                      Some(getProspectiveEmail()),
+                                      routes.PartnerEmailAddressController.displayExistingPartner(
+                                        partnerId
+                                      ),
+                                      routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
+                                        partnerId
+                                      )
           )
         )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
@@ -118,5 +144,13 @@ class PartnerEmailAddressController @Inject() (
         Ok("TODO")
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
+
+  private def renderEnterEmailVerificationCodePage(
+    form: Form[EmailAddressPasscode],
+    prospectiveEmailAddress: String,
+    backCall: Call,
+    submitCall: Call
+  )(implicit request: JourneyRequest[AnyContent]) =
+    email_address_passcode_page(form, Some(prospectiveEmailAddress), backCall, submitCall)
 
 }

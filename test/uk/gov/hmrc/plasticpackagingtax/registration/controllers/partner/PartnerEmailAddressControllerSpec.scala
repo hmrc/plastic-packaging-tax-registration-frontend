@@ -29,6 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -38,6 +39,9 @@ import scala.concurrent.Future
 class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
   private val page = mock[partner_email_address_page]
+
+  private val email_address_passcode_page =
+    mock[email_address_passcode_page]
 
   private val email_address_passcode_confirmation_page =
     mock[email_address_passcode_confirmation_page]
@@ -57,6 +61,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
                                         mockNewRegistrationUpdater,
                                       mcc = mcc,
                                       page = page,
+                                      email_address_passcode_page = email_address_passcode_page,
                                       email_address_passcode_confirmation_page =
                                         email_address_passcode_confirmation_page,
                                       emailVerificationService = mockEmailVerificationService

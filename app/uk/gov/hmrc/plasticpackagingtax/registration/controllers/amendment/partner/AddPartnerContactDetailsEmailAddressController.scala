@@ -16,13 +16,21 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AmendmentJourneyAction,
+  JourneyRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
+  email_address_passcode_page
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
@@ -34,6 +42,7 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   journeyAction: AmendmentJourneyAction,
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
+  email_address_passcode_page: email_address_passcode_page,
   email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
   registrationUpdateService: AmendRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
@@ -64,9 +73,10 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   def confirmEmailCode(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
-        email_address_passcode_confirmation_page(
-          routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-          routes.AddPartnerContactDetailsEmailAddressController.checkEmailVerificationCode()
+        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
+                                             getProspectiveEmail(),
+                                             routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+                                             routes.AddPartnerContactDetailsEmailAddressController.checkEmailVerificationCode()
         )
       )
     }
@@ -75,5 +85,13 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       Ok("TODO")
     }
+
+  private def renderEnterEmailVerificationCodePage( // TODO will probably deduplicate into a base class
+    form: Form[EmailAddressPasscode],
+    prospectiveEmailAddress: String,
+    backCall: Call,
+    submitCall: Call
+  )(implicit request: JourneyRequest[AnyContent]) =
+    email_address_passcode_page(form, Some(prospectiveEmailAddress), backCall, submitCall)
 
 }
