@@ -19,9 +19,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressControllerBase
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{
+  routes,
+  PartnerEmailAddressControllerBase
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
@@ -106,18 +113,32 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
     }
 
   def emailVerified(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+    (authenticate andThen journeyAction).async { implicit request =>
+      registrationUpdater.updateRegistration(updatePartnersEmail(None, getProspectiveEmail())).map {
+        _ =>
+          Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
+      }
     }
 
   def confirmEmailUpdate(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+      showEmailVerifiedPage(
+        routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode(),
+        routes.AddPartnerContactDetailsEmailAddressController.confirmEmailUpdate()
+      )
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       showTooManyAttemptsPage
     }
+
+  private def updatePartnersEmail( // TODO duplication with PartnerEmailAddressController
+    partner: Option[Partner],
+    updatedEmail: String
+  ): Registration => Registration = {
+    registration: Registration =>
+      updateRegistrationWithEmail(registration, partner.map(_.id), updatedEmail)
+  }
 
 }
