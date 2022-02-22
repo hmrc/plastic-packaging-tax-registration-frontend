@@ -22,10 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActi
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  Partner,
-  PartnerContactDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   NewRegistrationUpdateService,
   Registration
@@ -147,7 +144,7 @@ class PartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
         registrationUpdater.updateRegistration(
-          updatePartnersEmail(partner, getProspectiveEmail())
+          updatePartnersEmail(None, getProspectiveEmail())
         ).map { _ =>
           Redirect(routes.PartnerPhoneNumberController.displayNewPartner())
         }
@@ -227,7 +224,7 @@ class PartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       getPartner(Some(partnerId)).map { partner =>
         registrationUpdater.updateRegistration(
-          updatePartnersEmail(partner, getProspectiveEmail())
+          updatePartnersEmail(Some(partner), getProspectiveEmail())
         ).map { _ =>
           Redirect(routes.PartnerPhoneNumberController.displayExistingPartner(partnerId))
         }
@@ -239,20 +236,12 @@ class PartnerEmailAddressController @Inject() (
       showTooManyAttemptsPage
     }
 
-  // TODO incorrect for existing partner
-  private def updatePartnersEmail( // TODO duplication with updateAction in base controller but differcult to extract
-    partner: Partner,
+  private def updatePartnersEmail(
+    partner: Option[Partner],
     updatedEmail: String
   ): Registration => Registration = {
     registration: Registration =>
-      val withEmailAddress = {
-        val updatedContactDetails =
-          partner.contactDetails.getOrElse(PartnerContactDetails()).copy(emailAddress =
-            Some(updatedEmail)
-          )
-        partner.copy(contactDetails = Some(updatedContactDetails))
-      }
-      registration.withInflightPartner(Some(withEmailAddress))
+      updateRegistrationWithEmail(registration, partner.map(_.id), updatedEmail)
   }
 
 }

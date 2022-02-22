@@ -178,10 +178,7 @@ trait EmailVerificationActions {
     prospectiveEmailAddress: String,
     backCall: Call,
     submitCall: Call
-  )(implicit
-    request: JourneyRequest[AnyContent],
-    messages: Messages
-  ): HtmlFormat.Appendable = // TODO will end up private
+  )(implicit request: JourneyRequest[AnyContent], messages: Messages): HtmlFormat.Appendable =
     emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall)
 
 }

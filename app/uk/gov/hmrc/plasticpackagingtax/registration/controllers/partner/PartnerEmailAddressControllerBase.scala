@@ -86,10 +86,8 @@ abstract class PartnerEmailAddressControllerBase(
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       def updateAction(emailAddress: EmailAddress): Future[Registration] =
-        partnerId match {
-          case Some(partnerId) => updateExistingPartner(emailAddress, partnerId)
-          case _               => updateInflightPartner(emailAddress)
-        }
+        updateEmailAddress(partnerId, emailAddress)
+
       getPartner(partnerId).map { partner =>
         handleSubmission(partner,
                          backCall,
@@ -163,34 +161,36 @@ abstract class PartnerEmailAddressControllerBase(
         }
       )
 
-  private def updateInflightPartner(
-    formData: EmailAddress
-  )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
-    registrationUpdater.updateRegistration { registration =>
-      registration.inflightPartner.map { partner =>
-        val withEmailAddress =
-          partner.contactDetails.map { contactDetails =>
-            val updatedContactDetailsWithEmailAddress =
-              contactDetails.copy(emailAddress = Some(formData.value))
-            partner.copy(contactDetails = Some(updatedContactDetailsWithEmailAddress))
-          }
-        registration.withInflightPartner(withEmailAddress)
-      }.getOrElse {
-        registration
-      }
-    }
-
-  private def updateExistingPartner(formData: EmailAddress, partnerId: String)(implicit
-    req: JourneyRequest[AnyContent]
+  private def updateEmailAddress(existingPartnerId: Option[String], emailAddress: EmailAddress)(
+    implicit req: JourneyRequest[AnyContent]
   ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
+      updateRegistrationWithEmail(registration, existingPartnerId, emailAddress.value)
+    }
+
+  protected def updateRegistrationWithEmail(
+    registration: Registration,
+    existingPartnerId: Option[String],
+    emailAddress: String
+  ): Registration =
+    existingPartnerId.map { partnerId =>
       registration.withUpdatedPartner(
         partnerId,
         partner =>
           partner.copy(contactDetails =
-            partner.contactDetails.map(_.copy(emailAddress = Some(formData.value)))
+            partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress)))
           )
       )
+    }.getOrElse {
+      registration.inflightPartner.map { partner =>
+        val withEmailAddress =
+          partner.contactDetails.map { contactDetails =>
+            val updatedContactDetailsWithEmailAddress =
+              contactDetails.copy(emailAddress = Some(emailAddress))
+            partner.copy(contactDetails = Some(updatedContactDetailsWithEmailAddress))
+          }
+        registration.withInflightPartner(withEmailAddress)
+      }.getOrElse(registration)
     }
 
   protected def getPartner( // TODO back to private
