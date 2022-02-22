@@ -39,6 +39,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
   email_address_passcode_page,
   too_many_attempts_passcode_page
 }
@@ -50,6 +51,7 @@ trait EmailVerificationActions {
   def emailVerificationService: EmailVerificationService
   def registrationUpdater: RegistrationUpdater
   def emailPasscodePage: email_address_passcode_page
+  def emailCorrectPasscodePage: email_address_passcode_confirmation_page
   def emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page
 
   def isEmailVerificationRequired(email: String, isEmailChanged: String => Boolean)(implicit
@@ -118,6 +120,12 @@ trait EmailVerificationActions {
           )
         )
     }
+
+  def showEmailVerifiedPage(backCall: Call, submitCall: Call)(implicit
+    request: JourneyRequest[AnyContent],
+    messages: Messages
+  ): Result =
+    Ok(emailCorrectPasscodePage(backCall, submitCall))
 
   def showTooManyAttemptsPage()(implicit
     request: JourneyRequest[AnyContent],

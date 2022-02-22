@@ -46,10 +46,9 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
   private val email_address_passcode_page =
     mock[email_address_passcode_page]
 
-  private val email_address_passcode_confirmation_page =
-    mock[email_address_passcode_confirmation_page]
-
   private val too_many_attempts_passcode_page = mock[too_many_attempts_passcode_page]
+
+  private val emailCorrectPasscodePage = mock[email_address_passcode_confirmation_page]
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -67,8 +66,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
                                       mcc = mcc,
                                       page = page,
                                       emailPasscodePage = email_address_passcode_page,
-                                      email_address_passcode_confirmation_page =
-                                        email_address_passcode_confirmation_page,
+                                      emailCorrectPasscodePage = emailCorrectPasscodePage,
                                       emailIncorrectPasscodeTooManyAttemptsPage =
                                         too_many_attempts_passcode_page,
                                       emailVerificationService = mockEmailVerificationService

@@ -42,7 +42,7 @@ class AmendEmailAddressController @Inject() (
   amendmentJourneyAction: AmendmentJourneyAction,
   emailPage: email_address_page,
   val emailPasscodePage: email_address_passcode_page,
-  emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
   val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   val emailVerificationService: EmailVerificationService,
   val registrationUpdater: AmendRegistrationUpdateService
@@ -136,10 +136,8 @@ class AmendEmailAddressController @Inject() (
 
   def emailVerified(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(
-        emailCorrectPasscodePage(routes.AmendEmailAddressController.emailVerificationCode(),
-                                 routes.AmendEmailAddressController.confirmEmailUpdate()
-        )
+      showEmailVerifiedPage(routes.AmendEmailAddressController.emailVerificationCode(),
+                            routes.AmendEmailAddressController.confirmEmailUpdate()
       )
     }
 

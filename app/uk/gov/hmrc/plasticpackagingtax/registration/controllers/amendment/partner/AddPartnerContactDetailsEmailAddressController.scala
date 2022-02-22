@@ -40,7 +40,7 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
   val emailPasscodePage: email_address_passcode_page,
-  email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
   val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   registrationUpdateService: AmendRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService

@@ -132,6 +132,7 @@ GET        /partner-email-address-confirm-email-code        uk.gov.hmrc.plasticp
 POST       /partner-email-address-confirm-email-code        uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
 GET        /partner-email-confirmed                         uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.emailVerifiedNewPartner()
 GET        /partner-email-verification-too-many-attempts    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.emailVerificationTooManyAttemptsNewPartner()
+GET        /partner-email-confirm-change                    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.confirmEmailUpdateNewPartner()
 
 GET        /partner-email-address/:partnerId                            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.displayExistingPartner(partnerId: String)
 POST       /partner-email-address/:partnerId                            uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.submitExistingPartner(partnerId: String)
@@ -139,6 +140,7 @@ GET        /partner-email-address-confirm-email-code/:partnerId         uk.gov.h
 POST       /partner-email-address-confirm-email-code/:partnerId         uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(partnerId: String)
 GET        /partner-email-confirmed/:partnerId                          uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.emailVerifiedExistingPartner(partnerId: String)
 GET        /partner-email-verification-too-many-attempts/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.emailVerificationTooManyAttemptsExistingPartner(partnerId: String)
+GET        /partner-email-confirm-change/:partnerId                     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressController.confirmEmailUpdateExistingPartner(partnerId: String)
 
 GET        /partner-phone-number                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.displayNewPartner()
 POST       /partner-phone-number                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.submitNewPartner()

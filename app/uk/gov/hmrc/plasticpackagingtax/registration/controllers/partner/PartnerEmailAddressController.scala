@@ -49,7 +49,7 @@ class PartnerEmailAddressController @Inject() (
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
   val emailPasscodePage: email_address_passcode_page,
-  email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
   val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
@@ -135,6 +135,15 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def emailVerifiedNewPartner(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      request.registration.inflightPartner.map { _ =>
+        showEmailVerifiedPage(routes.PartnerEmailAddressController.confirmNewPartnerEmailCode(),
+                              routes.PartnerEmailAddressController.confirmEmailUpdateNewPartner()
+        )
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def confirmEmailUpdateNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { partner =>
         registrationUpdater.updateRegistration(
@@ -201,6 +210,16 @@ class PartnerEmailAddressController @Inject() (
                                                     )
               )
           )
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def confirmEmailUpdateExistingPartner(partnerId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      getPartner(Some(partnerId)).map { partner =>
+        showEmailVerifiedPage(
+          routes.PartnerEmailAddressController.confirmExistingPartnerEmailCode(partnerId),
+          routes.PartnerEmailAddressController.confirmEmailUpdateExistingPartner(partnerId)
+        )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
