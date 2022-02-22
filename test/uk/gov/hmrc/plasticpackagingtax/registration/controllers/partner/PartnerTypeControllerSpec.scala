@@ -35,10 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
   PartnershipGrsCreateRequest,
   SoleTraderGrsCreateRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  NewRegistrationUpdateService,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

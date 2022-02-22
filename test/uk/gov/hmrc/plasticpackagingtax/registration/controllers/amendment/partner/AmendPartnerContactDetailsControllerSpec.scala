@@ -18,16 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Call, Request, Result}
-import play.api.test.{FakeRequest, Injecting}
+import play.api.mvc._
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector

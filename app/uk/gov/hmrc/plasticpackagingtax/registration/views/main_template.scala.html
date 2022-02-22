@@ -54,7 +54,7 @@
         @hmrcTimeoutDialog(TimeoutDialog(
           timeout = Some(timeoutDialogConfig.timeoutSecs),
           countdown = Some(timeoutDialogConfig.countdownSecs),
-          keepAliveUrl = Some(request.uri),
+          keepAliveUrl = Some(pptRoutes.KeepAliveController.keepAlive.url),
           signOutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason.UserAction).url),
           timeoutUrl = Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason.SessionTimeout).url),
           title = Some(messages("timeoutDialog.title")),
