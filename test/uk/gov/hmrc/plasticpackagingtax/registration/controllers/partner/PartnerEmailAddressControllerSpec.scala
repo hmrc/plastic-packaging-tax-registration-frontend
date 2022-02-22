@@ -29,8 +29,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -45,6 +48,8 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
   private val email_address_passcode_confirmation_page =
     mock[email_address_passcode_confirmation_page]
+
+  private val too_many_attempts_passcode_page = mock[too_many_attempts_passcode_page]
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -64,6 +69,8 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
                                       emailPasscodePage = email_address_passcode_page,
                                       email_address_passcode_confirmation_page =
                                         email_address_passcode_confirmation_page,
+                                      emailIncorrectPasscodeTooManyAttemptsPage =
+                                        too_many_attempts_passcode_page,
                                       emailVerificationService = mockEmailVerificationService
     )
 

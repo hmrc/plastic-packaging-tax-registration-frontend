@@ -34,7 +34,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
   email_address_passcode_confirmation_page,
-  email_address_passcode_page
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
@@ -49,6 +50,7 @@ class PartnerEmailAddressController @Inject() (
   page: partner_email_address_page,
   val emailPasscodePage: email_address_passcode_page,
   email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
+  emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
@@ -145,7 +147,7 @@ class PartnerEmailAddressController @Inject() (
 
   def emailVerificationTooManyAttemptsNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+      Ok(emailIncorrectPasscodeTooManyAttemptsPage())
     }
 
   def confirmExistingPartnerEmailCode(partnerId: String): Action[AnyContent] =
@@ -215,10 +217,10 @@ class PartnerEmailAddressController @Inject() (
 
   def emailVerificationTooManyAttemptsExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok("TODO")
+      Ok(emailIncorrectPasscodeTooManyAttemptsPage())
     }
 
-  private def updatePartnersEmail(  // TODO duplication with updateAction in base controller but differcult to extract
+  private def updatePartnersEmail( // TODO duplication with updateAction in base controller but differcult to extract
     partner: Partner,
     updatedEmail: String
   ): Registration => Registration = {
