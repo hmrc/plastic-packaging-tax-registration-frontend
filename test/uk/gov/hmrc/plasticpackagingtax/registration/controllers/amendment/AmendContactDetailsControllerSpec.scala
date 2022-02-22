@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -24,15 +24,14 @@ import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.inject.NewInstanceInjector.instanceOf
 import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsString, status}
+import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
@@ -40,16 +39,14 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 import scala.concurrent.Future
 
 class AmendContactDetailsControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {
-
-  private val countryService = instanceOf[CountryService]
+    extends ControllerSpec with MockAmendmentJourneyAction with AddressCaptureSpec
+    with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
 
   private val amendNamePage        = mock[full_name_page]
   private val amendJobTitlePage    = mock[job_title_page]
   private val amendPhoneNumberPage = mock[phone_number_page]
-  private val amendAddressPage     = mock[address_page]
 
   when(amendNamePage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("name amendment")
@@ -63,10 +60,6 @@ class AmendContactDetailsControllerSpec
     HtmlFormat.raw("phone number amendment")
   )
 
-  when(amendAddressPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("address amendment")
-  )
-
   private val controller =
     new AmendContactDetailsController(mockAuthAllowEnrolmentAction,
                                       mcc,
@@ -74,8 +67,7 @@ class AmendContactDetailsControllerSpec
                                       amendNamePage,
                                       amendJobTitlePage,
                                       amendPhoneNumberPage,
-                                      amendAddressPage,
-                                      countryService
+                                      mockAddressCaptureService
     )
 
   private val populatedRegistration = aRegistration()
@@ -103,10 +95,6 @@ class AmendContactDetailsControllerSpec
               ("phone number",
                (req: Request[AnyContent]) => controller.phoneNumber()(req),
                "phone number amendment"
-              ),
-              ("address",
-               (req: Request[AnyContent]) => controller.address()(req),
-               "address amendment"
               )
         )
 
@@ -137,12 +125,6 @@ class AmendContactDetailsControllerSpec
       }
     }
 
-    val invalidAddress = Address(addressLine1 = "", townOrCity = "", postCode = Some("XXX"))
-    val validAddress = Address(addressLine1 = "2-3 Scala Street",
-                               addressLine2 = Some("Soho"),
-                               townOrCity = "London",
-                               postCode = Some("E17 3RE")
-    )
     val updateTestData =
       Table(
         ("TestName",
@@ -172,13 +154,6 @@ class AmendContactDetailsControllerSpec
          (req: Request[AnyContent]) => controller.updatePhoneNumber()(req),
          (reg: Registration) => reg.primaryContactDetails.phoneNumber mustBe Some("07123 123456"),
          "phone number amendment"
-        ),
-        ("address",
-         () => invalidAddress,
-         () => validAddress,
-         (req: Request[AnyContent]) => controller.updateAddress()(req),
-         (reg: Registration) => reg.primaryContactDetails.address mustBe Some(validAddress),
-         "address amendment"
         )
       )
 
@@ -231,6 +206,38 @@ class AmendContactDetailsControllerSpec
             test(registrationCaptor.getValue)
           }
       }
+    }
+
+    "redirect to address capture when updating address" in {
+      val expectedAddressCaptureConfig =
+        AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
+                             successLink = routes.AmendContactDetailsController.updateAddress().url,
+                             alfHeadingsPrefix = "addressLookup.contact",
+                             pptHeadingKey = "primaryContactDetails.address.title",
+                             entityName = populatedRegistration.primaryContactDetails.name,
+                             pptHintKey = None
+        )
+      simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
+
+      val resp = controller.address()(getRequest())
+
+      redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+    }
+
+    "update address on address capture callback" in {
+      simulateValidAddressCapture()
+
+      val resp = controller.updateAddress()(getRequest())
+
+      redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
+
+      val registrationCaptor: ArgumentCaptor[Registration] =
+        ArgumentCaptor.forClass(classOf[Registration])
+      verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
+        any()
+      )
+      registrationCaptor.getValue.primaryContactDetails.address mustBe Some(validCapturedAddress)
+
     }
   }
 

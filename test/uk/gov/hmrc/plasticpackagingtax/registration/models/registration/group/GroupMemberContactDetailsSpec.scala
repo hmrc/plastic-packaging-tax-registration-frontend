@@ -92,7 +92,9 @@ class GroupMemberContactDetailsSpec extends AnyWordSpec with Matchers with PptTe
           )
         )
         val result =
-          member.withUpdatedGroupMemberAddress(addressDetails.copy(postCode = Some("AA1 1AA")))
+          member.withUpdatedGroupMemberAddress(
+            Some(addressDetails.copy(postCode = Some("AA1 1AA")))
+          )
         result.contactDetails.map(_.address.get.postCode).get mustBe Some("AA1 1AA")
       }
       "with no contact details" in {

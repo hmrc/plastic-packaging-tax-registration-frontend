@@ -16,54 +16,31 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
-import base.unit.ControllerSpec
+import base.unit.{AddressCaptureSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.http.Status.OK
+import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import scala.concurrent.Future
+class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCaptureSpec {
 
-class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
-  private val page                               = mock[confirm_business_address]
-  private val mcc                                = stubMessagesControllerComponents()
-  private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
+  private val page = mock[confirm_business_address]
+  private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
     new ConfirmBusinessAddressController(authenticate = mockAuthAction,
                                          journeyAction = mockJourneyAction,
                                          registrationConnector = mockRegistrationConnector,
-                                         addressLookupFrontendConnector =
-                                           mockAddressLookupFrontendConnector,
-                                         appConfig,
+                                         mockAddressCaptureService,
                                          mcc = mcc,
                                          page = page
     )
-
-  private val alfAddress = AddressLookupConfirmation(auditRef = "auditRef",
-                                                     id = Some("123"),
-                                                     address = AddressLookupAddress(
-                                                       lines = List("addressLine1",
-                                                                    "addressLine2",
-                                                                    "addressLine3"
-                                                       ),
-                                                       postcode = Some("E17 1ER"),
-                                                       country = Some(
-                                                         AddressLookupCountry(code = "GB",
-                                                                              name =
-                                                                                "United Kingdom"
-                                                         )
-                                                       )
-                                                     )
-  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -72,12 +49,8 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
     )
     authorizedUser()
     mockRegistrationUpdate()
-    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
-      Future(AddressLookupOnRamp("/on-ramp"))
-    )
-    when(mockAddressLookupFrontendConnector.getAddress(any())(any(), any())).thenReturn(
-      Future.successful(alfAddress)
-    )
+    simulateSuccessfulAddressCaptureInit(None)
+    simulateValidAddressCapture()
   }
 
   override protected def afterEach(): Unit = {
@@ -96,7 +69,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
       contentAsString(resp) mustBe "business registered address"
     }
 
-    "redirect to address lookup frontend" when {
+    "redirect to address capture" when {
       "registered business address is not present" in {
         val registration = aRegistration()
         mockRegistrationFind(
@@ -107,8 +80,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
 
         val resp = controller.displayPage()(getRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some("/on-ramp")
+        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
       "registered business address is invalid" in {
         val registration = aRegistration()
@@ -126,20 +98,18 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
 
         val resp = controller.displayPage()(getRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some("/on-ramp")
+        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
     }
 
-    "obtain address from address lookup and update registration and redirect to task list" when {
+    "obtain address from address capture service and update registration and redirect to task list" when {
       "control is returned from address lookup frontend" in {
-        val resp = controller.alfCallback(Some("123"))(getRequest())
+        val resp = controller.addressCaptureCallback()(getRequest())
 
-        status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(commonRoutes.TaskListController.displayPage().url)
 
         modifiedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(
-          Address(alfAddress)
+          validCapturedAddress
         )
       }
     }
@@ -150,13 +120,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec {
 
         val resp = controller.changeBusinessAddress()(getRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some("/on-ramp")
-      }
-    }
-    "throw MissingAddressIdException if return from address lookup is missing a journey id" in {
-      intercept[MissingAddressIdException] {
-        await(controller.alfCallback(None)(getRequest()))
+        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
     }
 

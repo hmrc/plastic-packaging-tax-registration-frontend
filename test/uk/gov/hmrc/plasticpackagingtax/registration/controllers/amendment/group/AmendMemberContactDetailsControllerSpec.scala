@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -24,17 +24,16 @@ import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.inject.NewInstanceInjector.instanceOf
 import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsString, status}
+import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.{
   member_email_address_page,
   member_name_page,
@@ -46,16 +45,14 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 import scala.concurrent.Future
 
 class AmendMemberContactDetailsControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {
-
-  private val countryService = instanceOf[CountryService]
+    extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction
+    with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
 
   private val amendNamePage         = mock[member_name_page]
   private val amendPhoneNumberPage  = mock[member_phone_number_page]
   private val amendEmailAddressPage = mock[member_email_address_page]
-  private val amendAddressPage      = mock[address_page]
 
   when(amendNamePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("name amendment")
@@ -69,19 +66,14 @@ class AmendMemberContactDetailsControllerSpec
     HtmlFormat.raw("phone number amendment")
   )
 
-  when(amendAddressPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("address amendment")
-  )
-
   private val controller =
     new AmendMemberContactDetailsController(mockAuthAllowEnrolmentAction,
                                             mcc,
                                             mockAmendmentJourneyAction,
+                                            mockAddressCaptureService,
                                             amendNamePage,
                                             amendPhoneNumberPage,
-                                            amendEmailAddressPage,
-                                            amendAddressPage,
-                                            countryService
+                                            amendEmailAddressPage
     )
 
   private val populatedRegistration = aRegistration(
@@ -112,10 +104,6 @@ class AmendMemberContactDetailsControllerSpec
               ("member email address",
                (req: Request[AnyContent]) => controller.email(memberId)(req),
                "email address amendment"
-              ),
-              ("address",
-               (req: Request[AnyContent]) => controller.address(memberId)(req),
-               "address amendment"
               )
         )
 
@@ -146,12 +134,6 @@ class AmendMemberContactDetailsControllerSpec
       }
     }
 
-    val invalidAddress = Address(addressLine1 = "", townOrCity = "", postCode = Some("XXX"))
-    val validAddress = Address(addressLine1 = "2-3 Scala Street",
-                               addressLine2 = Some("Soho"),
-                               townOrCity = "London",
-                               postCode = Some("E17 3RE")
-    )
     val updateTestData =
       Table(
         ("TestName",
@@ -186,14 +168,6 @@ class AmendMemberContactDetailsControllerSpec
          (reg: Registration) =>
            reg.groupDetail.get.members.head.contactDetails.get.email mustBe Some("test@test.com"),
          "email address amendment"
-        ),
-        ("address",
-         () => invalidAddress,
-         () => validAddress,
-         (req: Request[AnyContent]) => controller.updateAddress(memberId)(req),
-         (reg: Registration) =>
-           reg.groupDetail.get.members.head.contactDetails.get.address mustBe Some(validAddress),
-         "address amendment"
         )
       )
 
@@ -249,6 +223,44 @@ class AmendMemberContactDetailsControllerSpec
           }
       }
     }
+
+    "redirect to address capture controller when updating address" in {
+      authorisedUserWithPptSubscription()
+
+      val expectedAddressCaptureConfig =
+        AddressCaptureConfig(backLink = amendRoutes.AmendRegistrationController.displayPage().url,
+                             successLink =
+                               routes.AmendMemberContactDetailsController.updateAddress(
+                                 memberId
+                               ).url,
+                             alfHeadingsPrefix = "addressLookup.contact",
+                             pptHeadingKey = "primaryContactDetails.address.title",
+                             entityName = populatedRegistration.findMember(memberId).flatMap(
+                               _.contactDetails.map(_.groupMemberName)
+                             ),
+                             pptHintKey = None
+        )
+      simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
+
+      val resp = controller.address(memberId)(getRequest())
+      redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+    }
+
+    "update address on address capture callback" in {
+      authorisedUserWithPptSubscription()
+      simulateValidAddressCapture()
+
+      populatedRegistration.findMember(memberId).flatMap(
+        _.contactDetails.flatMap(_.address)
+      ) mustNot equal(validCapturedAddress)
+
+      await(controller.updateAddress(memberId)(getRequest()))
+
+      getUpdatedRegistration().findMember(memberId).flatMap(_.contactDetails).flatMap(
+        _.address
+      ) mustBe Some(validCapturedAddress)
+    }
+
   }
 
   private def getRequest(): Request[AnyContentAsEmpty.type] =

@@ -17,13 +17,16 @@
 package base.unit
 
 import builders.RegistrationBuilder
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   EisError,
+  SubscriptionCreateOrUpdateResponse,
   SubscriptionCreateOrUpdateResponseFailure,
   SubscriptionCreateOrUpdateResponseSuccess
 }
@@ -49,12 +52,15 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
       )
     )
 
-  protected def simulateUpdateSubscriptionFailure(ex: RuntimeException) =
+  protected def simulateUpdateSubscriptionFailure(
+    ex: RuntimeException
+  ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
       Future.failed(ex)
     )
 
-  protected def simulateUpdateSubscriptionFailureReturnedError() =
+  protected def simulateUpdateSubscriptionFailureReturnedError()
+    : OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockSubscriptionConnector.updateSubscription(any(), any())(any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseFailure(failures =
@@ -63,14 +69,24 @@ trait MockSubscriptionConnector extends RegistrationBuilder with MockitoSugar {
       )
     )
 
-  protected def simulateGetSubscriptionSuccess(registration: Registration) =
+  protected def simulateGetSubscriptionSuccess(
+    registration: Registration
+  ): OngoingStubbing[Future[Registration]] =
     when(mockSubscriptionConnector.getSubscription(any())(any())).thenReturn(
       Future.successful(registration)
     )
 
-  protected def simulateGetSubscriptionFailure() =
+  protected def simulateGetSubscriptionFailure(): OngoingStubbing[Future[Registration]] =
     when(mockSubscriptionConnector.getSubscription(any())(any())).thenThrow(
       new IllegalStateException("BANG!")
     )
+
+  protected def getUpdatedRegistration(): Registration = {
+    val registrationCaptor: ArgumentCaptor[Registration] =
+      ArgumentCaptor.forClass(classOf[Registration])
+    verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(any())
+
+    registrationCaptor.getValue
+  }
 
 }

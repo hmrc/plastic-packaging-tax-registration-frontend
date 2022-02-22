@@ -48,7 +48,9 @@ abstract class ContactDetailsConfirmAddressControllerBase(
                              successLink = getAddressCaptureCallback(memberId).url,
                              alfHeadingsPrefix = "addressLookup.partner",
                              entityName =
-                               request.registration.groupDetail.flatMap(_.businessName(memberId)),
+                               request.registration.findMember(memberId).flatMap(
+                                 _.contactDetails.map(_.groupMemberName)
+                               ),
                              pptHeadingKey = "addressLookup.partner.lookup.heading",
                              pptHintKey = None
         )

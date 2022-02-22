@@ -80,7 +80,8 @@ class ConfirmBusinessAddressController @Inject() (
                            alfHeadingsPrefix = "addressLookup.business",
                            entityName = request.registration.organisationDetails.businessName,
                            pptHeadingKey = "addressLookup.contact.lookup.heading",
-                           pptHintKey = None
+                           pptHintKey = None,
+                           forceUkAddress = true
       )
     )(request).map(redirect => Redirect(redirect))
 

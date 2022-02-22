@@ -16,24 +16,26 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
-import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import base.unit.{AddressCaptureSpec, ControllerSpec}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.SEE_OTHER
-import play.api.test.Helpers.{await, redirectLocation, status}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
+import play.api.test.Helpers.{await, redirectLocation}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  GroupDetail,
+  NewRegistrationUpdateService
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-import scala.concurrent.Future
+class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with AddressCaptureSpec {
 
-class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
-  private val mcc                                = stubMessagesControllerComponents()
-  private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
+  private val mcc = stubMessagesControllerComponents()
+
+  private val groupRegistration = aRegistration(
+    withGroupDetail(
+      Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))
+    )
+  )
 
   private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
     mockRegistrationConnector
@@ -42,40 +44,16 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
   private val controller =
     new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
                                                journeyAction = mockJourneyAction,
-                                               addressLookupFrontendConnector =
-                                                 mockAddressLookupFrontendConnector,
-                                               appConfig,
+                                               addressCaptureService = mockAddressCaptureService,
                                                mcc = mcc,
                                                mockNewRegistrationUpdater
     )
 
-  private val alfAddress = AddressLookupConfirmation(auditRef = "auditRef",
-                                                     id = Some("123"),
-                                                     address = AddressLookupAddress(
-                                                       lines = List("addressLine1",
-                                                                    "addressLine2",
-                                                                    "addressLine3"
-                                                       ),
-                                                       postcode = Some("E17 1ER"),
-                                                       country = Some(
-                                                         AddressLookupCountry(code = "GB",
-                                                                              name =
-                                                                                "United Kingdom"
-                                                         )
-                                                       )
-                                                     )
-  )
-
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     authorizedUser()
+    mockRegistrationFind(groupRegistration)
     mockRegistrationUpdate()
-    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
-      Future(AddressLookupOnRamp("/on-ramp"))
-    )
-    when(mockAddressLookupFrontendConnector.getAddress(any())(any(), any())).thenReturn(
-      Future.successful(alfAddress)
-    )
   }
 
   override protected def afterEach(): Unit =
@@ -85,44 +63,52 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
     "redirect to address lookup frontend" when {
       "registered business address is not present" in {
+        val expectedAddressCaptureConfig =
+          AddressCaptureConfig(
+            backLink =
+              routes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url,
+            successLink =
+              routes.ContactDetailsConfirmAddressController.addressCaptureCallback(
+                groupMember.id
+              ).url,
+            alfHeadingsPrefix = "addressLookup.partner",
+            pptHeadingKey = "addressLookup.partner.lookup.heading",
+            entityName = groupMember.contactDetails.map(_.groupMemberName),
+            pptHintKey = None
+          )
+        simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
         val resp = controller.displayPage(groupMember.id)(getRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some("/on-ramp")
+        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
     }
 
-    "obtain address from address lookup and update registration and redirect to organisation list" when {
-      "control is returned from address lookup frontend" in {
+    "obtain address from address capture and update registration and redirect to organisation list" when {
+      "control is returned from address capture" in {
         mockRegistrationFind(
           aRegistration(
             withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
           )
         )
-        val resp = controller.addressCaptureCallback(Some("123"), groupMember.id)(getRequest())
+        simulateValidAddressCapture()
 
-        status(resp) mustBe SEE_OTHER
+        val resp = controller.addressCaptureCallback(groupMember.id)(getRequest())
+
         redirectLocation(resp) mustBe Some(
           groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id).url
         )
 
         modifiedRegistration.lastMember.get.contactDetails.get.address mustBe Some(
-          Address(alfAddress)
+          validCapturedAddress
         )
-      }
-    }
-
-    "throw MissingAddressIdException if return from address lookup is missing a journey id" in {
-      intercept[MissingAddressIdException] {
-        await(controller.addressCaptureCallback(None, groupMember.id)(getRequest()))
       }
     }
 
     "throw IllegalStateException" when {
       "group member cannot be found in registration" in {
         intercept[IllegalStateException] {
-          await(controller.addressCaptureCallback(Some("123"), "XXX")(getRequest()))
+          await(controller.addressCaptureCallback("XXX")(getRequest()))
         }
       }
     }
