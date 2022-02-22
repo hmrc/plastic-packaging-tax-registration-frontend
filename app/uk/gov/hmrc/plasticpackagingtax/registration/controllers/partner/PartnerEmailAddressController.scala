@@ -66,7 +66,7 @@ class PartnerEmailAddressController @Inject() (
     )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    partnerIddoDisplay(Some(partnerId),
+    doDisplay(Some(partnerId),
               partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
               partnerRoutes.PartnerEmailAddressController.submitExistingPartner(partnerId)
     )
@@ -218,7 +218,7 @@ class PartnerEmailAddressController @Inject() (
       Ok("TODO")
     }
 
-  private def updatePartnersEmail(  // TODO duplicate with updateAction in base controller
+  private def updatePartnersEmail(  // TODO duplication with updateAction in base controller but differcult to extract
     partner: Partner,
     updatedEmail: String
   ): Registration => Registration = {
