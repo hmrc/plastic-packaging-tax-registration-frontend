@@ -98,9 +98,22 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
   private val existingPartner =
     aLimitedCompanyPartner()
 
+  val nonNominatedExistingPartner = aSoleTraderPartner()
+
   private def registrationWithExistingPartner =
     aRegistration(
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
+    )
+
+  private def registrationWithExistingPartners =
+    aRegistration(
+      withPartnershipDetails(
+        Some(
+          generalPartnershipDetails.copy(partners =
+            Seq(existingPartner, nonNominatedExistingPartner)
+          )
+        )
+      )
     )
 
   private def registrationWithExistingPartnerAndInflightPartner =
@@ -151,36 +164,42 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         )
         when(
           mockEmailVerificationService.sendVerificationCode(any(), any(), any())(any())
-        ).thenReturn(Future.successful("an-email-verification-code"))
+        ).thenReturn(Future.successful("an-email-verification-journey-id"))
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)
+          postRequestEncoded(EmailAddress("proposed-email@localhost"), saveAndContinueFormAction)
         )
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
           routes.PartnerEmailAddressController.confirmNewPartnerEmailCode().url
         )
-        // TODO assert that the prospective email is been persisted
-        // modifiedRegistration.inflightPartner.flatMap(_.contactDetails.flatMap(_.emailAddress))
+
+        // Assert that the detail of the email verification journey were stashed in the expected place
+        modifiedRegistration.primaryContactDetails.journeyId mustBe Some(
+          "an-email-verification-journey-id"
+        )
+        modifiedRegistration.primaryContactDetails.prospectiveEmail mustBe Some(
+          "proposed-email@localhost"
+        )
       }
 
       //"user submits a valid email address for non nominated partner and is not prompted for email validation"
 
       "user submits an amendment to an existing partners email address" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+        mockRegistrationFind(registrationWithExistingPartners)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner(existingPartner.id)(
+        val result = controller.submitExistingPartner(nonNominatedExistingPartner.id)(
           postRequestEncoded(EmailAddress("amended@localhost"))
         )
 
         status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.findPartner(existingPartner.id).flatMap(_.contactDetails).flatMap(
-          _.emailAddress
-        ) mustBe Some("amended@localhost")
+        modifiedRegistration.findPartner(nonNominatedExistingPartner.id).flatMap(
+          _.contactDetails
+        ).flatMap(_.emailAddress) mustBe Some("amended@localhost")
       }
     }
 
