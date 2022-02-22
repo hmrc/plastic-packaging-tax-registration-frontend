@@ -25,7 +25,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJour
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
   email_address_passcode_confirmation_page,
-  email_address_passcode_page
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
@@ -40,6 +41,7 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   page: partner_email_address_page,
   val emailPasscodePage: email_address_passcode_page,
   email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   registrationUpdateService: AmendRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
@@ -80,6 +82,11 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
   def checkEmailVerificationCode(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok("TODO")
+    }
+
+  def emailVerificationTooManyAttempts(): Action[AnyContent] =
+    (authenticate andThen journeyAction) { implicit request =>
+      showTooManyAttemptsPage
     }
 
 }

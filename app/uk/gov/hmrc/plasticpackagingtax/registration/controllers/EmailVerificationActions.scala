@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.mvc.Results.{BadRequest, Redirect}
+import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{AnyContent, Call, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,7 +38,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
+}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,6 +50,7 @@ trait EmailVerificationActions {
   def emailVerificationService: EmailVerificationService
   def registrationUpdater: RegistrationUpdater
   def emailPasscodePage: email_address_passcode_page
+  def emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page
 
   def isEmailVerificationRequired(email: String, isEmailChanged: String => Boolean)(implicit
     request: JourneyRequest[AnyContent],
@@ -115,7 +119,13 @@ trait EmailVerificationActions {
         )
     }
 
-  def checkVerificationCode(verificationCode: String)(implicit
+  def showTooManyAttemptsPage()(implicit
+    request: JourneyRequest[AnyContent],
+    messages: Messages
+  ): Result =
+    Ok(emailIncorrectPasscodeTooManyAttemptsPage())
+
+  private def checkVerificationCode(verificationCode: String)(implicit
     req: JourneyRequest[AnyContent],
     hc: HeaderCarrier
   ): Future[EmailVerificationJourneyStatus.Value] =

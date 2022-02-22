@@ -50,7 +50,7 @@ class PartnerEmailAddressController @Inject() (
   page: partner_email_address_page,
   val emailPasscodePage: email_address_passcode_page,
   email_address_passcode_confirmation_page: email_address_passcode_confirmation_page,
-  emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   val registrationUpdateService: NewRegistrationUpdateService,
   val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
@@ -147,7 +147,7 @@ class PartnerEmailAddressController @Inject() (
 
   def emailVerificationTooManyAttemptsNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(emailIncorrectPasscodeTooManyAttemptsPage())
+      showTooManyAttemptsPage
     }
 
   def confirmExistingPartnerEmailCode(partnerId: String): Action[AnyContent] =
@@ -217,7 +217,7 @@ class PartnerEmailAddressController @Inject() (
 
   def emailVerificationTooManyAttemptsExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(emailIncorrectPasscodeTooManyAttemptsPage())
+      showTooManyAttemptsPage
     }
 
   private def updatePartnersEmail( // TODO duplication with updateAction in base controller but differcult to extract

@@ -43,7 +43,7 @@ class AmendEmailAddressController @Inject() (
   emailPage: email_address_page,
   val emailPasscodePage: email_address_passcode_page,
   emailCorrectPasscodePage: email_address_passcode_confirmation_page,
-  emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
   val emailVerificationService: EmailVerificationService,
   val registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
@@ -150,7 +150,7 @@ class AmendEmailAddressController @Inject() (
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(emailIncorrectPasscodeTooManyAttemptsPage())
+      showTooManyAttemptsPage
     }
 
 }
