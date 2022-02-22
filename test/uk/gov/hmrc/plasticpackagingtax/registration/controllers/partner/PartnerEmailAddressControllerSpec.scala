@@ -103,6 +103,11 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
     )
 
+  private def registrationWithExistingPartnerAndInflightPartner =
+    aRegistration(
+      withPartnershipDetails(Some(generalPartnershipDetails.copy(partners = Seq(existingPartner))))
+    ).withInflightPartner(Some(aSoleTraderPartner()))
+
   "PartnerEmailAddressController" should {
 
     "return 200" when {
@@ -220,7 +225,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
       "user submits form and the registration update fails" in {
         authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
+        mockRegistrationFind(registrationWithExistingPartnerAndInflightPartner)
         mockRegistrationUpdateFailure()
 
         val result =

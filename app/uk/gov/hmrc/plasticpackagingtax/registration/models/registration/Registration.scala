@@ -239,8 +239,11 @@ case class Registration(
   def isNominatedPartner(partnerId: Option[String]): Boolean =
     organisationDetails.partnershipDetails.exists(_.isNominatedPartner(partnerId))
 
-  def isNominatedPartnerOrFirstInflightPartner(partner: Partner) =
-    nominatedPartner.forall(_.id == partner.id)
+  def isNominatedPartnerOrFirstInflightPartner(partner: Partner) = {
+    val isTheNominatedPartner  = nominatedPartner.exists(_.id == partner.id)
+    val isFirstInflightPartner = organisationDetails.partnershipDetails.forall(_.partners.isEmpty)
+    isTheNominatedPartner || isFirstInflightPartner
+  }
 
 }
 
