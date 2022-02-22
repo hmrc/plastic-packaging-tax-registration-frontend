@@ -229,7 +229,7 @@ class PartnerEmailAddressController @Inject() (
         registrationUpdater.updateRegistration(
           updatePartnersEmail(partner, getProspectiveEmail())
         ).map { _ =>
-          Redirect(routes.PartnerPhoneNumberController.displayNewPartner())
+          Redirect(routes.PartnerPhoneNumberController.displayExistingPartner(partnerId))
         }
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
@@ -239,6 +239,7 @@ class PartnerEmailAddressController @Inject() (
       showTooManyAttemptsPage
     }
 
+  // TODO incorrect for existing partner
   private def updatePartnersEmail( // TODO duplication with updateAction in base controller but differcult to extract
     partner: Partner,
     updatedEmail: String
