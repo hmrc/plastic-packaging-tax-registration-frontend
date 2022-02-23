@@ -18,21 +18,22 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import com.google.inject.ImplementedBy
 import play.api.Logger
+import play.api.libs.json.{JsObject, JsValue}
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.mongo.cache.DataKey
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.RegistrationAmendmentRepository
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class KeepAliveActionImpl @Inject() (
-  appConfig: AppConfig,
-  registrationAmendmentRepository: RegistrationAmendmentRepository
-)(implicit val exec: ExecutionContext)
-    extends KeepAliveAction {
+class KeepAliveActionImpl @Inject() (appConfig: AppConfig, userDataRepository: UserDataRepository)(
+  implicit val exec: ExecutionContext
+) extends KeepAliveAction {
 
   private val logger = Logger(this.getClass)
 
@@ -43,17 +44,16 @@ class KeepAliveActionImpl @Inject() (
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.session.get("sessionId") match {
       case Some(sessionId) =>
-        registrationAmendmentRepository.get(sessionId).flatMap {
-          case Some(registration) =>
-            registrationAmendmentRepository.put(sessionId, registration).map {
-              registration =>
-                Right(JourneyRequest[A](request, registration, appConfig))
+        userDataRepository.findAll[Registration](sessionId).map {
+          values =>
+            for (value <- values) {
+              val key: String = value match {
+                case JsObject(jsValue) => jsValue.keys.head
+                case _                 => "None"
+              }
+              userDataRepository.put[JsValue](sessionId)(DataKey(key), value)
             }
-          case _ =>
-            logger.warn(
-              s"Denied attempt to access ${request.uri} since no registration found in the session"
-            )
-            throw NoRegistrationFound()
+            Right(JourneyRequest[A](request, values.head.as[Registration], appConfig))
         }
       case _ =>
         logger.warn(s"Denied attempt to access ${request.uri} since no user session present")
@@ -67,6 +67,3 @@ class KeepAliveActionImpl @Inject() (
 
 @ImplementedBy(classOf[KeepAliveActionImpl])
 trait KeepAliveAction extends ActionRefiner[AuthenticatedRequest, JourneyRequest]
-
-case class NoRegistrationFound(msg: String = "Registration not found in the session")
-    extends Exception(msg)

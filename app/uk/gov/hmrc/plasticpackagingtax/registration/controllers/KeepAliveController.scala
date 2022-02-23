@@ -18,15 +18,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthActioning,
-  AuthNoEnrolmentCheckAction
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  KeepAliveAction,
-  KeepAliveActionImpl
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.KeepAliveAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject

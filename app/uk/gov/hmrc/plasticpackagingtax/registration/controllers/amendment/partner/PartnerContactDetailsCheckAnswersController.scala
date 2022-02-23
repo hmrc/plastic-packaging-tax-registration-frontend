@@ -46,7 +46,7 @@ class PartnerContactDetailsCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    (authenticate andThen amendmentJourneyAction) {
       Redirect(routes.PartnersListController.displayPage())
     }
 

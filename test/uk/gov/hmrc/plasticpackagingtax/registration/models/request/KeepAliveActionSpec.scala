@@ -18,28 +18,33 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import base.MockAuthAction
 import base.PptTestData.newUser
-import base.unit.MockRegistrationAmendmentRepository
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status.OK
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Result, Results}
-import play.api.test.Helpers.{await, status}
+import play.api.test.Helpers.status
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import spec.PptTestData
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
 
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 class KeepAliveActionSpec
-    extends MockRegistrationAmendmentRepository with MockAuthAction with AnyWordSpecLike
-    with DefaultAwaitTimeout with BeforeAndAfterEach {
+    extends MockAuthAction with AnyWordSpecLike with DefaultAwaitTimeout with BeforeAndAfterEach
+    with PptTestData {
+
+  private val mockUserDataRepository = mock[UserDataRepository]
 
   private val keepAliveAction: KeepAliveAction =
-    new KeepAliveActionImpl(appConfig, inMemoryRegistrationAmendmentRepository)(
-      ExecutionContext.global
-    )
+    new KeepAliveActionImpl(appConfig, mockUserDataRepository)(ExecutionContext.global)
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
@@ -48,21 +53,25 @@ class KeepAliveActionSpec
 
   when(responseGenerator.apply(requestCaptor.capture())).thenReturn(Future.successful(Results.Ok))
 
-  override protected def beforeEach(): Unit =
-    inMemoryRegistrationAmendmentRepository.reset()
-
   "Keep Alive Action" should {
 
     "return a JourneyRequest populated with a cached registration" when {
 
       "a registration is cached on the user's session" in {
-        val cachedRegistration = aRegistration().copy(id = "3453456")
-        inMemoryRegistrationAmendmentRepository.put("123", cachedRegistration)
+        val registration = aRegistration().copy(id = "3453456")
+        val cachedRegistration: CacheItem =
+          CacheItem("123", Json.toJsObject(registration), Instant.now(), Instant.now())
+        when(mockUserDataRepository.findAll[JsValue](any())(any())).thenReturn(
+          Future.successful(List(Json.toJson(registration)))
+        )
+        when(
+          mockUserDataRepository.put[JsValue]("123")(DataKey("id"), Json.toJson(registration))
+        ).thenReturn(Future.successful(cachedRegistration))
         val request =
           new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")), newUser())
 
         status(keepAliveAction.invokeBlock(request, responseGenerator)) mustBe OK
-        requestCaptor.getValue.registration mustBe cachedRegistration
+        Json.toJson(requestCaptor.getValue.registration) mustBe cachedRegistration.data
       }
 
     }
@@ -77,16 +86,6 @@ class KeepAliveActionSpec
         }
       }
 
-      "no registration present in the session " in {
-        val cachedRegistration = aRegistration().copy(id = "3453456")
-        inMemoryRegistrationAmendmentRepository.put("123", cachedRegistration)
-        val request =
-          new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "456")), newUser())
-
-        intercept[NoRegistrationFound] {
-          await(keepAliveAction.invokeBlock(request, responseGenerator))
-        }
-      }
     }
   }
 

@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
-import javax.inject.{Inject, Singleton}
+import org.mongodb.scala.model.Filters
 import play.api.Configuration
-import play.api.libs.json.{Reads, Writes}
+import play.api.libs.json.{JsValue, Reads, Writes}
 import uk.gov.hmrc.mongo.cache.CacheIdType.SessionCacheId.NoSessionException
 import uk.gov.hmrc.mongo.cache.{CacheIdType, DataKey, MongoCacheRepository}
 import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,6 +60,15 @@ class UserDataRepository @Inject() (
   ): Future[Option[A]] = get[A](id)(DataKey(key))
 
   def getData[A: Reads](id: String, key: String): Future[Option[A]] = get[A](id)(DataKey(key))
+
+  def findAll[A: Reads](id: String): Future[List[JsValue]] = {
+    val values = collection
+      .find(Filters.equal("_id", id))
+      .toFuture
+    values.map { regs =>
+      regs.flatMap(cache => (cache.data.asOpt[JsValue])).toList
+    }
+  }
 
   def deleteData[A: Writes](
     key: String
