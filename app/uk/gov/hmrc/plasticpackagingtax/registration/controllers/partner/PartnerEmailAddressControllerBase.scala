@@ -110,7 +110,7 @@ abstract class PartnerEmailAddressControllerBase(
     onwardCall: Call,
     dropoutCall: Call,
     updateAction: EmailAddress => Future[Registration],
-    emailVerificationContinueUrl: Call, // TODO what does continue URL mean? Why are existing users supplying a string rather than a route?
+    emailVerificationContinueUrl: Call,
     confirmEmailAddressCall: Call
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     EmailAddress.form()
@@ -193,7 +193,7 @@ abstract class PartnerEmailAddressControllerBase(
       }.getOrElse(registration)
     }
 
-  protected def getPartner( // TODO back to private
+  protected def getPartner(
     partnerId: Option[String]
   )(implicit request: JourneyRequest[_]): Option[Partner] =
     partnerId match {
