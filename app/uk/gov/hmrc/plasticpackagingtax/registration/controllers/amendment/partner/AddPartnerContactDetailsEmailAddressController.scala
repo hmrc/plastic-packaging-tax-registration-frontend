@@ -95,7 +95,7 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
 
   def emailVerified(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      registrationUpdater.updateRegistration(updatePartnersEmail(None, getProspectiveEmail())).map {
+      registrationUpdater.updateRegistration(updatePartnersEmail(getProspectiveEmail())).map {
         _ =>
           Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
       }
@@ -114,12 +114,9 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
       showTooManyAttemptsPage
     }
 
-  private def updatePartnersEmail(
-    partner: Option[Partner],
-    updatedEmail: String
-  ): Registration => Registration = {
+  private def updatePartnersEmail(updatedEmail: String): Registration => Registration = {
     registration: Registration =>
-      updateRegistrationWithEmail(registration, partner.map(_.id), updatedEmail)
+      updateRegistrationWithPartnerEmail(registration, None, updatedEmail)
   }
 
 }
