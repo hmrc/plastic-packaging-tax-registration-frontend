@@ -184,7 +184,26 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         )
       }
 
-      //"user submits a valid email address for non nominated partner and is not prompted for email validation"
+      "user submits a valid email address for non nominated partner has it accepted immediately without verification" in {
+        authorizedUser()
+        mockRegistrationFind(registrationWithExistingPartnerAndInflightPartner)
+        mockRegistrationUpdate()
+
+        val result = controller.submitNewPartner()(
+          postRequestEncoded(EmailAddress("new-partners-email@localhost"),
+                             saveAndContinueFormAction
+          )
+        )
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.PartnerPhoneNumberController.displayNewPartner().url
+        )
+
+        modifiedRegistration.inflightPartner.flatMap(
+          _.contactDetails.flatMap(_.emailAddress)
+        ) mustBe Some("new-partners-email@localhost")
+      }
 
       "user submits an amendment to an existing partners email address" in {
         authorizedUser()
