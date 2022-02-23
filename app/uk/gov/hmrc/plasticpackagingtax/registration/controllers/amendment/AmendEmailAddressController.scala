@@ -107,32 +107,24 @@ class AmendEmailAddressController @Inject() (
 
   def emailVerificationCode(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(buildEmailVerificationCodePage(EmailAddressPasscode.form(), getProspectiveEmail()))
+      Ok(
+        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
+                                             getProspectiveEmail(),
+                                             backCall,
+                                             submitCall
+        )
+      )
     }
 
   def checkEmailVerificationCode(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      EmailAddressPasscode.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[EmailAddressPasscode]) =>
-            Future.successful(
-              BadRequest(buildEmailVerificationCodePage(formWithErrors, getProspectiveEmail()))
-            ),
-          verificationCode =>
-            handleEmailVerificationCodeSubmission(verificationCode.value,
-                                                  routes.AmendEmailAddressController.emailVerified(),
-                                                  routes.AmendEmailAddressController.emailVerificationTooManyAttempts(),
-                                                  backCall,
-                                                  submitCall
-            )
-        )
+      processVerificationCodeSubmission(
+        backCall,
+        submitCall,
+        routes.AmendEmailAddressController.emailVerified(),
+        routes.AmendEmailAddressController.emailVerificationTooManyAttempts()
+      )
     }
-
-  private def buildEmailVerificationCodePage(form: Form[EmailAddressPasscode], email: String)(
-    implicit request: JourneyRequest[AnyContent]
-  ) =
-    renderEnterEmailVerificationCodePage(form, email, backCall, submitCall)
 
   def emailVerified(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
