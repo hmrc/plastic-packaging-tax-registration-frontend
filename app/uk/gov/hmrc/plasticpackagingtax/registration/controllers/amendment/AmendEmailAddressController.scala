@@ -135,7 +135,9 @@ class AmendEmailAddressController @Inject() (
 
   def confirmEmailUpdate(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      updateRegistration(updateEmail(getProspectiveEmail()))  // TODO does anything stop the user just URL hacking straight to this screen?
+      updateRegistration(
+        updateEmail(getProspectiveEmail())
+      ) // TODO does anything stop the user just URL hacking straight to this screen?
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =

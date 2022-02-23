@@ -167,7 +167,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       }
     }
 
-    "update inflight registration" when {
+    "update inflight partner" when {
       "user submits a valid email address for first partner and is sent for email validation" in {
         authorizedUser()
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
@@ -341,8 +341,11 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           _.contactDetails.flatMap(_.emailAddress)
         ) mustBe Some("an-email@localhost")
       }
+    }
 
-      "user submits an amendment to an existing partners email address" in {
+    "update existing partners" when {
+
+      "user submits an amendment to an existing non nominated partners email address" in {
         authorizedUser()
         mockRegistrationFind(registrationWithExistingPartners)
         mockRegistrationUpdate()
@@ -352,11 +355,124 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         )
 
         status(result) mustBe SEE_OTHER
-
+        redirectLocation(result) mustBe Some(
+          routes.PartnerPhoneNumberController.displayExistingPartner(
+            nonNominatedExistingPartner.id
+          ).url
+        )
         modifiedRegistration.findPartner(nonNominatedExistingPartner.id).flatMap(
           _.contactDetails
         ).flatMap(_.emailAddress) mustBe Some("amended@localhost")
       }
+
+      "user is prompted to enter email verification code for existing nominated partner" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithExistingPartner.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithExistingPartner.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        mockRegistrationFind(withEmailVerificationJourney)
+        val existingNominatedPartner = withEmailVerificationJourney.nominatedPartner.get
+
+        val result =
+          controller.confirmExistingPartnerEmailCode(existingNominatedPartner.id)(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "user submits correct email verification code for existing nominated partner" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithExistingPartner.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithExistingPartner.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        mockRegistrationFind(withEmailVerificationJourney)
+
+        // Email verification will be called to check the user submitted code
+        when(
+          mockEmailVerificationService.checkVerificationCode(
+            ArgumentMatchers.eq("ACODE"),
+            ArgumentMatchers.eq("an-email@localhost"),
+            ArgumentMatchers.eq("email-verification-journey-id")
+          )(any())
+        ).thenReturn(Future.successful(EmailVerificationJourneyStatus.COMPLETE))
+        val existingNominatedPartner = withEmailVerificationJourney.nominatedPartner.get
+
+        val result = controller.checkExistingPartnerEmailVerificationCode(
+          existingNominatedPartner.id
+        )(postRequestEncoded(EmailAddressPasscode("ACODE"), saveAndContinueFormAction))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.PartnerEmailAddressController.emailVerifiedExistingPartner(
+            existingNominatedPartner.id
+          ).url
+        )
+      }
+
+      "user is prompted for confirm they still want to apply the verified email address to an existing nominated partner" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithExistingPartner.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithExistingPartner.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+
+        mockRegistrationFind(withEmailVerificationJourney)
+        mockRegistrationUpdate()
+        val existingNominatedPartner = withEmailVerificationJourney.nominatedPartner.get
+
+        val result =
+          controller.confirmEmailUpdateExistingPartner(existingNominatedPartner.id)(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "user submits confirmation of verified email address and has it updated" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithExistingPartner.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithExistingPartner.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+
+        mockRegistrationFind(withEmailVerificationJourney)
+        mockRegistrationUpdate()
+        val existingNominatedPartner = withEmailVerificationJourney.nominatedPartner.get
+
+        val result =
+          controller.emailVerifiedExistingPartner(existingNominatedPartner.id)(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.PartnerPhoneNumberController.displayExistingPartner(
+            existingNominatedPartner.id
+          ).url
+        )
+
+        modifiedRegistration.findPartner(existingNominatedPartner.id).flatMap(
+          _.contactDetails.flatMap(_.emailAddress)
+        ) mustBe Some("an-email@localhost")
+      }
+
     }
 
     "return an error" when {

@@ -195,7 +195,7 @@ class PartnerEmailAddressController @Inject() (
     updatedEmail: String
   ): Registration => Registration = {
     registration: Registration =>
-      updateRegistrationWithEmail(registration, partner.map(_.id), updatedEmail)
+      updateRegistrationWithPartnerEmail(registration, partner.map(_.id), updatedEmail)
   }
 
 }

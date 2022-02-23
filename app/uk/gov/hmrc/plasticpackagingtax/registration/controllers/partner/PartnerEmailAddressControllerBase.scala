@@ -165,10 +165,10 @@ abstract class PartnerEmailAddressControllerBase(
     implicit req: JourneyRequest[AnyContent]
   ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
-      updateRegistrationWithEmail(registration, existingPartnerId, emailAddress.value)
+      updateRegistrationWithPartnerEmail(registration, existingPartnerId, emailAddress.value)
     }
 
-  protected def updateRegistrationWithEmail(
+  protected def updateRegistrationWithPartnerEmail(
     registration: Registration,
     existingPartnerId: Option[String],
     emailAddress: String
