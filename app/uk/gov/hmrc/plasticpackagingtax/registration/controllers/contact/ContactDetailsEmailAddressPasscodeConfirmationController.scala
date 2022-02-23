@@ -22,6 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActi
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -36,7 +37,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
         page(routes.ContactDetailsEmailAddressPasscodeController.displayPage(),
-             routes.ContactDetailsEmailAddressPasscodeConfirmationController.submit()
+             routes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(),
+             Some(sectionName())
         )
       )
     }
@@ -46,5 +48,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
       // TODO does this do anything?
       Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
     }
+
+  private def sectionName()(implicit messages: Messages): String =
+    messages("primaryContactDetails.sectionHeader")
 
 }

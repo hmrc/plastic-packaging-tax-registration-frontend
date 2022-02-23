@@ -20,7 +20,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   AmendRegistrationUpdateService,
   Registration

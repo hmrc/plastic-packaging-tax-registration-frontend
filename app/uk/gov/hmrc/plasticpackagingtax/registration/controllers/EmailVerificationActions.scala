@@ -22,7 +22,6 @@ import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{AnyContent, Call, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddress,
   EmailAddressPasscode
@@ -126,7 +125,7 @@ trait EmailVerificationActions {
     request: JourneyRequest[AnyContent],
     messages: Messages
   ): Result =
-    Ok(emailCorrectPasscodePage(backCall, submitCall))
+    Ok(emailCorrectPasscodePage(backCall, submitCall, None))
 
   def showTooManyAttemptsPage()(implicit
     request: JourneyRequest[AnyContent],
@@ -180,7 +179,7 @@ trait EmailVerificationActions {
     backCall: Call,
     submitCall: Call
   )(implicit request: JourneyRequest[AnyContent], messages: Messages): HtmlFormat.Appendable =
-    emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall)
+    emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall, None)
 
   protected def processVerificationCodeSubmission(
     backCall: Call,

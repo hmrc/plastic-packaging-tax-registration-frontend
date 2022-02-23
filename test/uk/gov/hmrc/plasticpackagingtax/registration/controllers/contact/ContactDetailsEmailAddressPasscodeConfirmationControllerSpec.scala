@@ -44,7 +44,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
     super.beforeEach()
     val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {

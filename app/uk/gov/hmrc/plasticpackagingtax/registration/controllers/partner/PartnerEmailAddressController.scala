@@ -146,12 +146,14 @@ class PartnerEmailAddressController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       getPartner(Some(partnerId)).map { _ =>
         Ok(
-          emailPasscodePage(EmailAddressPasscode.form(),
-                            Some(getProspectiveEmail()),
-                            routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
-                            routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
-                              partnerId
-                            )
+          renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
+                                               getProspectiveEmail(),
+                                               routes.PartnerEmailAddressController.displayExistingPartner(
+                                                 partnerId
+                                               ),
+                                               routes.PartnerEmailAddressController.checkExistingPartnerEmailVerificationCode(
+                                                 partnerId
+                                               )
           )
         )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))

@@ -80,10 +80,12 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(email_address_passcode_page.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+    when(
+      email_address_passcode_page.apply(any(), any(), any(), any(), any())(any(), any())
+    ).thenReturn(HtmlFormat.empty)
+    when(emailCorrectPasscodePage.apply(any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.empty
     )
-    when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(too_many_attempts_passcode_page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
