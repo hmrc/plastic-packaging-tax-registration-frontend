@@ -67,7 +67,7 @@ trait EmailVerificationActions {
   def promptForEmailVerificationCode(
     request: JourneyRequest[AnyContent],
     email: EmailAddress,
-    continueUrl: String,
+    continueUrl: Call,
     enterVerificationCodeCall: Call
   )(implicit
     journeyRequest: JourneyRequest[AnyContent],
@@ -76,7 +76,7 @@ trait EmailVerificationActions {
   ): Future[Result] =
     emailVerificationService.sendVerificationCode(email.value,
                                                   request.user.credId,
-                                                  continueUrl
+                                                  continueUrl.url
     ).map { emailVerificationJourneyId =>
       persistProspectiveEmailAddress(email, emailVerificationJourneyId)
       Redirect(enterVerificationCodeCall)

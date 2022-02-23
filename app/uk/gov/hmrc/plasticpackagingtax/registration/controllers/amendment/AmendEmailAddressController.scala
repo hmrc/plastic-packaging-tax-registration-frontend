@@ -80,7 +80,7 @@ class AmendEmailAddressController @Inject() (
                   promptForEmailVerificationCode(
                     request,
                     email,
-                    "/register-for-plastic-packaging-tax/amend-registration",
+                    routes.AmendRegistrationController.displayPage(),
                     routes.AmendEmailAddressController.emailVerificationCode()
                   )
               }

@@ -151,11 +151,10 @@ abstract class PartnerEmailAddressControllerBase(
                   }
                 }
               else
-                promptForEmailVerificationCode(
-                  request,
-                  emailAddress,
-                  emailVerificationContinueUrl.url, // TODO why is every one else treating this as a String not a route?
-                  confirmEmailAddressCall
+                promptForEmailVerificationCode(request,
+                                               emailAddress,
+                                               emailVerificationContinueUrl,
+                                               confirmEmailAddressCall
                 )
           }
         }
