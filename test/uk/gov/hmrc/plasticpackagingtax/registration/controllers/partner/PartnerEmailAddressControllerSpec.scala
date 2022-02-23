@@ -205,6 +205,33 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         ) mustBe Some("new-partners-email@localhost")
       }
 
+      "user submits confirmation of verified email address and has it updated" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.copy(
+            primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney
+          )
+
+        mockRegistrationFind(withEmailVerificationJourney)
+        mockRegistrationUpdate()
+
+        val result = controller.confirmEmailUpdateNewPartner()(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.PartnerPhoneNumberController.displayNewPartner().url
+        )
+
+        modifiedRegistration.inflightPartner.flatMap(
+          _.contactDetails.flatMap(_.emailAddress)
+        ) mustBe Some("an-email@localhost")
+      }
+
       "user submits an amendment to an existing partners email address" in {
         authorizedUser()
         mockRegistrationFind(registrationWithExistingPartners)
