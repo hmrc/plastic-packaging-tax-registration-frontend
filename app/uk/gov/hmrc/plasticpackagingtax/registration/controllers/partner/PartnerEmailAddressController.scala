@@ -92,7 +92,7 @@ class PartnerEmailAddressController @Inject() (
 
   def confirmNewPartnerEmailCode(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.inflightPartner.map { partner =>
+      request.registration.inflightPartner.map { _ =>
         Ok(
           renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
                                                getProspectiveEmail(),
@@ -106,7 +106,7 @@ class PartnerEmailAddressController @Inject() (
 
   def checkNewPartnerEmailVerificationCode(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.inflightPartner.map { partner =>
+      request.registration.inflightPartner.map { _ =>
         EmailAddressPasscode.form()
           .bindFromRequest()
           .fold(
@@ -142,7 +142,7 @@ class PartnerEmailAddressController @Inject() (
 
   def confirmEmailUpdateNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.inflightPartner.map { partner =>
+      request.registration.inflightPartner.map { _ =>
         registrationUpdater.updateRegistration(
           updatePartnersEmail(None, getProspectiveEmail())
         ).map { _ =>
@@ -212,7 +212,7 @@ class PartnerEmailAddressController @Inject() (
 
   def confirmEmailUpdateExistingPartner(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      getPartner(Some(partnerId)).map { partner =>
+      getPartner(Some(partnerId)).map { _ =>
         showEmailVerifiedPage(
           routes.PartnerEmailAddressController.confirmExistingPartnerEmailCode(partnerId),
           routes.PartnerEmailAddressController.confirmEmailUpdateExistingPartner(partnerId)

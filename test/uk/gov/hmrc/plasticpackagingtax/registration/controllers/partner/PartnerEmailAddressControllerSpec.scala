@@ -17,16 +17,21 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
+  EmailAddress,
+  EmailAddressPasscode
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
@@ -78,9 +83,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     when(email_address_passcode_page.apply(any(), any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.empty
     )
-    when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(
-      HtmlFormat.empty
-    )
+    when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -205,11 +208,63 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           )
 
         mockRegistrationFind(withEmailVerificationJourney)
-        mockRegistrationUpdate()
 
         val result = controller.confirmNewPartnerEmailCode()(getRequest())
 
         status(result) mustBe OK
+      }
+
+      "user submits correct email verification code" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.copy(
+            primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney
+          )
+        mockRegistrationFind(withEmailVerificationJourney)
+
+        // Email verification will be called to check the user submitted code
+        when(
+          mockEmailVerificationService.checkVerificationCode(
+            ArgumentMatchers.eq("ACODE"),
+            ArgumentMatchers.eq("an-email@localhost"),
+            ArgumentMatchers.eq("email-verification-journey-id")
+          )(any())
+        ).thenReturn(Future.successful(EmailVerificationJourneyStatus.COMPLETE))
+
+        val result = controller.checkNewPartnerEmailVerificationCode()(
+          postRequestEncoded(EmailAddressPasscode("ACODE"), saveAndContinueFormAction)
+        )
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.PartnerEmailAddressController.emailVerifiedNewPartner().url
+        )
+      }
+
+      "user submits blank verification code" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.copy(
+            primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney
+          )
+        mockRegistrationFind(withEmailVerificationJourney)
+
+        // Email verification will not be called in this case
+        val result = controller.checkNewPartnerEmailVerificationCode()(
+          postRequestEncoded(EmailAddressPasscode(""), saveAndContinueFormAction)
+        )
+
+        status(result) mustBe BAD_REQUEST
       }
 
       "user is prompted for confirm they still want to apply the verified email address" in {
