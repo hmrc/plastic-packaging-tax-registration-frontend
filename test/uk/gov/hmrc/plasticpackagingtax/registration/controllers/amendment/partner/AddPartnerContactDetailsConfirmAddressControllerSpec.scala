@@ -35,7 +35,8 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
     extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction
     with PptTestData {
 
-  private val mcc = stubMessagesControllerComponents()
+  private val mcc       = stubMessagesControllerComponents()
+  private val sessionId = "123"
 
   private val controller =
     new AddPartnerContactDetailsConfirmAddressController(
@@ -103,7 +104,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
 
         val resp = await(controller.addressCaptureCallback()(getRequest()))
 
-        inMemoryRegistrationAmendmentRepository.get().map { registration =>
+        inMemoryRegistrationAmendmentRepository.get(sessionId).map { registration =>
           registration.get.inflightPartner.get.contactDetails.get.address mustBe validCapturedAddress
         }
 
@@ -115,6 +116,6 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
   }
 
   private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
+    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, sessionId)).withCSRFToken
 
 }

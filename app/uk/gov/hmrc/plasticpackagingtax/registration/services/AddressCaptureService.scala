@@ -21,7 +21,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.address.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.AddressCaptureDetailRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,23 +50,21 @@ object AddressCaptureConfig {
 }
 
 @Singleton
-class AddressCaptureService @Inject() (userDataRepository: UserDataRepository)(implicit
-  ec: ExecutionContext
-) {
-
-  private val repoKey = "addressCaptureDetails"
+class AddressCaptureService @Inject() (
+  addressCaptureDetailRepository: AddressCaptureDetailRepository
+)(implicit ec: ExecutionContext) {
 
   def initAddressCapture(
     config: AddressCaptureConfig
   )(implicit request: AuthenticatedRequest[Any]): Future[Call] =
-    userDataRepository.putData(repoKey, AddressCaptureDetail(config)).map(
+    addressCaptureDetailRepository.put(AddressCaptureDetail(config)).map(
       _ => routes.AddressCaptureController.initialiseAddressCapture()
     )
 
   def getAddressCaptureDetails()(implicit
     request: AuthenticatedRequest[Any]
   ): Future[Option[AddressCaptureDetail]] =
-    userDataRepository.getData[AddressCaptureDetail](repoKey)
+    addressCaptureDetailRepository.get()
 
   def getCapturedAddress()(implicit request: AuthenticatedRequest[Any]): Future[Option[Address]] =
     getAddressCaptureDetails().map { addressCapture =>
@@ -74,8 +72,7 @@ class AddressCaptureService @Inject() (userDataRepository: UserDataRepository)(i
     }
 
   def setCapturedAddress(capturedAddress: Address)(implicit request: AuthenticatedRequest[Any]) =
-    userDataRepository.updateData[AddressCaptureDetail](
-      repoKey,
+    addressCaptureDetailRepository.update(
       addressCaptureDetails => addressCaptureDetails.copy(capturedAddress = Some(capturedAddress))
     )
 

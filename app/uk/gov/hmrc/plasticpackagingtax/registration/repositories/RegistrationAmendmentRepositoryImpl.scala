@@ -19,11 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.MongoRegistrationAmendmentRepository.repositoryKey
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.RegistrationAmendmentRepositoryImpl.repositoryKey
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@ImplementedBy(classOf[MongoRegistrationAmendmentRepository])
+@ImplementedBy(classOf[RegistrationAmendmentRepositoryImpl])
 trait RegistrationAmendmentRepository {
 
   def put(id: String, registration: Registration): Future[Registration]
@@ -40,10 +40,11 @@ trait RegistrationAmendmentRepository {
     request: AuthenticatedRequest[Any]
   ): Future[Registration]
 
+  def reset(): Unit
 }
 
 @Singleton
-class MongoRegistrationAmendmentRepository @Inject() (userDataRepository: UserDataRepository)(
+class RegistrationAmendmentRepositoryImpl @Inject() (userDataRepository: UserDataRepository)(
   implicit ec: ExecutionContext
 ) extends RegistrationAmendmentRepository {
 
@@ -69,8 +70,9 @@ class MongoRegistrationAmendmentRepository @Inject() (userDataRepository: UserDa
       case _                  => throw new IllegalStateException("Missing registration in user data repository")
     }
 
+  def reset(): Unit = userDataRepository.reset()
 }
 
-object MongoRegistrationAmendmentRepository {
+object RegistrationAmendmentRepositoryImpl {
   val repositoryKey = "registrationAmendment"
 }

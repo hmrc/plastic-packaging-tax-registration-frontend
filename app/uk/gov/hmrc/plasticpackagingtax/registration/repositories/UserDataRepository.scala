@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
-import javax.inject.{Inject, Singleton}
+import com.google.inject.ImplementedBy
 import play.api.Configuration
 import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.mongo.cache.CacheIdType.SessionCacheId.NoSessionException
@@ -24,11 +24,34 @@ import uk.gov.hmrc.mongo.cache.{CacheIdType, DataKey, MongoCacheRepository}
 import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
+@ImplementedBy(classOf[MongoUserDataRepository])
+trait UserDataRepository {
+
+  def putData[T: Writes](key: String, data: T)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[T]
+
+  def putData[T: Writes](id: String, key: String, data: T): Future[T]
+
+  def getData[T: Reads](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Option[T]]
+  def getData[T: Reads](id: String, key: String): Future[Option[T]]
+
+  def deleteData[T: Writes](key: String)(implicit request: AuthenticatedRequest[Any]): Future[Unit]
+  def deleteData[T: Writes](id: String, key: String): Future[Unit]
+
+  def updateData[T: Reads: Writes](key: String, updater: T => T)(implicit
+    request: AuthenticatedRequest[Any]
+  ): Future[Unit]
+
+  def reset(): Unit
+}
+
 @Singleton
-class UserDataRepository @Inject() (
+class MongoUserDataRepository @Inject() (
   mongoComponent: MongoComponent,
   configuration: Configuration,
   timestampSupport: TimestampSupport
@@ -39,38 +62,41 @@ class UserDataRepository @Inject() (
       ttl = configuration.get[FiniteDuration]("mongodb.userDataCache.expiry"),
       timestampSupport = timestampSupport,
       cacheIdType = CacheIdType.SimpleCacheId
-    ) {
+    ) with UserDataRepository {
 
   private def id(implicit request: AuthenticatedRequest[Any]): String =
     request.session
       .get("sessionId")
       .getOrElse(throw NoSessionException)
 
-  def putData[A: Writes](key: String, data: A)(implicit
+  override def putData[T: Writes](key: String, data: T)(implicit
     request: AuthenticatedRequest[Any]
-  ): Future[A] =
+  ): Future[T] =
+    put[T](id)(DataKey(key), data).map(_ => data)
+
+  override def putData[A: Writes](id: String, key: String, data: A): Future[A] =
     put[A](id)(DataKey(key), data).map(_ => data)
 
-  def putData[A: Writes](id: String, key: String, data: A): Future[A] =
-    put[A](id)(DataKey(key), data).map(_ => data)
-
-  def getData[A: Reads](key: String)(implicit
+  override def getData[A: Reads](key: String)(implicit
     request: AuthenticatedRequest[Any]
   ): Future[Option[A]] = get[A](id)(DataKey(key))
 
-  def getData[A: Reads](id: String, key: String): Future[Option[A]] = get[A](id)(DataKey(key))
+  override def getData[A: Reads](id: String, key: String): Future[Option[A]] =
+    get[A](id)(DataKey(key))
 
-  def deleteData[A: Writes](
+  override def deleteData[A: Writes](
     key: String
   )(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
     delete[A](id)(DataKey(key))
 
-  def deleteData[A: Writes](id: String, key: String): Future[Unit] =
+  override def deleteData[A: Writes](id: String, key: String): Future[Unit] =
     delete[A](id)(DataKey(key))
 
-  def updateData[A: Reads: Writes](key: String, updater: A => A)(implicit
+  override def updateData[A: Reads: Writes](key: String, updater: A => A)(implicit
     request: AuthenticatedRequest[Any]
   ): Future[Unit] =
     getData(key).map(data => data.map(data => putData(key, updater(data))))
 
+  // TODO: is there a better way of exposing this function in a test implementation only?
+  override def reset(): Unit = throw new UnsupportedOperationException()
 }

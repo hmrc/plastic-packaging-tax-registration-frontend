@@ -53,7 +53,9 @@ class UserEnrolmentDetailsRepositorySpec
 
   val mockTimeStampSupport = new CurrentTimestampSupport()
 
-  val userDataRepository             = new UserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
+  val userDataRepository =
+    new MongoUserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
+
   val userEnrolmentDetailsRepository = new UserEnrolmentDetailsRepository(userDataRepository)
 
   implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
