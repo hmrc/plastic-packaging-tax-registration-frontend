@@ -75,10 +75,14 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(email_address_passcode_page.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
     reset(page)
+    reset(email_address_passcode_page)
     super.afterEach()
   }
 
@@ -182,6 +186,26 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         modifiedRegistration.primaryContactDetails.prospectiveEmail mustBe Some(
           "proposed-email@localhost"
         )
+      }
+
+      "user is prompted for email verification code" in {
+        authorizedUser()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("an-email@localhost")
+          )
+        val withEmailVerificationJourney =
+          registrationWithPartnershipDetailsAndInflightPartnerWithContactName.copy(
+            primaryContactDetails = primaryContactDetailsWithEmailVerificationJourney
+          )
+
+        mockRegistrationFind(withEmailVerificationJourney)
+        mockRegistrationUpdate()
+
+        val result = controller.confirmNewPartnerEmailCode()(getRequest())
+
+        status(result) mustBe OK
       }
 
       "user submits a valid email address for non nominated partner has it accepted immediately without verification" in {
