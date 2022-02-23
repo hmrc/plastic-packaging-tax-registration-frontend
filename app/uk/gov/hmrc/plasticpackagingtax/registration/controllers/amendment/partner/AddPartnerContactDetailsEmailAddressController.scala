@@ -16,13 +16,9 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{
-  routes,
-  PartnerEmailAddressControllerBase
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -39,7 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsEmailAddressController @Inject() (
@@ -89,27 +85,12 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
 
   def checkEmailVerificationCode(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      EmailAddressPasscode.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[EmailAddressPasscode]) =>
-            Future.successful(
-              BadRequest(
-                renderEnterEmailVerificationCodePage(formWithErrors,
-                                                     getProspectiveEmail(),
-                                                     routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-                                                     routes.AddPartnerContactDetailsEmailAddressController.checkEmailVerificationCode()
-                )
-              )
-            ),
-          verificationCode =>
-            handleEmailVerificationCodeSubmission(verificationCode.value,
-                                                  routes.AddPartnerContactDetailsEmailAddressController.emailVerified(),
-                                                  routes.AddPartnerContactDetailsEmailAddressController.emailVerificationTooManyAttempts(),
-                                                  routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
-                                                  routes.AddPartnerContactDetailsEmailAddressController.checkEmailVerificationCode()
-            )
-        )
+      processVerificationCodeSubmission(
+        routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
+        routes.AddPartnerContactDetailsEmailAddressController.checkEmailVerificationCode(),
+        routes.AddPartnerContactDetailsEmailAddressController.emailVerified(),
+        routes.AddPartnerContactDetailsEmailAddressController.emailVerificationTooManyAttempts()
+      )
     }
 
   def emailVerified(): Action[AnyContent] =
@@ -133,7 +114,7 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
       showTooManyAttemptsPage
     }
 
-  private def updatePartnersEmail( // TODO duplication with PartnerEmailAddressController
+  private def updatePartnersEmail(
     partner: Option[Partner],
     updatedEmail: String
   ): Registration => Registration = {

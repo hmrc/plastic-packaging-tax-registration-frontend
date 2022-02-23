@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
-import play.api.data.Form
+import play.api.data.{Form, FormBinding}
 import play.api.i18n.Messages
 import play.api.mvc.Results.{BadRequest, Ok, Redirect}
 import play.api.mvc.{AnyContent, Call, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddress,
   EmailAddressPasscode
@@ -180,5 +181,39 @@ trait EmailVerificationActions {
     submitCall: Call
   )(implicit request: JourneyRequest[AnyContent], messages: Messages): HtmlFormat.Appendable =
     emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall)
+
+  protected def processVerificationCodeSubmission(
+    backCall: Call,
+    submitCall: Call,
+    confirmVerifiedEmailCall: Call,
+    emailVerificationTooManyAttemptsCall: Call
+  )(implicit
+    req: JourneyRequest[AnyContent],
+    messages: Messages,
+    formBinding: FormBinding,
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Result] =
+    EmailAddressPasscode.form()
+      .bindFromRequest()
+      .fold(
+        (formWithErrors: Form[EmailAddressPasscode]) =>
+          Future.successful(
+            BadRequest(
+              renderEnterEmailVerificationCodePage(formWithErrors,
+                                                   getProspectiveEmail(),
+                                                   backCall,
+                                                   submitCall
+              )
+            )
+          ),
+        verificationCode =>
+          handleEmailVerificationCodeSubmission(verificationCode.value,
+                                                confirmVerifiedEmailCall,
+                                                emailVerificationTooManyAttemptsCall,
+                                                backCall,
+                                                submitCall
+          )
+      )
 
 }
