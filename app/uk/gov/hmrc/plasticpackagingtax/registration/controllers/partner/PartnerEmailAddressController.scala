@@ -123,7 +123,7 @@ class PartnerEmailAddressController @Inject() (
             verificationCode =>
               handleEmailVerificationCodeSubmission(verificationCode.value,
                                                     routes.PartnerEmailAddressController.emailVerifiedNewPartner(),
-                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttemptsNewPartner(),
+                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttempts(),
                                                     routes.PartnerEmailAddressController.displayNewPartner(),
                                                     routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
               )
@@ -151,14 +151,14 @@ class PartnerEmailAddressController @Inject() (
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  def emailVerificationTooManyAttemptsNewPartner(): Action[AnyContent] =
+  def emailVerificationTooManyAttempts(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       showTooManyAttemptsPage
     }
 
   def confirmExistingPartnerEmailCode(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      getPartner(Some(partnerId)).map { partner =>
+      getPartner(Some(partnerId)).map { _ =>
         Ok(
           emailPasscodePage(EmailAddressPasscode.form(),
                             Some(getProspectiveEmail()),
@@ -173,7 +173,7 @@ class PartnerEmailAddressController @Inject() (
 
   def checkExistingPartnerEmailVerificationCode(partnerId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      getPartner(Some(partnerId)).map { partner =>
+      getPartner(Some(partnerId)).map { _ =>
         EmailAddressPasscode.form()
           .bindFromRequest()
           .fold(
@@ -196,9 +196,7 @@ class PartnerEmailAddressController @Inject() (
                                                     routes.PartnerEmailAddressController.emailVerifiedExistingPartner(
                                                       partnerId
                                                     ),
-                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttemptsExistingPartner(
-                                                      partnerId
-                                                    ),
+                                                    routes.PartnerEmailAddressController.emailVerificationTooManyAttempts(),
                                                     routes.PartnerEmailAddressController.displayExistingPartner(
                                                       partnerId
                                                     ),
@@ -229,11 +227,6 @@ class PartnerEmailAddressController @Inject() (
           Redirect(routes.PartnerPhoneNumberController.displayExistingPartner(partnerId))
         }
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
-    }
-
-  def emailVerificationTooManyAttemptsExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
-      showTooManyAttemptsPage
     }
 
   private def updatePartnersEmail(

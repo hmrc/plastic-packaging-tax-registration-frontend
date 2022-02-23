@@ -84,12 +84,14 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       HtmlFormat.empty
     )
     when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(too_many_attempts_passcode_page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
     reset(page)
     reset(email_address_passcode_page)
     reset(emailCorrectPasscodePage)
+    reset(too_many_attempts_passcode_page)
     super.afterEach()
   }
 
@@ -109,7 +111,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
   private val existingPartner =
     aLimitedCompanyPartner()
 
-  val nonNominatedExistingPartner = aSoleTraderPartner()
+  private val nonNominatedExistingPartner = aSoleTraderPartner()
 
   private def registrationWithExistingPartner =
     aRegistration(
@@ -265,6 +267,11 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         )
 
         status(result) mustBe BAD_REQUEST
+      }
+
+      "user requests too many attempts page" in {
+        val result = controller.emailVerificationTooManyAttempts()(getRequest())
+        status(result) mustBe OK
       }
 
       "user is prompted for confirm they still want to apply the verified email address" in {
