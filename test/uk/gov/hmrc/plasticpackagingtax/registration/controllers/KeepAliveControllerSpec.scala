@@ -18,27 +18,25 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.PptTestData.newUser
 import base.unit.ControllerSpec
-import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
-import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey, MongoCacheRepository}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.MongoUserDataRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.time.Instant
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class KeepAliveControllerSpec extends ControllerSpec {
   private val mcc                    = stubMessagesControllerComponents()
-  private val mockUserDataRepository = mock[UserDataRepository]
+  private val mockUserDataRepository = mock[MongoUserDataRepository]
 
   private val controller =
     new KeepAliveController(authenticate = mockAuthAllowEnrolmentAction,

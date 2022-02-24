@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.cache.{DataKey, MongoCacheRepository}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.MongoUserDataRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class KeepAliveController @Inject() (
   mcc: MessagesControllerComponents,
-  userDataRepository: UserDataRepository,
+  userDataRepository: MongoUserDataRepository,
   authenticate: AuthNoEnrolmentCheckAction
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {

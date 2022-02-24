@@ -18,16 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
 import com.google.inject.ImplementedBy
 import play.api.Configuration
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{__, Format, JsObject, JsValue, Json, OFormat, Reads, Writes}
+import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.mongo.cache.CacheIdType.SessionCacheId.NoSessionException
 import uk.gov.hmrc.mongo.cache.{CacheIdType, CacheItem, DataKey, MongoCacheRepository}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
-import javax.inject.{Inject, Singleton}
-import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
