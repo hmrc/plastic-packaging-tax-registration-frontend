@@ -56,9 +56,8 @@ abstract class PartnerContactAddressControllerBase(
         AddressCaptureConfig(backLink = backLink.url,
                              successLink = captureAddressCallback.url,
                              alfHeadingsPrefix = "addressLookup.contact",
-                             entityName =
-                               getPartner(partnerId).flatMap(_.contactDetails.flatMap(_.name)),
-                             pptHeadingKey = "addressLookup.contact.lookup.heading",
+                             entityName = getPartner(partnerId).map(_.name),
+                             pptHeadingKey = "addressCapture.contact.heading",
                              pptHintKey = None
         )
       ).map(redirect => Redirect(redirect))

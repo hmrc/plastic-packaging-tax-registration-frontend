@@ -282,8 +282,8 @@ class AmendPartnerContactDetailsControllerSpec
         successLink =
           routes.AmendPartnerContactDetailsController.updateAddress(nominatedPartner.id).url,
         alfHeadingsPrefix = "addressLookup.partner",
-        pptHeadingKey = "addressLookup.partner.lookup.heading",
-        entityName = nominatedPartner.contactDetails.get.name,
+        pptHeadingKey = "addressCapture.contact.heading",
+        entityName = Some(nominatedPartner.name),
         pptHintKey = None
       )
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))

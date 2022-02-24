@@ -33,17 +33,17 @@
         continueButton: continue
 )
 
-@(form: Form[Boolean], backLink: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], backLink: Call, entityName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title(headingKey = "ukAddress.title"),
+    title = Title(headingKey = "ukAddress.title", headingArg = entityName.getOrElse(messages("missing.organisationName"))),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))
 ) {
 
     @formHelper(action = routes.AddressCaptureController.submitAddressInUk(), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages("ukAddress.title")),
+                content = Text(messages("ukAddress.title", entityName.getOrElse(messages("missing.organisationName")))),
                 classes = gdsFieldsetPageHeading,
                 isPageHeading = true
             )),

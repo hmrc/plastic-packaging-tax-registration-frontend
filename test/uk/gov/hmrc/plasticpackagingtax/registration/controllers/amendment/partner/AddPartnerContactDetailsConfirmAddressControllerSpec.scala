@@ -84,7 +84,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
             successLink =
               routes.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback().url,
             alfHeadingsPrefix = "addressLookup.partner",
-            pptHeadingKey = "addressLookup.partner.lookup.heading",
+            pptHeadingKey = "addressCapture.contact.heading",
             entityName = partnershipRegistrationWithInflightPartner.inflightPartner.map(_.name),
             pptHintKey = None
           )

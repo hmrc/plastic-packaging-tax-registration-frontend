@@ -234,10 +234,9 @@ class AmendMemberContactDetailsControllerSpec
                                  memberId
                                ).url,
                              alfHeadingsPrefix = "addressLookup.contact",
-                             pptHeadingKey = "primaryContactDetails.address.title",
-                             entityName = populatedRegistration.findMember(memberId).flatMap(
-                               _.contactDetails.map(_.groupMemberName)
-                             ),
+                             pptHeadingKey = "addressCapture.contact.heading",
+                             entityName =
+                               populatedRegistration.findMember(memberId).map(_.businessName),
                              pptHintKey = None
         )
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))

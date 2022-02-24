@@ -237,10 +237,9 @@ class AmendMemberContactDetailsController @Inject() (
                                memberId
                              ).url,
                              alfHeadingsPrefix = "addressLookup.contact",
-                             entityName = request.registration.findMember(memberId).flatMap(
-                               _.contactDetails.map(_.groupMemberName)
-                             ),
-                             pptHeadingKey = "primaryContactDetails.address.title",
+                             entityName =
+                               request.registration.findMember(memberId).map(_.businessName),
+                             pptHeadingKey = "addressCapture.contact.heading",
                              pptHintKey = None
         )
       ).map(redirect => Redirect(redirect))

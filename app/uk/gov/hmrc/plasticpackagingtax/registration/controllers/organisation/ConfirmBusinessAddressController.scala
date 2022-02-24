@@ -79,7 +79,7 @@ class ConfirmBusinessAddressController @Inject() (
                              routes.ConfirmBusinessAddressController.addressCaptureCallback().url,
                            alfHeadingsPrefix = "addressLookup.business",
                            entityName = request.registration.organisationDetails.businessName,
-                           pptHeadingKey = "addressLookup.contact.lookup.heading",
+                           pptHeadingKey = "addressCapture.business.heading",
                            pptHintKey = None,
                            forceUkAddress = true
       )

@@ -248,8 +248,8 @@ class AmendPartnerContactDetailsController @Inject() (
           successLink =
             routes.AmendPartnerContactDetailsController.updateAddress(partnerId).url,
           alfHeadingsPrefix = "addressLookup.partner",
-          entityName = getPartner(partnerId).contactDetails.flatMap(_.name),
-          pptHeadingKey = "addressLookup.partner.lookup.heading",
+          entityName = Some(getPartner(partnerId).name),
+          pptHeadingKey = "addressCapture.contact.heading",
           pptHintKey = None
         )
       ).map(redirect => Redirect(redirect))

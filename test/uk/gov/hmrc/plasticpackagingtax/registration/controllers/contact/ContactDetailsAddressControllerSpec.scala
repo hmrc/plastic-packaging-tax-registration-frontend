@@ -48,8 +48,8 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
                                  routes.ContactDetailsConfirmAddressController.displayPage().url,
                                successLink = routes.ContactDetailsAddressController.update.url,
                                alfHeadingsPrefix = "addressLookup.contact",
-                               pptHeadingKey = "addressLookup.contact.lookup.heading",
-                               entityName = registration.primaryContactDetails.name,
+                               pptHeadingKey = "addressCapture.contact.heading",
+                               entityName = registration.organisationDetails.businessName,
                                pptHintKey = None
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))

@@ -166,8 +166,8 @@ class AmendContactDetailsController @Inject() (
         AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
                              successLink = routes.AmendContactDetailsController.updateAddress().url,
                              alfHeadingsPrefix = "addressLookup.contact",
-                             entityName = request.registration.primaryContactDetails.name,
-                             pptHeadingKey = "primaryContactDetails.address.title",
+                             entityName = request.registration.organisationDetails.businessName,
+                             pptHeadingKey = "addressCapture.contact.heading",
                              pptHintKey = None
         )
       ).map(redirect => Redirect(redirect))

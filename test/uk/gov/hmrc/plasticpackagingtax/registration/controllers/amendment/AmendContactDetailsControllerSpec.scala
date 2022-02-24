@@ -213,8 +213,8 @@ class AmendContactDetailsControllerSpec
         AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
                              successLink = routes.AmendContactDetailsController.updateAddress().url,
                              alfHeadingsPrefix = "addressLookup.contact",
-                             pptHeadingKey = "primaryContactDetails.address.title",
-                             entityName = populatedRegistration.primaryContactDetails.name,
+                             pptHeadingKey = "addressCapture.contact.heading",
+                             entityName = populatedRegistration.organisationDetails.businessName,
                              pptHintKey = None
         )
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))

@@ -36,7 +36,7 @@
         countryCodeAutoComplete: countryCodeAutoComplete
 )
 
-@(form: Form[Address], countryMap: Map[String, String], backLink: Call, updateCall: Call, headingKey: String, contactName: Option[String], hintKey: Option[String] = Some("primaryContactDetails.address.hint"))(implicit request: Request[_], messages: Messages)
+@(form: Form[Address], countryMap: Map[String, String], backLink: Call, updateCall: Call, headingKey: String, entityName: Option[String], hintKey: Option[String] = Some("primaryContactDetails.address.hint"))(implicit request: Request[_], messages: Messages)
 
 @optionalHint = @{
     if(hintKey.isDefined) paragraphBody(messages(hintKey.get))
@@ -104,7 +104,7 @@
 }
 
 @govukLayout(
-    title = Title(headingKey, headingArg = contactName.getOrElse(messages("missing.organisationName"))),
+    title = Title(headingKey, headingArg = entityName.getOrElse(messages("missing.organisationName"))),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
@@ -114,7 +114,7 @@
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages(headingKey, contactName.getOrElse(messages("missing.organisationName")))),
+                content = Text(messages(headingKey, entityName.getOrElse(messages("missing.organisationName")))),
                 classes = gdsFieldsetPageHeading,
                 isPageHeading = true
             )),

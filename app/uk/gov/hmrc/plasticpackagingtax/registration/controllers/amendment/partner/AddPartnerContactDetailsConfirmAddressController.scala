@@ -53,7 +53,7 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
             routes.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback().url,
           alfHeadingsPrefix = "addressLookup.partner",
           entityName = request.registration.inflightPartner.map(_.name),
-          pptHeadingKey = "addressLookup.partner.lookup.heading",
+          pptHeadingKey = "addressCapture.contact.heading",
           pptHintKey = None
         )
       ).map(redirect => Redirect(redirect))

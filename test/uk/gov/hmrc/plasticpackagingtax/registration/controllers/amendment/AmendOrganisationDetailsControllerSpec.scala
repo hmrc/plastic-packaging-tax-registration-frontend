@@ -63,15 +63,13 @@ class AmendOrganisationDetailsControllerSpec
                                successLink =
                                  routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
                                alfHeadingsPrefix = "addressLookup.business",
-                               pptHeadingKey = "addressLookup.contact.lookup.heading",
+                               pptHeadingKey = "addressCapture.business.heading",
                                entityName = registration.organisationDetails.businessName,
                                pptHintKey = None
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
         val resp: Future[Result] = controller.changeBusinessAddress()(getRequest())
-
-        // TODO: check init config
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }

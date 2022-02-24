@@ -56,7 +56,7 @@ class AmendOrganisationDetailsController @Inject() (
                              routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
                            alfHeadingsPrefix = "addressLookup.business",
                            entityName = request.registration.organisationDetails.businessName,
-                           pptHeadingKey = "addressLookup.contact.lookup.heading",
+                           pptHeadingKey = "addressCapture.business.heading",
                            pptHintKey = None
       )
     )(request).map(redirect => Redirect(redirect))

@@ -53,8 +53,8 @@ class ContactDetailsAddressController @Inject() (
           backLink = routes.ContactDetailsConfirmAddressController.displayPage().url,
           successLink = routes.ContactDetailsAddressController.update.url,
           alfHeadingsPrefix = "addressLookup.contact",
-          entityName = request.registration.primaryContactDetails.name,
-          pptHeadingKey = "addressLookup.contact.lookup.heading",
+          entityName = request.registration.organisationDetails.businessName,
+          pptHeadingKey = "addressCapture.contact.heading",
           pptHintKey = None
         )
       ).map(redirect => Redirect(redirect))
