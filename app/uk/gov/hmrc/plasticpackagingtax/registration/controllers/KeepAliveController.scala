@@ -16,22 +16,56 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import play.api.Logger
 import play.api.i18n.I18nSupport
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.auth.core.SessionRecordNotFound
+import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.KeepAliveAction
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
+  CacheItemFormats,
+  UserDataRepository
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
+@Singleton
 class KeepAliveController @Inject() (
   mcc: MessagesControllerComponents,
-  keepAliveAction: KeepAliveAction,
+  userDataRepository: UserDataRepository,
   authenticate: AuthNoEnrolmentCheckAction
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
+
+  private val logger = Logger(this.getClass)
 
   def keepAlive(): Action[AnyContent] =
-    (authenticate andThen keepAliveAction) { implicit request =>
+    authenticate { implicit request =>
+      implicit val cif = CacheItemFormats.format
+      request.session.get("sessionId") match {
+        case Some(sessionId) =>
+          userDataRepository.findBySessionId(sessionId).map {
+            values =>
+              values match {
+                case Some(cacheItem) =>
+                  cacheItem.data.fields.headOption match {
+                    case Some(keyValuePair) =>
+                      userDataRepository.put[JsValue](sessionId)(DataKey(keyValuePair._1),
+                                                                 keyValuePair._2
+                      )
+                    case None => throw SessionRecordNotFound()
+                  }
+                case _ => throw SessionRecordNotFound()
+              }
+              Ok(request.uri)
+          }
+        case _ =>
+          logger.warn(s"Denied attempt to access ${request.uri} since no user session present")
+          throw SessionRecordNotFound()
+      }
       Ok(request.uri)
     }
 

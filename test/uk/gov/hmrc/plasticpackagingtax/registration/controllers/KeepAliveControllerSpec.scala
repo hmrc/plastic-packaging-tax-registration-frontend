@@ -26,10 +26,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  KeepAliveActionImpl
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -40,12 +37,9 @@ class KeepAliveControllerSpec extends ControllerSpec {
   private val mcc                    = stubMessagesControllerComponents()
   private val mockUserDataRepository = mock[UserDataRepository]
 
-  private val keepAliveAction =
-    new KeepAliveActionImpl(appConfig, mockUserDataRepository)(ExecutionContext.global)
-
   private val controller =
     new KeepAliveController(authenticate = mockAuthAllowEnrolmentAction,
-                            keepAliveAction = keepAliveAction,
+                            userDataRepository = mockUserDataRepository,
                             mcc = mcc
     )
 
@@ -60,8 +54,8 @@ class KeepAliveControllerSpec extends ControllerSpec {
         val registration = aRegistration().copy(id = "3453456")
         val cachedRegistration: CacheItem =
           CacheItem("123", Json.toJsObject(registration), Instant.now(), Instant.now())
-        when(mockUserDataRepository.findAll[JsValue](any())(any())).thenReturn(
-          Future.successful(List(Json.toJson(registration)))
+        when(mockUserDataRepository.findBySessionId(any())).thenReturn(
+          Future.successful(Some(cachedRegistration))
         )
         when(
           mockUserDataRepository.put[JsValue]("123")(DataKey("id"), Json.toJson(registration))

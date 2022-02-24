@@ -16,14 +16,16 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
-import org.mongodb.scala.model.Filters
 import play.api.Configuration
-import play.api.libs.json.{JsValue, Reads, Writes}
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{__, Format, JsObject, JsValue, Json, OFormat, Reads, Writes}
 import uk.gov.hmrc.mongo.cache.CacheIdType.SessionCacheId.NoSessionException
-import uk.gov.hmrc.mongo.cache.{CacheIdType, DataKey, MongoCacheRepository}
+import uk.gov.hmrc.mongo.cache.{CacheIdType, CacheItem, DataKey, MongoCacheRepository}
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
+import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,11 +63,8 @@ class UserDataRepository @Inject() (
 
   def getData[A: Reads](id: String, key: String): Future[Option[A]] = get[A](id)(DataKey(key))
 
-  def findAll[A: Reads](id: String): Future[List[JsValue]] =
-    collection
-      .find(Filters.equal("_id", id))
-      .toFuture
-      .map(_.flatMap(cache => (cache.data).asOpt[JsValue]).toList)
+  def findBySessionId(id: String): Future[Option[CacheItem]] =
+    findById(id)
 
   def deleteData[A: Writes](
     key: String
@@ -74,5 +73,19 @@ class UserDataRepository @Inject() (
 
   def deleteData[A: Writes](id: String, key: String): Future[Unit] =
     delete[A](id)(DataKey(key))
+
+}
+
+object CacheItemFormats {
+
+  val format: Format[CacheItem] = {
+    implicit val dtf: Format[Instant] = MongoJavatimeFormats.instantFormat
+    ((__ \ "_id").format[String]
+      ~ (__ \ "data").format[JsObject]
+      ~ (__ \ "modifiedDetails" \ "createdAt").format[Instant]
+      ~ (__ \ "modifiedDetails" \ "lastUpdated").format[Instant])(CacheItem.apply,
+                                                                  unlift(CacheItem.unapply)
+    )
+  }
 
 }
