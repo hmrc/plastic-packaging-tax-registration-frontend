@@ -117,6 +117,17 @@ class AddressCaptureControllerSpec
       }
     }
 
+    "redisplay the address in uk page" when {
+      "user does not make a selection" in {
+        val resp = addressCaptureController.submitAddressInUk()(
+          postRequestTuplesEncoded(Seq(("ukAddress", "")))
+        )
+
+        status(resp) mustBe BAD_REQUEST
+        contentAsString(resp) mustBe "Is UK Address?"
+      }
+    }
+
     "initialise and redirect to ALF" when {
 
       "the force UK flag is used" in {

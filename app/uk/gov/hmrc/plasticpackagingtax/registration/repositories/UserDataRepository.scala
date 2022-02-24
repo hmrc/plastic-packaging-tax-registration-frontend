@@ -47,7 +47,7 @@ trait UserDataRepository {
     request: AuthenticatedRequest[Any]
   ): Future[Unit]
 
-  def reset(): Unit
+  def reset(): Unit = {}
 }
 
 @Singleton
@@ -97,6 +97,4 @@ class MongoUserDataRepository @Inject() (
   ): Future[Unit] =
     getData(key).map(data => data.map(data => putData(key, updater(data))))
 
-  // TODO: is there a better way of exposing this function in a test implementation only?
-  override def reset(): Unit = throw new UnsupportedOperationException()
 }
