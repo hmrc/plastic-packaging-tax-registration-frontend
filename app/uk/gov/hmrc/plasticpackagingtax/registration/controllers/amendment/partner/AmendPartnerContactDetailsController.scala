@@ -156,6 +156,7 @@ class AmendPartnerContactDetailsController @Inject() (
 
   def updateEmailAddress(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      val partner = getPartner(partnerId)
       EmailAddress.form()
         .bindFromRequest()
         .fold(
@@ -166,18 +167,26 @@ class AmendPartnerContactDetailsController @Inject() (
               )
             ),
           emailAddress =>
-            updateRegistration(
-              { registration: Registration =>
-                registration.withUpdatedPartner(
-                  partnerId,
-                  partner =>
-                    partner.copy(contactDetails =
-                      partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress.value)))
-                    )
-                )
-              },
-              successfulRedirect(partnerId)
-            )
+            doesPartnerEmailRequireVerfication(partner, emailAddress).flatMap {
+              isEmailVerificationRequired =>
+                if (!isEmailVerificationRequired)
+                  // Go ahead and update the registration with this email address
+                  updateRegistration({ registration: Registration =>
+                                       registration.withUpdatedPartner(
+                                         partnerId,
+                                         partner =>
+                                           partner.copy(contactDetails =
+                                             partner.contactDetails.map(
+                                               _.copy(emailAddress = Some(emailAddress.value))
+                                             )
+                                           )
+                                       )
+                                     },
+                                     successfulRedirect(partnerId)
+                  )
+                else
+                  throw new IllegalStateException("Verification required but not implemented yet")
+            }
         )
     }
 
@@ -349,7 +358,7 @@ class AmendPartnerContactDetailsController @Inject() (
                    routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
     )
 
-  private def getPartner(partnerId: String)(implicit request: JourneyRequest[_]) =
+  private def getPartner(partnerId: String)(implicit request: JourneyRequest[_]): Partner =
     request.registration.findPartner(partnerId).getOrElse(
       throw new IllegalStateException("Partner not found")
     )
