@@ -576,11 +576,11 @@ contactDetails.member.sectionHeader = Other organisations in the group
 contactDetails.member.name.title = Who is the main contact for {0}?
 contactDetails.member.name.hint = Enter the correct contact here. This is usually the person responsible for the company’s Plastic Packaging Tax liability.
 contactDetails.member.firstName.error.empty = Enter the main contact’s first name
-contactDetails.member.firstName.error.length = First name cannot be more than 35 characters long
-contactDetails.member.firstName.error.specialCharacters = Enter first name in the correct format
+contactDetails.member.firstName.error.length = Enter first name in 35 characters or fewer
+contactDetails.member.firstName.error.specialCharacters = First names must only include letters and the characters space, full stop, comma, apostrophe or dash
 contactDetails.member.lastName.error.empty = Enter the main contact’s last name
-contactDetails.member.lastName.error.length = Last name cannot be more than 35 characters long
-contactDetails.member.lastName.error.specialCharacters = Enter last name in the correct format
+contactDetails.member.lastName.error.length = Enter last name in 35 characters or fewer
+contactDetails.member.lastName.error.specialCharacters = Last names must only include letters and the characters space, full stop, comma, apostrophe or dash
 
 contactDetails.member.emailAddress.title = What is {0}’s email address?
 contactDetails.member.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
