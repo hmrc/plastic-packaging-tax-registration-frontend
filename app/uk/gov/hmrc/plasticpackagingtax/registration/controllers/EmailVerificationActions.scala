@@ -152,7 +152,6 @@ trait EmailVerificationActions {
     email: EmailAddress,
     emailVerificationJourneyId: String
   )(implicit journeyRequest: JourneyRequest[AnyContent], hc: HeaderCarrier): Future[Registration] =
-    // By updating and persisting the entire registration; all the way back to ETMP in the case of an amendment
     registrationUpdater.updateRegistration(
       setProspectiveEmailOnRegistration(email.value, emailVerificationJourneyId)
     )
