@@ -18,15 +18,18 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.PptTestData.newUser
 import base.unit.ControllerSpec
+import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
+import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
-import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest}
+import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey, MongoCacheRepository}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -48,24 +51,30 @@ class KeepAliveControllerSpec extends ControllerSpec {
 
   "Keepalive controller" should {
 
-    "return 200" when {
+    "return 200 and keep all documents alive" when {
 
       "user is authorised and display page method is invoked" in {
-        val registration = aRegistration().copy(id = "3453456")
+        implicit val cif = MongoCacheRepository.format
+        val registration: (String, JsValue) =
+          "registrationAmendment" -> Json.toJson(aRegistration())
         val cachedRegistration: CacheItem =
-          CacheItem("123", Json.toJsObject(registration), Instant.now(), Instant.now())
+          CacheItem("sessionId", JsObject.apply(Map(registration)), Instant.now(), Instant.now())
         when(mockUserDataRepository.findBySessionId(any())).thenReturn(
           Future.successful(Some(cachedRegistration))
         )
-        when(
-          mockUserDataRepository.put[JsValue]("123")(DataKey("id"), Json.toJson(registration))
-        ).thenReturn(Future.successful(cachedRegistration))
         authorizedUser()
         val result = controller.keepAlive()(
           new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")), newUser())
         )
 
         status(result) mustBe OK
+        val cacheItemCaptor: ArgumentCaptor[CacheItem] =
+          ArgumentCaptor.forClass(classOf[CacheItem])
+        verify(mockUserDataRepository).put(any[String])(
+          DataKey(ArgumentMatchers.eq("registrationAmendment")),
+          cacheItemCaptor.capture()
+        )(any())
+        cacheItemCaptor.getValue mustBe Json.toJson(cachedRegistration.data.fields.head._2)
       }
     }
 

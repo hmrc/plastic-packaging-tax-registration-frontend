@@ -18,15 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
-import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
+import uk.gov.hmrc.mongo.cache.{DataKey, MongoCacheRepository}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
-  CacheItemFormats,
-  UserDataRepository
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -44,7 +41,7 @@ class KeepAliveController @Inject() (
 
   def keepAlive(): Action[AnyContent] =
     authenticate { implicit request =>
-      implicit val cif = CacheItemFormats.format
+      implicit val cif = MongoCacheRepository.format
       request.session.get("sessionId") match {
         case Some(sessionId) =>
           userDataRepository.findBySessionId(sessionId).map {

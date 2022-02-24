@@ -75,17 +75,3 @@ class UserDataRepository @Inject() (
     delete[A](id)(DataKey(key))
 
 }
-
-object CacheItemFormats {
-
-  val format: Format[CacheItem] = {
-    implicit val dtf: Format[Instant] = MongoJavatimeFormats.instantFormat
-    ((__ \ "_id").format[String]
-      ~ (__ \ "data").format[JsObject]
-      ~ (__ \ "modifiedDetails" \ "createdAt").format[Instant]
-      ~ (__ \ "modifiedDetails" \ "lastUpdated").format[Instant])(CacheItem.apply,
-                                                                  unlift(CacheItem.unapply)
-    )
-  }
-
-}
