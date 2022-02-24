@@ -171,16 +171,10 @@ class AmendPartnerContactDetailsController @Inject() (
             doesPartnerEmailRequireVerfication(partner, emailAddress).flatMap {
               isEmailVerificationRequired =>
                 if (!isEmailVerificationRequired)
-                  // Go ahead and update the registration with this email address
                   updateRegistration({ registration: Registration =>
                                        registration.withUpdatedPartner(
                                          partnerId,
-                                         partner =>
-                                           partner.copy(contactDetails =
-                                             partner.contactDetails.map(
-                                               _.copy(emailAddress = Some(emailAddress.value))
-                                             )
-                                           )
+                                         partner => applyEmailAddressTo(partner, emailAddress.value)
                                        )
                                      },
                                      successfulRedirect(partnerId)
@@ -231,17 +225,28 @@ class AmendPartnerContactDetailsController @Inject() (
   def emailVerified(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       val partner = getPartner(partnerId)
-      request.registration.inflightPartner.map { _ =>
-        showEmailVerifiedPage(
-          routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id),
-          ???
-        )
-      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+      showEmailVerifiedPage(
+        routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id),
+        routes.AmendPartnerContactDetailsController.confirmEmailUpdate(partnerId)
+      )
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       showTooManyAttemptsPage
+    }
+
+  def confirmEmailUpdate(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      updateRegistration(
+        { registration: Registration =>
+          registration.withUpdatedPartner(
+            partnerId,
+            partner => applyEmailAddressTo(partner, getProspectiveEmail())
+          )
+        },
+        successfulRedirect(partnerId)
+      )
     }
 
   private def buildContactEmailPage(
@@ -423,5 +428,10 @@ class AmendPartnerContactDetailsController @Inject() (
   private def successfulRedirect(partnerId: String)(implicit request: JourneyRequest[_]) =
     if (isNominated(partnerId)) amendmentRoutes.AmendRegistrationController.displayPage()
     else routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId)
+
+  private def applyEmailAddressTo(partner: Partner, emailAddress: String): Partner =
+    partner.copy(contactDetails =
+      partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress)))
+    )
 
 }
