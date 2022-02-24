@@ -62,15 +62,16 @@
 }
 
 @govukLayout(
-    title = Title("contactDetails.member.name.title", organisationName),
+    title = Title("contactDetails.member.name.heading", organisationName),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
+    @sectionHeader(messages("contactDetails.member.sectionHeader"))
 
     @formHelper(action = updateCall, 'autoComplete -> "off") {
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages("contactDetails.member.name.title", organisationName)),
+                content = Text(messages("contactDetails.member.name.heading", organisationName)),
                 classes = "govuk-fieldset__legend--l",
                 isPageHeading = true
             )),
