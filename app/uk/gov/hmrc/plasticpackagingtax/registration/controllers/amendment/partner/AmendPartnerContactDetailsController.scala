@@ -203,13 +203,45 @@ class AmendPartnerContactDetailsController @Inject() (
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       val partner = getPartner(partnerId)
       Ok(
-        renderEnterEmailVerificationCodePage(
-          EmailAddressPasscode.form(),
-          getProspectiveEmail(),
-          routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
-          ???
+        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
+                                             getProspectiveEmail(),
+                                             routes.AmendPartnerContactDetailsController.emailAddress(
+                                               partner.id
+                                             ),
+                                             routes.AmendPartnerContactDetailsController.checkEmailVerificationCode(
+                                               partnerId
+                                             )
         )
       )
+    }
+
+  def checkEmailVerificationCode(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      val partner = getPartner(partnerId)
+      def emailVerificationTooManyAttemptsCall =
+        routes.AmendPartnerContactDetailsController.emailVerificationTooManyAttempts()
+      processVerificationCodeSubmission(
+        routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
+        routes.AmendPartnerContactDetailsController.checkEmailVerificationCode(partnerId),
+        routes.AmendPartnerContactDetailsController.emailVerified(partnerId),
+        emailVerificationTooManyAttemptsCall
+      )
+    }
+
+  def emailVerified(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      val partner = getPartner(partnerId)
+      request.registration.inflightPartner.map { _ =>
+        showEmailVerifiedPage(
+          routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id),
+          ???
+        )
+      }.getOrElse(throw new IllegalStateException("Expected partner missing"))
+    }
+
+  def emailVerificationTooManyAttempts(): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      showTooManyAttemptsPage
     }
 
   private def buildContactEmailPage(

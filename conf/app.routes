@@ -341,6 +341,9 @@ POST       /amend-partner-job-title/:partnerId   uk.gov.hmrc.plasticpackagingtax
 GET        /amend-partner-email/:partnerId                  uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.emailAddress(partnerId)
 POST       /amend-partner-email/:partnerId                  uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateEmailAddress(partnerId)
 GET        /amend-partner-confirm-email-code/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.confirmEmailCode(partnerId)
+POST       /amend-partner-confirm-email-code/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.checkEmailVerificationCode(partnerId)
+GET        /amend-partner-confirmed-email                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.emailVerified(partnerId)
+GET        /amend-partner-verification-too-many-attempts    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.emailVerificationTooManyAttempts()
 
 GET        /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.phoneNumber(partnerId)
 POST       /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updatePhoneNumber(partnerId)
