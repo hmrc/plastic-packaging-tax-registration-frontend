@@ -543,6 +543,29 @@ class AmendPartnerContactDetailsControllerSpec
           _.contactDetails.flatMap(_.emailAddress)
         ) mustBe Some("verified-amended-email@localhost")
       }
+
+      "nominated partner job title is updated" in {
+        // Non table test to fill coverage hole
+        authorisedUserWithPptSubscription()
+        simulateGetSubscriptionSuccess(partnershipRegistration)
+        simulateUpdateSubscriptionSuccess()
+
+        val resp = controller.updateJobTitle(nominatedPartner.id)(
+          postRequestEncoded(JobTitle("New job title"))
+        )
+        status(resp) mustBe SEE_OTHER
+
+        val registrationCaptor: ArgumentCaptor[Registration] =
+          ArgumentCaptor.forClass(classOf[Registration])
+        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
+          any()
+        )
+
+        val updatedRegistration = registrationCaptor.getValue
+        updatedRegistration.findPartner(nominatedPartner.id).flatMap(
+          _.contactDetails.flatMap(_.jobTitle)
+        ) mustBe Some("New job title")
+      }
     }
   }
 
