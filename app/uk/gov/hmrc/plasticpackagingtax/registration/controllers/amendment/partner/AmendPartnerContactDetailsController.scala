@@ -29,6 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddress,
+  EmailAddressPasscode,
   JobTitle,
   PhoneNumber
 }
@@ -185,9 +186,30 @@ class AmendPartnerContactDetailsController @Inject() (
                                      successfulRedirect(partnerId)
                   )
                 else
-                  throw new IllegalStateException("Verification required but not implemented yet")
+                  promptForEmailVerificationCode(request,
+                                                 emailAddress,
+                                                 routes.AmendPartnerContactDetailsController.emailAddress(
+                                                   partner.id
+                                                 ),
+                                                 routes.AmendPartnerContactDetailsController.confirmEmailCode(
+                                                   partner.id
+                                                 )
+                  )
             }
         )
+    }
+
+  def confirmEmailCode(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      val partner = getPartner(partnerId)
+      Ok(
+        renderEnterEmailVerificationCodePage(
+          EmailAddressPasscode.form(),
+          getProspectiveEmail(),
+          routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
+          ???
+        )
+      )
     }
 
   private def buildContactEmailPage(
