@@ -349,16 +349,6 @@ class AmendPartnerContactDetailsControllerSpec
          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
          "Amend Partner Contact Name"
         ),
-        ("nominated partner email address",
-         () => EmailAddress("xxx"),
-         () => EmailAddress("updated-email@ppt.com"),
-         (req: Request[AnyContent]) => controller.updateEmailAddress(nominatedPartner.id)(req),
-         (reg: Registration) => {
-           reg.nominatedPartner.get.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
-         },
-         amendmentRoutes.AmendRegistrationController.displayPage(),
-         "Amend Partner Contact Email Address"
-        ),
         ("other partner email address",
          () => EmailAddress("xxx"),
          () => EmailAddress("updated-email@ppt.com"),
@@ -479,6 +469,35 @@ class AmendPartnerContactDetailsControllerSpec
               addressExtractor(updatedRegistration) mustBe validCapturedAddress
             }
         }
+      }
+
+      "nominated partner verified and confirmed email address is updated" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        val resp = controller.confirmEmailUpdate(nominatedPartner.id)(getRequest())
+        status(resp) mustBe SEE_OTHER
+
+        val registrationCaptor: ArgumentCaptor[Registration] =
+          ArgumentCaptor.forClass(classOf[Registration])
+        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
+          any()
+        )
+
+        val updatedRegistration = registrationCaptor.getValue
+        updatedRegistration.findPartner(nominatedPartner.id).flatMap(
+          _.contactDetails.flatMap(_.emailAddress)
+        ) mustBe Some("verified-amended-email@localhost")
       }
     }
   }
