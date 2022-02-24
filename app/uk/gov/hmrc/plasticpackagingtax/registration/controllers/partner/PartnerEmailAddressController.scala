@@ -57,7 +57,7 @@ class PartnerEmailAddressController @Inject() (
                                               registrationUpdater = registrationUpdateService
     ) {
 
-  private val emailVerificationTooManyAttemptsCall =
+  private def emailVerificationTooManyAttemptsCall =
     routes.PartnerEmailAddressController.emailVerificationTooManyAttempts()
 
   def displayNewPartner(): Action[AnyContent] =
