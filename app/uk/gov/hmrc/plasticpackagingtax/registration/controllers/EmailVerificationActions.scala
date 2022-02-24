@@ -32,6 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   INCORRECT_PASSCODE,
   TOO_MANY_ATTEMPTS
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Registration,
   RegistrationUpdater
@@ -214,5 +215,22 @@ trait EmailVerificationActions {
                                                 submitCall
           )
       )
+
+  protected def doesPartnerEmailRequireVerfication(partner: Partner, emailAddress: EmailAddress)(
+    implicit
+    hc: HeaderCarrier,
+    request: JourneyRequest[AnyContent],
+    ec: ExecutionContext
+  ): Future[Boolean] = {
+    def emailHasChanged(newEmailAddress: String): Boolean = {
+      val existingEmailAddress = partner.contactDetails.flatMap(_.emailAddress)
+      !existingEmailAddress.contains(newEmailAddress)
+    }
+    // Only required for nominated partner
+    if (request.registration.isNominatedPartnerOrFirstInflightPartner(partner))
+      isEmailVerificationRequired(emailAddress.value, emailHasChanged)
+    else
+      Future.successful(false)
+  }
 
 }

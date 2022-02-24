@@ -125,21 +125,8 @@ abstract class PartnerEmailAddressControllerBase(
               throw new IllegalStateException("Expected partner contact name missing")
             )
           ),
-        emailAddress => {
-          def emailHasChanged(newEmailAddress: String): Boolean = {
-            val existingEmailAddress = partner.contactDetails.flatMap(_.emailAddress)
-            !existingEmailAddress.contains(newEmailAddress)
-          }
-
-          val eventualEmailVerificationDecision = {
-            // Only required for nominated partner
-            if (request.registration.isNominatedPartnerOrFirstInflightPartner(partner))
-              isEmailVerificationRequired(emailAddress.value, emailHasChanged)
-            else
-              Future.successful(false)
-          }
-
-          eventualEmailVerificationDecision.flatMap {
+        emailAddress =>
+          doesPartnerEmailRequireVerfication(partner, emailAddress).flatMap {
             isEmailVerificationRequired =>
               if (!isEmailVerificationRequired)
                 updateAction(emailAddress).map { _ =>
@@ -157,7 +144,6 @@ abstract class PartnerEmailAddressControllerBase(
                                                confirmEmailAddressCall
                 )
           }
-        }
       )
 
   private def updateEmailAddress(existingPartnerId: Option[String], emailAddress: EmailAddress)(
