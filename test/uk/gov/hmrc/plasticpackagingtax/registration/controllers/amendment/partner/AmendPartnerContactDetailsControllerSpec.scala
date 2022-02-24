@@ -39,9 +39,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   PhoneNumber
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  EmailVerificationService
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
   partner_job_title_page,
@@ -59,10 +70,17 @@ class AmendPartnerContactDetailsControllerSpec
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val mockContactNamePage        = mock[partner_member_name_page]
-  private val mockContactEmailPage       = mock[partner_email_address_page]
-  private val mockContactPhoneNumberPage = mock[partner_phone_number_page]
-  private val mockJobTitlePage           = mock[partner_job_title_page]
+  private val mockRegistrationUpdater = mock[AmendRegistrationUpdateService]
+
+  private val mockEmailVerificationService = mock[EmailVerificationService]
+
+  private val mockContactNamePage             = mock[partner_member_name_page]
+  private val mockContactEmailPage            = mock[partner_email_address_page]
+  private val email_address_passcode_page     = mock[email_address_passcode_page]
+  private val too_many_attempts_passcode_page = mock[too_many_attempts_passcode_page]
+  private val emailCorrectPasscodePage        = mock[email_address_passcode_confirmation_page]
+  private val mockContactPhoneNumberPage      = mock[partner_phone_number_page]
+  private val mockJobTitlePage                = mock[partner_job_title_page]
 
   private val partnershipRegistration = aRegistration(
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
@@ -87,6 +105,12 @@ class AmendPartnerContactDetailsControllerSpec
     amendmentJourneyAction = mockAmendmentJourneyAction,
     contactNamePage = mockContactNamePage,
     contactEmailPage = mockContactEmailPage,
+    emailPasscodePage = email_address_passcode_page,
+    emailCorrectPasscodePage = emailCorrectPasscodePage,
+    emailIncorrectPasscodeTooManyAttemptsPage =
+      too_many_attempts_passcode_page,
+    registrationUpdater = mockRegistrationUpdater,
+    emailVerificationService = mockEmailVerificationService,
     contactPhoneNumberPage = mockContactPhoneNumberPage,
     jobTitlePage = mockJobTitlePage,
     addressCaptureService = mockAddressCaptureService

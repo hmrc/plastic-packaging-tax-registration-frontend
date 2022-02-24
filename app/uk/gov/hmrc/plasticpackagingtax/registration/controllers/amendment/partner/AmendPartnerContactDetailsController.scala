@@ -23,6 +23,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   AmendmentController,
   routes => amendmentRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
+  AddressLookupIntegration,
+  EmailVerificationActions
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddress,
   JobTitle,
@@ -30,14 +34,23 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{
   AddressCaptureConfig,
-  AddressCaptureService
+  AddressCaptureService,
+  EmailVerificationService
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
@@ -56,11 +69,17 @@ class AmendPartnerContactDetailsController @Inject() (
   amendmentJourneyAction: AmendmentJourneyAction,
   contactNamePage: partner_member_name_page,
   contactEmailPage: partner_email_address_page,
+  val emailPasscodePage: email_address_passcode_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+  val registrationUpdater: AmendRegistrationUpdateService,
+  val emailVerificationService: EmailVerificationService,
   contactPhoneNumberPage: partner_phone_number_page,
   jobTitlePage: partner_job_title_page,
   addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration
+    with EmailVerificationActions {
 
   def contactName(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
