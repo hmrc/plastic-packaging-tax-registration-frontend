@@ -65,8 +65,8 @@ case class GroupMember(
   def withUpdatedGroupMemberPhoneNumber(phoneNumber: String): GroupMember =
     withUpdatedContactDetails(cd => cd.copy(phoneNumber = Some(phoneNumber)))
 
-  def withUpdatedGroupMemberAddress(address: Address): GroupMember =
-    withUpdatedContactDetails(cd => cd.copy(address = Some(address)))
+  def withUpdatedGroupMemberAddress(address: Option[Address]): GroupMember =
+    withUpdatedContactDetails(cd => cd.copy(address = address))
 
   def isValid: Boolean =
     customerIdentification1.trim.nonEmpty &&

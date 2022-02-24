@@ -16,89 +16,73 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, redirectLocation, status}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup._
+import play.api.test.Helpers.redirectLocation
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 import scala.concurrent.Future
 
 class AmendOrganisationDetailsControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction {
-  private val mcc                                = stubMessagesControllerComponents()
-  private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
+    extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction {
+
+  private val mcc = stubMessagesControllerComponents()
+
+  private val registration = aRegistration()
 
   private val controller =
     new AmendOrganisationDetailsController(mockAuthAllowEnrolmentAction,
                                            mcc,
-                                           mockAddressLookupFrontendConnector,
-                                           appConfig,
+                                           mockAddressCaptureService,
                                            mockAmendmentJourneyAction
     )
-
-  private val alfAddress = AddressLookupConfirmation(auditRef = "auditRef",
-                                                     id = Some("123"),
-                                                     address = AddressLookupAddress(
-                                                       lines = List("addressLine1",
-                                                                    "addressLine2",
-                                                                    "addressLine3"
-                                                       ),
-                                                       postcode = Some("E17 1ER"),
-                                                       country = Some(
-                                                         AddressLookupCountry(code = "GB",
-                                                                              name =
-                                                                                "United Kingdom"
-                                                         )
-                                                       )
-                                                     )
-  )
 
   override protected def beforeEach(): Unit = {
     reset(mockSubscriptionConnector)
     authorisedUserWithPptSubscription()
     inMemoryRegistrationAmendmentRepository.reset()
-    simulateGetSubscriptionSuccess(aRegistration())
+    simulateGetSubscriptionSuccess(registration)
     simulateUpdateSubscriptionSuccess()
-    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
-      Future(AddressLookupOnRamp("/on-ramp"))
-    )
-    when(mockAddressLookupFrontendConnector.getAddress(any())(any(), any())).thenReturn(
-      Future.successful(alfAddress)
-    )
   }
 
   "Amend Organisation Details Controller" should {
 
     "redirect to address lookup frontend" when {
       "change business address" in {
+        val expectedAddressCaptureConfig =
+          AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
+                               successLink =
+                                 routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
+                               alfHeadingsPrefix = "addressLookup.business",
+                               pptHeadingKey = "addressCapture.business.heading",
+                               entityName = registration.organisationDetails.businessName,
+                               pptHintKey = None
+          )
+        simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
         val resp: Future[Result] = controller.changeBusinessAddress()(getRequest())
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some("/on-ramp")
+        redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
     }
 
     "obtain address from address lookup and update registration and redirect to amend registration page" when {
-      "control is returned from address lookup frontend" in {
-        val registration = aRegistration()
+      "control is returned from address capture" in {
         authorisedUserWithPptSubscription()
         inMemoryRegistrationAmendmentRepository.put("123", registration)
-        val resp = controller.alfCallback(Some("123"))(getRequest())
+        simulateValidAddressCapture()
 
-        status(resp) mustBe SEE_OTHER
+        val resp = controller.addressCaptureCallback()(getRequest())
+
         redirectLocation(resp) mustBe Some(routes.AmendRegistrationController.displayPage().url)
         val registrationCaptor: ArgumentCaptor[Registration] =
           ArgumentCaptor.forClass(classOf[Registration])
@@ -107,16 +91,11 @@ class AmendOrganisationDetailsControllerSpec
         )
 
         registrationCaptor.getValue.organisationDetails.businessRegisteredAddress mustBe Some(
-          Address(alfAddress)
+          validCapturedAddress
         )
       }
     }
 
-    "throw MissingAddressIdException if return from address lookup is missing a journey id" in {
-      intercept[MissingAddressIdException] {
-        await(controller.alfCallback(None)(getRequest()))
-      }
-    }
   }
 
   private def getRequest(): Request[AnyContentAsEmpty.type] =

@@ -17,11 +17,10 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -30,26 +29,25 @@ import scala.concurrent.ExecutionContext
 class ContactDetailsConfirmAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
+  addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents,
   registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsConfirmAddressControllerBase(authenticate,
                                                        journeyAction,
-                                                       addressLookupFrontendConnector,
-                                                       appConfig,
+                                                       addressCaptureService,
                                                        mcc,
                                                        registrationUpdater
     ) {
 
-  def displayPage(memberId: String): Action[AnyContent] = doDisplayPage(memberId)
+  def displayPage(memberId: String): Action[AnyContent] =
+    doDisplayPage(memberId, routes.ContactDetailsTelephoneNumberController.displayPage(memberId))
 
-  def alfCallback(id: Option[String], memberId: String): Action[AnyContent] =
-    doAlfCallback(id, memberId)
+  def addressCaptureCallback(memberId: String): Action[AnyContent] =
+    onAddressCaptureCallback(memberId)
 
-  override protected def getAlfCallback(memberId: String): Call =
-    routes.ContactDetailsConfirmAddressController.alfCallback(None, memberId)
+  override protected def getAddressCaptureCallback(memberId: String): Call =
+    routes.ContactDetailsConfirmAddressController.addressCaptureCallback(memberId)
 
   override protected def getSuccessfulRedirect(memberId: String): Call =
     routes.ContactDetailsCheckAnswersController.displayPage(memberId)

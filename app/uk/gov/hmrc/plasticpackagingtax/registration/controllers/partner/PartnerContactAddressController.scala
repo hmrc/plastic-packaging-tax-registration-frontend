@@ -18,11 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureService
 
 import scala.concurrent.ExecutionContext
 
@@ -30,34 +29,37 @@ import scala.concurrent.ExecutionContext
 class PartnerContactAddressController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
+  addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents,
   registrationUpdater: NewRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
     extends PartnerContactAddressControllerBase(authenticate,
                                                 journeyAction,
-                                                addressLookupFrontendConnector,
+                                                addressCaptureService,
                                                 mcc,
-                                                appConfig,
                                                 registrationUpdater
     ) {
 
   def captureNewPartner(): Action[AnyContent] =
-    doDisplayPage(None, routes.PartnerContactAddressController.alfCallbackNewPartner(None))
+    doDisplayPage(None,
+                  routes.PartnerPhoneNumberController.displayNewPartner(),
+                  routes.PartnerContactAddressController.addressCaptureCallbackNewPartner()
+    )
 
   def captureExistingPartner(partnerId: String): Action[AnyContent] =
     doDisplayPage(Some(partnerId),
-                  routes.PartnerContactAddressController.alfCallbackExistingPartner(partnerId, None)
+                  routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
+                  routes.PartnerContactAddressController.addressCaptureCallbackExistingPartner(
+                    partnerId
+                  )
     )
 
-  def alfCallbackNewPartner(id: Option[String]): Action[AnyContent] =
-    doAlfCallback(None, id, routes.PartnerCheckAnswersController.displayNewPartner())
+  def addressCaptureCallbackNewPartner(): Action[AnyContent] =
+    onAddressCaptureCallback(None, routes.PartnerCheckAnswersController.displayNewPartner())
 
-  def alfCallbackExistingPartner(partnerId: String, id: Option[String]): Action[AnyContent] =
-    doAlfCallback(Some(partnerId),
-                  id,
-                  routes.PartnerCheckAnswersController.displayExistingPartner(partnerId)
+  def addressCaptureCallbackExistingPartner(partnerId: String): Action[AnyContent] =
+    onAddressCaptureCallback(Some(partnerId),
+                             routes.PartnerCheckAnswersController.displayExistingPartner(partnerId)
     )
 
 }

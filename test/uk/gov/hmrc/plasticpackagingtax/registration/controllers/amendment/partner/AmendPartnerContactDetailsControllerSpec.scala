@@ -16,21 +16,19 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Call, Request, Result}
-import play.api.test.{FakeRequest, Injecting}
+import play.api.mvc._
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   routes => amendmentRoutes
 }
@@ -41,14 +39,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   PhoneNumber
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
-  AddressLookupAddress,
-  AddressLookupConfigV2,
-  AddressLookupConfirmation,
-  AddressLookupOnRamp
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
   partner_job_title_page,
@@ -61,13 +54,10 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 import scala.concurrent.Future
 
 class AmendPartnerContactDetailsControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks
-    with Injecting {
+    extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction
+    with TableDrivenPropertyChecks with Injecting {
 
-  private val mcc           = stubMessagesControllerComponents()
-  private val realAppConfig = inject[AppConfig]
-
-  private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
+  private val mcc = stubMessagesControllerComponents()
 
   private val mockContactNamePage        = mock[partner_member_name_page]
   private val mockContactEmailPage       = mock[partner_email_address_page]
@@ -99,8 +89,7 @@ class AmendPartnerContactDetailsControllerSpec
     contactEmailPage = mockContactEmailPage,
     contactPhoneNumberPage = mockContactPhoneNumberPage,
     jobTitlePage = mockJobTitlePage,
-    addressLookupFrontendConnector = mockAddressLookupFrontendConnector,
-    appConfig = realAppConfig
+    addressCaptureService = mockAddressCaptureService
   )
 
   override protected def beforeEach(): Unit = {
@@ -119,9 +108,6 @@ class AmendPartnerContactDetailsControllerSpec
     )
     when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Amend Partner Job Title")
-    )
-    when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
-      Future(AddressLookupOnRamp("/on-ramp"))
     )
   }
 
@@ -289,18 +275,22 @@ class AmendPartnerContactDetailsControllerSpec
         }
     }
 
-    "redirect to ALF with correct callback" in {
-      val resp = await(controller.address(nominatedPartner.id)(getRequest()))
-      redirectLocation(Future.successful(resp)) mustBe Some("/on-ramp")
+    "redirect to address capture with correct callback" in {
+      val expectedAddressCaptureConfig = AddressCaptureConfig(
+        backLink =
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(nominatedPartner.id).url,
+        successLink =
+          routes.AmendPartnerContactDetailsController.updateAddress(nominatedPartner.id).url,
+        alfHeadingsPrefix = "addressLookup.partner",
+        pptHeadingKey = "addressCapture.contact.heading",
+        entityName = Some(nominatedPartner.name),
+        pptHintKey = None
+      )
+      simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
-      val alfConfigCaptor: ArgumentCaptor[AddressLookupConfigV2] =
-        ArgumentCaptor.forClass(classOf[AddressLookupConfigV2])
-      verify(mockAddressLookupFrontendConnector).initialiseJourney(alfConfigCaptor.capture())(any(),
-                                                                                              any()
-      )
-      alfConfigCaptor.getValue.options.continueUrl mustBe realAppConfig.selfUrl(
-        routes.AmendPartnerContactDetailsController.updateAddress(nominatedPartner.id, None)
-      )
+      val resp = await(controller.address(nominatedPartner.id)(getRequest()))
+
+      redirectLocation(Future.successful(resp)) mustBe Some(addressCaptureRedirect.url)
     }
 
     val updateSubscriptionTestData =
@@ -449,26 +439,10 @@ class AmendPartnerContactDetailsControllerSpec
             addressExtractor: Registration => Address
           ) =>
             s"amending $partnerType partner" in {
-              val alfJourneyId = "123"
-              val updatedAddress =
-                AddressLookupAddress(lines = List("100 High Street", "Lindley", "Huddersfield"),
-                                     postcode = Some("HD1 1GH"),
-                                     country = None
-                )
-              val addressConfirmation = AddressLookupConfirmation(auditRef = "ABC123",
-                                                                  id = Some(alfJourneyId),
-                                                                  address = updatedAddress
-              )
-              when(
-                mockAddressLookupFrontendConnector.getAddress(ArgumentMatchers.eq(alfJourneyId))(
-                  any(),
-                  any()
-                )
-              )
-                .thenReturn(Future.successful(addressConfirmation))
+              simulateValidAddressCapture()
 
-              val resp = controller.updateAddress(partnerId, Some(alfJourneyId))(getRequest())
-              status(resp) mustBe SEE_OTHER
+              val resp = controller.updateAddress(partnerId)(getRequest())
+
               redirectLocation(resp) mustBe Some(redirect.url)
 
               val registrationCaptor: ArgumentCaptor[Registration] =
@@ -478,7 +452,7 @@ class AmendPartnerContactDetailsControllerSpec
               )(any())
 
               val updatedRegistration = registrationCaptor.getValue
-              addressExtractor(updatedRegistration) mustBe Address(addressConfirmation)
+              addressExtractor(updatedRegistration) mustBe validCapturedAddress
             }
         }
       }

@@ -18,27 +18,26 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 
 import play.api.data.Form
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   AmendmentController,
   routes => amendmentRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
-  Address,
   EmailAddress,
   JobTitle,
   PhoneNumber
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  AddressCaptureService
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
@@ -59,10 +58,9 @@ class AmendPartnerContactDetailsController @Inject() (
   contactEmailPage: partner_email_address_page,
   contactPhoneNumberPage: partner_phone_number_page,
   jobTitlePage: partner_job_title_page,
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig
+  addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration {
+    extends AmendmentController(mcc, amendmentJourneyAction) {
 
   def contactName(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
@@ -244,30 +242,30 @@ class AmendPartnerContactDetailsController @Inject() (
 
   def address(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      initialiseAddressLookup(addressLookupFrontendConnector = addressLookupFrontendConnector,
-                              appConfig = appConfig,
-                              continue =
-                                routes.AmendPartnerContactDetailsController.updateAddress(partnerId,
-                                                                                          None
-                                ),
-                              messagesPrefix = "addressLookup.partner",
-                              Some(getPartner(partnerId).name)
-      ).map(onRamp => Redirect(onRamp.redirectUrl))
+      addressCaptureService.initAddressCapture(
+        AddressCaptureConfig(
+          backLink = routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId).url,
+          successLink =
+            routes.AmendPartnerContactDetailsController.updateAddress(partnerId).url,
+          alfHeadingsPrefix = "addressLookup.partner",
+          entityName = Some(getPartner(partnerId).name),
+          pptHeadingKey = "addressCapture.contact.heading",
+          pptHintKey = None
+        )
+      ).map(redirect => Redirect(redirect))
     }
 
-  def updateAddress(partnerId: String, id: Option[String]): Action[AnyContent] =
+  def updateAddress(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      addressLookupFrontendConnector.getAddress(
-        id.getOrElse(throw new MissingAddressIdException)
-      ).flatMap {
-        confirmedAddress =>
+      addressCaptureService.getCapturedAddress().flatMap {
+        capturedAddress =>
           updateRegistration(
             registration =>
               registration.withUpdatedPartner(
                 partnerId,
                 partner =>
                   partner.copy(contactDetails =
-                    partner.contactDetails.map(_.copy(address = Some(Address(confirmedAddress))))
+                    partner.contactDetails.map(_.copy(address = capturedAddress))
                   )
               ),
             successfulRedirect(partnerId)

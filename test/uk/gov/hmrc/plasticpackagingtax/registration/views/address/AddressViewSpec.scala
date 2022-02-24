@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.contact
+package uk.gov.hmrc.plasticpackagingtax.registration.views.address
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
@@ -23,24 +23,27 @@ import play.api.data.Form
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.address_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
+class AddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page           = inject[address_page]
   private val countryService = inject[CountryService]
 
-  private val backLink   = Call("GET", "/back-link")
-  private val updateLink = Call("PUT", "/update")
+  private val backLink    = Call("GET", "/back-link")
+  private val updateLink  = Call("PUT", "/update")
+  private val headingKey  = "addressLookup.partner.lookup.heading"
+  private val contactName = Some("the contact")
 
   private def createView(
     form: Form[Address] = Address.form(),
     userFeatureFlags: Map[String, Boolean] = Map.empty
   ): Document =
-    page(form, countryService.getAll(), backLink, updateLink)(generateRequest(userFeatureFlags),
-                                                              messages
+    page(form, countryService.getAll(), backLink, updateLink, headingKey, contactName)(
+      generateRequest(userFeatureFlags),
+      messages
     )
 
   "Address View" should {
@@ -48,54 +51,42 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     val view = createView()
 
     "contain timeout dialog function" in {
-
       containTimeoutDialogFunction(view) mustBe true
-
     }
 
     "display sign out link" in {
-
       displaySignOutLink(view)
-
     }
 
     "display 'Back' button" in {
-
       view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
-
       view.select("title").text() must include(
-        messages("primaryContactDetails.address.title",
-                 journeyRequest.registration.primaryContactDetails.name.get
-        )
+        messages("addressLookup.partner.lookup.heading", contactName.get)
       )
     }
 
     "display header" in {
-
       view.getElementsByClass("govuk-caption-l").text() must include(
         messages("primaryContactDetails.sectionHeader")
       )
     }
 
     "display hint" in {
-
       view.getElementsByClass("govuk-body").get(0).text() must include(
         messages("primaryContactDetails.address.hint")
       )
     }
 
     "display visually hidden labels" in {
-
       view.getElementsByClass("govuk-visually-hidden").get(0).text() must include(
         messages("site.back.hiddenText")
       )
     }
 
     "display input boxes" in {
-
       view must containElementWithID("addressLine1")
       view must containElementWithID("addressLine2")
       view must containElementWithID("addressLine3")
@@ -105,25 +96,14 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Save and continue' button" in {
-
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and continue"
-    }
-
-    "'search for new address' link" in {
-      val view = createView()
-
-      view must containElementWithID("address-lookup-start")
-      view.getElementById("address-lookup-start").text() mustBe messages(
-        "primaryContactDetails.address.lookup"
-      )
     }
 
   }
 
   "Email address view when filled" should {
     "display data" in {
-
       val anAddress =
         Address(addressLine1 = "Address Line 1",
                 addressLine2 = Some("Address Line 2"),
@@ -146,10 +126,10 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       view.select("select#countryCode option[selected]").text() mustBe "United Kingdom"
     }
   }
+
   "display error" when {
 
     "mandatory address fields have not been submitted" in {
-
       val anInvalidAddress =
         Address(addressLine1 = "",
                 addressLine2 = None,
@@ -173,7 +153,6 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
     }
 
     "address fields are not valid" in {
-
       val anInvalidAddress =
         Address(addressLine1 = "*&%^",
                 addressLine2 = Some("Address Line 2*&%^"),
@@ -194,16 +173,25 @@ class ContactDetailsAddressViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukFieldError("addressLine3", "Enter an address in the correct format")
       view must haveGovukFieldError("townOrCity", "Enter a town or city in the correct format")
       view must haveGovukFieldError("postCode", "Enter a postcode in the correct format")
-
     }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form(), countryService.getAll(), backLink, updateLink)(journeyRequest, messages)
+    page.f(Address.form(),
+           countryService.getAll(),
+           backLink,
+           updateLink,
+           headingKey,
+           contactName,
+           None
+    )(journeyRequest, messages)
     page.render(Address.form(),
                 countryService.getAll(),
                 backLink,
                 updateLink,
+                headingKey,
+                contactName,
+                None,
                 journeyRequest,
                 messages
     )

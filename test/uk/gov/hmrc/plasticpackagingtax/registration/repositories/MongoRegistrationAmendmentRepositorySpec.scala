@@ -37,7 +37,7 @@ class MongoRegistrationAmendmentRepositorySpec
 
   private val mockUserDataRepository = mock[UserDataRepository]
 
-  private val mongoRegistrationAmendmentRepository = new MongoRegistrationAmendmentRepository(
+  private val mongoRegistrationAmendmentRepository = new RegistrationAmendmentRepositoryImpl(
     mockUserDataRepository
   )(ExecutionContext.global)
 
@@ -63,13 +63,13 @@ class MongoRegistrationAmendmentRepositorySpec
 
       "adding registration" in {
         mongoRegistrationAmendmentRepository.put(registration)
-        verify(mockUserDataRepository).putData(MongoRegistrationAmendmentRepository.repositoryKey,
+        verify(mockUserDataRepository).putData(RegistrationAmendmentRepositoryImpl.repositoryKey,
                                                registration
         )
 
         mongoRegistrationAmendmentRepository.put(sessionId, registration)
         verify(mockUserDataRepository).putData(sessionId,
-                                               MongoRegistrationAmendmentRepository.repositoryKey,
+                                               RegistrationAmendmentRepositoryImpl.repositoryKey,
                                                registration
         )
       }
@@ -82,7 +82,7 @@ class MongoRegistrationAmendmentRepositorySpec
       "updating a registration" in {
         val updatedRegistration = registration.copy(id = "08345982374")
         await(mongoRegistrationAmendmentRepository.update(_ => updatedRegistration))
-        verify(mockUserDataRepository).putData(MongoRegistrationAmendmentRepository.repositoryKey,
+        verify(mockUserDataRepository).putData(RegistrationAmendmentRepositoryImpl.repositoryKey,
                                                updatedRegistration
         )
       }

@@ -65,7 +65,7 @@
         viewUtils.summaryListRow("primaryContactDetails.check.jobTitle", registration.primaryContactDetails.jobTitle, viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.updateJobTitle())),
         viewUtils.summaryListRow("primaryContactDetails.check.email", registration.primaryContactDetails.email, viewUtils.showChangeLink(amendRoutes.AmendEmailAddressController.updateEmail())),
         viewUtils.summaryListRow("primaryContactDetails.check.phoneNumber", registration.primaryContactDetails.phoneNumber, viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.updatePhoneNumber())),
-        viewUtils.summaryListRow("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(viewUtils.extractAddress), viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.updateAddress()))
+        viewUtils.summaryListRow("primaryContactDetails.check.address", registration.primaryContactDetails.address.map(viewUtils.extractAddress), viewUtils.showChangeLink(amendRoutes.AmendContactDetailsController.address()))
     ).filterNot(_.value.content == Empty)
 }
 

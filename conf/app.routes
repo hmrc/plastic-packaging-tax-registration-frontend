@@ -49,10 +49,10 @@ POST       /partnership-name    uk.gov.hmrc.plasticpackagingtax.registration.con
 GET        /organisation-not-supported    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationTypeNotSupportedController.onPageLoad()
 
 GET        /confirm-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.displayPage()
-GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.alfCallback(id: Option[String])
+GET        /confirm-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.addressCaptureCallback()
 GET        /edit-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.ConfirmBusinessAddressController.changeBusinessAddress()
 
-GET       /organisation-check-answers  uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.CheckAnswersController.displayPage()
+GET        /organisation-check-answers  uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.CheckAnswersController.displayPage()
 
 # Primary Contact Details
 GET        /main-contact-name    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsFullNameController.displayPage()
@@ -78,13 +78,19 @@ POST       /main-contact-telephone    uk.gov.hmrc.plasticpackagingtax.registrati
 GET        /confirm-contact-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsConfirmAddressController.displayPage()
 POST       /confirm-contact-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsConfirmAddressController.submit()
 
-GET        /enter-contact-address-initialise    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.initialise()
-GET        /enter-contact-address-update    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.update(id: Option[String])
-GET        /enter-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.displayPage()
-POST       /enter-contact-address    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.submit()
+GET        /enter-contact-address           uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.displayPage()
+GET        /enter-contact-address-callback  uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsAddressController.update()
 
 GET        /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsCheckAnswersController.displayPage()
 POST       /contact-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.ContactDetailsCheckAnswersController.submit()
+
+# Address Capture
+GET        /capture-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.address.AddressCaptureController.initialiseAddressCapture()
+GET        /uk-address          uk.gov.hmrc.plasticpackagingtax.registration.controllers.address.AddressCaptureController.addressInUk()
+POST       /uk-address          uk.gov.hmrc.plasticpackagingtax.registration.controllers.address.AddressCaptureController.submitAddressInUk()
+GET        /address             uk.gov.hmrc.plasticpackagingtax.registration.controllers.address.AddressCaptureController.captureAddress()
+POST       /address             uk.gov.hmrc.plasticpackagingtax.registration.controllers.address.AddressCaptureController.submitAddress()
+GET        /alf-callback        uk.gov.hmrc.plasticpackagingtax.registration.controllers.address.AddressCaptureController.alfCallback(id: Option[String])
 
 # Partnership Registrations
 GET        /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.displayNewPartner()
@@ -120,15 +126,14 @@ POST       /partner-phone-number                uk.gov.hmrc.plasticpackagingtax.
 GET        /partner-phone-number/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.displayExistingPartner(partnerId: String)
 POST       /partner-phone-number/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerPhoneNumberController.submitExistingPartner(partnerId: String)
 
-GET        /partner-contact-address             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureNewPartner()
-GET        /partner-contact-address/:partnerId  uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureExistingPartner(partnerId)
+GET        /partner-contact-address                         uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureNewPartner()
+GET        /partner-contact-address/:partnerId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.captureExistingPartner(partnerId)
+GET        /partner-contact-address-callback                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.addressCaptureCallbackNewPartner()
+GET        /partner-contact-address-callback/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.addressCaptureCallbackExistingPartner(partnerId)
 
 GET        /partner-check-answers               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayNewPartner()
 GET        /partner-check-answers/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.displayExistingPartner(partnerId: String)
 POST       /partner-check-answers               uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerCheckAnswersController.continue()
-
-GET        /partner-contact-address-callback                uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackNewPartner(id: Option[String])
-GET        /partner-contact-address-callback/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactAddressController.alfCallbackExistingPartner(partnerId, id: Option[String])
 
 GET        /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.displayPage()
 POST       /partnership-partners-list   uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerListController.submit()
@@ -183,7 +188,7 @@ GET        /group-member-check-answers/:memberId    uk.gov.hmrc.plasticpackaging
 POST       /group-member-check-answers              uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.submit()
 
 GET        /group-member-contact-address/:memberId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.displayPage(memberId)
-GET        /group-member-contact-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.alfCallback(id: Option[String], memberId: String)
+GET        /group-member-contact-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressController.addressCaptureCallback(memberId: String)
 
 GET        /group-member-check-answers/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.displayPage(memberId)
 POST       /group-member-check-answers              uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsCheckAnswersController.submit()
@@ -225,7 +230,7 @@ GET        /amend-registration          uk.gov.hmrc.plasticpackagingtax.registra
 GET        /amend-registration-failed   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendRegistrationController.registrationUpdateFailed()
 
 GET        /amend-business-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.changeBusinessAddress()
-GET        /amend-registration-business-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.alfCallback(id: Option[String])
+GET        /amend-registration-business-address-callback    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendOrganisationDetailsController.addressCaptureCallback()
 
 GET        /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.contactName()
 POST       /amend-contact-name      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateContactName()
@@ -247,8 +252,8 @@ GET        /amend-email-confirm-change  uk.gov.hmrc.plasticpackagingtax.registra
 GET        /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.phoneNumber()
 POST       /amend-phone-number      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updatePhoneNumber()
 
-GET        /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.address()
-POST       /amend-address      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateAddress()
+GET        /amend-address           uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.address()
+GET        /amend-address-callback  uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendContactDetailsController.updateAddress()
 
 ## Groups
 
@@ -269,8 +274,8 @@ POST       /amend-group-member-contact-email/:memberId      uk.gov.hmrc.plasticp
 GET        /amend-group-member-contact-phone-number/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.phoneNumber(memberId)
 POST       /amend-group-member-contact-phone-number/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.updatePhoneNumber(memberId)
 
-GET        /amend-group-member-contact-address/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.address(memberId)
-POST       /amend-group-member-contact-address/:memberId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.updateAddress(memberId)
+GET        /amend-group-member-contact-address/:memberId            uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.address(memberId)
+GET        /amend-group-member-contact-address-callback/:memberId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AmendMemberContactDetailsController.updateAddress(memberId)
 
 GET        /amend-add-group-member-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberOrganisationDetailsTypeController.displayPage()
 POST       /amend-add-group-member-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberOrganisationDetailsTypeController.submit()
@@ -287,7 +292,7 @@ GET        /amend-add-group-member-contact-telephone/:memberId     uk.gov.hmrc.p
 POST       /amend-add-group-member-contact-telephone/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsTelephoneNumberController.submit(memberId)
 
 GET        /amend-add-group-member-contact-address/:memberId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsConfirmAddressController.displayPage(memberId)
-GET        /amend-add-group-member-contact-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsConfirmAddressController.alfCallback(id: Option[String], memberId: String)
+GET        /amend-add-group-member-contact-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsConfirmAddressController.addressCaptureCallback(memberId: String)
 
 GET        /amend-add-group-member-check-answers/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId)
 POST       /amend-add-group-member-check-answers              uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsCheckAnswersController.submit()
@@ -318,7 +323,7 @@ GET        /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackag
 POST       /amend-partner-phone-number/:partnerId      uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updatePhoneNumber(partnerId)
 
 GET        /amend-partner-address/:partnerId            uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.address(partnerId)
-GET        /amend-partner-address-callback/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateAddress(partnerId: String, id: Option[String])
+GET        /amend-partner-address-callback/:partnerId   uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AmendPartnerContactDetailsController.updateAddress(partnerId: String)
 
 GET        /amend-add-partner-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController.displayPage()
 POST       /amend-add-partner-organisation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerOrganisationDetailsTypeController.submit()
@@ -338,7 +343,7 @@ GET        /amend-add-partner-contact-telephone     uk.gov.hmrc.plasticpackaging
 POST       /amend-add-partner-contact-telephone     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsTelephoneNumberController.submit()
 
 GET        /amend-add-partner-contact-address              uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsConfirmAddressController.displayPage()
-GET        /amend-add-partner-contact-address-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsConfirmAddressController.alfCallback(id: Option[String])
+GET        /amend-add-partner-contact-address-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback()
 
 GET        /amend-add-partner-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsCheckAnswersController.displayPage()
 POST       /amend-add-partner-check-answers              uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.AddPartnerContactDetailsCheckAnswersController.submit()

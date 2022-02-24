@@ -18,16 +18,15 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.RegistrationUpdater
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AuthenticatedRequest,
   JourneyRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  AddressCaptureService
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -36,39 +35,38 @@ import scala.concurrent.ExecutionContext
 abstract class ContactDetailsConfirmAddressControllerBase(
   authenticate: AuthActioning,
   journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
+  addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents,
   registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with AddressLookupIntegration with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport {
 
-  protected def doDisplayPage(memberId: String): Action[AnyContent] =
+  protected def doDisplayPage(memberId: String, backLink: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      initialiseAddressLookup(addressLookupFrontendConnector,
-                              appConfig,
-                              getAlfCallback(memberId),
-                              "addressLookup.member.contact",
-                              request.registration.groupDetail.flatMap(_.businessName(memberId))
-      ).map(onRamp => Redirect(onRamp.redirectUrl))
+      addressCaptureService.initAddressCapture(
+        AddressCaptureConfig(backLink = backLink.url,
+                             successLink = getAddressCaptureCallback(memberId).url,
+                             alfHeadingsPrefix = "addressLookup.partner",
+                             entityName =
+                               request.registration.findMember(memberId).map(_.businessName),
+                             pptHeadingKey = "addressCapture.contact.heading",
+                             pptHintKey = None
+        )
+      ).map(redirect => Redirect(redirect))
     }
 
-  protected def getAlfCallback(memberId: String): Call
+  protected def getAddressCaptureCallback(memberId: String): Call
 
-  protected def doAlfCallback(id: Option[String], memberId: String): Action[AnyContent] =
+  protected def onAddressCaptureCallback(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      addressLookupFrontendConnector.getAddress(
-        id.getOrElse(throw new MissingAddressIdException)
-      ).flatMap {
-        // TODO: consider re-validating here as we do for contact address. The code there suggests that ALF might return
-        //       an address which we consider invalid. Need to check this out!
-        confirmedAddress =>
+      addressCaptureService.getCapturedAddress().flatMap {
+        capturedAddress =>
           registrationUpdater.updateRegistration { registration =>
             registration.copy(groupDetail =
               registration.groupDetail.map(
                 _.withUpdatedOrNewMember(
                   registration.findMember(memberId).map(
-                    _.withUpdatedGroupMemberAddress(Address(confirmedAddress))
+                    _.withUpdatedGroupMemberAddress(capturedAddress)
                   ).getOrElse(throw new IllegalStateException("Expected group member absent"))
                 )
               )
