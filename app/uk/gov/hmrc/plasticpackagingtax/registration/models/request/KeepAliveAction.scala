@@ -39,21 +39,27 @@ class KeepAliveActionImpl @Inject() (appConfig: AppConfig, userDataRepository: U
 
   protected def refine[A](
     request: AuthenticatedRequest[A]
-  ): Future[Either[Result, JourneyRequest[A]]] = {
+  ): Future[Either[Result, AuthenticatedRequest[A]]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.session.get("sessionId") match {
       case Some(sessionId) =>
-        userDataRepository.findAll[Registration](sessionId).map {
+        userDataRepository.findAll[JsValue](sessionId).map {
           values =>
             for (value <- values) {
-              val key: String = value match {
-                case JsObject(jsValue) => jsValue.keys.head
-                case _                 => "None"
+              val key: Option[String] = value match {
+                case JsObject(jsValue) => jsValue.keys.headOption
+                case _                 => None
               }
-              userDataRepository.put[JsValue](sessionId)(DataKey(key), value)
+              key match {
+                case Some(key) => userDataRepository.put[JsValue](sessionId)(DataKey(key), value)
+                case _ =>
+                  logger.warn(s"Denied attempt to access ${request.uri} no record found")
+                  throw SessionRecordNotFound()
+              }
+
             }
-            Right(JourneyRequest[A](request, values.head.as[Registration], appConfig))
+            Right(request)
         }
       case _ =>
         logger.warn(s"Denied attempt to access ${request.uri} since no user session present")
@@ -66,4 +72,4 @@ class KeepAliveActionImpl @Inject() (appConfig: AppConfig, userDataRepository: U
 }
 
 @ImplementedBy(classOf[KeepAliveActionImpl])
-trait KeepAliveAction extends ActionRefiner[AuthenticatedRequest, JourneyRequest]
+trait KeepAliveAction extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]

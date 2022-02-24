@@ -61,14 +61,11 @@ class UserDataRepository @Inject() (
 
   def getData[A: Reads](id: String, key: String): Future[Option[A]] = get[A](id)(DataKey(key))
 
-  def findAll[A: Reads](id: String): Future[List[JsValue]] = {
-    val values = collection
+  def findAll[A: Reads](id: String): Future[List[JsValue]] =
+    collection
       .find(Filters.equal("_id", id))
       .toFuture
-    values.map { regs =>
-      regs.flatMap(cache => (cache.data.asOpt[JsValue])).toList
-    }
-  }
+      .map(_.flatMap(cache => (cache.data).asOpt[JsValue]).toList)
 
   def deleteData[A: Writes](
     key: String

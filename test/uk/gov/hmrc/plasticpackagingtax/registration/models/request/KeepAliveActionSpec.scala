@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import base.MockAuthAction
 import base.PptTestData.newUser
+import org.bson.json.JsonObject
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,15 +28,17 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, Result, Results}
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{await, status}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import spec.PptTestData
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.parsing.json.JSONObject
 
 class KeepAliveActionSpec
     extends MockAuthAction with AnyWordSpecLike with DefaultAwaitTimeout with BeforeAndAfterEach
@@ -46,7 +49,7 @@ class KeepAliveActionSpec
   private val keepAliveAction: KeepAliveAction =
     new KeepAliveActionImpl(appConfig, mockUserDataRepository)(ExecutionContext.global)
 
-  private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
+  private val responseGenerator = mock[AuthenticatedRequest[_] => Future[Result]]
 
   private val requestCaptor: ArgumentCaptor[JourneyRequest[AnyContent]] =
     ArgumentCaptor.forClass(classOf[JourneyRequest[AnyContent]])
@@ -71,7 +74,6 @@ class KeepAliveActionSpec
           new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")), newUser())
 
         status(keepAliveAction.invokeBlock(request, responseGenerator)) mustBe OK
-        Json.toJson(requestCaptor.getValue.registration) mustBe cachedRegistration.data
       }
 
     }
@@ -83,6 +85,24 @@ class KeepAliveActionSpec
 
         intercept[SessionRecordNotFound] {
           keepAliveAction.invokeBlock(request, responseGenerator)
+        }
+      }
+
+      "no record is returned when the key is not present" in {
+        val registration = aRegistration().copy(id = "3453456")
+        val cachedRegistration: CacheItem =
+          CacheItem("123", Json.toJsObject(registration), Instant.now(), Instant.now())
+        when(mockUserDataRepository.findAll[JsValue](any())(any())).thenReturn(
+          Future.successful(List(Json.toJson("")))
+        )
+        when(
+          mockUserDataRepository.put[JsValue]("123")(DataKey("id"), Json.toJson(registration))
+        ).thenReturn(Future.successful(cachedRegistration))
+        val request =
+          new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")), newUser())
+
+        intercept[SessionRecordNotFound] {
+          await(keepAliveAction.invokeBlock(request, responseGenerator))
         }
       }
 
