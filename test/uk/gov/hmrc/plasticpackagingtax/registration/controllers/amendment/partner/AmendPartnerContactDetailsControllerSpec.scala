@@ -35,10 +35,12 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   Address,
   EmailAddress,
+  EmailAddressPasscode,
   JobTitle,
   PhoneNumber
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   AmendRegistrationUpdateService,
   Registration
@@ -494,6 +496,39 @@ class AmendPartnerContactDetailsControllerSpec
         val resp = controller.confirmEmailCode(nominatedPartner.id)(getRequest())
 
         status(resp) mustBe OK
+      }
+
+      "user submits correct email verification code for nominated partner email address" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        // Email verification will be called to check the user submitted code
+        when(
+          mockEmailVerificationService.checkVerificationCode(
+            ArgumentMatchers.eq("ABCDE"),
+            ArgumentMatchers.eq("verified-amended-email@localhost"),
+            ArgumentMatchers.eq("email-verification-journey-id")
+          )(any())
+        ).thenReturn(Future.successful(EmailVerificationJourneyStatus.COMPLETE))
+
+        val resp = controller.checkEmailVerificationCode(nominatedPartner.id)(
+          postRequestEncoded(EmailAddressPasscode("ABCDE"))
+        )
+
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some(
+          routes.AmendPartnerContactDetailsController.emailVerified(nominatedPartner.id).url
+        )
       }
 
       "user is prompted for confirm verified nominated partner email address" in {
