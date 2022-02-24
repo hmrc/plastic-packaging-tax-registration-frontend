@@ -133,6 +133,12 @@ class AmendPartnerContactDetailsControllerSpec
     when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Amend Partner Job Title")
     )
+    when(
+      email_address_passcode_page.apply(any(), any(), any(), any(), any())(any(), any())
+    ).thenReturn(HtmlFormat.empty)
+    when(emailCorrectPasscodePage.apply(any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
@@ -469,6 +475,44 @@ class AmendPartnerContactDetailsControllerSpec
               addressExtractor(updatedRegistration) mustBe validCapturedAddress
             }
         }
+      }
+
+      "user is prompted to enter verification code for nominated partner email address" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        val resp = controller.confirmEmailCode(nominatedPartner.id)(getRequest())
+
+        status(resp) mustBe OK
+      }
+
+      "user is prompted for confirm verified nominated partner email address" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        val resp = controller.emailVerified(nominatedPartner.id)(getRequest())
+
+        status(resp) mustBe OK
       }
 
       "nominated partner verified and confirmed email address is updated" in {
