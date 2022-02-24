@@ -25,7 +25,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  AddressCaptureService
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
 
 import javax.inject.{Inject, Singleton}
@@ -39,8 +42,7 @@ class AmendContactDetailsController @Inject() (
   contactNamePage: full_name_page,
   jobTitlePage: job_title_page,
   phoneNumberPage: phone_number_page,
-  addressPage: address_page,
-  countryService: CountryService
+  addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) {
 
@@ -159,39 +161,28 @@ class AmendContactDetailsController @Inject() (
     )
 
   def address(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
-      request.registration.primaryContactDetails.address match {
-        case Some(address) =>
-          Ok(buildAddressPage(Address.form().fill(address)))
-        case _ =>
-          Ok(buildAddressPage(Address.form()))
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      addressCaptureService.initAddressCapture(
+        AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
+                             successLink = routes.AmendContactDetailsController.updateAddress().url,
+                             alfHeadingsPrefix = "addressLookup.contact",
+                             entityName = request.registration.organisationDetails.businessName,
+                             pptHeadingKey = "addressCapture.contact.heading",
+                             pptHintKey = None
+        )
+      ).map(redirect => Redirect(redirect))
+    }
+
+  def updateAddress(): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      addressCaptureService.getCapturedAddress().flatMap {
+        capturedAddress =>
+          updateRegistration { registration =>
+            registration.copy(primaryContactDetails =
+              registration.primaryContactDetails.copy(address = capturedAddress)
+            )
+          }
       }
     }
-
-  def updateAddress(): Action[AnyContent] = {
-
-    def updateAddress(updatedAddress: Address): Registration => Registration = {
-      registration: Registration =>
-        registration.copy(primaryContactDetails =
-          registration.primaryContactDetails.copy(address = Some(updatedAddress))
-        )
-    }
-
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      Address.form()
-        .bindFromRequest()
-        .fold((formWithErrors: Form[Address]) =>
-                Future.successful(BadRequest(buildAddressPage(formWithErrors))),
-              address => updateRegistration(updateAddress(address))
-        )
-    }
-  }
-
-  private def buildAddressPage(form: Form[Address])(implicit request: JourneyRequest[AnyContent]) =
-    addressPage(form,
-                countryService.getAll(),
-                routes.AmendRegistrationController.displayPage(),
-                routes.AmendContactDetailsController.updateAddress()
-    )
 
 }

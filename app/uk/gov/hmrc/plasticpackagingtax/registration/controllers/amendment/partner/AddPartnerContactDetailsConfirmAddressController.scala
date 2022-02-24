@@ -18,17 +18,17 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.MissingAddressIdException
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   AmendRegistrationUpdateService,
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  AddressCaptureService
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -38,35 +38,33 @@ import scala.concurrent.ExecutionContext
 class AddPartnerContactDetailsConfirmAddressController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   journeyAction: AmendmentJourneyAction,
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
+  addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport with AddressLookupIntegration {
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      initialiseAddressLookup(addressLookupFrontendConnector,
-                              appConfig,
-                              routes.AddPartnerContactDetailsConfirmAddressController.alfCallback(
-                                None
-                              ),
-                              "addressLookup.partner",
-                              request.registration.inflightPartner.map(_.name)
-      ).map(onRamp => Redirect(onRamp.redirectUrl))
+      addressCaptureService.initAddressCapture(
+        AddressCaptureConfig(
+          backLink = routes.AddPartnerContactDetailsTelephoneNumberController.displayPage().url,
+          successLink =
+            routes.AddPartnerContactDetailsConfirmAddressController.addressCaptureCallback().url,
+          alfHeadingsPrefix = "addressLookup.partner",
+          entityName = request.registration.inflightPartner.map(_.name),
+          pptHeadingKey = "addressCapture.contact.heading",
+          pptHintKey = None
+        )
+      ).map(redirect => Redirect(redirect))
     }
 
-  def alfCallback(id: Option[String]): Action[AnyContent] =
+  def addressCaptureCallback(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      addressLookupFrontendConnector.getAddress(
-        id.getOrElse(throw new MissingAddressIdException)
-      ).flatMap {
-        // TODO: consider re-validating here as we do for contact address. The code there suggests that ALF might return
-        //       an address which we consider invalid. Need to check this out!
-        confirmedAddress =>
+      addressCaptureService.getCapturedAddress().flatMap {
+        capturedAddress =>
           registrationUpdater.updateRegistration { registration =>
-            update(Address(confirmedAddress))(registration)
+            update(capturedAddress)(registration)
           }.map {
             _ =>
               Redirect(routes.AddPartnerContactDetailsCheckAnswersController.displayPage())
@@ -74,7 +72,7 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
       }
     }
 
-  private def update(address: Address)(implicit registration: Registration): Registration =
+  private def update(address: Option[Address])(implicit registration: Registration): Registration =
     registration.withInflightPartner(
       registration.inflightPartner.map(_.withContactAddress(address))
     )

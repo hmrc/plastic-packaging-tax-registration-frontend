@@ -49,7 +49,7 @@ case class Partner(
       )
   }
 
-  def withContactAddress(contactAddress: Address): Partner =
+  def withContactAddress(contactAddress: Option[Address]): Partner =
     this.copy(contactDetails = this.contactDetails.map(_.withUpdatedAddress(contactAddress)))
 
   def canEditName: Boolean = {

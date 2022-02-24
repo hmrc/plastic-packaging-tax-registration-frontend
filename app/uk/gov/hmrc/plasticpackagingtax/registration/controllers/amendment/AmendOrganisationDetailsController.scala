@@ -18,19 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
-  AddressLookupConfirmation,
-  MissingAddressIdException
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  AddressCaptureService
 }
 
 import javax.inject.{Inject, Singleton}
@@ -40,11 +37,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendOrganisationDetailsController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   mcc: MessagesControllerComponents,
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
+  addressCaptureService: AddressCaptureService,
   amendmentJourneyAction: AmendmentJourneyAction
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration {
+    extends AmendmentController(mcc, amendmentJourneyAction) {
 
   def changeBusinessAddress(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
@@ -54,30 +50,31 @@ class AmendOrganisationDetailsController @Inject() (
   private def initialiseAddressLookup(
     request: JourneyRequest[AnyContent]
   )(implicit header: HeaderCarrier): Future[Result] =
-    initialiseAddressLookup(addressLookupFrontendConnector,
-                            appConfig,
-                            routes.AmendOrganisationDetailsController.alfCallback(None),
-                            "addressLookup.business",
-                            request.registration.organisationDetails.businessName
-    ).map(onRamp => Redirect(onRamp.redirectUrl))
+    addressCaptureService.initAddressCapture(
+      AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
+                           successLink =
+                             routes.AmendOrganisationDetailsController.addressCaptureCallback().url,
+                           alfHeadingsPrefix = "addressLookup.business",
+                           entityName = request.registration.organisationDetails.businessName,
+                           pptHeadingKey = "addressCapture.business.heading",
+                           pptHintKey = None
+      )
+    )(request).map(redirect => Redirect(redirect))
 
-  def alfCallback(id: Option[String]): Action[AnyContent] =
+  def addressCaptureCallback(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      def updateBusinessAddress(
-        address: AddressLookupConfirmation
-      ): Registration => Registration = {
+      def updateBusinessAddress(address: Option[Address]): Registration => Registration = {
         registration: Registration =>
           val updatedOrganisationDetails =
             registration.organisationDetails.copy(businessRegisteredAddress =
-              Some(Address(address))
+              address
             )
           registration.copy(organisationDetails = updatedOrganisationDetails)
       }
-      addressLookupFrontendConnector.getAddress(
-        id.getOrElse(throw new MissingAddressIdException)
-      ).flatMap {
-        confirmedAddress =>
-          updateRegistration(updateBusinessAddress(confirmedAddress)).map { _ =>
+
+      addressCaptureService.getCapturedAddress().flatMap {
+        capturedAddress =>
+          updateRegistration(updateBusinessAddress(capturedAddress)).map { _ =>
             Redirect(routes.AmendRegistrationController.displayPage())
           }
       }

@@ -45,7 +45,7 @@ class UserDataRepositorySpec
 
   val mockTimeStampSupport = new CurrentTimestampSupport()
 
-  val repository = new UserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
+  val repository = new MongoUserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
 
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
     new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),

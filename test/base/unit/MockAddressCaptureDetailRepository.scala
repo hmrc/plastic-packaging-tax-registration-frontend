@@ -18,20 +18,15 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
-  RegistrationAmendmentRepository,
-  RegistrationAmendmentRepositoryImpl
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.AddressCaptureDetailRepositoryImpl
 
 import scala.concurrent.ExecutionContext
 
-trait MockRegistrationAmendmentRepository extends RegistrationBuilder with MockitoSugar {
+trait MockAddressCaptureDetailRepository extends RegistrationBuilder with MockitoSugar {
 
-  private val inMemoryUserDetailsRepository = new InMemoryUserDetailsRepository()(
-    ExecutionContext.global
-  )
-
-  protected val inMemoryRegistrationAmendmentRepository: RegistrationAmendmentRepository =
-    new RegistrationAmendmentRepositoryImpl(inMemoryUserDetailsRepository)(ExecutionContext.global)
+  protected val inMemoryAddressCaptureDetailRepository =
+    new AddressCaptureDetailRepositoryImpl(
+      new InMemoryUserDetailsRepository()(ExecutionContext.global)
+    )
 
 }

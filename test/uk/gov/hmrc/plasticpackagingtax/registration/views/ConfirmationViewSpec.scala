@@ -80,6 +80,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
       val mainDetail = view.getElementsByClass(gdsPageBodyText)
       mainDetail.get(0) must containMessage("confirmationPage.detail.1")
       mainDetail.get(1) must containMessage("confirmationPage.detail.2")
+      mainDetail.get(2) must containMessage("confirmationPage.detail.3")
     }
 
     "display 'What happens next'" in {
@@ -89,12 +90,12 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
       )
 
       val whatHappensNextDetail = view.getElementsByClass(gdsPageBodyText)
-      whatHappensNextDetail.get(2) must containMessage("confirmationPage.whatHappensNext.detail")
-      whatHappensNextDetail.get(3) must containMessage(
+      whatHappensNextDetail.get(3) must containMessage("confirmationPage.whatHappensNext.detail")
+      whatHappensNextDetail.get(4) must containMessage(
         "confirmationPage.whatHappensNext.link",
         messages("confirmationPage.whatHappensNext.link.text")
       )
-      whatHappensNextDetail.get(4) must containMessage(
+      whatHappensNextDetail.get(5) must containMessage(
         "confirmationPage.exitSurvey.link",
         messages("confirmationPage.exitSurvey.link.text")
       )
