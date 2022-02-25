@@ -186,6 +186,17 @@ class AddressCaptureControllerSpec
         status(resp) mustBe BAD_REQUEST
         contentAsString(resp) mustBe "Address Capture"
       }
+      "ALF address is missing a postcode" in {
+        val validAlfAddress = aValidAlfAddress()
+        val invalidAlfAddress =
+          validAlfAddress.copy(address = validAlfAddress.address.copy(postcode = None))
+        simulateAlfCallback(invalidAlfAddress)
+
+        val resp = addressCaptureController.alfCallback(Some("123"))(getRequest())
+
+        status(resp) mustBe BAD_REQUEST
+        contentAsString(resp) mustBe "Address Capture"
+      }
     }
 
     "redirect to the PPT address capture page" when {
