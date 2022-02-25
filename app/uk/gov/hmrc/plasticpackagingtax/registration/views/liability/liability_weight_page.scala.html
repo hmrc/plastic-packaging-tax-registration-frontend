@@ -48,27 +48,6 @@
     )
 }
 
-@pptGuidanceLink = {
-    @link(
-        id = Some("guidance-link"),
-        newTab = true,
-        text = messages("liabilityWeightPage.guidance.description"),
-        call = Call(
-            method = "GET",
-            url = messages("liabilityWeightPage.guidance.href")
-        )
-    )
-}
-
-@pptWeightHelp = {
-    @paragraph(
-        content = Html(messages("liabilityWeightPage.info"))
-    )
-    @paragraph(
-        content = Html(messages("liabilityWeightPage.info2", pptGuidanceLink))
-    )
-}
-
 @govukLayout(title = Title("liabilityWeightPage.title")) {
 
     @errorSummary(form.errors)
@@ -77,8 +56,6 @@
 
     @pptWeightQuestion
 
-    @pptWeightHelp
-
     @formHelper(action = pptRoutes.LiabilityWeightController.submit(), 'autoComplete -> "off") {
         @govukInput(
             Input(
@@ -86,14 +63,11 @@
                 name = totalWeightField.name,
                 value = totalWeightField.value,
                 hint = None,
-                label = Label(
-                    content = Text(messages("liabilityWeightPage.label"))
-                ),
                 errorMessage = errorMessages,
                 suffix = Some(PrefixOrSuffix(
                     content = Text("kg")
                 )),
-                classes = "govuk-input--width-5"
+                classes = "govuk-input--width-10"
             )
         )
         @saveButtons()
