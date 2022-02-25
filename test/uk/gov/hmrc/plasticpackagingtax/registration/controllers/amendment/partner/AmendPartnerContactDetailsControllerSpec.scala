@@ -479,6 +479,44 @@ class AmendPartnerContactDetailsControllerSpec
         }
       }
 
+      "user submits a new email for a nominated partner and is sent for email verification" in {
+        authorisedUserWithPptSubscription()
+        simulateGetSubscriptionSuccess(partnershipRegistration)
+        // No subscription update expected.
+
+        // Email verification will check if this address is already verified; trying to let the user through with no
+        // friction if we already know this address
+        when(
+          mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"),
+                                                       any()
+          )(any())
+        ).thenReturn(Future.successful(false))
+        // Email verification will be called to setup an email verification journey for the new email address
+        when(
+          mockEmailVerificationService.sendVerificationCode(
+            ArgumentMatchers.eq("new-email@ppt.com"),
+            any(),
+            ArgumentMatchers.eq(
+              routes.AmendPartnerContactDetailsController.updateEmailAddress(
+                nominatedPartner.id
+              ).url
+            )
+          )(any())
+        ).thenReturn(Future.successful("an-email-verification-journey-id"))
+
+        val resp = controller.updateEmailAddress(nominatedPartner.id)(
+          postRequestEncoded(EmailAddress("new-email@ppt.com"))
+        )
+
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some(
+          routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url
+        )
+
+        // Would be nice to check that email verification journey details were set on the registration
+        // but can't work out how to get hold of the updated registration in this context
+      }
+
       "user is prompted to enter verification code for nominated partner email address" in {
         authorisedUserWithPptSubscription()
         val primaryContactDetailsWithEmailVerificationJourney =
