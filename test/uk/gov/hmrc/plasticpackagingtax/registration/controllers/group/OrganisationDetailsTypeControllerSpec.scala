@@ -284,11 +284,6 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         journeyNotSupportedPrivateBeta(PARTNERSHIP)
       }
 
-      "user submits form for overseas company" in {
-
-        journeyNotSupportedPrivateBeta(OVERSEAS_COMPANY_UK_BRANCH)
-      }
-
       "user submits form for overseas company with no branch in uk" in {
 
         journeyNotSupportedPrivateBeta(OVERSEAS_COMPANY_NO_UK_BRANCH)
