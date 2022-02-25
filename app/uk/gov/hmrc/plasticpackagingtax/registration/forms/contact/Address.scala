@@ -37,6 +37,8 @@ case class Address(
       addressLine2.exists(_.trim.nonEmpty) &&
       countryCode.trim.nonEmpty
 
+  def isUkAndMissingPostcode(): Boolean = countryCode == "GB" && postCode.isEmpty
+
 }
 
 object Address extends CommonFormValidators {
@@ -94,20 +96,16 @@ object Address extends CommonFormValidators {
       .verifying(emptyError(countryCode), isNonEmpty)
   )(Address.apply)(Address.unapply)
 
-  // Use this to unbind the form data from the request to get around the problem of conditional mandatoryIfEqual
-  // mapping not binding postcode
-  def dataExtractor(): Form[Address] =
-    Form(
-      Forms.mapping(addressLine1 -> Forms.text,
-                    addressLine2 -> optional(Forms.text),
-                    addressLine3 -> optional(Forms.text),
-                    townOrCity   -> Forms.text,
-                    postCode     -> optional(Forms.text),
-                    countryCode  -> Forms.text
-      )(Address.apply)(Address.unapply)
-    )
-
   def form(): Form[Address] = Form(mapping)
+
+  // Standard use of fillAndValidate on the Form object was not identifying missing postcodes for UK addresses
+  def fillAndValidate(address: Address): Form[Address] = {
+    val form = Address.form().fillAndValidate(address)
+    if (address.isUkAndMissingPostcode())
+      form.withError("postCode", Address.emptyError("postCode"))
+    else
+      form
+  }
 
   private def emptyError(field: String) = s"primaryContactDetails.address.$field.empty.error"
 

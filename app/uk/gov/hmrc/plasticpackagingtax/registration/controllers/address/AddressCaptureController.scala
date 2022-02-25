@@ -149,7 +149,7 @@ class AddressCaptureController @Inject() (
         ).flatMap {
           confirmedAddress =>
             val pptAddress  = Address(confirmedAddress)
-            val addressForm = Address.form().fillAndValidate(pptAddress)
+            val addressForm = Address.fillAndValidate(pptAddress)
             if (addressForm.errors.nonEmpty)
               Future.successful(BadRequest(buildAddressPage(addressForm, config)))
             else
