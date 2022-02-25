@@ -42,19 +42,11 @@
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
-@pptWeightQuestion = {
-    @pageHeading(
-        text = messages("liabilityWeightPage.question")
-    )
-}
-
 @govukLayout(title = Title("liabilityWeightPage.title")) {
 
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liabilityWeightPage.sectionHeader"))
-
-    @pptWeightQuestion
 
     @formHelper(action = pptRoutes.LiabilityWeightController.submit(), 'autoComplete -> "off") {
         @govukInput(
@@ -63,6 +55,11 @@
                 name = totalWeightField.name,
                 value = totalWeightField.value,
                 hint = None,
+                label = Label(
+                    isPageHeading = true,
+                    classes = gdsLabelPageHeading,
+                    content = Text(messages("liabilityWeightPage.question"))
+                ),
                 errorMessage = errorMessages,
                 suffix = Some(PrefixOrSuffix(
                     content = Text("kg")

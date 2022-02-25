@@ -67,8 +67,7 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display liability weight question" in {
-
-      view.getElementsByClass(Styles.gdsPageHeading).text() must include(
+      view.getElementsByClass(Styles.gdsLabelPageHeading).text() must include(
         messages("liabilityWeightPage.question")
       )
     }
