@@ -32,13 +32,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   routes => amendmentRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
-  Address,
-  EmailAddress,
-  EmailAddressPasscode,
-  JobTitle,
-  PhoneNumber
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -72,7 +66,9 @@ class AmendPartnerContactDetailsControllerSpec
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val mockRegistrationUpdater = mock[AmendRegistrationUpdateService]
+  private val inMemoryRegistrationUpdater = new AmendRegistrationUpdateService(
+    inMemoryRegistrationAmendmentRepository
+  )
 
   private val mockEmailVerificationService = mock[EmailVerificationService]
 
@@ -111,7 +107,7 @@ class AmendPartnerContactDetailsControllerSpec
     emailCorrectPasscodePage = emailCorrectPasscodePage,
     emailIncorrectPasscodeTooManyAttemptsPage =
       too_many_attempts_passcode_page,
-    registrationUpdater = mockRegistrationUpdater,
+    registrationUpdater = inMemoryRegistrationUpdater,
     emailVerificationService = mockEmailVerificationService,
     contactPhoneNumberPage = mockContactPhoneNumberPage,
     jobTitlePage = mockJobTitlePage,
@@ -144,7 +140,7 @@ class AmendPartnerContactDetailsControllerSpec
   }
 
   override protected def afterEach(): Unit = {
-    reset(mockSubscriptionConnector)
+    reset(mockSubscriptionConnector, mockEmailVerificationService)
     inMemoryRegistrationAmendmentRepository.reset()
     super.afterEach()
   }
@@ -504,17 +500,25 @@ class AmendPartnerContactDetailsControllerSpec
           )(any())
         ).thenReturn(Future.successful("an-email-verification-journey-id"))
 
-        val resp = controller.updateEmailAddress(nominatedPartner.id)(
-          postRequestEncoded(EmailAddress("new-email@ppt.com"))
+        val resp = await(
+          controller.updateEmailAddress(nominatedPartner.id)(
+            postRequestEncoded(EmailAddress("new-email@ppt.com"))
+          )
         )
 
-        status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(
+        status(Future.successful(resp)) mustBe SEE_OTHER
+        redirectLocation(Future.successful(resp)) mustBe Some(
           routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url
         )
 
-        // Would be nice to check that email verification journey details were set on the registration
-        // but can't work out how to get hold of the updated registration in this context
+        inMemoryRegistrationAmendmentRepository.get().map { updatedRegistration =>
+          updatedRegistration.get.primaryContactDetails.prospectiveEmail mustBe Some(
+            "new-email@ppt.com"
+          )
+          updatedRegistration.get.primaryContactDetails.journeyId mustBe Some(
+            "an-email-verification-journey-id"
+          )
+        }
       }
 
       "user is prompted to enter verification code for nominated partner email address" in {
@@ -605,13 +609,7 @@ class AmendPartnerContactDetailsControllerSpec
         val resp = controller.confirmEmailUpdate(nominatedPartner.id)(getRequest())
         status(resp) mustBe SEE_OTHER
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
-          any()
-        )
-
-        val updatedRegistration = registrationCaptor.getValue
+        val updatedRegistration = getUpdatedRegistration()
         updatedRegistration.findPartner(nominatedPartner.id).flatMap(
           _.contactDetails.flatMap(_.emailAddress)
         ) mustBe Some("verified-amended-email@localhost")
@@ -628,14 +626,7 @@ class AmendPartnerContactDetailsControllerSpec
         )
         status(resp) mustBe SEE_OTHER
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
-          any()
-        )
-
-        val updatedRegistration = registrationCaptor.getValue
-        updatedRegistration.findPartner(nominatedPartner.id).flatMap(
+        getUpdatedRegistration().findPartner(nominatedPartner.id).flatMap(
           _.contactDetails.flatMap(_.jobTitle)
         ) mustBe Some("New job title")
       }

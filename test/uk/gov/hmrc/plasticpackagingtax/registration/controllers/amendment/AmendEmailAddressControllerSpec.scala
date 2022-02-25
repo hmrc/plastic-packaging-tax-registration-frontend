@@ -82,7 +82,10 @@ class AmendEmailAddressControllerSpec
   )
 
   private val mockEmailVerificationService = mock[EmailVerificationService]
-  private val mockRegistrationUpdater      = mock[AmendRegistrationUpdateService]
+
+  private val inMemoryRegistrationUpdater = new AmendRegistrationUpdateService(
+    inMemoryRegistrationAmendmentRepository
+  )
 
   private val pptReference = "XMPPT0000000123"
   private val sessionId    = "ABC"
@@ -124,7 +127,7 @@ class AmendEmailAddressControllerSpec
                                                      amendEmailConfirmationPage,
                                                      amendEmailTooManyAttemptsPage,
                                                      mockEmailVerificationService,
-                                                     mockRegistrationUpdater
+                                                     inMemoryRegistrationUpdater
     )
 
     "show page" when {
