@@ -104,7 +104,7 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("firstName", "Enter first name")
+      view must haveGovukFieldError("firstName", "Enter the main contact’s first name")
     }
 
     "last name is not entered" in {
@@ -116,7 +116,7 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("lastName", "Enter last name")
+      view must haveGovukFieldError("lastName", "Enter the main contact’s last name")
     }
   }
 
