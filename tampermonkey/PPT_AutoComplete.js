@@ -511,7 +511,7 @@ const liabilityLiableDate = () => {
 }
 
 const liabilityWeight = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/total-packaging-weight')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/weight-next-12-months')) {
 
         document.getElementById('totalKg').value = '12000'
         document.getElementsByClassName('govuk-button')[0].click()
