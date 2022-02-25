@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
 
 @Singleton
 class KeepAliveController @Inject() (
@@ -44,20 +45,16 @@ class KeepAliveController @Inject() (
       implicit val cif = MongoCacheRepository.format
       request.session.get("sessionId") match {
         case Some(sessionId) =>
-          userDataRepository.findBySessionId(sessionId).map {
-            values =>
-              values match {
-                case Some(cacheItem) =>
-                  cacheItem.data.fields.headOption match {
-                    case Some(keyValuePair) =>
-                      userDataRepository.put[JsValue](sessionId)(DataKey(keyValuePair._1),
-                                                                 keyValuePair._2
-                      )
-                    case None => throw SessionRecordNotFound()
-                  }
+          userDataRepository.findBySessionId(sessionId) onComplete {
+            case Success(value) =>
+              value.data.fields.headOption match {
+                case Some(keyValuePair) =>
+                  userDataRepository.put[JsValue](sessionId)(DataKey(keyValuePair._1),
+                                                             keyValuePair._2
+                  )
                 case _ => throw SessionRecordNotFound()
               }
-              Ok(request.uri)
+            case Failure(_) => throw SessionRecordNotFound()
           }
         case _ =>
           logger.warn(s"Denied attempt to access ${request.uri} since no user session present")

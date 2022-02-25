@@ -19,13 +19,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import base.PptTestData.newUser
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{never, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
+import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey, MongoCacheRepository}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.MongoUserDataRepository
@@ -52,13 +53,12 @@ class KeepAliveControllerSpec extends ControllerSpec {
     "return 200 and keep all documents alive" when {
 
       "user is authorised and display page method is invoked" in {
-        implicit val cif = MongoCacheRepository.format
         val registration: (String, JsValue) =
           "registrationAmendment" -> Json.toJson(aRegistration())
         val cachedRegistration: CacheItem =
           CacheItem("sessionId", JsObject.apply(Map(registration)), Instant.now(), Instant.now())
         when(mockUserDataRepository.findBySessionId(any())).thenReturn(
-          Future.successful(Some(cachedRegistration))
+          Future.successful(cachedRegistration)
         )
         authorizedUser()
         val result = controller.keepAlive()(
@@ -83,6 +83,39 @@ class KeepAliveControllerSpec extends ControllerSpec {
         val result = controller.keepAlive()(getRequest())
 
         intercept[RuntimeException](status(result))
+      }
+
+      "no record is found for the sessionId" in {
+        authorizedUser()
+        when(mockUserDataRepository.findBySessionId("123456")).thenReturn(
+          Future.failed(SessionRecordNotFound())
+        )
+        val result =
+          controller.keepAlive()(
+            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")), newUser())
+          )
+        status(result) mustBe OK
+        verify(mockUserDataRepository, never()).put(any[String])(
+          DataKey(ArgumentMatchers.eq("123")),
+          any()
+        )(any())
+      }
+      "no value in the record for the sessionId" in {
+        authorizedUser()
+        val cachedRegistration: CacheItem =
+          CacheItem("sessionId", JsObject.empty, Instant.now(), Instant.now())
+        when(mockUserDataRepository.findBySessionId(any())).thenReturn(
+          Future.successful(cachedRegistration)
+        )
+        val result =
+          controller.keepAlive()(
+            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")), newUser())
+          )
+        status(result) mustBe OK
+        verify(mockUserDataRepository, never()).put(any[String])(
+          DataKey(ArgumentMatchers.eq("123")),
+          any()
+        )(any())
       }
     }
   }
