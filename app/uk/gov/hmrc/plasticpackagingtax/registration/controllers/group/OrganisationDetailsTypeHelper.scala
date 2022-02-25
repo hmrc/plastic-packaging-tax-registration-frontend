@@ -64,7 +64,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
       case (Some(OrgType.UK_COMPANY), _) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH), false) =>
+      case (Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH), _) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.SOLE_TRADER), false) =>

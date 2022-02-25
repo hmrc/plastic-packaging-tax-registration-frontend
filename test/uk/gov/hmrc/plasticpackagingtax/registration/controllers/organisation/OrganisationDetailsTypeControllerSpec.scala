@@ -361,11 +361,6 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         journeyNotSupportedPrivateBeta(TRUST)
       }
 
-      "user submits form for overseas company" in {
-
-        journeyNotSupportedPrivateBeta(OVERSEAS_COMPANY_UK_BRANCH)
-      }
-
       def journeyNotSupportedPrivateBeta(orgType: OrgType.Value) =
         journeySupportedForPrivateBeta(orgType, false)
 
