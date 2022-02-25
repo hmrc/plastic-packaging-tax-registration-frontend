@@ -19,9 +19,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 import play.api.data.Form
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendmentController
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
+  AmendmentController,
+  routes => amendRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration

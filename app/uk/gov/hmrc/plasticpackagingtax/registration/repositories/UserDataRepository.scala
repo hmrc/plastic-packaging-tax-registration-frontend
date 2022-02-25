@@ -19,8 +19,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 import com.google.inject.ImplementedBy
 import play.api.Configuration
 import play.api.libs.json.{Reads, Writes}
+import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.cache.CacheIdType.SessionCacheId.NoSessionException
-import uk.gov.hmrc.mongo.cache.{CacheIdType, DataKey, MongoCacheRepository}
+import uk.gov.hmrc.mongo.cache.{CacheIdType, CacheItem, DataKey, MongoCacheRepository}
 import uk.gov.hmrc.mongo.{MongoComponent, TimestampSupport}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -47,7 +48,7 @@ trait UserDataRepository {
     request: AuthenticatedRequest[Any]
   ): Future[Unit]
 
-  def reset(): Unit = {}
+  def reset(): Unit
 }
 
 @Singleton
@@ -84,6 +85,9 @@ class MongoUserDataRepository @Inject() (
   override def getData[A: Reads](id: String, key: String): Future[Option[A]] =
     get[A](id)(DataKey(key))
 
+  def findBySessionId(id: String): Future[CacheItem] =
+    findById(id).map(_.getOrElse(throw SessionRecordNotFound()))
+
   override def deleteData[A: Writes](
     key: String
   )(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
@@ -97,4 +101,5 @@ class MongoUserDataRepository @Inject() (
   ): Future[Unit] =
     getData(key).map(data => data.map(data => putData(key, updater(data))))
 
+  override def reset(): Unit = {}
 }

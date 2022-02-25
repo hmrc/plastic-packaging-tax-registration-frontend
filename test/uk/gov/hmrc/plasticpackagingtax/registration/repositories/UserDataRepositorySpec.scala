@@ -24,8 +24,10 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -71,6 +73,21 @@ class UserDataRepositorySpec
         await(repository.putData("testKey", "testData"))
 
         await(repository.getData[String]("testKey")) mustBe Some("testData")
+      }
+      "user's session id used as id to findBySessionId" in {
+        implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
+        await(repository.putData("testKey", "testData"))
+        val registration: (String, JsValue) =
+          "testKey" -> Json.toJson("testData")
+        await(repository.findBySessionId("12345").map(_.data)) mustBe
+          JsObject.apply(Map(registration))
+      }
+      "no cacheItem found for sessionId" in {
+        implicit val request: AuthenticatedRequest[Any] = authRequest("123456")
+        await(repository.putData("testKey", "testData"))
+        intercept[SessionRecordNotFound] {
+          await(repository.findBySessionId("12345"))
+        }
       }
     }
 
