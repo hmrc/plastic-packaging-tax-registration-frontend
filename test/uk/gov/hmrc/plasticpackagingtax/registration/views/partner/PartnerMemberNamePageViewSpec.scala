@@ -62,7 +62,7 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.select("title").text() must include(
-        messages("contactDetails.member.name.title", organisationName)
+        messages("partnership.otherPartners.contactNamePage.title", organisationName)
       )
     }
 
