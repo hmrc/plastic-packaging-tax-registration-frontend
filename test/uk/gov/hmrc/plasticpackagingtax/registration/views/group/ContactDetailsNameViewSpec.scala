@@ -30,7 +30,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[member_name_page]
 
-  private val backLink = Call("GET", "/back-link")
+  private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
   private val organisationName = "Organisation"
@@ -131,12 +131,12 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
       messages
     )
     page.render(MemberName.form(),
-      organisationName,
-      backLink,
-      updateLink,
-      groupMember.id,
-      journeyRequest,
-      messages
+                organisationName,
+                backLink,
+                updateLink,
+                groupMember.id,
+                journeyRequest,
+                messages
     )
   }
 
