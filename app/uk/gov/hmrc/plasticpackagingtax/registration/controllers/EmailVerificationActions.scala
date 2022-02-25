@@ -78,9 +78,10 @@ trait EmailVerificationActions {
     emailVerificationService.sendVerificationCode(email.value,
                                                   request.user.credId,
                                                   continueUrl.url
-    ).map { emailVerificationJourneyId =>
-      persistProspectiveEmailAddress(email, emailVerificationJourneyId)
-      Redirect(enterVerificationCodeCall)
+    ).flatMap { emailVerificationJourneyId =>
+      persistProspectiveEmailAddress(email, emailVerificationJourneyId).map { _ =>
+        Redirect(enterVerificationCodeCall)
+      }
     }
 
   def handleEmailVerificationCodeSubmission(
