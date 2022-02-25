@@ -27,7 +27,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.status
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
-import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey, MongoCacheRepository}
+import uk.gov.hmrc.mongo.cache.{CacheItem, DataKey}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.MongoUserDataRepository
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -116,6 +116,14 @@ class KeepAliveControllerSpec extends ControllerSpec {
           DataKey(ArgumentMatchers.eq("123")),
           any()
         )(any())
+      }
+      "no value for sessionId" in {
+        authorizedUser()
+        val result =
+          controller.keepAlive()(
+            new AuthenticatedRequest(FakeRequest().withSession(("session", "123456")), newUser())
+          )
+        intercept[RuntimeException](status(result))
       }
     }
   }
