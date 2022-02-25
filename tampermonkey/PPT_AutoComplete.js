@@ -657,18 +657,6 @@ const primaryContactConfirmAddress = () => {
     }
 }
 
-const primaryContactAddress = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/enter-contact-address')) {
-
-        document.getElementById('addressLine1').value = '2-3 Scala Street'
-        document.getElementById('addressLine2').value = 'Soho'
-        document.getElementById('townOrCity').value = 'London'
-        document.getElementById('postCode').value = 'W1T 2HN'
-        document.getElementById("countryCode-select").getElementsByTagName("option")[185].selected = "selected"
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
 const primaryContactCheckYourAnswers = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/contact-check-answers')) {
 
@@ -679,6 +667,26 @@ const primaryContactCheckYourAnswers = () => {
 const reviewRegistration = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/review-registration')) {
 
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+/*########################     ADDRESS CAPTURE COMPONENT     ########################## */
+
+const isUkAddress = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/uk-address')) {
+        document.getElementById('ukAddress').click()
+        document.getElementById('submit').click()
+    }
+}
+
+const pptAddressCapture = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/address')) {
+        document.getElementById('addressLine1').value = '2-3 Scala Street'
+        document.getElementById('addressLine2').value = 'Soho'
+        document.getElementById('townOrCity').value = 'London'
+        document.getElementById('postCode').value = 'W1T 2HN'
+        document.getElementById("countryCode-select").getElementsByTagName("option")[185].selected = "selected"
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -728,7 +736,7 @@ const addressLookupEdit = () => {
 
 /*########################     PPT ENROLMENT PAGES     ########################## */
 
-const pptReference = () => {
+const enrolmentPptReference = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-ppt-reference')) {
         document.getElementById('value').value = 'XMPPT0001234567'
 
@@ -742,7 +750,7 @@ const verifyOrganisation = () => {
     }
 }
 
-const isUkAddress = () => {
+const enrolmentIsUkAddress = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-uk-address')) {
         document.getElementById('value').checked = true
 
@@ -750,7 +758,7 @@ const isUkAddress = () => {
     }
 }
 
-const ukPostcode = () => {
+const enrolmentUkPostcode = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-postcode')) {
         document.getElementById('value').value = 'AB1 2CD'
 
@@ -758,7 +766,7 @@ const ukPostcode = () => {
     }
 }
 
-const registrationDate = () => {
+const enrolmentRegistrationDate = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-registration-date')) {
         document.getElementById('date.day').value = '10'
         document.getElementById('date.month').value = '10'
@@ -775,7 +783,7 @@ const enrolmentCheckAnswers = () => {
     }
 }
 
-const verificationFailure = () => {
+const enrolmentVerificationFailure = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-not-verified')) {
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -847,7 +855,6 @@ function completeJourney(manualJourney) {
     primaryContactEmailAddressPasscodeConfirmation()
     primaryContactTelephoneNumber()
     primaryContactConfirmAddress()
-    primaryContactAddress()
     primaryContactCheckYourAnswers()
 
     // groups
@@ -863,6 +870,10 @@ function completeJourney(manualJourney) {
         reviewRegistration()
     }
 
+    // address capture component
+    isUkAddress()
+    pptAddressCapture()
+
     // address lookup
     addressLookupLookup()
     addressLookupChoose()
@@ -870,11 +881,11 @@ function completeJourney(manualJourney) {
     addressLookupEdit()
 
     //enrolment
-    pptReference()
+    enrolmentPptReference()
     verifyOrganisation()
-    isUkAddress()
-    ukPostcode()
-    registrationDate()
+    enrolmentIsUkAddress()
+    enrolmentUkPostcode()
+    enrolmentRegistrationDate()
     enrolmentCheckAnswers()
-    verificationFailure()
+    enrolmentVerificationFailure()
 }
