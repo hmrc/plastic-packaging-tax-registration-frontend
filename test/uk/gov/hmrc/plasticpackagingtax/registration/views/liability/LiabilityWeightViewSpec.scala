@@ -67,39 +67,12 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display liability weight question" in {
-
-      view.getElementsByClass(Styles.gdsPageHeading).text() must include(
+      view.getElementsByClass(Styles.gdsLabelPageHeading).text() must include(
         messages("liabilityWeightPage.question")
       )
     }
 
-    "display liability weight information" in {
-
-      view.getElementsByClass("govuk-body").text() must include(
-        messages("liabilityWeightPage.info",
-                 "liabilityWeightPage.info2",
-                 "liabilityWeightPage.guidance.description"
-        )
-      )
-    }
-
-    "display liability weight information link" in {
-
-      val link = view.getElementById("guidance-link")
-      link must haveHref(messages("liabilityWeightPage.guidance.href"))
-      link.attr("target") mustBe "_blank"
-      link.attr("rel") mustBe "noopener noreferrer"
-    }
-
-    "display total weight label" in {
-
-      view.getElementsByAttributeValue("for", "totalKg").get(0).text() mustBe messages(
-        "liabilityWeightPage.label"
-      )
-    }
-
     "display total weight input box" in {
-
       view must containElementWithID("totalKg")
     }
 

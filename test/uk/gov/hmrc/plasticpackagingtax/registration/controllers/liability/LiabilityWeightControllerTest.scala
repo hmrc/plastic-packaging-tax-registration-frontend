@@ -150,7 +150,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       "user submits invalid liability weight" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(10000000000L)))))
+          controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(100000000000L)))))
 
         status(result) mustBe BAD_REQUEST
       }
