@@ -571,9 +571,9 @@ organisation.checkAnswers.title = Check your answers
 
 contactDetails.member.firstName = First name
 contactDetails.member.lastName = Last name
-contactDetails.member.name.heading = Who is the main contact for the organisation?
+contactDetails.member.name.title = Who is the main contact for the organisation?
 contactDetails.member.sectionHeader = Other organisations in the group
-contactDetails.member.name.title = Who is the main contact for {0}?
+contactDetails.member.name.heading = Who is the main contact for {0}?
 contactDetails.member.name.hint = Enter the correct contact here. This is usually the person responsible for the company’s Plastic Packaging Tax liability.
 contactDetails.member.firstName.error.empty = Enter the main contact’s first name
 contactDetails.member.firstName.error.length = Enter first name in 35 characters or fewer
