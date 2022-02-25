@@ -48,13 +48,10 @@ class CheckLiabilityDetailsAnswersController @Inject() (
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
-    if (isGroupRegistrationEnabled)
-      request.registration.registrationType match {
-        case Some(regType) if regType == RegType.GROUP =>
-          routes.MembersUnderGroupControlController.displayPage()
-        case _ => routes.RegistrationTypeController.displayPage()
-      }
-    else
-      routes.LiabilityStartDateController.displayPage()
+    request.registration.registrationType match {
+      case Some(regType) if regType == RegType.GROUP =>
+        routes.MembersUnderGroupControlController.displayPage()
+      case _ => routes.RegistrationTypeController.displayPage()
+    }
 
 }

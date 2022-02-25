@@ -25,9 +25,7 @@ import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectedWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_weight_expected_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -100,7 +98,7 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
         }
 
         "group registration enabled and weight is greater than de minimis" in {
-          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> true))
+          authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate()
 
@@ -124,29 +122,6 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
               )
           }
         }
-
-        "group registration not enabled and weight is greater than de minimis" in {
-          authorizedUser(features = Map(Features.isGroupRegistrationEnabled -> false))
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
-
-          val correctForm = Seq("answer" -> "yes", "totalKg" -> "10000", formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          status(result) mustBe SEE_OTHER
-
-          modifiedRegistration.liabilityDetails.expectedWeight mustBe Some(
-            LiabilityExpectedWeight(Some(true), Some(10000))
-          )
-
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-            case _ =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
-
       }
     }
 
