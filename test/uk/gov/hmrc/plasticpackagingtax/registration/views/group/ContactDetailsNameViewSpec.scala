@@ -61,9 +61,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("contactDetails.member.name.title", organisationName)
-      )
+      view.select("title").text() must include(messages("contactDetails.member.name.title"))
     }
 
     "display hint" in {
@@ -111,7 +109,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("firstName", "Enter first name")
+      view must haveGovukFieldError("firstName", "Enter the main contact’s first name")
     }
 
     "last name is not entered" in {
@@ -123,7 +121,7 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("lastName", "Enter last name")
+      view must haveGovukFieldError("lastName", "Enter the main contact’s last name")
     }
   }
 
