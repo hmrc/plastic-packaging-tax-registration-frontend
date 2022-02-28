@@ -122,10 +122,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
       "'preLaunch' feature flag enabled" when {
         val populatedExceedIn30Row =
-          SummaryRowDetail(
-            "checkLiabilityDetailsAnswers.future.exceed",
-            messages("general.true"),
-            liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+          SummaryRowDetail("checkLiabilityDetailsAnswers.future.exceed",
+                           messages("general.true"),
+                           liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
           )
 
         val populatedIsLiableRow =
@@ -158,10 +157,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
         )
 
         val populatedExceedIn30Row =
-          SummaryRowDetail(
-            "checkLiabilityDetailsAnswers.future.exceed",
-            messages("general.true"),
-            liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+          SummaryRowDetail("checkLiabilityDetailsAnswers.future.exceed",
+                           messages("general.true"),
+                           liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
           )
 
         "registration populated" in {

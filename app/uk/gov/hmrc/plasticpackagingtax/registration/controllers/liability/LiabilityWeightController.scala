@@ -92,7 +92,7 @@ class LiabilityWeightController @Inject() (
     formData.totalKg match {
       case Some(weight) =>
         if (weight < deMinimisKg)
-          Redirect(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
+          Redirect(routes.ExpectToExceedThresholdWeightController.displayPage())
         else
           Redirect(routes.LiabilityStartDateController.displayPage())
       case None => BadRequest

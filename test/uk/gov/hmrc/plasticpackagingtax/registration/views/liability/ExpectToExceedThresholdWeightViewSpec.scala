@@ -24,17 +24,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_expect_to_exceed_threshold_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
+class ExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[liability_expect_to_exceed_threshold_weight_page]
+  private val page = inject[expect_to_exceed_threshold_weight_page]
 
-  private def createView(
-    form: Form[ExpectToExceedThresholdWeight] = ExpectToExceedThresholdWeight.form()
-  ): Document =
+  private def createView(form: Form[Boolean] = ExpectToExceedThresholdWeight.form()): Document =
     page(form)(journeyRequest, messages)
 
   "Liability section expect process more weight view" should {
@@ -61,14 +59,14 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
     "display title" in {
 
       view.select("title").text() must include(
-        messages("liabilityExpectToExceedThresholdWeightPage.title")
+        messages("liability.expectToExceedThresholdWeight.title")
       )
     }
 
     "display header" in {
 
       view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("liabilityExpectToExceedThresholdWeightPage.sectionHeader")
+        messages("liability.expectToExceedThresholdWeight.sectionHeader")
       )
     }
 
@@ -78,14 +76,6 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
       view.getElementsByClass("govuk-label").first().text() mustBe "Yes"
       view must containElementWithID("answer-2")
       view.getElementsByClass("govuk-label").get(1).text() mustBe "No"
-    }
-
-    "display guidance link" in {
-
-      val link = view.getElementById("guidance-link")
-      link must haveHref(messages("liabilityExpectToExceedThresholdWeightPage.guidance.href"))
-      link.attr("target") mustBe "_blank"
-      link.attr("rel") mustBe "noopener noreferrer"
     }
 
     "display 'Save and continue' button" in {
@@ -100,8 +90,7 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
 
     "display radio button checked" in {
 
-      val form = ExpectToExceedThresholdWeight.form()
-        .fill(ExpectToExceedThresholdWeight("yes"))
+      val form = ExpectToExceedThresholdWeight.form().fill(true)
       val view = createView(form)
 
       view.getElementById("answer").attr("value") mustBe "yes"
@@ -115,7 +104,7 @@ class LiabilityExpectToExceedThresholdWeightViewSpec extends UnitViewSpec with M
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer", "This field is required")
+        view must haveGovukFieldError("answer", messages(ExpectToExceedThresholdWeight.emptyError))
         view must haveGovukGlobalErrorSummary
       }
     }

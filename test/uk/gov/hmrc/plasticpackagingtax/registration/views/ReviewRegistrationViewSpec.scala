@@ -262,7 +262,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(liabilityStartLink)
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
               )
               getChangeLinkFor(liabilitySection, 2, liabilityView) must haveHref(
                 liabilityRoutes.LiabilityStartDateController.displayPage()

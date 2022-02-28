@@ -94,7 +94,7 @@ class LiabilityStartDateController @Inject() (
         weight.totalKg match {
           case Some(totalKg) =>
             if (totalKg < deMinimisKg)
-              routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+              routes.ExpectToExceedThresholdWeightController.displayPage()
             else routes.LiabilityWeightController.displayPage()
           case None => commonRoutes.TaskListController.displayPage()
         }

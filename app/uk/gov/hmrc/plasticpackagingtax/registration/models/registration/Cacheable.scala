@@ -30,9 +30,6 @@ trait Cacheable {
     ec: ExecutionContext,
     request: JourneyRequest[_]
   ): Future[Either[ServiceError, Registration]] =
-    registrationConnector.update(cache(request.registration)).flatMap {
-      case Right(reg)  => Future.successful(Right(reg))
-      case Left(error) => Future.successful(Left(error))
-    }
+    registrationConnector.update(cache(request.registration))
 
 }

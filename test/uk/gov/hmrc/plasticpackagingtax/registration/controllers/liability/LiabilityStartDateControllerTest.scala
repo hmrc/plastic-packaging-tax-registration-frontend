@@ -105,7 +105,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
           )
         )
 
-        verifyBackLink(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
+        verifyBackLink(routes.ExpectToExceedThresholdWeightController.displayPage())
       }
 
       def verifyBackLink(backLink: Call): Unit = {

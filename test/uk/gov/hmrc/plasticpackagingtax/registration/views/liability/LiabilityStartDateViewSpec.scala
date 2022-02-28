@@ -150,12 +150,12 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form(), liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage())(
+    page.f(form(), liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage())(
       journeyRequest,
       messages
     )
     page.render(form(),
-                liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage(),
+                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage(),
                 journeyRequest,
                 messages
     )
