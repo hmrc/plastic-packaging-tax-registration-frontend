@@ -26,11 +26,19 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Liabilit
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class LiabilityDetails(
-  weight: Option[LiabilityWeight] = None,
+  // Pre-launch - remove after launch
   expectedWeight: Option[LiabilityExpectedWeight] = None,
+  // Old Post-launch - remove after launch
+  weight: Option[LiabilityWeight] = None,
+  // New Post-launch
+  exceededThresholdWeight: Option[Boolean] = None,
+  dateExceededThresholdWeight: Option[Date] = None,
+  expectToExceedThresholdWeight: Option[Boolean] = None,
+  dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
+  expectedWeightNext12m: Option[LiabilityWeight] = None,
+  // Derived fields - not directly input by user
   startDate: Option[Date] = None,
-  isLiable: Option[Boolean] = None,
-  expectToExceedThresholdWeight: Option[Boolean] = None
+  isLiable: Option[Boolean] = None
 ) {
 
   private def prelaunchCompleted: Boolean =
