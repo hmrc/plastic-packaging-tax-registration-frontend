@@ -26,56 +26,49 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectToExceedThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_expect_to_exceed_threshold_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@deprecated("use ExpectToExceedThresholdWeightController")
 @Singleton
-class LiabilityExpectToExceedThresholdWeightController @Inject() (
+class ExpectToExceedThresholdWeightController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: liability_expect_to_exceed_threshold_weight_page
+  page: expect_to_exceed_threshold_weight_page
 )(implicit ec: ExecutionContext)
-    extends LiabilityController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       request.registration.liabilityDetails.expectToExceedThresholdWeight match {
         case Some(data) =>
-          Future(
-            Ok(
-              page(
-                LiabilityExpectToExceedThresholdWeight.form().fill(
-                  LiabilityExpectToExceedThresholdWeight(Some(data))
-                )
-              )
-            )
-          )
-        case _ => Future(Ok(page(LiabilityExpectToExceedThresholdWeight.form())))
+          Ok(page(ExpectToExceedThresholdWeight.form().fill(data)))
+        case _ => Ok(page(ExpectToExceedThresholdWeight.form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      LiabilityExpectToExceedThresholdWeight.form()
+      ExpectToExceedThresholdWeight.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[LiabilityExpectToExceedThresholdWeight]) =>
-            Future(BadRequest(page(formWithErrors))),
-          processMoreWeight =>
-            updateRegistration(processMoreWeight).map {
+          (formWithErrors: Form[Boolean]) => Future.successful(BadRequest(page(formWithErrors))),
+          expectToExceed =>
+            updateRegistration(expectToExceed).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
-                    if (processMoreWeight.answer.getOrElse(false))
-                      Redirect(routes.LiabilityStartDateController.displayPage())
+                    if (expectToExceed)
+                      Redirect(
+                        routes.LiabilityStartDateController.displayPage()
+                      ) //todo new page should go here
                     else Redirect(routes.NotLiableController.displayPage())
                   case _ => Redirect(commonRoutes.TaskListController.displayPage())
                 }
@@ -86,11 +79,13 @@ class LiabilityExpectToExceedThresholdWeightController @Inject() (
     }
 
   private def updateRegistration(
-    formData: LiabilityExpectToExceedThresholdWeight
+    expectToExceedThresholdWeight: Boolean
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedLiableDetails =
-        registration.liabilityDetails.copy(expectToExceedThresholdWeight = formData.answer)
+        registration.liabilityDetails.copy(expectToExceedThresholdWeight =
+          Some(expectToExceedThresholdWeight)
+        )
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 

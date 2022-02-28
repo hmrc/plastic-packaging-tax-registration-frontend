@@ -21,35 +21,31 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_expect_to_exceed_threshold_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
-  private val page = mock[liability_expect_to_exceed_threshold_weight_page]
+class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
+  private val page = mock[expect_to_exceed_threshold_weight_page]
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new LiabilityExpectToExceedThresholdWeightController(authenticate = mockAuthAction,
-                                                         mockJourneyAction,
-                                                         mockRegistrationConnector,
-                                                         mcc = mcc,
-                                                         page = page
+    new ExpectToExceedThresholdWeightController(authenticate = mockAuthAction,
+                                                mockJourneyAction,
+                                                mockRegistrationConnector,
+                                                mcc = mcc,
+                                                page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[LiabilityExpectToExceedThresholdWeight]])(any(), any())).thenReturn(
-      HtmlFormat.empty
-    )
+    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
