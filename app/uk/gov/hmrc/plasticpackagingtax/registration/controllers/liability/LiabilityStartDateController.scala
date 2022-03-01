@@ -20,9 +20,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AuthAction,
+  FormAction,
+  SaveAndContinue
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}

@@ -21,9 +21,14 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
+  ActionItem,
+  Actions,
+  Key,
+  SummaryListRow
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features.isUkCompanyPrivateBeta
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService

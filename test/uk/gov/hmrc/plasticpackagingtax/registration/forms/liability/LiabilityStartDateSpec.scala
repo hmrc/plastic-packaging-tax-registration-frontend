@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date.{
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate.{
   dateDecimalError,
   day,
   dayEmptyError,

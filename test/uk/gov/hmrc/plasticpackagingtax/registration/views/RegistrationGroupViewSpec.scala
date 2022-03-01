@@ -23,8 +23,10 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._

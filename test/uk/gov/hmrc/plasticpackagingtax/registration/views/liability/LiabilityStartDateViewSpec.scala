@@ -21,8 +21,10 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
+  routes => liabilityRoutes
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.form
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_start_date_page

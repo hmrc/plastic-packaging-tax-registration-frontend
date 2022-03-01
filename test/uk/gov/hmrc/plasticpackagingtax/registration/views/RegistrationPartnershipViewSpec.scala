@@ -22,13 +22,19 @@ import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
+  routes => organisationRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  LiabilityDetails,
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_partnership
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 

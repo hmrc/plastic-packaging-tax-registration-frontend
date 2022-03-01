@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 
 import java.time.LocalDate
 import scala.util.Try

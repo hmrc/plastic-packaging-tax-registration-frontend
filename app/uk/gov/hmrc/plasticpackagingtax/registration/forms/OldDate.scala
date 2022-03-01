@@ -72,26 +72,24 @@ object OldDate {
         input => input
       ).verifying(dayFormatError, isValidNumber).verifying(dateDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-          int => int.map(_.toString)
+                                int => int.map(_.toString)
         ).verifying(dayOutOfRangeError, dayIsWithinRange),
       month -> Forms.optional(text()).verifying(monthEmptyError, _.nonEmpty).transform[Option[
         String
       ]](input => input.map(_.trim), input => input).verifying(monthFormatError,
-        isValidNumber
+                                                               isValidNumber
       ).verifying(dateDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-          int => int.map(_.toString)
+                                int => int.map(_.toString)
         ).verifying(monthOutOfRangeError, monthIsWithinRange),
       year -> Forms.optional(text()).verifying(yearEmptyError, _.nonEmpty).transform[Option[
         String
       ]](input => input.map(_.trim), input => input).verifying(yearFormatError,
-        isValidNumber
+                                                               isValidNumber
       ).verifying(dateDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-          int => int.map(_.toString)
+                                int => int.map(_.toString)
         )
     )(OldDate.apply)(OldDate.unapply)
 
 }
-
-

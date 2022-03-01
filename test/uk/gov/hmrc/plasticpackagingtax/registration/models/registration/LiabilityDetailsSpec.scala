@@ -18,8 +18,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityExpectedWeight, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
@@ -74,7 +77,9 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         "and 'isPreLaunch' flag is disabled" when {
           "and only 'startDate' has been answered" in {
             val liabilityDetails =
-              LiabilityDetails(startDate = Some(OldDate(Some(1), Some(4), Some(2022))), weight = None)
+              LiabilityDetails(startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+                               weight = None
+              )
             liabilityDetails.status mustBe TaskStatus.InProgress
           }
 
