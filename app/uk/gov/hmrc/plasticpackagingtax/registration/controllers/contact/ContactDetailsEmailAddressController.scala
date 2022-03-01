@@ -147,7 +147,7 @@ class ContactDetailsEmailAddressController @Inject() (
     this.emailVerificationService.sendVerificationCode(
       email,
       credId,
-      "/register-for-plastic-packaging-tax/primary-contact-details" // TODO this is not a valid route?
+      routes.ContactDetailsEmailAddressController.displayPage().url
     )
 
   private def handleNotVerifiedEmail(registration: Registration, credId: String)(implicit
