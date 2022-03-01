@@ -16,16 +16,10 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -58,22 +52,17 @@ class ExpectToExceedThresholdWeightController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       ExpectToExceedThresholdWeight.form()
         .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[Boolean]) => Future.successful(BadRequest(page(formWithErrors))),
-          expectToExceed =>
-            updateRegistration(expectToExceed).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
+        .fold(formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
+              expectToExceed =>
+                updateRegistration(expectToExceed).map {
+                  case Right(_) =>
                     if (expectToExceed)
                       Redirect(
                         routes.LiabilityStartDateController.displayPage()
                       ) //todo new page should go here
                     else Redirect(routes.NotLiableController.displayPage())
-                  case _ => Redirect(commonRoutes.TaskListController.displayPage())
+                  case Left(error) => throw error
                 }
-              case Left(error) => throw error
-            }
         )
 
     }

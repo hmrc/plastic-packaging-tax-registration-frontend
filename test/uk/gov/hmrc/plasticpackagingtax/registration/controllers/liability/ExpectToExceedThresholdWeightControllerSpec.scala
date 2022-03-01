@@ -18,44 +18,37 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
-import org.scalatest.Inspectors.forAll
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
-  private val page = mock[expect_to_exceed_threshold_weight_page]
-  private val mcc  = stubMessagesControllerComponents()
 
-  private val controller =
+  val mockPage: expect_to_exceed_threshold_weight_page =
+    mock[expect_to_exceed_threshold_weight_page]
+
+  val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
+
+  val controller: ExpectToExceedThresholdWeightController =
     new ExpectToExceedThresholdWeightController(authenticate = mockAuthAction,
                                                 mockJourneyAction,
                                                 mockRegistrationConnector,
                                                 mcc = mcc,
-                                                page = page
+                                                page = mockPage
     )
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
-  }
+  when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
 
-  override protected def afterEach(): Unit = {
-    reset(page)
-    super.afterEach()
-  }
-
-  "Liability Expect To Exceed Threshold Weight Controller" should {
-
-    "return 200" when {
+  "displayPage" should {
+    "return 200 (OK)" when {
 
       "user is authorised and display page method is invoked" in {
         authorizedUser()
@@ -92,93 +85,51 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         status(result) mustBe OK
       }
     }
+  }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
-        "user submits 'Yes' answer with isPreLaunch enabled" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+  "submit" should {
+    "return 303 (REDIRECT)" when {
+      "user submits 'Yes' answer" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
 
-          val correctForm = Seq("answer" -> "yes", formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val correctForm = Seq("answer" -> "yes")
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
+        status(result) mustBe SEE_OTHER
+        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.LiabilityStartDateController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
-
-        "user submits 'Yes' answer with isPreLaunch disabled" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
-
-          val correctForm = Seq("answer" -> "yes", formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          status(result) mustBe SEE_OTHER
-          modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
-
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.LiabilityStartDateController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
-
-        "user submits 'No' answer" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
-
-          val correctForm = Seq("answer" -> "no", formAction)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-          status(result) mustBe SEE_OTHER
-
-          modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
-
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
+        redirectLocation(result) mustBe Some(routes.LiabilityStartDateController.displayPage().url)
       }
 
-      "return 400 (BAD_REQUEST) for " + formAction._1 when {
-        "user does not pick an answer" in {
+      "user submits 'No' answer" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+
+        val correctForm = Seq("answer" -> "no")
+        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
+        status(result) mustBe SEE_OTHER
+
+        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
+
+        redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
+      }
+
+      "return 400 (BAD_REQUEST)" when {
+        "the form fails to bind" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           val result =
-            controller.submit()(postRequestEncoded(JsObject.empty, formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters invalid data" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          val incorrectForm = Seq("answer" -> "maybe", formAction)
-          val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
+            controller.submit()(postRequestEncoded(JsObject.empty))
 
           status(result) mustBe BAD_REQUEST
         }
       }
 
-      "return an error for " + formAction._1 when {
+      "return an error" when {
 
         "user is not authorised" in {
           unAuthorizedUser()
@@ -192,7 +143,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdateFailure()
 
-          val correctForm = Seq("answer" -> "yes", formAction)
+          val correctForm = Seq("answer" -> "yes")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[DownstreamServiceError](status(result))
@@ -203,7 +154,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           mockRegistrationFind(aRegistration())
           mockRegistrationException()
 
-          val correctForm = Seq("answer" -> "yes", formAction)
+          val correctForm = Seq("answer" -> "yes")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[RuntimeException](status(result))
