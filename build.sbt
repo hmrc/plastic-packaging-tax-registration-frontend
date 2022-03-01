@@ -52,7 +52,8 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     "logger.*\\(.*\\)",
     // These are being excluded since all logic has been pushed to base class and they are tested by their non-post-registration associates
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
-    ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller"
+    ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
+    ".*.forms.mappings.*"
   ).mkString(";"),
   coverageMinimum := 95.0,
   coverageFailOnMinimum := true,

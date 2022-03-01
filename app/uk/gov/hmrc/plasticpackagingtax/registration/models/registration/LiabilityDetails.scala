@@ -17,11 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityExpectedWeight, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails.minimumLiabilityWeightKg
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
@@ -32,7 +29,7 @@ case class LiabilityDetails(
   weight: Option[LiabilityWeight] = None,
   // New Post-launch
   exceededThresholdWeight: Option[Boolean] = None,
-  dateExceededThresholdWeight: Option[OldDate] = None,
+  dateExceededThresholdWeight: Option[Date] = None,
   expectToExceedThresholdWeight: Option[Boolean] = None,
   dateRealisedExpectedToExceedThresholdWeight: Option[OldDate] = None,
   expectedWeightNext12m: Option[LiabilityWeight] = None,

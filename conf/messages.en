@@ -51,6 +51,9 @@ date.month.leadingBlankSpace.error = Month must not have leading spaces
 date.month.trailingBlankSpace.error = Month must not have trailing spaces
 date.decimal.error = Date must be a real date
 
+date.missing.two.required.fields = Date you met the threshold must include the {0}
+date.missing.one.field = Date you met the threshold must include the {0}
+
 date.year = Year
 date.year.error = Enter a valid year
 date.year.empty.error = Enter the year
@@ -119,8 +122,9 @@ liabilityStartDatePage.sectionHeader = Plastic packaging details
 liabilityStartDatePage.title = What is the date you first became liable?
 liabilityStartDatePage.hint = For example, 12 11 2007
 liabilityStartDatePage.question = What is the date you first became liable?
-liabilityStartDate.formatting.error = Liability start date - wrong format
+liabilityStartDate.formatting.error = Date you met the threshold must be a real date
 liabilityStartDate.outOfRange.error = Liability date must be today or in the past
+liabilityStartDate.empty.error = Enter the date you met the threshold
 
 liabilityLiableDatePage.sectionHeader = Liability details
 liabilityLiableDatePage.title = What is your liability date?
