@@ -16,22 +16,22 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
-import play.api.data.Forms.text
 import play.api.data.{Forms, Mapping}
+import play.api.data.Forms.text
 import play.api.libs.json.Json
 
 import java.time.LocalDate
 import scala.util.Try
 
-case class Date(day: Option[Int], month: Option[Int], year: Option[Int]) {
+case class OldDate(day: Option[Int], month: Option[Int], year: Option[Int]) {
 
   override def toString: String = asLocalDate.toString
 
   def asLocalDate: LocalDate = LocalDate.of(year.getOrElse(0), month.getOrElse(0), day.getOrElse(0))
 }
 
-object Date {
-  implicit val format = Json.format[Date]
+object OldDate {
+  implicit val format = Json.format[OldDate]
 
   val year  = "year"
   val month = "month"
@@ -65,31 +65,33 @@ object Date {
   private val isWholeNumber: Option[String] => Boolean = input =>
     input.isEmpty || !isValidNumber(input) || input.forall(i => Try(BigInt(i)).isSuccess)
 
-  def mapping(): Mapping[Date] =
+  def mapping(): Mapping[OldDate] =
     Forms.mapping(
       day -> Forms.optional(text()).verifying(dayEmptyError, _.nonEmpty).transform[Option[String]](
         input => input.map(_.trim),
         input => input
       ).verifying(dayFormatError, isValidNumber).verifying(dateDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-                                int => int.map(_.toString)
+          int => int.map(_.toString)
         ).verifying(dayOutOfRangeError, dayIsWithinRange),
       month -> Forms.optional(text()).verifying(monthEmptyError, _.nonEmpty).transform[Option[
         String
       ]](input => input.map(_.trim), input => input).verifying(monthFormatError,
-                                                               isValidNumber
+        isValidNumber
       ).verifying(dateDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-                                int => int.map(_.toString)
+          int => int.map(_.toString)
         ).verifying(monthOutOfRangeError, monthIsWithinRange),
       year -> Forms.optional(text()).verifying(yearEmptyError, _.nonEmpty).transform[Option[
         String
       ]](input => input.map(_.trim), input => input).verifying(yearFormatError,
-                                                               isValidNumber
+        isValidNumber
       ).verifying(dateDecimalError, isWholeNumber)
         .transform[Option[Int]]((input: Option[String]) => input.map(BigInt(_).toInt),
-                                int => int.map(_.toString)
+          int => int.map(_.toString)
         )
-    )(Date.apply)(Date.unapply)
+    )(OldDate.apply)(OldDate.unapply)
 
 }
+
+

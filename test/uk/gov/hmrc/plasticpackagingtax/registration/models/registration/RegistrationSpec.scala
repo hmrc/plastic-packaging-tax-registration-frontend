@@ -21,12 +21,9 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityExpectedWeight, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
@@ -146,7 +143,7 @@ class RegistrationSpec
 
     val completedLiabilityDetails =
       LiabilityDetails(startDate =
-                         Some(Date(Some(1), Some(5), Some(2022))),
+                         Some(OldDate(Some(1), Some(5), Some(2022))),
                        expectedWeight =
                          Some(LiabilityExpectedWeight(Some(true), Some(10000))),
                        isLiable = Some(true)

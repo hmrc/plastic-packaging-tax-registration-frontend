@@ -16,26 +16,13 @@
 
 package builders
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  PARTNERSHIP,
-  SOLE_TRADER,
-  UK_COMPANY
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityExpectedWeight, LiabilityWeight}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationAddressDetails,
-  IncorporationDetails,
-  PartnershipDetails,
-  RegistrationDetails,
-  SoleTraderDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorporationAddressDetails, IncorporationDetails, PartnershipDetails, RegistrationDetails, SoleTraderDetails}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 
@@ -59,7 +46,7 @@ trait RegistrationBuilder {
                                                        )
                                                      ),
                                                      startDate =
-                                                       Some(Date(Some(1), Some(4), Some(2022))),
+                                                       Some(OldDate(Some(1), Some(4), Some(2022))),
                                                      isLiable = Some(true),
                                                      expectToExceedThresholdWeight = Some(true)
                  ),

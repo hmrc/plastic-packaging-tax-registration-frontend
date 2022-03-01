@@ -23,18 +23,11 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  MetaData,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, MetaData, OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_single_entity
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -164,7 +157,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             startDate = Some(Date(Some(1), Some(4), Some(2022)))
+                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
           withOrganisationDetails(OrganisationDetails()),

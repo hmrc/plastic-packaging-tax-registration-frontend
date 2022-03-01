@@ -20,13 +20,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthAction, FormAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -60,7 +56,7 @@ class LiabilityStartDateController @Inject() (
       LiabilityStartDate.form()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[Date]) =>
+          (formWithErrors: Form[OldDate]) =>
             Future.successful(BadRequest(page(formWithErrors, backLink))),
           liabilityStartDate =>
             updateRegistration(liabilityStartDate).map {
@@ -78,7 +74,7 @@ class LiabilityStartDateController @Inject() (
     }
 
   private def updateRegistration(
-    formData: Date
+    formData: OldDate
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { model =>
       val updatedLiabilityDetails = model.liabilityDetails.copy(startDate = Some(formData),

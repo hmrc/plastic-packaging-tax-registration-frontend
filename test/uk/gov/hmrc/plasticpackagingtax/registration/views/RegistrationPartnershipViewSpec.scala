@@ -22,19 +22,13 @@ import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_partnership
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -185,7 +179,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             startDate = Some(Date(Some(1), Some(4), Some(2022)))
+                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
           withOrganisationDetails(OrganisationDetails()),
@@ -263,7 +257,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             startDate = Some(Date(Some(1), Some(4), Some(2022)))
+                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
           withPartnershipDetails(Some(generalPartnershipDetails)),
@@ -344,7 +338,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration: Registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             startDate = Some(Date(Some(1), Some(4), Some(2022)))
+                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
           withPartnershipDetails(
@@ -434,7 +428,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             startDate = Some(Date(Some(1), Some(4), Some(2022)))
+                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
           withPartnershipDetails(

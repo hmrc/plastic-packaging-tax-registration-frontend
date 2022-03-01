@@ -25,39 +25,18 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityExpectedWeight, LiabilityWeight}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  PARTNERSHIP,
-  SOLE_TRADER,
-  UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  GroupMember,
-  GroupMemberContactDetails,
-  OrganisationDetails => GroupMemberOrganisationDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  GroupDetail,
-  LiabilityDetails,
-  OrganisationDetails,
-  Registration
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupMemberOrganisationDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, LiabilityDetails, OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsPageHeading
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -237,7 +216,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 page(
                   registration = registration.copy(liabilityDetails =
                     LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(1000))),
-                                     startDate = Some(Date(Some(1), Some(11), Some(2022))),
+                                     startDate = Some(OldDate(Some(1), Some(11), Some(2022))),
                                      expectToExceedThresholdWeight = Some(true)
                     )
                   ),
@@ -274,7 +253,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 page(
                   registration = registration.copy(liabilityDetails =
                     LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(11000))),
-                                     startDate = Some(Date(Some(1), Some(11), Some(2022))),
+                                     startDate = Some(OldDate(Some(1), Some(11), Some(2022))),
                                      expectToExceedThresholdWeight = None
                     )
                   ),

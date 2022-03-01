@@ -23,10 +23,8 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
@@ -184,7 +182,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
                                          withLiabilityDetails(
                                            LiabilityDetails(
                                              weight = Some(LiabilityWeight(Some(10000))),
-                                             startDate = Some(Date(Some(1), Some(4), Some(2022)))
+                                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
                                            )
                                          ),
                                          withOrganisationDetails(OrganisationDetails()),

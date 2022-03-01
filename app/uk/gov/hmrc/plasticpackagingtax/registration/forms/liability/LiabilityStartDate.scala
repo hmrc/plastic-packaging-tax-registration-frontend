@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 
 import java.time.LocalDate
 import scala.util.Try
@@ -31,10 +31,10 @@ object LiabilityStartDate {
 
   val dateLowerLimit = LocalDate.of(2022, 4, 1)
 
-  private val isDateFormatValid: Date => Boolean = date =>
+  private val isDateFormatValid: OldDate => Boolean = date =>
     Try(LocalDate.parse(date.toString)).isSuccess
 
-  private val isDateInRange: Date => Boolean = date =>
+  private val isDateInRange: OldDate => Boolean = date =>
     (LocalDate.parse(date.toString).isEqual(dateLowerLimit) || LocalDate.parse(
       date.toString
     ).isBefore(dateLowerLimit)) &&
@@ -42,9 +42,9 @@ object LiabilityStartDate {
         date.toString
       ).isAfter(dateUpperLimit))
 
-  def form(): Form[Date] =
+  def form(): Form[OldDate] =
     Form(
-      Date.mapping()
+      OldDate.mapping()
         .verifying(dateFormattingError, isDateFormatValid)
         .verifying(dateOutOfRangeError, date => !isDateFormatValid(date) || isDateInRange(date))
     )
