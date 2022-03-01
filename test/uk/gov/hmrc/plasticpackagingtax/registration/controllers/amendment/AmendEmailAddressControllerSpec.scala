@@ -38,7 +38,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
   JOURNEY_NOT_FOUND,
   TOO_MANY_ATTEMPTS
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
@@ -66,11 +69,11 @@ class AmendEmailAddressControllerSpec
     HtmlFormat.raw("email amendment")
   )
 
-  when(amendEmailPasscodePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+  when(amendEmailPasscodePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email passcode")
   )
 
-  when(amendEmailConfirmationPage.apply(any(), any())(any(), any())).thenReturn(
+  when(amendEmailConfirmationPage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email verification confirmation")
   )
 
@@ -79,6 +82,10 @@ class AmendEmailAddressControllerSpec
   )
 
   private val mockEmailVerificationService = mock[EmailVerificationService]
+
+  private val inMemoryRegistrationUpdater = new AmendRegistrationUpdateService(
+    inMemoryRegistrationAmendmentRepository
+  )
 
   private val pptReference = "XMPPT0000000123"
   private val sessionId    = "ABC"
@@ -92,6 +99,7 @@ class AmendEmailAddressControllerSpec
 
   override protected def beforeEach(): Unit = {
     reset(mockSubscriptionConnector)
+    reset(mockEmailVerificationService)
 
     authorisedUserWithPptSubscription()
     inMemoryRegistrationAmendmentRepository.reset()
@@ -119,7 +127,8 @@ class AmendEmailAddressControllerSpec
                                                      amendEmailPasscodePage,
                                                      amendEmailConfirmationPage,
                                                      amendEmailTooManyAttemptsPage,
-                                                     mockEmailVerificationService
+                                                     mockEmailVerificationService,
+                                                     inMemoryRegistrationUpdater
     )
 
     "show page" when {
@@ -208,6 +217,7 @@ class AmendEmailAddressControllerSpec
     "send a verification code and prompt the user for this" when {
       "email is *not* already verified" in {
         val unverifiedEmail = "unverified@ppt.com"
+        simulateAllEmailsUnverified()
 
         val resp = controller.updateEmail()(
           postRequestEncoded(form =
@@ -246,6 +256,13 @@ class AmendEmailAddressControllerSpec
 
     "update email" when {
       "user confirms" in {
+        // Email verification will be called to check this email address has actually been verified
+        // and that the user has not url skipped to the end of the journey
+        when(
+          mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("updatedemail@ppt.com"),
+                                                       any()
+          )(any())
+        ).thenReturn(Future.successful(true))
 
         val resp = controller.confirmEmailUpdate()(getRequest())
 

@@ -26,8 +26,9 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.LiabilityWeightExpectedController
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectedWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_weight_expected_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.prelaunch.liability_weight_expected_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class LiabilityWeightExpectedControllerTest extends ControllerSpec {

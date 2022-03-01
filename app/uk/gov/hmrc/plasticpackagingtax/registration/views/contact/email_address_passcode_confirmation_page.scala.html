@@ -31,7 +31,7 @@
   formHelper: FormWithCSRF,
   continueButton: continue
 )
-@(backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+@(backLink: Call, updateCall: Call, sectionHeading: Option[String])(implicit request: Request[_], messages: Messages)
 
 @hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice.link")</a>}
 
@@ -39,7 +39,9 @@
   title = Title("primaryContactDetails.emailAddress.passcode.confirmation.title"),
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
 
-    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+    @sectionHeading.map { heading =>
+        @sectionHeader(heading)
+    }
 
     @pageHeading(messages("primaryContactDetails.emailAddress.passcode.confirmation.title"))
 

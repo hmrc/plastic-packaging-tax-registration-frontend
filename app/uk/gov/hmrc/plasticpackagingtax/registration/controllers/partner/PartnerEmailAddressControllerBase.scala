@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.EmailVerificationActions
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AuthActioning,
   FormAction,
@@ -44,9 +45,9 @@ abstract class PartnerEmailAddressControllerBase(
   val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
-  registrationUpdater: RegistrationUpdater
+  val registrationUpdater: RegistrationUpdater
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
+    extends FrontendController(mcc) with I18nSupport with EmailVerificationActions {
 
   protected def doDisplay(
     partnerId: Option[String],
@@ -79,16 +80,24 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardsCall: Call,
-    dropoutCall: Call
+    dropoutCall: Call,
+    emailVerificationContinueUrl: Call,
+    confirmEmailAddressCall: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       def updateAction(emailAddress: EmailAddress): Future[Registration] =
-        partnerId match {
-          case Some(partnerId) => updateExistingPartner(emailAddress, partnerId)
-          case _               => updateInflightPartner(emailAddress)
-        }
+        updateEmailAddress(partnerId, emailAddress)
+
       getPartner(partnerId).map { partner =>
-        handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, updateAction)
+        handleSubmission(partner,
+                         backCall,
+                         submitCall,
+                         onwardsCall,
+                         dropoutCall,
+                         updateAction,
+                         emailVerificationContinueUrl,
+                         confirmEmailAddressCall
+        )
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected existing partner missing"))
       )
@@ -100,7 +109,9 @@ abstract class PartnerEmailAddressControllerBase(
     submitCall: Call,
     onwardCall: Call,
     dropoutCall: Call,
-    updateAction: EmailAddress => Future[Registration]
+    updateAction: EmailAddress => Future[Registration],
+    emailVerificationContinueUrl: Call,
+    confirmEmailAddressCall: Call
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     EmailAddress.form()
       .bindFromRequest()
@@ -115,47 +126,59 @@ abstract class PartnerEmailAddressControllerBase(
             )
           ),
         emailAddress =>
-          updateAction(emailAddress).map { _ =>
-            FormAction.bindFromRequest match {
-              case SaveAndContinue =>
-                Redirect(onwardCall)
-              case _ =>
-                Redirect(dropoutCall)
-            }
+          doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
+            isEmailVerificationRequired =>
+              if (!isEmailVerificationRequired)
+                updateAction(emailAddress).map { _ =>
+                  FormAction.bindFromRequest match {
+                    case SaveAndContinue =>
+                      Redirect(onwardCall)
+                    case _ =>
+                      Redirect(dropoutCall)
+                  }
+                }
+              else
+                promptForEmailVerificationCode(request,
+                                               emailAddress,
+                                               emailVerificationContinueUrl,
+                                               confirmEmailAddressCall
+                )
           }
       )
 
-  private def updateInflightPartner(
-    formData: EmailAddress
-  )(implicit req: JourneyRequest[AnyContent]): Future[Registration] =
-    registrationUpdater.updateRegistration { registration =>
-      registration.inflightPartner.map { partner =>
-        val withEmailAddress =
-          partner.contactDetails.map { contactDetails =>
-            val updatedContactDetailsWithEmailAddress =
-              contactDetails.copy(emailAddress = Some(formData.value))
-            partner.copy(contactDetails = Some(updatedContactDetailsWithEmailAddress))
-          }
-        registration.withInflightPartner(withEmailAddress)
-      }.getOrElse {
-        registration
-      }
-    }
-
-  private def updateExistingPartner(formData: EmailAddress, partnerId: String)(implicit
-    req: JourneyRequest[AnyContent]
+  private def updateEmailAddress(existingPartnerId: Option[String], emailAddress: EmailAddress)(
+    implicit req: JourneyRequest[AnyContent]
   ): Future[Registration] =
     registrationUpdater.updateRegistration { registration =>
+      updateRegistrationWithPartnerEmail(registration, existingPartnerId, emailAddress.value)
+    }
+
+  protected def updateRegistrationWithPartnerEmail(
+    registration: Registration,
+    existingPartnerId: Option[String],
+    emailAddress: String
+  ): Registration =
+    existingPartnerId.map { partnerId =>
       registration.withUpdatedPartner(
         partnerId,
         partner =>
           partner.copy(contactDetails =
-            partner.contactDetails.map(_.copy(emailAddress = Some(formData.value)))
+            partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress)))
           )
       )
+    }.getOrElse {
+      registration.inflightPartner.map { partner =>
+        val withEmailAddress =
+          partner.contactDetails.map { contactDetails =>
+            val updatedContactDetailsWithEmailAddress =
+              contactDetails.copy(emailAddress = Some(emailAddress))
+            partner.copy(contactDetails = Some(updatedContactDetailsWithEmailAddress))
+          }
+        registration.withInflightPartner(withEmailAddress)
+      }.getOrElse(registration)
     }
 
-  private def getPartner(
+  protected def getPartner(
     partnerId: Option[String]
   )(implicit request: JourneyRequest[_]): Option[Partner] =
     partnerId match {

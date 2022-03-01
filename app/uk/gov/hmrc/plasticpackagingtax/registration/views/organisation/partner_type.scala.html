@@ -37,8 +37,8 @@
 
     @titleMessage = @{
         request.registration.isNominatedPartner(partnerId) match {
-            case Some(false) => "other.partner.type.title"
-            case _ => "nominated.partner.type.title"
+            case true => "nominated.partner.type.title"
+            case false => "other.partner.type.title"
         }}
 
     @radioItem(ppType: PartnerTypeEnum) = @{

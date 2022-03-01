@@ -30,6 +30,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   task_list_single_entity
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
+  routes => prelaunchLiabilityRoutes
+}
 
 import javax.inject.{Inject, Singleton}
 
@@ -55,7 +58,7 @@ class TaskListController @Inject() (
 
   private def startLink(implicit request: JourneyRequest[AnyContent]) =
     if (request.isFeatureFlagEnabled(Features.isPreLaunch))
-      liabilityRoutes.LiabilityWeightExpectedController.displayPage()
+      prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
     else liabilityRoutes.LiabilityWeightController.displayPage()
 
 }

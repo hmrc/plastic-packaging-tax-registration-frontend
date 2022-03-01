@@ -32,16 +32,23 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   routes => amendmentRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
-  Address,
-  EmailAddress,
-  JobTitle,
-  PhoneNumber
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{
+  AddressCaptureConfig,
+  EmailVerificationService
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
   partner_job_title_page,
@@ -59,10 +66,19 @@ class AmendPartnerContactDetailsControllerSpec
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val mockContactNamePage        = mock[partner_member_name_page]
-  private val mockContactEmailPage       = mock[partner_email_address_page]
-  private val mockContactPhoneNumberPage = mock[partner_phone_number_page]
-  private val mockJobTitlePage           = mock[partner_job_title_page]
+  private val inMemoryRegistrationUpdater = new AmendRegistrationUpdateService(
+    inMemoryRegistrationAmendmentRepository
+  )
+
+  private val mockEmailVerificationService = mock[EmailVerificationService]
+
+  private val mockContactNamePage             = mock[partner_member_name_page]
+  private val mockContactEmailPage            = mock[partner_email_address_page]
+  private val email_address_passcode_page     = mock[email_address_passcode_page]
+  private val too_many_attempts_passcode_page = mock[too_many_attempts_passcode_page]
+  private val emailCorrectPasscodePage        = mock[email_address_passcode_confirmation_page]
+  private val mockContactPhoneNumberPage      = mock[partner_phone_number_page]
+  private val mockJobTitlePage                = mock[partner_job_title_page]
 
   private val partnershipRegistration = aRegistration(
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
@@ -87,6 +103,12 @@ class AmendPartnerContactDetailsControllerSpec
     amendmentJourneyAction = mockAmendmentJourneyAction,
     contactNamePage = mockContactNamePage,
     contactEmailPage = mockContactEmailPage,
+    emailPasscodePage = email_address_passcode_page,
+    emailCorrectPasscodePage = emailCorrectPasscodePage,
+    emailIncorrectPasscodeTooManyAttemptsPage =
+      too_many_attempts_passcode_page,
+    registrationUpdater = inMemoryRegistrationUpdater,
+    emailVerificationService = mockEmailVerificationService,
     contactPhoneNumberPage = mockContactPhoneNumberPage,
     jobTitlePage = mockJobTitlePage,
     addressCaptureService = mockAddressCaptureService
@@ -109,15 +131,21 @@ class AmendPartnerContactDetailsControllerSpec
     when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Amend Partner Job Title")
     )
+    when(
+      email_address_passcode_page.apply(any(), any(), any(), any(), any())(any(), any())
+    ).thenReturn(HtmlFormat.empty)
+    when(emailCorrectPasscodePage.apply(any(), any(), any())(any(), any())).thenReturn(
+      HtmlFormat.empty
+    )
   }
 
   override protected def afterEach(): Unit = {
-    reset(mockSubscriptionConnector)
+    reset(mockSubscriptionConnector, mockEmailVerificationService)
     inMemoryRegistrationAmendmentRepository.reset()
     super.afterEach()
   }
 
-  "Amend Partner Contract Details Controller" should {
+  "Amend Partner Contact Details Controller" should {
 
     val showPageTestData =
       Table(("Test Name", "Display Call", "Verification"),
@@ -325,16 +353,6 @@ class AmendPartnerContactDetailsControllerSpec
          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
          "Amend Partner Contact Name"
         ),
-        ("nominated partner email address",
-         () => EmailAddress("xxx"),
-         () => EmailAddress("updated-email@ppt.com"),
-         (req: Request[AnyContent]) => controller.updateEmailAddress(nominatedPartner.id)(req),
-         (reg: Registration) => {
-           reg.nominatedPartner.get.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
-         },
-         amendmentRoutes.AmendRegistrationController.displayPage(),
-         "Amend Partner Contact Email Address"
-        ),
         ("other partner email address",
          () => EmailAddress("xxx"),
          () => EmailAddress("updated-email@ppt.com"),
@@ -455,6 +473,168 @@ class AmendPartnerContactDetailsControllerSpec
               addressExtractor(updatedRegistration) mustBe validCapturedAddress
             }
         }
+      }
+
+      "user submits a new email for a nominated partner and is sent for email verification" in {
+        authorisedUserWithPptSubscription()
+        simulateGetSubscriptionSuccess(partnershipRegistration)
+        // No subscription update expected.
+
+        // Email verification will check if this address is already verified; trying to let the user through with no
+        // friction if we already know this address
+        when(
+          mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"),
+                                                       any()
+          )(any())
+        ).thenReturn(Future.successful(false))
+        // Email verification will be called to setup an email verification journey for the new email address
+        when(
+          mockEmailVerificationService.sendVerificationCode(
+            ArgumentMatchers.eq("new-email@ppt.com"),
+            any(),
+            ArgumentMatchers.eq(
+              routes.AmendPartnerContactDetailsController.updateEmailAddress(
+                nominatedPartner.id
+              ).url
+            )
+          )(any())
+        ).thenReturn(Future.successful("an-email-verification-journey-id"))
+
+        val resp = await(
+          controller.updateEmailAddress(nominatedPartner.id)(
+            postRequestEncoded(EmailAddress("new-email@ppt.com"))
+          )
+        )
+
+        status(Future.successful(resp)) mustBe SEE_OTHER
+        redirectLocation(Future.successful(resp)) mustBe Some(
+          routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url
+        )
+
+        inMemoryRegistrationAmendmentRepository.get().map { updatedRegistration =>
+          updatedRegistration.get.primaryContactDetails.prospectiveEmail mustBe Some(
+            "new-email@ppt.com"
+          )
+          updatedRegistration.get.primaryContactDetails.journeyId mustBe Some(
+            "an-email-verification-journey-id"
+          )
+        }
+      }
+
+      "user is prompted to enter verification code for nominated partner email address" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        val resp = controller.confirmEmailCode(nominatedPartner.id)(getRequest())
+
+        status(resp) mustBe OK
+      }
+
+      "user submits correct email verification code for nominated partner email address" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        // Email verification will be called to check the user submitted code
+        when(
+          mockEmailVerificationService.checkVerificationCode(
+            ArgumentMatchers.eq("ABCDE"),
+            ArgumentMatchers.eq("verified-amended-email@localhost"),
+            ArgumentMatchers.eq("email-verification-journey-id")
+          )(any())
+        ).thenReturn(Future.successful(EmailVerificationJourneyStatus.COMPLETE))
+
+        val resp = controller.checkEmailVerificationCode(nominatedPartner.id)(
+          postRequestEncoded(EmailAddressPasscode("ABCDE"))
+        )
+
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some(
+          routes.AmendPartnerContactDetailsController.emailVerified(nominatedPartner.id).url
+        )
+      }
+
+      "user is prompted for confirm verified nominated partner email address" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        val resp = controller.emailVerified(nominatedPartner.id)(getRequest())
+
+        status(resp) mustBe OK
+      }
+
+      "nominated partner verified and confirmed email address is updated" in {
+        authorisedUserWithPptSubscription()
+        val primaryContactDetailsWithEmailVerificationJourney =
+          partnershipRegistration.primaryContactDetails.copy(
+            journeyId = Some("email-verification-journey-id"),
+            prospectiveEmail = Some("verified-amended-email@localhost")
+          )
+        simulateGetSubscriptionSuccess(
+          partnershipRegistration.copy(primaryContactDetails =
+            primaryContactDetailsWithEmailVerificationJourney
+          )
+        )
+        simulateUpdateSubscriptionSuccess()
+
+        // Email verification will be called to check this email address has actually been verified
+        // and that the user has not url skipped to the end of the journey
+        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
+          Future.successful(true)
+        )
+
+        val resp = controller.confirmEmailUpdate(nominatedPartner.id)(getRequest())
+        status(resp) mustBe SEE_OTHER
+
+        val updatedRegistration = getUpdatedRegistration()
+        updatedRegistration.findPartner(nominatedPartner.id).flatMap(
+          _.contactDetails.flatMap(_.emailAddress)
+        ) mustBe Some("verified-amended-email@localhost")
+      }
+
+      "nominated partner job title is updated" in {
+        // Non table test to fill coverage hole
+        authorisedUserWithPptSubscription()
+        simulateGetSubscriptionSuccess(partnershipRegistration)
+        simulateUpdateSubscriptionSuccess()
+
+        val resp = controller.updateJobTitle(nominatedPartner.id)(
+          postRequestEncoded(JobTitle("New job title"))
+        )
+        status(resp) mustBe SEE_OTHER
+
+        getUpdatedRegistration().findPartner(nominatedPartner.id).flatMap(
+          _.contactDetails.flatMap(_.jobTitle)
+        ) mustBe Some("New job title")
       }
     }
   }

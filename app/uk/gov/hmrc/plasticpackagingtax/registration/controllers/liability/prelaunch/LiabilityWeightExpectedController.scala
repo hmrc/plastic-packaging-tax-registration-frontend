@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
+  routes => liabilityRoutes
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectedWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_weight_expected_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.prelaunch.liability_weight_expected_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -83,8 +87,8 @@ class LiabilityWeightExpectedController @Inject() (
     formData: LiabilityExpectedWeight
   )(implicit req: JourneyRequest[AnyContent]): Result =
     if (formData.overLiabilityThreshold)
-      Redirect(routes.RegistrationTypeController.displayPage())
+      Redirect(liabilityRoutes.RegistrationTypeController.displayPage())
     else
-      Redirect(routes.NotLiableController.displayPage())
+      Redirect(liabilityRoutes.NotLiableController.displayPage())
 
 }
