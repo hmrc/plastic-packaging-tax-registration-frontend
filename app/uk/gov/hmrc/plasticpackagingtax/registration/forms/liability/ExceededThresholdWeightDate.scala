@@ -25,7 +25,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.util.Try
 
-class ExceededThresholdWeightDate @Inject extends Mappings{
+class ExceededThresholdWeightDate @Inject extends Mappings {
 
   val dateFormattingError = "liabilityStartDate.formatting.error"
   val dateOutOfRangeError = "liabilityStartDate.outOfRange.error"
@@ -37,10 +37,10 @@ class ExceededThresholdWeightDate @Inject extends Mappings{
     Form(
       mapping(
         "liability-start-date" -> localDate(emptyDateKey =
-          dateEmptyError,
-          requiredKey,
-          twoRequiredKey,
-          dateFormattingError
+                                              dateEmptyError,
+                                            requiredKey,
+                                            twoRequiredKey,
+                                            dateFormattingError
         ).verifying(isInDateRange)
       )(Date.apply)(Date.unapply)
     )
