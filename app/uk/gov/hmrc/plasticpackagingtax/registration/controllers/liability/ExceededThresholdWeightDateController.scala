@@ -26,17 +26,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  ExceededThresholdWeightDate,
-  LiabilityStartDate
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeightDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.{
-  exceeded_threshold_weight_date_page,
-  liability_start_date_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_date_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -75,8 +69,8 @@ class ExceededThresholdWeightDateController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
+                    //todo need to point to display tax start date page
                     Redirect(routes.RegistrationTypeController.displayPage())
-
                   case _ =>
                     Redirect(commonRoutes.TaskListController.displayPage())
                 }
@@ -95,17 +89,7 @@ class ExceededThresholdWeightDateController @Inject() (
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]) =
-    //todo need to point to the new page
-    request.registration.liabilityDetails.weight match {
-      case Some(weight) =>
-        weight.totalKg match {
-          case Some(totalKg) =>
-            if (totalKg < 10000)
-              routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
-            else routes.LiabilityWeightController.displayPage()
-          case None => commonRoutes.TaskListController.displayPage()
-        }
-      case None => commonRoutes.TaskListController.displayPage()
-    }
+    //todo need to point to have you exceeded 10000kg page
+    routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
 
 }

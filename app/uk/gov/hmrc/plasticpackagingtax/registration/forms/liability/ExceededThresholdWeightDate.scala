@@ -19,12 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
 
-import java.time.{Clock, LocalDate}
+import java.time.Clock
 import javax.inject.{Inject, Singleton}
-import scala.util.Try
 
 @Singleton
 class ExceededThresholdWeightDate @Inject() (appConfig: AppConfig, clock: Clock) extends Mappings {
@@ -43,7 +42,7 @@ class ExceededThresholdWeightDate @Inject() (appConfig: AppConfig, clock: Clock)
                                                       requiredKey,
                                                       twoRequiredKey,
                                                       dateFormattingError
-        ).verifying(isInDateRange(appConfig, clock, dateOutOfRangeError))
+        ).verifying(isInDateRange(dateOutOfRangeError)(appConfig, clock))
       )(Date.apply)(Date.unapply)
     )
 

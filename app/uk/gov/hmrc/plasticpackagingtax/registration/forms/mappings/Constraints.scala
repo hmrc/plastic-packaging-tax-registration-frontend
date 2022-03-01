@@ -26,7 +26,9 @@ trait Constraints {
   private def isDateInRange(appConfig: AppConfig, clock: Clock): LocalDate => Boolean =
     date => !date.isBefore(appConfig.goLiveDate) && !date.isAfter(LocalDate.now(clock))
 
-  def isInDateRange(appConfig: AppConfig, clock: Clock, errorKey: String): Constraint[LocalDate] =
+  def isInDateRange(
+    errorKey: String
+  )(implicit appConfig: AppConfig, clock: Clock): Constraint[LocalDate] =
     Constraint {
       case request if !isDateInRange(appConfig, clock).apply(request) =>
         Invalid(ValidationError(errorKey))
