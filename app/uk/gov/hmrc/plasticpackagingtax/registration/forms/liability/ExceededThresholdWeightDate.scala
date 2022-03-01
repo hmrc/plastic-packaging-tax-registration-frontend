@@ -18,30 +18,32 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
 
-import java.time.LocalDate
-import javax.inject.Inject
+import java.time.{Clock, LocalDate}
+import javax.inject.{Inject, Singleton}
 import scala.util.Try
 
-class ExceededThresholdWeightDate @Inject extends Mappings {
+@Singleton
+class ExceededThresholdWeightDate @Inject() (appConfig: AppConfig, clock: Clock) extends Mappings {
 
-  val dateFormattingError = "liabilityStartDate.formatting.error"
-  val dateOutOfRangeError = "liabilityStartDate.outOfRange.error"
-  val dateEmptyError      = "liabilityStartDate.empty.error"
-  val twoRequiredKey      = "date.missing.two.required.fields"
-  val requiredKey         = "date.missing.one.field"
+  val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
+  val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
+  val dateEmptyError      = "liability.exceededThresholdWeightDate.empty.error"
+  val twoRequiredKey      = "liability.exceededThresholdWeightDate.two.required.fields"
+  val requiredKey         = "liability.exceededThresholdWeightDate.one.field"
 
   def apply(): Form[Date] =
     Form(
       mapping(
-        "liability-start-date" -> localDate(emptyDateKey =
-                                              dateEmptyError,
-                                            requiredKey,
-                                            twoRequiredKey,
-                                            dateFormattingError
-        ).verifying(isInDateRange)
+        "exceeded-threshold-weight-date" -> localDate(emptyDateKey =
+                                                        dateEmptyError,
+                                                      requiredKey,
+                                                      twoRequiredKey,
+                                                      dateFormattingError
+        ).verifying(isInDateRange(appConfig, clock, dateOutOfRangeError))
       )(Date.apply)(Date.unapply)
     )
 

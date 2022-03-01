@@ -37,6 +37,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -219,4 +220,5 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val grsAccessibilityStatementPath: String =
     "/accessibility-statement" + accessibilityStatementServicePath
 
+  lazy val goLiveDate: LocalDate = LocalDate.parse(config.get[String]("go-live-date"))
 }

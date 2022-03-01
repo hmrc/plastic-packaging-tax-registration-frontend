@@ -26,11 +26,18 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   SaveAndContinue
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
+  ExceededThresholdWeightDate,
+  LiabilityStartDate
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_start_date_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.{
+  exceeded_threshold_weight_date_page,
+  liability_start_date_page
+}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,29 +48,30 @@ class ExceededThresholdWeightDateController @Inject() (
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
   mcc: MessagesControllerComponents,
-  page: liability_start_date_page
+  page: exceeded_threshold_weight_date_page,
+  exceededThresholdWeightDate: ExceededThresholdWeightDate
 )(implicit ec: ExecutionContext)
-    extends LiabilityController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.liabilityDetails.startDate match {
+      request.registration.liabilityDetails.dateExceededThresholdWeight match {
         case Some(data) =>
-          Ok(page(LiabilityStartDate.form().fill(data), backLink))
+          Ok(page(exceededThresholdWeightDate().fill(data), backLink))
         case _ =>
-          Ok(page(LiabilityStartDate.form(), backLink))
+          Ok(page(exceededThresholdWeightDate(), backLink))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      LiabilityStartDate.form()
+      exceededThresholdWeightDate()
         .bindFromRequest()
         .fold(
-          (formWithErrors: Form[OldDate]) =>
+          (formWithErrors: Form[Date]) =>
             Future.successful(BadRequest(page(formWithErrors, backLink))),
-          liabilityStartDate =>
-            updateRegistration(liabilityStartDate).map {
+          dateExceededThresholdWeight =>
+            updateRegistration(dateExceededThresholdWeight).map {
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
@@ -78,22 +86,21 @@ class ExceededThresholdWeightDateController @Inject() (
     }
 
   private def updateRegistration(
-    formData: OldDate
+    formData: Date
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { model =>
-      val updatedLiabilityDetails = model.liabilityDetails.copy(startDate = Some(formData),
-                                                                weight =
-                                                                  model.liabilityDetails.weight
-      )
+      val updatedLiabilityDetails =
+        model.liabilityDetails.copy(dateExceededThresholdWeight = Some(formData))
       model.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]) =
+    //todo need to point to the new page
     request.registration.liabilityDetails.weight match {
       case Some(weight) =>
         weight.totalKg match {
           case Some(totalKg) =>
-            if (totalKg < deMinimisKg)
+            if (totalKg < 10000)
               routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
             else routes.LiabilityWeightController.displayPage()
           case None => commonRoutes.TaskListController.displayPage()

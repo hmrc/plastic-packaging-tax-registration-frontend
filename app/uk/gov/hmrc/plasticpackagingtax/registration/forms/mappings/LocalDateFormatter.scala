@@ -71,7 +71,7 @@ private[mappings] class LocalDateFormatter(
         field -> data.get(s"$key.$field").filter(_.nonEmpty)
     }.toMap
 
-    lazy val missingFields = fields
+    val missingFields = fields
       .withFilter(_._2.isEmpty)
       .map(_._1)
       .toList

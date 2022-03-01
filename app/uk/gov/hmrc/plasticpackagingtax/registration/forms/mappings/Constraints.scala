@@ -17,23 +17,19 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 
 trait Constraints {
 
-  private val dateUpperLimit: LocalDate = LocalDate.now()
+  private def isDateInRange(appConfig: AppConfig, clock: Clock): LocalDate => Boolean =
+    date => !date.isBefore(appConfig.goLiveDate) && !date.isAfter(LocalDate.now(clock))
 
-  val dateLowerLimit = LocalDate.of(2022, 4, 1)
-
-  private val isDateInRange: LocalDate => Boolean = date =>
-    (date.isEqual(dateLowerLimit) || date.isBefore(dateLowerLimit)) &&
-      (date.isEqual(dateUpperLimit) || date.isAfter(dateUpperLimit))
-
-  def isInDateRange: Constraint[LocalDate] =
+  def isInDateRange(appConfig: AppConfig, clock: Clock, errorKey: String): Constraint[LocalDate] =
     Constraint {
-      case request if !isDateInRange.apply(request) =>
-        Invalid(ValidationError("liabilityStartDate.outOfRange.error"))
+      case request if !isDateInRange(appConfig, clock).apply(request) =>
+        Invalid(ValidationError(errorKey))
       case _ => Valid
     }
 
