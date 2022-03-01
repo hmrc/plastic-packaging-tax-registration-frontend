@@ -18,14 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.data.Form
 import play.api.mvc._
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.EmailVerificationActions
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  TOO_MANY_ATTEMPTS
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
@@ -42,12 +41,16 @@ class AmendEmailAddressController @Inject() (
   mcc: MessagesControllerComponents,
   amendmentJourneyAction: AmendmentJourneyAction,
   emailPage: email_address_page,
-  emailPasscodePage: email_address_passcode_page,
-  emailCorrectPasscodePage: email_address_passcode_confirmation_page,
-  emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
-  emailVerificationService: EmailVerificationService
+  val emailPasscodePage: email_address_passcode_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+  val emailVerificationService: EmailVerificationService,
+  val registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendmentJourneyAction) with EmailVerificationActions {
+
+  private val backCall   = routes.AmendEmailAddressController.email()
+  private val submitCall = routes.AmendEmailAddressController.checkEmailVerificationCode()
 
   def email(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
@@ -67,40 +70,25 @@ class AmendEmailAddressController @Inject() (
           (formWithErrors: Form[EmailAddress]) =>
             Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           email =>
-            if (isEmailChanged(email.value))
-              emailVerificationService.isEmailVerified(email.value, request.user.credId).flatMap {
-                case true => updateRegistration(updateEmail(email.value))
-                case false =>
-                  emailVerificationService.sendVerificationCode(
-                    email.value,
-                    request.user.credId,
-                    "/register-for-plastic-packaging-tax/amend-registration"
-                  ).map { journeyId =>
-                    amendmentJourneyAction.updateLocalRegistration(
-                      updateProspectiveEmail(journeyId, email.value)
-                    )
-                    Redirect(routes.AmendEmailAddressController.emailVerificationCode())
-                  }
-              }
-            else
+            if (!isEmailChanged(email.value))
+              // Not update required; we can exit straight to the next screen
               Future.successful(Redirect(routes.AmendRegistrationController.displayPage()))
+            else
+              isEmailVerificationRequired(email.value, isEmailChanged).flatMap {
+                case false => updateRegistration(updateEmail(email.value))
+                case true =>
+                  promptForEmailVerificationCode(
+                    request,
+                    email,
+                    routes.AmendRegistrationController.displayPage(),
+                    routes.AmendEmailAddressController.emailVerificationCode()
+                  )
+              }
         )
     }
 
   private def isEmailChanged(newEmail: String)(implicit request: JourneyRequest[AnyContent]) =
     !request.registration.primaryContactDetails.email.contains(newEmail)
-
-  private def updateProspectiveEmail(
-    journeyId: String,
-    updatedEmail: String
-  ): Registration => Registration = {
-    registration: Registration =>
-      registration.copy(primaryContactDetails =
-        registration.primaryContactDetails.copy(journeyId = Some(journeyId),
-                                                prospectiveEmail = Some(updatedEmail)
-        )
-      )
-  }
 
   private def updateEmail(updatedEmail: String): Registration => Registration = {
     registration: Registration =>
@@ -119,87 +107,46 @@ class AmendEmailAddressController @Inject() (
 
   def emailVerificationCode(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(buildEmailVerificationCodePage(EmailAddressPasscode.form(), getProspectiveEmail()))
+      Ok(
+        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
+                                             getProspectiveEmail(),
+                                             backCall,
+                                             submitCall
+        )
+      )
     }
-
-  private def getProspectiveEmail()(implicit req: JourneyRequest[AnyContent]) =
-    req.registration.primaryContactDetails.prospectiveEmail.getOrElse(
-      throw new IllegalStateException("Prospective email expected in registration")
-    )
 
   def checkEmailVerificationCode(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      EmailAddressPasscode.form()
-        .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[EmailAddressPasscode]) =>
-            Future.successful(
-              BadRequest(buildEmailVerificationCodePage(formWithErrors, getProspectiveEmail()))
-            ),
-          verificationCode => checkEmailVerificationCode(verificationCode.value)
-        )
+      processVerificationCodeSubmission(
+        backCall,
+        submitCall,
+        routes.AmendEmailAddressController.emailVerified(),
+        routes.AmendEmailAddressController.emailVerificationTooManyAttempts()
+      )
     }
-
-  private def checkEmailVerificationCode(
-    verificationCode: String
-  )(implicit journeyRequest: JourneyRequest[AnyContent]): Future[Result] =
-    emailVerificationService.checkVerificationCode(verificationCode,
-                                                   getProspectiveEmail(),
-                                                   getJourneyId()
-    ).map {
-      case COMPLETE =>
-        Redirect(routes.AmendEmailAddressController.emailVerified())
-      case INCORRECT_PASSCODE =>
-        BadRequest(
-          buildEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
-            getProspectiveEmail()
-          )
-        )
-      case TOO_MANY_ATTEMPTS =>
-        Redirect(routes.AmendEmailAddressController.emailVerificationTooManyAttempts())
-      case _ =>
-        BadRequest(
-          buildEmailVerificationCodePage(
-            EmailAddressPasscode.form().withError("journeyNotFound",
-                                                  "Passcode for email address is not found"
-            ),
-            getProspectiveEmail()
-          )
-        )
-    }
-
-  private def getJourneyId()(implicit req: JourneyRequest[AnyContent]) =
-    req.registration.primaryContactDetails.journeyId.getOrElse(
-      throw new IllegalStateException("Journey id expected in registration")
-    )
-
-  private def buildEmailVerificationCodePage(form: Form[EmailAddressPasscode], email: String)(
-    implicit request: JourneyRequest[AnyContent]
-  ) =
-    emailPasscodePage(form,
-                      Some(email),
-                      routes.AmendEmailAddressController.email(),
-                      routes.AmendEmailAddressController.checkEmailVerificationCode()
-    )
 
   def emailVerified(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(
-        emailCorrectPasscodePage(routes.AmendEmailAddressController.emailVerificationCode(),
-                                 routes.AmendEmailAddressController.confirmEmailUpdate()
-        )
+      showEmailVerifiedPage(routes.AmendEmailAddressController.emailVerificationCode(),
+                            routes.AmendEmailAddressController.confirmEmailUpdate()
       )
     }
 
   def confirmEmailUpdate(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      updateRegistration(updateEmail(getProspectiveEmail()))
+      val prospectiveEmail = getProspectiveEmail()
+      isEmailVerified(prospectiveEmail).flatMap { isVerified =>
+        if (isVerified)
+          updateRegistration(updateEmail(prospectiveEmail))
+        else
+          Future.successful(Redirect(routes.AmendEmailAddressController.email()))
+      }
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
-      Ok(emailIncorrectPasscodeTooManyAttemptsPage())
+      showTooManyAttemptsPage
     }
 
 }

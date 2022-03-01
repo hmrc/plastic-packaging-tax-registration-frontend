@@ -71,7 +71,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -295,7 +295,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
                            ),
                            ArgumentMatchers.eq(
                              routes.ContactDetailsEmailAddressPasscodeController.submit()
-                           )
+                           ),
+                           any()
         )(any(), any())
         form.fill(EmailAddressPasscode("DNCLRK"))
       }

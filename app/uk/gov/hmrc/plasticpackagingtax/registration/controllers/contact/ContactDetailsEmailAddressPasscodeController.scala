@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
 import play.api.data.Form
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
@@ -138,7 +138,8 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
     page(form,
          email,
          routes.ContactDetailsEmailAddressController.displayPage(),
-         routes.ContactDetailsEmailAddressPasscodeController.submit()
+         routes.ContactDetailsEmailAddressPasscodeController.submit(),
+         Some(sectionName)
     )
 
   private def addVerifiedEmail(email: String)(implicit
@@ -153,5 +154,8 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
     hc: HeaderCarrier
   ): Future[EmailVerificationJourneyStatus.Value] =
     emailVerificationService.checkVerificationCode(passcode, email, journeyId)
+
+  private def sectionName()(implicit messages: Messages): String =
+    messages("primaryContactDetails.sectionHeader")
 
 }

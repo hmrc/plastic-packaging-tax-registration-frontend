@@ -32,7 +32,10 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
   "Email Address Passcode Confirmation View" should {
 
-    val view = page(backLink, updateCall)(request = journeyRequest, messages = messages)
+    val view = page(backLink, updateCall, Some(messages("primaryContactDetails.sectionHeader")))(
+      request = journeyRequest,
+      messages = messages
+    )
 
     "contain timeout dialog function" in {
 
@@ -66,8 +69,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(backLink, updateCall)(request, messages)
-    page.render(backLink, updateCall, request, messages)
+    page.f(backLink, updateCall, None)(request, messages)
+    page.render(backLink, updateCall, None, request, messages)
   }
 
 }

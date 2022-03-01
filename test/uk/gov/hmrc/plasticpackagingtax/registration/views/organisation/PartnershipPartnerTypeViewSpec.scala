@@ -62,7 +62,10 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createViewNominated(form: Form[PartnerType] = PartnerType.form()): Document =
-    page(form, None, submitLink)(journeyRequest, messages)
+    page(form, registrationWithOtherPartners.nominatedPartner.map(_.id), submitLink)(
+      journeyReqForOthers,
+      messages
+    )
 
   private def createViewForOthers(form: Form[PartnerType] = PartnerType.form()): Document =
     page(form, None, submitLink)(journeyReqForOthers, messages)

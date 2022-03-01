@@ -23,21 +23,35 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
   AmendmentController,
   routes => amendmentRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
+  AddressLookupIntegration,
+  EmailVerificationActions
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddress,
+  EmailAddressPasscode,
   JobTitle,
   PhoneNumber
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  AmendRegistrationUpdateService,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
   AmendmentJourneyAction,
   JourneyRequest
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{
   AddressCaptureConfig,
-  AddressCaptureService
+  AddressCaptureService,
+  EmailVerificationService
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
+  email_address_passcode_confirmation_page,
+  email_address_passcode_page,
+  too_many_attempts_passcode_page
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_email_address_page,
@@ -56,11 +70,17 @@ class AmendPartnerContactDetailsController @Inject() (
   amendmentJourneyAction: AmendmentJourneyAction,
   contactNamePage: partner_member_name_page,
   contactEmailPage: partner_email_address_page,
+  val emailPasscodePage: email_address_passcode_page,
+  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+  val registrationUpdater: AmendRegistrationUpdateService,
+  val emailVerificationService: EmailVerificationService,
   contactPhoneNumberPage: partner_phone_number_page,
   jobTitlePage: partner_job_title_page,
   addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration
+    with EmailVerificationActions {
 
   def contactName(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
@@ -137,6 +157,7 @@ class AmendPartnerContactDetailsController @Inject() (
 
   def updateEmailAddress(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      val partner = getPartner(partnerId)
       EmailAddress.form()
         .bindFromRequest()
         .fold(
@@ -147,19 +168,93 @@ class AmendPartnerContactDetailsController @Inject() (
               )
             ),
           emailAddress =>
-            updateRegistration(
-              { registration: Registration =>
-                registration.withUpdatedPartner(
-                  partnerId,
-                  partner =>
-                    partner.copy(contactDetails =
-                      partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress.value)))
-                    )
-                )
-              },
-              successfulRedirect(partnerId)
-            )
+            doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
+              isEmailVerificationRequired =>
+                if (!isEmailVerificationRequired)
+                  updateRegistration({ registration: Registration =>
+                                       registration.withUpdatedPartner(
+                                         partnerId,
+                                         partner => applyEmailAddressTo(partner, emailAddress.value)
+                                       )
+                                     },
+                                     successfulRedirect(partnerId)
+                  )
+                else
+                  promptForEmailVerificationCode(request,
+                                                 emailAddress,
+                                                 routes.AmendPartnerContactDetailsController.emailAddress(
+                                                   partner.id
+                                                 ),
+                                                 routes.AmendPartnerContactDetailsController.confirmEmailCode(
+                                                   partner.id
+                                                 )
+                  )
+            }
         )
+    }
+
+  def confirmEmailCode(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      val partner = getPartner(partnerId)
+      Ok(
+        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
+                                             getProspectiveEmail(),
+                                             routes.AmendPartnerContactDetailsController.emailAddress(
+                                               partner.id
+                                             ),
+                                             routes.AmendPartnerContactDetailsController.checkEmailVerificationCode(
+                                               partnerId
+                                             )
+        )
+      )
+    }
+
+  def checkEmailVerificationCode(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      val partner = getPartner(partnerId)
+      def emailVerificationTooManyAttemptsCall =
+        routes.AmendPartnerContactDetailsController.emailVerificationTooManyAttempts()
+      processVerificationCodeSubmission(
+        routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
+        routes.AmendPartnerContactDetailsController.checkEmailVerificationCode(partnerId),
+        routes.AmendPartnerContactDetailsController.emailVerified(partnerId),
+        emailVerificationTooManyAttemptsCall
+      )
+    }
+
+  def emailVerified(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      val partner = getPartner(partnerId)
+      showEmailVerifiedPage(
+        routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id),
+        routes.AmendPartnerContactDetailsController.confirmEmailUpdate(partnerId)
+      )
+    }
+
+  def emailVerificationTooManyAttempts(): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction) { implicit request =>
+      showTooManyAttemptsPage
+    }
+
+  def confirmEmailUpdate(partnerId: String): Action[AnyContent] =
+    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+      val prospectiveEmail = getProspectiveEmail()
+      isEmailVerified(prospectiveEmail).flatMap { isVerified =>
+        if (isVerified)
+          updateRegistration(
+            { registration: Registration =>
+              registration.withUpdatedPartner(
+                partnerId,
+                partner => applyEmailAddressTo(partner, prospectiveEmail)
+              )
+            },
+            successfulRedirect(partnerId)
+          )
+        else
+          Future.successful(
+            Redirect(routes.AmendPartnerContactDetailsController.emailAddress(partnerId))
+          )
+      }
     }
 
   private def buildContactEmailPage(
@@ -330,16 +425,21 @@ class AmendPartnerContactDetailsController @Inject() (
                    routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
     )
 
-  private def getPartner(partnerId: String)(implicit request: JourneyRequest[_]) =
+  private def getPartner(partnerId: String)(implicit request: JourneyRequest[_]): Partner =
     request.registration.findPartner(partnerId).getOrElse(
       throw new IllegalStateException("Partner not found")
     )
 
   private def isNominated(partnerId: String)(implicit request: JourneyRequest[_]) =
-    request.registration.isNominatedPartner(Some(partnerId)).getOrElse(false)
+    request.registration.isNominatedPartner(Some(partnerId))
 
   private def successfulRedirect(partnerId: String)(implicit request: JourneyRequest[_]) =
     if (isNominated(partnerId)) amendmentRoutes.AmendRegistrationController.displayPage()
     else routes.PartnerContactDetailsCheckAnswersController.displayPage(partnerId)
+
+  private def applyEmailAddressTo(partner: Partner, emailAddress: String): Partner =
+    partner.copy(contactDetails =
+      partner.contactDetails.map(_.copy(emailAddress = Some(emailAddress)))
+    )
 
 }

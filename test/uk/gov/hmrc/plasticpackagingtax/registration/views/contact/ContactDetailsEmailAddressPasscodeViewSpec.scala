@@ -37,7 +37,12 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
     form: Form[EmailAddressPasscode] = EmailAddressPasscode.form(),
     emailAddress: String = "test@test.com"
   ): Document =
-    page(form, Some(emailAddress), backLink, updateCall)(journeyRequest, messages)
+    page(form,
+         Some(emailAddress),
+         backLink,
+         updateCall,
+         Some(messages("primaryContactDetails.sectionHeader"))
+    )(journeyRequest, messages)
 
   "Email Address Passcode View" should {
 
@@ -155,13 +160,14 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddressPasscode.form(), Some("test@test.com"), backLink, updateCall)(request,
-                                                                                     messages
+    page.f(EmailAddressPasscode.form(), Some("test@test.com"), backLink, updateCall, None)(request,
+                                                                                           messages
     )
     page.render(EmailAddressPasscode.form(),
                 Some("test@test.com"),
                 backLink,
                 updateCall,
+                Some(messages("primaryContactDetails.sectionHeader")),
                 request,
                 messages
     )
