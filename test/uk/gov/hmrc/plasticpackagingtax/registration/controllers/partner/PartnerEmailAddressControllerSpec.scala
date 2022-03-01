@@ -335,9 +335,11 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         // Email verification will be called to check this email address has actually been verified
         // and that the user has not url skipped to the end of the journey
-        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
-          Future.successful(true)
-        )
+        when(
+          mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("an-email@localhost"),
+                                                       any()
+          )(any())
+        ).thenReturn(Future.successful(true))
 
         val result = controller.confirmEmailUpdateNewPartner()(getRequest())
 
