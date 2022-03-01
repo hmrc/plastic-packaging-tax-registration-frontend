@@ -149,6 +149,13 @@ trait EmailVerificationActions {
       throw new IllegalStateException("Prospective email expected in registration")
     )
 
+  protected def isEmailVerified(email: String)(implicit
+    request: JourneyRequest[AnyContent],
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Boolean] =
+    emailVerificationService.isEmailVerified(email, request.user.credId)
+
   private def persistProspectiveEmailAddress(
     email: EmailAddress,
     emailVerificationJourneyId: String

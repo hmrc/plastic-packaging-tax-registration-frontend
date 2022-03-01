@@ -36,7 +36,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerEmailAddressController @Inject() (
@@ -129,10 +129,16 @@ class PartnerEmailAddressController @Inject() (
   def confirmEmailUpdateNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.inflightPartner.map { _ =>
-        registrationUpdater.updateRegistration(
-          updatePartnersEmail(None, getProspectiveEmail())
-        ).map { _ =>
-          Redirect(routes.PartnerPhoneNumberController.displayNewPartner())
+        val prospectiveEmail = getProspectiveEmail()
+        isEmailVerified(prospectiveEmail).flatMap { isVerified =>
+          if (isVerified)
+            registrationUpdater.updateRegistration(
+              updatePartnersEmail(None, prospectiveEmail)
+            ).map { _ =>
+              Redirect(routes.PartnerPhoneNumberController.displayNewPartner())
+            }
+          else
+            Future.successful(Redirect(routes.PartnerEmailAddressController.displayNewPartner()))
         }
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }

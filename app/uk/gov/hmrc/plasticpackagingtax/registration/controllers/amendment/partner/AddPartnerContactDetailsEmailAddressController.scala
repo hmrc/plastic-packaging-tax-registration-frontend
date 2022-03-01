@@ -34,7 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddPartnerContactDetailsEmailAddressController @Inject() (
@@ -94,9 +94,17 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
 
   def emailVerified(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      registrationUpdater.updateRegistration(updatePartnersEmail(getProspectiveEmail())).map {
-        _ =>
-          Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
+      val prospectiveEmail = getProspectiveEmail()
+      isEmailVerified(prospectiveEmail).flatMap { isVerified =>
+        if (isVerified)
+          registrationUpdater.updateRegistration(updatePartnersEmail(prospectiveEmail)).map {
+            _ =>
+              Redirect(routes.AddPartnerContactDetailsTelephoneNumberController.displayPage())
+          }
+        else
+          Future.successful(
+            Redirect(routes.AddPartnerContactDetailsEmailAddressController.displayPage())
+          )
       }
     }
 

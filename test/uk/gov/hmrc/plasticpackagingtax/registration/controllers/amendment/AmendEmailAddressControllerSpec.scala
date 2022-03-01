@@ -99,6 +99,7 @@ class AmendEmailAddressControllerSpec
 
   override protected def beforeEach(): Unit = {
     reset(mockSubscriptionConnector)
+    reset(mockEmailVerificationService)
 
     authorisedUserWithPptSubscription()
     inMemoryRegistrationAmendmentRepository.reset()
@@ -216,6 +217,7 @@ class AmendEmailAddressControllerSpec
     "send a verification code and prompt the user for this" when {
       "email is *not* already verified" in {
         val unverifiedEmail = "unverified@ppt.com"
+        simulateAllEmailsUnverified()
 
         val resp = controller.updateEmail()(
           postRequestEncoded(form =
@@ -254,6 +256,13 @@ class AmendEmailAddressControllerSpec
 
     "update email" when {
       "user confirms" in {
+        // Email verification will be called to check this email address has actually been verified
+        // and that the user has not url skipped to the end of the journey
+        when(
+          mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("updatedemail@ppt.com"),
+                                                       any()
+          )(any())
+        ).thenReturn(Future.successful(true))
 
         val resp = controller.confirmEmailUpdate()(getRequest())
 

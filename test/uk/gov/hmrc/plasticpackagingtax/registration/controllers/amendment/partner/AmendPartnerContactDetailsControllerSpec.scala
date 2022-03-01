@@ -145,7 +145,7 @@ class AmendPartnerContactDetailsControllerSpec
     super.afterEach()
   }
 
-  "Amend Partner Contract Details Controller" should {
+  "Amend Partner Contact Details Controller" should {
 
     val showPageTestData =
       Table(("Test Name", "Display Call", "Verification"),
@@ -605,6 +605,12 @@ class AmendPartnerContactDetailsControllerSpec
           )
         )
         simulateUpdateSubscriptionSuccess()
+
+        // Email verification will be called to check this email address has actually been verified
+        // and that the user has not url skipped to the end of the journey
+        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
+          Future.successful(true)
+        )
 
         val resp = controller.confirmEmailUpdate(nominatedPartner.id)(getRequest())
         status(resp) mustBe SEE_OTHER

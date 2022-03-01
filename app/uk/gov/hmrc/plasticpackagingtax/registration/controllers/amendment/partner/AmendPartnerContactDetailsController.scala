@@ -238,15 +238,23 @@ class AmendPartnerContactDetailsController @Inject() (
 
   def confirmEmailUpdate(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      updateRegistration(
-        { registration: Registration =>
-          registration.withUpdatedPartner(
-            partnerId,
-            partner => applyEmailAddressTo(partner, getProspectiveEmail())
+      val prospectiveEmail = getProspectiveEmail()
+      isEmailVerified(prospectiveEmail).flatMap { isVerified =>
+        if (isVerified)
+          updateRegistration(
+            { registration: Registration =>
+              registration.withUpdatedPartner(
+                partnerId,
+                partner => applyEmailAddressTo(partner, prospectiveEmail)
+              )
+            },
+            successfulRedirect(partnerId)
           )
-        },
-        successfulRedirect(partnerId)
-      )
+        else
+          Future.successful(
+            Redirect(routes.AmendPartnerContactDetailsController.emailAddress(partnerId))
+          )
+      }
     }
 
   private def buildContactEmailPage(

@@ -94,6 +94,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     reset(email_address_passcode_page)
     reset(emailCorrectPasscodePage)
     reset(too_many_attempts_passcode_page)
+    reset(mockEmailVerificationService)
     super.afterEach()
   }
 
@@ -331,6 +332,12 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         mockRegistrationFind(withEmailVerificationJourney)
         mockRegistrationUpdate()
+
+        // Email verification will be called to check this email address has actually been verified
+        // and that the user has not url skipped to the end of the journey
+        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
+          Future.successful(true)
+        )
 
         val result = controller.confirmEmailUpdateNewPartner()(getRequest())
 
