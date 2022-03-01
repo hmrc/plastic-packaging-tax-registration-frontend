@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectedWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{routes => prelaunchLiabilityRoutes}
 
 @this(
         govukLayout: main_template,
@@ -68,7 +68,7 @@
 
     @sectionHeader(messages("liabilityExpectedWeightPage.sectionHeader"))
 
-    @formHelper(action = pptRoutes.LiabilityWeightExpectedController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = prelaunchLiabilityRoutes.LiabilityWeightExpectedController.submit(), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
