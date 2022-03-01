@@ -168,7 +168,7 @@ class AmendPartnerContactDetailsController @Inject() (
               )
             ),
           emailAddress =>
-            doesPartnerEmailRequireVerfication(partner, emailAddress).flatMap {
+            doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
               isEmailVerificationRequired =>
                 if (!isEmailVerificationRequired)
                   updateRegistration({ registration: Registration =>

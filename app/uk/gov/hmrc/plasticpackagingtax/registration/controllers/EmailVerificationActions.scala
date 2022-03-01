@@ -216,7 +216,7 @@ trait EmailVerificationActions {
           )
       )
 
-  protected def doesPartnerEmailRequireVerfication(partner: Partner, emailAddress: EmailAddress)(
+  protected def doesPartnerEmailRequireVerification(partner: Partner, emailAddress: EmailAddress)(
     implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent],

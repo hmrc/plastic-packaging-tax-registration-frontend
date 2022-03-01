@@ -126,7 +126,7 @@ abstract class PartnerEmailAddressControllerBase(
             )
           ),
         emailAddress =>
-          doesPartnerEmailRequireVerfication(partner, emailAddress).flatMap {
+          doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
             isEmailVerificationRequired =>
               if (!isEmailVerificationRequired)
                 updateAction(emailAddress).map { _ =>
