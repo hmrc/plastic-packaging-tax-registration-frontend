@@ -45,7 +45,6 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction) { _ =>
-      // TODO does this do anything?
       Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
     }
 
