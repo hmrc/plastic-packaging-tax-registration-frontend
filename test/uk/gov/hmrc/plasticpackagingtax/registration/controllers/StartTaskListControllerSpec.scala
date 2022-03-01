@@ -24,6 +24,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
+  routes => preLaunchLiabilityRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
@@ -50,7 +53,9 @@ class StartTaskListControllerSpec extends ControllerSpec {
       "no existing registration" when {
         "preLaunch" in {
           authorizedUser(features = Map(Features.isPreLaunch -> true))
-          verifyRedirect(liabilityRoutes.LiabilityWeightExpectedController.displayPage().url)
+          verifyRedirect(
+            preLaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage().url
+          )
         }
         "postLaunch" in {
           authorizedUser(features = Map(Features.isPreLaunch -> false))
