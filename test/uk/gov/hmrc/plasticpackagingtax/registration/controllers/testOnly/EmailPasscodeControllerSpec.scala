@@ -39,7 +39,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
     mock[EmailTestOnlyPasscodeConnector]
 
   private val controller =
-    new EmailPasscodeController(authenticate = mockAuthAction,
+    new EmailPasscodeController(authenticate = mockAuthAllowEnrolmentAction,
                                 mcc = mcc,
                                 mockJourneyAction,
                                 emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector

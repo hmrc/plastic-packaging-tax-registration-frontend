@@ -30,7 +30,7 @@ case class PrimaryContactDetails(
   // The following fields are used for email verification only
   journeyId: Option[String] = None,
   prospectiveEmail: Option[String] =
-    None // Not mirrored in back end since only used during registration amendment
+    None
 ) {
 
   def status(emailVerified: String => Boolean): TaskStatus =

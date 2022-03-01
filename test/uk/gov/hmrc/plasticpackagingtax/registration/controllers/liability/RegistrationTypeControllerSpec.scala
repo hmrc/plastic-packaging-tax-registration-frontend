@@ -31,6 +31,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROU
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegistrationType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.registration_type_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
+  routes => prelaunchLiabilityRoutes
+}
 
 class RegistrationTypeControllerSpec extends ControllerSpec {
 
@@ -94,7 +97,9 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
       "preLaunch" in {
         authorizedUser(features = Map(Features.isPreLaunch -> true))
-        verifyExpectedBackLink(routes.LiabilityWeightExpectedController.displayPage().url)
+        verifyExpectedBackLink(
+          prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage().url
+        )
       }
 
       "postLaunch" in {

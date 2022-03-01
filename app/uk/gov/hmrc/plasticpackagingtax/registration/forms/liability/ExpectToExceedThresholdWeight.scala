@@ -17,31 +17,20 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.mapping
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
-
-case class ExpectToExceedThresholdWeight(answer: Option[Boolean])
 
 object ExpectToExceedThresholdWeight extends CommonFormValidators with CommonFormValues {
 
-  lazy val emptyError = "liabilityExpectToExceedThresholdWeightPage.question.empty.error"
+  val emptyError = "liability.expectToExceedThresholdWeight.question.empty.error"
 
-  def form(): Form[ExpectToExceedThresholdWeight] =
+  def form(): Form[Boolean] =
     Form(
       mapping(
-        "answer" -> text()
+        "answer" -> nonEmptyString(emptyError)
           .verifying(emptyError, contains(Seq(YES, NO)))
-      )(ExpectToExceedThresholdWeight.apply)(ExpectToExceedThresholdWeight.unapply)
+          .transform[Boolean](_ == YES, _.toString)
+      )(identity)(Some.apply)
     )
-
-  def apply(value: String): ExpectToExceedThresholdWeight =
-    value match {
-      case YES => ExpectToExceedThresholdWeight(Some(true))
-      case NO  => ExpectToExceedThresholdWeight(Some(false))
-      case _   => ExpectToExceedThresholdWeight(None)
-    }
-
-  def unapply(liableDate: ExpectToExceedThresholdWeight): Option[String] =
-    liableDate.answer.map(value => if (value) YES else NO)
 
 }

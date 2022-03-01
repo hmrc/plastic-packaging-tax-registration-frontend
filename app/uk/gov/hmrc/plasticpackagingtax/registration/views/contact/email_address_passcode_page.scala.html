@@ -36,7 +36,7 @@
   link : link
 )
 
-@(form: Form[EmailAddressPasscode], emailAddress: Option[String], backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[EmailAddressPasscode], emailAddress: Option[String], backLink: Call, updateCall: Call, sectionHeading: Option[String])(implicit request: Request[_], messages: Messages)
 
 @emailAddressPasscodeField = @{form("value")}
 
@@ -67,7 +67,9 @@
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
-  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+  @sectionHeading.map { heading =>
+    @sectionHeader(heading)
+  }
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {
     @pageHeading(messages("primaryContactDetails.emailAddress.passcode.title"))

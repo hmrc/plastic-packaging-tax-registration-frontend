@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectedWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_weight_expected_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.prelaunch.liability_weight_expected_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest

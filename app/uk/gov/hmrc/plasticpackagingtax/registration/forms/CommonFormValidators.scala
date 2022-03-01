@@ -17,10 +17,18 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
 import com.google.common.base.Strings
+import play.api.data.Forms.{optional, text}
+import play.api.data.Mapping
 
 import java.util.regex.Pattern
 
 trait CommonFormValidators {
+
+  def nonEmptyString(errorKey: String): Mapping[String] =
+    optional(text)
+      .verifying(errorKey, _.nonEmpty)
+      .transform[String](_.get, Some.apply)
+      .verifying(errorKey, _.trim.nonEmpty)
 
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
 
