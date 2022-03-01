@@ -28,7 +28,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -47,7 +47,7 @@ class LiabilityExpectToExceedThresholdWeightControllerSpec extends ControllerSpe
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ExpectToExceedThresholdWeight]])(any(), any())).thenReturn(
+    when(page.apply(any[Form[LiabilityExpectToExceedThresholdWeight]])(any(), any())).thenReturn(
       HtmlFormat.empty
     )
   }

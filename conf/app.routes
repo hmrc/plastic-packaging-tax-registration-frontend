@@ -20,6 +20,9 @@ POST       /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controll
 GET        /forward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityExpectToExceedThresholdWeightController.displayPage()
 POST       /forward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityExpectToExceedThresholdWeightController.submit()
 
+GET        /threshold-next-30-days       uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExpectToExceedThresholdWeightController.displayPage()
+POST       /threshold-next-30-days       uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExpectToExceedThresholdWeightController.submit()
+
 GET        /weight-next-12-months        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityWeightController.displayPage()
 POST       /weight-next-12-months        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityWeightController.submit()
 

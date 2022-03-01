@@ -16,50 +16,39 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.play.PlaySpec
+import play.api.data.Form
 
-class ExpectToExceedThresholdWeightSpec extends AnyWordSpec with Matchers {
-  "ProcessMoreWeight" should {
-    "correctly apply" when {
+class ExpectToExceedThresholdWeightSpec extends PlaySpec {
+
+  val sut: Form[Boolean] = ExpectToExceedThresholdWeight.form()
+
+  "ExpectToExceedThresholdWeight" must {
+    "bind correctly" when {
       "'yes' is provided" in {
-        val processMoreWeight = ExpectToExceedThresholdWeight.apply("yes")
-        processMoreWeight.answer mustBe Some(true)
+        sut.bind(Map("answer" -> "yes")).value mustBe Some(true)
+        sut.bind(Map("answer" -> "yes")).errors mustBe Nil
       }
 
       "'no' is provided" in {
-        val processMoreWeight = ExpectToExceedThresholdWeight.apply("no")
-        processMoreWeight.answer mustBe Some(false)
-      }
-
-      " neither 'yes' or 'no' are provided" in {
-        val processMoreWeight = ExpectToExceedThresholdWeight.apply("maybe")
-        processMoreWeight.answer mustBe None
-      }
-
-      " string is empty" in {
-        val processMoreWeight = ExpectToExceedThresholdWeight.apply("")
-        processMoreWeight.answer mustBe None
+        sut.bind(Map("answer" -> "no")).value mustBe Some(false)
+        sut.bind(Map("answer" -> "no")).errors mustBe Nil
       }
     }
 
-    "correctly unapply" when {
-      "answer is 'Some(true)'" in {
-        val processMoreWeight =
-          ExpectToExceedThresholdWeight.unapply(ExpectToExceedThresholdWeight(Some(true)))
-        processMoreWeight mustBe Some("yes")
+    "error correctly" when {
+      "answer empty" in {
+        sut.bind(Map.empty[String, String]).value mustBe None
+        sut.bind(Map.empty[String, String]).errors.map(_.message) mustBe Seq(
+          ExpectToExceedThresholdWeight.emptyError
+        )
       }
 
-      "answer is 'Some(false)'" in {
-        val processMoreWeight =
-          ExpectToExceedThresholdWeight.unapply(ExpectToExceedThresholdWeight(Some(false)))
-        processMoreWeight mustBe Some("no")
-      }
-
-      "answer is None" in {
-        val processMoreWeight =
-          ExpectToExceedThresholdWeight.unapply(ExpectToExceedThresholdWeight(None))
-        processMoreWeight mustBe None
+      "answer is trash" in {
+        sut.bind(Map("answer" -> "trash")).value mustBe None
+        sut.bind(Map("answer" -> "trash")).errors.map(_.message) mustBe Seq(
+          ExpectToExceedThresholdWeight.emptyError
+        )
       }
     }
   }

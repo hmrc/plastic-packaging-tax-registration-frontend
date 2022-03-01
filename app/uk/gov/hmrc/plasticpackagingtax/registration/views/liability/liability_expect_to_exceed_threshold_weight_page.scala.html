@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectToExceedThresholdWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 
@@ -32,7 +32,7 @@
 )
 
 
-@(form: Form[ExpectToExceedThresholdWeight])(implicit request: Request[_], messages: Messages)
+@(form: Form[LiabilityExpectToExceedThresholdWeight])(implicit request: Request[_], messages: Messages)
 
 
 @errorMessages = @{
@@ -85,8 +85,8 @@
         idPrefix = Some(form("answer").name),
         name = form("answer").name,
         items = Seq(
-            RadioItem(content = Text(messages("general.true")), value = Some(ExpectToExceedThresholdWeight.YES), checked = form("answer").value.contains(ExpectToExceedThresholdWeight.YES)),
-            RadioItem(content = Text(messages("general.false")), value = Some(ExpectToExceedThresholdWeight.NO), checked = form("answer").value.contains(ExpectToExceedThresholdWeight.NO))
+            RadioItem(content = Text(messages("general.true")), value = Some(LiabilityExpectToExceedThresholdWeight.YES), checked = form("answer").value.contains(LiabilityExpectToExceedThresholdWeight.YES)),
+            RadioItem(content = Text(messages("general.false")), value = Some(LiabilityExpectToExceedThresholdWeight.NO), checked = form("answer").value.contains(LiabilityExpectToExceedThresholdWeight.NO))
         ),
         classes = "govuk-radios",
         errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
