@@ -38,10 +38,8 @@ POST       /backward-look    uk.gov.hmrc.plasticpackagingtax.registration.contro
 
 GET        /date-met-threshold    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightDateController.displayPage()
 POST       /date-met-threshold    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightDateController.submit()
+
 # Liability : common
-
-
-# Liability used both pre and post launch
 GET        /not-liable  uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotLiableController.displayPage()
 
 GET        /registration-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.RegistrationTypeController.displayPage()
