@@ -158,6 +158,17 @@ liabilityExpectedWeight.decimal.error = Expected weight must not include decimal
 liabilityExpectedWeight.leadingBlankSpace.error = Expected weight must not have leading spaces
 liabilityExpectedWeight.trailingBlankSpace.error = Expected weight must not have trailing spaces
 
+liability.sectionHeader = Liability details
+
+liability.expectToExceedThreshold.date.question = When did you realise your organisation or group would go over the 10,000kg threshold?
+liability.expectToExceedThreshold.date.hint = For example, 15 6 2022
+liability.expectToExceedThreshold.date.none = Enter the date you realised you would meet the threshold
+liability.expectToExceedThreshold.date.noDay = Date you realised you would meet the threshold must include the day
+liability.expectToExceedThreshold.date.noMonth = Date you realised you would meet the threshold must include the month
+liability.expectToExceedThreshold.date.noYear = Date you realised you would meet the threshold must include the year
+liability.expectToExceedThreshold.date.invalid = Date you realised you would meet the threshold must be a real date
+liability.expectToExceedThreshold.date.future = Date you realised you would meet the threshold must be today or in the past
+
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
