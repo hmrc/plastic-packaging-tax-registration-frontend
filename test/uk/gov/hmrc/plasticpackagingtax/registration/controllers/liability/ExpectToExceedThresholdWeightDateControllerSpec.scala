@@ -119,11 +119,14 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
       val dateRealised = Date(LocalDate.of(2022, 4, 1))
       val resp = await(
         controller.submit()(
-          postJsonRequestEncodedFormAction(
-            Seq(("expect-to-exceed-threshold-weight-date.day", "1"),
-                ("expect-to-exceed-threshold-weight-date.month", "4"),
-                ("expect-to-exceed-threshold-weight-date.year", "2022")
-            )
+          postJsonRequestEncoded(
+            ("expect-to-exceed-threshold-weight-date.day",
+             dateRealised.date.getDayOfMonth.toString
+            ),
+            ("expect-to-exceed-threshold-weight-date.month",
+             dateRealised.date.getMonthValue.toString
+            ),
+            ("expect-to-exceed-threshold-weight-date.year", dateRealised.date.getYear.toString)
           )
         )
       )

@@ -103,37 +103,25 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
 
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "update registration and redirect on " + formAction._1 when {
-        "groups enabled" in {
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+    "update registration and redirect on " when {
+      "groups enabled" in {
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
 
-          val result =
-            controller.submit()(
-              postJsonRequestEncodedFormAction(
-                Seq(("exceeded-threshold-weight-date.day", "1"),
-                    ("exceeded-threshold-weight-date.month", "4"),
-                    ("exceeded-threshold-weight-date.year", "2022")
-                ),
-                formAction
-              )
+        val result =
+          controller.submit()(
+            postJsonRequestEncoded(("exceeded-threshold-weight-date.day", "1"),
+                                   ("exceeded-threshold-weight-date.month", "4"),
+                                   ("exceeded-threshold-weight-date.year", "2022")
             )
-
-          status(result) mustBe SEE_OTHER
-
-          modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(
-            Date(LocalDate.of(2022, 4, 1))
           )
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.RegistrationTypeController.displayPage().url
-              )
-            case _ =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
+
+        status(result) mustBe SEE_OTHER
+
+        modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(
+          Date(LocalDate.of(2022, 4, 1))
+        )
+        redirectLocation(result) mustBe Some(routes.RegistrationTypeController.displayPage().url)
       }
     }
 

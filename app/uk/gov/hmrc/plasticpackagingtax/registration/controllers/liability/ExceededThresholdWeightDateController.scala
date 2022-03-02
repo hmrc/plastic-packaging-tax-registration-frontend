@@ -65,13 +65,8 @@ class ExceededThresholdWeightDateController @Inject() (
               dateExceededThresholdWeight =>
                 updateRegistration(dateExceededThresholdWeight).map {
                   case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        //todo need to point to display tax start date page
-                        Redirect(routes.RegistrationTypeController.displayPage())
-                      case _ =>
-                        Redirect(commonRoutes.TaskListController.displayPage())
-                    }
+                    //todo need to point to display tax start date page
+                    Redirect(routes.RegistrationTypeController.displayPage())
                   case Left(error) => throw error
                 }
         )
