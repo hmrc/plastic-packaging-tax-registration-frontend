@@ -51,9 +51,9 @@ class ExceededThresholdWeightDateController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.liabilityDetails.dateExceededThresholdWeight match {
         case Some(data) =>
-          Ok(page(exceededThresholdWeightDate().fill(data), backLink))
+          Ok(page(exceededThresholdWeightDate().fill(data)))
         case _ =>
-          Ok(page(exceededThresholdWeightDate(), backLink))
+          Ok(page(exceededThresholdWeightDate()))
       }
     }
 
@@ -61,21 +61,19 @@ class ExceededThresholdWeightDateController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       exceededThresholdWeightDate()
         .bindFromRequest()
-        .fold(
-          (formWithErrors: Form[Date]) =>
-            Future.successful(BadRequest(page(formWithErrors, backLink))),
-          dateExceededThresholdWeight =>
-            updateRegistration(dateExceededThresholdWeight).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    //todo need to point to display tax start date page
-                    Redirect(routes.RegistrationTypeController.displayPage())
-                  case _ =>
-                    Redirect(commonRoutes.TaskListController.displayPage())
+        .fold((formWithErrors: Form[Date]) => Future.successful(BadRequest(page(formWithErrors))),
+              dateExceededThresholdWeight =>
+                updateRegistration(dateExceededThresholdWeight).map {
+                  case Right(_) =>
+                    FormAction.bindFromRequest match {
+                      case SaveAndContinue =>
+                        //todo need to point to display tax start date page
+                        Redirect(routes.RegistrationTypeController.displayPage())
+                      case _ =>
+                        Redirect(commonRoutes.TaskListController.displayPage())
+                    }
+                  case Left(error) => throw error
                 }
-              case Left(error) => throw error
-            }
         )
     }
 
@@ -87,9 +85,5 @@ class ExceededThresholdWeightDateController @Inject() (
         model.liabilityDetails.copy(dateExceededThresholdWeight = Some(formData))
       model.copy(liabilityDetails = updatedLiabilityDetails)
     }
-
-  private def backLink()(implicit request: JourneyRequest[AnyContent]) =
-    //todo need to point to have you exceeded 10000kg page
-    routes.LiabilityExpectToExceedThresholdWeightController.displayPage()
 
 }

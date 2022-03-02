@@ -65,7 +65,7 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Date]], any[Call])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[Date]])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -97,29 +97,8 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
         status(result) mustBe OK
 
         val formCaptor: ArgumentCaptor[Form[Date]] = ArgumentCaptor.forClass(classOf[Form[Date]])
-        verify(page).apply(formCaptor.capture(), any())(any(), any())
+        verify(page).apply(formCaptor.capture())(any(), any())
         formCaptor.getValue.value mustBe Some(exceededDate)
-      }
-
-    }
-
-    "set expected back links" when {
-      "to has exceed threshold weight page" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-
-        verifyBackLink(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-      }
-
-      def verifyBackLink(backLink: Call): Unit = {
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-
-        val backLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
-
-        verify(page).apply(any(), backLinkCaptor.capture())(any(), any())
-        backLinkCaptor.getValue mustBe backLink
       }
 
     }

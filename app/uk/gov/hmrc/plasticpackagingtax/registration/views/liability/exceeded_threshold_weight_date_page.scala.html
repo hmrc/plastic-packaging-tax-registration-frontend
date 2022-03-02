@@ -30,7 +30,7 @@
 )
 
 
-@(form: Form[Date], backLink: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[Date])(implicit request: Request[_], messages: Messages)
 
 @dayField = @{form("exceeded-threshold-weight-date.day")}
 @monthField = @{form("exceeded-threshold-weight-date.month")}
@@ -43,7 +43,8 @@
 
 @govukLayout(
   title = Title("liability.exceededThresholdWeightDate.title"),
-  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+  //TODO back link needs changing
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.exceededThresholdWeightDate.sectionHeader"))

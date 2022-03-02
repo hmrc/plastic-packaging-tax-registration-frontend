@@ -18,14 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import com.google.inject.Singleton
 import play.api.data.Form
-import play.api.data.Forms.{localDate, mapping}
+import play.api.data.Forms.mapping
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
 
-import java.time.{Clock, LocalDate}
+import java.time.Clock
 import javax.inject.Inject
-import scala.util.Try
 
 @Singleton
 class ExpectToExceedThresholdWeightDate @Inject() (appConfig: AppConfig, clock: Clock)

@@ -49,10 +49,9 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
     Clock.fixed(Instant.parse("2022-05-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
 
   private def createView(
-    form: Form[Date] = new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply(),
-    backLink: Call = liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
+    form: Form[Date] = new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply()
   ): Document =
-    page(form, backLink)(journeyRequest, messages)
+    page(form)(journeyRequest, messages)
 
   "Exceeded Threshold Weight Date View" should {
 
@@ -288,11 +287,10 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
     )
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply(),
-           liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
-    )(journeyRequest, messages)
+    page.f(new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply())(journeyRequest,
+                                                                              messages
+    )
     page.render(new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply(),
-                liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage(),
                 journeyRequest,
                 messages
     )
