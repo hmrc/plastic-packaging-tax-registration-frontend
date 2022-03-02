@@ -159,7 +159,7 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
     }
 
     "return 400 (BAD_REQUEST)" when {
-      "user submits invalid exceed thr start date" in {
+      "user submits invalid exceed threshold weight date" in {
         authorizedUser()
         val result =
           controller.submit()(postRequest(Json.toJson(Date(LocalDate.of(2012, 5, 1)))))

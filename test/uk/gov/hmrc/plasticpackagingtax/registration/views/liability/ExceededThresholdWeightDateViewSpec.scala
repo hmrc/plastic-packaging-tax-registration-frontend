@@ -20,7 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
@@ -159,7 +159,133 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
                                     "Liability date must be today or in the past"
       )
     }
+
+    "date is invalid" in {
+      val exceededForm = form("", "", "")
+      exceededForm.errors.size mustBe 3
+      validateErrors(exceededForm.errors,
+                     Seq(
+                       FormError("exceeded-threshold-weight-date.day",
+                                 List("liability.exceededThresholdWeightDate.empty.error"),
+                                 List()
+                       )
+                     )
+      )
+    }
+
+    "day is invalid" in {
+      val exceededForm = form("dfd", "4", "2022")
+      exceededForm.errors.size mustBe 1
+      validateErrors(exceededForm.errors,
+                     Seq(
+                       FormError("exceeded-threshold-weight-date",
+                                 List("liability.exceededThresholdWeightDate.formatting.error"),
+                                 List()
+                       )
+                     )
+      )
+    }
+    "day is empty" in {
+      val exceededForm = form("", "4", "2022")
+      exceededForm.errors.size mustBe 2
+      validateErrors(
+        exceededForm.errors,
+        Seq(FormError("day", List("liability.exceededThresholdWeightDate.one.field"), List("day")))
+      )
+    }
+    "month is invalid" in {
+      val exceededForm = form("1", "sd", "2022")
+      exceededForm.errors.size mustBe 1
+      validateErrors(exceededForm.errors.toList,
+                     List(
+                       FormError("exceeded-threshold-weight-date",
+                                 List("liability.exceededThresholdWeightDate.formatting.error"),
+                                 List()
+                       )
+                     )
+      )
+    }
+    "month is empty" in {
+      val exceededForm = form("1", "", "2022")
+      exceededForm.errors.size mustBe 2
+      validateErrors(
+        exceededForm.errors,
+        Seq(
+          FormError("month", List("liability.exceededThresholdWeightDate.one.field"), List("month"))
+        )
+      )
+    }
+    "year is invalid" in {
+      val exceededForm = form("1", "4", "xfd")
+      exceededForm.errors.size mustBe 1
+      validateErrors(exceededForm.errors,
+                     Seq(
+                       FormError("exceeded-threshold-weight-date",
+                                 List("liability.exceededThresholdWeightDate.formatting.error"),
+                                 List()
+                       )
+                     )
+      )
+    }
+    "year is empty" in {
+      val exceededForm = form("1", "4", "")
+      exceededForm.errors.size mustBe 2
+      validateErrors(
+        exceededForm.errors,
+        Seq(
+          FormError("year", List("liability.exceededThresholdWeightDate.one.field"), List("year"))
+        )
+      )
+    }
+    "month and year is empty" in {
+      val exceededForm = form("1", "", "")
+      exceededForm.errors.size mustBe 3
+      validateErrors(exceededForm.errors,
+                     Seq(
+                       FormError("month and year",
+                                 List("liability.exceededThresholdWeightDate.two.required.fields"),
+                                 List("month", "year")
+                       )
+                     )
+      )
+    }
+    "day and year is empty" in {
+      val exceededForm = form("", "4", "")
+      exceededForm.errors.size mustBe 3
+      validateErrors(exceededForm.errors,
+                     Seq(
+                       FormError("day and year",
+                                 List("liability.exceededThresholdWeightDate.two.required.fields"),
+                                 List("day", "year")
+                       )
+                     )
+      )
+    }
+    "day and month is empty" in {
+      val exceededForm = form("", "", "2022")
+      exceededForm.errors.size mustBe 3
+      validateErrors(exceededForm.errors,
+                     Seq(
+                       FormError("day and month",
+                                 List("liability.exceededThresholdWeightDate.two.required.fields"),
+                                 List("day", "month")
+                       )
+                     )
+      )
+    }
   }
+
+  private def form(day: String, month: String, year: String): Form[Date] =
+    new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply().bind(toMap(day, month, year))
+
+  private def validateErrors(actual: Seq[FormError], expected: Seq[FormError]): Unit =
+    expected.head mustBe actual.head
+
+  private def toMap(day: String, month: String, year: String): Map[String, String] =
+    Map("exceeded-threshold-weight-date.day"   -> day,
+        "exceeded-threshold-weight-date.month" -> month,
+        "exceeded-threshold-weight-date.year"  -> year
+    )
 
   override def exerciseGeneratedRenderingMethods() = {
     page.f(new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply(),
