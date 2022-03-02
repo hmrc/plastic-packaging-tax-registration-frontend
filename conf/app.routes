@@ -22,7 +22,8 @@ POST       /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controll
 GET        /backward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.BackwardLookTestController.displayPage()
 POST       /backward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.BackwardLookTestController.submit()
 
-# TODO: date exceeded capture here
+GET        /date-met-threshold    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightDateController.displayPage()
+POST       /date-met-threshold    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightDateController.submit()
 
 GET        /threshold-next-30-days       uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExpectToExceedThresholdWeightController.displayPage()
 POST       /threshold-next-30-days       uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExpectToExceedThresholdWeightController.submit()

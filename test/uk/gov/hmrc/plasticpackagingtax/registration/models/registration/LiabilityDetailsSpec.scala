@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
@@ -77,7 +77,9 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         "and 'isPreLaunch' flag is disabled" when {
           "and only 'startDate' has been answered" in {
             val liabilityDetails =
-              LiabilityDetails(startDate = Some(Date(Some(1), Some(4), Some(2022))), weight = None)
+              LiabilityDetails(startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+                               weight = None
+              )
             liabilityDetails.status mustBe TaskStatus.InProgress
           }
 
@@ -98,7 +100,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         "and liability details are all correctly filled in" in {
           val liabilityDetails =
             LiabilityDetails(startDate =
-                               Some(Date(Some(1), Some(5), Some(2022))),
+                               Some(OldDate(Some(1), Some(5), Some(2022))),
                              expectedWeight =
                                Some(LiabilityExpectedWeight(Some(true), Some(atWeightThreshold))),
                              isLiable = Some(true)
@@ -110,7 +112,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
       "and 'isPreLaunch' flag is disabled" when {
         "and liability details are all correctly filled in for weight existing exceeding" in {
           val liabilityDetails = LiabilityDetails(startDate =
-                                                    Some(Date(Some(1), Some(5), Some(2022))),
+                                                    Some(OldDate(Some(1), Some(5), Some(2022))),
                                                   weight =
                                                     Some(LiabilityWeight(Some(atWeightThreshold)))
           )
@@ -119,7 +121,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         "and liability details are all correctly filled in for weight expected to exceed" in {
           val liabilityDetails =
             LiabilityDetails(startDate =
-                               Some(Date(Some(1), Some(5), Some(2022))),
+                               Some(OldDate(Some(1), Some(5), Some(2022))),
                              weight = Some(LiabilityWeight(Some(belowWeightThreshold))),
                              expectToExceedThresholdWeight = Some(true)
             )

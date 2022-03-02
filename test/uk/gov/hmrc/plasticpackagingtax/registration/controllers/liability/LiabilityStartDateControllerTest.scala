@@ -30,7 +30,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_start_date_page
@@ -51,7 +51,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[Date]], any[Call])(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[OldDate]], any[Call])(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -140,12 +140,12 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
         mockRegistrationUpdate()
 
         val result =
-          controller.submit()(postRequestEncoded(Date(Some(1), Some(4), Some(2022)), formAction))
+          controller.submit()(postRequestEncoded(OldDate(Some(1), Some(4), Some(2022)), formAction))
 
         status(result) mustBe SEE_OTHER
 
         modifiedRegistration.liabilityDetails.startDate mustBe Some(
-          Date(Some(1), Some(4), Some(2022))
+          OldDate(Some(1), Some(4), Some(2022))
         )
         formAction._1 match {
           case "SaveAndContinue" => redirectLocation(result) mustBe Some(saveAndContinueRedirectUrl)
@@ -158,7 +158,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
       "user submits invalid liability start date" in {
         authorizedUser()
         val result =
-          controller.submit()(postRequest(Json.toJson(Date(Some(1), Some(3), Some(2012)))))
+          controller.submit()(postRequest(Json.toJson(OldDate(Some(1), Some(3), Some(2012)))))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -177,7 +177,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
         authorizedUser()
         mockRegistrationUpdateFailure()
         val result =
-          controller.submit()(postRequest(Json.toJson(Date(Some(1), Some(4), Some(2022)))))
+          controller.submit()(postRequest(Json.toJson(OldDate(Some(1), Some(4), Some(2022)))))
 
         intercept[DownstreamServiceError](status(result))
       }
@@ -186,7 +186,7 @@ class LiabilityStartDateControllerTest extends ControllerSpec {
         authorizedUser()
         mockRegistrationException()
         val result =
-          controller.submit()(postRequest(Json.toJson(Date(Some(1), Some(4), Some(2022)))))
+          controller.submit()(postRequest(Json.toJson(OldDate(Some(1), Some(4), Some(2022)))))
 
         intercept[RuntimeException](status(result))
       }

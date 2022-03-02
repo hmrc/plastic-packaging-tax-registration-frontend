@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.forms
+package uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.data.FieldMapping
+import play.api.data.Forms.of
 
 import java.time.LocalDate
 
-case class Date(date: LocalDate)
+trait Mappings extends Formatters with Constraints {
 
-object Date {
-  implicit val format: OFormat[Date] = Json.format[Date]
+  protected def localDate(
+    emptyDateKey: String,
+    singleRequiredKey: String,
+    twoRequiredKey: String,
+    invalidKey: String,
+    args: Seq[String] = Seq.empty
+  ): FieldMapping[LocalDate] =
+    of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
+
 }

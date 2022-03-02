@@ -30,19 +30,19 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   GroupMemberContactDetails,
@@ -237,7 +237,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 page(
                   registration = registration.copy(liabilityDetails =
                     LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(1000))),
-                                     startDate = Some(Date(Some(1), Some(11), Some(2022))),
+                                     startDate = Some(OldDate(Some(1), Some(11), Some(2022))),
                                      expectToExceedThresholdWeight = Some(true)
                     )
                   ),
@@ -274,7 +274,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 page(
                   registration = registration.copy(liabilityDetails =
                     LiabilityDetails(weight = Some(LiabilityWeight(totalKg = Some(11000))),
-                                     startDate = Some(Date(Some(1), Some(11), Some(2022))),
+                                     startDate = Some(OldDate(Some(1), Some(11), Some(2022))),
                                      expectToExceedThresholdWeight = None
                     )
                   ),

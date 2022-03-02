@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
@@ -37,7 +37,7 @@ case class LiabilityDetails(
   dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
   expectedWeightNext12m: Option[LiabilityWeight] = None,
   // Derived fields - not directly input by user
-  startDate: Option[Date] = None,
+  startDate: Option[OldDate] = None,
   isLiable: Option[Boolean] = None
 ) {
 

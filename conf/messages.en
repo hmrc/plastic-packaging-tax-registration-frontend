@@ -163,11 +163,10 @@ liability.sectionHeader = Liability details
 liability.expectToExceedThreshold.date.question = When did you realise your organisation or group would go over the 10,000kg threshold?
 liability.expectToExceedThreshold.date.hint = For example, 15 6 2022
 liability.expectToExceedThreshold.date.none = Enter the date you realised you would meet the threshold
-liability.expectToExceedThreshold.date.noDay = Date you realised you would meet the threshold must include the day
-liability.expectToExceedThreshold.date.noMonth = Date you realised you would meet the threshold must include the month
-liability.expectToExceedThreshold.date.noYear = Date you realised you would meet the threshold must include the year
 liability.expectToExceedThreshold.date.invalid = Date you realised you would meet the threshold must be a real date
 liability.expectToExceedThreshold.date.future = Date you realised you would meet the threshold must be today or in the past
+liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
+liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
 
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
@@ -422,6 +421,15 @@ liability.expectToExceedThresholdWeight.title = Does your organisation or group 
 liability.expectToExceedThresholdWeight.hint = If you’re registering as a group, each member must expect to meet this threshold.
 liability.expectToExceedThresholdWeight.question = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the next 30 days?
 liability.expectToExceedThresholdWeight.question.empty.error = Choose an option
+
+liability.exceededThresholdWeightDate.sectionHeader = Liability details
+liability.exceededThresholdWeightDate.title = When did your organisation or group meet the 10,000kg threshold?
+liability.exceededThresholdWeightDate.hint = For example, 15 5 2022
+liability.exceededThresholdWeightDate.formatting.error = Date you met the threshold must be a real date
+liability.exceededThresholdWeightDate.outOfRange.error = Liability date must be today or in the past
+liability.exceededThresholdWeightDate.empty.error = Enter the date you met the threshold
+liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
+liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
 
 grs.failure.title = Sorry, there is a problem with the service
 grs.failure.heading = Sorry, there is a problem with the service.

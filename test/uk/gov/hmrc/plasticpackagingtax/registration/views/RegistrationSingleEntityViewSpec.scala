@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
@@ -164,7 +164,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             startDate = Some(Date(Some(1), Some(4), Some(2022)))
+                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
           withOrganisationDetails(OrganisationDetails()),

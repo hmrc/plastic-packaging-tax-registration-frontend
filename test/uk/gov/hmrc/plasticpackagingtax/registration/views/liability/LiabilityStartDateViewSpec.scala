@@ -24,7 +24,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityStartDate.form
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_start_date_page
@@ -36,7 +36,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
   private val page = inject[liability_start_date_page]
 
   private def createView(
-    form: Form[Date] = LiabilityStartDate.form(),
+    form: Form[OldDate] = LiabilityStartDate.form(),
     backLink: Call = liabilityRoutes.LiabilityWeightController.displayPage()
   ): Document =
     page(form, backLink)(journeyRequest, messages)
@@ -138,7 +138,7 @@ class LiabilityStartDateViewSpec extends UnitViewSpec with Matchers {
     "Start date is not entered" in {
 
       val form = LiabilityStartDate.form()
-        .fillAndValidate(Date(None, None, None))
+        .fillAndValidate(OldDate(None, None, None))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
