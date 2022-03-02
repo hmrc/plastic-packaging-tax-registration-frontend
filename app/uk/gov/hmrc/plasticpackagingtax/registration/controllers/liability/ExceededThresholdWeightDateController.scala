@@ -20,12 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeightDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
@@ -65,8 +60,7 @@ class ExceededThresholdWeightDateController @Inject() (
               dateExceededThresholdWeight =>
                 updateRegistration(dateExceededThresholdWeight).map {
                   case Right(_) =>
-                    //todo need to point to display tax start date page
-                    Redirect(routes.RegistrationTypeController.displayPage())
+                    Redirect(routes.TaxStartDateController.displayPage())
                   case Left(error) => throw error
                 }
         )
@@ -77,7 +71,12 @@ class ExceededThresholdWeightDateController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { model =>
       val updatedLiabilityDetails =
-        model.liabilityDetails.copy(dateExceededThresholdWeight = Some(formData))
+        model.liabilityDetails.copy(dateExceededThresholdWeight =
+                                      Some(formData),
+                                    exceededThresholdWeight = Some(true),
+                                    expectToExceedThresholdWeight = None,
+                                    dateRealisedExpectedToExceedThresholdWeight = None
+        )
       model.copy(liabilityDetails = updatedLiabilityDetails)
     }
 

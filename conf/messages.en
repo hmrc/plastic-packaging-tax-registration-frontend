@@ -168,6 +168,13 @@ liability.expectToExceedThreshold.date.future = Date you realised you would meet
 liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
 liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
 
+liability.taxStartDate.title = Your tax start date
+liability.taxStartDate.pageHeading = Your tax start date
+liability.taxStartDate.sectionHeader = Liability details
+liability.taxStartDate.hint1 = Your tax start date is {0}.
+liability.taxStartDate.ThreshHoldBreached.hint = This is the first day of the month after you passed the 10,000kg threshold.
+liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you realised that you would pass the 10,000kg threshold within 30 days.
+
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Liability Start Date
 checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight

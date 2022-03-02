@@ -20,20 +20,20 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeightDate
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  LiabilityDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -105,7 +105,8 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
 
     "update registration and redirect on " when {
       "groups enabled" in {
-        mockRegistrationFind(aRegistration())
+
+        mockRegistrationFind(createDirtyRegistration())
         mockRegistrationUpdate()
 
         val result =
@@ -117,11 +118,8 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
           )
 
         status(result) mustBe SEE_OTHER
-
-        modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(
-          Date(LocalDate.of(2022, 4, 1))
-        )
-        redirectLocation(result) mustBe Some(routes.RegistrationTypeController.displayPage().url)
+        assertLiabilityDetails(modifiedRegistration.liabilityDetails)
+        redirectLocation(result) mustBe Some(routes.TaxStartDateController.displayPage().url)
       }
     }
 
@@ -173,4 +171,23 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
       }
     }
   }
+
+  def createDirtyRegistration(): Registration =
+    aRegistration(
+      withLiabilityDetails(liabilityDetails =
+        LiabilityDetails(exceededThresholdWeight = None,
+                         dateExceededThresholdWeight = None,
+                         expectToExceedThresholdWeight = Some(true),
+                         dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.now))
+        )
+      )
+    )
+
+  def assertLiabilityDetails(liabilityDetails: LiabilityDetails): Unit = {
+    liabilityDetails.dateExceededThresholdWeight mustBe Some(Date(LocalDate.of(2022, 4, 1)))
+    liabilityDetails.exceededThresholdWeight mustBe Some(true)
+    liabilityDetails.expectToExceedThresholdWeight mustBe None
+    liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
+  }
+
 }
