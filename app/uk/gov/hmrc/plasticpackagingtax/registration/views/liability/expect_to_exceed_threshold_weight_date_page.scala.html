@@ -32,9 +32,9 @@
 
 @(form: Form[Date])(implicit request: Request[_], messages: Messages)
 
-@dayField = @{form("day")}
-@monthField = @{form("month")}
-@yearField = @{form("year")}
+@dayField = @{form("expect-to-exceed-threshold-weight-date.day")}
+@monthField = @{form("expect-to-exceed-threshold-weight-date.month")}
+@yearField = @{form("expect-to-exceed-threshold-weight-date.year")}
 
 @errorMessages = @{
     val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")

@@ -46,16 +46,16 @@ class ExpectToExceedThresholdWeightDateController @Inject() (
       val form =
         request.registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight match {
           case Some(data) =>
-            expectToExceedThresholdWeightDate.form().fill(data)
+            expectToExceedThresholdWeightDate().fill(data)
           case _ =>
-            expectToExceedThresholdWeightDate.form()
+            expectToExceedThresholdWeightDate()
         }
       Ok(page(form))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      expectToExceedThresholdWeightDate.form()
+      expectToExceedThresholdWeightDate()
         .bindFromRequest()
         .fold((formWithErrors: Form[Date]) => Future.successful(BadRequest(page(formWithErrors))),
               dateRealisedExpectedToExceedThresholdWeight =>

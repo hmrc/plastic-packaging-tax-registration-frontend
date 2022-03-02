@@ -66,16 +66,15 @@ class ExpectToExceedThresholdWeightDateSpec extends AnyWordSpec with Matchers {
   }
 
   private def reject(day: String, month: String, year: String): Assertion =
-    expectToExceedThresholdWeightDate.form().bind(
-      toMap(day, month, year)
-    ).errors.nonEmpty mustBe true
+    expectToExceedThresholdWeightDate().bind(toMap(day, month, year)).errors.nonEmpty mustBe true
 
   private def accept(day: String, month: String, year: String): Assertion =
-    expectToExceedThresholdWeightDate.form().bind(
-      toMap(day, month, year)
-    ).errors.isEmpty mustBe true
+    expectToExceedThresholdWeightDate().bind(toMap(day, month, year)).errors.isEmpty mustBe true
 
   private def toMap(day: String, month: String, year: String): Map[String, String] =
-    Map(Date.day -> day, Date.month -> month, Date.year -> year)
+    Map("expect-to-exceed-threshold-weight-date.day"   -> day,
+        "expect-to-exceed-threshold-weight-date.month" -> month,
+        "expect-to-exceed-threshold-weight-date.year"  -> year
+    )
 
 }

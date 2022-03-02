@@ -20,7 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
@@ -45,7 +45,7 @@ class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matche
 
   private val page = inject[expect_to_exceed_threshold_weight_date_page]
 
-  private def createView(form: Form[Date] = expectToExceedThresholdWeightDate.form()): Document =
+  private def createView(form: Form[Date] = expectToExceedThresholdWeightDate()): Document =
     page(form)(journeyRequest, messages)
 
   "Expect to Exceed Threshold Weight Date View" should {
@@ -113,32 +113,42 @@ class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matche
     }
 
     "display data in date inputs" in {
-      val form = expectToExceedThresholdWeightDate.form()
-        .fill(Date(Some(1), Some(5), Some(2022)))
+      val form = expectToExceedThresholdWeightDate()
+        .fill(Date(LocalDate.of(2022, 5, 1)))
       val view = createView(form)
 
-      view.getElementById("day").attr("value") mustBe "1"
-      view.getElementById("month").attr("value") mustBe "5"
-      view.getElementById("year").attr("value") mustBe "2022"
+      view.getElementById("expect-to-exceed-threshold-weight-date.day").attr("value") mustBe "1"
+      view.getElementById("expect-to-exceed-threshold-weight-date.month").attr("value") mustBe "5"
+      view.getElementById("expect-to-exceed-threshold-weight-date.year").attr("value") mustBe "2022"
     }
 
     "display error" when {
       "no date entered" in {
-        val form = expectToExceedThresholdWeightDate.form().fillAndValidate(Date(None, None, None))
-        val view = createView(form)
-
-        view must haveGovukGlobalErrorSummary
-
-        view must haveGovukFieldError("expect-to-exceed-threshold-weight-date", "Enter the day")
-        view must haveGovukFieldError("expect-to-exceed-threshold-weight-date", "Enter the month")
-        view must haveGovukFieldError("expect-to-exceed-threshold-weight-date", "Enter the year")
+        val expectToExceedForm = form("", "", "")
+        expectToExceedForm.errors.size mustBe 3
+        expectToExceedForm.errors.head mustBe FormError(
+          "expect-to-exceed-threshold-weight-date.day",
+          List("liability.expectToExceedThreshold.date.none"),
+          List()
+        )
       }
     }
   }
 
+  private def form(day: String, month: String, year: String): Form[Date] =
+    new ExpectToExceedThresholdWeightDate(mockAppConfig, fakeClock).apply().bind(
+      toMap(day, month, year)
+    )
+
+  private def toMap(day: String, month: String, year: String): Map[String, String] =
+    Map("expect-to-exceed-threshold-weight-date.day"   -> day,
+        "expect-to-exceed-threshold-weight-date.month" -> month,
+        "expect-to-exceed-threshold-weight-date.year"  -> year
+    )
+
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(expectToExceedThresholdWeightDate.form())(journeyRequest, messages)
-    page.render(expectToExceedThresholdWeightDate.form(), journeyRequest, messages)
+    page.f(expectToExceedThresholdWeightDate())(journeyRequest, messages)
+    page.render(expectToExceedThresholdWeightDate(), journeyRequest, messages)
   }
 
 }

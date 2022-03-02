@@ -86,7 +86,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
     }
     "display page with populated form" when {
       "date previously captured" in {
-        val dateRealised = Date(Some(1), Some(5), Some(2022))
+        val dateRealised = Date(LocalDate.of(2022, 4, 1))
         mockRegistrationFind(
           aFreshRegistration.copy(liabilityDetails =
             LiabilityDetails(exceededThresholdWeight = Some(false),
@@ -108,7 +108,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
     }
 
     "redisplay page when invalid date supplied" in {
-      val resp = controller.submit()(postRequestEncoded(Date(Some(1), None, None)))
+      val resp = controller.submit()(postRequestEncoded(Date(LocalDate.of(2022, 7, 1))))
 
       status(resp) mustBe BAD_REQUEST
       contentAsString(resp) mustBe "Expect to exceed threshold date"
@@ -116,8 +116,17 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
 
     "update registration and redirect when valid date supplied" in {
       mockRegistrationUpdate()
-      val dateRealised = Date(Some(1), Some(5), Some(2022))
-      val resp         = await(controller.submit()(postRequestEncoded(dateRealised)))
+      val dateRealised = Date(LocalDate.of(2022, 4, 1))
+      val resp = await(
+        controller.submit()(
+          postJsonRequestEncodedFormAction(
+            Seq(("expect-to-exceed-threshold-weight-date.day", "1"),
+                ("expect-to-exceed-threshold-weight-date.month", "4"),
+                ("expect-to-exceed-threshold-weight-date.year", "2022")
+            )
+          )
+        )
+      )
 
       redirectLocation(Future.successful(resp)) mustBe Some(
         routes.LiabilityWeightController.displayPage().url
@@ -137,7 +146,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
       "submitting date" in {
         unAuthorizedUser()
         intercept[RuntimeException] {
-          await(controller.submit()(postRequestEncoded(Date(Some(1), Some(5), Some(2022)))))
+          await(controller.submit()(postRequestEncoded(Date(LocalDate.of(2022, 2, 1)))))
         }
       }
     }

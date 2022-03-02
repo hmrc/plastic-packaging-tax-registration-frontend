@@ -34,7 +34,7 @@ case class LiabilityDetails(
   exceededThresholdWeight: Option[Boolean] = None,
   dateExceededThresholdWeight: Option[Date] = None,
   expectToExceedThresholdWeight: Option[Boolean] = None,
-  dateRealisedExpectedToExceedThresholdWeight: Option[OldDate] = None,
+  dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
   expectedWeightNext12m: Option[LiabilityWeight] = None,
   // Derived fields - not directly input by user
   startDate: Option[OldDate] = None,
