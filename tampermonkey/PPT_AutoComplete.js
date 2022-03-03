@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.11
+// @version      15.12
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -626,8 +626,8 @@ const primaryContactEmailAddress = () => {
     }
 }
 
-const primaryContactEmailAddressPasscode = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/confirm-email-code')) {
+const emailAddressPasscode = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/.*confirm-email-code')) {
         var passcode = getPasscode()
 
         document.getElementById('value').value = passcode
@@ -635,8 +635,8 @@ const primaryContactEmailAddressPasscode = () => {
     }
 }
 
-const primaryContactEmailAddressPasscodeConfirmation = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/email-confirmed')) {
+const emailAddressPasscodeConfirmation = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/.*email-confirmed')) {
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -829,6 +829,8 @@ function completeJourney(manualJourney) {
     partnerContactName()
     partnerJobTitle()
     partnerContactEmailAddress()
+    emailAddressPasscode()
+    emailAddressPasscodeConfirmation()
     partnerContactPhoneNumber()
     partnerContactCheckAnswers()
 
@@ -851,8 +853,8 @@ function completeJourney(manualJourney) {
     primaryContactFullName()
     primaryContactJobTitle()
     primaryContactEmailAddress()
-    primaryContactEmailAddressPasscode()
-    primaryContactEmailAddressPasscodeConfirmation()
+    emailAddressPasscode()
+    emailAddressPasscodeConfirmation()
     primaryContactTelephoneNumber()
     primaryContactConfirmAddress()
     primaryContactCheckYourAnswers()

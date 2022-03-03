@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name     Plastic Packaging Tax Registration Authorisation
 // @namespace  http://tampermonkey.net/
-// @version   6.5
+// @version   6.6
 // @description Auth Wizard autocomplete script for PPT
 // @author    pmonteiro
 // @match     http*://*/auth-login-stub/gg-sign-in?continue=*register-for-plastic-packaging-tax*
