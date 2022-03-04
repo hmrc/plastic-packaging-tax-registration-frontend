@@ -26,7 +26,6 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   Registration
@@ -166,9 +165,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
         val result = sut.submit()(postRequest(JsObject.empty))
 
         status(result) mustBe SEE_OTHER
-
-        // todo: Replace with capture weight page once this is ready
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.LiabilityWeightController.displayPage().url)
       }
     }
   }

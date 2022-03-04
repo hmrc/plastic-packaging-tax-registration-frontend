@@ -20,7 +20,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -60,8 +59,7 @@ class TaxStartDateController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { _ =>
-      // todo: Replace with capture weight page once this is ready
-      Future.successful(Redirect(commonRoutes.TaskListController.displayPage()))
+      Future.successful(Redirect(routes.LiabilityWeightController.displayPage()))
     }
 
   private def updateRegistration(
