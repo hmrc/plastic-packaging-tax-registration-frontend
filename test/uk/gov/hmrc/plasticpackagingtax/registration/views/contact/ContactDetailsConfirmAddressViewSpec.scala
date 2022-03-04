@@ -82,13 +82,6 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display description" in {
-
-      view.getElementsByClass("govuk-body").get(0).text() must include(
-        messages("primaryContactDetails.confirmAddress.description")
-      )
-    }
-
     "display radio inputs" in {
 
       view must containElementWithID("useRegisteredAddress")
