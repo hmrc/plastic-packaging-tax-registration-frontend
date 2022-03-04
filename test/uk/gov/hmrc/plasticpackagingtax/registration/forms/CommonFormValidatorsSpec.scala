@@ -63,7 +63,7 @@ class CommonFormValidatorsSpec
         isValidEmail("#!$%&'*+-/=?^_{}|~@domain.org") must be(true)
       }
 
-      "is valid Phone number" in {
+      "is valid Telephone number" in {
 
         isValidTelephoneNumber("07723456765") must be(true)
         isValidTelephoneNumber("077 234 567 65") must be(true)

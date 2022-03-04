@@ -37,8 +37,8 @@ POST       /weight-next-12-months        uk.gov.hmrc.plasticpackagingtax.registr
 # Liability : common
 GET        /not-liable  uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotLiableController.displayPage()
 
-GET        /registration-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.RegistrationTypeController.displayPage()
-POST       /registration-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.RegistrationTypeController.submit()
+GET        /single-or-group    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.RegistrationTypeController.displayPage()
+POST       /single-or-group   uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.RegistrationTypeController.submit()
 
 GET        /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.displayPage()
 POST       /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.submit()
