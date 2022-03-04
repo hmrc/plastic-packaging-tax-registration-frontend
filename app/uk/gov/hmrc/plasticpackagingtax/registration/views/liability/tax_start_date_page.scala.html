@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import java.time.LocalDate
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -28,7 +29,7 @@
  continueButton:    continue,
  sectionHeader:     sectionHeader
 )
-@(startDate: String, hasExceededThresholdWeight: Boolean, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(startDate: LocalDate, hasExceededThresholdWeight: Boolean, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 @govukLayout(
     title = Title("liability.taxStartDate.title"),
@@ -36,7 +37,10 @@
 
     @sectionHeader(messages("liability.sectionHeader"))
     @pageHeading(messages("liability.taxStartDate.pageHeading"))
-    @paragraphBody(messages("liability.taxStartDate.hint1", startDate))
+    @paragraphBody(messages("liability.taxStartDate.hint1",
+                                startDate.getDayOfMonth + " " +
+                                messages(s"date.month.${startDate.getMonthValue}") + " " +
+                                startDate.getYear ))
     @paragraphBody(
         if(hasExceededThresholdWeight)
             messages("liability.taxStartDate.ThreshHoldBreached.hint")

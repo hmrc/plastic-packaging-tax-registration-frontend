@@ -70,8 +70,9 @@ class TaxStartDateControllerSpec extends ControllerSpec {
         val result = sut.displayPage()(getRequest())
 
         status(result) mustBe OK
-        verify(page).apply(startDate = ArgumentMatchers.eq("1 April 2022"), any(), any())(any(),
-                                                                                          any()
+        verify(page).apply(startDate = ArgumentMatchers.eq(LocalDate.of(2022, 4, 1)), any(), any())(
+          any(),
+          any()
         )
       }
     }

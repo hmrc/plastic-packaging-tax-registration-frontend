@@ -27,13 +27,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyReques
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
+import java.time.LocalDate
+
 @ViewTest
 class TaxStartDateViewSpec extends UnitViewSpec {
 
   private val page = inject[tax_start_date_page]
 
-  private val backLink          = Call("GET", "backLink")
-  private val startDate: String = "1 April 2022"
+  private val backLink             = Call("GET", "backLink")
+  private val startDate: LocalDate = LocalDate.of(2022, 4, 1)
 
   "liability tax start date page" should {
 
@@ -86,7 +88,7 @@ class TaxStartDateViewSpec extends UnitViewSpec {
     }
   }
 
-  private def createView(startDate: String, hasExceededThresholdWeight: Boolean, backLink: Call)(
+  private def createView(startDate: LocalDate, hasExceededThresholdWeight: Boolean, backLink: Call)(
     implicit request: JourneyRequest[AnyContent]
   ): Document =
     page(startDate, hasExceededThresholdWeight, backLink)(request, messages(request))

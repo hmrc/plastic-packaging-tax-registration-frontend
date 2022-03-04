@@ -20,15 +20,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
 
 import java.time.LocalDate
-import java.time.format.{DateTimeFormatter, FormatStyle}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,13 +48,13 @@ class TaxStartDateController @Inject() (
         case Some(date) =>
           updateRegistration(date).map { _ =>
             Ok(
-              page(date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
+              page(date,
                    request.registration.liabilityDetails.exceededThresholdWeight.getOrElse(false),
                    backLink()
               )
             )
           }
-        case _ => throw new IllegalArgumentException("Problem calculating the Tax Start Date")
+        case _ => throw new IllegalStateException("Problem calculating the Tax Start Date")
       }
     }
 
