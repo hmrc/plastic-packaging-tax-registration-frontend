@@ -105,8 +105,7 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
 
     "update registration and redirect on " when {
       "groups enabled" in {
-
-        mockRegistrationFind(createDirtyRegistration())
+        mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 
         val result =
@@ -118,7 +117,10 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
           )
 
         status(result) mustBe SEE_OTHER
-        assertLiabilityDetails(modifiedRegistration.liabilityDetails)
+
+        modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(
+          Date(LocalDate.of(2022, 4, 1))
+        )
         redirectLocation(result) mustBe Some(routes.TaxStartDateController.displayPage().url)
       }
     }
@@ -171,23 +173,4 @@ class ExceededThresholdWeightDateControllerSpec extends ControllerSpec {
       }
     }
   }
-
-  def createDirtyRegistration(): Registration =
-    aRegistration(
-      withLiabilityDetails(liabilityDetails =
-        LiabilityDetails(exceededThresholdWeight = None,
-                         dateExceededThresholdWeight = None,
-                         expectToExceedThresholdWeight = Some(true),
-                         dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.now))
-        )
-      )
-    )
-
-  def assertLiabilityDetails(liabilityDetails: LiabilityDetails): Unit = {
-    liabilityDetails.dateExceededThresholdWeight mustBe Some(Date(LocalDate.of(2022, 4, 1)))
-    liabilityDetails.exceededThresholdWeight mustBe Some(true)
-    liabilityDetails.expectToExceedThresholdWeight mustBe None
-    liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
-  }
-
 }

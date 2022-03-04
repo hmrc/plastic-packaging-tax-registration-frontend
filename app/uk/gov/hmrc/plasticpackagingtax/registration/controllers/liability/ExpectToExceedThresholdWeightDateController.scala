@@ -72,9 +72,7 @@ class ExpectToExceedThresholdWeightDateController @Inject() (
     update { registration =>
       registration.copy(liabilityDetails =
         registration.liabilityDetails.copy(dateRealisedExpectedToExceedThresholdWeight =
-                                             Some(dateRealisedExpectedToExceedThresholdWeight),
-                                           exceededThresholdWeight = None,
-                                           dateExceededThresholdWeight = None
+          Some(dateRealisedExpectedToExceedThresholdWeight)
         )
       )
     }

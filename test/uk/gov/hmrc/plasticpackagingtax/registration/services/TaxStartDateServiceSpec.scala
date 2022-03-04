@@ -42,18 +42,28 @@ class TaxStartDateServiceSpec extends PlaySpec {
   }
 
   "return an error" when {
-    "no date is set" in {
+    "no exceeded threshold date is set" in {
       new TaxStartDateServiceImpl()
-        .calculateTaxStartDate(LiabilityDetails()) mustBe None
+        .calculateTaxStartDate(LiabilityDetails(exceededThresholdWeight = Some(true))) mustBe None
+    }
+
+    "no dateRealisedExpectedToExceedThresholdWeight is set" in {
+      new TaxStartDateServiceImpl()
+        .calculateTaxStartDate(
+          LiabilityDetails(expectToExceedThresholdWeight = Some(true))
+        ) mustBe None
     }
   }
 
   private def createLiabilityDetailsForThresholdWouldBeBreached =
-    LiabilityDetails(dateRealisedExpectedToExceedThresholdWeight =
-      Some(forms.Date(LocalDate.of(2022, 4, 30)))
+    LiabilityDetails(expectToExceedThresholdWeight = Some(true),
+                     dateRealisedExpectedToExceedThresholdWeight =
+                       Some(forms.Date(LocalDate.of(2022, 4, 30)))
     )
 
   private def createLiabilityDetailsForBreachedThreshold =
-    LiabilityDetails(dateExceededThresholdWeight = Some(forms.Date(dateExceededThresholdWeight)))
+    LiabilityDetails(exceededThresholdWeight = Some(true),
+                     dateExceededThresholdWeight = Some(forms.Date(dateExceededThresholdWeight))
+    )
 
 }

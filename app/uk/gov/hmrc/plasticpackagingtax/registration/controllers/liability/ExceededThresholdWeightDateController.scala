@@ -71,12 +71,7 @@ class ExceededThresholdWeightDateController @Inject() (
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { model =>
       val updatedLiabilityDetails =
-        model.liabilityDetails.copy(dateExceededThresholdWeight =
-                                      Some(formData),
-                                    exceededThresholdWeight = Some(true),
-                                    expectToExceedThresholdWeight = None,
-                                    dateRealisedExpectedToExceedThresholdWeight = None
-        )
+        model.liabilityDetails.copy(dateExceededThresholdWeight = Some(formData))
       model.copy(liabilityDetails = updatedLiabilityDetails)
     }
 

@@ -25,12 +25,14 @@ import java.time.LocalDate
 class TaxStartDateServiceImpl extends TaxStartDateService {
 
   def calculateTaxStartDate(details: LiabilityDetails): Option[LocalDate] =
-    details.dateExceededThresholdWeight
-      .map(p => calculateExceedStartDate(Some(p)))
-      .getOrElse(details.dateRealisedExpectedToExceedThresholdWeight.map(_.date))
+    if (details.exceededThresholdWeight.exists(_ == true))
+      details.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
+    else if (details.expectToExceedThresholdWeight.exists(_ == true))
+      details.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
+    else None
 
-  private def calculateExceedStartDate(date: Option[Date]): Option[LocalDate] =
-    date.map(_.date.plusMonths(1).withDayOfMonth(1))
+  private def calculateExceedStartDate(date: Date): LocalDate =
+    date.date.plusMonths(1).withDayOfMonth(1)
 
 }
 

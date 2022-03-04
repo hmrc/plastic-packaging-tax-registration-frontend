@@ -139,27 +139,6 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
       )
     }
 
-    "clear date exceeded when update registration" in {
-      mockRegistrationFind(createDirtyRegistration)
-      mockRegistrationUpdate()
-      val dateRealised = Date(LocalDate.of(2022, 4, 1))
-
-      await(
-        controller.submit()(
-          postJsonRequestEncoded(
-            ("expect-to-exceed-threshold-weight-date.day",
-             dateRealised.date.getDayOfMonth.toString
-            ),
-            ("expect-to-exceed-threshold-weight-date.month",
-             dateRealised.date.getMonthValue.toString
-            ),
-            ("expect-to-exceed-threshold-weight-date.year", dateRealised.date.getYear.toString)
-          )
-        )
-      )
-      verifyLiabilityDetails(modifiedRegistration.liabilityDetails, dateRealised)
-    }
-
     "unauthorised access throws exceptions" when {
       "displaying page" in {
         unAuthorizedUser()
@@ -175,24 +154,4 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
       }
     }
   }
-
-  private def createDirtyRegistration: Registration =
-    aRegistration(
-      withLiabilityDetails(liabilityDetails =
-        LiabilityDetails(exceededThresholdWeight = Some(true),
-                         dateExceededThresholdWeight = Some(Date(LocalDate.now)),
-                         dateRealisedExpectedToExceedThresholdWeight = None
-        )
-      )
-    )
-
-  def verifyLiabilityDetails(
-    liabilityDetails: LiabilityDetails,
-    expectedDataRealised: Date
-  ): Unit = {
-    liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe Some(expectedDataRealised)
-    liabilityDetails.exceededThresholdWeight mustBe None
-    liabilityDetails.dateExceededThresholdWeight mustBe None
-  }
-
 }
