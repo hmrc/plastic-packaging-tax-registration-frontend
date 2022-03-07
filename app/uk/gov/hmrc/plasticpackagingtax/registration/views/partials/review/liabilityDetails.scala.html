@@ -74,7 +74,7 @@
             content = if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
                 Empty
             } else {
-                Text(viewUtils.displayDate(liabilityDetails.startDate).getOrElse(""))
+                Text(viewUtils.displayOldDate(liabilityDetails.startDate).getOrElse(""))
             }
         ),
         call = Some(pptRoutes.LiabilityStartDateController.displayPage())

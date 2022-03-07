@@ -151,14 +151,7 @@ class ReviewRegistrationController @Inject() (
         Redirect(routes.TaskListController.displayPage())
       }
     else
-      markRegistrationAsReviewed(reg).map(
-        _ =>
-          Ok(
-            reviewRegistrationPage(registration = reg,
-                                   liabilityStartLink = startRegistrationController.startLink
-            )
-          )
-      )
+      markRegistrationAsReviewed(reg).map(_ => Ok(reviewRegistrationPage(registration = reg)))
   }
 
   private def markRegistrationAsReviewed(

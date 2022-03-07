@@ -11,14 +11,7 @@ GET        /start-registration   uk.gov.hmrc.plasticpackagingtax.registration.co
 GET        /packaging-weight-next-12months        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.LiabilityWeightExpectedController.displayPage()
 POST       /packaging-weight-next-12months        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.LiabilityWeightExpectedController.submit()
 
-# Liability : post-launch (old)
-GET        /forward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityExpectToExceedThresholdWeightController.displayPage()
-POST       /forward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityExpectToExceedThresholdWeightController.submit()
-
-GET        /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityStartDateController.displayPage()
-POST       /liable-date    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityStartDateController.submit()
-
-# Liability : post-launch (new)
+# Liability : post-launch
 GET        /backward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.BackwardLookTestController.displayPage()
 POST       /backward-look    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.BackwardLookTestController.submit()
 
@@ -40,14 +33,14 @@ GET        /not-liable  uk.gov.hmrc.plasticpackagingtax.registration.controllers
 GET        /registration-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.RegistrationTypeController.displayPage()
 POST       /registration-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.RegistrationTypeController.submit()
 
-GET        /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.displayPage()
-POST       /check-plastic-packaging-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.submit()
-
 GET        /group-same-control        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.MembersUnderGroupControlController.displayPage()
 POST       /group-same-control        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.MembersUnderGroupControlController.submit()
 
 GET        /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotMembersUnderGroupControlController.displayPage()
 POST       /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotMembersUnderGroupControlController.submit()
+
+GET        /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.displayPage()
+POST       /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.submit()
 
 # Organisation Details
 GET        /grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.GrsController.grsCallback(journeyId)

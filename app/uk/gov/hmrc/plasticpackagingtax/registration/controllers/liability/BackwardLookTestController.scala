@@ -38,8 +38,8 @@ class BackwardLookTestController @Inject() (
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      Future.successful(Ok)
+    (authenticate andThen journeyAction) { implicit request =>
+      Redirect(routes.ExceededThresholdWeightDateController.displayPage())
     }
 
   def submit(): Action[AnyContent] =

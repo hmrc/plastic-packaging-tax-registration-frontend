@@ -168,13 +168,16 @@ liability.expectToExceedThreshold.date.future = Date you realised you would meet
 liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
 liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
 
-checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
-checkLiabilityDetailsAnswers.date = Liability Start Date
-checkLiabilityDetailsAnswers.weight = Plastic Packaging Total Weight
-checkLiabilityDetailsAnswers.check.label = Liability details
-checkLiabilityDetailsAnswers.future.exceed = Expect to exceed 10,000kg in the next 30 days
-checkLiabilityDetailsAnswers.registrationType = What you want to register
-checkLiabilityDetailsAnswers.membersUnderGroupControl = Group under same control
+liability.checkAnswers.title = Check your answers
+liability.checkAnswers.weight = Plastic packaging total weight
+liability.checkAnswers.exceededThreshold = 10,000kg or more plastic packaging since 1 April 2022
+liability.checkAnswers.dateExceededThreshold = Date met threshold
+liability.checkAnswers.expectToExceededThreshold = Expect to process 10,000kg or more plastic packaging in next 30 days
+liability.checkAnswers.dateRealisedExpectToExceededThreshold = Date realised will meet threshold
+liability.checkAnswers.startDate = Your tax start date
+liability.checkAnswers.expectedWeightNext12m = Expected plastic packaging processed in the next 12 months
+liability.checkAnswers.registrationType = What you want to register
+liability.checkAnswers.membersUnderGroupControl = Group under same control
 
 primaryContactDetails.sectionHeader = Contact details
 
@@ -263,6 +266,7 @@ group.organisationList.nominatedOrganisation = Nominated organisation
 addOrganisation.add.heading = Do you need to add another organisation?
 addOrganisation.empty.error = Please select Yes or No
 reviewRegistration.organisationDetails.title = Review and send your registration
+reviewRegistration.organisationDetails.check.liability = Liability details
 reviewRegistration.organisationDetails.check.label.singleEntity = Organisation details
 reviewRegistration.organisationDetails.check.label.group = Nominated organisation details
 reviewRegistration.organisationDetails.check.label.groupMembers = Organisations in the group

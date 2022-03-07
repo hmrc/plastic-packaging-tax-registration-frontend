@@ -57,9 +57,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
                 updateRegistration(expectToExceed).map {
                   case Right(_) =>
                     if (expectToExceed)
-                      Redirect(
-                        routes.LiabilityStartDateController.displayPage()
-                      ) //todo new page should go here
+                      Redirect(routes.ExpectToExceedThresholdWeightDateController.displayPage())
                     else Redirect(routes.NotLiableController.displayPage())
                   case Left(error) => throw error
                 }
