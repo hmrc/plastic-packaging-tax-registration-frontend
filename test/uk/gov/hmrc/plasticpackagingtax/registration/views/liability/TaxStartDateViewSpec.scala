@@ -66,7 +66,7 @@ class TaxStartDateViewSpec extends UnitViewSpec {
         val elem = view.getElementsByClass("govuk-body")
 
         elem.get(0).text() mustBe messages("liability.taxStartDate.hint1", "1 April 2022")
-        elem.get(1).text() mustBe messages("liability.taxStartDate.ThreshHoldBreached.hint")
+        elem.get(1).text() mustBe messages("liability.taxStartDate.threshHoldBreached.hint")
       }
 
       "threshold is expected to be exceeded" in {

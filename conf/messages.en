@@ -184,7 +184,7 @@ liability.taxStartDate.title = Your tax start date
 liability.taxStartDate.pageHeading = Your tax start date
 liability.taxStartDate.sectionHeader = Liability details
 liability.taxStartDate.hint1 = Your tax start date is {0}.
-liability.taxStartDate.ThreshHoldBreached.hint = This is the first day of the month after you passed the 10,000kg threshold.
+liability.taxStartDate.threshHoldBreached.hint = This is the first day of the month after you passed the 10,000kg threshold.
 liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you realised that you would pass the 10,000kg threshold within 30 days.
 
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers

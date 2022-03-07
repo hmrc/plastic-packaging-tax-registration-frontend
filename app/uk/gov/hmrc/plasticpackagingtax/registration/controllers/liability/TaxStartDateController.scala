@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheab
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -39,7 +40,7 @@ class TaxStartDateController @Inject() (
   page: tax_start_date_page,
   override val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
-    extends LiabilityController(mcc) with Cacheable with I18nSupport {
+    extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage: Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
