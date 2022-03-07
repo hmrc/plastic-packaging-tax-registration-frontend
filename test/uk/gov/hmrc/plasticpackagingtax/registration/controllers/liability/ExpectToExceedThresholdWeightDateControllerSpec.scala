@@ -132,7 +132,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec {
       )
 
       redirectLocation(Future.successful(resp)) mustBe Some(
-        routes.LiabilityWeightController.displayPage().url
+        routes.TaxStartDateController.displayPage().url
       )
       modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe Some(
         dateRealised

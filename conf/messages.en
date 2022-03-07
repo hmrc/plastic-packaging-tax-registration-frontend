@@ -42,6 +42,18 @@ date.day.leadingBlankSpace.error = Day must not have leading spaces
 date.day.trailingBlankSpace.error = Day must not have trailing spaces
 date.month.outOfRange.error = Day must be a number between 1 and 12
 date.month = Month
+date.month.1 = January
+date.month.2 = February
+date.month.3 = March
+date.month.4 = April
+date.month.5 = May
+date.month.6 = June
+date.month.7 = July
+date.month.8 = August
+date.month.9 = September
+date.month.10 = October
+date.month.11 = November
+date.month.12 = December
 date.month.error = Enter a valid month
 date.month.empty.error = Enter the month
 date.month.format.error = Month must only contain numbers
@@ -164,6 +176,13 @@ liability.expectToExceedThreshold.date.invalid = Date you realised you would mee
 liability.expectToExceedThreshold.date.future = Date you realised you would meet the threshold must be today or in the past
 liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
 liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
+
+liability.taxStartDate.title = Your tax start date
+liability.taxStartDate.pageHeading = Your tax start date
+liability.taxStartDate.sectionHeader = Liability details
+liability.taxStartDate.hint1 = Your tax start date is {0}.
+liability.taxStartDate.threshHoldBreached.hint = This is the first day of the month after you passed the 10,000kg threshold.
+liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you realised that you would pass the 10,000kg threshold within 30 days.
 
 checkLiabilityDetailsAnswers.title = Check your plastic packaging answers
 checkLiabilityDetailsAnswers.date = Your tax start date
@@ -697,3 +716,5 @@ amend.partner.listPartners.question = Do you need to add another partner?
 
 amend.partner.remove.title = Are you sure you want to remove {0} from the partnership?
 removePartner.empty.error = Please select Yes or No
+
+
