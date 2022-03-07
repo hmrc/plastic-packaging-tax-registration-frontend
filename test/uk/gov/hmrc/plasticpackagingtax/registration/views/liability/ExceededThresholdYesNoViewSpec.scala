@@ -20,9 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdYesNo
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_yes_no_page

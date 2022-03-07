@@ -17,31 +17,26 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import base.unit.ControllerSpec
-import org.bouncycastle.jcajce.provider.util.BadBlockException
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{clearInvocations, reset, verify, when, RETURNS_DEEP_STUBS}
+import org.mockito.Mockito.{clearInvocations, verify, when, RETURNS_DEEP_STUBS}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.{Form, FormError, Mapping}
+import play.api.data.Form
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.json.JsObject
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.auth.core.InsufficientConfidenceLevel
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdYesNo
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   Registration
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_yes_no_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdYesNo
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 class ExceededThresholdYesNoControllerSpec extends ControllerSpec {
 
