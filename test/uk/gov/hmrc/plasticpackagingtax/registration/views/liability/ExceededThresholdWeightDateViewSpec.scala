@@ -21,7 +21,6 @@ import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.data.{Form, FormError}
-import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes

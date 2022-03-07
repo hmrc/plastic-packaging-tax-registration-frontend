@@ -42,6 +42,18 @@ date.day.leadingBlankSpace.error = Day must not have leading spaces
 date.day.trailingBlankSpace.error = Day must not have trailing spaces
 date.month.outOfRange.error = Day must be a number between 1 and 12
 date.month = Month
+date.month.1 = January
+date.month.2 = February
+date.month.3 = March
+date.month.4 = April
+date.month.5 = May
+date.month.6 = June
+date.month.7 = July
+date.month.8 = August
+date.month.9 = September
+date.month.10 = October
+date.month.11 = November
+date.month.12 = December
 date.month.error = Enter a valid month
 date.month.empty.error = Enter the month
 date.month.format.error = Month must only contain numbers
@@ -89,19 +101,18 @@ registrationPage.title = Register for Plastic Packaging Tax
 registrationPage.subheading.complete = Registration complete
 registrationPage.subheading.incomplete = Registration incomplete
 registrationPage.completedSections = You have completed {0} of {1} sections.
-registrationPage.task.eligibility.heading = Eligibility check
-registrationPage.task.eligibility = Need to register
+registrationPage.task.eligibility.heading = Liability details
+registrationPage.task.eligibility = Check if you need to register
 registrationPage.task.organisation.heading = Organisation details
 registrationPage.task.organisation.heading.group = Nominated organisation details
 registrationPage.task.organisation.heading.partnership = Enter partnership details
-registrationPage.task.organisation = Organisation information
+registrationPage.task.organisation = Enter organisation details
 registrationPage.task.organisation.group = Nominated organisation information
 registrationPage.task.organisation.partnership = Partnership details
 registrationPage.task.contactDetails.heading = Contact details
 registrationPage.task.contactDetails.heading.group = Nominated organisation contact details
 registrationPage.task.contactDetails.heading.partnership = Enter details of partners in the partnership
-registrationPage.task.contactDetails = Main contact
-registrationPage.task.contactDetails.group = Main contact
+registrationPage.task.contactDetails = Enter contact details
 registrationPage.task.contactDetails.group = Main contact
 registrationPage.task.contactDetails.partnership = Enter details of the nominated partner
 registrationPage.task.contactDetails.partnership.otherPartners = Enter details of the other partners
@@ -128,8 +139,7 @@ liabilityLiableDatePage.hint = To register for this service, you must expect you
 liabilityLiableDatePage.question = Will you still be liable for the Plastic Packaging Tax by 1 April 2022?
 liabilityLiableDatePage.question.empty.error = Choose an option
 
-liabilityWeightPage.sectionHeader = Plastic packaging details
-liabilityWeightPage.sectionHeader = Plastic packaging details
+liabilityWeightPage.sectionHeader = Liability details
 liabilityWeightPage.title = Enter the weight of plastic packaging processed
 liabilityWeightPage.info = This includes all plastic packaging that you’ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
 liabilityWeightPage.info2 = If you’re unsure what to include, you can follow {0}.
@@ -159,14 +169,20 @@ liabilityExpectedWeight.leadingBlankSpace.error = Expected weight must not have 
 liabilityExpectedWeight.trailingBlankSpace.error = Expected weight must not have trailing spaces
 
 liability.sectionHeader = Liability details
-
-liability.expectToExceedThreshold.date.question = When did you realise your organisation or group would go over the 10,000kg threshold?
+liability.expectToExceedThreshold.date.question = When did you realise your organisation or group would meet the 10,000kg threshold?
 liability.expectToExceedThreshold.date.hint = For example, 15 6 2022
 liability.expectToExceedThreshold.date.none = Enter the date you realised you would meet the threshold
 liability.expectToExceedThreshold.date.invalid = Date you realised you would meet the threshold must be a real date
 liability.expectToExceedThreshold.date.future = Date you realised you would meet the threshold must be today or in the past
 liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
 liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
+
+liability.taxStartDate.title = Your tax start date
+liability.taxStartDate.pageHeading = Your tax start date
+liability.taxStartDate.sectionHeader = Liability details
+liability.taxStartDate.hint1 = Your tax start date is {0}.
+liability.taxStartDate.threshHoldBreached.hint = This is the first day of the month after you passed the 10,000kg threshold.
+liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you realised that you would pass the 10,000kg threshold within 30 days.
 
 liability.checkAnswers.title = Check your answers
 liability.checkAnswers.weight = Plastic packaging total weight
@@ -184,7 +200,7 @@ primaryContactDetails.sectionHeader = Contact details
 primaryContactDetails.fullName.default = the primary contact
 
 primaryContactDetails.fullNamePage.title = Who is the main contact?
-primaryContactDetails.fullNamePage.hint = This is the name of the person who will manage the company’s PPT account, receive updates about the account and submit returns.
+primaryContactDetails.fullNamePage.hint = This is the name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns.
 primaryContactDetails.fullNamePage.label = Name
 primaryContactDetails.fullNamePage.value.error.empty = Enter a name
 primaryContactDetails.fullNamePage.value.error.length = Name cannot be more than 160 characters long
@@ -200,11 +216,11 @@ primaryContactDetails.emailAddress.hint = We’ll only use this to send notifica
 primaryContactDetails.emailAddress.empty.error = Enter an email address
 primaryContactDetails.emailAddress.format.error = Enter an email address in the correct format
 
-primaryContactDetails.emailAddress.passcode.title = Enter the code to confirm the email address
+primaryContactDetails.emailAddress.passcode.title = Enter the code to confirm this email address
 primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK
 primaryContactDetails.emailAddress.passcode.label = Confirmation code
 primaryContactDetails.emailAddress.passcode.empty.error = Enter a passcode
-primaryContactDetails.emailAddress.passcode.detail = We have sent a code {0} to confirm your email address.
+primaryContactDetails.emailAddress.passcode.detail = We have sent a code {0} to confirm this email address.
 primaryContactDetails.emailAddress.passcode.summary = I have not received an email
 primaryContactDetails.emailAddress.passcode.summary.detail = The email may take a few minutes to arrive. Its subject line is: 'Confirm your email address'.
 primaryContactDetails.emailAddress.passcode.summary.detail.2 = Check your spam or junk folder. If it has still not arrived, you can {0}.
@@ -212,22 +228,21 @@ primaryContactDetails.emailAddress.passcode.summary.detail.link.text =  provide 
 
 
 primaryContactDetails.emailAddress.passcode.confirmation.title = Email address confirmed
-primaryContactDetails.emailAddress.passcode.confirmation.detail = Your email address is now confirmed.
+primaryContactDetails.emailAddress.passcode.confirmation.detail = This email address is now confirmed.
 
 primaryContactDetails.tooManyAttempts.passcode.title = You’ve been locked out of your PPT registration
 primaryContactDetails.tooManyAttempts.passcode.1 = This is because you entered the wrong email passcode too many times.
 primaryContactDetails.tooManyAttempts.passcode.2 = You can try again after 24 hours by signing into your PPT registration.
 
 primaryContactDetails.phoneNumber.title = What is {0}’s telephone number?
-primaryContactDetails.phoneNumber.caption = We’ll use this to contact you about your PPT account.
+primaryContactDetails.phoneNumber.caption = We’ll use this to contact you about your Plastic Packaging Tax account.
 primaryContactDetails.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
 primaryContactDetails.phoneNumber.empty.error = Enter a phone number
-primaryContactDetails.phoneNumber.tooLong.error = Phone number must be no longer than 24 digits
+primaryContactDetails.phoneNumber.tooLong.error = Telephone number must be no longer than 24 digits
 primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
 
-primaryContactDetails.confirmAddress.title = Do you want to use this as the main contact address?
-primaryContactDetails.confirmAddress.heading = Do you want to use this as the main contact address?
-primaryContactDetails.confirmAddress.description = This is the registered business address we hold.
+primaryContactDetails.confirmAddress.title = Do you want to use this registered address as the main contact address?
+primaryContactDetails.confirmAddress.heading = Do you want to use this registered address as the main contact address?
 primaryContactDetails.confirmAddress.empty.error = Choose an option
 
 primaryContactDetails.address.title = What is {0}’s business address?
@@ -252,10 +267,10 @@ primaryContactDetails.address.countryCode.empty.error = Select a country
 primaryContactDetails.check.meta.title = Check the main contact’s details
 primaryContactDetails.check.title = Check your answers
 primaryContactDetails.check.label = Main contact details
-primaryContactDetails.check.fullName = Name
+primaryContactDetails.check.fullName = Contact name
 primaryContactDetails.check.jobTitle = Job title
 primaryContactDetails.check.address = Contact address
-primaryContactDetails.check.phoneNumber = Phone number
+primaryContactDetails.check.phoneNumber = Telephone number
 primaryContactDetails.check.email = Email address
 
 group.organisationList.sectionHeader = Other organisations in the group
@@ -270,11 +285,11 @@ reviewRegistration.organisationDetails.check.liability = Liability details
 reviewRegistration.organisationDetails.check.label.singleEntity = Organisation details
 reviewRegistration.organisationDetails.check.label.group = Nominated organisation details
 reviewRegistration.organisationDetails.check.label.groupMembers = Organisations in the group
-reviewRegistration.organisationDetails.organisationType = Business type
-reviewRegistration.organisationDetails.organisationName = Business name
+reviewRegistration.organisationDetails.organisationType = Organisation type
+reviewRegistration.organisationDetails.organisationName = Organisation name
 reviewRegistration.organisationDetails.businessRegistrationNumber = Company registration number
-reviewRegistration.organisationDetails.registeredBusinessAddress = Registered business address
-reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique taxpayer reference
+reviewRegistration.organisationDetails.registeredBusinessAddress = Registered address
+reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique Taxpayer Reference
 reviewRegistration.sendYourApplication.title = Now send your application
 reviewRegistration.sendYourApplication.body = By submitting this registration you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
@@ -298,7 +313,7 @@ reviewRegistration.partner.nino = National Insurance Number
 reviewRegistration.partner.contact.name = Contact name
 reviewRegistration.partner.contact.jobTitle = Job Title
 reviewRegistration.partner.contact.email = Contact email
-reviewRegistration.partner.contact.phone = Phone number
+reviewRegistration.partner.contact.phone = Telephone number
 reviewRegistration.partner.contact.address = Contact address
 
 reviewRegistration.member.orgType = Organisation type
@@ -307,20 +322,20 @@ reviewRegistration.member.orgName = Organisation name
 reviewRegistration.member.utr = Unique Taxpayer Reference
 reviewRegistration.member.contact.name = Contact name
 reviewRegistration.member.contact.email = Contact email
-reviewRegistration.member.contact.phone = Phone number
+reviewRegistration.member.contact.phone = Telephone number
 reviewRegistration.member.contact.address = Contact address
 
 confirmationPage.title = Registration submitted
 confirmationPage.panel.body = Your Plastic Packaging Tax (PPT) registration number is {0}
 confirmationPage.panel.body.default = Your registration has already been submitted
-confirmationPage.detail.1 = You`ll need this registration number when you contact HMRC about your PPT account.
+confirmationPage.detail.1 = You’ll need this registration number if you contact HMRC about your PPT account.
 confirmationPage.detail.2 = Make sure you keep a record of it because we will not send you a confirmation email.
 confirmationPage.detail.3 = You can also find this registration number on the main screen of your PPT account.
 confirmationPage.whatHappensNext.title = What happens next
 confirmationPage.whatHappensNext.detail = PPT starts on 1 April 2022.
 confirmationPage.whatHappensNext.link = Go to your {0} to find out how to prepare your return.
 confirmationPage.whatHappensNext.link.text = PPT account
-confirmationPage.exitSurvey.link = {0} (Takes 30 seconds)
+confirmationPage.exitSurvey.link = {0}
 confirmationPage.exitSurvey.link.text = What did you think of this service?
 
 registrationType.title = What do you want to register?
@@ -385,7 +400,7 @@ partnership.otherPartners.contactPhoneNumberPage.title = What is {0}’s telepho
 partnership.otherPartners.checkAnswers.contactName = Name
 partnership.otherPartners.checkAnswers.jobTitle = Job title
 partnership.otherPartners.checkAnswers.emailAddress = Email address
-partnership.otherPartners.checkAnswers.phoneNumber = Phone number
+partnership.otherPartners.checkAnswers.phoneNumber = Telephone number
 
 unauthorised.heading = You are not registered for Plastic Packaging Tax
 unauthorised.paragraph.1 = The Plastic Packaging Tax (PPT) service will launch in April 2022, and is currently available to a limited number of people for their feedback.
@@ -564,7 +579,7 @@ group.member.already.registered.detail2 = {0} will need to de-register for PPT b
 
 amendRegistration.organisationDetails.title = Your PPT registration
 
-company.confirmAddress.title = Confirm the company address for {0}
+company.confirmAddress.title = Confirm the registered address for {0}
 
 missing.organisationName = your organisation
 
@@ -621,7 +636,7 @@ contactDetails.member.emailAddress.title = What is {0}’s email address?
 contactDetails.member.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
 
 contactDetails.member.phoneNumber.title = What is {0}’s telephone number?
-contactDetails.member.phoneNumber.caption = We’ll use this to contact you about your PPT account.
+contactDetails.member.phoneNumber.caption = We’ll use this to contact you about your Plastic Packaging Tax account.
 contactDetails.member.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
 
 contactDetails.member.check.title = Check your answers
@@ -631,7 +646,7 @@ contactDetails.member.check.orgName = Organisation name
 contactDetails.member.check.utr = Unique Taxpayer Reference
 contactDetails.member.check.contact.name = Contact name
 contactDetails.member.check.contact.email = Contact email
-contactDetails.member.check.contact.phone = Phone number
+contactDetails.member.check.contact.phone = Telephone number
 contactDetails.member.check.contact.address = Contact address
 
 addressLookup.member.contact.lookup.title = What address do you want to use for {0}?
@@ -655,7 +670,7 @@ partner.check.nino = National Insurance Number
 partner.check.contact.name = Contact name
 partner.check.contact.email = Contact email
 partner.check.contact.jobTitle = Job title
-partner.check.contact.phone = Phone number
+partner.check.contact.phone = Telephone number
 partner.check.contact.address = Contact address
 
 partnership.partnerList.title = You have added {0} partners
@@ -705,3 +720,5 @@ amend.partner.listPartners.question = Do you need to add another partner?
 
 amend.partner.remove.title = Are you sure you want to remove {0} from the partnership?
 removePartner.empty.error = Please select Yes or No
+
+

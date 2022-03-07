@@ -60,11 +60,8 @@ class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matche
       displaySignOutLink(view)
     }
 
-    // TODO: fix test when previous page is available to link to
     "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        routes.ExpectToExceedThresholdWeightDateController.displayPage()
-      )
+      view.getElementById("back-link") must haveHref(routes.TaxStartDateController.displayPage())
     }
 
     "display title" in {

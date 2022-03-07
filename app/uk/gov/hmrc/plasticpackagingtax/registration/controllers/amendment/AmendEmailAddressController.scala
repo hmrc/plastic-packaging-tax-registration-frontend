@@ -49,8 +49,8 @@ class AmendEmailAddressController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) with EmailVerificationActions {
 
-  private val backCall   = routes.AmendEmailAddressController.email()
-  private val submitCall = routes.AmendEmailAddressController.checkEmailVerificationCode()
+  private def backCall   = routes.AmendEmailAddressController.email()
+  private def submitCall = routes.AmendEmailAddressController.checkEmailVerificationCode()
 
   def email(): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>

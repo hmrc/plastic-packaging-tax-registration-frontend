@@ -37,7 +37,7 @@
 @(form: Form[ConfirmAddress], businessAddress: Address)(implicit request: Request[_], messages: Messages)
 
 @fieldSetBody = {
-@paragraphBody(message = messages("primaryContactDetails.confirmAddress.description"))
+
 @govukInsetText(InsetText(content = HtmlContent(viewUtils.extractAddress(businessAddress))))
 @govukRadios(Radios(
     hint = None,
