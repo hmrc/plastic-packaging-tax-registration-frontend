@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
@@ -26,7 +26,9 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.LiabilityWeightExpectedController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
+  routes => liabilityRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityExpectedWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.prelaunch.liability_weight_expected_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -92,9 +94,13 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
 
           formAction._1 match {
             case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
+              redirectLocation(result) mustBe Some(
+                liabilityRoutes.NotLiableController.displayPage().url
+              )
             case _ =>
-              redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
+              redirectLocation(result) mustBe Some(
+                liabilityRoutes.NotLiableController.displayPage().url
+              )
           }
         }
 
@@ -115,11 +121,11 @@ class LiabilityWeightExpectedControllerTest extends ControllerSpec {
           formAction._1 match {
             case "SaveAndContinue" =>
               redirectLocation(result) mustBe Some(
-                routes.RegistrationTypeController.displayPage().url
+                liabilityRoutes.RegistrationTypeController.displayPage().url
               )
             case _ =>
               redirectLocation(result) mustBe Some(
-                routes.RegistrationTypeController.displayPage().url
+                liabilityRoutes.RegistrationTypeController.displayPage().url
               )
           }
         }

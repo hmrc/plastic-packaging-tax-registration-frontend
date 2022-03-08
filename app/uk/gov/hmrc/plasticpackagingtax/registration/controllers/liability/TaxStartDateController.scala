@@ -80,7 +80,7 @@ class TaxStartDateController @Inject() (
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
-    if (request.registration.liabilityDetails.exceededThresholdWeight.exists(_ == true))
+    if (request.registration.liabilityDetails.exceededThresholdWeight.contains(true))
       routes.ExceededThresholdWeightDateController.displayPage()
     else routes.ExpectToExceedThresholdWeightDateController.displayPage()
 

@@ -22,7 +22,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConne
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_expect_to_exceed_threshold_weight_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,8 +31,7 @@ class BackwardLookTestController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents,
-  page: liability_expect_to_exceed_threshold_weight_page
+  mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 

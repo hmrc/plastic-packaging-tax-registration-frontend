@@ -16,12 +16,13 @@
 
 package builders
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
-  LiabilityWeight
+  LiabilityWeight,
+  RegType
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
@@ -33,6 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
 
+import java.time.LocalDate
 import java.util.UUID
 
 //noinspection ScalaStyle
@@ -46,16 +48,22 @@ trait RegistrationBuilder {
   private def modelWithDefaults: Registration =
     Registration(id = "id",
                  incorpJourneyId = Some(UUID.randomUUID().toString),
+                 registrationType = Some(RegType.SINGLE_ENTITY),
                  liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
                                                      expectedWeight = Some(
                                                        LiabilityExpectedWeight(Some(true),
                                                                                Some(12000)
                                                        )
                                                      ),
+                                                     exceededThresholdWeight = Some(false),
+                                                     expectToExceedThresholdWeight = Some(true),
+                                                     dateRealisedExpectedToExceedThresholdWeight =
+                                                       Some(Date(LocalDate.parse("2022-03-05"))),
+                                                     expectedWeightNext12m =
+                                                       Some(LiabilityWeight(Some(12000))),
                                                      startDate =
                                                        Some(OldDate(Some(1), Some(4), Some(2022))),
-                                                     isLiable = Some(true),
-                                                     expectToExceedThresholdWeight = Some(true)
+                                                     isLiable = Some(true)
                  ),
                  primaryContactDetails = PrimaryContactDetails(name = Some("Jack Gatsby"),
                                                                jobTitle = Some("Developer"),

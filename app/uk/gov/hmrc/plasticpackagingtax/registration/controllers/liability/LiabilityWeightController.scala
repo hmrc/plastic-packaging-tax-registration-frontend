@@ -18,14 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
-  FormAction,
-  SaveAndContinue
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -61,13 +56,7 @@ class LiabilityWeightController @Inject() (
             Future.successful(BadRequest(page(formWithErrors))),
           liabilityWeight =>
             updateRegistration(liabilityWeight).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    handleSaveAndContinue(liabilityWeight)
-                  case _ =>
-                    Redirect(commonRoutes.TaskListController.displayPage())
-                }
+              case Right(_)    => Redirect(routes.RegistrationTypeController.displayPage())
               case Left(error) => throw error
             }
         )
@@ -77,25 +66,9 @@ class LiabilityWeightController @Inject() (
     formData: LiabilityWeight
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedExpectToExceedThreshold =
-        if (formData.totalKg.getOrElse(0L) > deMinimisKg) None
-        else registration.liabilityDetails.expectToExceedThresholdWeight
-      val updatedLiabilityDetails =
-        registration.liabilityDetails.copy(expectToExceedThresholdWeight =
-                                             updatedExpectToExceedThreshold,
-                                           weight = Some(formData)
-        )
-      registration.copy(liabilityDetails = updatedLiabilityDetails)
-    }
-
-  private def handleSaveAndContinue(formData: LiabilityWeight): Result =
-    formData.totalKg match {
-      case Some(weight) =>
-        if (weight < deMinimisKg)
-          Redirect(routes.LiabilityExpectToExceedThresholdWeightController.displayPage())
-        else
-          Redirect(routes.LiabilityStartDateController.displayPage())
-      case None => BadRequest
+      registration.copy(liabilityDetails =
+        registration.liabilityDetails.copy(expectedWeightNext12m = Some(formData))
+      )
     }
 
 }

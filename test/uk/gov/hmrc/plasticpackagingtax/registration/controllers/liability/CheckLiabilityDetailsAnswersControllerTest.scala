@@ -56,7 +56,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     super.beforeEach()
     val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
     when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
   }
 
@@ -103,9 +103,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)))
         mockRegistrationFind(registration)
-        given(page.apply(refEq(registration), any(), any())(any(), any())).willReturn(
-          HtmlFormat.empty
-        )
+        given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
         when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
 
         verifyExpectedLinks(backLink = routes.MembersUnderGroupControlController.displayPage().url,
@@ -140,15 +138,11 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
     status(result) mustBe OK
 
-    val backLinkCaptor: ArgumentCaptor[Call]            = ArgumentCaptor.forClass(classOf[Call])
-    val changeLiabilityLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
+    val backLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
 
-    verify(page).apply(any(), backLinkCaptor.capture(), changeLiabilityLinkCaptor.capture())(any(),
-                                                                                             any()
-    )
+    verify(page).apply(any(), backLinkCaptor.capture())(any(), any())
 
     backLinkCaptor.getValue.url mustBe backLink
-    changeLiabilityLinkCaptor.getValue.url mustBe changeLiabilityLink
   }
 
 }

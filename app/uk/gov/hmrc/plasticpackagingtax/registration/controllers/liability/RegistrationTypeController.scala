@@ -87,6 +87,6 @@ class RegistrationTypeController @Inject() (
     if (isPreLaunch)
       prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
     else
-      routes.LiabilityStartDateController.displayPage()
+      routes.LiabilityWeightController.displayPage()
 
 }
