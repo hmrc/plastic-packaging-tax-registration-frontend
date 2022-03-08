@@ -435,11 +435,17 @@ liabilityExpectToExceedThresholdWeightPage.guidance.href = https://www.gov.uk/gu
 liabilityExpectToExceedThresholdWeightPage.radio.option.yes= Yes
 liabilityExpectToExceedThresholdWeightPage.radio.option.no= No
 
+liability.exceededThresholdWeight.sectionHeader = Liability details
+liability.exceededThresholdWeight.title = Has your organisation or group processed 10,000kg or more of plastic packaging since 1 April 2022?
+liability.exceededThresholdWeight.hint = If you’re registering as a group, each member must have met this threshold.
+liability.exceededThresholdWeight.question = Has your organisation or group processed 10,000kg or more of plastic packaging since 1 April 2022?
+liability.exceededThresholdWeight.question.empty.error = Select yes if your organisation or group has processed 10,000kg or more of plastic packaging since 1 April 2022
+
 liability.expectToExceedThresholdWeight.sectionHeader = Liability details
 liability.expectToExceedThresholdWeight.title = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the next 30 days?
 liability.expectToExceedThresholdWeight.hint = If you’re registering as a group, each member must expect to meet this threshold.
 liability.expectToExceedThresholdWeight.question = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the next 30 days?
-liability.expectToExceedThresholdWeight.question.empty.error = Choose an option
+liability.expectToExceedThresholdWeight.question.empty.error = Select yes if your organisation or group expects to process 10,000kg or more of plastic packaging in the next 30 days
 
 liability.exceededThresholdWeightDate.sectionHeader = Liability details
 liability.exceededThresholdWeightDate.title = When did your organisation or group meet the 10,000kg threshold?
