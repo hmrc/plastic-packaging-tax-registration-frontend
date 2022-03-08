@@ -27,8 +27,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   MetaData,
@@ -37,6 +40,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_single_entity
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+
+import java.time.LocalDate
 
 @ViewTest
 class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
@@ -96,7 +101,9 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+            LiabilityDetails(expectedWeight = Some(LiabilityExpectedWeight(Some(true), None)),
+                             exceededThresholdWeight = Some(true)
+            )
           ),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
@@ -164,6 +171,10 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
+                             exceededThresholdWeight = Some(true),
+                             dateExceededThresholdWeight =
+                               Some(Date(LocalDate.parse("2022-03-05"))),
+                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                              startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),

@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -37,6 +37,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_partnership
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+
+import java.time.LocalDate
 
 @ViewTest
 class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
@@ -110,7 +112,12 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
+                             exceededThresholdWeight = Some(true),
+                             dateExceededThresholdWeight =
+                               Some(Date(LocalDate.parse("2022-03-05"))),
+                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+            )
           ),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
@@ -185,6 +192,10 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
+                             exceededThresholdWeight = Some(true),
+                             dateExceededThresholdWeight =
+                               Some(Date(LocalDate.parse("2022-03-05"))),
+                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                              startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
@@ -263,6 +274,10 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
+                             exceededThresholdWeight = Some(true),
+                             dateExceededThresholdWeight =
+                               Some(Date(LocalDate.parse("2022-03-05"))),
+                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                              startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
@@ -344,6 +359,10 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration: Registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
+                             exceededThresholdWeight = Some(true),
+                             dateExceededThresholdWeight =
+                               Some(Date(LocalDate.parse("2022-03-05"))),
+                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                              startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),
@@ -434,6 +453,10 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
+                             exceededThresholdWeight = Some(true),
+                             dateExceededThresholdWeight =
+                               Some(Date(LocalDate.parse("2022-03-05"))),
+                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                              startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
             )
           ),

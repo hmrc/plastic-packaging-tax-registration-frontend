@@ -27,22 +27,40 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
   routes => preLaunchLiabilityRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   Registration
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class StartTaskListControllerSpec extends ControllerSpec {
+import java.time.LocalDate
+
+class StartRegistrationControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
   private val emptyRegistration = Registration("123")
 
-  private val partialRegistration = Registration(
-    id = "123",
-    liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(12000))))
+  private val partialRegistration = Registration(id = "123",
+                                                 liabilityDetails = LiabilityDetails(
+                                                   expectedWeight = Some(
+                                                     LiabilityExpectedWeight(Some(true),
+                                                                             Some(12000)
+                                                     )
+                                                   ),
+                                                   exceededThresholdWeight = Some(true),
+                                                   dateExceededThresholdWeight =
+                                                     Some(Date(LocalDate.parse("2022-03-05"))),
+                                                   expectedWeightNext12m =
+                                                     Some(LiabilityWeight(Some(12000))),
+                                                   startDate =
+                                                     Some(OldDate(Some(1), Some(4), Some(2022)))
+                                                 )
   )
 
   private val controller =
