@@ -72,7 +72,9 @@ class ExceededThresholdYesNoController @Inject() (
       // Haven't already exceeded so ask if they will exceed next
       routes.ExpectToExceedThresholdWeightController.displayPage()
 
-  private def onSuccess(alreadyExceeded: Boolean)(implicit request: JourneyRequest[_]): Future[Result] = {
+  private def onSuccess(
+    alreadyExceeded: Boolean
+  )(implicit request: JourneyRequest[_]): Future[Result] = {
     val future = updateRegistration(alreadyExceeded)
     future
       .map({
@@ -80,6 +82,5 @@ class ExceededThresholdYesNoController @Inject() (
         case _           => Redirect(nextPage(alreadyExceeded))
       })
   }
-
 
 }
