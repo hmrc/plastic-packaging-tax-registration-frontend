@@ -64,17 +64,6 @@ class ExceededThresholdYesNoControllerSpec extends ControllerSpec {
 
     "continuing an existing registration" should {
 
-      "user is authorised, a registration already exists and display page method is invoked" in {
-        val registration =
-          aRegistration(
-            withLiabilityDetails(LiabilityDetails(exceededThresholdWeight = Some(true)))
-          )
-        authorizedUser()
-        mockRegistrationFind(registration)
-        val result = controller.displayPage()(getRequest())
-        status(result) mustBe Status.OK
-      }
-
       "populate the form with the previous answer" in {
         clearInvocations(mockPage) // todo oh dear move to before hook
 
