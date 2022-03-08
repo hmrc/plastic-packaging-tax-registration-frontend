@@ -414,7 +414,7 @@ liabilityExpectToExceedThresholdWeightPage.radio.option.no= No
 
 liability.exceededThresholdWeight.sectionHeader = Liability details
 liability.exceededThresholdWeight.title = Has your organisation or group processed 10,000kg or more of plastic packaging since 1 April 2022?
-liability.exceededThresholdWeight.hint = If you're registering as a group, each member must have met this threshold.
+liability.exceededThresholdWeight.hint = If you’re registering as a group, each member must have met this threshold.
 liability.exceededThresholdWeight.question = Has your organisation or group processed 10,000kg or more of plastic packaging since 1 April 2022?
 liability.exceededThresholdWeight.question.empty.error = Select yes if your organisation or group has processed 10,000kg or more of plastic packaging since 1 April 2022
 
