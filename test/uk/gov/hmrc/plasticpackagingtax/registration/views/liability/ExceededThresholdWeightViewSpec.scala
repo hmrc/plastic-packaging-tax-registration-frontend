@@ -22,13 +22,13 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdYesNo
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_yes_no_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class ExceededThresholdYesNoViewSpec extends UnitViewSpec with Matchers {
+class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[exceeded_threshold_yes_no_page]
+  private val page = inject[exceeded_threshold_weight_page]
 
   private def createView(form: Form[Boolean] = ExceededThresholdYesNo.form()): Document =
     page(form)(journeyRequest, messages)

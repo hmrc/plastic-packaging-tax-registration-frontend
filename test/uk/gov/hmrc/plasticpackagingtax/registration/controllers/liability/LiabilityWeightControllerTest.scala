@@ -86,8 +86,9 @@ class LiabilityWeightControllerTest extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
 
-        modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
-        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe None
+        modifiedRegistration.liabilityDetails.expectedWeightNext12m mustBe Some(
+          LiabilityWeight(Some(20000))
+        )
 
         redirectLocation(result) mustBe Some(routes.RegistrationTypeController.displayPage().url)
       }

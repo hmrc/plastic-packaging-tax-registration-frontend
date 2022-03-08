@@ -71,7 +71,7 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        liabilityRoutes.BackwardLookTestController.displayPage()
+        liabilityRoutes.ExceededThresholdWeightController.displayPage()
       )
     }
 

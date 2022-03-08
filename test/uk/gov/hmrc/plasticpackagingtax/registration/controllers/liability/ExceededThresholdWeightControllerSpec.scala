@@ -29,27 +29,24 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  Registration
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_yes_no_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-class ExceededThresholdYesNoControllerSpec extends ControllerSpec {
+class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
-  val mockPage: exceeded_threshold_yes_no_page = mock[exceeded_threshold_yes_no_page]
+  val mockPage: exceeded_threshold_weight_page = mock[exceeded_threshold_weight_page]
   when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
 
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
-  val controller = new ExceededThresholdYesNoController(authenticate = mockAuthAction,
-                                                        mockJourneyAction,
-                                                        mockRegistrationConnector,
-                                                        mcc = mcc,
-                                                        page = mockPage
+  val controller = new ExceededThresholdWeightController(authenticate = mockAuthAction,
+                                                         mockJourneyAction,
+                                                         mockRegistrationConnector,
+                                                         mcc = mcc,
+                                                         page = mockPage
   )
 
   "displayPage" when {
@@ -113,8 +110,8 @@ class ExceededThresholdYesNoControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
         redirectLocation(result) mustBe Some(
-          "/register-for-plastic-packaging-tax/liable-date"
-        ) // todo wire up correct page
+          routes.ExceededThresholdWeightDateController.displayPage().url
+        )
       }
     }
 

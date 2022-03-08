@@ -44,7 +44,7 @@
         text = messages("liability.exceededThresholdWeight.question")
     )
 
-    @formHelper(action = liabilityRoutes.ExceededThresholdYesNoController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = liabilityRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
             hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeight.hint")))),

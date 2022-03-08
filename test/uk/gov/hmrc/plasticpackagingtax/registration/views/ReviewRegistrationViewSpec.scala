@@ -33,7 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
@@ -227,7 +227,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 )
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
-                "checkLiabilityDetailsAnswers.weight"
+                "liability.checkAnswers.weight"
               )
 
               getValueFor(liabilitySection, 0, liabilityView) mustBe "11000 kg"
@@ -243,7 +243,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                     LiabilityDetails(exceededThresholdWeight = Some(true),
                                      dateExceededThresholdWeight =
                                        Some(Date(LocalDate.parse("2022-03-05"))),
-                                     expectedWeightNext12m = Some(LiabilityWeight(Some(12000)))
+                                     expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+                                     startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
                     )
                   )
                 )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
@@ -265,7 +266,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(liabilitySection, 2, liabilityView) mustBe "01 Apr 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
-                liabilityRoutes.BackwardLookTestController.displayPage().url
+                liabilityRoutes.ExceededThresholdWeightController.displayPage().url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
                 liabilityRoutes.ExceededThresholdWeightDateController.displayPage()
@@ -280,7 +281,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      expectToExceedThresholdWeight = Some(true),
                                      dateRealisedExpectedToExceedThresholdWeight =
                                        Some(Date(LocalDate.parse("2022-03-06"))),
-                                     expectedWeightNext12m = Some(LiabilityWeight(Some(12000)))
+                                     expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+                                     startDate = Some(OldDate(Some(6), Some(3), Some(2022)))
                     )
                   )
                 )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
@@ -306,7 +308,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(liabilitySection, 3, liabilityView) mustBe "06 Mar 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
-                liabilityRoutes.BackwardLookTestController.displayPage().url
+                liabilityRoutes.ExceededThresholdWeightController.displayPage().url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
                 liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()

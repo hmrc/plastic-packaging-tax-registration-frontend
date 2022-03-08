@@ -12,8 +12,8 @@ GET        /packaging-weight-next-12months        uk.gov.hmrc.plasticpackagingta
 POST       /packaging-weight-next-12months        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.LiabilityWeightExpectedController.submit()
 
 # Liability : post-launch
-GET        /threshold-from-1-april-2022    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdYesNoController.displayPage()
-POST       /threshold-from-1-april-2022    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdYesNoController.submit()
+GET        /threshold-from-1-april-2022    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightController.displayPage()
+POST       /threshold-from-1-april-2022    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightController.submit()
 
 GET        /date-met-threshold    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightDateController.displayPage()
 POST       /date-met-threshold    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.ExceededThresholdWeightDateController.submit()

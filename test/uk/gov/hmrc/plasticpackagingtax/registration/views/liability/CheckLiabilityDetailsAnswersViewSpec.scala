@@ -121,12 +121,12 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       }
 
       "post-launch" in {
-        assertSummaryRows(preLaunchView,
+        assertSummaryRows(postLaunchView,
                           List(
                             SummaryRowDetail(
                               "liability.checkAnswers.exceededThreshold",
                               "No",
-                              Some(liabilityRoutes.BackwardLookTestController.displayPage())
+                              Some(liabilityRoutes.ExceededThresholdWeightController.displayPage())
                             ),
                             SummaryRowDetail(
                               "liability.checkAnswers.expectToExceededThreshold",
@@ -137,7 +137,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                             ),
                             SummaryRowDetail(
                               "liability.checkAnswers.dateRealisedExpectToExceededThreshold",
-                              "Yes",
+                              "05 Mar 2022",
                               Some(
                                 liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
                               )
@@ -145,6 +145,11 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                             SummaryRowDetail("liability.checkAnswers.startDate",
                                              "01 Apr 2022",
                                              None
+                            ),
+                            SummaryRowDetail(
+                              "liability.checkAnswers.registrationType",
+                              "A single organisation",
+                              Some(liabilityRoutes.RegistrationTypeController.displayPage())
                             )
                           )
         )

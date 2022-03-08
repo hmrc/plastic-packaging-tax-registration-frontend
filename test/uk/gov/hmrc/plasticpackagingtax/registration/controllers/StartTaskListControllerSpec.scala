@@ -59,7 +59,7 @@ class StartTaskListControllerSpec extends ControllerSpec {
         }
         "postLaunch" in {
           authorizedUser(features = Map(Features.isPreLaunch -> false))
-          verifyRedirect(liabilityRoutes.LiabilityWeightController.displayPage().url)
+          verifyRedirect(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
         }
 
         def verifyRedirect(pageUrl: String): Unit = {
