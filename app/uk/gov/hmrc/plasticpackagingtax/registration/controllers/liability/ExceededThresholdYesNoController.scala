@@ -47,10 +47,15 @@ class ExceededThresholdYesNoController @Inject() (
       }
     }
 
-  def hasErrors(form: Form[Boolean])(implicit request: Request[_]): Future[Result] =
+  def submit(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+      ExceededThresholdYesNo.form().bindFromRequest().fold(hasErrors, onSuccess)
+    }
+
+  private def hasErrors(form: Form[Boolean])(implicit request: Request[_]): Future[Result] =
     Future.successful(BadRequest(page(form)))
 
-  def updateRegistration(
+  private def updateRegistration(
     alreadyExceeded: Boolean
   )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
@@ -59,7 +64,7 @@ class ExceededThresholdYesNoController @Inject() (
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
-  def nextPage(alreadyExceeded: Boolean): Call =
+  private def nextPage(alreadyExceeded: Boolean): Call =
     if (alreadyExceeded)
       // todo should be page where we ask for date user exceeded
       routes.LiabilityStartDateController.displayPage()
@@ -67,7 +72,7 @@ class ExceededThresholdYesNoController @Inject() (
       // Haven't already exceeded so ask if they will exceed next
       routes.ExpectToExceedThresholdWeightController.displayPage()
 
-  def onSuccess(alreadyExceeded: Boolean)(implicit request: JourneyRequest[_]): Future[Result] = {
+  private def onSuccess(alreadyExceeded: Boolean)(implicit request: JourneyRequest[_]): Future[Result] = {
     val future = updateRegistration(alreadyExceeded)
     future
       .map({
@@ -76,9 +81,5 @@ class ExceededThresholdYesNoController @Inject() (
       })
   }
 
-  def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      ExceededThresholdYesNo.form().bindFromRequest().fold(hasErrors, onSuccess)
-    }
 
 }
