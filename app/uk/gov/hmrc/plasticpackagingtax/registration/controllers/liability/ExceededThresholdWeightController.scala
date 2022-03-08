@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdYesNo
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
@@ -42,14 +42,14 @@ class ExceededThresholdWeightController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.liabilityDetails.exceededThresholdWeight match {
-        case Some(data) => Ok(page(ExceededThresholdYesNo.form().fill(data)))
-        case _          => Ok(page(ExceededThresholdYesNo.form()))
+        case Some(data) => Ok(page(ExceededThresholdWeight.form().fill(data)))
+        case _          => Ok(page(ExceededThresholdWeight.form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      ExceededThresholdYesNo.form().bindFromRequest().fold(hasErrors, onSuccess)
+      ExceededThresholdWeight.form().bindFromRequest().fold(hasErrors, onSuccess)
     }
 
   private def hasErrors(form: Form[Boolean])(implicit request: Request[_]): Future[Result] =

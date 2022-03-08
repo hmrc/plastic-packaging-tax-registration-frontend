@@ -41,7 +41,7 @@ class LiabilityWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.liabilityDetails.weight match {
+      request.registration.liabilityDetails.expectedWeightNext12m match {
         case Some(data) => Ok(page(LiabilityWeight.form().fill(data)))
         case _          => Ok(page(LiabilityWeight.form()))
       }

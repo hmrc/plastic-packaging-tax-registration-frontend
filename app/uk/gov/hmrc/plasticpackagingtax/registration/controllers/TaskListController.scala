@@ -59,6 +59,6 @@ class TaskListController @Inject() (
   private def startLink(implicit request: JourneyRequest[AnyContent]) =
     if (request.isFeatureFlagEnabled(Features.isPreLaunch))
       prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
-    else liabilityRoutes.LiabilityWeightController.displayPage()
+    else liabilityRoutes.ExceededThresholdWeightController.displayPage()
 
 }

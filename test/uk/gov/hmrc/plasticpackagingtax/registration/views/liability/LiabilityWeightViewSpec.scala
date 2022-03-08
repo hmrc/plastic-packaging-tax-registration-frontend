@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_weight_page
@@ -51,7 +52,9 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") mustBe null
+      view.getElementById("back-link") must haveHref(
+        routes.TaxStartDateController.displayPage().url
+      )
     }
 
     "display title" in {

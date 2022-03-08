@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdYesNo
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -30,7 +30,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[exceeded_threshold_weight_page]
 
-  private def createView(form: Form[Boolean] = ExceededThresholdYesNo.form()): Document =
+  private def createView(form: Form[Boolean] = ExceededThresholdWeight.form()): Document =
     page(form)(journeyRequest, messages)
 
   "The view" should {
@@ -74,17 +74,17 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
     "display error" when {
       "no radio button checked" in {
-        val form = ExceededThresholdYesNo.form().bind(emptyFormData)
+        val form = ExceededThresholdWeight.form().bind(emptyFormData)
         val view = createView(form)
-        view must haveGovukFieldError("answer", messages(ExceededThresholdYesNo.emptyError))
+        view must haveGovukFieldError("answer", messages(ExceededThresholdWeight.emptyError))
         view must haveGovukGlobalErrorSummary
       }
     }
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(ExceededThresholdYesNo.form())(request, messages)
-    page.render(ExceededThresholdYesNo.form(), request, messages)
+    page.f(ExceededThresholdWeight.form())(request, messages)
+    page.render(ExceededThresholdWeight.form(), request, messages)
   }
 
 }
