@@ -48,6 +48,6 @@ class StartRegistrationController @Inject() (
   def startLink(implicit request: JourneyRequest[AnyContent]): Call =
     if (request.isFeatureFlagEnabled(Features.isPreLaunch))
       prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
-    else liabilityRoutes.LiabilityWeightController.displayPage()
+    else liabilityRoutes.ExceededThresholdWeightController.displayPage()
 
 }

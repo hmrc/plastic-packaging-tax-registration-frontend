@@ -26,12 +26,17 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
+  LiabilityExpectedWeight,
+  LiabilityWeight
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_group
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+
+import java.time.LocalDate
 
 @ViewTest
 class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
@@ -92,9 +97,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(withRegistrationType(Some(GROUP)),
                                          withLiabilityDetails(
-                                           LiabilityDetails(weight =
-                                                              Some(LiabilityWeight(Some(10000))),
-                                                            startDate = None
+                                           LiabilityDetails(
+                                             expectedWeight =
+                                               Some(LiabilityExpectedWeight(Some(true), None)),
+                                             exceededThresholdWeight = Some(true)
                                            )
                                          ),
                                          withIncorpJourneyId(None),
@@ -182,9 +188,17 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
                                            Some(GroupDetail(membersUnderGroupControl = Some(true)))
                                          ),
                                          withLiabilityDetails(
-                                           LiabilityDetails(
-                                             weight = Some(LiabilityWeight(Some(10000))),
-                                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+                                           LiabilityDetails(weight =
+                                                              Some(LiabilityWeight(Some(10000))),
+                                                            exceededThresholdWeight = Some(true),
+                                                            dateExceededThresholdWeight = Some(
+                                                              Date(LocalDate.parse("2022-03-05"))
+                                                            ),
+                                                            expectedWeightNext12m =
+                                                              Some(LiabilityWeight(Some(12000))),
+                                                            startDate = Some(
+                                                              OldDate(Some(1), Some(4), Some(2022))
+                                                            )
                                            )
                                          ),
                                          withOrganisationDetails(OrganisationDetails()),

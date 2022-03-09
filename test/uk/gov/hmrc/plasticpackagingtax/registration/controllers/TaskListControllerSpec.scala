@@ -146,7 +146,7 @@ class TaskListControllerSpec extends ControllerSpec {
       }
       "postLaunch" in {
         authorizedUser(features = Map(Features.isPreLaunch -> false))
-        verifyStartLink(liabilityRoutes.LiabilityWeightController.displayPage().url)
+        verifyStartLink(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
       }
 
       def verifyStartLink(startLink: String): Unit = {

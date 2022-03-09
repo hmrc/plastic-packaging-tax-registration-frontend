@@ -28,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.registr
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
   routes => prelaunchLiabilityRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,9 +60,17 @@ class RegistrationTypeController @Inject() (
           (formWithErrors: Form[RegistrationType]) =>
             Future.successful(BadRequest(page(formWithErrors, backLink))),
           registrationType =>
-            update(
-              registration => registration.copy(registrationType = registrationType.value)
-            ).map {
+            update(registrationType.value match {
+              case Some(RegType.GROUP) =>
+                registration => registration.copy(registrationType = registrationType.value)
+              case Some(RegType.SINGLE_ENTITY) =>
+                registration =>
+                  registration.copy(
+                    registrationType = registrationType.value,
+                    groupDetail =
+                      registration.groupDetail.map(_.copy(membersUnderGroupControl = None))
+                  )
+            }).map {
               case Right(registration) =>
                 registration.registrationType match {
                   case Some(regType) if regType == RegType.GROUP =>
@@ -78,6 +87,6 @@ class RegistrationTypeController @Inject() (
     if (isPreLaunch)
       prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
     else
-      routes.LiabilityStartDateController.displayPage()
+      routes.LiabilityWeightController.displayPage()
 
 }

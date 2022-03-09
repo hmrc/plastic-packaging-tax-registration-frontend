@@ -76,78 +76,36 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
-        "user submits the liability total weight" when {
+    "update registration and redirect as expected" when {
+      "user enters projected 12m weight" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
 
-          "and weight is greater than minimum weight and feature flag 'liabilityPreLaunch' is disabled" in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate()
+        val result = controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000))))
 
-            val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(Some(20000)), formAction))
+        status(result) mustBe SEE_OTHER
 
-            status(result) mustBe SEE_OTHER
+        modifiedRegistration.liabilityDetails.expectedWeightNext12m mustBe Some(
+          LiabilityWeight(Some(20000))
+        )
 
-            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(20000)))
-            modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe None
-
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe Some(
-                  routes.LiabilityStartDateController.displayPage().url
-                )
-              case _ =>
-                redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-            }
-          }
-          "and weight is less than minimum weight" in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate()
-            val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(Some(2000)), formAction))
-
-            status(result) mustBe SEE_OTHER
-
-            modifiedRegistration.liabilityDetails.weight mustBe Some(LiabilityWeight(Some(2000)))
-            modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
-
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe Some(
-                  routes.LiabilityExpectToExceedThresholdWeightController.displayPage().url
-                )
-              case _ =>
-                redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-            }
-          }
-
-          "and weight is not set" in {
-            authorizedUser()
-            mockRegistrationFind(aRegistration())
-            mockRegistrationUpdate()
-            when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
-
-            val result =
-              controller.submit()(postRequestEncoded(LiabilityWeight(None), formAction))
-
-            status(result) mustBe BAD_REQUEST
-
-            formAction._1 match {
-              case "SaveAndContinue" =>
-                redirectLocation(result) mustBe None
-              case _ =>
-                redirectLocation(result) mustBe None
-            }
-          }
-        }
+        redirectLocation(result) mustBe Some(routes.RegistrationTypeController.displayPage().url)
       }
     }
 
-    "return 400 (BAD_REQUEST)" when {
-      "user submits invalid liability weight" in {
+    "redisplay page" when {
+      "does not provide projected 12m weight" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+        when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
+
+        val result = controller.submit()(postRequestEncoded(LiabilityWeight(None)))
+
+        status(result) mustBe BAD_REQUEST
+      }
+      "user provides an out of range projected 12m weight" in {
         authorizedUser()
         val result =
           controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(100000000000L)))))
@@ -155,31 +113,31 @@ class LiabilityWeightControllerTest extends ControllerSpec {
         status(result) mustBe BAD_REQUEST
       }
     }
+  }
 
-    "return an error" when {
+  "return an error" when {
 
-      "user is not authorised" in {
-        unAuthorizedUser()
-        val result = controller.displayPage()(getRequest())
+    "user is not authorised" in {
+      unAuthorizedUser()
+      val result = controller.displayPage()(getRequest())
 
-        intercept[RuntimeException](status(result))
-      }
+      intercept[RuntimeException](status(result))
+    }
 
-      "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationUpdateFailure()
-        val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+    "user submits form and the registration update fails" in {
+      authorizedUser()
+      mockRegistrationUpdateFailure()
+      val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
 
-        intercept[DownstreamServiceError](status(result))
-      }
+      intercept[DownstreamServiceError](status(result))
+    }
 
-      "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
-        mockRegistrationException()
-        val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+    "user submits form and a registration update runtime exception occurs" in {
+      authorizedUser()
+      mockRegistrationException()
+      val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
 
-        intercept[RuntimeException](status(result))
-      }
+      intercept[RuntimeException](status(result))
     }
   }
 }

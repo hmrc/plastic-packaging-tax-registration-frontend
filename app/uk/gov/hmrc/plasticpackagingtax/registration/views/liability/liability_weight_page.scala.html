@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
 
 @this(
         govukLayout: main_template,
@@ -42,7 +43,9 @@
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
-@govukLayout(title = Title("liabilityWeightPage.title")) {
+@govukLayout(
+    title = Title("liabilityWeightPage.title"),
+    backButton = Some(BackButton(messages("site.back"), pptRoutes.TaxStartDateController.displayPage(), messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
 

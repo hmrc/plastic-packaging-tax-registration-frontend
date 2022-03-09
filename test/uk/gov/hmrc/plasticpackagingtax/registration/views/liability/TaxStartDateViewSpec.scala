@@ -40,7 +40,10 @@ class TaxStartDateViewSpec extends UnitViewSpec {
   "liability tax start date page" should {
 
     val view =
-      createView(startDate, true, liabilityRoutes.LiabilityStartDateController.displayPage())
+      createView(startDate,
+                 true,
+                 liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
+      )
 
     "have the correct Title" in {
       view.select("title").first must containMessage("liability.taxStartDate.title")
@@ -70,10 +73,11 @@ class TaxStartDateViewSpec extends UnitViewSpec {
       }
 
       "threshold is expected to be exceeded" in {
-        val elem = createView(startDate,
-                              false,
-                              liabilityRoutes.LiabilityStartDateController.displayPage()
-        ).getElementsByClass("govuk-body")
+        val elem =
+          createView(startDate,
+                     false,
+                     liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
+          ).getElementsByClass("govuk-body")
 
         elem.get(0).text() mustBe messages("liability.taxStartDate.hint1", "1 April 2022")
         elem.get(1).text() mustBe messages(

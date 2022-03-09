@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
 
-object ExceededThresholdYesNo extends CommonFormValidators with CommonFormValues {
+object ExceededThresholdWeight extends CommonFormValidators with CommonFormValues {
 
   val emptyError = "liability.exceededThresholdWeight.question.empty.error"
 

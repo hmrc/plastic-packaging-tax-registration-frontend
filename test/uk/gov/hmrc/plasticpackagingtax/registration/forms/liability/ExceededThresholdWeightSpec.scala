@@ -20,7 +20,7 @@ import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 
 class ExceededThresholdWeightSpec extends PlaySpec {
-  val sut: Form[Boolean] = ExceededThresholdYesNo.form()
+  val sut: Form[Boolean] = ExceededThresholdWeight.form()
 
   "The form" must {
 

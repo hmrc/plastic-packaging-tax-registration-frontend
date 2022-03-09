@@ -54,7 +54,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
     ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller"
   ).mkString(";"),
-  coverageMinimum := 95.0,
+  coverageMinimum := 94.0,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false

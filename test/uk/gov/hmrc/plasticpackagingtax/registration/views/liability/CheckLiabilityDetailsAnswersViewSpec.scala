@@ -27,6 +27,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
+  routes => prelaunchLiabilityRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -34,47 +37,32 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
-import java.time.format.DateTimeFormatter
-
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   private val mockAppConfig = mock[AppConfig]
 
-  private val backLink         = Call("GET", "backLink")
-  private val changeWeightLink = Call("GET", "changeWeightLink")
+  private val backLink = Call("GET", "backLink")
 
   private val page = inject[check_liability_details_answers_page]
 
-  private val populatedRegistration   = aRegistration()
-  private val unpopulatedRegistration = Registration("id")
+  private val registration = aRegistration()
 
   "Check liability details answers View" should {
     val preLaunchView = createView(preLaunch = true,
-                                   reg = populatedRegistration,
+                                   reg = registration,
                                    backLink = routes.TaskListController.displayPage()
     )
-    val preLaunchViewWithEmptyRegistration =
-      createView(preLaunch = true,
-                 reg = unpopulatedRegistration,
-                 backLink = routes.TaskListController.displayPage()
-      )
 
     val postLaunchView = createView(preLaunch = false,
-                                    reg = populatedRegistration,
+                                    reg = registration,
                                     backLink =
-                                      liabilityRoutes.LiabilityStartDateController.displayPage()
+                                      liabilityRoutes.RegistrationTypeController.displayPage()
     )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
-
-    val postLaunchViewWithEmptyRegistration =
-      createView(preLaunch = false,
-                 reg = unpopulatedRegistration,
-                 backLink = liabilityRoutes.LiabilityStartDateController.displayPage()
-      )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
 
     "have the correct title" in {
       List(preLaunchView, postLaunchView).foreach { view =>
-        view.select("title").first must containMessage("checkLiabilityDetailsAnswers.title")
+        view.select("title").first must containMessage("liability.checkAnswers.title")
       }
     }
 
@@ -91,15 +79,15 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Back' button" when {
-      "feature flag 'isPreLaunch' is enabled" in {
+      "pre-launch" in {
         preLaunchView.getElementById("back-link") must haveHref(
           routes.TaskListController.displayPage()
         )
       }
 
-      "feature flag 'isPreLaunch' is not enabled" in {
+      "post-launch" in {
         postLaunchView.getElementById("back-link") must haveHref(
-          liabilityRoutes.LiabilityStartDateController.displayPage()
+          liabilityRoutes.RegistrationTypeController.displayPage()
         )
       }
     }
@@ -107,76 +95,64 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
       List(preLaunchView, postLaunchView).foreach { view =>
         view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
-          "checkLiabilityDetailsAnswers.title"
+          "liability.checkAnswers.title"
         )
       }
     }
 
     "display expected content" when {
-      val populatedWeightRow =
-        SummaryRowDetail("checkLiabilityDetailsAnswers.weight",
-                         populatedRegistration.liabilityDetails.weight.get.totalKg.get.toString,
-                         liabilityRoutes.LiabilityWeightController.displayPage()
+      "pre-launch" in {
+        assertSummaryRows(preLaunchView,
+                          List(
+                            SummaryRowDetail(
+                              "liability.checkAnswers.weight",
+                              "12000 kg",
+                              Some(
+                                prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
+                              )
+                            ),
+                            SummaryRowDetail(
+                              "liability.checkAnswers.registrationType",
+                              "A single organisation",
+                              Some(liabilityRoutes.RegistrationTypeController.displayPage())
+                            )
+                          )
         )
-      val unpopulatedWeightRow = populatedWeightRow.copy(value = "")
-
-      "'preLaunch' feature flag enabled" when {
-        val populatedExceedIn30Row =
-          SummaryRowDetail(
-            "checkLiabilityDetailsAnswers.future.exceed",
-            messages("general.true"),
-            liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
-          )
-
-        val populatedIsLiableRow =
-          SummaryRowDetail("checkLiabilityDetailsAnswers.future.liable",
-                           messages("general.true"),
-                           liabilityRoutes.LiabilityStartDateController.displayPage()
-          )
-
-        "registration populated" in {
-          assertSummaryRows(preLaunchView,
-                            List(populatedWeightRow, populatedExceedIn30Row, populatedIsLiableRow)
-          )
-        }
-
-        "registration unpopulated" in {
-          val unpopulatedIsLiableRow = populatedIsLiableRow.copy(value = "")
-
-          assertSummaryRows(preLaunchViewWithEmptyRegistration,
-                            List(unpopulatedWeightRow, unpopulatedIsLiableRow)
-          )
-        }
       }
 
-      "'preLaunch' feature flag not enabled" when {
-        val populatedLiableDateRow = SummaryRowDetail("checkLiabilityDetailsAnswers.date",
-                                                      populatedRegistration.liabilityDetails.startDate.get.asLocalDate.format(
-                                                        DateTimeFormatter.ofPattern("dd MMM yyyy")
-                                                      ),
-                                                      liabilityRoutes.LiabilityStartDateController.displayPage()
+      "post-launch" in {
+        assertSummaryRows(postLaunchView,
+                          List(
+                            SummaryRowDetail(
+                              "liability.checkAnswers.exceededThreshold",
+                              "No",
+                              Some(liabilityRoutes.ExceededThresholdWeightController.displayPage())
+                            ),
+                            SummaryRowDetail(
+                              "liability.checkAnswers.expectToExceededThreshold",
+                              "Yes",
+                              Some(
+                                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
+                              )
+                            ),
+                            SummaryRowDetail(
+                              "liability.checkAnswers.dateRealisedExpectToExceededThreshold",
+                              "05 Mar 2022",
+                              Some(
+                                liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
+                              )
+                            ),
+                            SummaryRowDetail("liability.checkAnswers.startDate",
+                                             "01 Apr 2022",
+                                             None
+                            ),
+                            SummaryRowDetail(
+                              "liability.checkAnswers.registrationType",
+                              "A single organisation",
+                              Some(liabilityRoutes.RegistrationTypeController.displayPage())
+                            )
+                          )
         )
-
-        val populatedExceedIn30Row =
-          SummaryRowDetail(
-            "checkLiabilityDetailsAnswers.future.exceed",
-            messages("general.true"),
-            liabilityRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage()
-          )
-
-        "registration populated" in {
-          assertSummaryRows(postLaunchView,
-                            List(populatedWeightRow, populatedExceedIn30Row, populatedLiableDateRow)
-          )
-        }
-
-        "registration unpopulated" in {
-          val unpopulatedLiableDateRow = populatedLiableDateRow.copy(value = "")
-
-          assertSummaryRows(postLaunchViewWithEmptyRegistration,
-                            List(unpopulatedWeightRow, unpopulatedLiableDateRow)
-          )
-        }
       }
     }
 
@@ -188,8 +164,8 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(populatedRegistration, backLink, changeWeightLink)(journeyRequest, messages)
-    page.render(populatedRegistration, backLink, changeWeightLink, journeyRequest, messages)
+    page.f(registration, backLink)(journeyRequest, messages)
+    page.render(registration, backLink, journeyRequest, messages)
   }
 
   private def createView(preLaunch: Boolean, reg: Registration, backLink: Call)(implicit
@@ -198,7 +174,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     when(mockAppConfig.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(
       preLaunch
     )
-    page(reg, backLink, changeWeightLink)(request, messages(request))
+    page(reg, backLink)(request, messages(request))
   }
 
   private def assertSummaryRows(view: Document, rows: List[SummaryRowDetail]) = {
@@ -216,10 +192,11 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       elem: Element => elem.hasClass("govuk-link")
     }
     rows.zip(summaryRowLinks).foreach { row =>
-      row._2 must haveHref(row._1.actionLink)
+      if (row._1.actionLink.isDefined)
+        row._2 must haveHref(row._1.actionLink.get)
     }
   }
 
-  private case class SummaryRowDetail(label: String, value: String, actionLink: Call)
+  private case class SummaryRowDetail(label: String, value: String, actionLink: Option[Call])
 
 }

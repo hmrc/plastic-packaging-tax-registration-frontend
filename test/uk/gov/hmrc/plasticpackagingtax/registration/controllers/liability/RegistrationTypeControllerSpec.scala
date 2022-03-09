@@ -104,7 +104,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
       "postLaunch" in {
         authorizedUser(features = Map(Features.isPreLaunch -> false))
-        verifyExpectedBackLink(routes.LiabilityStartDateController.displayPage().url)
+        verifyExpectedBackLink(routes.LiabilityWeightController.displayPage().url)
       }
 
     }

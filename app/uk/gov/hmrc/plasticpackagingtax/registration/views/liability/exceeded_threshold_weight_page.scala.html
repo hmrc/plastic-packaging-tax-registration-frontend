@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdYesNo
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 
@@ -44,15 +44,15 @@
         text = messages("liability.exceededThresholdWeight.question")
     )
 
-    @formHelper(action = liabilityRoutes.ExceededThresholdYesNoController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = liabilityRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
             hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeight.hint")))),
             idPrefix = Some(form("answer").name),
             name = form("answer").name,
             items = Seq(
-                RadioItem(content = Text(messages("general.true")), value = Some(ExceededThresholdYesNo.YES), checked = form("answer").value.contains("true")),
-                RadioItem(content = Text(messages("general.false")), value = Some(ExceededThresholdYesNo.NO), checked = form("answer").value.contains("false"))
+                RadioItem(content = Text(messages("general.true")), value = Some(ExceededThresholdWeight.YES), checked = form("answer").value.contains("true")),
+                RadioItem(content = Text(messages("general.false")), value = Some(ExceededThresholdWeight.NO), checked = form("answer").value.contains("false"))
             ),
             classes = "govuk-radios",
             errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

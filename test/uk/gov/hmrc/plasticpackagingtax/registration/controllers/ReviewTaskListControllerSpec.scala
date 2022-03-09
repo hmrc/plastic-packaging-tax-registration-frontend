@@ -78,7 +78,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     authorizedUser()
-    given(mockReviewRegistrationPage.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     given(mockStartRegistrationController.startLink(any())).willReturn(liabilityStartLink)
   }
@@ -116,10 +116,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(registration),
-                                                 liabilityStartLink =
-                                                   ArgumentMatchers.eq(liabilityStartLink)
-        )(any(), any())
+        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(registration))(
+          any(),
+          any()
+        )
       }
 
       "user is authorised and registration contains a partial group member" in {
@@ -140,10 +140,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(expectedReg),
-                                                 liabilityStartLink =
-                                                   ArgumentMatchers.eq(liabilityStartLink)
-        )(any(), any())
+        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(expectedReg))(
+          any(),
+          any()
+        )
 
         verify(mockRegistrationConnector).update(
           ArgumentMatchers.eq(

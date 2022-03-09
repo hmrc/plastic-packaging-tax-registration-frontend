@@ -41,24 +41,24 @@ case class LiabilityDetails(
   isLiable: Option[Boolean] = None
 ) {
 
-  private def prelaunchCompleted: Boolean =
-    isLiable.contains(true) && expectedWeight.exists(
+  def isCompleted: Boolean =
+    startDate.nonEmpty && (isPreLaunchComplete || isPostLaunchComplete)
+
+  private def isPreLaunchComplete: Boolean =
+    expectedWeight.exists(
       expectedWeight =>
         expectedWeight.expectToExceedThresholdWeight.contains(
           true
         ) && expectedWeight.overLiabilityThreshold
     )
 
-  private def postLaunchComplete: Boolean =
-    weight.flatMap(_.totalKg).exists(
-      _ >= minimumLiabilityWeightKg
-    ) || expectToExceedThresholdWeight.contains(true)
+  private def isPostLaunchComplete: Boolean = expectedWeightNext12m.isDefined
 
-  def isCompleted: Boolean =
-    startDate.nonEmpty && (prelaunchCompleted || postLaunchComplete)
+  def isInProgress: Boolean = isPreLaunchInProgress || isPostLaunchInProgress
 
-  def isInProgress: Boolean =
-    weight.isDefined || startDate.isDefined || isLiable.isDefined || expectToExceedThresholdWeight.isDefined
+  private def isPreLaunchInProgress: Boolean = expectedWeight.isDefined
+
+  private def isPostLaunchInProgress: Boolean = exceededThresholdWeight.isDefined
 
   def status: TaskStatus =
     if (isCompleted) TaskStatus.Completed

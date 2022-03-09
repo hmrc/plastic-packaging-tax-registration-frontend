@@ -19,11 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartRegistrationController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
+  StartRegistrationController,
+  routes => commonRoutes
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -39,7 +41,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration, backLink, startRegistrationController.startLink))
+      Ok(page(request.registration, backLink))
     }
 
   def submit(): Action[AnyContent] =

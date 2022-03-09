@@ -43,8 +43,7 @@
 
 @govukLayout(
   title = Title("liability.exceededThresholdWeightDate.title"),
-  //TODO back link needs changing
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.LiabilityExpectToExceedThresholdWeightController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ExceededThresholdWeightController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.exceededThresholdWeightDate.sectionHeader"))

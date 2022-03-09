@@ -100,7 +100,9 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
 
-        redirectLocation(result) mustBe Some(routes.LiabilityStartDateController.displayPage().url)
+        redirectLocation(result) mustBe Some(
+          routes.ExpectToExceedThresholdWeightDateController.displayPage().url
+        )
       }
 
       "user submits 'No' answer" in {

@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.review._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.liabilityCheckAnswers
 
 @this(
         formHelper: FormWithCSRF,
@@ -33,17 +34,14 @@
         paragraphBody: paragraphBody,
         subHeading: subHeading,
         appConfig: AppConfig,
-        liabilityDetails: liabilityDetails,
         organisationDetails: organisationDetails,
         groupMemberListDetails: groupMemberListDetails,
         primaryContactDetails: primaryContactDetails,
-        partnerListDetails : partnerListDetails
+        partnerListDetails : partnerListDetails,
+        liabilityCheckAnswers: liabilityCheckAnswers
 )
 
-@(
-        registration: Registration,
-        liabilityStartLink: Call,
-)(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @addressChangeLink = @{
     request.registration.organisationDetails.isBusinessAddressFromGrs match {
@@ -60,7 +58,9 @@
 
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
-        @liabilityDetails(registration.liabilityDetails, Some(liabilityStartLink), registration.registrationType, registration.groupDetail)
+        @subHeading(messages("reviewRegistration.organisationDetails.check.liability"))
+        @liabilityCheckAnswers(registration)
+
         @organisationDetails(registration.organisationDetails, registration.registrationType, Some(orgRoutes.OrganisationDetailsTypeController.displayPage()), addressChangeLink)
         @if(registration.isPartnershipWithPartnerCollection) {
             @partnerListDetails(registration.nominatedPartner.get, registration.otherPartners)
