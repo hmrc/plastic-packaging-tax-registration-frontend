@@ -59,8 +59,15 @@ class ExceededThresholdWeightController @Inject() (
     alreadyExceeded: Boolean
   )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedLiabilityDetails =
-        registration.liabilityDetails.copy(exceededThresholdWeight = Some(alreadyExceeded))
+      val updatedLiabilityDetails = {
+        if (alreadyExceeded)
+          registration.liabilityDetails.copy(exceededThresholdWeight = Some(true),
+                                             expectToExceedThresholdWeight = None,
+                                             dateRealisedExpectedToExceedThresholdWeight = None
+          )
+        else
+          registration.liabilityDetails.copy(exceededThresholdWeight = Some(false))
+      }
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
