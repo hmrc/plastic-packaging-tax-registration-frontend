@@ -43,7 +43,7 @@
 
 @govukLayout(
   title = Title("liability.expectToExceedThreshold.date.question"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.TaxStartDateController.displayPage(), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButton(messages("site.back"), pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.sectionHeader"))
