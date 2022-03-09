@@ -88,7 +88,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
   "submit" should {
     authorizedUser()
 
-    "redirect" when {
+    "update registration and redirect" when {
 
       "user answers no" in {
         mockRegistrationFind(aRegistration())
@@ -109,6 +109,8 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
+        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe None
+        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
         redirectLocation(result) mustBe Some(
           routes.ExceededThresholdWeightDateController.displayPage().url
         )
