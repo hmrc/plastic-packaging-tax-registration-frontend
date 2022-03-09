@@ -53,7 +53,7 @@ class ExpectToExceedThrliability_expect_to_exceed_threshold_weight_pageesholdWei
     "display 'Back' button" in {
 
       view.getElementById("back-link") must haveHref(
-        liabilityRoutes.LiabilityWeightController.displayPage()
+        liabilityRoutes.ExceededThresholdWeightController.displayPage()
       )
     }
 
