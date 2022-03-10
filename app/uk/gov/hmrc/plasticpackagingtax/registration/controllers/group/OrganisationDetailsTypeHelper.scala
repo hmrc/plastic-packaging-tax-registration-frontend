@@ -74,13 +74,18 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         getRegisteredSocietyRedirectUrl(memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
-        if (request.registration.isGroup)
-          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-                         businessVerificationCheck,
-                         memberId
-          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-        else
-          Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
+        // TODO - redirect to not yet available page
+        // Q. Is this on a feature toggle? A configurable?
+
+      Future(Redirect(partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad()))
+
+//        if (request.registration.isGroup)
+//          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+//                         businessVerificationCheck,
+//                         memberId
+//          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+//        else
+//          Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
       case _ =>
         Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
     }

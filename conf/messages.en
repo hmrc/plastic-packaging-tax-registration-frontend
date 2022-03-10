@@ -376,6 +376,12 @@ partnership.name.title = What is the name of the partnership?
 partnership.name.empty.error = Please enter your partnership name
 partnership.name.format.error = Please enter your partnership name in correct format
 
+partnership.registrationAvailableSoon.header = Partnership
+partnership.registrationAvailableSoon.title = Partnership registration will be available soon
+partnership.registrationAvailableSoon = {0} and we’ll contact you when the service becomes available
+partnership.registrationAvailableSoon.link = Tell us you would like to register as a partnership
+partnership.registrationAvailableSoon.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
+
 partner.type.SoleTrader = Sole trader
 partner.type.UkCompany = UK limited company
 partner.type.RegisteredSociety = Registered society
@@ -686,6 +692,8 @@ addPartner.empty.error = Select yes if you need to add another partner
 
 partnership.removePartner.title = Are you sure you want to remove {0} from the partnership?
 partnership.removePartner.error.empty = Please select Yes or No
+
+
 
 amend.organisation.title = Your organisation’s details
 amend.individual.title = Your details

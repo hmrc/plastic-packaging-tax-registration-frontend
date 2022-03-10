@@ -109,6 +109,8 @@ GET        /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingt
 POST       /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.submitNewPartner()
 POST       /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.submitExistingPartner(partnerId: String)
 
+GET        /partnership-registration-available-soon    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerRegistrationAvailableSoonController.onPageLoad()
+
 GET        /partner-name                        uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerNameController.displayNewPartner()
 POST       /partner-name                        uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerNameController.submitNewPartner()
 GET        /partner-name/:partnerId             uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerNameController.displayExistingPartner(partnerId: String)
