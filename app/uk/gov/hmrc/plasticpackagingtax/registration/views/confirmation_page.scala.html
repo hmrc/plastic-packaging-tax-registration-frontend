@@ -15,43 +15,86 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
+
+@import java.time.LocalDate
 
 @this(
-    govukLayout: main_template,
-    govukPanel : GovukPanel,
-    subHeading: subHeading,
-    paragraphBody: paragraphBody,
-    link: link,
-    appConfig: AppConfig
+        govukLayout: main_template,
+        govukPanel: GovukPanel,
+        subHeading: subHeading,
+        paragraphBody: paragraphBody,
+        paragraph: paragraph,
+        link: link,
+        appConfig: AppConfig,
+        viewUtils: ViewUtils,
+        bulletList: bulletList
 )
 
-@()(implicit request: Request[_], messages: Messages, flash: Flash)
+@()(implicit request: AuthenticatedRequest[_], messages: Messages, flash: Flash)
+
+@heading = {
+    @if(flash.get(FlashKeys.groupReg).contains(true.toString)) {
+        @messages("confirmationPage.group.heading", viewUtils.displayLocalDate(LocalDate.now()))
+    } else {
+        @messages("confirmationPage.heading", viewUtils.displayLocalDate(LocalDate.now()))
+    }
+}
+
+@preLaunchDetail = {
+    @paragraphBody(message = messages("confirmationPage.preLaunch.whatHappensNext.detail"))
+    @paragraphBody(message = messages("confirmationPage.preLaunch.whatHappensNext.link",
+        link(text = messages("confirmationPage.preLaunch.whatHappensNext.link.text"), call = Call("GET", appConfig.pptAccountUrl))))
+}
+
+@postLaunchDetail = {
+    @paragraphBody(message = messages("confirmationPage.whatHappensNext.detail",
+        link(text = messages("confirmationPage.whatHappensNext.detail.link"), call = Call("GET", appConfig.pptAccountUrl))))
+    @bulletList(elements = Seq(
+        Html(messages("confirmationPage.whatHappensNext.detail.item1")),
+        Html(messages("confirmationPage.whatHappensNext.detail.item2"))
+    ))
+}
 
 @govukLayout(title = Title("confirmationPage.title")) {
 
     @govukPanel(Panel(
-        title = Text(messages("confirmationPage.title")),
+        title = HtmlContent(heading),
         content = HtmlContent(
             flash.get(FlashKeys.referenceId)
                     .map(referenceId => messages("confirmationPage.panel.body", referenceId))
                     .getOrElse(messages("confirmationPage.panel.body.default")))
     ))
 
-    @paragraphBody(message = messages("confirmationPage.detail.1"))
-    @paragraphBody(message = messages("confirmationPage.detail.2"))
-    @paragraphBody(message = messages("confirmationPage.detail.3"))
+    <div id="detail">
+        @paragraphBody(message = messages("confirmationPage.detail.1"))
+        @paragraphBody(message = messages("confirmationPage.detail.2"))
+        @paragraphBody(message = messages("confirmationPage.detail.3",
+            link(text = messages("confirmationPage.detail.3.link"), call = Call("GET", appConfig.pptAccountUrl))))
+    </div>
 
-    @subHeading(text = messages("confirmationPage.whatHappensNext.title"))
+    <div id="what-happens-next">
+        @subHeading(text = messages("confirmationPage.whatHappensNext.title"))
 
-    @paragraphBody(message = messages("confirmationPage.whatHappensNext.detail"))
+        @if(request.isFeatureFlagEnabled(Features.isPreLaunch)) {
+            @preLaunchDetail
+        } else {
+            @postLaunchDetail
+        }
+    </div>
 
-    @paragraphBody(message = messages("confirmationPage.whatHappensNext.link",
-        link(text = messages("confirmationPage.whatHappensNext.link.text"), call = Call("GET", appConfig.pptAccountUrl))))
+    <div id="bta">
+        @paragraphBody(message = messages("confirmationPage.whatHappensNext.bta",
+            link(text = messages("confirmationPage.whatHappensNext.bta.link"), call = Call("GET", appConfig.businessAccountUrl))))
+    </div>
 
-    @paragraphBody(message = messages("confirmationPage.exitSurvey.link",
-        link(text = messages("confirmationPage.exitSurvey.link.text"), call = Call("GET", appConfig.exitSurveyUrl))))
-
+    <div id="exit-survey">
+        @paragraphBody(classes = "govuk-body govuk-!-margin-top-8", message = messages("confirmationPage.exitSurvey.link",
+            link(text = messages("confirmationPage.exitSurvey.link.text"), call = Call("GET", appConfig.exitSurveyUrl))))
+    </div>
 }

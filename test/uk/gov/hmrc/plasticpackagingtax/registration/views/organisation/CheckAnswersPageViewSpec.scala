@@ -169,7 +169,8 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
             )
           )
           val journeyReq = JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                                                                   PptTestData.newUser()
+                                                                   PptTestData.newUser(),
+                                                                   appConfig
                                           ),
                                           soleTraderRegistration,
                                           appConfig
@@ -224,7 +225,8 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
             )
           )
           val journeyReq = JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                                                                   PptTestData.newUser()
+                                                                   PptTestData.newUser(),
+                                                                   appConfig
                                           ),
                                           updatedRegistation,
                                           appConfig

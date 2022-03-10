@@ -58,7 +58,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                                     reg = registration,
                                     backLink =
                                       liabilityRoutes.RegistrationTypeController.displayPage()
-    )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
+    )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
 
     "have the correct title" in {
       List(preLaunchView, postLaunchView).foreach { view =>

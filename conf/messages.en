@@ -326,15 +326,26 @@ reviewRegistration.member.contact.phone = Telephone number
 reviewRegistration.member.contact.address = Contact address
 
 confirmationPage.title = Registration submitted
+confirmationPage.heading = Registration submitted on {0}
+confirmationPage.group.heading = Group registration submitted on {0}
 confirmationPage.panel.body = Your Plastic Packaging Tax (PPT) registration number is {0}
 confirmationPage.panel.body.default = Your registration has already been submitted
 confirmationPage.detail.1 = You’ll need this registration number if you contact HMRC about your PPT account.
 confirmationPage.detail.2 = Make sure you keep a record of it because we will not send you a confirmation email.
-confirmationPage.detail.3 = You can also find this registration number on the main screen of your PPT account.
+confirmationPage.detail.3 = You can also find this registration number on the main screen of your {0}.
+confirmationPage.detail.3.link = PPT account
+
 confirmationPage.whatHappensNext.title = What happens next
-confirmationPage.whatHappensNext.detail = PPT starts on 1 April 2022.
-confirmationPage.whatHappensNext.link = Go to your {0} to find out how to prepare your return.
-confirmationPage.whatHappensNext.link.text = PPT account
+confirmationPage.preLaunch.whatHappensNext.detail = PPT starts on 1 April 2022.
+confirmationPage.preLaunch.whatHappensNext.link = Go to your {0} to find out how to prepare your return.
+confirmationPage.preLaunch.whatHappensNext.link.text = PPT account
+confirmationPage.whatHappensNext.detail = Go to your {0} to:
+confirmationPage.whatHappensNext.detail.link = PPT account
+confirmationPage.whatHappensNext.detail.item1 = submit a return
+confirmationPage.whatHappensNext.detail.item2 = find out how to prepare a return
+confirmationPage.whatHappensNext.bta = You can also use {0} to manage your PPT account or allow someone else to manage it for you.
+confirmationPage.whatHappensNext.bta.link = your business tax account
+
 confirmationPage.exitSurvey.link = {0}
 confirmationPage.exitSurvey.link.text = What did you think of this service?
 

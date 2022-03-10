@@ -42,7 +42,7 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
     userFeatureFlags: Map[String, Boolean] = Map.empty
   ): Document =
     page(form, countryService.getAll(), backLink, updateLink, headingKey, contactName)(
-      generateRequest(userFeatureFlags),
+      journeyRequest(userFeatureFlags),
       messages
     )
 

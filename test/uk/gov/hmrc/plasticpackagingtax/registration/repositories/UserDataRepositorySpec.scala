@@ -30,6 +30,7 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 import java.util.concurrent.TimeUnit
@@ -40,7 +41,8 @@ class UserDataRepositorySpec
     extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
     with DefaultAwaitTimeout with MongoSupport {
 
-  val mockConfig = mock[Configuration]
+  private val appConfig: AppConfig = mock[AppConfig]
+  private val mockConfig           = mock[Configuration]
   when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
     FiniteDuration(1, TimeUnit.MINUTES)
   )
@@ -51,7 +53,8 @@ class UserDataRepositorySpec
 
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
     new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),
-                             PptTestData.newUser("123")
+                             PptTestData.newUser("123"),
+                             appConfig
     )
 
   override def beforeEach(): Unit = {

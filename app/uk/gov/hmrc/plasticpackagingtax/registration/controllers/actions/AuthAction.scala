@@ -149,7 +149,8 @@ abstract class AuthActionBase @Inject() (
           SignedInUser(allEnrolments,
                        identityData,
                        allowedUsers.getUserFeatures(email).getOrElse(appConfig.defaultFeatures)
-          )
+          ),
+          appConfig
         )
       )
     else {

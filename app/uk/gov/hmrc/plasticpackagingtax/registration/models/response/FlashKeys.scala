@@ -18,4 +18,5 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.response
 
 object FlashKeys {
   val referenceId: String = "referenceId"
+  val groupReg: String    = "groupReg"
 }

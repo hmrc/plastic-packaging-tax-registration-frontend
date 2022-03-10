@@ -26,6 +26,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.await
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -35,6 +36,7 @@ class MongoRegistrationAmendmentRepositorySpec
     extends AnyWordSpec with RegistrationBuilder with Matchers with MockitoSugar
     with BeforeAndAfterEach with DefaultAwaitTimeout {
 
+  private val appConfig: AppConfig   = mock[AppConfig]
   private val mockUserDataRepository = mock[UserDataRepository]
 
   private val mongoRegistrationAmendmentRepository = new RegistrationAmendmentRepositoryImpl(
@@ -43,7 +45,7 @@ class MongoRegistrationAmendmentRepositorySpec
 
   private val sessionId        = "123"
   private val registration     = aRegistration()
-  private implicit val request = new AuthenticatedRequest(FakeRequest(), newUser())
+  private implicit val request = new AuthenticatedRequest(FakeRequest(), newUser(), appConfig)
 
   override protected def beforeEach(): Unit = {
     reset(mockUserDataRepository)

@@ -62,7 +62,10 @@ class KeepAliveControllerSpec extends ControllerSpec {
         )
         authorizedUser()
         val result = controller.keepAlive()(
-          new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")), newUser())
+          new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")),
+                                   newUser(),
+                                   appConfig
+          )
         )
 
         status(result) mustBe OK
@@ -92,7 +95,10 @@ class KeepAliveControllerSpec extends ControllerSpec {
         )
         val result =
           controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")), newUser())
+            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
+                                     newUser(),
+                                     appConfig
+            )
           )
         status(result) mustBe OK
         verify(mockUserDataRepository, never()).put(any[String])(
@@ -109,7 +115,10 @@ class KeepAliveControllerSpec extends ControllerSpec {
         )
         val result =
           controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")), newUser())
+            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
+                                     newUser(),
+                                     appConfig
+            )
           )
         status(result) mustBe OK
         verify(mockUserDataRepository, never()).put(any[String])(
@@ -121,7 +130,10 @@ class KeepAliveControllerSpec extends ControllerSpec {
         authorizedUser()
         val result =
           controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("session", "123456")), newUser())
+            new AuthenticatedRequest(FakeRequest().withSession(("session", "123456")),
+                                     newUser(),
+                                     appConfig
+            )
           )
         intercept[RuntimeException](status(result))
       }

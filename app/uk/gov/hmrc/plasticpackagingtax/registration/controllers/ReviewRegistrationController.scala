@@ -48,7 +48,6 @@ class ReviewRegistrationController @Inject() (
   metrics: Metrics,
   override val registrationConnector: RegistrationConnector,
   auditor: Auditor,
-  startRegistrationController: StartRegistrationController,
   reviewRegistrationPage: review_registration_page,
   registrationFilterService: RegistrationGroupFilterService
 )(implicit ec: ExecutionContext)
@@ -107,10 +106,22 @@ class ReviewRegistrationController @Inject() (
     )
     if (response.enrolmentInitiatedSuccessfully.contains(true))
       Redirect(routes.ConfirmationController.displayPage())
-        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
+        .flashing(
+          Flash(
+            Map(FlashKeys.referenceId -> response.pptReference,
+                FlashKeys.groupReg    -> registration.isGroup.toString
+            )
+          )
+        )
     else
       Redirect(routes.NotableErrorController.enrolmentFailure())
-        .flashing(Flash(Map(FlashKeys.referenceId -> response.pptReference)))
+        .flashing(
+          Flash(
+            Map(FlashKeys.referenceId -> response.pptReference,
+                FlashKeys.groupReg    -> registration.isGroup.toString
+            )
+          )
+        )
   }
 
   private def handleFailedSubscription(registration: Registration, failures: Seq[EisError])(implicit
