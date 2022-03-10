@@ -146,7 +146,8 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
                                              "01 Apr 2022",
                                              None
                             ),
-                            SummaryRowDetail("liability.checkAnswers.expectedWeightNext12m",
+                            SummaryRowDetail(
+                              "liability.checkAnswers.expectedWeightNext12m",
                               "12000 kg",
                               Some(liabilityRoutes.LiabilityWeightController.displayPage())
                             ),
