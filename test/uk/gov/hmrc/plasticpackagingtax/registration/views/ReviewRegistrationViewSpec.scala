@@ -262,8 +262,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
 
               getValueFor(liabilitySection, 0, liabilityView) mustBe "Yes"
-              getValueFor(liabilitySection, 1, liabilityView) mustBe "05 Mar 2022"
-              getValueFor(liabilitySection, 2, liabilityView) mustBe "01 Apr 2022"
+              getValueFor(liabilitySection, 1, liabilityView) mustBe "05 March 2022"
+              getValueFor(liabilitySection, 2, liabilityView) mustBe "01 April 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
                 liabilityRoutes.ExceededThresholdWeightController.displayPage().url
@@ -304,8 +304,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
               getValueFor(liabilitySection, 0, liabilityView) mustBe "No"
               getValueFor(liabilitySection, 1, liabilityView) mustBe "Yes"
-              getValueFor(liabilitySection, 2, liabilityView) mustBe "06 Mar 2022"
-              getValueFor(liabilitySection, 3, liabilityView) mustBe "06 Mar 2022"
+              getValueFor(liabilitySection, 2, liabilityView) mustBe "06 March 2022"
+              getValueFor(liabilitySection, 3, liabilityView) mustBe "06 March 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
                 liabilityRoutes.ExceededThresholdWeightController.displayPage().url
