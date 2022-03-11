@@ -378,7 +378,7 @@ partnership.name.format.error = Please enter your partnership name in correct fo
 
 partnership.registrationAvailableSoon.header = Partnership
 partnership.registrationAvailableSoon.title = Partnership registration will be available soon
-partnership.registrationAvailableSoon = {0} and we’ll contact you when the service becomes available
+partnership.registrationAvailableSoon = {0} and we’ll contact you when the service becomes available.
 partnership.registrationAvailableSoon.link = Tell us you would like to register as a partnership
 partnership.registrationAvailableSoon.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
 partnership.registrationAvailableSoon.feedback = {0}. Your thoughts and ideas will help us to make improvements.
