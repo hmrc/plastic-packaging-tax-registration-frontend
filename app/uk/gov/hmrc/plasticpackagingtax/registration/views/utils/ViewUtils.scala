@@ -101,6 +101,6 @@ class ViewUtils @Inject() (countryService: CountryService) {
     date.map(displayLocalDate)
 
   def displayLocalDate(date: LocalDate): String =
-    date.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+    date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
 
 }

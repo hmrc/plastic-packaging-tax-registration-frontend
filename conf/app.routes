@@ -39,8 +39,8 @@ POST       /single-or-group   uk.gov.hmrc.plasticpackagingtax.registration.contr
 GET        /group-same-control        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.MembersUnderGroupControlController.displayPage()
 POST       /group-same-control        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.MembersUnderGroupControlController.submit()
 
-GET        /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotMembersUnderGroupControlController.displayPage()
-POST       /group-cannot-apply        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotMembersUnderGroupControlController.submit()
+GET        /group-cannot-register        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotMembersUnderGroupControlController.displayPage()
+POST       /group-cannot-register        uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.NotMembersUnderGroupControlController.submit()
 
 GET        /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.displayPage()
 POST       /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.submit()
