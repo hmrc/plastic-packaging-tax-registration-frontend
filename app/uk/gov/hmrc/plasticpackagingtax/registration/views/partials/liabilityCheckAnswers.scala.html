@@ -147,6 +147,25 @@
                 Text(viewUtils.displayOldDate(registration.liabilityDetails.startDate).getOrElse(""))
             ),
             actions = None
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(messages("liability.checkAnswers.expectedWeightNext12m"))
+            ),
+            value = Value(
+                content = Text(
+                    registration.liabilityDetails.expectedWeightNext12m.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse("")
+                )
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = routes.LiabilityWeightController.displayPage().url,
+                        content = Text(messages("site.link.change")),
+                        visuallyHiddenText = Some(messages("liability.checkAnswers.expectedWeightNext12m"))
+                    )
+                )
+            ))
         )
     )
 }
