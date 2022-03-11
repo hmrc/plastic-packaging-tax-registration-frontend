@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type_not_supported
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_registration_available_soon_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
-class OrganisationTypeNotSupportedController @Inject() (
+@Singleton
+class PartnerRegistrationAvailableSoonController @Inject() (
   mcc: MessagesControllerComponents,
-  page: organisation_type_not_supported,
+  page: partner_registration_available_soon_page,
   authenticate: AuthAction
 ) extends FrontendController(mcc) with I18nSupport {
 

@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type_not_supported
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_registration_available_soon_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class OrganisationTypeNotSupportedControllerSpec extends ControllerSpec {
+class PartnerRegistrationAvailableSoonControllerSpec extends ControllerSpec {
 
-  private val page = mock[organisation_type_not_supported]
+  private val page = mock[partner_registration_available_soon_page]
 
   val controller =
-    new OrganisationTypeNotSupportedController(stubMessagesControllerComponents(),
-                                               page,
-                                               authenticate = mockAuthAction
+    new PartnerRegistrationAvailableSoonController(stubMessagesControllerComponents(),
+                                                   page,
+                                                   authenticate = mockAuthAction
     )
 
   override protected def beforeEach(): Unit = {
@@ -46,7 +46,7 @@ class OrganisationTypeNotSupportedControllerSpec extends ControllerSpec {
     super.afterEach()
   }
 
-  "OrganisationTypeNotSupported controller" should {
+  "PartnerRegistrationAvailableSoon controller" should {
 
     "return 200 (OK)" when {
 

@@ -74,6 +74,23 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         getRegisteredSocietyRedirectUrl(memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
+        getPartnershipRedirectUrl(memberId, businessVerificationCheck)
+      case _ =>
+        Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
+    }
+
+  def grsCallbackUrl(organisationId: Option[String] = None): String
+
+  private def getPartnershipRedirectUrl(
+    memberId: Option[String],
+    businessVerificationCheck: Boolean
+  )(implicit
+    request: JourneyRequest[AnyContent],
+    headerCarrier: HeaderCarrier,
+    executionContext: ExecutionContext
+  ): Future[Result] =
+    request.isFeatureFlagEnabled(Features.isPartnershipEnabled) match {
+      case true =>
         if (request.registration.isGroup)
           getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                          businessVerificationCheck,
@@ -82,10 +99,8 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         else
           Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
       case _ =>
-        Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
+        Future(Redirect(partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad()))
     }
-
-  def grsCallbackUrl(organisationId: Option[String] = None): String
 
   private def getSoleTraderRedirectUrl(
     memberId: Option[String]

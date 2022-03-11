@@ -145,7 +145,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "group user submits organisation type: " + PARTNERSHIP in {
           val registration: Registration =
             aRegistration(withRegistrationType(Some(RegType.GROUP)))
-          authorizedUser()
+          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
@@ -158,7 +158,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "user submits organisation type: " + PARTNERSHIP in {
           val registration: Registration =
             aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
-          authorizedUser()
+          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
@@ -166,6 +166,21 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           redirectLocation(result) mustBe Some(
             partnerRoutes.PartnershipTypeController.displayPage().url
+          )
+        }
+
+        "group user submits organisation type: " + PARTNERSHIP + " journey disabled" in {
+          val registration: Registration =
+            aRegistration(withRegistrationType(Some(RegType.GROUP)))
+          authorizedUser(features = Map(Features.isPartnershipEnabled -> false))
+          mockRegistrationFind(registration)
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          redirectLocation(result) mustBe Some(
+            partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad().url
           )
         }
 
