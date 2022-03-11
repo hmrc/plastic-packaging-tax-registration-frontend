@@ -19,93 +19,182 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Flash
+import play.api.test.Injecting
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
-@ViewTest
-class ConfirmationViewSpec extends UnitViewSpec with Matchers {
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@ViewTest
+class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
+
+  private val realAppConfig           = inject[AppConfig]
   private val page: confirmation_page = inject[confirmation_page]
 
+  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
-    page()(journeyRequest, messages, flash)
+    page()(authenticatedRequest(Map(Features.isPreLaunch -> false)), messages, flash)
+
+  private def createPreLaunchView(flash: Flash = new Flash(Map.empty)): Html =
+    page()(authenticatedRequest(Map(Features.isPreLaunch -> true)), messages, flash)
 
   "Confirmation Page view" should {
 
     val view: Html = createView()
 
     "contain timeout dialog function" in {
-
       containTimeoutDialogFunction(view) mustBe true
-
     }
 
     "display sign out link" in {
-
       displaySignOutLink(view)
-
     }
 
     "display title" in {
-
       view.select("title").text() must include(messages("confirmationPage.title"))
     }
 
     "display panel" when {
-
-      "no 'referenceId' has been provided" in {
-        view.getElementsByClass(gdsPanelTitle).get(0) must containMessage("confirmationPage.title")
-        view.getElementsByClass(gdsPanelBody).get(0) must containMessage(
-          "confirmationPage.panel.body.default"
-        )
+      "single entity registration" when {
+        "no 'referenceId' has been provided" in {
+          verifyPanelContent(view,
+                             messages("confirmationPage.heading",
+                                      LocalDate.now.format(dateFormatter)
+                             ),
+                             messages("confirmationPage.panel.body.default")
+          )
+        }
+        "a 'referenceId' has been provided" in {
+          val viewWithReferenceId = createView(flash =
+            Flash(Map(FlashKeys.referenceId -> "PPT123", FlashKeys.groupReg -> false.toString))
+          )
+          verifyPanelContent(viewWithReferenceId,
+                             messages("confirmationPage.heading",
+                                      LocalDate.now.format(dateFormatter)
+                             ),
+                             messages("confirmationPage.panel.body", "PPT123")
+          )
+        }
       }
-
-      "a 'referenceId' has been provided" in {
-        val viewWithReferenceId = createView(flash = Flash(Map(FlashKeys.referenceId -> "PPT123")))
-        viewWithReferenceId.getElementsByClass(gdsPanelTitle).get(0) must containMessage(
-          "confirmationPage.title"
-        )
-        viewWithReferenceId.getElementsByClass(gdsPanelBody).get(0) must containMessage(
-          "confirmationPage.panel.body",
-          "PPT123"
-        )
+      "group registration" when {
+        "no 'referenceId' has been provided" in {
+          val groupView = createView(flash =
+            Flash(Map(FlashKeys.groupReg -> true.toString))
+          )
+          verifyPanelContent(groupView,
+                             messages("confirmationPage.group.heading",
+                                      LocalDate.now.format(dateFormatter)
+                             ),
+                             messages("confirmationPage.panel.body.default")
+          )
+        }
+        "a 'referenceId' has been provided" in {
+          val groupViewWithReferenceId = createView(flash =
+            Flash(Map(FlashKeys.referenceId -> "PPT123", FlashKeys.groupReg -> true.toString))
+          )
+          verifyPanelContent(groupViewWithReferenceId,
+                             messages("confirmationPage.group.heading",
+                                      LocalDate.now.format(dateFormatter)
+                             ),
+                             messages("confirmationPage.panel.body", "PPT123")
+          )
+        }
       }
     }
 
-    "display body" in {
-
-      val mainDetail = view.getElementsByClass(gdsPageBodyText)
+    "display main body" in {
+      val mainDetail = createView().select("div#detail p")
       mainDetail.get(0) must containMessage("confirmationPage.detail.1")
       mainDetail.get(1) must containMessage("confirmationPage.detail.2")
-      mainDetail.get(2) must containMessage("confirmationPage.detail.3")
+      mainDetail.get(2).text must include(
+        messages("confirmationPage.detail.3", messages("confirmationPage.detail.3.link"))
+      )
+
+      mainDetail.select("a").get(0) must haveHref(realAppConfig.pptAccountUrl)
     }
 
-    "display 'What happens next'" in {
+    "display 'What happens next'" when {
 
-      view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(
-        "confirmationPage.whatHappensNext.title"
-      )
+      "pre-launch" in {
+        val preLaunchView = createPreLaunchView()
 
-      val whatHappensNextDetail = view.getElementsByClass(gdsPageBodyText)
-      whatHappensNextDetail.get(3) must containMessage("confirmationPage.whatHappensNext.detail")
-      whatHappensNextDetail.get(4) must containMessage(
-        "confirmationPage.whatHappensNext.link",
-        messages("confirmationPage.whatHappensNext.link.text")
-      )
-      whatHappensNextDetail.get(5) must containMessage(
-        "confirmationPage.exitSurvey.link",
-        messages("confirmationPage.exitSurvey.link.text")
-      )
+        preLaunchView.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(
+          "confirmationPage.whatHappensNext.title"
+        )
+
+        val whatHappensNextDetail = preLaunchView.select("div#what-happens-next p")
+        whatHappensNextDetail.get(0) must containMessage(
+          "confirmationPage.preLaunch.whatHappensNext.detail"
+        )
+        whatHappensNextDetail.get(1).text must include(
+          messages("confirmationPage.preLaunch.whatHappensNext.link",
+                   messages("confirmationPage.preLaunch.whatHappensNext.link.text")
+          )
+        )
+
+        whatHappensNextDetail.select("a").get(0) must haveHref(realAppConfig.pptAccountUrl)
+      }
+
+      "post-launch" in {
+        view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(
+          "confirmationPage.whatHappensNext.title"
+        )
+
+        val whatHappensNextDetail = view.select("div#what-happens-next p")
+        whatHappensNextDetail.get(0).text must include(
+          messages("confirmationPage.whatHappensNext.detail",
+                   messages("confirmationPage.whatHappensNext.detail.link")
+          )
+        )
+        whatHappensNextDetail.select("a").get(0) must haveHref(realAppConfig.pptAccountUrl)
+
+        val whatHappensNextDetailList = view.select("div#what-happens-next li")
+        whatHappensNextDetailList.get(0).text must include(
+          messages("confirmationPage.whatHappensNext.detail.item1")
+        )
+        whatHappensNextDetailList.get(1).text must include(
+          messages("confirmationPage.whatHappensNext.detail.item2")
+        )
+      }
     }
 
+    "display BTA info and link" in {
+      val btaDetail = view.select("div#bta p")
+      btaDetail.get(0).text must include(
+        messages("confirmationPage.whatHappensNext.bta",
+                 messages("confirmationPage.whatHappensNext.bta.link")
+        )
+      )
+
+      btaDetail.select("a").get(0) must haveHref(realAppConfig.businessAccountUrl)
+    }
+
+    "display exit survey link" in {
+      val exitSurveyDetail = view.select("div#exit-survey p")
+      exitSurveyDetail.get(0).text must include(
+        messages("confirmationPage.exitSurvey.link",
+                 messages("confirmationPage.exitSurvey.link.text")
+        )
+      )
+
+      exitSurveyDetail.select("a").get(0) must haveHref(realAppConfig.exitSurveyUrl)
+    }
+  }
+
+  private def verifyPanelContent(view: Html, panelTitle: String, panelContent: String) = {
+    view.getElementsByClass(gdsPanelTitle).get(0).text() must include(panelTitle)
+    view.getElementsByClass(gdsPanelBody).get(0).text() must include(panelContent)
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f()(request, messages, new Flash(Map.empty))
-    page.render(request, messages, new Flash(Map.empty))
+    page.f()(authenticatedRequest, messages, new Flash(Map.empty))
+    page.render(authenticatedRequest, messages, new Flash(Map.empty))
   }
 
 }

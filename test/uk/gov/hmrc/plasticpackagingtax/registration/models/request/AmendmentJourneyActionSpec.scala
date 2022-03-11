@@ -74,7 +74,8 @@ class AmendmentJourneyActionSpec
       "no registration is cached against the user's session" in {
         val request = new AuthenticatedRequest(
           FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
-          enrolledUser
+          enrolledUser,
+          appConfig
         )
 
         status(mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)) mustBe OK
@@ -90,7 +91,8 @@ class AmendmentJourneyActionSpec
         inMemoryRegistrationAmendmentRepository.put("123", cachedRegistration)
         val request = new AuthenticatedRequest(
           FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
-          enrolledUser
+          enrolledUser,
+          appConfig
         )
 
         status(mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)) mustBe OK
@@ -104,7 +106,8 @@ class AmendmentJourneyActionSpec
       "user does not have an internal id" in {
         val request = new AuthenticatedRequest(
           FakeRequest(),
-          user.copy(identityData = user.identityData.copy(internalId = None))
+          user.copy(identityData = user.identityData.copy(internalId = None)),
+          appConfig
         )
 
         intercept[InsufficientEnrolments] {
@@ -113,7 +116,7 @@ class AmendmentJourneyActionSpec
       }
 
       "user does not have a ppt enrolment" in {
-        val request = new AuthenticatedRequest(FakeRequest(), user)
+        val request = new AuthenticatedRequest(FakeRequest(), user, appConfig)
 
         intercept[InsufficientEnrolments] {
           mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)
@@ -125,7 +128,7 @@ class AmendmentJourneyActionSpec
     "throw SessionRecordNotFound" when {
 
       "no active session present" in {
-        val request = new AuthenticatedRequest(FakeRequest(), enrolledUser)
+        val request = new AuthenticatedRequest(FakeRequest(), enrolledUser, appConfig)
 
         intercept[SessionRecordNotFound] {
           mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)

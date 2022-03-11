@@ -222,7 +222,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                       isLiable = Some(true)
                     )
                   )
-                )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> true)),
+                )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> true)),
                   messages = messages
                 )
 
@@ -247,7 +247,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
                     )
                   )
-                )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
+                )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
                   messages = messages
                 )
 
@@ -285,7 +285,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      startDate = Some(OldDate(Some(6), Some(3), Some(2022)))
                     )
                   )
-                )(generateRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
+                )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
                   messages = messages
                 )
 
@@ -595,7 +595,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             )
             val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
               JourneyRequest(authenticatedRequest =
-                               new AuthenticatedRequest(FakeRequest(), userWithPPTEnrolment),
+                               new AuthenticatedRequest(FakeRequest(),
+                                                        userWithPPTEnrolment,
+                                                        appConfig
+                               ),
                              registration = partnershipRegistration,
                              appConfig = appConfig
               )
@@ -688,7 +691,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             )
             val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
               JourneyRequest(authenticatedRequest =
-                               new AuthenticatedRequest(FakeRequest(), userWithPPTEnrolment),
+                               new AuthenticatedRequest(FakeRequest(),
+                                                        userWithPPTEnrolment,
+                                                        appConfig
+                               ),
                              registration = partnershipRegistration,
                              appConfig = appConfig
               )

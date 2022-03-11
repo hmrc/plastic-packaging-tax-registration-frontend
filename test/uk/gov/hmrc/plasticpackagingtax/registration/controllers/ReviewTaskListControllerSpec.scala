@@ -55,12 +55,11 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import java.util.UUID
 
 class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
-  private val mockReviewRegistrationPage      = mock[review_registration_page]
-  private val mockDuplicateSubscriptionPage   = mock[duplicate_subscription_page]
-  private val mcc                             = stubMessagesControllerComponents()
-  private val mockStartRegistrationController = mock[StartRegistrationController]
-  private val mockRegistrationFilterService   = mock[RegistrationGroupFilterService]
-  private val liabilityStartLink              = Call("GET", "/startRegistrationLink")
+  private val mockReviewRegistrationPage    = mock[review_registration_page]
+  private val mockDuplicateSubscriptionPage = mock[duplicate_subscription_page]
+  private val mcc                           = stubMessagesControllerComponents()
+  private val mockRegistrationFilterService = mock[RegistrationGroupFilterService]
+  private val liabilityStartLink            = Call("GET", "/startRegistrationLink")
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,
@@ -71,7 +70,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                      auditor = mockAuditor,
                                      reviewRegistrationPage = mockReviewRegistrationPage,
                                      metrics = metricsMock,
-                                     startRegistrationController = mockStartRegistrationController,
                                      registrationFilterService = mockRegistrationFilterService
     )
 
@@ -80,7 +78,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     authorizedUser()
     given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
-    given(mockStartRegistrationController.startLink(any())).willReturn(liabilityStartLink)
   }
 
   override protected def afterEach(): Unit = {

@@ -16,7 +16,7 @@
 
 package spec
 
-import base.PptTestData.testUserFeatures
+import base.PptTestData.{newUser, testUserFeatures}
 import base.{MockAuthAction, PptTestData => TestData}
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
@@ -68,33 +68,43 @@ import scala.language.implicitConversions
 
 trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
+  val request: Request[AnyContent] = FakeRequest().withCSRFToken
+
+  val authenticatedRequest: AuthenticatedRequest[AnyContent] =
+    new AuthenticatedRequest(FakeRequest().withCSRFToken, newUser(), appConfig)
+
   implicit val journeyRequest: JourneyRequest[AnyContent] =
-    JourneyRequest(authenticatedRequest =
-                     new AuthenticatedRequest(FakeRequest().withCSRFToken, TestData.newUser()),
+    JourneyRequest(authenticatedRequest = authenticatedRequest,
                    registration = aRegistration(),
                    appConfig = appConfig
     )
 
   val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
-    JourneyRequest(authenticatedRequest =
-                     new AuthenticatedRequest(FakeRequest().withCSRFToken, userWithPPTEnrolment),
-                   registration = aRegistration(),
-                   appConfig = appConfig
+    JourneyRequest(
+      authenticatedRequest =
+        new AuthenticatedRequest(FakeRequest().withCSRFToken, userWithPPTEnrolment, appConfig),
+      registration = aRegistration(),
+      appConfig = appConfig
     )
 
-  implicit def generateRequest(
+  def authenticatedRequest(userFeatureFlags: Map[String, Boolean] = testUserFeatures) =
+    new AuthenticatedRequest(FakeRequest().withCSRFToken,
+                             TestData.newUser(featureFlags = userFeatureFlags),
+                             appConfig
+    )
+
+  implicit def journeyRequest(
     userFeatureFlags: Map[String, Boolean] = testUserFeatures
   ): JourneyRequest[AnyContent] =
     JourneyRequest(
       authenticatedRequest =
         new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                                 TestData.newUser(featureFlags = userFeatureFlags)
+                                 TestData.newUser(featureFlags = userFeatureFlags),
+                                 appConfig
         ),
       registration = aRegistration(),
       appConfig = appConfig
     )
-
-  val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   protected val testCompanyName   = "Example Limited"
   protected val testCompanyNumber = "123456789"
