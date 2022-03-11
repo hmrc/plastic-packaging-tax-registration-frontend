@@ -133,10 +133,18 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                    partnerRoutes.PartnershipTypeController.displayPage().url
           )
         }
+        "user submits organisation type: " + PARTNERSHIP + " journey disabled" in {
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          assertRedirectForOrgType(
+            PARTNERSHIP,
+            partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad().url,
+            false
+          )
+        }
 
         "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser()
+          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
           mockRegistrationFind(aRegistration(withRegistrationType(Some(RegType.GROUP))))
           mockRegistrationUpdate()
 
@@ -157,7 +165,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser()
+          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
           mockRegistrationFind(
             aRegistration(withRegistrationType(Some(RegType.GROUP)),
                           withPartnershipDetails(
@@ -210,8 +218,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
       }
 
-      def assertRedirectForOrgType(orgType: OrgType, redirectUrl: String): Unit = {
-        authorizedUser()
+      def assertRedirectForOrgType(
+        orgType: OrgType,
+        redirectUrl: String,
+        partnershipEnabled: Boolean = true
+      ): Unit = {
+        authorizedUser(features = Map(Features.isPartnershipEnabled -> partnershipEnabled))
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 

@@ -43,7 +43,7 @@
     }
 }
 
-@linkFeedback = {<a href="@feedbackUrl" class="govuk-link">@messages("organisationDetails.feedback.link")</a>}
+@linkFeedback = {<a href="@feedbackUrl" class="govuk-link" id="govuk-feedback-link">@messages("partnership.registrationAvailableSoon.feedback.link")</a>}
 
 @linkTellUs(key: String) = {
     @link(
@@ -65,6 +65,6 @@
 
     @paragraph(content = Html(messages("partnership.registrationAvailableSoon", linkTellUs("registrationAvailableSoon"))))
 
-    @paragraphBody(messages("organisationDetails.feedback", linkFeedback))
+    @paragraphBody(messages("partnership.registrationAvailableSoon.feedback", linkFeedback))
 }
 

@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
-class PartnerRegistrationAvailableSoonController @Inject()(
+class PartnerRegistrationAvailableSoonController @Inject() (
   mcc: MessagesControllerComponents,
   page: partner_registration_available_soon_page
 ) extends FrontendController(mcc) with I18nSupport {
@@ -32,4 +32,5 @@ class PartnerRegistrationAvailableSoonController @Inject()(
     Action { implicit request =>
       Ok(page())
     }
+
 }

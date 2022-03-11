@@ -74,23 +74,33 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
         getRegisteredSocietyRedirectUrl(memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
       case (Some(OrgType.PARTNERSHIP), false) =>
-        // TODO - redirect to not yet available page
-        // Q. Is this on a feature toggle? A configurable?
-
-      Future(Redirect(partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad()))
-
-//        if (request.registration.isGroup)
-//          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
-//                         businessVerificationCheck,
-//                         memberId
-//          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-//        else
-//          Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
+        getPartnershipRedirectUrl(memberId, businessVerificationCheck)
       case _ =>
         Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
     }
 
   def grsCallbackUrl(organisationId: Option[String] = None): String
+
+  private def getPartnershipRedirectUrl(
+    memberId: Option[String],
+    businessVerificationCheck: Boolean
+  )(implicit
+    request: JourneyRequest[AnyContent],
+    headerCarrier: HeaderCarrier,
+    executionContext: ExecutionContext
+  ): Future[Result] =
+    request.isFeatureFlagEnabled(Features.isPartnershipEnabled) match {
+      case true =>
+        if (request.registration.isGroup)
+          getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
+                         businessVerificationCheck,
+                         memberId
+          ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+        else
+          Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
+      case _ =>
+        Future(Redirect(partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad()))
+    }
 
   private def getSoleTraderRedirectUrl(
     memberId: Option[String]
