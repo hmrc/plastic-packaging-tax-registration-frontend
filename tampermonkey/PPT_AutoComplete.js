@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.12
+// @version      15.13
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -249,7 +249,11 @@ const organisationType = () => {
                 document.getElementById('answer-3').checked = true
             }
         } else if(optionSelected("Organisation", "Partnership")){
-            document.getElementById('answer-4').checked = true
+            if(optionSelected("Journey", "Single")){
+                document.getElementById('answer-4').checked = true
+            } else{
+                document.getElementById('answer-2').checked = true
+            }
         } else {
             document.getElementById('answer').checked = true
         }
@@ -484,13 +488,15 @@ const partnerContactPhoneNumber = () => {
     }
 }
 
-const partnerContactCheckAnswers = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/.*partner-check-answers')) {
+const checkAnswers = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/.*check-answers')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
 /* ####################### PPT */
+
+/* ####################### Pre-launch Liability */
 
 const liabilityStartDate = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/liable-date')) {
@@ -527,8 +533,53 @@ const liabilityExpectedWeight = () => {
     }
 }
 
+/* ####################### Post-launch Liability */
+
+const liabilityHasYourGroupExceeded = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/threshold-from-1-april-2022')) {
+
+        document.getElementById('answer').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const liabilityExpectYourGroupToExceed = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/threshold-next-30-days')) {
+
+        document.getElementById('answer').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const liabilityExceededThresholdWeightDate = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/date-met-threshold')) {
+        document.getElementById('exceeded-threshold-weight-date.day').value = '11'
+        document.getElementById('exceeded-threshold-weight-date.month').value = '03'
+        document.getElementById('exceeded-threshold-weight-date.year').value = '2022'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const liabilityExpectToExceedThresholdWeightDate = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/date-realised-will-meet-threshold')) {
+        document.getElementById('expect-to-exceed-threshold-weight-date.day').value = '11'
+        document.getElementById('expect-to-exceed-threshold-weight-date.month').value = '03'
+        document.getElementById('expect-to-exceed-threshold-weight-date.year').value = '2022'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const liabilityTaxStartDate = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/tax-start-date')) {
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const registrationType = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/registration-type')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/registration-type')||currentPageIs('/register-for-plastic-packaging-tax/single-or-group')) {
 
         if(optionSelected("Journey", "Single")||optionSelected("Journey", "Partnership")){
             document.getElementById('value').checked = true
@@ -543,6 +594,13 @@ const membersUnderGroupControl = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/group-same-control')) {
 
         document.getElementById('value').checked = true
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const groupCannotApply = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/group-cannot-apply')) {
+
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -591,13 +649,6 @@ const groupMemberContactPhoneNumber = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/group-member-contact-telephone/.*')) {
 
         document.getElementById('value').value = "07712345677"
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
-const groupMemberContactCheckAnswers = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/group-member-check-answers/.*')) {
-
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -653,13 +704,6 @@ const primaryContactConfirmAddress = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/confirm-contact-address')) {
 
         document.getElementById('useRegisteredAddress-2').checked = true
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
-const primaryContactCheckYourAnswers = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/contact-check-answers')) {
-
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -776,13 +820,6 @@ const enrolmentRegistrationDate = () => {
     }
 }
 
-const enrolmentCheckAnswers = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-check-answers')) {
-
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
 const enrolmentVerificationFailure = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/enrolment-not-verified')) {
         document.getElementsByClassName('govuk-button')[0].click()
@@ -832,7 +869,7 @@ function completeJourney(manualJourney) {
     emailAddressPasscode()
     emailAddressPasscodeConfirmation()
     partnerContactPhoneNumber()
-    partnerContactCheckAnswers()
+    checkAnswers()
 
     // Business Details
     organisationType()
@@ -843,11 +880,18 @@ function completeJourney(manualJourney) {
     // Liability Details
     liabilityLiableDate()
     liabilityStartDate()
+    liabilityHasYourGroupExceeded()
+    liabilityExpectYourGroupToExceed()
+    liabilityExceededThresholdWeightDate()
+    liabilityExpectToExceedThresholdWeightDate()
+    liabilityTaxStartDate()
     liabilityWeight()
     liabilityExpectedWeight()
     liabilityCheckYourAnswers()
     registrationType()
+    checkAnswers()
     membersUnderGroupControl()
+    groupCannotApply()
 
     // Primary Contact Details
     primaryContactFullName()
@@ -857,7 +901,7 @@ function completeJourney(manualJourney) {
     emailAddressPasscodeConfirmation()
     primaryContactTelephoneNumber()
     primaryContactConfirmAddress()
-    primaryContactCheckYourAnswers()
+    checkAnswers()
 
     // groups
     groupOrganisationList()
@@ -865,7 +909,7 @@ function completeJourney(manualJourney) {
     groupMemberContactName()
     groupMemberContactEmailAddress()
     groupMemberContactPhoneNumber()
-    groupMemberContactCheckAnswers()
+    checkAnswers()
 
     //review registration
     if(manualJourney){
@@ -888,6 +932,6 @@ function completeJourney(manualJourney) {
     enrolmentIsUkAddress()
     enrolmentUkPostcode()
     enrolmentRegistrationDate()
-    enrolmentCheckAnswers()
+    checkAnswers()
     enrolmentVerificationFailure()
 }
