@@ -104,20 +104,20 @@ registrationPage.completedSections = You have completed {0} of {1} sections.
 registrationPage.task.eligibility.heading = Liability details
 registrationPage.task.eligibility = Check if you need to register
 registrationPage.task.organisation.heading = Organisation details
-registrationPage.task.organisation.heading.group = Nominated organisation details
+registrationPage.task.organisation.heading.group = Representative member details
 registrationPage.task.organisation.heading.partnership = Enter partnership details
 registrationPage.task.organisation = Enter organisation details
-registrationPage.task.organisation.group = Nominated organisation information
+registrationPage.task.organisation.group = Enter representative member details
 registrationPage.task.organisation.partnership = Partnership details
 registrationPage.task.contactDetails.heading = Contact details
-registrationPage.task.contactDetails.heading.group = Nominated organisation contact details
+registrationPage.task.contactDetails.heading.group = Main contact details
 registrationPage.task.contactDetails.heading.partnership = Enter details of partners in the partnership
 registrationPage.task.contactDetails = Enter contact details
-registrationPage.task.contactDetails.group = Main contact
+registrationPage.task.contactDetails.group = Enter main contact details
 registrationPage.task.contactDetails.partnership = Enter details of the nominated partner
 registrationPage.task.contactDetails.partnership.otherPartners = Enter details of the other partners
-registrationPage.task.otherOrganisation.heading = Other organisations in group
-registrationPage.task.otherOrganisation = Other organisations in the group
+registrationPage.task.otherOrganisation.heading = Other organisations in the group
+registrationPage.task.otherOrganisation = Enter details of other organisations in the group
 registrationPage.task.review.heading = Review and send
 registrationPage.task.review = Submit registration
 
@@ -140,12 +140,12 @@ liabilityLiableDatePage.question = Will you still be liable for the Plastic Pack
 liabilityLiableDatePage.question.empty.error = Choose an option
 
 liabilityWeightPage.sectionHeader = Liability details
-liabilityWeightPage.title = Enter the weight of plastic packaging processed
+liabilityWeightPage.title = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
 liabilityWeightPage.info = This includes all plastic packaging that you’ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
 liabilityWeightPage.info2 = If you’re unsure what to include, you can follow {0}.
 liabilityWeightPage.guidance.description = the current guidance for businesses (opens in a new tab)
 liabilityWeightPage.guidance.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
-liabilityWeightPage.question = How much plastic packaging does your organisation or group estimate it will process in the next 12 months?
+liabilityWeightPage.question = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
 liabilityWeight.outOfRange.error = Weight must be 99,999,999,999kg or less
 liabilityWeight.empty.error = Enter the weight, in kilograms
 liabilityWeight.below.threshold.error = Weight must be 0kg or more
@@ -181,17 +181,17 @@ liability.taxStartDate.title = Your tax start date
 liability.taxStartDate.pageHeading = Your tax start date
 liability.taxStartDate.sectionHeader = Liability details
 liability.taxStartDate.hint1 = Your tax start date is {0}.
-liability.taxStartDate.threshHoldBreached.hint = This is the first day of the month after you passed the 10,000kg threshold.
-liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you realised that you would pass the 10,000kg threshold within 30 days.
+liability.taxStartDate.threshHoldBreached.hint = This is the first day of the month after you met the 10,000kg threshold.
+liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you realised that you would meet the 10,000kg threshold within 30 days.
 
 liability.checkAnswers.title = Check your answers
 liability.checkAnswers.weight = Plastic packaging total weight
 liability.checkAnswers.exceededThreshold = 10,000kg or more plastic packaging since 1 April 2022
 liability.checkAnswers.dateExceededThreshold = Date met threshold
-liability.checkAnswers.expectToExceededThreshold = Expect to process 10,000kg or more plastic packaging in next 30 days
+liability.checkAnswers.expectToExceededThreshold = Expect to manufacture or import 10,000kg or more plastic packaging in next 30 days
 liability.checkAnswers.dateRealisedExpectToExceededThreshold = Date realised will meet threshold
 liability.checkAnswers.startDate = Your tax start date
-liability.checkAnswers.expectedWeightNext12m = Expected plastic packaging processed in the next 12 months
+liability.checkAnswers.expectedWeightNext12m = Expected weight of plastic packaging in the next 12 months
 liability.checkAnswers.registrationType = What you want to register
 liability.checkAnswers.membersUnderGroupControl = Group under same control
 
@@ -425,7 +425,7 @@ organisationDetails.feedback.link = Send us your feedback
 
 notLiable.pageTitle = You do not currently need to register at this time
 notLiable.title = You do not currently need to register for Plastic Packaging Tax
-notLiable.inset = You may need to register for it in the future. You must keep records of all the plastic packaging you manufacture, convert or import into the UK.
+notLiable.inset = You may need to register for it in the future. You must keep records of all the plastic packaging you manufacture or import into the UK.
 notLiable.guidance = The Plastic Packaging Tax guidance has {0}.
 notLiable.guidance.link.description = more information on the type of records you must keep (opens in a new tab)
 notLiable.guidance.link.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
@@ -447,16 +447,16 @@ liabilityExpectToExceedThresholdWeightPage.radio.option.yes= Yes
 liabilityExpectToExceedThresholdWeightPage.radio.option.no= No
 
 liability.exceededThresholdWeight.sectionHeader = Liability details
-liability.exceededThresholdWeight.title = Has your organisation or group processed 10,000kg or more of plastic packaging since 1 April 2022?
+liability.exceededThresholdWeight.title = Has your organisation or group manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?
 liability.exceededThresholdWeight.hint = If you’re registering as a group, each member must have met this threshold.
-liability.exceededThresholdWeight.question = Has your organisation or group processed 10,000kg or more of plastic packaging since 1 April 2022?
-liability.exceededThresholdWeight.question.empty.error = Select yes if your organisation or group has processed 10,000kg or more of plastic packaging since 1 April 2022
+liability.exceededThresholdWeight.question = Has your organisation or group manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?
+liability.exceededThresholdWeight.question.empty.error = Select yes if your organisation or group has manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022
 
 liability.expectToExceedThresholdWeight.sectionHeader = Liability details
-liability.expectToExceedThresholdWeight.title = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the next 30 days?
+liability.expectToExceedThresholdWeight.title = Does your organisation or group expect to manufacture or import 10,000kg or more finished plastic packaging in the next 30 days?
 liability.expectToExceedThresholdWeight.hint = If you’re registering as a group, each member must expect to meet this threshold.
-liability.expectToExceedThresholdWeight.question = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the next 30 days?
-liability.expectToExceedThresholdWeight.question.empty.error = Select yes if your organisation or group expects to process 10,000kg or more of plastic packaging in the next 30 days
+liability.expectToExceedThresholdWeight.question = Does your organisation or group expect to manufacture or import 10,000kg or more finished plastic packaging in the next 30 days?
+liability.expectToExceedThresholdWeight.question.empty.error = Select yes if your organisation or group expects to manufacture or import 10,000kg or more finished plastic packaging in the next 30 days
 
 liability.exceededThresholdWeightDate.sectionHeader = Liability details
 liability.exceededThresholdWeightDate.title = When did your organisation or group meet the 10,000kg threshold?
@@ -564,7 +564,7 @@ verify.organisation.detail.2 = We ask these questions to protect against malicio
 group.membersUnderGroupControl.title = Are all the organisations in the group under the same control?
 group.membersUnderGroupControl.error.empty = Please select yes or no
 
-group.notMembersUnderGroupControl.title = You can’t apply as a group
+group.notMembersUnderGroupControl.title = You cannot register as a group
 group.notMembersUnderGroupControl.detail = You can apply as a single organisation or partnership.
 
 group.removeMember.title = Are you sure you want to remove {0} from the group?

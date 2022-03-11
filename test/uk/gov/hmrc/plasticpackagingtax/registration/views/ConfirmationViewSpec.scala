@@ -36,7 +36,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
   private val realAppConfig           = inject[AppConfig]
   private val page: confirmation_page = inject[confirmation_page]
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
 
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
     page()(authenticatedRequest(Map(Features.isPreLaunch -> false)), messages, flash)
