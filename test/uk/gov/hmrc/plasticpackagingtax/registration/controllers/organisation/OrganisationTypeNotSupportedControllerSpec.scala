@@ -30,11 +30,15 @@ class OrganisationTypeNotSupportedControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type_not_supported]
 
   val controller =
-    new OrganisationTypeNotSupportedController(stubMessagesControllerComponents(), page)
+    new OrganisationTypeNotSupportedController(stubMessagesControllerComponents(),
+                                               page,
+                                               authenticate = mockAuthAction
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
+    authorizedUser()
   }
 
   override protected def afterEach(): Unit = {

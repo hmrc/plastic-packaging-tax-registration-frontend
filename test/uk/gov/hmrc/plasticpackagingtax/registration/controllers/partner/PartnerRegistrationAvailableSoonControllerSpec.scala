@@ -30,11 +30,15 @@ class PartnerRegistrationAvailableSoonControllerSpec extends ControllerSpec {
   private val page = mock[partner_registration_available_soon_page]
 
   val controller =
-    new PartnerRegistrationAvailableSoonController(stubMessagesControllerComponents(), page)
+    new PartnerRegistrationAvailableSoonController(stubMessagesControllerComponents(),
+                                                   page,
+                                                   authenticate = mockAuthAction
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
+    authorizedUser()
   }
 
   override protected def afterEach(): Unit = {

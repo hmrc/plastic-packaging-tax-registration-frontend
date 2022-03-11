@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type_not_supported
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -25,11 +26,12 @@ import javax.inject.Inject
 
 class OrganisationTypeNotSupportedController @Inject() (
   mcc: MessagesControllerComponents,
-  page: organisation_type_not_supported
+  page: organisation_type_not_supported,
+  authenticate: AuthAction
 ) extends FrontendController(mcc) with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    Action { implicit request =>
+    authenticate { implicit request =>
       Ok(page())
     }
 
