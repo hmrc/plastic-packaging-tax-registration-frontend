@@ -16,17 +16,21 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
 import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
 
 class ExpectToExceedThresholdWeightDateSpec extends AnyWordSpec with Matchers {
+  val mockMessages: Messages = mock[Messages]
+  when(mockMessages.apply(anyString(), any())).thenReturn("some message")
 
   private val mockAppConfig = mock[AppConfig]
   when(mockAppConfig.goLiveDate).thenReturn(LocalDate.parse("2022-04-01"))
@@ -65,10 +69,14 @@ class ExpectToExceedThresholdWeightDateSpec extends AnyWordSpec with Matchers {
   }
 
   private def reject(day: String, month: String, year: String): Assertion =
-    expectToExceedThresholdWeightDate().bind(toMap(day, month, year)).errors.nonEmpty mustBe true
+    expectToExceedThresholdWeightDate()(mockMessages).bind(
+      toMap(day, month, year)
+    ).errors.nonEmpty mustBe true
 
   private def accept(day: String, month: String, year: String): Assertion =
-    expectToExceedThresholdWeightDate().bind(toMap(day, month, year)).errors.isEmpty mustBe true
+    expectToExceedThresholdWeightDate()(mockMessages).bind(
+      toMap(day, month, year)
+    ).errors.isEmpty mustBe true
 
   private def toMap(day: String, month: String, year: String): Map[String, String] =
     Map("expect-to-exceed-threshold-weight-date.day"   -> day,

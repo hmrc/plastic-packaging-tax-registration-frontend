@@ -149,12 +149,14 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
 
       val form = new ExceededThresholdWeightDate(mockAppConfig, fakeClock).apply()
         .fillAndValidate(Date(LocalDate.of(2012, 4, 1)))
-      val view = createView(form)
-
-      view must haveGovukGlobalErrorSummary
-
-      view must haveGovukFieldError("exceeded-threshold-weight-date",
-                                    "Liability date must be today or in the past"
+      validateErrors(
+        form.errors,
+        Seq(
+          FormError("exceeded-threshold-weight-date",
+                    List("Date you met the threshold must be on, or after, 1  April 2022"),
+                    List()
+          )
+        )
       )
     }
 

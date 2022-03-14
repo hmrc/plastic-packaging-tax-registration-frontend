@@ -176,6 +176,7 @@ liability.expectToExceedThreshold.date.invalid = Date you realised you would mee
 liability.expectToExceedThreshold.date.future = Date you realised you would meet the threshold must be today or in the past
 liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
 liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
+liability.exceededThresholdWeightDate.before.goLiveDate.error = Date you met the threshold must be on, or after, {0}
 
 liability.taxStartDate.title = Your tax start date
 liability.taxStartDate.pageHeading = Your tax start date

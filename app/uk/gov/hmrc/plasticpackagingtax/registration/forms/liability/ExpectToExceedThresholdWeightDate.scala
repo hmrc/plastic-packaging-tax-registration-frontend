@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import com.google.inject.Singleton
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
@@ -36,7 +37,7 @@ class ExpectToExceedThresholdWeightDate @Inject() (appConfig: AppConfig, clock: 
   val twoRequiredKey      = "liability.expectToExceedThreshold.two.required.fields"
   val requiredKey         = "liability.expectToExceedThreshold.one.field"
 
-  def apply(): Form[Date] =
+  def apply()(implicit messages: Messages): Form[Date] =
     Form(
       mapping(
         "expect-to-exceed-threshold-weight-date" -> localDate(emptyDateKey =
@@ -44,7 +45,9 @@ class ExpectToExceedThresholdWeightDate @Inject() (appConfig: AppConfig, clock: 
                                                               requiredKey,
                                                               twoRequiredKey,
                                                               dateFormattingError
-        ).verifying(isInDateRange(dateOutOfRangeError)(appConfig, clock))
+        ).verifying(
+          isInDateRange(dateOutOfRangeError, dateOutOfRangeError)(appConfig, clock, messages)
+        )
       )(Date.apply)(Date.unapply)
     )
 

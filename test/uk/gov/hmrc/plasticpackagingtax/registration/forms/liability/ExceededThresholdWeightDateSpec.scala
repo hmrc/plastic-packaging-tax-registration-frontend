@@ -16,11 +16,13 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.data.FormError
+import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 
@@ -28,6 +30,8 @@ import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
 
 class ExceededThresholdWeightDateSpec extends AnyWordSpec with Matchers {
+  val mockMessages: Messages = mock[Messages]
+  when(mockMessages.apply(anyString(), any())).thenReturn("some message")
 
   private val mockAppConfig =
     mock[AppConfig]
@@ -42,31 +46,29 @@ class ExceededThresholdWeightDateSpec extends AnyWordSpec with Matchers {
 
   "Exceeded threshold weight date" should {
     "pass validation 01/04/2022" in {
-      exceededThresholdWeightDate().fill(Date(LocalDate.of(2022, 4, 1))).errors.size mustBe 0
+      exceededThresholdWeightDate()(mockMessages).fill(
+        Date(LocalDate.of(2022, 4, 1))
+      ).errors.size mustBe 0
     }
 
     "pass validation 01/05/2022" in {
-      exceededThresholdWeightDate().fillAndValidate(
+      exceededThresholdWeightDate()(mockMessages).fillAndValidate(
         Date(LocalDate.of(2022, 5, 1))
       ).errors.size mustBe 0
     }
 
     "fails validation 01/02/2022" in {
       val validationError =
-        exceededThresholdWeightDate().fillAndValidate(Date(LocalDate.of(2022, 2, 1)))
+        exceededThresholdWeightDate()(mockMessages).fillAndValidate(Date(LocalDate.of(2022, 2, 1)))
       validationError.errors.size mustBe 1
       validationError.errors.mustBe(
-        List(
-          FormError("exceeded-threshold-weight-date",
-                    List("liability.exceededThresholdWeightDate.outOfRange.error")
-          )
-        )
+        List(FormError("exceeded-threshold-weight-date", List("some message")))
       )
     }
 
     "fails validation 01/06/2022" in {
       val validationError =
-        exceededThresholdWeightDate().fillAndValidate(Date(LocalDate.of(2022, 6, 1)))
+        exceededThresholdWeightDate()(mockMessages).fillAndValidate(Date(LocalDate.of(2022, 6, 1)))
       validationError.errors.size mustBe 1
       validationError.errors.mustBe(
         List(

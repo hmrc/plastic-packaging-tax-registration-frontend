@@ -17,22 +17,41 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
 import java.time.{Clock, LocalDate}
 
 trait Constraints {
 
-  private def isDateInRange(appConfig: AppConfig, clock: Clock): LocalDate => Boolean =
-    date => !date.isBefore(appConfig.goLiveDate) && !date.isAfter(LocalDate.now(clock))
+  private def isDateInFuture(clock: Clock): LocalDate => Boolean =
+    date => !date.isAfter(LocalDate.now(clock))
 
-  def isInDateRange(
-    errorKey: String
-  )(implicit appConfig: AppConfig, clock: Clock): Constraint[LocalDate] =
+  private def isDateBeforeLiveDate(appConfig: AppConfig): LocalDate => Boolean =
+    date => !date.isBefore(appConfig.goLiveDate)
+
+  private def getMonth(appConfig: AppConfig)(implicit messages: Messages) =
+    messages(s"date.month.${appConfig.goLiveDate.getMonthValue}")
+
+  def isInDateRange(errorKey: String, beforeLiveDateErrorKey: String)(implicit
+    appConfig: AppConfig,
+    clock: Clock,
+    messages: Messages
+  ): Constraint[LocalDate] = {
+    val goLiveDate = appConfig.goLiveDate
     Constraint {
-      case request if !isDateInRange(appConfig, clock).apply(request) =>
+      case request if !isDateBeforeLiveDate(appConfig).apply(request) =>
+        Invalid(
+          ValidationError(
+            messages(beforeLiveDateErrorKey,
+                     s"${goLiveDate.getDayOfMonth}  ${getMonth(appConfig)} ${goLiveDate.getYear}"
+            )
+          )
+        )
+      case request if !isDateInFuture(clock).apply(request) =>
         Invalid(ValidationError(errorKey))
       case _ => Valid
     }
+  }
 
 }
