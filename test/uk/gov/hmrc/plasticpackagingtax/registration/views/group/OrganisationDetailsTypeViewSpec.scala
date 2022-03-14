@@ -137,9 +137,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
       radioInputMustBe(1, UK_COMPANY)
       radioInputMustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupPartnership"))
-      radioInputMustBe(3, CHARITABLE_INCORPORATED_ORGANISATION)
-      radioInputMustBe(4, OVERSEAS_COMPANY_UK_BRANCH)
-      radioInputMustBe(5, OVERSEAS_COMPANY_NO_UK_BRANCH)
+      radioInputMustBe(3, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display 'Save and continue' button" in {
