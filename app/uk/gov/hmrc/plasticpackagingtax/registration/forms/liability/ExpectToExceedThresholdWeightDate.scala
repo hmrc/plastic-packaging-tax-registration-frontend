@@ -37,6 +37,9 @@ class ExpectToExceedThresholdWeightDate @Inject() (appConfig: AppConfig, clock: 
   val twoRequiredKey      = "liability.expectToExceedThreshold.two.required.fields"
   val requiredKey         = "liability.expectToExceedThreshold.one.field"
 
+  val beforeLiveDateError =
+    "liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error"
+
   def apply()(implicit messages: Messages): Form[Date] =
     Form(
       mapping(
@@ -46,7 +49,7 @@ class ExpectToExceedThresholdWeightDate @Inject() (appConfig: AppConfig, clock: 
                                                               twoRequiredKey,
                                                               dateFormattingError
         ).verifying(
-          isInDateRange(dateOutOfRangeError, dateOutOfRangeError)(appConfig, clock, messages)
+          isInDateRange(dateOutOfRangeError, beforeLiveDateError)(appConfig, clock, messages)
         )
       )(Date.apply)(Date.unapply)
     )
