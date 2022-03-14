@@ -36,11 +36,7 @@
 
 @(form: Form[Boolean], nominatedOrganisation: String, members: Seq[GroupMember])(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@numOrganisations = @{
-    {
-        members.size + 1
-    }.toString
-}
+@numOrganisations = @{ members.size + 1 }
 
 @listofMembers = @{
 
@@ -54,18 +50,18 @@
                 ListMember(
                     name = member.businessName,
                     change = Some(pptControllers.group.routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-                    remove = Some(pptControllers.group.routes.RemoveMemberController.submit(member.id))
+                    remove = if(numOrganisations > 2) Some(pptControllers.group.routes.RemoveMemberController.submit(member.id)) else None
                 )
             )
 }
 
 @govukLayout(
-    title = Title("group.organisationList.title.multiple", numOrganisations),
+    title = Title("group.organisationList.title.multiple", numOrganisations.toString),
     backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
 
     @sectionHeader(messages("group.organisationList.sectionHeader"))
 
-    @pageHeading(messages("group.organisationList.title.multiple", numOrganisations))
+    @pageHeading(messages("group.organisationList.title.multiple", numOrganisations.toString))
 
     @listMembers(listofMembers)
 

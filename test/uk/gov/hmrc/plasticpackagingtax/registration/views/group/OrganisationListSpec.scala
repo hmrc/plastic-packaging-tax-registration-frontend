@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes =>
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
 
 class OrganisationListSpec extends UnitViewSpec with Matchers {
@@ -31,12 +32,12 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
   private val singleMember = Seq(groupMember)
 
-  private def createView(): Document =
-    page(AddOrganisationForm.form(), "ACME Inc", singleMember)(journeyRequest, messages)
+  private def createView(members: Seq[GroupMember]): Document =
+    page(AddOrganisationForm.form(), "ACME Inc", members)(journeyRequest, messages)
 
   "OrganisationList View" should {
 
-    val view = createView()
+    val view = createView(singleMember)
 
     "contain timeout dialog function" in {
 
@@ -108,6 +109,30 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("hmrc-add-to-a-list__identifier").get(
         1
       ).text() mustBe groupMember.organisationDetails.map(_.organisationName).get
+    }
+
+    "have no remove button" when {
+      "group contains 2 members" in {
+        view.getElementsByClass("hmrc-add-to-a-list__remove")
+          .select("a")
+          .size() mustBe 0
+      }
+
+      "group contains less than 2 members" in {
+        val newView = createView(Seq.empty)
+        newView.getElementsByClass("hmrc-add-to-a-list__remove")
+          .select("a")
+          .size() mustBe 0
+      }
+    }
+
+    "have the remove button enabled" when {
+      "group contains more than 2 members" in {
+        val newView = createView(Seq(groupMember, groupMember, groupMember))
+        newView.getElementsByClass("hmrc-add-to-a-list__remove")
+          .select("a")
+          .size() mustBe 3
+      }
     }
 
   }
