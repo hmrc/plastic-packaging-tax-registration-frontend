@@ -61,7 +61,7 @@ class PartnerRegistrationAvailableSoonPageViewSpec extends UnitViewSpec with Mat
     "display info and link" in {
 
       view.getElementById("registrationAvailableSoon-link") must haveHref(
-        "https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax"
+        "mailto:pptpartnerships@hmrc.gov.uk"
       )
       view.getElementById("registrationAvailableSoon-link") must containMessage(
         "partnership.registrationAvailableSoon.link"
