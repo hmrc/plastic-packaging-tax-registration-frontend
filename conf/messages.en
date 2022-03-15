@@ -217,7 +217,7 @@ primaryContactDetails.emailAddress.empty.error = Enter an email address
 primaryContactDetails.emailAddress.format.error = Enter an email address in the correct format
 
 primaryContactDetails.emailAddress.passcode.title = Enter the code to confirm this email address
-primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK
+primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK.
 primaryContactDetails.emailAddress.passcode.label = Confirmation code
 primaryContactDetails.emailAddress.passcode.empty.error = Enter a passcode
 primaryContactDetails.emailAddress.passcode.detail = We have sent a code {0} to confirm this email address.
@@ -352,7 +352,7 @@ confirmationPage.exitSurvey.link.text = What did you think of this service?
 registrationType.title = What do you want to register?
 registrationType.singleEntity = A single organisation
 registrationType.group = A group of organisations
-registrationType.group.hint = You cannot register charitable incorporated organisations (CIO) or foreign companies with no UK establishment as part of a group.
+registrationType.group.hint = You cannot register charitable incorporated organisations (CIO) or overseas organisations without a UK establishment as part of a group.
 
 organisationDetails.sectionHeader = Organisation details
 organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
@@ -361,8 +361,8 @@ organisationDetails.basedInUk.empty.error = Choose an option
 organisationDetails.type.title = What type of organisation do you want to register?
 organisationDetails.type.empty.error = Value must be selected
 
-organisationDetails.nominated.organisation.sectionHeader = Nominated organisation details
-organisationDetails.type.group.title = What type of organisation is the nominated organisation?
+organisationDetails.nominated.organisation.sectionHeader = Representative member details
+organisationDetails.type.group.title = What type of organisation is the representative member?
 
 organisationDetails.type.UkCompany = UK limited company
 organisationDetails.type.SoleTrader = Sole trader
@@ -370,7 +370,7 @@ organisationDetails.type.Partnership = Partnership
 organisationDetails.type.CIO = Charitable incorporated organisation (CIO)
 organisationDetails.type.Trust = Trust
 organisationDetails.type.RegisteredSociety = Registered society
-organisationDetails.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
+organisationDetails.type.OverseasCompanyUkBranch = Overseas organisation with a UK establishment
 organisationDetails.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
 
 organisationDetails.type.GeneralPartnership = General partnership
@@ -469,7 +469,7 @@ liability.expectToExceedThresholdWeight.question.empty.error = Select yes if you
 
 liability.exceededThresholdWeightDate.sectionHeader = Liability details
 liability.exceededThresholdWeightDate.title = When did your organisation or group meet the 10,000kg threshold?
-liability.exceededThresholdWeightDate.hint = For example, 15 5 2022
+liability.exceededThresholdWeightDate.hint = For example, 15 5 2022.
 liability.exceededThresholdWeightDate.formatting.error = Date you met the threshold must be a real date
 liability.exceededThresholdWeightDate.outOfRange.error = Liability date must be today or in the past
 liability.exceededThresholdWeightDate.empty.error = Enter the date you met the threshold
