@@ -29,18 +29,22 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
   PptReference,
   RegistrationDate
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY,
   _
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
+  PartnerTypeEnum,
+  _
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
   EmailStatus,
   VerificationStatus
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
@@ -76,7 +80,13 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   implicit val journeyRequest: JourneyRequest[AnyContent] =
     JourneyRequest(authenticatedRequest = authenticatedRequest,
                    registration = aRegistration(),
-                   appConfig = appConfig
+                   appConfig = appConfig,
+                   pptReference = None
+    )
+
+  def pptReferenceFromUsersEnrolments(user: SignedInUser): Option[String] =
+    user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(
+      _.identifiers.headOption.map(_.value)
     )
 
   val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
@@ -84,7 +94,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
       authenticatedRequest =
         new AuthenticatedRequest(FakeRequest().withCSRFToken, userWithPPTEnrolment, appConfig),
       registration = aRegistration(),
-      appConfig = appConfig
+      appConfig = appConfig,
+      pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
     )
 
   def authenticatedRequest(userFeatureFlags: Map[String, Boolean] = testUserFeatures) =
@@ -95,16 +106,18 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
 
   implicit def journeyRequest(
     userFeatureFlags: Map[String, Boolean] = testUserFeatures
-  ): JourneyRequest[AnyContent] =
+  ): JourneyRequest[AnyContent] = {
+    val user = TestData.newUser(featureFlags = userFeatureFlags)
     JourneyRequest(
       authenticatedRequest =
-        new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                                 TestData.newUser(featureFlags = userFeatureFlags),
-                                 appConfig
-        ),
+        new AuthenticatedRequest(FakeRequest().withCSRFToken, user, appConfig),
       registration = aRegistration(),
-      appConfig = appConfig
+      appConfig = appConfig,
+      pptReference = user.enrolments.getEnrolment(PptEnrolment.Key).flatMap(
+        _.identifiers.headOption.map(_.value)
+      )
     )
+  }
 
   protected val testCompanyName   = "Example Limited"
   protected val testCompanyNumber = "123456789"

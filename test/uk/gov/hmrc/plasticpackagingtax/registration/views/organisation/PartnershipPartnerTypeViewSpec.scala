@@ -55,11 +55,14 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
     withPartnershipDetails(partnershipDetails = Some(generalPartnershipDetailsWithPartners))
   )
 
-  val journeyReqForOthers = JourneyRequest(
-    new AuthenticatedRequest(FakeRequest().withCSRFToken, PptTestData.newUser(), appConfig),
-    registrationWithOtherPartners,
-    appConfig
-  )
+  val journeyReqForOthers = {
+    val user = PptTestData.newUser()
+    JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken, user, appConfig),
+                   registrationWithOtherPartners,
+                   appConfig,
+                   pptReferenceFromUsersEnrolments(user)
+    )
+  }
 
   private def createViewNominated(form: Form[PartnerType] = PartnerType.form()): Document =
     page(form, registrationWithOtherPartners.nominatedPartner.map(_.id), submitLink)(

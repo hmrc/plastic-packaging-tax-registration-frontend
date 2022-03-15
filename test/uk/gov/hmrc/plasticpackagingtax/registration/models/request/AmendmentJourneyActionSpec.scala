@@ -26,19 +26,15 @@ import play.api.http.Status.OK
 import play.api.mvc.{AnyContent, Result, Results}
 import play.api.test.Helpers.status
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
-import uk.gov.hmrc.auth.core.{
-  Enrolment,
-  EnrolmentIdentifier,
-  Enrolments,
-  InsufficientEnrolments,
-  SessionRecordNotFound
-}
+import spec.PptTestData
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 
 import scala.concurrent.Future
 
 class AmendmentJourneyActionSpec
-    extends MockAmendmentJourneyAction with DefaultAwaitTimeout with BeforeAndAfterEach {
+    extends MockAmendmentJourneyAction with DefaultAwaitTimeout with BeforeAndAfterEach
+    with PptTestData {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
@@ -75,7 +71,8 @@ class AmendmentJourneyActionSpec
         val request = new AuthenticatedRequest(
           FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
           enrolledUser,
-          appConfig
+          appConfig,
+          pptReferenceFromUsersEnrolments(enrolledUser)
         )
 
         status(mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)) mustBe OK
@@ -92,7 +89,8 @@ class AmendmentJourneyActionSpec
         val request = new AuthenticatedRequest(
           FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
           enrolledUser,
-          appConfig
+          appConfig,
+          pptReferenceFromUsersEnrolments(enrolledUser)
         )
 
         status(mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)) mustBe OK
@@ -128,7 +126,11 @@ class AmendmentJourneyActionSpec
     "throw SessionRecordNotFound" when {
 
       "no active session present" in {
-        val request = new AuthenticatedRequest(FakeRequest(), enrolledUser, appConfig)
+        val request = new AuthenticatedRequest(FakeRequest(),
+                                               enrolledUser,
+                                               appConfig,
+                                               pptReferenceFromUsersEnrolments(enrolledUser)
+        )
 
         intercept[SessionRecordNotFound] {
           mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)

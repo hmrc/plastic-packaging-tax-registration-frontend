@@ -143,16 +143,20 @@ abstract class AuthActionBase @Inject() (
     if (checkAlreadyEnrolled && allEnrolments.getEnrolment(PptEnrolment.Identifier).isDefined)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
     else if (allowedUsers.isAllowed(email))
-      block(
-        new AuthenticatedRequest(
-          request,
+      block {
+        val user =
           SignedInUser(allEnrolments,
                        identityData,
                        allowedUsers.getUserFeatures(email).getOrElse(appConfig.defaultFeatures)
-          ),
-          appConfig
-        )
-      )
+          )
+
+        val pptReference =
+          user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(
+            enrolment => enrolment.getIdentifier(PptEnrolment.Key)
+          ).map(id => id.value)
+
+        new AuthenticatedRequest(request, user, appConfig, pptReference)
+      }
     else {
       logger.warn("User is not allowed, access denied")
       Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))

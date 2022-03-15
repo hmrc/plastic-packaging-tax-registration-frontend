@@ -19,18 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 
 class AuthenticatedRequest[+A](
   request: Request[A],
   val user: SignedInUser,
-  val appConfig: AppConfig
+  val appConfig: AppConfig,
+  val pptReference: Option[String] = None
 ) extends WrappedRequest[A](request) {
-
-  def pptReference: Option[String] =
-    user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(
-      enrolment => enrolment.getIdentifier(PptEnrolment.Key)
-    ).map(id => id.value)
 
   val featureFlags: Map[String, Boolean] =
     user.features
