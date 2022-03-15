@@ -22,6 +22,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,10 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  IdentityData
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, IdentityData}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -85,8 +83,29 @@ abstract class AuthActionBase @Inject() (
   ): Future[Result] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
+
+    def authPredicate: Predicate = {
+      // TODO restore; also not used in returns
+      // CredentialStrength(CredentialStrength.strong)
+
+      // TODO Using Enrolment in this way is locking out the registration journey
+      // Needs to be conditional; may be what checkAlreadyEnrolled is doing or a new switch
+
+      getSelectedClientIdentifier.map { clientIdentifier =>
+        // If this request is decorated with a selected client identifier this indicates
+        // an agent at work; we need to request the delegated authority
+        Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key,
+          clientIdentifier
+        ).withDelegatedAuthRule("ppt-auth")
+      }.getOrElse {
+        Enrolment(PptEnrolment.Identifier)
+      }
+    }
+
     val authorisation = authTimer.time()
-    authorised(CredentialStrength(CredentialStrength.strong))
+    authorised(authPredicate)
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
@@ -140,15 +159,27 @@ abstract class AuthActionBase @Inject() (
     email: String,
     allEnrolments: Enrolments
   ) = {
-    val pptEnrolment = allEnrolments.getEnrolment(PptEnrolment.Identifier)
-    val pptReference =
-      pptEnrolment.flatMap(enrolment => enrolment.getIdentifier(PptEnrolment.Key)).map(
-        id => id.value
-      )
+
+    def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
+
+    val pptReference = {
+      // The source of the ppt reference will be different if this is an agent request
+      identityData.affinityGroup match {
+        case Some(AffinityGroup.Agent) =>
+          getSelectedClientIdentifier()
+        case _ =>
+          val pptEnrolment = allEnrolments.getEnrolment(PptEnrolment.Identifier)
+          pptEnrolment.flatMap(enrolment => enrolment.getIdentifier(PptEnrolment.Key)).map(
+            id => id.value
+          )
+      }
+    }
+    logger.info("Authed with affinity group " + identityData.affinityGroup + " and ppt reference " + pptReference)
 
     if (checkAlreadyEnrolled && pptReference.isDefined)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
-    else if (allowedUsers.isAllowed(email))
+
+    else if (allowedUsers.isAllowed(email, identityData.affinityGroup))
       block {
         val user =
           SignedInUser(allEnrolments,
