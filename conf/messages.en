@@ -174,9 +174,6 @@ liability.expectToExceedThreshold.date.hint = For example, 15 6 2022
 liability.expectToExceedThreshold.date.none = Enter the date you realised you would meet the threshold
 liability.expectToExceedThreshold.date.invalid = Date you realised you would meet the threshold must be a real date
 liability.expectToExceedThreshold.date.future = Date you realised you would meet the threshold must be today or in the past
-liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
-liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
-liability.exceededThresholdWeightDate.before.goLiveDate.error = Date you met the threshold must be on, or after, {0}
 
 liability.taxStartDate.title = Your tax start date
 liability.taxStartDate.pageHeading = Your tax start date
@@ -473,10 +470,11 @@ liability.exceededThresholdWeightDate.sectionHeader = Liability details
 liability.exceededThresholdWeightDate.title = When did your organisation or group meet the 10,000kg threshold?
 liability.exceededThresholdWeightDate.hint = For example, 15 5 2022.
 liability.exceededThresholdWeightDate.formatting.error = Date you met the threshold must be a real date
-liability.exceededThresholdWeightDate.outOfRange.error = Liability date must be today or in the past
+liability.exceededThresholdWeightDate.outOfRange.error = Date you met the threshold must be today or in the past
 liability.exceededThresholdWeightDate.empty.error = Enter the date you met the threshold
 liability.exceededThresholdWeightDate.two.required.fields = Date you met the threshold must include the {0}
 liability.exceededThresholdWeightDate.one.field = Date you met the threshold must include the {0}
+liability.exceededThresholdWeightDate.before.goLiveDate.error = Date you met the threshold must be on, or after, {0}
 
 grs.failure.title = Sorry, there is a problem with the service
 grs.failure.heading = Sorry, there is a problem with the service.
