@@ -48,8 +48,8 @@ POST       /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registrat
 # Organisation Details
 GET        /grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.GrsController.grsCallback(journeyId)
 
-GET        /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPage()
-POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submit()
+GET        /group-representative-member-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPage()
+POST       /group-representative-member-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submit()
 
 GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.displayPage()
 POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.submit()

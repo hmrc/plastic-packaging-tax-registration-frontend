@@ -85,7 +85,7 @@
                         isPageHeading = true
                     ))
                 )),
-                hint = None,
+                hint = Some(Hint(content = Text(messages("organisationDetails.type.hint")))),
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = organisationRadios,
