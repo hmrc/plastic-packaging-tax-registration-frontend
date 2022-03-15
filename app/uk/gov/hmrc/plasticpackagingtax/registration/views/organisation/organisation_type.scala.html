@@ -71,7 +71,8 @@
     @govukLayout(
         title = Title(title),
         backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
-            @errorSummary(form.errors)
+
+        @errorSummary(form.errors)
 
         @sectionHeader(messages(section))
 

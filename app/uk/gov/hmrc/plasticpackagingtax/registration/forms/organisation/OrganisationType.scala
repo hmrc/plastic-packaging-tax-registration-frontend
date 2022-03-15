@@ -55,7 +55,7 @@ object OrganisationType extends CommonFormValidators {
   def form(): Form[OrganisationType] =
     Form(
       mapping(
-        "answer" -> text()
+        "answer" -> nonEmptyString(emptyError)
           .verifying(emptyError, contains(OrgType.values.toSeq.map(_.toString)))
       )(OrganisationType.apply)(OrganisationType.unapply)
     )
