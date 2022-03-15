@@ -87,4 +87,5 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
 
   private def createSut(registration: Registration): ListGroupMembersViewModel =
     new ListGroupMembersViewModel(registration)
+
 }
