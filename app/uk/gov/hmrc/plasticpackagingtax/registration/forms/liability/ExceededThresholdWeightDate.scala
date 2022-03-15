@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
@@ -28,13 +29,14 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class ExceededThresholdWeightDate @Inject() (appConfig: AppConfig, clock: Clock) extends Mappings {
 
-  val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
-  val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
-  val dateEmptyError      = "liability.exceededThresholdWeightDate.empty.error"
-  val twoRequiredKey      = "liability.exceededThresholdWeightDate.two.required.fields"
-  val requiredKey         = "liability.exceededThresholdWeightDate.one.field"
+  val dateFormattingError   = "liability.exceededThresholdWeightDate.formatting.error"
+  val dateOutOfRangeError   = "liability.exceededThresholdWeightDate.outOfRange.error"
+  val dateEmptyError        = "liability.exceededThresholdWeightDate.empty.error"
+  val twoRequiredKey        = "liability.exceededThresholdWeightDate.two.required.fields"
+  val requiredKey           = "liability.exceededThresholdWeightDate.one.field"
+  val isBeforeLiveDateError = "liability.exceededThresholdWeightDate.before.goLiveDate.error"
 
-  def apply(): Form[Date] =
+  def apply()(implicit messages: Messages): Form[Date] =
     Form(
       mapping(
         "exceeded-threshold-weight-date" -> localDate(emptyDateKey =
@@ -42,7 +44,9 @@ class ExceededThresholdWeightDate @Inject() (appConfig: AppConfig, clock: Clock)
                                                       requiredKey,
                                                       twoRequiredKey,
                                                       dateFormattingError
-        ).verifying(isInDateRange(dateOutOfRangeError)(appConfig, clock))
+        ).verifying(
+          isInDateRange(dateOutOfRangeError, isBeforeLiveDateError)(appConfig, clock, messages)
+        )
       )(Date.apply)(Date.unapply)
     )
 
