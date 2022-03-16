@@ -4,6 +4,10 @@
 
 GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
 
+#Welsh Translation
+GET        /lang/enGb             uk.gov.hmrc.plasticpackagingtax.registration.controllers.LanguageController.enGb()
+GET        /lang/cyGb             uk.gov.hmrc.plasticpackagingtax.registration.controllers.LanguageController.cyGb()
+
 GET        /start                uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
 GET        /start-registration   uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartRegistrationController.startRegistration()
 

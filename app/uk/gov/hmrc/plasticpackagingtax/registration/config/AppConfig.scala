@@ -39,9 +39,15 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, Language}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesConfig) {
+
+  lazy val welshEnabled: Boolean = config.get[Boolean]("lang.welsh.enabled")
+
+  def languageLinks: Seq[(Language, String)] =
+    Seq((En, routes.LanguageController.enGb.url), (Cy, routes.LanguageController.cyGb.url))
 
   lazy val assetsUrl: String = config.get[String]("assets.url")
 

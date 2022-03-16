@@ -65,10 +65,10 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
 
     "display feedback link for authenticated users" in {
 
-      view.getElementsByClass("govuk-link").get(2) must haveHref(
+      view.getElementsByClass("govuk-link").get(3) must haveHref(
         "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
       )
-      view.getElementsByClass("govuk-link").get(2) must containMessage(
+      view.getElementsByClass("govuk-link").get(3) must containMessage(
         "organisationDetails.feedback.link"
       )
     }
@@ -76,10 +76,10 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
     "display feedback link for unauthenticated users" in {
 
       val unauthenticatedView = page()(FakeRequest(), messages)
-      unauthenticatedView.getElementsByClass("govuk-link").get(1) must haveHref(
+      unauthenticatedView.getElementsByClass("govuk-link").get(2) must haveHref(
         "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
       )
-      unauthenticatedView.getElementsByClass("govuk-link").get(1) must containMessage(
+      unauthenticatedView.getElementsByClass("govuk-link").get(2) must containMessage(
         "organisationDetails.feedback.link"
       )
     }
