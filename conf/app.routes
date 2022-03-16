@@ -48,8 +48,8 @@ POST       /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registrat
 # Organisation Details
 GET        /grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.GrsController.grsCallback(journeyId)
 
-GET        /group-representative-member-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPage()
-POST       /group-representative-member-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submit()
+GET        /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPage()
+POST       /organisation-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submit()
 
 GET        /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.displayPage()
 POST       /partnership    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnershipTypeController.submit()
@@ -187,6 +187,9 @@ GET        /request-to-join-private-beta   uk.gov.hmrc.plasticpackagingtax.regis
 GET        /keep-alive              uk.gov.hmrc.plasticpackagingtax.registration.controllers.KeepAliveController.keepAlive()
 
 # Group Registrations
+GET        /group-representative-member-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.displayPageRepresentativeMember()
+POST       /group-representative-member-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.OrganisationDetailsTypeController.submitRepresentativeMember()
+
 GET        /group-member-type               uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.displayPageNewMember()
 GET        /group-member-type/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeController.displayPageAmendMember(memberId)
 

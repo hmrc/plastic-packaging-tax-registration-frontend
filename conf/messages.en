@@ -359,8 +359,9 @@ organisationDetails.basedInUk.title = Is the organisation you want to register b
 organisationDetails.basedInUk.empty.error = Choose an option
 
 organisationDetails.type.title = What type of organisation do you want to register?
-organisationDetails.type.empty.error = Select the type of organisation you want to add
+organisationDetails.type.empty.error = Select the type of organisation you want to register
 organisationDetails.type.empty.member.error = Select the representative member organisation type
+organisationDetails.type.empty.group.error = Select the type of organisation you want to add
 
 organisationDetails.nominated.organisation.sectionHeader = Representative member details
 organisationDetails.type.group.title = What type of organisation is the representative member?

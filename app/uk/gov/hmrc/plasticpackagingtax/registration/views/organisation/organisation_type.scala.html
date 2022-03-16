@@ -76,7 +76,7 @@
 
         @sectionHeader(messages(section))
 
-        @formHelper(action = organisationRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = if(isGroup) organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember() else organisationRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(

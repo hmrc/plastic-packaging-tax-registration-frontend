@@ -47,14 +47,22 @@ object OrgType extends Enumeration {
 
 }
 
+object ActionEnum extends Enumeration {
+  type Type = Value
+
+  val Org, RepresentativeMember, Group  = Value
+}
+
 case class OrganisationType(answer: Option[OrgType])
 
 object OrganisationType extends CommonFormValidators {
 
-  def form(isGroup: Boolean): Form[OrganisationType] = {
-    lazy val emptyError = isGroup match {
-      case true => "organisationDetails.type.empty.error"
-      case _    => "organisationDetails.type.empty.member.error"
+  def form(action: ActionEnum.Type): Form[OrganisationType] = {
+    lazy val emptyError = action match {
+      case ActionEnum.Org                  => "organisationDetails.type.empty.error"
+      case ActionEnum.RepresentativeMember => "organisationDetails.type.empty.member.error"
+      case ActionEnum.Group                => "organisationDetails.type.empty.group.error"
+      case _                               => "organisationDetails.type.empty.error"
     }
 
     Form(

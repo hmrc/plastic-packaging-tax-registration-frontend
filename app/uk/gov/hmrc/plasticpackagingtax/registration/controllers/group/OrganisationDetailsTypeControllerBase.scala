@@ -21,16 +21,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  GroupDetail,
-  Registration,
-  RegistrationUpdater
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{ActionEnum, OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration, RegistrationUpdater}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -55,7 +48,7 @@ abstract class OrganisationDetailsTypeControllerBase(
             _.organisationDetails.map(_.organisationType)
           ).getOrElse(throw new IllegalStateException("Organisation type is absent"))
           Ok(
-            page(form = OrganisationType.form(isFirstMember).fill(
+            page(form = OrganisationType.form(ActionEnum.Group).fill(
                    OrganisationType(OrgType.withNameOpt(organisationType))
                  ),
                  isFirstMember,
@@ -64,7 +57,7 @@ abstract class OrganisationDetailsTypeControllerBase(
             )
           )
         case None =>
-          Ok(page(form = OrganisationType.form(isFirstMember), isFirstMember, memberId, submitCall))
+          Ok(page(form = OrganisationType.form(ActionEnum.Group), isFirstMember, memberId, submitCall))
       }
 
     }
@@ -72,7 +65,7 @@ abstract class OrganisationDetailsTypeControllerBase(
   protected def doSubmit(memberId: Option[String], submitCall: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val isFirstMember: Boolean = request.registration.isFirstGroupMember
-      OrganisationType.form(isFirstMember)
+      OrganisationType.form(ActionEnum.Group)
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>

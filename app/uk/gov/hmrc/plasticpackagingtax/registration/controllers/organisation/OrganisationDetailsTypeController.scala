@@ -25,18 +25,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
-  OrgType,
-  OrganisationType,
-  PartnerTypeEnum
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{ActionEnum, OrgType, OrganisationType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Cacheable,
-  NewRegistrationUpdateService,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, NewRegistrationUpdateService, OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -61,29 +52,33 @@ class OrganisationDetailsTypeController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport
     with OrganisationDetailsTypeHelper {
 
-  private lazy val isGroup = false
+  def displayPageRepresentativeMember(): Action[AnyContent] = doDisplayPage(ActionEnum.RepresentativeMember)
+  def displayPage(): Action[AnyContent]                     = doDisplayPage(ActionEnum.Org)
+  def submitRepresentativeMember() : Action[AnyContent]     = doSubmit(ActionEnum.RepresentativeMember)
+  def submit(): Action[AnyContent]                          = doSubmit(ActionEnum.Org)
 
-  def displayPage(): Action[AnyContent] =
+  private def doDisplayPage(action: ActionEnum.Type) = {
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
           Future(
             Ok(
-              page(form = OrganisationType.form(isGroup).fill(OrganisationType(Some(data))),
-                   isGroup = request.registration.isGroup
+              page(form = OrganisationType.form(action).fill(OrganisationType(Some(data))),
+                isGroup = request.registration.isGroup
               )
             )
           )
         case _ =>
           Future(
-            Ok(page(form = OrganisationType.form(isGroup), isGroup = request.registration.isGroup))
+            Ok(page(form = OrganisationType.form(action), isGroup = request.registration.isGroup))
           )
       }
     }
+  }
 
-  def submit(): Action[AnyContent] =
+  private def doSubmit(action: ActionEnum.Type) = {
     (authenticate andThen journeyAction).async { implicit request =>
-      OrganisationType.form(isGroup)
+      OrganisationType.form(action)
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
@@ -99,8 +94,8 @@ class OrganisationDetailsTypeController @Inject() (
               case Left(error) => throw error
             }
         )
-
     }
+  }
 
   private def updateRegistration(
     formData: OrganisationType
