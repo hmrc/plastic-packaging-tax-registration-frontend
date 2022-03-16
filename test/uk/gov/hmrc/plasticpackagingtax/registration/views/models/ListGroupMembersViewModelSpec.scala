@@ -32,7 +32,7 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
 
   val members                    = Seq(groupMember, groupMember)
   val registration: Registration = createRegistration(members)
-  val sut                        = createSut(registration)
+  val sut                        = createViewModel(registration)
 
   "groupMemberCount" must {
     "count the groupMembers" in {
@@ -67,15 +67,15 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
 
     "not contain remove button" when {
       "has two member only" in {
-        val newSut = createSut(createRegistration(Seq(groupMember)))
+        val viewModel = createViewModel(createRegistration(Seq(groupMember)))
 
-        newSut.listMembers(mockMessages).foreach(_.remove mustBe None)
+        viewModel.listMembers(mockMessages).foreach(_.remove mustBe None)
       }
 
       "has one member only" in {
-        val newSut = createSut(createRegistration(Seq.empty))
+        val viewModel = createViewModel(createRegistration(Seq.empty))
 
-        newSut.listMembers(mockMessages).foreach(_.remove mustBe None)
+        viewModel.listMembers(mockMessages).foreach(_.remove mustBe None)
       }
     }
   }
@@ -85,7 +85,7 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
     aRegistration(withGroupDetail(Some(groupDetail1)))
   }
 
-  private def createSut(registration: Registration): ListGroupMembersViewModel =
+  private def createViewModel(registration: Registration): ListGroupMembersViewModel =
     new ListGroupMembersViewModel(registration)
 
 }

@@ -112,13 +112,13 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
     }
 
     "have no remove button" when {
-      "group contains 2 members" in {
+      "group contains 2 members (nominate member and a member)" in {
         view.getElementsByClass("hmrc-add-to-a-list__remove")
           .select("a")
           .size() mustBe 0
       }
 
-      "group contains less than 2 members" in {
+      "group contains less only the nominate member" in {
         val newView = createView(Seq.empty)
         newView.getElementsByClass("hmrc-add-to-a-list__remove")
           .select("a")
