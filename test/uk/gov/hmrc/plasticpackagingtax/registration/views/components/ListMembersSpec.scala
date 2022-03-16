@@ -95,7 +95,6 @@ class ListMembersSpec extends UnitViewSpec with Matchers {
         ) must haveSize(0)
       }
     }
-
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {

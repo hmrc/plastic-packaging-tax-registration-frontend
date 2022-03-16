@@ -22,6 +22,7 @@ import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration}
 
 class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
@@ -30,13 +31,12 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
   when(mockMessages.apply(anyString(), any())).thenReturn("some message")
 
   val members                    = Seq(groupMember, groupMember)
-  val groupDetail                = GroupDetail(membersUnderGroupControl = Some(true), members = members)
-  val registration: Registration = aRegistration(withGroupDetail(Some(groupDetail)))
-  val sut                        = new ListGroupMembersViewModel(registration)
+  val registration: Registration = createRegistration(members)
+  val sut                        = createViewModel(registration)
 
   "groupMemberCount" must {
     "count the groupMembers" in {
-      sut.groupMemberCount mustBe "2"
+      sut.groupMemberCount mustBe 2
     }
   }
 
@@ -64,5 +64,28 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
           other.subHeading mustBe None
       }
     }
+
+    "not contain remove button" when {
+      "has two member only" in {
+        val viewModel = createViewModel(createRegistration(Seq(groupMember)))
+
+        viewModel.listMembers(mockMessages).foreach(_.remove mustBe None)
+      }
+
+      "has one member only" in {
+        val viewModel = createViewModel(createRegistration(Seq.empty))
+
+        viewModel.listMembers(mockMessages).foreach(_.remove mustBe None)
+      }
+    }
   }
+
+  private def createRegistration(members: Seq[GroupMember]): Registration = {
+    val groupDetail1 = GroupDetail(membersUnderGroupControl = Some(true), members = members)
+    aRegistration(withGroupDetail(Some(groupDetail1)))
+  }
+
+  private def createViewModel(registration: Registration): ListGroupMembersViewModel =
+    new ListGroupMembersViewModel(registration)
+
 }

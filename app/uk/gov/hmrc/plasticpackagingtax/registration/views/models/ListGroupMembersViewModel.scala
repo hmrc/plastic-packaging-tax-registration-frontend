@@ -21,7 +21,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 class ListGroupMembersViewModel(registration: Registration) {
-  val groupMemberCount: String = registration.groupDetail.map(_.members.size).getOrElse(0).toString
+  val groupMemberCount: Int = registration.groupDetail.map(_.members.size).getOrElse(0)
 
   def listMembers(implicit messages: Messages): Seq[ListMember] =
     ListMember(
@@ -36,7 +36,10 @@ class ListGroupMembersViewModel(registration: Registration) {
             ListMember(name = member.businessName,
                        change =
                          Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-                       remove = Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+                       remove =
+                         if (groupMemberCount > 1)
+                           Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+                         else None
             )
         )
       )
