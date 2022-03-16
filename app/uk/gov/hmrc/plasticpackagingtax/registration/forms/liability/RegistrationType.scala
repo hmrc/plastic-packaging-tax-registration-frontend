@@ -21,7 +21,6 @@ import play.api.data.Forms.{mapping, text}
 import play.api.libs.json.{Format, Reads, Writes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType.emptyError
 
 object RegType extends Enumeration {
   type RegType = Value
@@ -37,6 +36,7 @@ object RegType extends Enumeration {
 case class RegistrationType(value: Option[RegType])
 
 object RegistrationType extends CommonFormValidators {
+  lazy val emptyError = "registrationType.type.empty.error"
 
   def form(): Form[RegistrationType] =
     Form(

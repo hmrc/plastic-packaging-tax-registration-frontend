@@ -39,10 +39,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[organisation_type]
+  private val page    = inject[organisation_type]
+  private val isGroup = false
 
   private def createView(
-    form: Form[OrganisationType] = OrganisationType.form(),
+    form: Form[OrganisationType] = OrganisationType.form(isGroup),
     isGroup: Boolean = false
   ): Document =
     page(form, isGroup)(journeyRequest, messages)
@@ -149,7 +150,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display checked radio button" in {
 
       val form = OrganisationType
-        .form()
+        .form(isGroup)
         .fill(OrganisationType(UK_COMPANY.toString))
       val view = createView(form)
 
@@ -161,19 +162,21 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       "no radio button checked" in {
 
         val form = OrganisationType
-          .form()
+          .form(isGroup)
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer", "This field is required")
+        view must haveGovukFieldError("answer",
+                                      "Select the representative member organisation type"
+        )
         view must haveGovukGlobalErrorSummary
       }
     }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(OrganisationType.form(), false)(request, messages)
-    page.render(OrganisationType.form(), false, request, messages)
+    page.f(OrganisationType.form(isGroup), false)(request, messages)
+    page.render(OrganisationType.form(isGroup), false, request, messages)
   }
 
   def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit

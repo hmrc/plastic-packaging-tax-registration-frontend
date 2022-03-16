@@ -352,13 +352,15 @@ registrationType.title = What do you want to register?
 registrationType.singleEntity = A single organisation
 registrationType.group = A group of organisations
 registrationType.group.hint = You cannot register charitable incorporated organisations (CIO) or overseas organisations without a UK establishment as part of a group.
+registrationType.type.empty.error = Value must be selected
 
 organisationDetails.sectionHeader = Organisation details
 organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
 organisationDetails.basedInUk.empty.error = Choose an option
 
 organisationDetails.type.title = What type of organisation do you want to register?
-organisationDetails.type.empty.error = Value must be selected
+organisationDetails.type.empty.error = Select the type of organisation you want to add
+organisationDetails.type.empty.member.error = Select the representative member organisation type
 
 organisationDetails.nominated.organisation.sectionHeader = Representative member details
 organisationDetails.type.group.title = What type of organisation is the representative member?
@@ -581,9 +583,10 @@ group.removeMember.title = Are you sure you want to remove {0} from the group?
 group.removeMember.error.empty = Please select Yes or No
 
 organisationDetails.other.organisation.sectionHeader = Other organisations in the group
-organisationDetails.other.group.title = What type of organisation is the first one you want to add?
-organisationDetails.other.next.group.title = What type of organisation is the next one you want to add?
+organisationDetails.other.group.title = What type of organisation do you want to add first?
+organisationDetails.other.next.group.title = What type of organisation do you want to add next?
 organisationDetails.type.GroupPartnership = Limited liability partnership
+organisationDetails.other.type.hint = Charitable incorporated organisations (CIO), trusts, overseas organisations without a UK establishment, and public bodies must register for Plastic Packaging Tax separately.
 
 enrolment.referenceNumber.already.used.title = Your PPT reference number has already been used
 enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different Government Gateway.

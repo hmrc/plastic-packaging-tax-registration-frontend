@@ -50,15 +50,20 @@ object OrgType extends Enumeration {
 case class OrganisationType(answer: Option[OrgType])
 
 object OrganisationType extends CommonFormValidators {
-  lazy val emptyError = "organisationDetails.type.empty.error"
 
-  def form(): Form[OrganisationType] =
+  def form(isGroup: Boolean): Form[OrganisationType] = {
+    lazy val emptyError = isGroup match {
+      case true => "organisationDetails.type.empty.error"
+      case _    => "organisationDetails.type.empty.member.error"
+    }
+
     Form(
       mapping(
         "answer" -> nonEmptyString(emptyError)
           .verifying(emptyError, contains(OrgType.values.toSeq.map(_.toString)))
       )(OrganisationType.apply)(OrganisationType.unapply)
     )
+  }
 
   def apply(value: String): OrganisationType = OrganisationType(OrgType.withNameOpt(value))
 

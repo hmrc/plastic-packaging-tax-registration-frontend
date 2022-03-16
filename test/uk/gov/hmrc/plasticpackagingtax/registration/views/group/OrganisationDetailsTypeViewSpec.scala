@@ -37,10 +37,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[organisation_type]
+  private val page    = inject[organisation_type]
+  private val isGroup = true
 
   private def createView(
-    form: Form[OrganisationType] = OrganisationType.form(),
+    form: Form[OrganisationType] = OrganisationType.form(isGroup),
     isFirstMember: Boolean = true
   ): Document =
     page(form = form,
@@ -74,7 +75,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title for next group member" in {
-      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
+      val view: Document = createView(form = OrganisationType.form(isGroup), isFirstMember = false)
       view.select("title").text() must include(
         messages("organisationDetails.other.next.group.title")
       )
@@ -120,7 +121,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title for next group member" in {
-      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
+      val view: Document = createView(form = OrganisationType.form(isGroup), isFirstMember = false)
       view.select("title").text() must include(
         messages("organisationDetails.other.next.group.title")
       )
@@ -153,7 +154,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display checked radio button" in {
 
       val form = OrganisationType
-        .form()
+        .form(isGroup)
         .fill(OrganisationType(UK_COMPANY.toString))
       val view = createView(form)
 
@@ -165,23 +166,23 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       "no radio button checked" in {
 
         val form = OrganisationType
-          .form()
+          .form(isGroup)
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer", "This field is required")
+        view must haveGovukFieldError("answer", "Select the type of organisation you want to add")
         view must haveGovukGlobalErrorSummary
       }
     }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(OrganisationType.form(),
+    page.f(OrganisationType.form(isGroup),
            true,
            Some(groupMember.id),
            routes.OrganisationDetailsTypeController.submitNewMember()
     )(request, messages)
-    page.render(OrganisationType.form(),
+    page.render(OrganisationType.form(isGroup),
                 isFirstMember = true,
                 Some(groupMember.id),
                 routes.OrganisationDetailsTypeController.submitNewMember(),

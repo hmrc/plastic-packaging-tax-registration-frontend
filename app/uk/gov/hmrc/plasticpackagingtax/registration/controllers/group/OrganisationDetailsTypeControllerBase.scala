@@ -55,7 +55,7 @@ abstract class OrganisationDetailsTypeControllerBase(
             _.organisationDetails.map(_.organisationType)
           ).getOrElse(throw new IllegalStateException("Organisation type is absent"))
           Ok(
-            page(form = OrganisationType.form().fill(
+            page(form = OrganisationType.form(isFirstMember).fill(
                    OrganisationType(OrgType.withNameOpt(organisationType))
                  ),
                  isFirstMember,
@@ -63,14 +63,16 @@ abstract class OrganisationDetailsTypeControllerBase(
                  submitCall
             )
           )
-        case None => Ok(page(form = OrganisationType.form(), isFirstMember, memberId, submitCall))
+        case None =>
+          Ok(page(form = OrganisationType.form(isFirstMember), isFirstMember, memberId, submitCall))
       }
 
     }
 
   protected def doSubmit(memberId: Option[String], submitCall: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      OrganisationType.form()
+      val isFirstMember: Boolean = request.registration.isFirstGroupMember
+      OrganisationType.form(isFirstMember)
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>

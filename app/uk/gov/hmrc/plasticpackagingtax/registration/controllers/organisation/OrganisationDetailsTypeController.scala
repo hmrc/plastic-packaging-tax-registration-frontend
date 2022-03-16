@@ -67,19 +67,21 @@ class OrganisationDetailsTypeController @Inject() (
         case Some(data) =>
           Future(
             Ok(
-              page(form = OrganisationType.form().fill(OrganisationType(Some(data))),
+              page(form = OrganisationType.form(false).fill(OrganisationType(Some(data))),
                    isGroup = request.registration.isGroup
               )
             )
           )
         case _ =>
-          Future(Ok(page(form = OrganisationType.form(), isGroup = request.registration.isGroup)))
+          Future(
+            Ok(page(form = OrganisationType.form(false), isGroup = request.registration.isGroup))
+          )
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      OrganisationType.form()
+      OrganisationType.form(false)
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
