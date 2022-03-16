@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.13
+// @version      15.14
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -637,10 +637,27 @@ const groupMemberContactName = () => {
     }
 }
 
+const amendGroupMemberContactName = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/amend-group-member-contact-name/.*')) {
+
+        document.getElementById('firstName').value = "John"
+        document.getElementById('lastName').value = "Pigeon"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const groupMemberContactEmailAddress = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/group-member-contact-email/.*')) {
 
         document.getElementById('value').value = "test@test.com"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const amendGroupMemberContactEmailAddress = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/amend-group-member-contact-email/.*')) {
+
+        document.getElementById('value').value = "testamend@test.com"
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -653,9 +670,25 @@ const groupMemberContactPhoneNumber = () => {
     }
 }
 
+const amendGroupMemberContactPhoneNumber = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/amend-group-member-contact-phone-number/.*')) {
+
+        document.getElementById('value').value = "07834123456"
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const primaryContactFullName = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/main-contact-name')) {
         document.getElementById('value').value = 'Jack Gatsby'
+
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
+const amendContactFullName = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/amend-contact-name')) {
+        document.getElementById('value').value = 'John Gatensby'
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -669,8 +702,16 @@ const primaryContactJobTitle = () => {
     }
 }
 
+const amendContactJobTitle = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/amend-job-title')) {
+
+        document.getElementById('value').value = 'Cost Estimator'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const primaryContactEmailAddress = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/main-contact-email')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/main-contact-email') || currentPageIs('/register-for-plastic-packaging-tax/amend-email') ) {
 
         document.getElementById('value').value = 'ppt@mail.com'
         document.getElementsByClassName('govuk-button')[0].click()
@@ -700,6 +741,14 @@ const primaryContactTelephoneNumber = () => {
     }
 }
 
+const amendContactTelephoneNumber = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/amend-phone-number')) {
+
+        document.getElementById('value').value = '07867123456'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
+
 const primaryContactConfirmAddress = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/confirm-contact-address')) {
 
@@ -709,7 +758,8 @@ const primaryContactConfirmAddress = () => {
 }
 
 const reviewRegistration = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/review-registration')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/review-registration') ||
+        currentPageIs('/register-for-plastic-packaging-tax/amend-registration')) {
 
         document.getElementsByClassName('govuk-button')[0].click()
     }
@@ -934,4 +984,12 @@ function completeJourney(manualJourney) {
     enrolmentRegistrationDate()
     checkAnswers()
     enrolmentVerificationFailure()
+
+    // amend pages
+    amendContactFullName()
+    amendContactJobTitle()
+    amendContactTelephoneNumber()
+    amendGroupMemberContactName()
+    amendGroupMemberContactEmailAddress()
+    amendGroupMemberContactPhoneNumber()
 }
