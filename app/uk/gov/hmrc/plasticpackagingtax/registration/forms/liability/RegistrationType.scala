@@ -36,7 +36,7 @@ object RegType extends Enumeration {
 case class RegistrationType(value: Option[RegType])
 
 object RegistrationType extends CommonFormValidators {
-  lazy val emptyError = "registrationType.type.empty.error"
+  val emptyError = "registrationType.type.empty.error"
 
   def form(): Form[RegistrationType] =
     Form(
