@@ -61,27 +61,29 @@ class OrganisationDetailsTypeController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport
     with OrganisationDetailsTypeHelper {
 
+  private lazy val isGroup = false
+
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
           Future(
             Ok(
-              page(form = OrganisationType.form(false).fill(OrganisationType(Some(data))),
+              page(form = OrganisationType.form(isGroup).fill(OrganisationType(Some(data))),
                    isGroup = request.registration.isGroup
               )
             )
           )
         case _ =>
           Future(
-            Ok(page(form = OrganisationType.form(false), isGroup = request.registration.isGroup))
+            Ok(page(form = OrganisationType.form(isGroup), isGroup = request.registration.isGroup))
           )
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      OrganisationType.form(false)
+      OrganisationType.form(isGroup)
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
