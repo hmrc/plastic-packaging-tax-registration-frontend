@@ -25,9 +25,19 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{ActionEnum, OrgType, OrganisationType, PartnerTypeEnum}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  ActionEnum,
+  OrgType,
+  OrganisationType,
+  PartnerTypeEnum
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.PartnershipDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, NewRegistrationUpdateService, OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  Cacheable,
+  NewRegistrationUpdateService,
+  OrganisationDetails,
+  Registration
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -52,19 +62,21 @@ class OrganisationDetailsTypeController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport
     with OrganisationDetailsTypeHelper {
 
-  def displayPageRepresentativeMember(): Action[AnyContent] = doDisplayPage(ActionEnum.RepresentativeMember)
-  def displayPage(): Action[AnyContent]                     = doDisplayPage(ActionEnum.Org)
-  def submitRepresentativeMember() : Action[AnyContent]     = doSubmit(ActionEnum.RepresentativeMember)
-  def submit(): Action[AnyContent]                          = doSubmit(ActionEnum.Org)
+  def displayPageRepresentativeMember(): Action[AnyContent] =
+    doDisplayPage(ActionEnum.RepresentativeMember)
 
-  private def doDisplayPage(action: ActionEnum.Type) = {
+  def displayPage(): Action[AnyContent]                = doDisplayPage(ActionEnum.Org)
+  def submitRepresentativeMember(): Action[AnyContent] = doSubmit(ActionEnum.RepresentativeMember)
+  def submit(): Action[AnyContent]                     = doSubmit(ActionEnum.Org)
+
+  private def doDisplayPage(action: ActionEnum.Type) =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
           Future(
             Ok(
               page(form = OrganisationType.form(action).fill(OrganisationType(Some(data))),
-                isGroup = request.registration.isGroup
+                   isGroup = request.registration.isGroup
               )
             )
           )
@@ -74,9 +86,8 @@ class OrganisationDetailsTypeController @Inject() (
           )
       }
     }
-  }
 
-  private def doSubmit(action: ActionEnum.Type) = {
+  private def doSubmit(action: ActionEnum.Type) =
     (authenticate andThen journeyAction).async { implicit request =>
       OrganisationType.form(action)
         .bindFromRequest()
@@ -95,7 +106,6 @@ class OrganisationDetailsTypeController @Inject() (
             }
         )
     }
-  }
 
   private def updateRegistration(
     formData: OrganisationType

@@ -50,7 +50,7 @@ object OrgType extends Enumeration {
 object ActionEnum extends Enumeration {
   type Type = Value
 
-  val Org, RepresentativeMember, Group  = Value
+  val Org, RepresentativeMember, Group = Value
 }
 
 case class OrganisationType(answer: Option[OrgType])

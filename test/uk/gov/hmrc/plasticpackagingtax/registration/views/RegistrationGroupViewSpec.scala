@@ -242,7 +242,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(organisationElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(organisationElement, 0) must haveHref(
-            organisationRoutes.OrganisationDetailsTypeController.displayPage()
+            organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember()
           )
         }
 

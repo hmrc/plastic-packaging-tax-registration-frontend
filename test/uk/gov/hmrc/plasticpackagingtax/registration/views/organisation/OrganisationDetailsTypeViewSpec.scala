@@ -32,18 +32,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   TRUST,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  ActionEnum,
+  OrganisationType
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
 
-  private val page    = inject[organisation_type]
-  private val isGroup = false
+  private val page = inject[organisation_type]
 
   private def createView(
-    form: Form[OrganisationType] = OrganisationType.form(isGroup),
+    form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Org),
     isGroup: Boolean = false
   ): Document =
     page(form, isGroup)(journeyRequest, messages)
@@ -150,7 +152,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display checked radio button" in {
 
       val form = OrganisationType
-        .form(isGroup)
+        .form(ActionEnum.Org)
         .fill(OrganisationType(UK_COMPANY.toString))
       val view = createView(form)
 
@@ -162,7 +164,20 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       "no radio button checked" in {
 
         val form = OrganisationType
-          .form(isGroup)
+          .form(ActionEnum.Org)
+          .bind(emptyFormData)
+        val view = createView(form)
+
+        view must haveGovukFieldError("answer",
+                                      "Select what type of organisation you want to register"
+        )
+        view must haveGovukGlobalErrorSummary
+      }
+
+      "no radio button checked for representative member" in {
+
+        val form = OrganisationType
+          .form(ActionEnum.RepresentativeMember)
           .bind(emptyFormData)
         val view = createView(form)
 
@@ -175,8 +190,8 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(OrganisationType.form(isGroup), false)(request, messages)
-    page.render(OrganisationType.form(isGroup), false, request, messages)
+    page.f(OrganisationType.form(ActionEnum.Org), false)(request, messages)
+    page.render(OrganisationType.form(ActionEnum.Org), false, request, messages)
   }
 
   def radioInputMustBe(number: Int, orgType: OrgType, labelKey: Option[String] = None)(implicit

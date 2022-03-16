@@ -21,9 +21,20 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{ActionEnum, OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration, RegistrationUpdater}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  ActionEnum,
+  OrgType,
+  OrganisationType
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
+  GroupDetail,
+  Registration,
+  RegistrationUpdater
+}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AuthenticatedRequest,
+  JourneyRequest
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -57,7 +68,13 @@ abstract class OrganisationDetailsTypeControllerBase(
             )
           )
         case None =>
-          Ok(page(form = OrganisationType.form(ActionEnum.Group), isFirstMember, memberId, submitCall))
+          Ok(
+            page(form = OrganisationType.form(ActionEnum.Group),
+                 isFirstMember,
+                 memberId,
+                 submitCall
+            )
+          )
       }
 
     }
