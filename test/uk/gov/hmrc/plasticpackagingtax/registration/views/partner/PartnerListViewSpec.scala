@@ -71,19 +71,19 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display nominated partner label" in {
-      view.select("li").get(0).text() must include(
+      view.getElementById("list-members-ul").children().get(0).text() must include(
         messages("partnership.partnerList.nominatedPartner")
       )
     }
 
     "display nominated partner name" in {
-      view.select("li").get(0).text() must include(
+      view.getElementById("list-members-ul").children().get(0).text() must include(
         getNominatedPartner(partnershipRegistration).name
       )
     }
 
     "display other partners names" in {
-      val otherPartnerItems = view.select("li")
+      val otherPartnerItems = view.getElementById("list-members-ul").children()
       getOtherPartners(partnershipRegistration).zipWithIndex.foreach {
         case (partner, idx) => otherPartnerItems.get(idx + 1).text() must include(partner.name)
       }

@@ -71,7 +71,7 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
     "display visually hidden labels" in {
 
-      view.getElementsByClass("govuk-visually-hidden").get(0).text() must include(
+      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(
         messages("site.back.hiddenText")
       )
     }
@@ -83,11 +83,11 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
     }
 
     "display change link for nominated org" in {
-      view.select("li a").get(0) must haveHref(orgRoutes.CheckAnswersController.displayPage())
+      view.getElementById("list-members-ul").children().select("a").get(0) must haveHref(orgRoutes.CheckAnswersController.displayPage())
     }
 
     "display change links for group members" in {
-      view.select("li a").get(1) must haveHref(
+      view.getElementById("list-members-ul").children().select("a").get(1) must haveHref(
         groupRoutes.ContactDetailsCheckAnswersController.displayPage(groupMember.id)
       )
     }
