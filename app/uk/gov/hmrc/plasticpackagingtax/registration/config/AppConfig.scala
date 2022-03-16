@@ -46,12 +46,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val welshEnabled: Boolean = config.get[Boolean]("lang.welsh.enabled")
 
-  def languageLinks: Seq[(Language, String)] = {
-    Seq(
-      (En, routes.LanguageController.enGb.url),
-      (Cy, routes.LanguageController.cyGb.url)
-    )
-  }
+  def languageLinks: Seq[(Language, String)] =
+    Seq((En, routes.LanguageController.enGb.url), (Cy, routes.LanguageController.cyGb.url))
 
   lazy val assetsUrl: String = config.get[String]("assets.url")
 

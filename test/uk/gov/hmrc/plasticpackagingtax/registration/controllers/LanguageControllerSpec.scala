@@ -37,7 +37,6 @@ import play.api.test.{FakeRequest, Injecting}
 import play.api.test.Helpers._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
-
 class LanguageControllerSpec extends ControllerSpec with Injecting {
 
   lazy val controller = inject[LanguageController]
@@ -62,7 +61,7 @@ class LanguageControllerSpec extends ControllerSpec with Injecting {
     "redirect" when {
       "redirect URI contains the path" in {
         val request = FakeRequest()
-        val result = controller.cyGb()(request)
+        val result  = controller.cyGb()(request)
         cookies(result).get("PLAY_LANG").get.value shouldBe "cy"
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get shouldBe inject[AppConfig].pptAccountUrl

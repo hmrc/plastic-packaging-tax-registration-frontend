@@ -83,7 +83,9 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
     }
 
     "display change link for nominated org" in {
-      view.getElementById("list-members-ul").children().select("a").get(0) must haveHref(orgRoutes.CheckAnswersController.displayPage())
+      view.getElementById("list-members-ul").children().select("a").get(0) must haveHref(
+        orgRoutes.CheckAnswersController.displayPage()
+      )
     }
 
     "display change links for group members" in {
