@@ -19,18 +19,17 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.organisation
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type_not_supported
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.register_as_other_organisation
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
+class RegisterAsOtherOrganisationViewSpec extends UnitViewSpec with Matchers {
 
-  private val page                   = inject[organisation_type_not_supported]
+  private val page                   = inject[register_as_other_organisation]
   private def createView(): Document = page()(journeyRequest, messages)
 
-  "Organisation Type Not Supported View" should {
+  "Register As Other Organisation View" should {
 
     val view = createView()
 
@@ -47,7 +46,7 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
     "display title" in {
 
       view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
-        "organisationDetails.notSupportCompanyTypePage.title"
+        "organisationDetails.registerAsOtherOrganisation.title"
       )
     }
 
@@ -56,31 +55,30 @@ class OrganisationTypeNotSupportedViewSpec extends UnitViewSpec with Matchers {
       view.getElementById("section-header") must containMessage("organisationDetails.sectionHeader")
     }
 
-    "display info paragraph" in {
+    "display paragraphs" in {
 
       view.getElementsByClass(Styles.gdsPageBodyText).first() must containMessage(
-        "organisationDetails.notSupportCompanyTypePage.detail"
+        "organisationDetails.registerAsOtherOrganisation.paragraph.1"
+      )
+
+      view.getElementsByClass(Styles.gdsPageBodyText).get(1).text() must include(
+        messages("organisationDetails.registerAsOtherOrganisation.paragraph.2",
+                 messages("organisationDetails.registerAsOtherOrganisation.gform.link.description")
+        )
+      )
+
+      view.getElementsByClass(Styles.gdsPageBodyText).get(2) must containMessage(
+        "organisationDetails.registerAsOtherOrganisation.paragraph.3"
       )
     }
 
-    "display feedback link for authenticated users" in {
+    "display gform link" in {
 
-      view.getElementsByClass("govuk-link").get(3) must haveHref(
-        "http://localhost:9250/contact/beta-feedback?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
+      view.getElementById("gform-link") must haveHref(
+        "https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax"
       )
-      view.getElementsByClass("govuk-link").get(3) must containMessage(
-        "organisationDetails.feedback.link"
-      )
-    }
-
-    "display feedback link for unauthenticated users" in {
-
-      val unauthenticatedView = page()(FakeRequest(), messages)
-      unauthenticatedView.getElementsByClass("govuk-link").get(2) must haveHref(
-        "http://localhost:9250/contact/beta-feedback-unauthenticated?service=plastic-packaging-tax&backUrl=http://localhost:8503/"
-      )
-      unauthenticatedView.getElementsByClass("govuk-link").get(2) must containMessage(
-        "organisationDetails.feedback.link"
+      view.getElementById("gform-text") must containMessage(
+        "organisationDetails.registerAsOtherOrganisation.gform.link.description"
       )
     }
   }

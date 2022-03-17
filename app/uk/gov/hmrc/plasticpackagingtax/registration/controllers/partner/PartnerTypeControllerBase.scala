@@ -121,10 +121,9 @@ abstract class PartnerTypeControllerBase(
                         case SCOTTISH_PARTNERSHIP | GENERAL_PARTNERSHIP =>
                           redirectToPartnerNamePrompt(partnerId)
                         case _ =>
-                          //TODO later CHARITABLE_INCORPORATED_ORGANISATION & OVERSEAS_COMPANY_NO_UK_BRANCH will have their own not supported page
                           Future(
                             Redirect(
-                              organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                              organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
                             )
                           )
                       }

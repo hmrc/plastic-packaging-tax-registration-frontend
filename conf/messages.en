@@ -430,10 +430,12 @@ unauthorised.paragraph.1 = The Plastic Packaging Tax (PPT) service will launch i
 unauthorised.paragraph.2 = If you would like to provide your feedback too, you can {0}. We will respond to you within two working days.
 unauthorised.paragraph.2.link = request to join PPT’s list of users
 
-organisationDetails.notSupportCompanyTypePage.title = This type of organisation is not supported yet
-organisationDetails.notSupportCompanyTypePage.detail = This is a new service and different types of organisation will be added as the service develops.
-organisationDetails.feedback = {0}. Your thoughts and ideas will help us to make improvements.
-organisationDetails.feedback.link = Send us your feedback
+organisationDetails.registerAsOtherOrganisation.title = Register as a charitable incorporated organisation, trust or overseas company without a UK establishment
+organisationDetails.registerAsOtherOrganisation.paragraph.1 = This is a new service and this organisation type is not supported yet.
+organisationDetails.registerAsOtherOrganisation.paragraph.2 = You can still register for Plastic Packaging Tax by {0}
+organisationDetails.registerAsOtherOrganisation.paragraph.3 = You will be asked some questions about your organisation and your plastic packaging tax again.
+organisationDetails.registerAsOtherOrganisation.gform.link.description = completing this online form
+organisationDetails.registerAsOtherOrganisation.gform.link = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 notLiable.pageTitle = You do not currently need to register at this time
 notLiable.title = You do not currently need to register for Plastic Packaging Tax

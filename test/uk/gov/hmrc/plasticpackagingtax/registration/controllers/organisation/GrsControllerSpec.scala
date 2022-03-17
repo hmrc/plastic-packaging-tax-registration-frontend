@@ -347,7 +347,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          orgRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+          orgRoutes.RegisterAsOtherOrganisationController.onPageLoad().url
         )
       }
     }

@@ -76,7 +76,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
       case (Some(OrgType.PARTNERSHIP), false) =>
         getPartnershipRedirectUrl(memberId, businessVerificationCheck)
       case _ =>
-        Future(Redirect(organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()))
+        Future(Redirect(organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()))
     }
 
   def grsCallbackUrl(organisationId: Option[String] = None): String

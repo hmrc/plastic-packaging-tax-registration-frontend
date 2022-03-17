@@ -23,34 +23,41 @@
     govukLayout: main_template,
     pageHeading: pageHeading,
     paragraphBody: paragraphBody,
+    paragraph: paragraph,
     govUkLink: govUkLink,
     govukButton: GovukButton,
     sectionHeader: sectionHeader,
-    link: link,
-    appConfig: AppConfig
+    link: link
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
-
-@feedbackUrl = @{
-    if (isAuthenticated) {
-        s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
-    } else {
-        s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
-    }
+@gformLink = @{
+    link(
+        id = Some("gform-link"),
+        newTab = true,
+        text = messages("organisationDetails.registerAsOtherOrganisation.gform.link.description"),
+        call = Call(
+            method = "GET",
+            url = messages("organisationDetails.registerAsOtherOrganisation.gform.link")
+        )
+    )
 }
 
-@link = {<a href="@feedbackUrl" class="govuk-link">@messages("organisationDetails.feedback.link")</a>}
+@gformParagraph = {
+    @paragraph(
+        content = Html(messages("organisationDetails.registerAsOtherOrganisation.paragraph.2", gformLink) + "."),
+        id = Some("gform-text")
+    )
+}
 
-@govukLayout(title = Title("organisationDetails.notSupportCompanyTypePage.title")) {
+@govukLayout(title = Title("organisationDetails.registerAsOtherOrganisation.title")) {
 
     @sectionHeader(messages("organisationDetails.sectionHeader"))
 
-    @pageHeading(messages("organisationDetails.notSupportCompanyTypePage.title"))
+    @pageHeading(messages("organisationDetails.registerAsOtherOrganisation.title"))
 
-    @paragraphBody(messages("organisationDetails.notSupportCompanyTypePage.detail"))
-
-    @paragraphBody(messages("organisationDetails.feedback", link))
+    @paragraphBody(messages("organisationDetails.registerAsOtherOrganisation.paragraph.1"))
+    @gformParagraph
+    @paragraphBody(messages("organisationDetails.registerAsOtherOrganisation.paragraph.3"))
 }
