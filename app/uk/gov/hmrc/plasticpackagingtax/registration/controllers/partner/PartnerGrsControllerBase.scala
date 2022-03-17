@@ -85,7 +85,7 @@ abstract class PartnerGrsControllerBase(
                 case DUPLICATE_SUBSCRIPTION =>
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
-                  Redirect(orgRoutes.OrganisationTypeNotSupportedController.onPageLoad())
+                  Redirect(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad())
               }
             }
           case Left(error) => throw error

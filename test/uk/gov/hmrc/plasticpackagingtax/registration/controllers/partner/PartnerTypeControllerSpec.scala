@@ -216,7 +216,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
                 partnerGrsCreateRequest.getValue.businessVerificationCheck mustBe false
               case _ =>
                 redirectLocation(result) mustBe Some(
-                  orgRoutes.OrganisationTypeNotSupportedController.onPageLoad().url
+                  orgRoutes.RegisterAsOtherOrganisationController.onPageLoad().url
                 )
             }
           }

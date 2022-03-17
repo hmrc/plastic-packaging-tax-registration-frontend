@@ -222,7 +222,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
           assertRedirectForOrgType(CHARITABLE_INCORPORATED_ORGANISATION,
-                                   routes.OrganisationTypeNotSupportedController.onPageLoad().url
+                                   routes.RegisterAsOtherOrganisationController.onPageLoad().url
           )
         }
         "user submits organisation type: " + OVERSEAS_COMPANY_UK_BRANCH in {
@@ -234,7 +234,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type: " + TRUST in {
           assertRedirectForOrgType(TRUST,
-                                   routes.OrganisationTypeNotSupportedController.onPageLoad().url
+                                   routes.RegisterAsOtherOrganisationController.onPageLoad().url
           )
         }
 
@@ -432,11 +432,11 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         if (supported)
           redirectLocation(result) must not be Some(
-            routes.OrganisationTypeNotSupportedController.onPageLoad().url
+            routes.RegisterAsOtherOrganisationController.onPageLoad().url
           )
         else
           redirectLocation(result) mustBe Some(
-            routes.OrganisationTypeNotSupportedController.onPageLoad().url
+            routes.RegisterAsOtherOrganisationController.onPageLoad().url
           )
       }
 

@@ -22,17 +22,17 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type_not_supported
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.register_as_other_organisation
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class OrganisationTypeNotSupportedControllerSpec extends ControllerSpec {
+class RegisterAsOtherOrganisationControllerSpec extends ControllerSpec {
 
-  private val page = mock[organisation_type_not_supported]
+  private val page = mock[register_as_other_organisation]
 
   val controller =
-    new OrganisationTypeNotSupportedController(stubMessagesControllerComponents(),
-                                               page,
-                                               authenticate = mockAuthAction
+    new RegisterAsOtherOrganisationController(stubMessagesControllerComponents(),
+                                              page,
+                                              authenticate = mockAuthAction
     )
 
   override protected def beforeEach(): Unit = {

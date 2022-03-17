@@ -111,7 +111,7 @@ class PartnershipTypeController @Inject() (
                           case _ =>
                             Future(
                               Redirect(
-                                organisationRoutes.OrganisationTypeNotSupportedController.onPageLoad()
+                                organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
                               )
                             )
                         }
