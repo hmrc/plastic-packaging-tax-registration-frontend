@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.OrganisationDetailsTypeHelper
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  ActionEnum,
   OrgType,
   OrganisationType,
   PartnerTypeEnum
@@ -61,25 +62,34 @@ class OrganisationDetailsTypeController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport
     with OrganisationDetailsTypeHelper {
 
-  def displayPage(): Action[AnyContent] =
+  def displayPageRepresentativeMember(): Action[AnyContent] =
+    doDisplayPage(ActionEnum.RepresentativeMember)
+
+  def displayPage(): Action[AnyContent]                = doDisplayPage(ActionEnum.Org)
+  def submitRepresentativeMember(): Action[AnyContent] = doSubmit(ActionEnum.RepresentativeMember)
+  def submit(): Action[AnyContent]                     = doSubmit(ActionEnum.Org)
+
+  private def doDisplayPage(action: ActionEnum.Type) =
     (authenticate andThen journeyAction).async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
           Future(
             Ok(
-              page(form = OrganisationType.form().fill(OrganisationType(Some(data))),
+              page(form = OrganisationType.form(action).fill(OrganisationType(Some(data))),
                    isGroup = request.registration.isGroup
               )
             )
           )
         case _ =>
-          Future(Ok(page(form = OrganisationType.form(), isGroup = request.registration.isGroup)))
+          Future(
+            Ok(page(form = OrganisationType.form(action), isGroup = request.registration.isGroup))
+          )
       }
     }
 
-  def submit(): Action[AnyContent] =
+  private def doSubmit(action: ActionEnum.Type) =
     (authenticate andThen journeyAction).async { implicit request =>
-      OrganisationType.form()
+      OrganisationType.form(action)
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>
@@ -95,7 +105,6 @@ class OrganisationDetailsTypeController @Inject() (
               case Left(error) => throw error
             }
         )
-
     }
 
   private def updateRegistration(

@@ -30,7 +30,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  ActionEnum,
+  OrganisationType
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -40,7 +43,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
   private val page = inject[organisation_type]
 
   private def createView(
-    form: Form[OrganisationType] = OrganisationType.form(),
+    form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Group),
     isFirstMember: Boolean = true
   ): Document =
     page(form = form,
@@ -74,7 +77,8 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title for next group member" in {
-      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
+      val view: Document =
+        createView(form = OrganisationType.form(ActionEnum.Group), isFirstMember = false)
       view.select("title").text() must include(
         messages("organisationDetails.other.next.group.title")
       )
@@ -120,7 +124,8 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title for next group member" in {
-      val view: Document = createView(form = OrganisationType.form(), isFirstMember = false)
+      val view: Document =
+        createView(form = OrganisationType.form(ActionEnum.Group), isFirstMember = false)
       view.select("title").text() must include(
         messages("organisationDetails.other.next.group.title")
       )
@@ -153,7 +158,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display checked radio button" in {
 
       val form = OrganisationType
-        .form()
+        .form(ActionEnum.Group)
         .fill(OrganisationType(UK_COMPANY.toString))
       val view = createView(form)
 
@@ -165,23 +170,23 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       "no radio button checked" in {
 
         val form = OrganisationType
-          .form()
+          .form(ActionEnum.Group)
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer", "This field is required")
+        view must haveGovukFieldError("answer", "Select the type of organisation you want to add")
         view must haveGovukGlobalErrorSummary
       }
     }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(OrganisationType.form(),
+    page.f(OrganisationType.form(ActionEnum.Group),
            true,
            Some(groupMember.id),
            routes.OrganisationDetailsTypeController.submitNewMember()
     )(request, messages)
-    page.render(OrganisationType.form(),
+    page.render(OrganisationType.form(ActionEnum.Group),
                 isFirstMember = true,
                 Some(groupMember.id),
                 routes.OrganisationDetailsTypeController.submitNewMember(),

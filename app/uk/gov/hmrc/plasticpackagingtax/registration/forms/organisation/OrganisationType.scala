@@ -47,18 +47,30 @@ object OrgType extends Enumeration {
 
 }
 
+object ActionEnum extends Enumeration {
+  type Type = Value
+
+  val Org, RepresentativeMember, Group = Value
+}
+
 case class OrganisationType(answer: Option[OrgType])
 
 object OrganisationType extends CommonFormValidators {
-  lazy val emptyError = "organisationDetails.type.empty.error"
 
-  def form(): Form[OrganisationType] =
+  def form(action: ActionEnum.Type): Form[OrganisationType] = {
+    val emptyError = action match {
+      case ActionEnum.Org                  => "organisationDetails.type.empty.error"
+      case ActionEnum.RepresentativeMember => "organisationDetails.type.empty.member.error"
+      case ActionEnum.Group                => "organisationDetails.type.empty.group.error"
+    }
+
     Form(
       mapping(
-        "answer" -> text()
+        "answer" -> nonEmptyString(emptyError)
           .verifying(emptyError, contains(OrgType.values.toSeq.map(_.toString)))
       )(OrganisationType.apply)(OrganisationType.unapply)
     )
+  }
 
   def apply(value: String): OrganisationType = OrganisationType(OrgType.withNameOpt(value))
 

@@ -71,11 +71,12 @@
     @govukLayout(
         title = Title(title),
         backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
-            @errorSummary(form.errors)
+
+        @errorSummary(form.errors)
 
         @sectionHeader(messages(section))
 
-        @formHelper(action = organisationRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
+        @formHelper(action = if(isGroup) organisationRoutes.OrganisationDetailsTypeController.submitRepresentativeMember() else organisationRoutes.OrganisationDetailsTypeController.submit(), 'autoComplete -> "off") {
 
             @govukRadios(Radios(
                 fieldset = Some(Fieldset(
@@ -85,7 +86,7 @@
                         isPageHeading = true
                     ))
                 )),
-                hint = None,
+                hint = Some(Hint(content = Text(messages("organisationDetails.type.hint")))),
                 idPrefix = Some(form("answer").name),
                 name = form("answer").name,
                 items = organisationRadios,

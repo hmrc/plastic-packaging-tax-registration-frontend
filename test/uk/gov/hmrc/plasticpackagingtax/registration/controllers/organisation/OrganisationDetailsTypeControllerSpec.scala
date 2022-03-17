@@ -114,6 +114,27 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
       }
+
+      "user is authorised and display page method is invoked for representative member" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+        val result = controller.displayPageRepresentativeMember()(getRequest())
+
+        status(result) mustBe OK
+      }
+
+      "user is authorised, a registration already exists and display page method is invoked for representative member" in {
+        val registration = aRegistration(
+          withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY)))
+        )
+        authorizedUser()
+        mockRegistrationFind(registration)
+
+        val result = controller.displayPageRepresentativeMember()(getRequest())
+
+        status(result) mustBe OK
+      }
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
@@ -215,6 +236,28 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           assertRedirectForOrgType(TRUST,
                                    routes.OrganisationTypeNotSupportedController.onPageLoad().url
           )
+        }
+
+        "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP + " for representative member" in {
+          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
+          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
+          mockRegistrationFind(aRegistration(withRegistrationType(Some(RegType.GROUP))))
+          mockRegistrationUpdate()
+
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val result =
+            controller.submitRepresentativeMember()(postJsonRequestEncoded(correctForm: _*))
+
+          status(result) mustBe SEE_OTHER
+          modifiedRegistration.organisationDetails.organisationType mustBe Some(PARTNERSHIP)
+          modifiedRegistration.organisationDetails.partnershipDetails.get.partnershipType mustBe PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+
+          formAction._1 match {
+            case "SaveAndContinue" =>
+              redirectLocation(result) mustBe Some("http://test/redirect/partnership")
+            case "SaveAndComeBackLater" =>
+              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+          }
         }
       }
 

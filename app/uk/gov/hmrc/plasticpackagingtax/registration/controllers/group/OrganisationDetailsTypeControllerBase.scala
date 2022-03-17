@@ -21,7 +21,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
+  ActionEnum,
+  OrgType,
+  OrganisationType
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   GroupDetail,
   Registration,
@@ -55,7 +59,7 @@ abstract class OrganisationDetailsTypeControllerBase(
             _.organisationDetails.map(_.organisationType)
           ).getOrElse(throw new IllegalStateException("Organisation type is absent"))
           Ok(
-            page(form = OrganisationType.form().fill(
+            page(form = OrganisationType.form(ActionEnum.Group).fill(
                    OrganisationType(OrgType.withNameOpt(organisationType))
                  ),
                  isFirstMember,
@@ -63,14 +67,22 @@ abstract class OrganisationDetailsTypeControllerBase(
                  submitCall
             )
           )
-        case None => Ok(page(form = OrganisationType.form(), isFirstMember, memberId, submitCall))
+        case None =>
+          Ok(
+            page(form = OrganisationType.form(ActionEnum.Group),
+                 isFirstMember,
+                 memberId,
+                 submitCall
+            )
+          )
       }
 
     }
 
   protected def doSubmit(memberId: Option[String], submitCall: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      OrganisationType.form()
+      val isFirstMember: Boolean = request.registration.isFirstGroupMember
+      OrganisationType.form(ActionEnum.Group)
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[OrganisationType]) =>

@@ -240,7 +240,8 @@ const registrationPage = () => {
 }
 
 const organisationType = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/organisation-type')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/group-representative-member-type') ||
+      currentPageIs('/register-for-plastic-packaging-tax/organisation-type')) {
 
         if(optionSelected("Organisation", "OverseasUK")){
             if(optionSelected("Journey", "Single")){
@@ -621,7 +622,7 @@ const groupOrganisationList = () => {
 }
 
 const groupMemberOrganisation = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/group-member-organisation')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/group-member-type')) {
 
         document.getElementById('answer').checked = true
         document.getElementsByClassName('govuk-button')[0].click()
