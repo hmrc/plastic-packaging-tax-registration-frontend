@@ -91,6 +91,14 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+    "display hint link" in {
+
+      val link = view.getElementById("organisationDetails-other-type-link")
+
+      link must containMessage("organisationDetails.other.type.hint")
+      link must haveHref(messages("organisationDetails.other.type.href"))
+    }
+
     "display 'Save and continue' button" in {
 
       view must containElementWithID("submit")
@@ -143,6 +151,14 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       radioInputMustBe(1, UK_COMPANY)
       radioInputMustBe(2, PARTNERSHIP, Some("organisationDetails.type.GroupPartnership"))
       radioInputMustBe(3, OVERSEAS_COMPANY_UK_BRANCH)
+    }
+
+    "display hint link" in {
+
+      val link = view.getElementById("organisationDetails-other-type-link")
+
+      link must containMessage("organisationDetails.other.type.hint")
+      link must haveHref(messages("organisationDetails.other.type.href"))
     }
 
     "display 'Save and continue' button" in {

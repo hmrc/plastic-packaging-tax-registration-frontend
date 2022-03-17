@@ -373,7 +373,7 @@ organisationDetails.type.CIO = Charitable incorporated organisation (CIO)
 organisationDetails.type.Trust = Trust
 organisationDetails.type.RegisteredSociety = Registered society
 organisationDetails.type.OverseasCompanyUkBranch = Overseas organisation with a UK establishment
-organisationDetails.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
+organisationDetails.type.OverseasCompanyNoUKBranch = Overseas organisation without a UK establishment
 
 organisationDetails.type.GeneralPartnership = General partnership
 organisationDetails.type.LimitedLiabilityPartnership = Limited liability partnership
@@ -383,6 +383,7 @@ organisationDetails.type.ScottishLimitedPartnership = Scottish limited partnersh
 
 organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
 organisationDetails.type.hint = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO), a trust, an overseas organisation without a UK establishment, or a public body.
+organisationDetails.type.href = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected
@@ -588,6 +589,7 @@ organisationDetails.other.group.title = What type of organisation do you want to
 organisationDetails.other.next.group.title = What type of organisation do you want to add next?
 organisationDetails.type.GroupPartnership = Limited liability partnership
 organisationDetails.other.type.hint = Charitable incorporated organisations (CIO), trusts, overseas organisations without a UK establishment, and public bodies must register for Plastic Packaging Tax separately.
+organisationDetails.other.type.href = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 enrolment.referenceNumber.already.used.title = Your PPT reference number has already been used
 enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different Government Gateway.

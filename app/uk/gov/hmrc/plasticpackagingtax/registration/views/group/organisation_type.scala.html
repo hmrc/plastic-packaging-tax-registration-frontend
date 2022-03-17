@@ -27,7 +27,9 @@
         govukRadios: GovukRadios,
         sectionHeader: sectionHeader,
         saveButtons: saveButtons,
-        errorSummary: errorSummary
+        errorSummary: errorSummary,
+        link: link,
+        paragraph: paragraph,
 )
 
 @(form: Form[OrganisationType], isFirstMember: Boolean, memberId: Option[String], submit: Call)(implicit request: Request[_], messages: Messages)
@@ -57,6 +59,8 @@
     )
 }
 
+@linkHint = {<a href=@messages("organisationDetails.other.type.href") class="govuk-link" id="organisationDetails-other-type-link">@messages("organisationDetails.other.type.hint")</a>}
+
 @govukLayout(
     title = Title(title),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
@@ -74,13 +78,15 @@
                     isPageHeading = true
                 ))
             )),
-            hint = Some(Hint(content = Text(messages("organisationDetails.other.type.hint")))),
+            hint = None,
             idPrefix = Some(form("answer").name),
             name = form("answer").name,
             items = organisationRadios,
             classes = "govuk-radios",
             errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
         ))
+
+        @paragraph(linkHint)
 
         @saveButtons()
     }

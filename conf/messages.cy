@@ -358,7 +358,9 @@ organisationDetails.sectionHeader  = Manylion y sefydliad
 # organisationDetails.basedInUk.empty.error  = NO STRING FOUND
 
 organisationDetails.type.title  = Pa fath o sefydliad yr hoffech ei gofrestru?
-# organisationDetails.type.empty.error  = NO STRING FOUND
+organisationDetails.type.empty.error = Dewiswch y math o sefydliad yr hoffech ei gofrestru
+organisationDetails.type.empty.member.error = Dewiswch y math o sefydliad yr hoffech ei ychwanegu
+organisationDetails.type.empty.group.error = Dewiswch pa fath o sefydliad yw’r aelod cynrychiadol
 
 organisationDetails.nominated.organisation.sectionHeader  = Manylion yr aelod cynrychiadol
 organisationDetails.type.group.title  = Pa fath o sefydliad yw’r aelod cynrychiadol?
