@@ -95,6 +95,23 @@ class ListMembersSpec extends UnitViewSpec with Matchers {
         ) must haveSize(0)
       }
     }
+    "not render line separator" when {
+      "remove link is not rendered" in {
+        val view: Html = component(singleMember)(messages)
+
+        view.select(".hmrc-add-to-a-list__contents > .hmrc-add-to-a-list__remove") must haveSize(0)
+      }
+    }
+
+    "render line separator" when {
+      "remove link is rendered" in {
+        val view: Html = component(
+          Seq(ListMember(name = "any name", remove = Some(Call("GET", "/remove-url"))))
+        )(messages)
+
+        view.select(".hmrc-add-to-a-list__contents > .hmrc-add-to-a-list__remove") must haveSize(1)
+      }
+    }
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
