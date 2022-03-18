@@ -107,13 +107,18 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       when(appConfig.pptAccountUrl).thenReturn("/ppt-accounts-url")
       val user =
         PptTestData.newUser("123").copy(enrolments =
-          Enrolments(Set(Enrolment(PptEnrolment.Identifier)))
+          Enrolments(
+            Set(
+              Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key, "XMPPT0000000001")
+            )
+          )
         )
       authorizedUser(user)
 
       val result =
         createAuthAction().invokeBlock(authRequest(Headers(), user), okResponseGenerator)
 
+      status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some("/ppt-accounts-url")
     }
 
