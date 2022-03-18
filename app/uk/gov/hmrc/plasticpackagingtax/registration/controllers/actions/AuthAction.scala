@@ -95,7 +95,6 @@ abstract class AuthActionBase @Inject() (
 
       // TODO Using Enrolment in this way is locking out the registration journey
       // Needs to be conditional; may be what checkAlreadyEnrolled is doing or a new switch
-
       getSelectedClientIdentifier.map { clientIdentifier =>
         // If this request is decorated with a selected client identifier this indicates
         // an agent at work; we need to request the delegated authority
@@ -182,7 +181,9 @@ abstract class AuthActionBase @Inject() (
 
     if (pptReference.isDefined && isRegistrationAction)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
-    else if (allowedUsers.isAllowed(email, identityData.affinityGroup))
+    else if (
+      allowedUsers.isAllowed(email) || identityData.affinityGroup.contains(AffinityGroup.Agent)
+    )
       block {
         val user =
           SignedInUser(allEnrolments,

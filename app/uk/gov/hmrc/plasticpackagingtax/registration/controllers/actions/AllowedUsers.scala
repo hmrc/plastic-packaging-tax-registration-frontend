@@ -17,23 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
 import com.google.inject.{Inject, ProvidedBy}
-
 import javax.inject.Provider
 import play.api.Configuration
-import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 
 @ProvidedBy(classOf[AllowedUsersProvider])
 class AllowedUsers(users: Seq[AllowedUser]) {
 
-  def isAllowed(email: String, affinityGroup: Option[AffinityGroup]): Boolean = {
-    affinityGroup match {
-      case Some(AffinityGroup.Agent) =>
-        true
-      case _ =>
-        users.isEmpty || users.exists(_.email.equalsIgnoreCase(email))
-    }
-  }
+  def isAllowed(email: String): Boolean =
+    users.isEmpty || users.exists(_.email.equalsIgnoreCase(email))
 
   def getUserFeatures(email: String): Option[Map[String, Boolean]] =
     users.find(_.email.equalsIgnoreCase(email)).map(_.features)
