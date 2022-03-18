@@ -351,6 +351,7 @@ confirmationPage.exitSurvey.link.text = What did you think of this service?
 registrationType.title = What do you want to register?
 registrationType.singleEntity = A single organisation
 registrationType.group = A group of organisations
+registrationType.group.hint = You cannot register charitable incorporated organisations (CIO) or overseas organisations without a UK establishment as part of a group.
 registrationType.type.empty.error = Value must be selected
 
 organisationDetails.sectionHeader = Organisation details
