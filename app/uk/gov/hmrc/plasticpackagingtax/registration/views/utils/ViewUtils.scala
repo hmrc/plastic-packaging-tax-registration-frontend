@@ -89,7 +89,7 @@ class ViewUtils @Inject() (countryService: CountryService) {
     ).filter(_.nonEmpty).mkString("<br>")
 
   def showChangeLink(call: Call)(implicit journeyRequest: JourneyRequest[_]): Option[Call] =
-    if (!journeyRequest.isFeatureFlagEnabled(isUkCompanyPrivateBeta)) Some(call) else None
+    Some(call)
 
   def displayOldDate(date: Option[OldDate]): Option[String] =
     displayLocalDate(date.map(_.asLocalDate))
