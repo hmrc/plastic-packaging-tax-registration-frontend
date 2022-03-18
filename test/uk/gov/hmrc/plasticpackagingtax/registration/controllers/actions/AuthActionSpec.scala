@@ -23,7 +23,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
@@ -190,5 +189,18 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
         "mfa-uplift-url?origin=PPT&continueUrl=login-continue-url"
       )
     }
+
+    "only allow enrolment users to access amendment screens by enforcing an enrolment predicate" in {
+      val allowedEmail = "amina@hmrc.co.uk"
+      val user         = PptTestData.newUser("123")
+      authorizedUser(user, expectedPredicate = Some(Enrolment(PptEnrolment.Identifier)))
+
+      await(
+        amendmentAuthAction(
+          new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))
+        ).invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+      ) mustBe Results.Ok
+    }
+
   }
 }
