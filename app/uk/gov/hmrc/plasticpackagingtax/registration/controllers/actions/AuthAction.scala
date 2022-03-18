@@ -30,7 +30,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, IdentityData}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+  AuthenticatedRequest,
+  IdentityData
+}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +45,7 @@ class AuthActionImpl @Inject() (
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig) with AuthAction {
-  override val checkAlreadyEnrolled: Boolean = true
+  override val isRegistrationAction: Boolean = true
 }
 
 class AuthNoEnrolmentCheckActionImpl @Inject() (
@@ -53,7 +56,7 @@ class AuthNoEnrolmentCheckActionImpl @Inject() (
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
     with AuthNoEnrolmentCheckAction {
-  override val checkAlreadyEnrolled: Boolean = false
+  override val isRegistrationAction: Boolean = false
 }
 
 abstract class AuthActionBase @Inject() (
@@ -65,7 +68,7 @@ abstract class AuthActionBase @Inject() (
 ) extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest] with AuthorisedFunctions {
 
-  val checkAlreadyEnrolled: Boolean
+  val isRegistrationAction: Boolean
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -86,7 +89,7 @@ abstract class AuthActionBase @Inject() (
 
     def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
 
-    def authPredicate: Predicate = {
+    def authPredicate: Predicate =
       // TODO restore; also not used in returns
       // CredentialStrength(CredentialStrength.strong)
 
@@ -97,12 +100,11 @@ abstract class AuthActionBase @Inject() (
         // If this request is decorated with a selected client identifier this indicates
         // an agent at work; we need to request the delegated authority
         Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key,
-          clientIdentifier
+                                                          clientIdentifier
         ).withDelegatedAuthRule("ppt-auth")
       }.getOrElse {
         Enrolment(PptEnrolment.Identifier)
       }
-    }
 
     val authorisation = authTimer.time()
     authorised(authPredicate)
@@ -174,11 +176,12 @@ abstract class AuthActionBase @Inject() (
           )
       }
     }
-    logger.info("Authed with affinity group " + identityData.affinityGroup + " and ppt reference " + pptReference)
+    logger.info(
+      "Authed with affinity group " + identityData.affinityGroup + " and ppt reference " + pptReference
+    )
 
-    if (checkAlreadyEnrolled && pptReference.isDefined)
+    if (pptReference.isDefined && isRegistrationAction)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
-
     else if (allowedUsers.isAllowed(email, identityData.affinityGroup))
       block {
         val user =
