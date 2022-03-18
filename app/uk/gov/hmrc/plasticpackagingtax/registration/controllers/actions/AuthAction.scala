@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -92,18 +92,18 @@ abstract class AuthActionBase @Inject() (
     def authPredicate: Predicate =
       // TODO restore; also not used in returns
       // CredentialStrength(CredentialStrength.strong)
-
-      // TODO Using Enrolment in this way is locking out the registration journey
-      // Needs to be conditional; may be what checkAlreadyEnrolled is doing or a new switch
-      getSelectedClientIdentifier.map { clientIdentifier =>
-        // If this request is decorated with a selected client identifier this indicates
-        // an agent at work; we need to request the delegated authority
-        Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key,
-                                                          clientIdentifier
-        ).withDelegatedAuthRule("ppt-auth")
-      }.getOrElse {
-        Enrolment(PptEnrolment.Identifier)
-      }
+      if (isRegistrationAction)
+        EmptyPredicate
+      else
+        getSelectedClientIdentifier().map { clientIdentifier =>
+          // If this request is decorated with a selected client identifier this indicates
+          // an agent at work; we need to request the delegated authority
+          Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key,
+                                                            clientIdentifier
+          ).withDelegatedAuthRule("ppt-auth")
+        }.getOrElse {
+          Enrolment(PptEnrolment.Identifier)
+        }
 
     val authorisation = authTimer.time()
     authorised(authPredicate)

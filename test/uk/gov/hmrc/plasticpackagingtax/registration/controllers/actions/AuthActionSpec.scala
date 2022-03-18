@@ -18,11 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions
 
 import base.unit.ControllerSpec
 import base.{MetricsMocks, PptTestData}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AllowedUser
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
@@ -43,6 +44,21 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
                        stubMessagesControllerComponents(),
                        appConfig
     )
+
+  private def amendmentAuthAction(
+    emailAllowedList: AllowedUsers = new AllowedUsers(Seq.empty)
+  ): AuthNoEnrolmentCheckAction =
+    new AuthNoEnrolmentCheckActionImpl(mockAuthConnector,
+                                       emailAllowedList,
+                                       metricsMock,
+                                       stubMessagesControllerComponents(),
+                                       appConfig
+    )
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockAuthConnector)
+  }
 
   "Auth Action" should {
 
@@ -71,10 +87,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       await(
-        registrationAuthAction(new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))).invokeBlock(
-          authRequest(Headers(), user),
-          okResponseGenerator
-        )
+        registrationAuthAction(
+          new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))
+        ).invokeBlock(authRequest(Headers(), user), okResponseGenerator)
       ) mustBe Results.Ok
     }
 
@@ -84,10 +99,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(user)
 
       await(
-        registrationAuthAction(new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))).invokeBlock(
-          authRequest(Headers(), user),
-          okResponseGenerator
-        )
+        registrationAuthAction(
+          new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))
+        ).invokeBlock(authRequest(Headers(), user), okResponseGenerator)
       ) mustBe Results.Ok
     }
 
@@ -103,8 +117,16 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
     }
 
-    "allow users with no existing enrolment to access registration screens" in {
-      fail()
+    "allow users with no existing enrolment to access registration screens by not enforcing an enrolment predicate" in {
+      val allowedEmail = "amina@hmrc.co.uk"
+      val user         = PptTestData.newUser("123")
+      authorizedUser(user, expectedPredicate = Some(EmptyPredicate))
+
+      await(
+        registrationAuthAction(
+          new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))
+        ).invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+      ) mustBe Results.Ok
     }
 
     "redirect to PPT account url when user already enrolled access a registration journey" in {
@@ -135,7 +157,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
       val result =
         registrationAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                       okResponseGenerator
+                                             okResponseGenerator
         )
 
       redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
@@ -147,7 +169,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
       val result =
         registrationAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                       okResponseGenerator
+                                             okResponseGenerator
         )
 
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
@@ -161,7 +183,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       whenAuthFailsWith(IncorrectCredentialStrength())
       val result =
         registrationAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                       okResponseGenerator
+                                             okResponseGenerator
         )
 
       redirectLocation(result) mustBe Some(
