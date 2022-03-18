@@ -87,14 +87,14 @@ abstract class AuthActionBase @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
+    val strongCredientials = CredentialStrength(CredentialStrength.strong)
+
     def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
 
     def authPredicate: Predicate =
       if (isRegistrationAction)
-        CredentialStrength(CredentialStrength.strong)
+        strongCredientials
       else
-        // TODO restore
-        // CredentialStrength(CredentialStrength.strong)
         getSelectedClientIdentifier().map { clientIdentifier =>
           // If this request is decorated with a selected client identifier this indicates
           // an agent at work; we need to request the delegated authority
@@ -103,7 +103,7 @@ abstract class AuthActionBase @Inject() (
           ).withDelegatedAuthRule("ppt-auth")
         }.getOrElse {
           Enrolment(PptEnrolment.Identifier)
-        }
+        }.and(strongCredientials)
 
     val authorisation = authTimer.time()
     authorised(authPredicate)

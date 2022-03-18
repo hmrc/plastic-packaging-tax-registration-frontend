@@ -193,12 +193,18 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     "only allow enrolment users to access amendment screens by enforcing an enrolment predicate" in {
       val allowedEmail = "amina@hmrc.co.uk"
       val user         = PptTestData.newUser("123")
-      authorizedUser(user, expectedPredicate = Some(Enrolment(PptEnrolment.Identifier)))
+      authorizedUser(
+        user,
+        expectedPredicate = Some(
+          Enrolment(PptEnrolment.Identifier).and(CredentialStrength(CredentialStrength.strong))
+        )
+      )
 
       await(
-        amendmentAuthAction(
-          new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))
-        ).invokeBlock(authRequest(Headers(), user), okResponseGenerator)
+        amendmentAuthAction(new AllowedUsers(Seq(AllowedUser(email = allowedEmail)))).invokeBlock(
+          authRequest(Headers(), user),
+          okResponseGenerator
+        )
       ) mustBe Results.Ok
     }
 
