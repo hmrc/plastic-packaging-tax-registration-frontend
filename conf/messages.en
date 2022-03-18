@@ -351,7 +351,6 @@ confirmationPage.exitSurvey.link.text = What did you think of this service?
 registrationType.title = What do you want to register?
 registrationType.singleEntity = A single organisation
 registrationType.group = A group of organisations
-registrationType.group.hint = You cannot register charitable incorporated organisations (CIO) or overseas organisations without a UK establishment as part of a group.
 registrationType.type.empty.error = Value must be selected
 
 organisationDetails.sectionHeader = Organisation details
@@ -383,7 +382,6 @@ organisationDetails.type.ScottishLimitedPartnership = Scottish limited partnersh
 
 organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
 organisationDetails.type.hint = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO), a trust, an overseas organisation without a UK establishment, or a public body.
-organisationDetails.type.href = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected
@@ -436,7 +434,6 @@ organisationDetails.registerAsOtherOrganisation.paragraph.1 = This is a new serv
 organisationDetails.registerAsOtherOrganisation.paragraph.2 = You can still register for Plastic Packaging Tax by {0}
 organisationDetails.registerAsOtherOrganisation.paragraph.3 = You will be asked some questions about your organisation and your plastic packaging tax again.
 organisationDetails.registerAsOtherOrganisation.gform.link.description = completing this online form
-organisationDetails.registerAsOtherOrganisation.gform.link = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 notLiable.pageTitle = You do not currently need to register at this time
 notLiable.title = You do not currently need to register for Plastic Packaging Tax
@@ -591,7 +588,6 @@ organisationDetails.other.group.title = What type of organisation do you want to
 organisationDetails.other.next.group.title = What type of organisation do you want to add next?
 organisationDetails.type.GroupPartnership = Limited liability partnership
 organisationDetails.other.type.hint = Charitable incorporated organisations (CIO), trusts, overseas organisations without a UK establishment, and public bodies must register for Plastic Packaging Tax separately.
-organisationDetails.other.type.href = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 enrolment.referenceNumber.already.used.title = Your PPT reference number has already been used
 enrolment.referenceNumber.already.used.detail1 = The PPT reference number you entered has already been linked to a different Government Gateway.
@@ -756,4 +752,4 @@ amend.partner.listPartners.question = Do you need to add another partner?
 amend.partner.remove.title = Are you sure you want to remove {0} from the partnership?
 removePartner.empty.error = Please select Yes or No
 
-
+gform.link = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
