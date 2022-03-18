@@ -34,12 +34,6 @@ class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
   val registration: Registration = createRegistration(members)
   val sut                        = createViewModel(registration)
 
-  "groupMemberCount" must {
-    "count the groupMembers" in {
-      sut.groupMemberCount mustBe 2
-    }
-  }
-
   "listMembers" must {
     "have the lead member first" in {
       val first = sut.listMembers(mockMessages).head

@@ -20,9 +20,16 @@
 
 @(members: Seq[ListMember])(implicit messages: Messages)
 
+@removeClasses = @{
+    if(members.filter(!_.remove.isEmpty).isEmpty) {
+        ""
+    }else{
+        "hmrc-add-to-a-list__remove"
+    }
+}
 <ul class="hmrc-add-to-a-list hmrc-add-to-a-list--short" id="list-members-ul">
 
-    @members.map { member =>
+    @members.zipWithIndex.map { case(member, i) =>
 
         <li class="hmrc-add-to-a-list__contents">
             <span class="hmrc-add-to-a-list__identifier">
@@ -39,8 +46,8 @@
                 </a>
             }
             </span>
-            <span class="hmrc-add-to-a-list__remove">
-            @member.remove.map{ call =>
+           <span class="@removeClasses">
+                @member.remove.map{ call =>
                 <a class="govuk-link govuk-link--no-visited-state" href="@call.url">
                     <span aria-hidden="true">@messages("site.link.remove")</span>
                     <span class="govuk-visually-hidden">@messages("site.link.remove.hidden", member.name)</span>

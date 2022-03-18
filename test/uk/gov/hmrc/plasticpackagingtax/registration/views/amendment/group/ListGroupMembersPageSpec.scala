@@ -38,10 +38,9 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
   val realAppConfig: AppConfig      = inject[AppConfig]
 
   object fakeViewModel extends ListGroupMembersViewModel(aRegistration()) {
-    override val groupMemberCount: Int = 1
 
     override def listMembers(implicit messages: Messages): Seq[ListMember] =
-      Seq(ListMember("testName"))
+      Seq(ListMember("testName"), ListMember("testName 1"))
 
   }
 
@@ -54,11 +53,11 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
     }
 
     "contain title" in {
-      sut.select("title").text() must include(messages("amend.group.listMembers.title", 1))
+      sut.select("title").text() must include(messages("amend.group.listMembers.title", 2))
     }
 
     "contain heading" in {
-      sut.select("h1").text() mustBe messages("amend.group.listMembers.title", 1)
+      sut.select("h1").text() mustBe messages("amend.group.listMembers.title", 2)
     }
 
     "list the members" in {

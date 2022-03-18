@@ -39,14 +39,18 @@
 
 @(form: Form[Boolean], viewModel: ListGroupMembersViewModel)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
+@groupMemberCount = @{
+    viewModel.listMembers.length.toString
+}
+
 @govukLayout(
-    title = Title("amend.group.listMembers.title", viewModel.groupMemberCount.toString),
+    title = Title("amend.group.listMembers.title", groupMemberCount),
     backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))
 ) {
 
     @errorSummary(form.errors)
 
-    @pageHeading(text = messages("amend.group.listMembers.title", viewModel.groupMemberCount.toString))
+    @pageHeading(text = messages("amend.group.listMembers.title", groupMemberCount))
 
     @listMembers(viewModel.listMembers)
 

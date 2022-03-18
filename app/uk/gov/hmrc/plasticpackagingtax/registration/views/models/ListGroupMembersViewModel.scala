@@ -21,7 +21,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 
 class ListGroupMembersViewModel(registration: Registration) {
-  val groupMemberCount: Int = registration.groupDetail.map(_.members.size).getOrElse(0)
 
   def listMembers(implicit messages: Messages): Seq[ListMember] =
     ListMember(
@@ -31,17 +30,18 @@ class ListGroupMembersViewModel(registration: Registration) {
       subHeading = Some(messages("amend.group.manage.representativeMember"))
     ) +:
       registration.groupDetail.toSeq.flatMap(
-        _.members.map(
-          member =>
-            ListMember(name = member.businessName,
-                       change =
-                         Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
-                       remove =
-                         if (groupMemberCount > 1)
-                           Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
-                         else None
-            )
-        )
+        o =>
+          o.members.map(
+            member =>
+              ListMember(name = member.businessName,
+                         change =
+                           Some(routes.ContactDetailsCheckAnswersController.displayPage(member.id)),
+                         remove =
+                           if (o.members.length > 1)
+                             Some(routes.ConfirmRemoveMemberController.displayPage(member.id))
+                           else None
+              )
+          )
       )
 
 }
