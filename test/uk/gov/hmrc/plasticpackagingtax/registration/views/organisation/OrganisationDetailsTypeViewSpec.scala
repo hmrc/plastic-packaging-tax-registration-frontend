@@ -151,7 +151,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       val link = view.getElementById("organisationDetails-type-link")
 
       link must containMessage("organisationDetails.type.hint")
-      link must haveHref(messages("organisationDetails.type.href"))
+      link must haveHref(messages("gform.link"))
     }
 
     "display 'Save and continue' button" in {

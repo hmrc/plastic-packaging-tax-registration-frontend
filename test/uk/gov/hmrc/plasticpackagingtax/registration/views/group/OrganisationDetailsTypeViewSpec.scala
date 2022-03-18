@@ -96,7 +96,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       val link = view.getElementById("organisationDetails-other-type-link")
 
       link must containMessage("organisationDetails.other.type.hint")
-      link must haveHref(messages("organisationDetails.other.type.href"))
+      link must haveHref(messages("gform.link"))
     }
 
     "display 'Save and continue' button" in {
@@ -158,7 +158,7 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       val link = view.getElementById("organisationDetails-other-type-link")
 
       link must containMessage("organisationDetails.other.type.hint")
-      link must haveHref(messages("organisationDetails.other.type.href"))
+      link must haveHref(messages("gform.link"))
     }
 
     "display 'Save and continue' button" in {
