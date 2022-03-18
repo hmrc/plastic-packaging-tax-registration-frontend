@@ -84,7 +84,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     "process request when use email number is allowed" in {
       val allowedEmail = "amina@hmrc.co.uk"
       val user         = PptTestData.newUser("123")
-      authorizedUser(user)
+      authorizedUser(user, expectedPredicate = Some(CredentialStrength(CredentialStrength.strong)))
 
       await(
         registrationAuthAction(
@@ -120,7 +120,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     "allow users with no existing enrolment to access registration screens by not enforcing an enrolment predicate" in {
       val allowedEmail = "amina@hmrc.co.uk"
       val user         = PptTestData.newUser("123")
-      authorizedUser(user, expectedPredicate = Some(EmptyPredicate))
+      authorizedUser(user, expectedPredicate = Some(CredentialStrength(CredentialStrength.strong)))
 
       await(
         registrationAuthAction(

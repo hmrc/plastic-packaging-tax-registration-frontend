@@ -90,11 +90,11 @@ abstract class AuthActionBase @Inject() (
     def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
 
     def authPredicate: Predicate =
-      // TODO restore; also not used in returns
-      // CredentialStrength(CredentialStrength.strong)
       if (isRegistrationAction)
-        EmptyPredicate
+        CredentialStrength(CredentialStrength.strong)
       else
+        // TODO restore
+        // CredentialStrength(CredentialStrength.strong)
         getSelectedClientIdentifier().map { clientIdentifier =>
           // If this request is decorated with a selected client identifier this indicates
           // an agent at work; we need to request the delegated authority
