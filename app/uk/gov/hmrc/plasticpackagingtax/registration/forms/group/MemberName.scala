@@ -19,10 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.group
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
 import play.api.libs.json.Json
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 
 case class MemberName(firstName: String, lastName: String)
 
-object MemberName {
+object MemberName extends CommonFormValidators {
 
   implicit val format = Json.format[MemberName]
 
@@ -30,18 +31,18 @@ object MemberName {
 
   private val lastName = "lastName"
 
-  private val mapping = Forms.mapping(
-    firstName ->
-      text()
-        .verifying(emptyError(firstName), _.trim.nonEmpty)
-        .verifying(lengthError(firstName), name => name.isEmpty || name.length <= 35)
-        .verifying(nonAlphabeticError(firstName), name => name.isEmpty || name.forall(_.isLetter)),
-    lastName ->
-      text()
-        .verifying(emptyError(lastName), _.trim.nonEmpty)
-        .verifying(lengthError(lastName), name => name.isEmpty || name.length <= 35)
-        .verifying(nonAlphabeticError(lastName), name => name.isEmpty || name.forall(_.isLetter))
-  )(MemberName.apply)(MemberName.unapply)
+  private val mapping =
+    Forms.mapping(firstName ->
+                    text()
+                      .verifying(emptyError(firstName), _.trim.nonEmpty)
+                      .verifying(lengthError(firstName), name => name.isEmpty || name.length <= 35)
+                      .verifying(nonAlphabeticError(firstName), isValidName),
+                  lastName ->
+                    text()
+                      .verifying(emptyError(lastName), _.trim.nonEmpty)
+                      .verifying(lengthError(lastName), name => name.isEmpty || name.length <= 35)
+                      .verifying(nonAlphabeticError(lastName), isValidName)
+    )(MemberName.apply)(MemberName.unapply)
 
   def form(): Form[MemberName] = Form(mapping)
 

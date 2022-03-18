@@ -26,8 +26,6 @@ case class FullName(value: String)
 object FullName extends CommonFormValidators {
   implicit val format: OFormat[FullName] = Json.format[FullName]
 
-  val allowedChars: Option[String] = Some(".-'")
-
   private val fullName = "value"
 
   private val mapping = Forms.mapping(
@@ -35,9 +33,7 @@ object FullName extends CommonFormValidators {
       text()
         .verifying(emptyError(fullName), isNonEmpty)
         .verifying(lengthError(fullName), isNotExceedingMaxLength(_, 160))
-        .verifying(nonAlphabeticError(fullName),
-                   containsOnlyAlphaAndWhitespacesAnd(_, allowedChars)
-        )
+        .verifying(nonAlphabeticError(fullName), isValidName)
   )(FullName.apply)(FullName.unapply)
 
   def form(): Form[FullName] = Form(mapping)

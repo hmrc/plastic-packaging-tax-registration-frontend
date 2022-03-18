@@ -41,17 +41,21 @@ trait CommonFormValidators {
       cleaned.isEmpty || cleaned.length <= maxLength
     }
 
-  val containsOnlyAlphaAndWhitespacesAnd: (String, Option[String]) => Boolean =
-    (value, allowedChars) =>
-      value.isEmpty || value.chars().allMatch(
-        char =>
-          Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(
-            _.contains(char)
-          )
-      )
+  val nameRegexPattern = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,160}$")
+
+//  val containsOnlyAlphaAndWhitespacesAnd: (String, Option[String]) => Boolean =
+//    (value, allowedChars) =>
+//      value.isEmpty || value.chars().allMatch(
+//        char =>
+//          Character.isLetter(char) || Character.isWhitespace(char) || allowedChars.exists(
+//            _.contains(char)
+//          )
+//      )
 
   val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
     pattern.matcher(value).matches()
+
+  val isValidName: String => Boolean = (name: String) => isMatchingPattern(name, nameRegexPattern)
 
   val emailPattern =
     Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
