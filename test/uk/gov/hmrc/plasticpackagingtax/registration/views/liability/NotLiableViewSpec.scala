@@ -48,7 +48,7 @@ class NotLiableViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(messages("notLiable.pageTitle"))
+      view.select("title").text() must include(messages("notLiable.title"))
     }
 
     "display page heading" in {
