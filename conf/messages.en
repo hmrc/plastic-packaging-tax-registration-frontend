@@ -235,11 +235,11 @@ primaryContactDetails.tooManyAttempts.passcode.1 = This is because you entered t
 primaryContactDetails.tooManyAttempts.passcode.2 = You can try again after 24 hours by signing into your PPT registration.
 
 primaryContactDetails.phoneNumber.title = What is {0}’s telephone number?
-primaryContactDetails.phoneNumber.caption = We’ll use this to contact you about your Plastic Packaging Tax account.
-primaryContactDetails.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
-primaryContactDetails.phoneNumber.empty.error = Enter a phone number
-primaryContactDetails.phoneNumber.tooLong.error = Telephone number must be no longer than 24 digits
-primaryContactDetails.phoneNumber.invalidFormat.error = Enter a phone number in the correct format
+primaryContactDetails.phoneNumber.caption = We’ll use this to make contact about this Plastic Packaging Tax account.
+primaryContactDetails.phoneNumber.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
+primaryContactDetails.phoneNumber.empty.error = Enter the telephone number of the main contact
+primaryContactDetails.phoneNumber.tooLong.error = Telephone number must be 24 numbers or fewer
+primaryContactDetails.phoneNumber.invalidFormat.error = Enter a telephone number in the correct format
 
 primaryContactDetails.confirmAddress.title = Do you want to use this registered address as the main contact address?
 primaryContactDetails.confirmAddress.heading = Do you want to use this registered address as the main contact address?
@@ -437,9 +437,9 @@ organisationDetails.registerAsOtherOrganisation.paragraph.2 = You can still regi
 organisationDetails.registerAsOtherOrganisation.paragraph.3 = You will be asked some questions about your organisation and your plastic packaging tax again.
 organisationDetails.registerAsOtherOrganisation.gform.link.description = completing this online form
 
-notLiable.pageTitle = You do not currently need to register at this time
+notLiable.pageTitle = You do not currently need to register for Plastic Packaging Tax
 notLiable.title = You do not currently need to register for Plastic Packaging Tax
-notLiable.inset = You will need to register for it in the future if you meet the 10,000kg threshold. We recommend you keep records of all the plastic packaging you manufacture or import into the UK.
+notLiable.inset = You will need to register for it in the future if you meet the 10,000kg threshold. You must keep records of all the plastic packaging you manufacture or import into the UK.
 notLiable.guidance = The Plastic Packaging Tax guidance has {0}.
 notLiable.guidance.link.description = more information on the type of records you may need to keep (opens in a new tab)
 notLiable.guidance.link.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
@@ -669,8 +669,8 @@ contactDetails.member.emailAddress.title = What is {0}’s email address?
 contactDetails.member.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
 
 contactDetails.member.phoneNumber.title = What is {0}’s telephone number?
-contactDetails.member.phoneNumber.caption = We’ll use this to contact you about your Plastic Packaging Tax account.
-contactDetails.member.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
+contactDetails.member.phoneNumber.caption = We’ll use this to make contact about this Plastic Packaging Tax account.
+contactDetails.member.phoneNumber.hint = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
 
 contactDetails.member.check.title = Check your answers
 contactDetails.member.check.orgType = Organisation type
