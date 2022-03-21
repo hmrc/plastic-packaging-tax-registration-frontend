@@ -24,6 +24,17 @@ import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
+  val fullNameRegexPattern: Pattern     = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,160}$")
+  val nameRegexPattern: Pattern         = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,35}$")
+  val phoneNumberRegexPattern: Pattern  = Pattern.compile("^[+]?[0-9 ]*$")
+  val addressInputRegexPattern: Pattern = Pattern.compile("^[A-Za-z0-9 \\-,.&']{1,35}$")
+
+  val emailPattern: Pattern =
+    Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
+
+  val postcodeRegexPattern: Pattern =
+    Pattern.compile("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$")
+
   val isProvided: String => Boolean = value => value.nonEmpty
 
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
@@ -49,9 +60,6 @@ trait CommonFormValidators {
           )
       )
 
-  val fullNameRegexPattern = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,160}$")
-  val nameRegexPattern     = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,35}$")
-
   val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
     pattern.matcher(value).matches()
 
@@ -61,24 +69,14 @@ trait CommonFormValidators {
   val isValidName: String => Boolean =
     isValidAnyName(nameRegexPattern, 35)
 
-  val emailPattern =
-    Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
-
   val isValidEmail: String => Boolean = (email: String) =>
     email.isEmpty || isMatchingPattern(email, emailPattern)
-
-  val phoneNumberRegexPattern: Pattern = Pattern.compile("^[+]?[0-9 ]*$")
 
   val isValidTelephoneNumber: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
 
-  val addressInputRegexPattern: Pattern = Pattern.compile("^[A-Za-z0-9 \\-,.&']{1,35}$")
-
   val isValidAddressInput: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, addressInputRegexPattern)
-
-  val postcodeRegexPattern: Pattern =
-    Pattern.compile("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$")
 
   val isValidPostcode: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
