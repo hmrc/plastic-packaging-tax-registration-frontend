@@ -30,7 +30,12 @@ trait CommonFormValidators {
       .transform[String](_.get, Some.apply)
       .verifying(errorKey, _.trim.nonEmpty)
 
+  val isProvided: String => Boolean = value => value.nonEmpty
+
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
+
+  val isNoneWhiteSpace: String => Boolean = value =>
+    value.isEmpty || value.exists(char => !char.isWhitespace)
 
   val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
     value.isEmpty || value.length <= maxLength
@@ -57,8 +62,9 @@ trait CommonFormValidators {
 
   val isValidName: String => Boolean = {
     (name: String) =>
-      name.forall(char => char.isLetter || char.isWhitespace) && isMatchingPattern(name,
-                                                                                   nameRegexPattern
+      name.isEmpty || name.forall(char => char.isLetter || char.isWhitespace) && isMatchingPattern(
+        name,
+        nameRegexPattern
       )
   }
 
