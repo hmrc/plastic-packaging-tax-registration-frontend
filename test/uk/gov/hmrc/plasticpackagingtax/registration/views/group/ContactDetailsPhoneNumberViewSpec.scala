@@ -68,6 +68,11 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+    "display caption" in {
+      view.getElementById("section-header").text() mustBe
+        messages("group.organisationList.sectionHeader")
+    }
+
     "display hint" in {
 
       view.getElementById("value-hint").text() must include(
@@ -120,6 +125,28 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       view must haveGovukGlobalErrorSummary
 
       view must haveGovukFieldError("value", "Enter the telephone number of the main contact")
+    }
+
+    "phone number has wrong format" in {
+      val form = PhoneNumber
+        .form()
+        .fillAndValidate(PhoneNumber("abc"))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("value", "Enter a telephone number in the correct format")
+    }
+
+    "phone number is too long" in {
+      val form = PhoneNumber
+        .form()
+        .fillAndValidate(PhoneNumber("123456789789456123456789456"))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("value", "Telephone number must be 24 numbers or fewer")
     }
   }
 

@@ -68,7 +68,7 @@ class TaxStartDateViewSpec extends UnitViewSpec {
       "threshold has been breached" in {
         val elem = view.getElementsByClass("govuk-body")
 
-        elem.get(0).text() mustBe messages("liability.taxStartDate.hint1", "1 April 2022")
+        elem.get(0).text() mustBe messages("liability.taxStartDate.hint", "1 April 2022")
         elem.get(1).text() mustBe messages("liability.taxStartDate.threshHoldBreached.hint")
       }
 
@@ -79,7 +79,7 @@ class TaxStartDateViewSpec extends UnitViewSpec {
                      liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
           ).getElementsByClass("govuk-body")
 
-        elem.get(0).text() mustBe messages("liability.taxStartDate.hint1", "1 April 2022")
+        elem.get(0).text() mustBe messages("liability.taxStartDate.hint", "1 April 2022")
         elem.get(1).text() mustBe messages(
           "liability.taxStartDate.realisedThresholdWouldBeExceeded.hint"
         )

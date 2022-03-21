@@ -178,7 +178,7 @@ liability.expectToExceedThreshold.date.future = Date you realised you would meet
 liability.taxStartDate.title = Your tax start date
 liability.taxStartDate.pageHeading = Your tax start date
 liability.taxStartDate.sectionHeader = Liability details
-liability.taxStartDate.hint1 = Your tax start date is {0}.
+liability.taxStartDate.hint = Your tax start date is {0}.
 liability.taxStartDate.threshHoldBreached.hint = This is the first day of the month after you met the 10,000kg threshold.
 liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you realised that you would meet the 10,000kg threshold within 30 days.
 liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error = Date you realised you would meet the threshold must be on, or after, {0}
@@ -439,7 +439,7 @@ organisationDetails.registerAsOtherOrganisation.gform.link.description = complet
 
 notLiable.pageTitle = You do not currently need to register for Plastic Packaging Tax
 notLiable.title = You do not currently need to register for Plastic Packaging Tax
-notLiable.inset = You will need to register for it in the future if you meet the 10,000kg threshold. You must keep records of all the plastic packaging you manufacture or import into the UK.
+notLiable.inset = You will need to register for it in the future if you meet the 10,000kg threshold. We recommend you keep records of all the plastic packaging you manufacture or import into the UK.
 notLiable.guidance = The Plastic Packaging Tax guidance has {0}.
 notLiable.guidance.link.description = more information on the type of records you may need to keep (opens in a new tab)
 notLiable.guidance.link.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
