@@ -119,7 +119,7 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Enter a phone number")
+      view must haveGovukFieldError("value", "Enter the telephone number of the main contact")
     }
   }
 
