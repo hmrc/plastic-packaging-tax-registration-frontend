@@ -109,7 +109,48 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("firstName", "Enter the main contact’s first name")
+      view must haveGovukFieldError("firstName", "Enter the first name of the main contact")
+    }
+
+    "first name is spaces" in {
+
+      val form = MemberName
+        .form()
+        .fillAndValidate(MemberName("  ", "last"))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("firstName", "Enter a first name")
+    }
+
+    "first name is invalid" in {
+
+      val form = MemberName
+        .form()
+        .fillAndValidate(MemberName("456465", "last"))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError(
+        "firstName",
+        "First name must only include letters, hyphens, spaces, apostrophes and full stops"
+      )
+    }
+
+    "first name is > 35" in {
+
+      val form = MemberName
+        .form()
+        .fillAndValidate(
+          MemberName("hjghjgfhjdsgfhjdsgfdshjfgdsjhfgjshfgdshjfgdsjhfgdsjhfgdsjh", "last")
+        )
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("firstName", "First name must be 35 characters or fewer")
     }
 
     "last name is not entered" in {
@@ -121,7 +162,48 @@ class ContactDetailsNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("lastName", "Enter the main contact’s last name")
+      view must haveGovukFieldError("lastName", "Enter the last name of the main contact")
+    }
+
+    "last name is spaces" in {
+
+      val form = MemberName
+        .form()
+        .fillAndValidate(MemberName("first", "   "))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("lastName", "Enter a last name")
+    }
+
+    "last name is invalid" in {
+
+      val form = MemberName
+        .form()
+        .fillAndValidate(MemberName("first", "1224"))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError(
+        "lastName",
+        "Last name must only include letters, hyphens, spaces, apostrophes and full stops"
+      )
+    }
+
+    "last name is > 35" in {
+
+      val form = MemberName
+        .form()
+        .fillAndValidate(
+          MemberName("first", "hjghjgfhjdsgfhjdsgfdshjfgdsjhfgjshfgdshjfgdsjhfgdsjhfgdsjh")
+        )
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError("lastName", "Last name must be 35 characters or fewer")
     }
   }
 

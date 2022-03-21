@@ -657,20 +657,19 @@ contactDetails.member.name.title = Who is the main contact for the organisation?
 contactDetails.member.sectionHeader = Other organisations in the group
 contactDetails.member.name.heading = Who is the main contact for {0}?
 contactDetails.member.name.hint = Enter the correct contact here. This is usually the person responsible for the company’s Plastic Packaging Tax liability.
-contactDetails.member.firstName.error.empty = Enter the main contact’s first name
-contactDetails.member.firstName.error.length = Enter first name in 35 characters or fewer
-contactDetails.member.firstName.error.specialCharacters = First names must only include letters and the characters space, full stop, comma, apostrophe or dash
-contactDetails.member.lastName.error.empty = Enter the main contact’s last name
-contactDetails.member.lastName.error.length = Enter last name in 35 characters or fewer
-contactDetails.member.lastName.error.specialCharacters = Last names must only include letters and the characters space, full stop, comma, apostrophe or dash
-
+contactDetails.member.firstName.error.empty = Enter the first name of the main contact
+contactDetails.member.firstName.error.length = First name must be 35 characters or fewer
+contactDetails.member.firstName.error.specialCharacters = First name must only include letters, hyphens, spaces, apostrophes and full stops
+contactDetails.member.firstName.error.spaces = Enter a first name
+contactDetails.member.lastName.error.empty = Enter the last name of the main contact
+contactDetails.member.lastName.error.length = Last name must be 35 characters or fewer
+contactDetails.member.lastName.error.specialCharacters = Last name must only include letters, hyphens, spaces, apostrophes and full stops
+contactDetails.member.lastName.error.spaces = Enter a last name
 contactDetails.member.emailAddress.title = What is {0}’s email address?
 contactDetails.member.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
-
 contactDetails.member.phoneNumber.title = What is {0}’s telephone number?
 contactDetails.member.phoneNumber.caption = We’ll use this to contact you about your Plastic Packaging Tax account.
 contactDetails.member.phoneNumber.hint = You can enter a company, personal or extension number. Include the country code for international numbers.
-
 contactDetails.member.check.title = Check your answers
 contactDetails.member.check.orgType = Organisation type
 contactDetails.member.check.companyNumber = Company number

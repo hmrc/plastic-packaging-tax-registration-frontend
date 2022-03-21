@@ -34,7 +34,7 @@ object FullName extends CommonFormValidators {
         .verifying(emptyError(fullName), isProvided)
         .verifying(whiteSpaceError(fullName), isNoneWhiteSpace)
         .verifying(lengthError(fullName), isNotExceedingMaxLength(_, 160))
-        .verifying(nonAlphabeticError(fullName), isValidName)
+        .verifying(nonAlphabeticError(fullName), isValidFullName)
   )(FullName.apply)(FullName.unapply)
 
   def form(): Form[FullName] = Form(mapping)

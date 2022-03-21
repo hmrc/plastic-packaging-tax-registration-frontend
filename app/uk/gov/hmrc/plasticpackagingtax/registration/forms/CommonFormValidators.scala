@@ -24,12 +24,6 @@ import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
-  def nonEmptyString(errorKey: String): Mapping[String] =
-    optional(text)
-      .verifying(errorKey, _.nonEmpty)
-      .transform[String](_.get, Some.apply)
-      .verifying(errorKey, _.trim.nonEmpty)
-
   val isProvided: String => Boolean = value => value.nonEmpty
 
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
@@ -46,8 +40,6 @@ trait CommonFormValidators {
       cleaned.isEmpty || cleaned.length <= maxLength
     }
 
-  val nameRegexPattern = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,160}$")
-
   val containsOnlyAlphaAndWhitespacesAnd: (String, Option[String]) => Boolean =
     (value, allowedChars) =>
       value.isEmpty || value.chars().allMatch(
@@ -57,16 +49,17 @@ trait CommonFormValidators {
           )
       )
 
+  val fullNameRegexPattern = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,160}$")
+  val nameRegexPattern     = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,35}$")
+
   val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
     pattern.matcher(value).matches()
 
-  val isValidName: String => Boolean = {
-    (name: String) =>
-      name.isEmpty || name.forall(char => char.isLetter || char.isWhitespace) && isMatchingPattern(
-        name,
-        nameRegexPattern
-      )
-  }
+  val isValidFullName: String => Boolean =
+    isValidAnyName(fullNameRegexPattern)
+
+  val isValidName: String => Boolean =
+    isValidAnyName(nameRegexPattern)
 
   val emailPattern =
     Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
@@ -96,5 +89,18 @@ trait CommonFormValidators {
     (length: Int) =>
       (input: String) =>
         isNotExceedingMaxLength(input, length) && isValidPostcode(input.toUpperCase)
+
+  def nonEmptyString(errorKey: String): Mapping[String] =
+    optional(text)
+      .verifying(errorKey, _.nonEmpty)
+      .transform[String](_.get, Some.apply)
+      .verifying(errorKey, _.trim.nonEmpty)
+
+  private def isValidAnyName(pattern: Pattern): String => Boolean =
+    (name: String) =>
+      name.isEmpty || name.forall(char => char.isLetter || char.isWhitespace) && isMatchingPattern(
+        name,
+        pattern
+      )
 
 }
