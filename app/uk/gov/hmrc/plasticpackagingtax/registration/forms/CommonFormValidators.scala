@@ -56,10 +56,10 @@ trait CommonFormValidators {
     pattern.matcher(value).matches()
 
   val isValidFullName: String => Boolean =
-    isValidAnyName(fullNameRegexPattern)
+    isValidAnyName(fullNameRegexPattern, 160)
 
   val isValidName: String => Boolean =
-    isValidAnyName(nameRegexPattern)
+    isValidAnyName(nameRegexPattern, 35)
 
   val emailPattern =
     Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
@@ -96,11 +96,10 @@ trait CommonFormValidators {
       .transform[String](_.get, Some.apply)
       .verifying(errorKey, _.trim.nonEmpty)
 
-  private def isValidAnyName(pattern: Pattern): String => Boolean =
+  private def isValidAnyName(pattern: Pattern, len: Int): String => Boolean =
     (name: String) =>
-      name.isEmpty || name.forall(char => char.isLetter || char.isWhitespace) && isMatchingPattern(
-        name,
-        pattern
-      )
+      (name.size > len || name.isEmpty) || name.forall(
+        char => char.isLetter || char.isWhitespace
+      ) && isMatchingPattern(name, pattern)
 
 }
