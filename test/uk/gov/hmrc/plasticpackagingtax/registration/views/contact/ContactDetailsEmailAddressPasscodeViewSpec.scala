@@ -155,7 +155,26 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Enter a passcode")
+      view must haveGovukFieldError(
+        "value",
+        "Enter the code that was sent by email to confirm the email address. For example PGYHNB"
+      )
+    }
+
+    "email address passcode invalid" in {
+
+      val form = EmailAddressPasscode
+        .form().withError("incorrectPasscode",
+                          "primaryContactDetails.emailAddress.passcode.incorrect"
+        )
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
+      view must haveGovukFieldError(
+        "value",
+        "Confirmation code is incorrect. Enter the code that was sent by email to confirm the email address. For example PGYHNB"
+      )
     }
   }
 
