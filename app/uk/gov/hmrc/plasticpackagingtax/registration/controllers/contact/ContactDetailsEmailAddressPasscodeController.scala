@@ -106,9 +106,11 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
       case INCORRECT_PASSCODE =>
         Future.successful(
           BadRequest(
-            buildEmailPasscodePage(
-              EmailAddressPasscode.form().withError("incorrectPasscode", "Incorrect Passcode"),
-              None
+            buildEmailPasscodePage(EmailAddressPasscode.form().withError(
+                                     "incorrectPasscode",
+                                     "primaryContactDetails.emailAddress.passcode.incorrect"
+                                   ),
+                                   None
             )
           )
         )
