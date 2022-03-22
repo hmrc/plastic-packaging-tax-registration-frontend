@@ -24,13 +24,23 @@ import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
-  def nonEmptyString(errorKey: String): Mapping[String] =
-    optional(text)
-      .verifying(errorKey, _.nonEmpty)
-      .transform[String](_.get, Some.apply)
-      .verifying(errorKey, _.trim.nonEmpty)
+  val fullNameRegexPattern: Pattern     = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,160}$")
+  val nameRegexPattern: Pattern         = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,35}$")
+  val phoneNumberRegexPattern: Pattern  = Pattern.compile("^[+]?[0-9 ]*$")
+  val addressInputRegexPattern: Pattern = Pattern.compile("^[A-Za-z0-9 \\-,.&']{1,35}$")
+
+  val emailPattern: Pattern =
+    Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
+
+  val postcodeRegexPattern: Pattern =
+    Pattern.compile("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$")
+
+  val isProvided: String => Boolean = value => value.nonEmpty
 
   val isNonEmpty: String => Boolean = value => !Strings.isNullOrEmpty(value) && value.trim.nonEmpty
+
+  val isNoneWhiteSpace: String => Boolean = value =>
+    value.isEmpty || value.exists(char => !char.isWhitespace)
 
   val isNotExceedingMaxLength: (String, Int) => Boolean = (value, maxLength) =>
     value.isEmpty || value.length <= maxLength
@@ -53,24 +63,20 @@ trait CommonFormValidators {
   val isMatchingPattern: (String, Pattern) => Boolean = (value, pattern) =>
     pattern.matcher(value).matches()
 
-  val emailPattern =
-    Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
+  val isValidFullName: String => Boolean =
+    isValidAnyName(fullNameRegexPattern, 160)
+
+  val isValidName: String => Boolean =
+    isValidAnyName(nameRegexPattern, 35)
 
   val isValidEmail: String => Boolean = (email: String) =>
     email.isEmpty || isMatchingPattern(email, emailPattern)
 
-  val phoneNumberRegexPattern: Pattern = Pattern.compile("^[+]?[0-9 ]*$")
-
   val isValidTelephoneNumber: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, phoneNumberRegexPattern)
 
-  val addressInputRegexPattern: Pattern = Pattern.compile("^[A-Za-z0-9 \\-,.&']{1,35}$")
-
   val isValidAddressInput: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, addressInputRegexPattern)
-
-  val postcodeRegexPattern: Pattern =
-    Pattern.compile("^[A-Z]{1,2}[0-9][0-9A-Z]?\\s?[0-9][A-Z]{2}|BFPO\\s?[0-9]{1,10}$")
 
   val isValidPostcode: String => Boolean = (value: String) =>
     value.isEmpty || isMatchingPattern(value, postcodeRegexPattern)
@@ -81,5 +87,17 @@ trait CommonFormValidators {
     (length: Int) =>
       (input: String) =>
         isNotExceedingMaxLength(input, length) && isValidPostcode(input.toUpperCase)
+
+  def nonEmptyString(errorKey: String): Mapping[String] =
+    optional(text)
+      .verifying(errorKey, _.nonEmpty)
+      .transform[String](_.get, Some.apply)
+      .verifying(errorKey, _.trim.nonEmpty)
+
+  private def isValidAnyName(pattern: Pattern, len: Int): String => Boolean =
+    (name: String) =>
+      (name.size > len || name.isEmpty) || name.forall(
+        char => char.isLetter || char.isWhitespace
+      ) && isMatchingPattern(name, pattern)
 
 }

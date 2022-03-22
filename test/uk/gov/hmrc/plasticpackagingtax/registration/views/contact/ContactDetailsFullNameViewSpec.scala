@@ -22,7 +22,6 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName.allowedChars
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.full_name_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -110,7 +109,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       val form = FullName
         .form()
-        .fill(FullName("First Name " + allowedChars.get + " Last Name " + allowedChars.get))
+        .fill(FullName("First Name .-' " + "Last Name" + " .-'"))
       val view = createView(form)
 
       view.getElementById("value").attr("value") mustBe "First Name .-' Last Name .-'"
@@ -127,6 +126,17 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
+      view must haveGovukFieldError("value", "Enter the name of the main contact")
+    }
+
+    "user entered all spaces" in {
+      val form = FullName
+        .form()
+        .fillAndValidate(FullName("   "))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
       view must haveGovukFieldError("value", "Enter a name")
     }
 
@@ -138,18 +148,20 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Enter a name in the correct format")
+      view must haveGovukFieldError("value",
+                                    "Name must only include letters, hyphens, spaces, apostrophes"
+      )
     }
 
     "user entered more than 160 characters" in {
       val form = FullName
         .form()
-        .fillAndValidate(FullName("abcde" * 40))
+        .fillAndValidate(FullName("x" * 161))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Name cannot be more than 160 characters long")
+      view must haveGovukFieldError("value", "Name must be 160 characters or fewer")
     }
   }
 

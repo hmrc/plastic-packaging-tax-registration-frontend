@@ -19,10 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.group
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
 import play.api.libs.json.Json
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 
 case class MemberName(firstName: String, lastName: String)
 
-object MemberName {
+object MemberName extends CommonFormValidators {
 
   implicit val format = Json.format[MemberName]
 
@@ -30,18 +31,20 @@ object MemberName {
 
   private val lastName = "lastName"
 
-  private val mapping = Forms.mapping(
-    firstName ->
-      text()
-        .verifying(emptyError(firstName), _.trim.nonEmpty)
-        .verifying(lengthError(firstName), name => name.isEmpty || name.length <= 35)
-        .verifying(nonAlphabeticError(firstName), name => name.isEmpty || name.forall(_.isLetter)),
-    lastName ->
-      text()
-        .verifying(emptyError(lastName), _.trim.nonEmpty)
-        .verifying(lengthError(lastName), name => name.isEmpty || name.length <= 35)
-        .verifying(nonAlphabeticError(lastName), name => name.isEmpty || name.forall(_.isLetter))
-  )(MemberName.apply)(MemberName.unapply)
+  private val mapping =
+    Forms.mapping(firstName ->
+                    text()
+                      .verifying(emptyError(firstName), isProvided)
+                      .verifying(whiteSpaceError(firstName), isNoneWhiteSpace)
+                      .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 35))
+                      .verifying(nonAlphabeticError(firstName), isValidName),
+                  lastName ->
+                    text()
+                      .verifying(emptyError(lastName), isProvided)
+                      .verifying(whiteSpaceError(lastName), isNoneWhiteSpace)
+                      .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 35))
+                      .verifying(nonAlphabeticError(lastName), isValidName)
+    )(MemberName.apply)(MemberName.unapply)
 
   def form(): Form[MemberName] = Form(mapping)
 
@@ -52,5 +55,8 @@ object MemberName {
 
   private def nonAlphabeticError(field: String) =
     s"contactDetails.member.${field}.error.specialCharacters"
+
+  private def whiteSpaceError(field: String) =
+    s"contactDetails.member.${field}.error.spaces"
 
 }

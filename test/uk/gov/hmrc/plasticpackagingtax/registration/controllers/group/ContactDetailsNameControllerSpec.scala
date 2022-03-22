@@ -138,6 +138,29 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return 400 (BAD_REQUEST)" when {
 
+      "user submits numbers in firstname" in {
+        authorizedUser()
+        val result =
+          controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("123", "andy"))))
+
+        status(result) mustBe BAD_REQUEST
+      }
+      "user submits numbers in lastname" in {
+        authorizedUser()
+        val result =
+          controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("andy", "123"))))
+
+        status(result) mustBe BAD_REQUEST
+      }
+
+      "user submits accented member name" in {
+        authorizedUser()
+        val result =
+          controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("Chlöe", "Bòb"))))
+
+        status(result) mustBe BAD_REQUEST
+      }
+
       "user submits invalid member name" in {
         authorizedUser()
         val result =

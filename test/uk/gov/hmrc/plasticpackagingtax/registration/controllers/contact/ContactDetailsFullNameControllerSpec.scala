@@ -128,6 +128,14 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
           status(result) mustBe BAD_REQUEST
         }
+
+        "user enters accented characters" in {
+          authorizedUser()
+          val result =
+            controller.submit()(postRequestEncoded(FullName("Chlöe Anne-Marie"), formAction))
+
+          status(result) mustBe BAD_REQUEST
+        }
       }
 
       "return an error for " + formAction._1 when {
