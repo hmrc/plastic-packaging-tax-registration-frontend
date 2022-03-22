@@ -126,6 +126,17 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
+      view must haveGovukFieldError("value", "Enter the name of the main contact")
+    }
+
+    "user entered all spaces" in {
+      val form = FullName
+        .form()
+        .fillAndValidate(FullName("   "))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
+
       view must haveGovukFieldError("value", "Enter a name")
     }
 
@@ -137,7 +148,9 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Enter a name in the correct format")
+      view must haveGovukFieldError("value",
+                                    "Name must only include letters, hyphens, spaces, apostrophes"
+      )
     }
 
     "user entered more than 160 characters" in {
@@ -148,7 +161,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value", "Name cannot be more than 160 characters long")
+      view must haveGovukFieldError("value", "Name must be 160 characters or fewer")
     }
   }
 

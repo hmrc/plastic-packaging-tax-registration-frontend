@@ -34,13 +34,15 @@ object MemberName extends CommonFormValidators {
   private val mapping =
     Forms.mapping(firstName ->
                     text()
-                      .verifying(emptyError(firstName), _.trim.nonEmpty)
-                      .verifying(lengthError(firstName), name => name.isEmpty || name.length <= 35)
+                      .verifying(emptyError(firstName), isProvided)
+                      .verifying(whiteSpaceError(firstName), isNoneWhiteSpace)
+                      .verifying(lengthError(firstName), isNotExceedingMaxLength(_, 35))
                       .verifying(nonAlphabeticError(firstName), isValidName),
                   lastName ->
                     text()
-                      .verifying(emptyError(lastName), _.trim.nonEmpty)
-                      .verifying(lengthError(lastName), name => name.isEmpty || name.length <= 35)
+                      .verifying(emptyError(lastName), isProvided)
+                      .verifying(whiteSpaceError(lastName), isNoneWhiteSpace)
+                      .verifying(lengthError(lastName), isNotExceedingMaxLength(_, 35))
                       .verifying(nonAlphabeticError(lastName), isValidName)
     )(MemberName.apply)(MemberName.unapply)
 
@@ -53,5 +55,8 @@ object MemberName extends CommonFormValidators {
 
   private def nonAlphabeticError(field: String) =
     s"contactDetails.member.${field}.error.specialCharacters"
+
+  private def whiteSpaceError(field: String) =
+    s"contactDetails.member.${field}.error.spaces"
 
 }

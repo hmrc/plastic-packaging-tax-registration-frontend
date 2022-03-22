@@ -31,9 +31,10 @@ object FullName extends CommonFormValidators {
   private val mapping = Forms.mapping(
     fullName ->
       text()
-        .verifying(emptyError(fullName), isNonEmpty)
+        .verifying(emptyError(fullName), isProvided)
+        .verifying(whiteSpaceError(fullName), isNoneWhiteSpace)
         .verifying(lengthError(fullName), isNotExceedingMaxLength(_, 160))
-        .verifying(nonAlphabeticError(fullName), isValidName)
+        .verifying(nonAlphabeticError(fullName), isValidFullName)
   )(FullName.apply)(FullName.unapply)
 
   def form(): Form[FullName] = Form(mapping)
@@ -45,5 +46,8 @@ object FullName extends CommonFormValidators {
 
   private def nonAlphabeticError(field: String) =
     s"primaryContactDetails.fullNamePage.${field}.error.specialCharacters"
+
+  private def whiteSpaceError(field: String) =
+    s"primaryContactDetails.fullNamePage.${field}.error.spaces"
 
 }
