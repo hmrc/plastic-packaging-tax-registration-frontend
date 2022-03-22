@@ -70,6 +70,12 @@ class RegistrationTypeViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-label").get(1).text() mustBe messages("registrationType.group")
     }
 
+    "display hint" in {
+      view.getElementsByClass("govuk-hint").text() must include(
+        messages("registrationType.group.hint")
+      )
+    }
+
     "display 'Save and continue' button" in {
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and continue"
