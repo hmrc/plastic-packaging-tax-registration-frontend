@@ -634,12 +634,12 @@ addressLookup.contact.lookup.heading = What is {0}’s business address?
 addressLookup.partner.lookup.title = What is {0}’s contact address?
 addressLookup.partner.lookup.heading = What is {0}’s contact address?
 
-addressLookup.business.confirm.title = What is the business address for {0}?
-addressLookup.business.confirm.heading = What is the business address for {0}?
-addressLookup.contact.confirm.title = What is {0}’s business address?
-addressLookup.contact.confirm.heading = What is {0}’s business address?
-addressLookup.partner.confirm.title = What is {0}’s contact address?
-addressLookup.partner.confirm.heading = What is {0}’s contact address?
+addressLookup.business.confirm.title = Confirm the business address for {0}
+addressLookup.business.confirm.heading = Confirm the business address for {0}
+addressLookup.contact.confirm.title = Confirm the address for {0}
+addressLookup.contact.confirm.heading = Confirm the address for {0}
+addressLookup.partner.confirm.title = Confirm the address for {0}
+addressLookup.partner.confirm.heading = Confirm the address for {0}
 
 addressLookup.business.edit.title = What is the business address for {0}?
 addressLookup.business.edit.heading = What is the business address for {0}?
