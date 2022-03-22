@@ -94,7 +94,8 @@
                         }.toSeq,
             label = Label(
                 content = HtmlContent(messages("primaryContactDetails.address.countryCode")),
-                classes = "govuk-label govuk-label--s"
+                classes = "govuk-label govuk-label--s",
+                attributes = Map("aria-labelledby"-> "countryCode")
             ),
             errorMessage = form("countryCode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
         )
