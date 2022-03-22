@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.testOnly
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.testOnly.EmailTestOnlyPasscodeConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthTestOnlyActionImpl
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthRegistrationOrAmendmentActionImpl
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -27,7 +27,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmailPasscodeController @Inject() (
-  authenticate: AuthTestOnlyActionImpl,
+  authenticate: AuthRegistrationOrAmendmentActionImpl,
   mcc: MessagesControllerComponents,
   journeyAction: JourneyAction,
   emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector

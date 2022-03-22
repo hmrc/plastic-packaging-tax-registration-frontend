@@ -69,7 +69,7 @@ class AddressCaptureControllerSpec
   ).thenReturn(HtmlFormat.raw("Address Capture"))
 
   private val addressCaptureController = new AddressCaptureController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockRegistrationOrAmendmentAction,
     mcc = mcc,
     addressCaptureService = addressCaptureService,
     addressLookupFrontendConnector = mockAddressLookupFrontendConnector,

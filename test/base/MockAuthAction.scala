@@ -34,7 +34,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AllowedUsers,
   AuthActionImpl,
-  AuthNoEnrolmentCheckActionImpl
+  AuthNoEnrolmentCheckActionImpl,
+  AuthRegistrationOrAmendmentActionImpl
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
@@ -54,6 +55,14 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   )
 
   val mockAuthAllowEnrolmentAction = new AuthNoEnrolmentCheckActionImpl(
+    mockAuthConnector,
+    new AllowedUsers(Seq.empty),
+    metricsMock,
+    stubMessagesControllerComponents(),
+    appConfig
+  )
+
+  val mockRegistrationOrAmendmentAction = new AuthRegistrationOrAmendmentActionImpl(
     mockAuthConnector,
     new AllowedUsers(Seq.empty),
     metricsMock,

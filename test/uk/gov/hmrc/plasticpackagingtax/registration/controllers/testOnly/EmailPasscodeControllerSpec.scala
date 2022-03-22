@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AllowedUsers,
-  AuthTestOnlyActionImpl
+  AuthRegistrationOrAmendmentActionImpl
 }
 
 import scala.concurrent.Future
@@ -41,15 +41,8 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
   val mockEmailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector =
     mock[EmailTestOnlyPasscodeConnector]
 
-  val mockAuthTestOnlyAction = new AuthTestOnlyActionImpl(mockAuthConnector,
-                                                          new AllowedUsers(Seq.empty),
-                                                          metricsMock,
-                                                          stubMessagesControllerComponents(),
-                                                          appConfig
-  )
-
   private val controller =
-    new EmailPasscodeController(authenticate = mockAuthTestOnlyAction,
+    new EmailPasscodeController(authenticate = mockRegistrationOrAmendmentAction,
                                 mcc = mcc,
                                 mockJourneyAction,
                                 emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector

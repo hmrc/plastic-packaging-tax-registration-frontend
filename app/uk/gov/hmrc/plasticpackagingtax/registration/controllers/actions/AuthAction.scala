@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,7 +45,7 @@ class AuthActionImpl @Inject() (
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig) with AuthAction {
-  override val isRegistrationAction: Boolean           = true
+  override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = true
 }
 
@@ -57,11 +57,11 @@ class AuthNoEnrolmentCheckActionImpl @Inject() (
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
     with AuthNoEnrolmentCheckAction {
-  override val isRegistrationAction: Boolean           = false
+  override val mustBeEnrolled: Boolean                 = true
   override val redirectEnrolledUsersToReturns: Boolean = false
 }
 
-class AuthTestOnlyActionImpl @Inject() (
+class AuthRegistrationOrAmendmentActionImpl @Inject() (
   override val authConnector: AuthConnector,
   allowedUsers: AllowedUsers,
   metrics: Metrics,
@@ -69,7 +69,7 @@ class AuthTestOnlyActionImpl @Inject() (
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
     with AuthNoEnrolmentCheckAction {
-  override val isRegistrationAction: Boolean           = true
+  override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = false
 }
 
@@ -82,7 +82,7 @@ abstract class AuthActionBase @Inject() (
 ) extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest] with AuthorisedFunctions {
 
-  val isRegistrationAction: Boolean
+  val mustBeEnrolled: Boolean
   val redirectEnrolledUsersToReturns: Boolean
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
@@ -102,13 +102,13 @@ abstract class AuthActionBase @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val strongCredientials = CredentialStrength(CredentialStrength.strong)
+    val strongCredentials = CredentialStrength(CredentialStrength.strong)
 
     def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
 
     def authPredicate: Predicate =
-      if (isRegistrationAction)
-        strongCredientials
+      if (!mustBeEnrolled)
+        strongCredentials
       else
         getSelectedClientIdentifier().map { clientIdentifier =>
           // If this request is decorated with a selected client identifier this indicates
@@ -118,7 +118,7 @@ abstract class AuthActionBase @Inject() (
           ).withDelegatedAuthRule("ppt-auth")
         }.getOrElse {
           Enrolment(PptEnrolment.Identifier)
-        }.and(strongCredientials)
+        }.and(strongCredentials)
 
     val authorisation = authTimer.time()
     authorised(authPredicate)
@@ -225,5 +225,5 @@ trait AuthAction extends AuthActioning
 @ImplementedBy(classOf[AuthNoEnrolmentCheckActionImpl])
 trait AuthNoEnrolmentCheckAction extends AuthActioning
 
-@ImplementedBy(classOf[AuthTestOnlyActionImpl])
-trait AuthTestOnlyAction extends AuthActioning
+@ImplementedBy(classOf[AuthRegistrationOrAmendmentActionImpl])
+trait AuthRegistrationOrAmendmentAction extends AuthActioning
