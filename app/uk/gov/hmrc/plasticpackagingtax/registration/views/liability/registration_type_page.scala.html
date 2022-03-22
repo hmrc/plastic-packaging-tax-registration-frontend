@@ -56,7 +56,8 @@
                     RadioItem(content = HtmlContent(messages("registrationType.singleEntity")), value = Some(RegType.SINGLE_ENTITY.toString), checked = registrationType.value.contains(RegType.SINGLE_ENTITY.toString)),
                     RadioItem(content = HtmlContent(messages("registrationType.group")),
                         value = Some(RegType.GROUP.toString),
-                        checked = registrationType.value.contains(RegType.GROUP.toString))
+                        checked = registrationType.value.contains(RegType.GROUP.toString),
+                        hint = Some(Hint(content = HtmlContent(messages("registrationType.group.hint")))))
                 ),
                 classes = "govuk-radios",
                 errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
