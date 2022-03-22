@@ -45,7 +45,8 @@ class AuthActionImpl @Inject() (
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig) with AuthAction {
-  override val isRegistrationAction: Boolean = true
+  override val isRegistrationAction: Boolean           = true
+  override val redirectEnrolledUsersToReturns: Boolean = true
 }
 
 class AuthNoEnrolmentCheckActionImpl @Inject() (
@@ -56,7 +57,20 @@ class AuthNoEnrolmentCheckActionImpl @Inject() (
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
     with AuthNoEnrolmentCheckAction {
-  override val isRegistrationAction: Boolean = false
+  override val isRegistrationAction: Boolean           = false
+  override val redirectEnrolledUsersToReturns: Boolean = false
+}
+
+class AuthTestOnlyActionImpl @Inject() (
+  override val authConnector: AuthConnector,
+  allowedUsers: AllowedUsers,
+  metrics: Metrics,
+  mcc: MessagesControllerComponents,
+  appConfig: AppConfig
+) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
+    with AuthNoEnrolmentCheckAction {
+  override val isRegistrationAction: Boolean           = true
+  override val redirectEnrolledUsersToReturns: Boolean = false
 }
 
 abstract class AuthActionBase @Inject() (
@@ -69,6 +83,7 @@ abstract class AuthActionBase @Inject() (
     with ActionFunction[Request, AuthenticatedRequest] with AuthorisedFunctions {
 
   val isRegistrationAction: Boolean
+  val redirectEnrolledUsersToReturns: Boolean
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -179,7 +194,7 @@ abstract class AuthActionBase @Inject() (
       "Authed with affinity group " + identityData.affinityGroup + " and ppt reference " + pptReference
     )
 
-    if (pptReference.isDefined && isRegistrationAction)
+    if (pptReference.isDefined && redirectEnrolledUsersToReturns)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
     else if (
       allowedUsers.isAllowed(email) || identityData.affinityGroup.contains(AffinityGroup.Agent)
@@ -209,3 +224,6 @@ trait AuthAction extends AuthActioning
 
 @ImplementedBy(classOf[AuthNoEnrolmentCheckActionImpl])
 trait AuthNoEnrolmentCheckAction extends AuthActioning
+
+@ImplementedBy(classOf[AuthTestOnlyActionImpl])
+trait AuthTestOnlyAction extends AuthActioning
