@@ -139,9 +139,7 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       val form = MemberName
         .form()
-        .fillAndValidate(
-          MemberName("hjghjgfhjdsgfhjdsgfdshjfgdsjhfgjshfgdshjfgdsjhfgdsjhfgdsjh", "last")
-        )
+        .fillAndValidate(MemberName("x" * 36, "last"))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
@@ -192,9 +190,7 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       val form = MemberName
         .form()
-        .fillAndValidate(
-          MemberName("first", "hjghjgfhjdsgfhjdsgfdshjfgdsjhfgjshfgdshjfgdsjhfgdsjhfgdsjh")
-        )
+        .fillAndValidate(MemberName("first", "x" * 36))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary

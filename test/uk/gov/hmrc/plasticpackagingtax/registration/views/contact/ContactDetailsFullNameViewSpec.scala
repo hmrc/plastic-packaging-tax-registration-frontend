@@ -156,7 +156,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
     "user entered more than 160 characters" in {
       val form = FullName
         .form()
-        .fillAndValidate(FullName("abcde" * 40))
+        .fillAndValidate(FullName("x" * 161))
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
