@@ -46,6 +46,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   GroupMemberContactDetails,
@@ -594,13 +595,17 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
             )
             val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
-              JourneyRequest(authenticatedRequest =
-                               new AuthenticatedRequest(FakeRequest(),
-                                                        userWithPPTEnrolment,
-                                                        appConfig
-                               ),
-                             registration = partnershipRegistration,
-                             appConfig = appConfig
+              JourneyRequest(
+                authenticatedRequest =
+                  new AuthenticatedRequest(FakeRequest(),
+                                           userWithPPTEnrolment,
+                                           appConfig,
+                                           pptReference =
+                                             pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
+                  ),
+                registration = partnershipRegistration,
+                appConfig = appConfig,
+                pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val partnershipView =
               page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
@@ -696,7 +701,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                         appConfig
                                ),
                              registration = partnershipRegistration,
-                             appConfig = appConfig
+                             appConfig = appConfig,
+                             pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val otherPartnersView =
               page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)

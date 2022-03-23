@@ -21,14 +21,17 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.test.Helpers.status
+import play.api.test.Helpers.{status, stubMessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.testOnly.EmailTestOnlyPasscodeConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   FailedToFetchTestOnlyPasscode
 }
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
+  AllowedUsers,
+  AuthRegistrationOrAmendmentActionImpl
+}
 
 import scala.concurrent.Future
 
@@ -39,7 +42,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
     mock[EmailTestOnlyPasscodeConnector]
 
   private val controller =
-    new EmailPasscodeController(authenticate = mockAuthAllowEnrolmentAction,
+    new EmailPasscodeController(authenticate = mockRegistrationOrAmendmentAction,
                                 mcc = mcc,
                                 mockJourneyAction,
                                 emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector

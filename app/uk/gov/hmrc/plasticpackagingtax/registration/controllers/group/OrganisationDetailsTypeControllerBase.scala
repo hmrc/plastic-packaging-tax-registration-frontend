@@ -100,7 +100,8 @@ abstract class OrganisationDetailsTypeControllerBase(
               handleOrganisationType(organisationType, false, memberId)(
                 new JourneyRequest[AnyContent](authenticatedRequest = request.authenticatedRequest,
                                                registration = registration,
-                                               appConfig = appConfig
+                                               appConfig = appConfig,
+                                               request.pptReference
                 ),
                 ec,
                 hc

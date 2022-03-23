@@ -27,13 +27,15 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers.stubMessagesControllerComponents
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
   AllowedUsers,
   AuthActionImpl,
-  AuthNoEnrolmentCheckActionImpl
+  AuthNoEnrolmentCheckActionImpl,
+  AuthRegistrationOrAmendmentActionImpl
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
@@ -53,6 +55,14 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   )
 
   val mockAuthAllowEnrolmentAction = new AuthNoEnrolmentCheckActionImpl(
+    mockAuthConnector,
+    new AllowedUsers(Seq.empty),
+    metricsMock,
+    stubMessagesControllerComponents(),
+    appConfig
+  )
+
+  val mockRegistrationOrAmendmentAction = new AuthRegistrationOrAmendmentActionImpl(
     mockAuthConnector,
     new AllowedUsers(Seq.empty),
     metricsMock,
@@ -99,11 +109,11 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   def authorisedUserWithPptSubscription(): Unit = authorizedUser(user = userWithPPTEnrolment)
 
-  def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPreLaunch -> true)): Unit = {
+  def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPreLaunch -> true), expectedPredicate: Option[Predicate] = None): Unit = {
     when(appConfig.defaultFeatures).thenReturn(features)
     when(
       mockAuthConnector.authorise(
-        any(),
+        expectedPredicate.map(ArgumentMatchers.eq(_)).getOrElse(any()),
         ArgumentMatchers.eq(
           credentials and name and email and externalId and internalId and affinityGroup and allEnrolments
             and agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and

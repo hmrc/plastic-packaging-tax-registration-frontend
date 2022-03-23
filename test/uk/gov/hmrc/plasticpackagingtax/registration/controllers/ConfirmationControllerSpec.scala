@@ -34,7 +34,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ConfirmationController(authenticate = mockAuthAllowEnrolmentAction, mcc = mcc, page = page)
+    new ConfirmationController(authenticate = mockAuthAction, mcc = mcc, page = page)
 
   private val registration = aRegistration()
 

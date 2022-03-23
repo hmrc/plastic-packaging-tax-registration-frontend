@@ -22,6 +22,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,7 +45,8 @@ class AuthActionImpl @Inject() (
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig) with AuthAction {
-  override val checkAlreadyEnrolled: Boolean = true
+  override val mustBeEnrolled: Boolean                 = false
+  override val redirectEnrolledUsersToReturns: Boolean = true
 }
 
 class AuthNoEnrolmentCheckActionImpl @Inject() (
@@ -55,7 +57,20 @@ class AuthNoEnrolmentCheckActionImpl @Inject() (
   appConfig: AppConfig
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
     with AuthNoEnrolmentCheckAction {
-  override val checkAlreadyEnrolled: Boolean = false
+  override val mustBeEnrolled: Boolean                 = true
+  override val redirectEnrolledUsersToReturns: Boolean = false
+}
+
+class AuthRegistrationOrAmendmentActionImpl @Inject() (
+  override val authConnector: AuthConnector,
+  allowedUsers: AllowedUsers,
+  metrics: Metrics,
+  mcc: MessagesControllerComponents,
+  appConfig: AppConfig
+) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
+    with AuthNoEnrolmentCheckAction {
+  override val mustBeEnrolled: Boolean                 = false
+  override val redirectEnrolledUsersToReturns: Boolean = false
 }
 
 abstract class AuthActionBase @Inject() (
@@ -67,7 +82,8 @@ abstract class AuthActionBase @Inject() (
 ) extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest] with AuthorisedFunctions {
 
-  val checkAlreadyEnrolled: Boolean
+  val mustBeEnrolled: Boolean
+  val redirectEnrolledUsersToReturns: Boolean
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -85,8 +101,27 @@ abstract class AuthActionBase @Inject() (
   ): Future[Result] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    val strongCredentials = CredentialStrength(CredentialStrength.strong)
+
+    def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
+
+    def authPredicate: Predicate =
+      if (!mustBeEnrolled)
+        strongCredentials
+      else
+        getSelectedClientIdentifier().map { clientIdentifier =>
+          // If this request is decorated with a selected client identifier this indicates
+          // an agent at work; we need to request the delegated authority
+          Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key,
+                                                            clientIdentifier
+          ).withDelegatedAuthRule("ppt-auth")
+        }.getOrElse {
+          Enrolment(PptEnrolment.Identifier)
+        }.and(strongCredentials)
+
     val authorisation = authTimer.time()
-    authorised(CredentialStrength(CredentialStrength.strong))
+    authorised(authPredicate)
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
@@ -139,24 +174,44 @@ abstract class AuthActionBase @Inject() (
     identityData: IdentityData,
     email: String,
     allEnrolments: Enrolments
-  ) =
-    if (checkAlreadyEnrolled && allEnrolments.getEnrolment(PptEnrolment.Identifier).isDefined)
+  ) = {
+
+    def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
+
+    val pptReference = {
+      // The source of the ppt reference will be different if this is an agent request
+      identityData.affinityGroup match {
+        case Some(AffinityGroup.Agent) =>
+          getSelectedClientIdentifier()
+        case _ =>
+          val pptEnrolment = allEnrolments.getEnrolment(PptEnrolment.Identifier)
+          pptEnrolment.flatMap(enrolment => enrolment.getIdentifier(PptEnrolment.Key)).map(
+            id => id.value
+          )
+      }
+    }
+    logger.info(
+      "Authed with affinity group " + identityData.affinityGroup + " and ppt reference " + pptReference
+    )
+
+    if (pptReference.isDefined && redirectEnrolledUsersToReturns)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
-    else if (allowedUsers.isAllowed(email))
-      block(
-        new AuthenticatedRequest(
-          request,
+    else if (
+      allowedUsers.isAllowed(email) || identityData.affinityGroup.contains(AffinityGroup.Agent)
+    )
+      block {
+        val user =
           SignedInUser(allEnrolments,
                        identityData,
                        allowedUsers.getUserFeatures(email).getOrElse(appConfig.defaultFeatures)
-          ),
-          appConfig
-        )
-      )
+          )
+        new AuthenticatedRequest(request, user, appConfig, pptReference)
+      }
     else {
       logger.warn("User is not allowed, access denied")
       Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
     }
+  }
 
 }
 
@@ -169,3 +224,6 @@ trait AuthAction extends AuthActioning
 
 @ImplementedBy(classOf[AuthNoEnrolmentCheckActionImpl])
 trait AuthNoEnrolmentCheckAction extends AuthActioning
+
+@ImplementedBy(classOf[AuthRegistrationOrAmendmentActionImpl])
+trait AuthRegistrationOrAmendmentAction extends AuthActioning

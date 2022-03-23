@@ -31,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   OrganisationDetails => GroupMemberOrganisationDetails
@@ -168,12 +169,16 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
                                 incorporationDetails = None
             )
           )
-          val journeyReq = JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                                                                   PptTestData.newUser(),
-                                                                   appConfig
-                                          ),
-                                          soleTraderRegistration,
-                                          appConfig
+          val user = PptTestData.newUser()
+          val journeyReq = JourneyRequest(
+            new AuthenticatedRequest(FakeRequest().withCSRFToken,
+                                     user,
+                                     appConfig,
+                                     pptReferenceFromUsersEnrolments(user)
+            ),
+            soleTraderRegistration,
+            appConfig,
+            pptReferenceFromUsersEnrolments(user)
           )
           val soleTraderView = page()(journeyReq, messages)
 
@@ -224,13 +229,13 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
                                 incorporationDetails = None
             )
           )
-          val journeyReq = JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                                                                   PptTestData.newUser(),
-                                                                   appConfig
-                                          ),
-                                          updatedRegistation,
-                                          appConfig
-          )
+          val user = PptTestData.newUser()
+          val journeyReq =
+            JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken, user, appConfig),
+                           updatedRegistation,
+                           appConfig,
+                           pptReferenceFromUsersEnrolments(user)
+            )
           val partnershipView = page()(journeyReq, messages)
 
           getKeyFor(0, partnershipView) must containMessage(

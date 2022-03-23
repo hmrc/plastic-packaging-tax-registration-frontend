@@ -18,12 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.address
 
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
+import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthRegistrationOrAmendmentActionImpl
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.address.UkAddressForm
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
@@ -36,8 +36,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.services.{
   AddressCaptureService,
   CountryService
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.uk_address_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.address_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.{
+  address_page,
+  uk_address_page
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +47,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressCaptureController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
+  authenticate: AuthRegistrationOrAmendmentActionImpl,
   mcc: MessagesControllerComponents,
   addressCaptureService: AddressCaptureService,
   addressLookupFrontendConnector: AddressLookupFrontendConnector,

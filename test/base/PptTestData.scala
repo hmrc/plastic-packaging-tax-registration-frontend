@@ -59,7 +59,7 @@ object PptTestData {
                               None,
                               None,
                               None,
-                              Some("crdentialStrength 50"),
+                              Some("credentialStrength 50"),
                               Some(LoginTimes(DateTime.now, None))
                  ),
                  featureFlags
