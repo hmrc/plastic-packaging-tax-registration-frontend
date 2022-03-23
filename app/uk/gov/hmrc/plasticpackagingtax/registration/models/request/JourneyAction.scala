@@ -41,7 +41,6 @@ class JourneyAction @Inject() (
   override protected def refine[A](
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, JourneyRequest[A]]] = {
-    println("!!!!!!!!!!!!!!!!!! J")
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.user.identityData.internalId.filter(_.trim.nonEmpty) match {
