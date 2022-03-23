@@ -86,11 +86,11 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
+            controller.submit()(postRequestEncoded(FullName("FirstName -'. LastName"), formAction))
 
           status(result) mustBe SEE_OTHER
 
-          modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName LastName")
+          modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName -'. LastName")
 
           formAction._1 match {
             case "SaveAndContinue" =>
@@ -125,6 +125,14 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
             controller.submit()(
               postRequestEncoded(FullName("FirstNam807980234£$ LastName"), formAction)
             )
+
+          status(result) mustBe BAD_REQUEST
+        }
+
+        "user enters non-alphabetic no digits" in {
+          authorizedUser()
+          val result =
+            controller.submit()(postRequestEncoded(FullName("()/,& LastName"), formAction))
 
           status(result) mustBe BAD_REQUEST
         }

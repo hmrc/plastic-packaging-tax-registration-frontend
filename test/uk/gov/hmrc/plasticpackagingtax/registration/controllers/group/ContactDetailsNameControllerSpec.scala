@@ -99,14 +99,16 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
           val result =
             controller.submit(groupMember.id)(
-              postRequestEncoded(MemberName(firstName = "Test", lastName = "User"), formAction)
+              postRequestEncoded(MemberName(firstName = "Test -'.", lastName = "User -'."),
+                                 formAction
+              )
             )
 
           status(result) mustBe SEE_OTHER
           val contactDetails =
             modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get
-          contactDetails.firstName mustBe "Test"
-          contactDetails.lastName mustBe "User"
+          contactDetails.firstName mustBe "Test -'."
+          contactDetails.lastName mustBe "User -'."
           redirectLocation(result) mustBe Some(
             groupRoutes.ContactDetailsEmailAddressController.displayPage(groupMember.id).url
           )
