@@ -18,7 +18,7 @@ package base
 
 import org.joda.time.{DateTime, LocalDate}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core.Enrolments
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
@@ -33,7 +33,8 @@ object PptTestData {
 
   def newUser(
     internalId: String = "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b",
-    featureFlags: Map[String, Boolean] = testUserFeatures
+    featureFlags: Map[String, Boolean] = testUserFeatures,
+    affinityGroup: Option[AffinityGroup] = None
   ): SignedInUser =
     SignedInUser(Enrolments(Set()),
                  IdentityData(Some(internalId),
@@ -58,11 +59,14 @@ object PptTestData {
                               None,
                               None,
                               None,
-                              None,
+                              affinityGroup,
                               Some("credentialStrength 50"),
                               Some(LoginTimes(DateTime.now, None))
                  ),
                  featureFlags
     )
+
+  def newAgent(externalId: String = "123") =
+    newUser(externalId, affinityGroup = Some(AffinityGroup.Agent))
 
 }
