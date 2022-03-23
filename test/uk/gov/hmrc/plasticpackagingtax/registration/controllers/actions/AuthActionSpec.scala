@@ -174,6 +174,18 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
     }
 
+    "redirect agents to unauthorised page if when try at access registration pages" in {
+      val agent = PptTestData.newAgent("456")
+      authorizedUser(agent)
+      println("!!!!!!!!!!!!!! A " + agent.identityData.affinityGroup)
+      val result =
+        registrationAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+          okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+    }
+
     "redirect the user to MFA Uplift page if the user has incorrect credential strength " in {
       when(appConfig.mfaUpliftUrl).thenReturn("mfa-uplift-url")
       when(appConfig.loginContinueUrl).thenReturn("login-continue-url")

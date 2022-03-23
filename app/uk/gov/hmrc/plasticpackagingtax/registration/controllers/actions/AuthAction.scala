@@ -47,6 +47,7 @@ class AuthActionImpl @Inject() (
 ) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig) with AuthAction {
   override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = true
+  override val agentsAllowed: Boolean                  = false
 }
 
 class AuthNoEnrolmentCheckActionImpl @Inject() (
@@ -59,6 +60,7 @@ class AuthNoEnrolmentCheckActionImpl @Inject() (
     with AuthNoEnrolmentCheckAction {
   override val mustBeEnrolled: Boolean                 = true
   override val redirectEnrolledUsersToReturns: Boolean = false
+  override val agentsAllowed: Boolean                  = true
 }
 
 class AuthRegistrationOrAmendmentActionImpl @Inject() (
@@ -71,6 +73,7 @@ class AuthRegistrationOrAmendmentActionImpl @Inject() (
     with AuthNoEnrolmentCheckAction {
   override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = false
+  override val agentsAllowed: Boolean                  = true
 }
 
 abstract class AuthActionBase @Inject() (
@@ -84,6 +87,7 @@ abstract class AuthActionBase @Inject() (
 
   val mustBeEnrolled: Boolean
   val redirectEnrolledUsersToReturns: Boolean
+  val agentsAllowed: Boolean
 
   implicit override val executionContext: ExecutionContext = mcc.executionContext
   override val parser: BodyParser[AnyContent]              = mcc.parsers.defaultBodyParser
@@ -155,9 +159,10 @@ abstract class AuthActionBase @Inject() (
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength()
+      case _: UnsupportedAffinityGroup =>
+        Results.Redirect(routes.UnauthorisedController.onPageLoad())
       case _: AuthorisationException =>
         Results.Redirect(routes.UnauthorisedController.onPageLoad())
-
     }
   }
 
@@ -190,9 +195,10 @@ abstract class AuthActionBase @Inject() (
           )
       }
     }
-    logger.info(
-      "Authed with affinity group " + identityData.affinityGroup + " and ppt reference " + pptReference
-    )
+
+    if (identityData.affinityGroup.contains(AffinityGroup.Agent) && !agentsAllowed) {
+      throw UnsupportedAffinityGroup()
+    }
 
     if (pptReference.isDefined && redirectEnrolledUsersToReturns)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
