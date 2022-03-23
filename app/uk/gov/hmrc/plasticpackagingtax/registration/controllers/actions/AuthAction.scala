@@ -196,11 +196,12 @@ abstract class AuthActionBase @Inject() (
       }
     }
 
-    if (identityData.affinityGroup.contains(AffinityGroup.Agent) && !agentsAllowed) {
+    if (identityData.affinityGroup.contains(AffinityGroup.Agent) && !agentsAllowed)
       throw UnsupportedAffinityGroup()
-    }
 
     if (pptReference.isDefined && redirectEnrolledUsersToReturns)
+      Future.successful(Results.Redirect(appConfig.pptAccountUrl))
+    else if (identityData.affinityGroup.contains(AffinityGroup.Agent) && pptReference.isEmpty)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
     else if (
       allowedUsers.isAllowed(email) || identityData.affinityGroup.contains(AffinityGroup.Agent)

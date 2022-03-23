@@ -177,10 +177,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     "redirect agents to unauthorised page if when try at access registration pages" in {
       val agent = PptTestData.newAgent("456")
       authorizedUser(agent)
-      println("!!!!!!!!!!!!!! A " + agent.identityData.affinityGroup)
       val result =
         registrationAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-          okResponseGenerator
+                                             okResponseGenerator
         )
 
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
@@ -218,6 +217,25 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
           okResponseGenerator
         )
       ) mustBe Results.Ok
+    }
+
+    "agents accessing an amendment screen without a selected client should be redirected back to plastics account" in {
+      // The plastics accounts UI will take the required actions; we will not duplicate them here
+      val agent = PptTestData.newAgent("456")
+      authorizedUser(
+        agent,
+        expectedPredicate = Some(
+          Enrolment(PptEnrolment.Identifier).and(CredentialStrength(CredentialStrength.strong))
+        )
+      )
+
+      val result =
+        amendmentAuthAction(new AllowedUsers(Seq.empty)).invokeBlock(authRequest(Headers(), agent),
+                                                                     okResponseGenerator
+        )
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some("/ppt-accounts-url")
     }
 
   }
