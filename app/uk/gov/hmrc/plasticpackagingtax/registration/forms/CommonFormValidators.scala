@@ -24,8 +24,8 @@ import java.util.regex.Pattern
 
 trait CommonFormValidators {
 
-  val fullNameRegexPattern: Pattern     = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,160}$")
-  val nameRegexPattern: Pattern         = Pattern.compile("^[A-Za-z0-9 ,.()/&''-]{1,35}$")
+  val fullNameRegexPattern: Pattern     = Pattern.compile("^[A-Za-z .'-]{1,160}$")
+  val nameRegexPattern: Pattern         = Pattern.compile("^[A-Za-z .'-]{1,35}$")
   val phoneNumberRegexPattern: Pattern  = Pattern.compile("^[+]?[0-9 ]*$")
   val addressInputRegexPattern: Pattern = Pattern.compile("^[A-Za-z0-9 \\-,.&']{1,35}$")
 
@@ -95,9 +95,6 @@ trait CommonFormValidators {
       .verifying(errorKey, _.trim.nonEmpty)
 
   private def isValidAnyName(pattern: Pattern, len: Int): String => Boolean =
-    (name: String) =>
-      (name.size > len || name.isEmpty) || name.forall(
-        char => char.isLetter || char.isWhitespace
-      ) && isMatchingPattern(name, pattern)
+    (name: String) => (name.size > len || name.isEmpty) || isMatchingPattern(name, pattern)
 
 }
