@@ -148,8 +148,9 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       view must haveGovukGlobalErrorSummary
 
-      view must haveGovukFieldError("value",
-                                    "Name must only include letters, hyphens, spaces, apostrophes"
+      view must haveGovukFieldError(
+        "value",
+        "Name must only include letters, hyphens, spaces, apostrophes and full stops"
       )
     }
 

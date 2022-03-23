@@ -204,7 +204,7 @@ primaryContactDetails.fullNamePage.label = Name
 primaryContactDetails.fullNamePage.value.error.empty = Enter the name of the main contact
 primaryContactDetails.fullNamePage.value.error.spaces = Enter a name
 primaryContactDetails.fullNamePage.value.error.length = Name must be 160 characters or fewer
-primaryContactDetails.fullNamePage.value.error.specialCharacters = Name must only include letters, hyphens, spaces, apostrophes
+primaryContactDetails.fullNamePage.value.error.specialCharacters = Name must only include letters, hyphens, spaces, apostrophes and full stops
 
 primaryContactDetails.jobTitlePage.title = What is {0}’s job title?
 primaryContactDetails.jobTitle.empty.error = Enter a job title
