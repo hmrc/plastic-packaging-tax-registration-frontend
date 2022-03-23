@@ -57,6 +57,7 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockAuthConnector)
+    reset(appConfig)
   }
 
   "Auth Action" should {
@@ -221,6 +222,8 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
     "agents accessing an amendment screen without a selected client should be redirected back to plastics account" in {
       // The plastics accounts UI will take the required actions; we will not duplicate them here
+      when(appConfig.pptAccountUrl).thenReturn("/ppt-accounts-url")
+
       val agent = PptTestData.newAgent("456")
       authorizedUser(
         agent,
