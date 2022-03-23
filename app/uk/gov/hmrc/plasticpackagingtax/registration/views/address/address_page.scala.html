@@ -80,6 +80,7 @@
         Select(
             id = "countryCode",
             name = "countryCode",
+            attributes = Map("aria-labelledby" -> "countryCode"),
             items =
                 Seq(SelectItem(value = None)) ++
                         countryMap.map { countryEntry =>
