@@ -19,26 +19,39 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.DeregistrationDetailRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_reason_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DeregisterReasonController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   mcc: MessagesControllerComponents,
+  deregistrationDetailRepository: DeregistrationDetailRepository,
   page: deregister_reason_page
-) extends FrontendController(mcc) with I18nSupport {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Ok(page())
+    authenticate.async { implicit request =>
+      deregistrationDetailRepository.get().map { deregistrationDetails =>
+        // TODO: populate form
+        Ok(page())
+      }
     }
 
   def submit(): Action[AnyContent] =
-    authenticate { implicit request =>
-      Redirect(routes.DeregisterCheckYourAnswersController.displayPage())
+    authenticate.async { implicit request =>
+      deregistrationDetailRepository.update(
+        deregistrationDetails =>
+          // TODO: update here
+          deregistrationDetails
+      ).map { _ =>
+        Redirect(routes.DeregisterCheckYourAnswersController.displayPage())
+      }
     }
 
 }
