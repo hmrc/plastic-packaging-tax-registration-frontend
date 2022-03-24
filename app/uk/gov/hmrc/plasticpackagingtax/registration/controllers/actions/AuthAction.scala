@@ -99,6 +99,15 @@ abstract class AuthActionBase @Inject() (
       agentCode and confidenceLevel and nino and saUtr and dateOfBirth and agentInformation and groupIdentifier and
       credentialRole and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes
 
+  private def acceptableCredentialStrength: Predicate = {
+    val strongCredentials = CredentialStrength(CredentialStrength.strong)
+    // Agents are allowed to use weak credentials
+    // The order of this clause is important if we wish to preserve the MFA uplift of non agents.
+    // If an auth OR clause evaluates to false, the auth AlternateAuthPredicate with response with an exception
+    // matching the last clause it evaluated. Strong credentials needs to be the last clause if we want to catch it
+    AffinityGroup.Agent.or(strongCredentials)
+  }
+
   override def invokeBlock[A](
     request: Request[A],
     block: AuthenticatedRequest[A] => Future[Result]
@@ -106,13 +115,11 @@ abstract class AuthActionBase @Inject() (
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    val strongCredentials = CredentialStrength(CredentialStrength.strong)
-
     def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
 
     def authPredicate: Predicate =
       if (!mustBeEnrolled)
-        strongCredentials
+        acceptableCredentialStrength
       else
         getSelectedClientIdentifier().map { clientIdentifier =>
           // If this request is decorated with a selected client identifier this indicates
@@ -122,7 +129,7 @@ abstract class AuthActionBase @Inject() (
           ).withDelegatedAuthRule("ppt-auth")
         }.getOrElse {
           Enrolment(PptEnrolment.Identifier)
-        }.and(strongCredentials)
+        }.and(acceptableCredentialStrength)
 
     val authorisation = authTimer.time()
     authorised(authPredicate)
