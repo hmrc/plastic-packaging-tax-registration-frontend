@@ -80,7 +80,7 @@ class UserEnrolmentDetailsRepositorySpec
     dropDatabase()
   }
 
-  "PublicBodyRegistrationRepository" should {
+  "User Enrolment Details Repository" should {
 
     "add data to cache and return it" in {
 
