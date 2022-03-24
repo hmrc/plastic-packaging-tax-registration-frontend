@@ -363,7 +363,8 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         verify(mockAuditor, Mockito.atLeast(1)).registrationSubmitted(
           ArgumentMatchers.eq(completedRegistrationWithNrsDetail),
-          ArgumentMatchers.eq(Some("XXPPTP123456789"))
+          ArgumentMatchers.eq(Some("XXPPTP123456789")),
+          any()
         )(any(), any())
       }
     }

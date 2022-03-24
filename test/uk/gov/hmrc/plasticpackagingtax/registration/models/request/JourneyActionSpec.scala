@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import base.unit.ControllerSpec
 import base.{MockAuthAction, PptTestData}
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify}
@@ -91,7 +91,7 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
                                     responseGenerator
           )
         ) mustBe Results.Ok
-        verify(mockAuditor).newRegistrationStarted()(any(), any())
+        verify(mockAuditor).newRegistrationStarted(ArgumentMatchers.eq("999"))(any(), any())
       }
     }
   }

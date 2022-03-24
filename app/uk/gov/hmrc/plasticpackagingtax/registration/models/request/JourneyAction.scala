@@ -60,10 +60,11 @@ class JourneyAction @Inject() (
       case Right(reg) =>
         reg
           .map { r =>
+            auditor.resumePPTRegistration(id)
             Future.successful(Right(r))
           }
           .getOrElse {
-            auditor.newRegistrationStarted()
+            auditor.newRegistrationStarted(id)
             registrationConnector.create(Registration(id))
           }
       case Left(error) => Future.successful(Left(error))

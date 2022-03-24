@@ -28,15 +28,25 @@ class Auditor @Inject() (auditConnector: AuditConnector) {
 
   def registrationSubmitted(
     registration: Registration,
-    pptReference: Option[String] = None
+    pptReference: Option[String] = None,
+    internalId: Option[String]
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
     auditConnector.sendExplicitAudit(CreateRegistrationEvent.eventType,
-                                     CreateRegistrationEvent(registration, pptReference)
+                                     CreateRegistrationEvent(registration, pptReference, internalId)
     )
 
-  def newRegistrationStarted()(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+  def newRegistrationStarted(
+    internalId: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
     auditConnector.sendExplicitAudit(StartRegistrationEvent.eventType,
-                                     StartRegistrationEvent(UserType.NEW)
+                                     StartRegistrationEvent(UserType.NEW, internalId)
+    )
+
+  def resumePPTRegistration(
+    internalId: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+    auditConnector.sendExplicitAudit(StartRegistrationEvent.eventType,
+                                     StartRegistrationEvent(UserType.RESUME, internalId)
     )
 
 }
