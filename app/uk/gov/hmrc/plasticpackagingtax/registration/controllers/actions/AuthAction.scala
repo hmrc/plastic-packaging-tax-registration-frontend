@@ -103,7 +103,7 @@ abstract class AuthActionBase @Inject() (
     val strongCredentials = CredentialStrength(CredentialStrength.strong)
     // Agents are allowed to use weak credentials
     // The order of this clause is important if we wish to preserve the MFA uplift of non agents.
-    // If an auth OR clause evaluates to false, the auth AlternateAuthPredicate with response with an exception
+    // If an auth OR clause evaluates to false, the auth AlternateAuthPredicate will respond with an exception
     // matching the last clause it evaluated. Strong credentials needs to be the last clause if we want to catch it
     AffinityGroup.Agent.or(strongCredentials)
   }
