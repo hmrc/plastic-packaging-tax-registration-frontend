@@ -392,3 +392,15 @@ POST       /amend-add-partner-check-answers              uk.gov.hmrc.plasticpack
 
 GET        /confirm-remove-partner/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.ConfirmRemovePartnerController.displayPage(partnerId)
 POST       /confirm-remove-partner/:partnerId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.ConfirmRemovePartnerController.submit(partnerId)
+
+# De-registration
+
+GET        /deregister                          uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterController.displayPage()
+POST       /deregister                          uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterController.submit()
+
+GET        /deregister-reason                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterReasonController.displayPage()
+POST       /deregister-reason                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterReasonController.submit()
+
+GET        /deregister-check-your-answers       uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterCheckYourAnswersController.displayPage()
+
+GET        /deregistration-submitted            uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregistrationSubmittedController.displayPage()
