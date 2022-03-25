@@ -167,7 +167,7 @@ abstract class AuthActionBase @Inject() (
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength()
       case _: InsufficientEnrolments =>
-        // Returns has the best not enrolled explanation page and know what todo with agents in this state
+        // Returns has the best not enrolled explanation page and knows how to handle agents in this state
         Results.Redirect(appConfig.pptAccountUrl)
       case _: UnsupportedAffinityGroup =>
         Results.Redirect(routes.UnauthorisedController.onPageLoad())
