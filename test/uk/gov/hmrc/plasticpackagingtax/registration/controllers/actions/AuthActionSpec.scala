@@ -166,9 +166,20 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
     }
 
-    "redirect to unauthorised page when user not authorised" in {
-
+    "redirect to returns accounts to use its not enrolled page when user is not enrolled" in {
+      when(appConfig.pptAccountUrl).thenReturn("/ppt-accounts-url")
       whenAuthFailsWith(InsufficientEnrolments())
+
+      val result =
+        registrationAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                             okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some("/ppt-accounts-url")
+    }
+
+    "redirect to unauthorised page when user not authorised" in {
+      whenAuthFailsWith(InternalError("Some general auth exception"))
 
       val result =
         registrationAuthAction().invokeBlock(authRequest(Headers(), PptTestData.newUser()),
