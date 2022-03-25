@@ -13,7 +13,10 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.{DeregistrationDetails, DeregistrationReason}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.{
+  DeregistrationDetails,
+  DeregistrationReason
+}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
 import java.util.concurrent.TimeUnit
@@ -56,7 +59,7 @@ class DeregistrationDetailRepositorySpec
   "Deregistration Detail Repository" should {
 
     "return None when no previously stored deregistration detail" in {
-      deregistrationDetailRepository.get().map { _ mustBe None }
+      deregistrationDetailRepository.get().map(_ mustBe None)
     }
 
     "persist deregistration detail" in {
