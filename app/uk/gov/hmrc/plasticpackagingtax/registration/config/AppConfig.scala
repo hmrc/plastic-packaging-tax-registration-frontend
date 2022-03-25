@@ -86,6 +86,8 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       signOutUrl.url
   }
 
+  lazy val pptRegistrationInfoUrl: String = config.get[String]("urls.pptRegistrationsInfoLink")
+
   lazy val incorpIdHost: String =
     servicesConfig.baseUrl("incorporated-entity-identification-frontend")
 
