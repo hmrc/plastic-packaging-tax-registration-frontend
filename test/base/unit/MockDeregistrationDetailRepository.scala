@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.components
+package base.unit
 
-object Styles {
+import builders.RegistrationBuilder
+import org.scalatestplus.mockito.MockitoSugar
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
+  AddressCaptureDetailRepositoryImpl,
+  DeregistrationDetailRepositoryImpl
+}
 
-  val gdsPageHeading            = "govuk-heading-l"
-  val gdsFieldsetPageHeading    = "govuk-fieldset__legend--l"
-  val gdsFieldsetPageSubheading = "govuk-fieldset__legend--m"
-  val gdsLabelPageHeading       = "govuk-label--l"
-  val gdsPageSubHeading         = "govuk-heading-m"
-  val gdsLabelSubHeading        = "govuk-label--s"
-  val gdsPageBodyText           = "govuk-body"
-  val gdsPanelTitle             = "govuk-panel__title"
-  val gdsPanelBody              = "govuk-panel__body"
+import scala.concurrent.ExecutionContext
+
+trait MockDeregistrationDetailRepository extends RegistrationBuilder with MockitoSugar {
+
+  protected val inMemoryDeregistrationDetailRepository =
+    new DeregistrationDetailRepositoryImpl(
+      new InMemoryUserDetailsRepository()(ExecutionContext.global)
+    )
+
 }

@@ -16,42 +16,55 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterForm
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.DeregistrationDetailRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   mcc: MessagesControllerComponents,
   deregistrationDetailRepository: DeregistrationDetailRepository,
+  appConfig: AppConfig,
   page: deregister_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      deregistrationDetailRepository.put(DeregistrationDetails(None, None)).map { _ =>
-        Ok(page())
+      deregistrationDetailRepository.get().map { deregistrationDetails =>
+        val form = deregistrationDetails.deregister.map(DeregisterForm.form().fill(_)).getOrElse(
+          DeregisterForm.form()
+        )
+        Ok(page(form))
       }
     }
 
   def submit(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      deregistrationDetailRepository.update(
-        deregistrationDetails =>
-          // TODO: update here
-          deregistrationDetails
-      ).map { _ =>
-        Redirect(routes.DeregisterReasonController.displayPage())
-      }
+      DeregisterForm.form()
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[Boolean]) => Future.successful(BadRequest(page(formWithErrors))),
+          deregister =>
+            deregistrationDetailRepository.update(
+              deregistrationDetails => deregistrationDetails.copy(deregister = Some(deregister))
+            ).map { deregistrationDetails =>
+              if (deregistrationDetails.deregister.contains(true))
+                Redirect(routes.DeregisterReasonController.displayPage())
+              else
+                Redirect(appConfig.pptAccountUrl)
+            }
+        )
     }
 
 }
