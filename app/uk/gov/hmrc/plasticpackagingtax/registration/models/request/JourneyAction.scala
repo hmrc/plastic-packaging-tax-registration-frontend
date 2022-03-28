@@ -64,9 +64,8 @@ class JourneyAction @Inject() (
           .map { r =>
             val hasPptRegistrationResumed =
               request.session.get("resumePPTRegistration").getOrElse("false")
-            if (hasPptRegistrationResumed.equals("false")) {
-                 auditor.resumePPTRegistration(id)
-            }
+            if (hasPptRegistrationResumed.equals("false"))
+              auditor.resumePPTRegistration(id)
             Future.successful(Right(r))
           }
           .getOrElse {

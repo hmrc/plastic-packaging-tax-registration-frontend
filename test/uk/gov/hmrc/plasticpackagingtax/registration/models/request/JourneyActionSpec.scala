@@ -52,11 +52,11 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
         given(mockRegistrationConnector.find(refEq("123"))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(Registration("123"))))
         )
-        val fakeRequest = FakeRequest().withSession("resumePPTRegistration"-> "true")
+        val fakeRequest = FakeRequest().withSession("resumePPTRegistration" -> "true")
 
         await(
           actionRefiner.invokeBlock(authRequest(fakeRequest, user = PptTestData.newUser("123")),
-            responseGenerator
+                                    responseGenerator
           )
         ) mustBe Results.Ok
 
@@ -71,7 +71,8 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
           Future.successful(Right(Option(Registration("123"))))
         )
 
-        val fakeRequest = FakeRequest().withSession("resumePPTRegistration"-> "false").withHeaders(headers)
+        val fakeRequest =
+          FakeRequest().withSession("resumePPTRegistration" -> "false").withHeaders(headers)
 
         await(
           actionRefiner.invokeBlock(authRequest(fakeRequest, user = PptTestData.newUser("123")),
