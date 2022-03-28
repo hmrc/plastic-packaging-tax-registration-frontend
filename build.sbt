@@ -56,12 +56,10 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     // Deregistration skeletal components excluded initially
     ".*.controllers.deregistration.DeregisterCheckYourAnswersController",
     ".*.controllers.deregistration.DeregisterReasonController",
-    ".*.controllers.deregistration.DeregistrationSubmittedController",
     ".*.views.html.deregistration.deregister_check_your_answers_page",
     ".*.views.html.deregistration.deregister_reason_page",
-    ".*.views.html.deregistration.deregistration_submitted_page",
   ).mkString(";"),
-  coverageMinimum := 93.8,  // TODO: consider upping when we've had chance to write tests for the dereg stuff
+  coverageMinimum := 94,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false

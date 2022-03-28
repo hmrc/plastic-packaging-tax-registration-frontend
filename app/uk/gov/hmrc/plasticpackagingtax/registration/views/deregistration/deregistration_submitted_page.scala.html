@@ -16,22 +16,30 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.routes
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
 @this(
-    formHelper: FormWithCSRF,
-    govukLayout: main_template,
-    govukInput: GovukInput,
-    paragraph: paragraph,
-    saveButtons: saveButtons,
-    errorSummary: errorSummary
+        formHelper: FormWithCSRF,
+        govukLayout: main_template,
+        govukInput: GovukInput,
+        paragraph: paragraph,
+        paragraphBody: paragraphBody,
+        govukPanel: GovukPanel,
+        link: link,
+        appConfig: AppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("TODO")) {
+    title = Title("deregistration.confirmation.title")) {
 
-    <h1>Deregistration Submitted</h1>
+    @govukPanel(Panel(
+        title = HtmlContent(messages("deregistration.confirmation.title"))
+    ))
 
+    @paragraphBody(message = messages("deregistration.confirmation.detail1"))
+
+    @paragraph(content = Html(messages("deregistration.confirmation.detail2",
+        link(text = messages("deregistration.confirmation.detail2.link"), call = Call("GET", appConfig.pptAccountUrl)))))
 }
