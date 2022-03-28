@@ -15,27 +15,60 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationReason._
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterReasonForm
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.routes
 
 @this(
     formHelper: FormWithCSRF,
     govukLayout: main_template,
     govukInput: GovukInput,
+    govukRadios : GovukRadios,
     paragraph: paragraph,
     saveButtons: saveButtons,
     errorSummary: errorSummary
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(form: Form[DeregisterReasonForm])(implicit request: Request[_], messages: Messages)
+
+@title = @{ "deregistration.reason.title" }
+
+@deregisterRadios = @{
+    Seq(
+        RadioItem(content = Text(messages(s"deregistration.reason.type.RegisteredIncorrectly")), value = Some(RegisteredIncorrectly), checked = form("answer").value.contains(RegisteredIncorrectly.toString)),
+        RadioItem(content = Text(messages(s"deregistration.reason.type.CeasedTrading")), value = Some(CeasedTrading), checked = form("answer").value.contains(CeasedTrading.toString)),
+        RadioItem(content = Text(messages(s"deregistration.reason.type.BelowDeminimis")), value = Some(BelowDeminimis), checked = form("answer").value.contains(BelowDeminimis.toString)),
+        RadioItem(content = Text(messages(s"deregistration.reason.type.TakenIntoGroupRegistration")), value = Some(TakenIntoGroupRegistration), checked = form("answer").value.contains(TakenIntoGroupRegistration.toString))
+    )
+}
 
 @govukLayout(
-    title = Title("TODO")) {
+    title = Title(title),
+    backButton = Some(BackButton(messages("site.back"), routes.DeregisterController.displayPage(), messages("site.back.hiddenText")))) {
 
-    <h1>Deregistration Reason?</h1>
-
+    @errorSummary(form.errors)
+    
     @formHelper(action = routes.DeregisterReasonController.submit(), 'autoComplete -> "off") {
 
-        @saveButtons()
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages(title)),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            ))
+        )),
+        hint = None,
+        idPrefix = Some(form("answer").name),
+        name = form("answer").name,
+        items = deregisterRadios,
+        classes = "govuk-radios",
+        errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+    ))
+    
+    
+    @saveButtons()
     }
 }
