@@ -21,9 +21,10 @@ import base.{MockAuthAction, PptTestData}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.Mockito.{never, reset, times, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Result, Results}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.await
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException, RequestId}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
@@ -51,12 +52,15 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
         given(mockRegistrationConnector.find(refEq("123"))(any[HeaderCarrier])).willReturn(
           Future.successful(Right(Option(Registration("123"))))
         )
+        val fakeRequest = FakeRequest().withSession("resumePPTRegistration"-> "true")
 
         await(
-          actionRefiner.invokeBlock(authRequest(user = PptTestData.newUser("123")),
-                                    responseGenerator
+          actionRefiner.invokeBlock(authRequest(fakeRequest, user = PptTestData.newUser("123")),
+            responseGenerator
           )
         ) mustBe Results.Ok
+
+        verify(mockAuditor, never()).resumePPTRegistration(ArgumentMatchers.eq("123"))(any(), any())
       }
     }
 
@@ -67,13 +71,16 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
           Future.successful(Right(Option(Registration("123"))))
         )
 
+        val fakeRequest = FakeRequest().withSession("resumePPTRegistration"-> "false").withHeaders(headers)
+
         await(
-          actionRefiner.invokeBlock(authRequest(headers, user = PptTestData.newUser("123")),
+          actionRefiner.invokeBlock(authRequest(fakeRequest, user = PptTestData.newUser("123")),
                                     responseGenerator
           )
         ) mustBe Results.Ok
 
         getHeaders.requestId mustBe Some(RequestId("req1"))
+        verify(mockAuditor).resumePPTRegistration(ArgumentMatchers.eq("123"))(any(), any())
       }
     }
 
