@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
 import base.PptTestData
@@ -8,7 +24,6 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.test.Helpers.await
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
@@ -58,8 +73,8 @@ class DeregistrationDetailRepositorySpec
 
   "Deregistration Detail Repository" should {
 
-    "return None when no previously stored deregistration detail" in {
-      deregistrationDetailRepository.get().map(_ mustBe None)
+    "return empty DeregistrationDetails when no previously stored deregistration detail" in {
+      deregistrationDetailRepository.get().map(_ mustBe DeregistrationDetails(None, None))
     }
 
     "persist deregistration detail" in {
@@ -74,7 +89,7 @@ class DeregistrationDetailRepositorySpec
           storedDeregistrationDetail.copy(reason = Some(DeregistrationReason.CeasedTrading))
         }.map { _ =>
           deregistrationDetailRepository.get().map { storedRegistrationDetail =>
-            storedRegistrationDetail.get.reason mustBe Some(DeregistrationReason.CeasedTrading)
+            storedRegistrationDetail.reason mustBe Some(DeregistrationReason.CeasedTrading)
           }
         }
       }
@@ -85,12 +100,6 @@ class DeregistrationDetailRepositorySpec
         deregistrationDetailRepository.delete().map { _ =>
           deregistrationDetailRepository.get() mustBe None
         }
-      }
-    }
-
-    "throw IllegalStateException if attempt to update missing deregistration detail" in {
-      intercept[IllegalStateException] {
-        await(deregistrationDetailRepository.update(dd => dd))
       }
     }
   }

@@ -755,3 +755,14 @@ amend.partner.remove.title = Are you sure you want to remove {0} from the partne
 removePartner.empty.error = Please select Yes or No
 
 gform.link = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
+
+deregistration.deregister.title = Deregister from Plastic Packaging Tax
+deregistration.deregister.eligibility = You can deregister for Plastic Packaging Tax if you:
+deregistration.deregister.eligibility.1 = registered incorrectly
+deregistration.deregister.eligibility.2 = cease trading
+deregistration.deregister.eligibility.3 = have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.deregister.eligibility.4 = want to register as part of a group
+deregistration.deregister.detail1 = We’ll need to approve your deregistration request.
+deregistration.deregister.detail2 = When you deregister, your tax liability will stop.
+deregistration.deregister.label = Are you sure you want to deregister from Plastic Packaging Tax?
+deregistration.deregister.empty.error = Please select Yes or No

@@ -54,10 +54,12 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
     ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
     // Deregistration skeletal components excluded initially
-    ".*.controllers.deregister.*",
-    ".*.views.html.deregistration.*",
-    ".*.models.deregistration.DeregistrationDetails*",
-    ".*.repositories.DeregistrationDetailRepository*",
+    ".*.controllers.deregistration.DeregisterCheckYourAnswersController",
+    ".*.controllers.deregistration.DeregisterReasonController",
+    ".*.controllers.deregistration.DeregistrationSubmittedController",
+    ".*.views.html.deregistration.deregister_check_your_answers_page",
+    ".*.views.html.deregistration.deregister_reason_page",
+    ".*.views.html.deregistration.deregistration_submitted_page",
   ).mkString(";"),
   coverageMinimum := 93.8,  // TODO: consider upping when we've had chance to write tests for the dereg stuff
   coverageFailOnMinimum := true,

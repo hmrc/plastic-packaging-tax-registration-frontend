@@ -17,24 +17,63 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.routes
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner.YES
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner.NO
 
 @this(
     formHelper: FormWithCSRF,
     govukLayout: main_template,
+    govukFieldset: GovukFieldset,
+    govukRadios: GovukRadios,
+    pageHeading: pageHeading,
     govukInput: GovukInput,
-    paragraph: paragraph,
+    paragraphBody: paragraphBody,
+    bulletList: bulletList,
     saveButtons: saveButtons,
-    errorSummary: errorSummary
+    errorSummary: errorSummary,
+    appConfig: AppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("TODO")) {
+    title = Title("deregistration.deregister.title"),
+    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
 
-    <h1>Deregister?</h1>
+    @pageHeading(text = messages("deregistration.deregister.title"))
+
+    @paragraphBody(message = messages("deregistration.deregister.eligibility"))
+    @bulletList(elements = Seq(
+        Html(messages("deregistration.deregister.eligibility.1")),
+        Html(messages("deregistration.deregister.eligibility.2")),
+        Html(messages("deregistration.deregister.eligibility.3")),
+        Html(messages("deregistration.deregister.eligibility.4"))
+    ))
+
+    @paragraphBody(message = messages("deregistration.deregister.detail1"))
+    @paragraphBody(message = messages("deregistration.deregister.detail2"))
 
     @formHelper(action = routes.DeregisterController.submit(), 'autoComplete -> "off") {
+
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("deregistration.deregister.label")),
+                classes = gdsFieldsetPageSubheading,
+                isPageHeading = false
+            )),
+            html = govukRadios(Radios(
+                hint = None,
+                name = "deregister",
+                items = Seq(
+                    RadioItem(content = Text(messages("general.true")), value = Some(YES), checked = form.value.contains(true)),
+                    RadioItem(content = Text(messages("general.false")), value = Some(NO), checked = form.value.contains(false))
+                ),
+                classes = "govuk-radios--inline",
+                errorMessage = form("deregister").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            ))
+        ))
 
         @saveButtons()
     }

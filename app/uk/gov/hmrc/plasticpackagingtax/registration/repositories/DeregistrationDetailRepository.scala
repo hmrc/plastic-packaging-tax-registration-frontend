@@ -32,7 +32,7 @@ trait DeregistrationDetailRepository {
     request: AuthenticatedRequest[Any]
   ): Future[DeregistrationDetails]
 
-  def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[DeregistrationDetails]]
+  def get()(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails]
 
   def update(update: DeregistrationDetails => DeregistrationDetails)(implicit
     request: AuthenticatedRequest[Any]
@@ -50,20 +50,21 @@ class DeregistrationDetailRepositoryImpl @Inject() (userDataRepository: UserData
   )(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
     userDataRepository.putData[DeregistrationDetails](repositoryKey, deregistrationDetails)
 
-  def get()(implicit request: AuthenticatedRequest[Any]): Future[Option[DeregistrationDetails]] =
-    userDataRepository.getData[DeregistrationDetails](repositoryKey)
+  def get()(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
+    userDataRepository.getData[DeregistrationDetails](repositoryKey).map {
+      case Some(deregistrationDetails) => deregistrationDetails
+      case None                        => DeregistrationDetails(None, None)
+    }
 
   def update(
     update: DeregistrationDetails => DeregistrationDetails
   )(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
-    get().flatMap {
-      case Some(deregistrationDetails) => put(update(deregistrationDetails))
-      case _                           => throw new IllegalStateException("Existing deregistration detail not found")
-    }
+    get().flatMap(deregistrationDetails => put(update(deregistrationDetails)))
 
   def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
     userDataRepository.deleteData[DeregistrationDetails](repositoryKey)
 
+  def reset(): Unit = userDataRepository.reset()
 }
 
 object DeregistrationDetailsRepository {
