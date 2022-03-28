@@ -42,6 +42,7 @@
     title = Title("deregistration.deregister.title"),
     backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
 
+    @errorSummary(form.errors)
     @pageHeading(text = messages("deregistration.deregister.title"))
 
     @paragraphBody(message = messages("deregistration.deregister.eligibility"))

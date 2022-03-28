@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterForm
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -27,10 +28,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class DeregisterViewSpec extends UnitViewSpec with Matchers {
 
-  private val page = inject[deregister_page]
+  override val appConfig: AppConfig = inject[AppConfig]
+  private val page                  = inject[deregister_page]
 
   private def createView(form: Form[Boolean] = DeregisterForm.form()): Document =
-    page(form)(request, messages)
+    page(form)(authenticatedRequest, messages)
 
   "The Initial Deregister View" should {
 
@@ -113,7 +115,7 @@ class DeregisterViewSpec extends UnitViewSpec with Matchers {
       val view = createView(form)
 
       view must haveGovukGlobalErrorSummary
-      view must haveGovukFieldError("value", messages("deregistration.deregister.empty.error"))
+      view must haveGovukFieldError("deregister", messages("deregistration.deregister.empty.error"))
     }
   }
 
