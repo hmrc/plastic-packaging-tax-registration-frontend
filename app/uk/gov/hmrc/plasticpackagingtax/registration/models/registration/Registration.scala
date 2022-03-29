@@ -109,12 +109,17 @@ case class Registration(
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
   def liabilityDetailsStatus: TaskStatus =
-    if (this.liabilityDetails.isCompleted && registrationType.contains(GROUP))
+    if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
       if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
         TaskStatus.Completed
       else TaskStatus.InProgress
+    else if (liabilityDetails.status == TaskStatus.Completed)
+      if (registrationType.nonEmpty)
+        TaskStatus.Completed
+      else
+        TaskStatus.InProgress
     else
-      this.liabilityDetails.status
+      liabilityDetails.status
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
 
