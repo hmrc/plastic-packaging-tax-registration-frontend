@@ -17,25 +17,77 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.routes
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationDetails
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 
 @this(
     formHelper: FormWithCSRF,
     govukLayout: main_template,
-    govukInput: GovukInput,
     paragraph: paragraph,
     saveButtons: saveButtons,
-    errorSummary: errorSummary
+    errorSummary: errorSummary,
+    govukSummaryList: GovukSummaryList,
+    pageHeading: pageHeading,
+    saveAndContinue: saveAndContinue
 )
 
-@()(implicit request: Request[_], messages: Messages)
+
+@(deregistrationDetails: DeregistrationDetails)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("TODO")) {
+    title = Title("deregister.checkAnswers.title"),
+    backButton = Some(BackButton(messages("site.back"), routes.DeregisterReasonController.displayPage(), messages("site.back.hiddenText")))) {
 
-    <h1>Deregistration - Check Your Answers</h1>
+    @pageHeading(messages("deregister.checkAnswers.heading"))
 
-    @formHelper(action = routes.DeregistrationSubmittedController.displayPage(), 'autoComplete -> "off") {
-
-        @saveButtons()
+    @formHelper(action = routes.DeregisterCheckYourAnswersController.continue(), 'autoComplete -> "off") {
+        @govukSummaryList(
+            SummaryList(
+                Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("deregister.checkAnswers.wantToDeregister"))
+                        ),
+                        value = Value(
+                            content =  deregistrationDetails.deregister match {
+                            case Some(true) => Text(messages("general.true"))
+                            case Some(false) => Text(messages("general.false"))
+                            case None => Text("")
+                            }
+                        ),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = routes.DeregisterController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("deregister.checkAnswers.wantToDeregister"))
+                                )
+                            )
+                        ))
+                    ),
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("deregister.checkAnswers.reasonToDeregister"))
+                        ),
+                        value = Value(
+                            content = deregistrationDetails.reason match {
+                            case Some(reason) => Text(reason.toString)
+                            case None => Text("")
+                        }),
+                        actions = Some(Actions(
+                            items = Seq(
+                                ActionItem(
+                                    href = routes.DeregisterReasonController.displayPage().url,
+                                    content = Text(messages("site.link.change")),
+                                    visuallyHiddenText = Some(messages("deregister.checkAnswers.reasonToDeregister"))
+                                )
+                            )
+                        ))
+                    )
+                )
+            )
+        )
+        @saveAndContinue("deregister.checkAnswers.confirm")
     }
 }
