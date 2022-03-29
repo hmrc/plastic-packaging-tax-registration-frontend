@@ -35,3 +35,10 @@ object StartRegistrationEvent {
   implicit val format: OFormat[StartRegistrationEvent] = Json.format[StartRegistrationEvent]
   val eventType: String                                = "startPPTRegistration"
 }
+
+case class ResumeRegistrationEvent(userType: UserType, internalId: String) {}
+
+object ResumeRegistrationEvent {
+  implicit val format: OFormat[ResumeRegistrationEvent] = Json.format[ResumeRegistrationEvent]
+  val eventType: String                                 = "resumePPTRegistration"
+}
