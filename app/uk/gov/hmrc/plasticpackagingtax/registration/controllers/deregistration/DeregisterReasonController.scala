@@ -16,15 +16,17 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration
 
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterReasonForm
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.DeregistrationDetailRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_reason_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterReasonController @Inject() (
@@ -37,21 +39,30 @@ class DeregisterReasonController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      deregistrationDetailRepository.get().map { deregistrationDetails =>
-        // TODO: populate form
-        Ok(page())
+      deregistrationDetailRepository.get().map { data =>
+        data.reason match {
+          case Some(reason) =>
+            Ok(page(DeregisterReasonForm.form().fill(DeregisterReasonForm(Some(reason)))))
+          case _ => Ok(page(DeregisterReasonForm.form()))
+        }
       }
     }
 
   def submit(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      deregistrationDetailRepository.update(
-        deregistrationDetails =>
-          // TODO: update here
-          deregistrationDetails
-      ).map { _ =>
-        Redirect(routes.DeregisterCheckYourAnswersController.displayPage())
-      }
+      DeregisterReasonForm.form()
+        .bindFromRequest()
+        .fold(
+          (formWithErrors: Form[DeregisterReasonForm]) =>
+            Future.successful(BadRequest(page(formWithErrors))),
+          deregistrationReason =>
+            deregistrationDetailRepository.update(
+              deregistrationDetails =>
+                deregistrationDetails.copy(reason = deregistrationReason.answer)
+            ).map { _ =>
+              Redirect(routes.DeregisterCheckYourAnswersController.displayPage())
+            }
+        )
     }
 
 }
