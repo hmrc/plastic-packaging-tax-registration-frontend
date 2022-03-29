@@ -22,6 +22,7 @@
         formHelper: FormWithCSRF,
         govukLayout: main_template,
         govukInput: GovukInput,
+        subHeading: subHeading,
         paragraph: paragraph,
         paragraphBody: paragraphBody,
         govukPanel: GovukPanel,
@@ -38,6 +39,7 @@
         title = HtmlContent(messages("deregistration.confirmation.title"))
     ))
 
+    @subHeading(text = messages("deregistration.confirmation.subheading"))
     @paragraphBody(message = messages("deregistration.confirmation.detail1"))
 
     @paragraph(content = Html(messages("deregistration.confirmation.detail2",
