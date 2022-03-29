@@ -69,6 +69,7 @@ class ReviewRegistrationController @Inject() (
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val completedRegistration = request.registration.asCompleted()
+      val internalId            = request.authenticatedRequest.user.identityData.internalId
       val completedRegistrationWithUserHeaders =
         completedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
 
@@ -84,25 +85,27 @@ class ReviewRegistrationController @Inject() (
                                                                                   _,
                                                                                   _
               ) =>
-            handleSuccessfulSubscription(completedRegistration, successfulSubscription)
+            handleSuccessfulSubscription(completedRegistration, successfulSubscription, internalId)
           case SubscriptionCreateOrUpdateResponseFailure(failures) =>
-            handleFailedSubscription(completedRegistration, failures)
+            handleFailedSubscription(completedRegistration, failures, internalId)
         }
         .recoverWith {
-          case _ => Future.successful(handleFailedSubscription(completedRegistration))
+          case _ => Future.successful(handleFailedSubscription(completedRegistration, internalId))
         }
     }
 
   private def handleSuccessfulSubscription(
     registration: Registration,
-    response: SubscriptionCreateOrUpdateResponseSuccess
+    response: SubscriptionCreateOrUpdateResponseSuccess,
+    internalId: Option[String]
   )(implicit hc: HeaderCarrier): Result = {
     successSubmissionCounter.inc()
     val updatedMetadata = registration.metaData.copy(nrsDetails =
       Some(NrsDetails(response.nrsSubmissionId, response.nrsFailureReason))
     )
-    auditor.registrationSubmitted(registration.copy(metaData = updatedMetadata),
-                                  Some(response.pptReference)
+    auditor.registrationSubmitted(registration = registration.copy(metaData = updatedMetadata),
+                                  pptReference = Some(response.pptReference),
+                                  internalId = internalId
     )
     if (response.enrolmentInitiatedSuccessfully.contains(true))
       Redirect(routes.ConfirmationController.displayPage())
@@ -124,28 +127,31 @@ class ReviewRegistrationController @Inject() (
         )
   }
 
-  private def handleFailedSubscription(registration: Registration, failures: Seq[EisError])(implicit
-    hc: HeaderCarrier
-  ): Result = {
-    performFailedSubscriptionCommonTasks(registration)
+  private def handleFailedSubscription(
+    registration: Registration,
+    failures: Seq[EisError],
+    internalId: Option[String]
+  )(implicit hc: HeaderCarrier): Result = {
+    performFailedSubscriptionCommonTasks(registration, internalId)
     if (failures.head.isDuplicateSubscription)
       Redirect(routes.NotableErrorController.duplicateRegistration())
     else
       Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
-  private def handleFailedSubscription(
-    registration: Registration
-  )(implicit hc: HeaderCarrier): Result = {
-    performFailedSubscriptionCommonTasks(registration)
+  private def handleFailedSubscription(registration: Registration, internalId: Option[String])(
+    implicit hc: HeaderCarrier
+  ): Result = {
+    performFailedSubscriptionCommonTasks(registration, internalId)
     Redirect(routes.NotableErrorController.subscriptionFailure())
   }
 
   private def performFailedSubscriptionCommonTasks(
-    registration: Registration
+    registration: Registration,
+    internalId: Option[String]
   )(implicit hc: HeaderCarrier): Unit = {
     failedSubmissionCounter.inc()
-    auditor.registrationSubmitted(registration)
+    auditor.registrationSubmitted(registration, internalId = internalId)
   }
 
   private def getSafeId(registration: Registration): String =
