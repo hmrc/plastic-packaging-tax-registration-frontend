@@ -427,10 +427,11 @@ partnership.otherPartners.checkAnswers.jobTitle = Job title
 partnership.otherPartners.checkAnswers.emailAddress = Email address
 partnership.otherPartners.checkAnswers.phoneNumber = Telephone number
 
-unauthorised.heading = You are not registered for Plastic Packaging Tax
-unauthorised.paragraph.1 = The Plastic Packaging Tax (PPT) service will launch in April 2022, and is currently available to a limited number of people for their feedback.
-unauthorised.paragraph.2 = If you would like to provide your feedback too, you can {0}. We will respond to you within two working days.
-unauthorised.paragraph.2.link = request to join PPT’s list of users
+unauthorised.heading = You must be registered to use this service
+unauthorised.paragraph.1 = You need to {0} to use this service.
+unauthorised.paragraph.1.link = register for Plastic Packaging Tax
+unauthorised.paragraph.2 = Visit the {0} for more information.
+unauthorised.paragraph.2.link = Plastic Packaging Tax guidance
 
 organisationDetails.registerAsOtherOrganisation.title = Register as a charitable incorporated organisation, trust or overseas company without a UK establishment
 organisationDetails.registerAsOtherOrganisation.paragraph.1 = This is a new service and this organisation type is not supported yet.

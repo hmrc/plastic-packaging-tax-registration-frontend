@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.StartController
 
 @this(
         govukLayout: main_template,
@@ -28,19 +29,27 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@contactHmrcLink = {
+@registerLink = {
 @link(
-    id = Some("deskpro_link"),
-    text = messages("unauthorised.paragraph.2.link"),
-    call = Call("GET", config.contactHmrcUrl)
-)
+        id = Some("register_for_ppt_link"),
+        text = messages("unauthorised.paragraph.1.link"),
+        call = StartController.displayStartPage()
+    )
+}
+
+@findOutLink = {
+@link(
+        id = Some("find_out_about_ppt_link"),
+        text = messages("unauthorised.paragraph.2.link"),
+        call = Call("GET", config.pptRegistrationInfoUrl)
+    )
 }
 
 @govukLayout(title = Title("unauthorised.heading")) {
 
     @pageHeading(messages("unauthorised.heading"))
 
-    @paragraph(content = Html(messages("unauthorised.paragraph.1")))
-    @paragraph(content = Html(messages("unauthorised.paragraph.2", contactHmrcLink)))
+    @paragraph(content = Html(messages("unauthorised.paragraph.1", registerLink)))
 
+    @paragraph(content = Html(messages("unauthorised.paragraph.2", findOutLink)))
 }
