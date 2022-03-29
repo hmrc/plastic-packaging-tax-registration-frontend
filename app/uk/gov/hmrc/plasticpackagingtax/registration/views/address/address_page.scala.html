@@ -80,17 +80,15 @@
         Select(
             id = "countryCode",
             name = "countryCode",
-            attributes = Map("aria-labelledby" -> "countryCode"),
+            formGroupClasses = "autocomplete-wrapper",
+            attributes = Map("aria-labelledby" -> "countryCode", "data-all-countries" -> ""),
             items =
                 Seq(SelectItem(value = None)) ++
                         countryMap.map { countryEntry =>
                             SelectItem(
                                 value = Some(countryEntry._1),
                                 text = countryEntry._2,
-                                selected = form("countryCode").value match {
-                                    case Some(code) => code == countryEntry._1
-                                    case _ => false
-                                }
+                                selected = form("countryCode").value.contains(countryEntry._1)
                             )
                         }.toSeq,
             label = Label(
