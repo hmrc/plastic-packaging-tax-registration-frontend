@@ -19,10 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
-  StartRegistrationController,
-  routes => commonRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
@@ -35,7 +32,6 @@ class CheckLiabilityDetailsAnswersController @Inject() (
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
-  startRegistrationController: StartRegistrationController,
   page: check_liability_details_answers_page
 ) extends LiabilityController(mcc) with I18nSupport {
 
