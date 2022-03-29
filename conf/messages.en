@@ -766,7 +766,7 @@ deregistration.deregister.eligibility.4 = want to register as part of a group
 deregistration.deregister.detail1 = We’ll need to approve your deregistration request.
 deregistration.deregister.detail2 = When you deregister, your tax liability will stop.
 deregistration.deregister.label = Are you sure you want to deregister from Plastic Packaging Tax?
-deregistration.deregister.empty.error = Please select Yes or No
+deregistration.deregister.empty.error = Select yes if you want to deregister from Plastic Packaging Tax
 
 deregistration.reason.title = Why do you want to deregister?
 deregistration.reason.type.RegisteredIncorrectly = Registered incorrectly
