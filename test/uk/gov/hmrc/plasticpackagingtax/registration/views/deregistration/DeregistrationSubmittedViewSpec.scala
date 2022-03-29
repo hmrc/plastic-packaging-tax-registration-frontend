@@ -44,6 +44,10 @@ class DeregistrationSubmittedViewSpec extends UnitViewSpec with Matchers {
       view.select("title").text() must include(messages("deregistration.confirmation.title"))
     }
 
+    "display sub-heading" in {
+      view.select("h2").text() must include(messages("deregistration.confirmation.subheading"))
+    }
+
     "display confirmation panel" in {
       view.select("h1").text() must include(messages("deregistration.confirmation.title"))
     }
