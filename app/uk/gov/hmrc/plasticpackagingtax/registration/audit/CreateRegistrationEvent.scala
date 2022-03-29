@@ -33,14 +33,20 @@ case class CreateRegistrationEvent(
   organisationDetails: OrganisationDetails = OrganisationDetails(),
   groupDetail: Option[GroupDetail],
   metaData: MetaData = MetaData(),
-  userHeaders: Map[String, String] = Map.empty
+  userHeaders: Map[String, String] = Map.empty,
+  internalId: Option[String] = None,
+  isGroup: Boolean
 )
 
 object CreateRegistrationEvent {
   implicit val format: OFormat[CreateRegistrationEvent] = Json.format[CreateRegistrationEvent]
   val eventType: String                                 = "createPPTRegistration"
 
-  def apply(registration: Registration, pptReference: Option[String]): CreateRegistrationEvent =
+  def apply(
+    registration: Registration,
+    pptReference: Option[String],
+    internalId: Option[String]
+  ): CreateRegistrationEvent =
     CreateRegistrationEvent(id = registration.id,
                             pptReference = pptReference,
                             dateOfRegistration = registration.dateOfRegistration,
@@ -50,7 +56,9 @@ object CreateRegistrationEvent {
                             primaryContactDetails = registration.primaryContactDetails,
                             organisationDetails = registration.organisationDetails,
                             groupDetail = registration.groupDetail,
-                            metaData = registration.metaData
+                            metaData = registration.metaData,
+                            internalId = internalId,
+                            isGroup = registration.isGroup
     )
 
 }

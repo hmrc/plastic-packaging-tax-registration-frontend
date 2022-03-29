@@ -21,16 +21,24 @@ import uk.gov.hmrc.plasticpackagingtax.registration.audit.UserType.UserType
 
 object UserType extends Enumeration {
   type UserType = Value
-  val NEW = Value
+  val NEW    = Value
+  val RESUME = Value
 
   implicit val format: Format[UserType] =
     Format(Reads.enumNameReads(UserType), Writes.enumNameWrites)
 
 }
 
-case class StartRegistrationEvent(userType: UserType) {}
+case class StartRegistrationEvent(userType: UserType, internalId: String) {}
 
 object StartRegistrationEvent {
   implicit val format: OFormat[StartRegistrationEvent] = Json.format[StartRegistrationEvent]
   val eventType: String                                = "startPPTRegistration"
+}
+
+case class ResumeRegistrationEvent(userType: UserType, internalId: String) {}
+
+object ResumeRegistrationEvent {
+  implicit val format: OFormat[ResumeRegistrationEvent] = Json.format[ResumeRegistrationEvent]
+  val eventType: String                                 = "resumePPTRegistration"
 }

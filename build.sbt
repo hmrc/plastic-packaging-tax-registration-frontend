@@ -55,9 +55,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
     // Deregistration skeletal components excluded initially
     ".*.controllers.deregistration.DeregisterCheckYourAnswersController",
-    ".*.controllers.deregistration.DeregisterReasonController",
     ".*.views.html.deregistration.deregister_check_your_answers_page",
-    ".*.views.html.deregistration.deregister_reason_page",
   ).mkString(";"),
   coverageMinimum := 94,
   coverageFailOnMinimum := true,

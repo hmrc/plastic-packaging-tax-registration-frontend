@@ -53,10 +53,12 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         givenAuditReturns(Status.NO_CONTENT)
         val registration = aRegistration()
 
-        auditor.registrationSubmitted(registration)
+        auditor.registrationSubmitted(registration, None, None)
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None)) mustBe true
+          verifyEventSentToAudit(auditUrl,
+                                 CreateRegistrationEvent(registration, None, None)
+          ) mustBe true
         }
       }
     }
@@ -68,10 +70,12 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
                                          withRegistrationType(Some(RegType.GROUP))
         )
 
-        auditor.registrationSubmitted(registration)
+        auditor.registrationSubmitted(registration, None, Some("123456"))
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None)) mustBe true
+          verifyEventSentToAudit(auditUrl,
+                                 CreateRegistrationEvent(registration, None, Some("123456"))
+          ) mustBe true
         }
       }
     }
@@ -81,10 +85,12 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         givenAuditReturns(Status.BAD_REQUEST)
         val registration = aRegistration()
 
-        auditor.registrationSubmitted(registration)
+        auditor.registrationSubmitted(registration, None, Some("123456"))
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl, CreateRegistrationEvent(registration, None)) mustBe true
+          verifyEventSentToAudit(auditUrl,
+                                 CreateRegistrationEvent(registration, None, Some("123456"))
+          ) mustBe true
         }
       }
     }
@@ -93,10 +99,12 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
       "newRegistrationStarted invoked" in {
         givenAuditReturns(Status.NO_CONTENT)
 
-        auditor.newRegistrationStarted()
+        auditor.newRegistrationStarted("123456")
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
+          verifyEventSentToAudit(auditUrl,
+                                 StartRegistrationEvent(UserType.NEW, "123456")
+          ) mustBe true
         }
       }
     }
@@ -105,10 +113,12 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
       "newRegistrationStarted audit event fails" in {
         givenAuditReturns(Status.BAD_REQUEST)
 
-        auditor.newRegistrationStarted()
+        auditor.newRegistrationStarted("123456")
 
         eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl, StartRegistrationEvent(UserType.NEW)) mustBe true
+          verifyEventSentToAudit(auditUrl,
+                                 StartRegistrationEvent(UserType.NEW, "123456")
+          ) mustBe true
         }
       }
     }

@@ -40,9 +40,11 @@ class StartRegistrationController @Inject() (
   def startRegistration(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       if (request.registration.isStarted)
-        Redirect(routes.TaskListController.displayPage())
+        Redirect(routes.TaskListController.displayPage()).addingToSession(
+          "resumePPTRegistration" -> "true"
+        )
       else
-        Redirect(startLink)
+        Redirect(startLink).addingToSession("resumePPTRegistration" -> "true")
     }
 
   def startLink(implicit request: JourneyRequest[AnyContent]): Call =

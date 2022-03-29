@@ -40,21 +40,20 @@ class UnauthorisedViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByTag("h1").first() must containMessage("unauthorised.heading")
     }
 
-    "display required information" in {
+    "display required information for start page" in {
       val contentParagraphs = view.select("p.govuk-body")
 
-      contentParagraphs.get(0) must containMessage("unauthorised.paragraph.1")
-      stripSpaceBeforeFullstop(contentParagraphs.get(1).text()) must include(
-        messages("unauthorised.paragraph.2", messages("unauthorised.paragraph.2.link"))
+      stripSpaceBeforeFullstop(contentParagraphs.get(0).text()) must include(
+        messages("unauthorised.paragraph.1", messages("unauthorised.paragraph.1.link"))
       )
     }
 
-    "display contact HMRC/deskpro link" in {
-      val link = view.getElementById("deskpro_link")
+    "display required information for register" in {
+      val contentParagraphs = view.select("p.govuk-body")
 
-      link must containMessage("unauthorised.paragraph.2.link")
-      link must haveHref(appConfig.contactHmrcUrl)
-      link.attributes().hasKey("target") mustBe false
+      stripSpaceBeforeFullstop(contentParagraphs.get(1).text()) must include(
+        messages("unauthorised.paragraph.2", messages("unauthorised.paragraph.2.link"))
+      )
     }
   }
 

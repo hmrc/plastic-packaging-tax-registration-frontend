@@ -45,7 +45,7 @@ class JourneyAction @Inject() (
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     request.user.identityData.internalId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
-        loadOrCreateRegistration(id).map {
+        loadOrCreateRegistration(id)(hc, request).map {
           case Right(reg)  => Right(JourneyRequest[A](request, reg, appConfig, request.pptReference))
           case Left(error) => throw error
         }
@@ -55,15 +55,21 @@ class JourneyAction @Inject() (
     }
   }
 
-  private def loadOrCreateRegistration[A](id: String)(implicit headerCarrier: HeaderCarrier) =
+  private def loadOrCreateRegistration[A](
+    id: String
+  )(implicit headerCarrier: HeaderCarrier, request: AuthenticatedRequest[A]) =
     registrationConnector.find(id).flatMap {
       case Right(reg) =>
         reg
           .map { r =>
+            val hasPptRegistrationResumed =
+              request.session.get("resumePPTRegistration").getOrElse("false")
+            if (hasPptRegistrationResumed.equals("false"))
+              auditor.resumePPTRegistration(id)
             Future.successful(Right(r))
           }
           .getOrElse {
-            auditor.newRegistrationStarted()
+            auditor.newRegistrationStarted(id)
             registrationConnector.create(Registration(id))
           }
       case Left(error) => Future.successful(Left(error))
