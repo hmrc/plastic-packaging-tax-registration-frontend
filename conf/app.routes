@@ -402,5 +402,6 @@ GET        /deregister-reason                   uk.gov.hmrc.plasticpackagingtax.
 POST       /deregister-reason                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterReasonController.submit()
 
 GET        /deregister-check-your-answers       uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterCheckYourAnswersController.displayPage()
+POST       /deregister-check-your-answers       uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterCheckYourAnswersController.continue()
 
 GET        /deregistration-submitted            uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregistrationSubmittedController.displayPage()

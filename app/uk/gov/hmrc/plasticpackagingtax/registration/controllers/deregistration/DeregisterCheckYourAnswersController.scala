@@ -18,35 +18,46 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DeregistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.DeregistrationDetailRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterCheckYourAnswersController @Inject() (
   authenticate: AuthNoEnrolmentCheckAction,
   mcc: MessagesControllerComponents,
   deregistrationDetailRepository: DeregistrationDetailRepository,
+  deregistrationConnector: DeregistrationConnector,
   page: deregister_check_your_answers_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      deregistrationDetailRepository.get().map { deregistrationDetails =>
-        // TODO: pass to page
-        Ok(page())
-      }
+      deregistrationDetailRepository.get().map(
+        deregistrationDetails => Ok(page(deregistrationDetails))
+      )
     }
 
   def continue(): Action[AnyContent] =
-    authenticate { implicit request =>
-      // TODO: submit the dereg request (and delete the local deets)
-      Redirect(routes.DeregistrationSubmittedController.displayPage())
+    authenticate.async { implicit request =>
+      val pptReference = request.pptReference.getOrElse(
+        throw new IllegalStateException("Ppt reference number not found")
+      )
+      deregistrationDetailRepository.get().flatMap {
+        deregistrationDetails =>
+          deregistrationConnector.deregister(pptReference, deregistrationDetails).flatMap {
+            case Right(_) =>
+              deregistrationDetailRepository.delete()
+              Future.successful(Redirect(routes.DeregistrationSubmittedController.displayPage()))
+            case Left(ex) => throw ex
+          }
+      }
     }
 
 }

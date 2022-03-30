@@ -780,3 +780,9 @@ deregistration.confirmation.subheading = What happens next
 deregistration.confirmation.detail1 = We’ll send you a letter to say if we’ve approved your request.
 deregistration.confirmation.detail2 = You can still view and update your {0} until your deregistration request is approved.
 deregistration.confirmation.detail2.link = Plastic Packaging Tax account
+
+deregister.checkAnswers.title = Check your answers
+deregister.checkAnswers.heading = Check your answers
+deregister.checkAnswers.wantToDeregister = Want to deregister
+deregister.checkAnswers.reasonToDeregister = Why you want to deregister
+deregister.checkAnswers.confirm = Confirm and continue

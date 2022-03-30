@@ -53,9 +53,6 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     // These are being excluded since all logic has been pushed to base class and they are tested by their non-post-registration associates
     ".*.controllers.amendment.group.AddGroupMember(OrganisationDetailsType|Grs|ContactDetailsName|ContactDetailsEmailAddress|ContactDetailsTelephoneNumber|ContactDetailsConfirmAddress)Controller",
     ".*.controllers.amendment.partner.AddPartner(Name|OrganisationDetailsType|Grs|ContactDetailsEmailAddress|ContactDetailsName|ContactDetailsTelephoneNumber)Controller",
-    // Deregistration skeletal components excluded initially
-    ".*.controllers.deregistration.DeregisterCheckYourAnswersController",
-    ".*.views.html.deregistration.deregister_check_your_answers_page",
   ).mkString(";"),
   coverageMinimum := 94,
   coverageFailOnMinimum := true,

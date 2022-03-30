@@ -191,6 +191,9 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def pptSubscriptionCreateUrl(safeNumber: String): String =
     s"$pptSubscriptionsUrl/$safeNumber"
 
+  def pptSubscriptionDeregisterUrl(pptReference: String): String =
+    s"$pptSubscriptionsUrl/deregister/$pptReference"
+
   def getEmailVerificationStatusUrl(credId: String): String =
     s"$emailVerificationHost/email-verification/verification-status/$credId"
 
