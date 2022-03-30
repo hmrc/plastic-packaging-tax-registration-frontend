@@ -28,7 +28,7 @@
         govukButton: GovukButton,
         govukSummaryList: GovukSummaryList,
         pageHeading: pageHeading,
-        saveAndContinue: saveAndContinue,
+        continue: continue,
         viewUtils: ViewUtils,
         sectionHeader: sectionHeader,
         liabilityCheckAnswers: liabilityCheckAnswers
@@ -44,6 +44,6 @@
 
         @formHelper(action = pptRoutes.CheckLiabilityDetailsAnswersController.submit(), 'autoComplete -> "off") {
             @liabilityCheckAnswers(registration)
-            @saveAndContinue()
+            @continue()
         }
     }
