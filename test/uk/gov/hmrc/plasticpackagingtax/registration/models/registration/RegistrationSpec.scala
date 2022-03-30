@@ -25,7 +25,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
-  LiabilityWeight
+  LiabilityWeight,
+  RegType
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
@@ -158,11 +159,20 @@ class RegistrationSpec
       )
     completedLiabilityDetails.isCompleted mustBe true
 
-    "be complete for single organisation registration with completed liability details" in {
+    "be complete for single organisation registration with completed liability details and selected registration type" in {
       Registration(id = "123",
                    liabilityDetails =
-                     completedLiabilityDetails
+                     completedLiabilityDetails,
+                   registrationType = Some(RegType.SINGLE_ENTITY)
       ).liabilityDetailsStatus mustBe TaskStatus.Completed
+    }
+
+    "be incomplete for registration with completed liability details but no registration type" in {
+      Registration(id = "123",
+                   liabilityDetails =
+                     completedLiabilityDetails,
+                   registrationType = None
+      ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
 
     "be in progress for single organisation registration with incomplete liability details" in {

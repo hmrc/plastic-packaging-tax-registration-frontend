@@ -47,8 +47,6 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
                                                mockJourneyAction,
                                                mcc = mcc,
-                                               startRegistrationController =
-                                                 mockStartRegistrationController,
                                                page = page
     )
 
