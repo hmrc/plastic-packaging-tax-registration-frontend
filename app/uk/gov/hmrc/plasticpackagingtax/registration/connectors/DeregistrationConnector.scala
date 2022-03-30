@@ -36,7 +36,7 @@ class DeregistrationConnector @Inject() (
 
   def deregister(pptReference: String, deregistrationDetails: DeregistrationDetails)(implicit
     hc: HeaderCarrier
-  ): Future[Either[ServiceError, HttpResponse]] = {
+  ): Future[Either[ServiceError, Unit]] = {
     val timer = metrics.defaultRegistry.timer("ppt.deregister.timer").time()
     httpClient.PUT[Option[DeregistrationReason], HttpResponse](
       appConfig.pptSubscriptionDeregisterUrl(pptReference),
@@ -44,7 +44,7 @@ class DeregistrationConnector @Inject() (
     ).andThen { case _ => timer.stop() }
       .map {
         case response @ HttpResponse(OK, _, _) =>
-          Right(response)
+          Right()
         case response =>
           Left(
             DownstreamServiceError(

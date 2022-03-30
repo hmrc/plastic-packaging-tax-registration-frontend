@@ -21,12 +21,10 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DeregistrationConnector,
   DownstreamServiceError,
@@ -96,7 +94,7 @@ class DeregisterCheckYourAnswersControllerSpec
           mockDegistrationConnector.deregister(ArgumentMatchers.eq("XMPPT0000000123"),
                                                ArgumentMatchers.eq(initialDeregistrationDetails)
           )(any())
-        ).thenReturn(Future.successful(Right(HttpResponse.apply(Status.OK, ""))))
+        ).thenReturn(Future.successful(Right()))
         val result: Future[Result] = controller.continue()(request)
 
         status(result) mustBe SEE_OTHER

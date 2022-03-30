@@ -23,7 +23,6 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
 import play.api.test.Helpers.{await, OK}
 import play.api.test.Injecting
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.{
   DeregistrationDetails,
   DeregistrationReason
@@ -49,10 +48,10 @@ class DeregistrationConnectorISpec
 
         givenPutDeregistration(pptReference, Status.OK, DeregistrationReason.CeasedTrading.toString)
 
-        val res: Either[ServiceError, HttpResponse] =
+        val res: Either[ServiceError, Unit] =
           await(connector.deregister(pptReference, deregistrationDetails))
 
-        res.right.get.status mustBe OK
+        res.right.get mustBe ()
         getTimer("ppt.deregister.timer").getCount mustBe 1
       }
 
@@ -66,7 +65,7 @@ class DeregistrationConnectorISpec
                                DeregistrationReason.CeasedTrading.toString
         )
 
-        val res: Either[ServiceError, HttpResponse] =
+        val res: Either[ServiceError, Unit] =
           await(connector.deregister(pptReference, deregistrationDetails))
 
         res.left.value.getMessage must include("Failed to de-register")

@@ -54,7 +54,7 @@ class DeregisterCheckYourAnswersController @Inject() (
           deregistrationConnector.deregister(pptReference, deregistrationDetails).flatMap {
             case Right(_) =>
               deregistrationDetailRepository.delete()
-              Future(Redirect(routes.DeregistrationSubmittedController.displayPage()))
+              Future.successful(Redirect(routes.DeregistrationSubmittedController.displayPage()))
             case Left(ex) => throw ex
           }
       }
