@@ -19,7 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.components
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{saveAndComeBackLater, saveAndContinue, saveButtons}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
+  saveAndComeBackLater,
+  saveAndContinue,
+  saveButtons
+}
 
 class SaveButtonsSpec extends UnitViewSpec with Matchers {
 
