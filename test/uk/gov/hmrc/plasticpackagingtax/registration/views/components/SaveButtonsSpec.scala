@@ -17,10 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views.components
 
 import base.unit.UnitViewSpec
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features.isUkCompanyPrivateBeta
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
   saveAndComeBackLater,
   saveAndContinue,
@@ -37,27 +35,12 @@ class SaveButtonsSpec extends UnitViewSpec with Matchers {
     new saveButtons(saveAndContinueButton, saveAndComeBackLaterButton, mockConfig)
 
   "Save Buttons Component" should {
-    "render both buttons" when {
-      "outside of private BETA" in {
-        when(mockConfig.isDefaultFeatureFlagEnabled(isUkCompanyPrivateBeta)).thenReturn(false)
-        val view = component()(messages)
+    "render only the save button" in {
+      val view = component()(messages)
 
-        val buttons = view.select("button")
-        buttons.size() mustBe 2
-        buttons.get(0).text() mustBe messages("site.button.saveAndContinue")
-        buttons.get(1).text() mustBe messages("site.button.saveAndComeBackLater")
-      }
-    }
-
-    "render only the save button" when {
-      "during private BETA" in {
-        when(mockConfig.isDefaultFeatureFlagEnabled(isUkCompanyPrivateBeta)).thenReturn(true)
-        val view = component()(messages)
-
-        val buttons = view.select("button")
-        buttons.size() mustBe 1
-        buttons.get(0).text() mustBe messages("site.button.saveAndContinue")
-      }
+      val buttons = view.select("button")
+      buttons.size() mustBe 1
+      buttons.get(0).text() mustBe messages("site.button.saveAndContinue")
     }
   }
 
