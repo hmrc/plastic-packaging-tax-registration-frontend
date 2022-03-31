@@ -384,7 +384,7 @@ organisationDetails.type.ScottishPartnership = Scottish partnership
 organisationDetails.type.ScottishLimitedPartnership = Scottish limited partnership
 
 organisationDetails.type.GroupNominatedPartnership = Limited liability partnership
-organisationDetails.type.hint = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO), a trust, an overseas organisation without a UK establishment, or a public body.
+organisationDetails.type.hint = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO), a trust, an overseas organisation without a UK establishment, or a public body
 
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Value must be selected
