@@ -105,7 +105,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
     "display reason to deregister row" in {
       val row = getSummaryRow(view, 1)
       row must haveSummaryKey(messages("deregister.checkAnswers.reasonToDeregister"))
-      row must haveSummaryValue("Ceased Trading")
+      row must haveSummaryValue("Ceased trading")
       row must haveSummaryActionsTexts("site.link.change",
                                        "deregister.checkAnswers.reasonToDeregister"
       )

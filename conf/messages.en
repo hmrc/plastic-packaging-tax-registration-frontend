@@ -770,9 +770,9 @@ deregistration.deregister.empty.error = Select yes if you want to deregister fro
 
 deregistration.reason.title = Why do you want to deregister?
 deregistration.reason.type.RegisteredIncorrectly = Registered incorrectly
-deregistration.reason.type.CeasedTrading = Ceased Trading
-deregistration.reason.type.BelowDeminimis = Have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
-deregistration.reason.type.TakenIntoGroupRegistration = Want to register as part of a group
+deregistration.reason.type.CeasedTrading = Ceased trading
+deregistration.reason.type.BelowDe-minimus = Have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.reason.type.TakenintoGroupRegistration = Want to register as part of a group
 deregistration.reason.empty.error = Select your reason for deregistration 
 
 deregistration.confirmation.title = Your deregistration request has been submitted
