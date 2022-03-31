@@ -34,7 +34,7 @@
 
 @govukLayout(
     title = Title("liability.exceededThresholdWeight.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.StartController.displayStartPage(), messages("site.back.hiddenText")))) {
+    backButton = None) {
 
     @errorSummary(form.errors)
 

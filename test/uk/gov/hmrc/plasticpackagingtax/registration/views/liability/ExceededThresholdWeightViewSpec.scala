@@ -44,8 +44,8 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.StartController.displayStartPage())
+    "should not have a 'Back' button" in {
+      view.getElementById("back-link") mustBe null
     }
 
     "display title" in {
