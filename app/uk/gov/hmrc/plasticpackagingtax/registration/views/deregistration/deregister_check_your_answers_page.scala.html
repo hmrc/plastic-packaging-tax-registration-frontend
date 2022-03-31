@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationReason
 
 @this(
     formHelper: FormWithCSRF,
@@ -72,7 +73,7 @@
                         ),
                         value = Value(
                             content = deregistrationDetails.reason match {
-                            case Some(reason) => Text(reason.toString)
+                            case Some(reason) => Text(messages(s"deregistration.reason.type.${reason.replaceAll("\\s", "")}"))
                             case None => Text("")
                         }),
                         actions = Some(Actions(
