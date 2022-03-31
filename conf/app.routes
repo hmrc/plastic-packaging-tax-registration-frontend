@@ -8,7 +8,7 @@ GET        /assets/*file            controllers.Assets.versioned(path="/public",
 GET        /lang/enGb             uk.gov.hmrc.plasticpackagingtax.registration.controllers.LanguageController.enGb()
 GET        /lang/cyGb             uk.gov.hmrc.plasticpackagingtax.registration.controllers.LanguageController.cyGb()
 
-GET        /start                uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartController.displayStartPage()
+GET        /start                controllers.Default.redirect(to = "/register-for-plastic-packaging-tax/start-registration")
 GET        /start-registration   uk.gov.hmrc.plasticpackagingtax.registration.controllers.StartRegistrationController.startRegistration()
 
 # Liability : pre-launch

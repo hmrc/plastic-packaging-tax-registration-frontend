@@ -77,7 +77,7 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-label").get(0).text() mustBe "Registered incorrectly"
 
       view.getElementById("answer-2").attr("value").text() mustBe CeasedTrading.toString
-      view.getElementsByClass("govuk-label").get(1).text() mustBe "Ceased Trading"
+      view.getElementsByClass("govuk-label").get(1).text() mustBe "Ceased trading"
 
       view.getElementById("answer-3").attr("value").text() mustBe BelowDeminimis.toString
       view.getElementsByClass("govuk-label").get(
