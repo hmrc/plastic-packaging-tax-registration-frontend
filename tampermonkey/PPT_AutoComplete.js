@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.14
+// @version      15.15
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -554,8 +554,8 @@ const liabilityExpectYourGroupToExceed = () => {
 
 const liabilityExceededThresholdWeightDate = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/date-met-threshold')) {
-        document.getElementById('exceeded-threshold-weight-date.day').value = '11'
-        document.getElementById('exceeded-threshold-weight-date.month').value = '03'
+        document.getElementById('exceeded-threshold-weight-date.day').value = '01'
+        document.getElementById('exceeded-threshold-weight-date.month').value = '04'
         document.getElementById('exceeded-threshold-weight-date.year').value = '2022'
 
         document.getElementsByClassName('govuk-button')[0].click()
@@ -564,8 +564,8 @@ const liabilityExceededThresholdWeightDate = () => {
 
 const liabilityExpectToExceedThresholdWeightDate = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/date-realised-will-meet-threshold')) {
-        document.getElementById('expect-to-exceed-threshold-weight-date.day').value = '11'
-        document.getElementById('expect-to-exceed-threshold-weight-date.month').value = '03'
+        document.getElementById('expect-to-exceed-threshold-weight-date.day').value = '01'
+        document.getElementById('expect-to-exceed-threshold-weight-date.month').value = '04'
         document.getElementById('expect-to-exceed-threshold-weight-date.year').value = '2022'
 
         document.getElementsByClassName('govuk-button')[0].click()
