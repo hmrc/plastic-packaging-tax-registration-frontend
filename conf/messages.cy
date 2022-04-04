@@ -323,16 +323,16 @@ confirmationPage.detail.3.link  = cyfrif Treth Deunydd Pacio Plastig
 confirmationPage.whatHappensNext.title  = Yr hyn sy’n digwydd nesaf
 confirmationPage.preLaunch.whatHappensNext.detail  = Mae’r Dreth Deunydd Pacio Plastig yn dechrau ar 1 Ebrill 2022.
 confirmationPage.preLaunch.whatHappensNext.link  = Ewch i’ch {0} i gael gwybod sut mae paratoi’ch Ffurflen Dreth.
-confirmationPage.preLaunch.whatHappensNext.link.text  = [Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol]:
+confirmationPage.preLaunch.whatHappensNext.link.text  = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol:
 confirmationPage.whatHappensNext.detail  = Ewch i’ch {0} i wneud y canlynol:
-confirmationPage.whatHappensNext.detail.link  = [Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol]:
+confirmationPage.whatHappensNext.detail.link  = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol:
 confirmationPage.whatHappensNext.detail.item1  = cyflwyno Ffurflen Dreth
 confirmationPage.whatHappensNext.detail.item2  = cael gwybod sut i baratoi Ffurflen Dreth
 confirmationPage.whatHappensNext.bta  = Gallwch hefyd ddefnyddio’ch 0 i reoli’ch cyfrif Treth Deunydd Pacio Plastig neu i ganiatáu i rywun arall ei reoli ar eich rhan.
 confirmationPage.whatHappensNext.bta.link  = cyfrif treth busnes
 
 confirmationPage.exitSurvey.link  = {0}
-confirmationPage.exitSurvey.link.text  = [Beth oedd eich barn am y gwasanaeth hwn?]
+confirmationPage.exitSurvey.link.text  = Beth oedd eich barn am y gwasanaeth hwn?
 
 registrationType.title  = Beth hoffech ei gofrestru?
 registrationType.singleEntity  = Sefydliad unigol
@@ -378,10 +378,10 @@ partnership.name.format.error  = Nodwch enw eich partneriaeth yn y fformat cywir
 partnership.registrationAvailableSoon.header  = Partneriaeth
 partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir
 partnership.registrationAvailableSoon  = {0] a byddwn yn cysylltu â chi pan fydd y gwasanaeth ar gael.
-partnership.registrationAvailableSoon.link  = [Rhowch wybod i ni eich bod yn dymuno cofrestru partneriaeth]
+partnership.registrationAvailableSoon.link  = Rhowch wybod i ni eich bod yn dymuno cofrestru partneriaeth
 partnership.registrationAvailableSoon.href  =  mailto:pptpartnerships@hmrc.gov.uk
 partnership.registrationAvailableSoon.feedback  = {0} Bydd eich meddyliau a’ch syniadau’n ein helpu i wneud gwelliannau.
-partnership.registrationAvailableSoon.feedback.link  = [Anfonwch eich adborth atom]
+partnership.registrationAvailableSoon.feedback.link  = Anfonwch eich adborth atom
 
 partner.type.SoleTrader  = Unig fasnachwr
 partner.type.UkCompany  = Cwmni cyfyngedig yn y DU
@@ -424,12 +424,12 @@ notLiable.pageTitle  = Nid oes angen i chi gofrestru ar gyfer y Dreth Deunydd Pa
 notLiable.title  = Nid oes angen i chi gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar hyn o bryd
 notLiable.inset  = Bydd angen i chi gofrestru ar ei chyfer yn y dyfodol os byddwch yn cyrraedd y trothwy 10,000kg. Rydym yn argymell eich bod yn cadw cofnodion o’r holl ddeunydd pacio plastig rydych yn ei weithgynhyrchu neu’n ei fewnforio i’r DU.
 notLiable.guidance  = Mae’r arweiniad ynghylch y Dreth Deunydd Pacio Plastig yn cynnwys {0}.
-notLiable.guidance.link.description  = [rhagor o wybodaeth am y math o gofnodion y mae’n rhaid i chi eu cadw (yn agor tab newydd)]
+notLiable.guidance.link.description  = rhagor o wybodaeth am y math o gofnodion y mae’n rhaid i chi eu cadw (yn agor tab newydd)
 notLiable.guidance.link.href  =  https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
 notLiable.think.title  = Rhowch eich barn
 notLiable.think.info  = Mae hwn yn wasanaeth newydd ac rydym eisiau gwybod beth yw’ch barn amdano.
 notLiable.think.feedback  = {0}. Bydd eich meddyliau a’ch syniadau’n ein helpu i wneud gwelliannau.
-notLiable.think.feedback.link.description  = [Anfonwch eich adborth atom]
+notLiable.think.feedback.link.description  = Anfonwch eich adborth atom
 
 liability.exceededThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
 liability.exceededThresholdWeight.title  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
@@ -537,7 +537,7 @@ enrolment.confirmation.whatHappensNext.detail.1.link.text  = cyfrif Treth Deunyd
 enrolment.confirmation.whatHappensNext.detail.2  =  If you have a {0} you can view your PPT account there.
 enrolment.confirmation.whatHappensNext.detail.2.link.text  = cyfrif treth busne
 enrolment.confirmation.whatHappensNext.detail.3  = {0}
-enrolment.confirmation.whatHappensNext.detail.3.link.text  = [Beth oedd eich barn am y gwasanaeth hwn?]
+enrolment.confirmation.whatHappensNext.detail.3.link.text  = Beth oedd eich barn am y gwasanaeth hwn?
 
 enrolment.not.verified.title  = Mae’n ddrwg gennym, nid oedd modd dilysu’ch busnes
 enrolment.not.verified.detail1  = The information you provided does not match the details we have about your business.
@@ -559,7 +559,7 @@ organisationDetails.other.organisation.sectionHeader  = Sefydliadau eraill yn y 
 organisationDetails.other.group.title  = Pa fath o sefydliad yr hoffech ei ychwanegu gyntaf?
 organisationDetails.other.next.group.title  =  Pa fath o sefydliad yr hoffech ei ychwanegu nesaf?
 organisationDetails.type.GroupPartnership  = Partneriaeth atebolrwydd cyfyngedig
-organisationDetails.other.type.hint  = [Mae’n rhaid i Sefydliadau Corfforedig Elusennol, ymddiriedolaethau, sefydliadau tramor heb safle yn y DU a chyrff cyhoeddus gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar wahân]
+organisationDetails.other.type.hint  = Mae’n rhaid i Sefydliadau Corfforedig Elusennol, ymddiriedolaethau, sefydliadau tramor heb safle yn y DU a chyrff cyhoeddus gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar wahân
 
 enrolment.referenceNumber.already.used.title  =  Mae’ch cyfeirnod Treth Deunydd Pacio Plastig eisoes wedi’i ddefnyddio
 enrolment.referenceNumber.already.used.detail1  =  Mae’r cyfeirnod Treth Deunydd Pacio Plastig a nodwyd gennych eisoes wedi’i gysylltu â chyfrif Porth y Llywodraeth gwahanol.
