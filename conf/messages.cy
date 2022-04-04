@@ -27,7 +27,7 @@ sessionTimout.detail  = Mae’ch atebion wedi’u cadw.
 sessionTimout.signin.button  = Mewngofnodi
 
 timeoutDialog.title  = Rydych ar fin cael eich allgofnodi
-timeoutDialog.message  = Er eich diogelwch, cewch eich allgofnodi ymhen [time remaining].
+timeoutDialog.message  = Er eich diogelwch, cewch eich allgofnodi ymhen
 timeoutDialog.messageSuffix  = Bydd eich atebion yn cael eu cadw.
 timeoutDialog.keepAlive.text  = Aros wedi mewngofnodi
 timeoutDialog.signout.text  = Allgofnodi
