@@ -29,7 +29,7 @@ object LiabilityWeight {
   implicit val format = Json.format[LiabilityWeight]
 
   val maxTotalKg                = 99999999999L
-  val minTotalKg                = 0
+  val minTotalKg                = 1
   val totalKg                   = "totalKg"
   val weightEmptyError          = "liabilityWeight.empty.error"
   val weightFormatError         = "liabilityWeight.format.error"
