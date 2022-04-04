@@ -126,25 +126,11 @@ task.status.inProgress = In Progress
 task.status.completed = Completed
 task.status.cannotStartYet = Cannot Start Yet
 
-liabilityStartDatePage.sectionHeader = Plastic packaging details
-liabilityStartDatePage.title = What is the date you first became liable?
-liabilityStartDatePage.hint = For example, 12 11 2007
-liabilityStartDatePage.question = What is the date you first became liable?
 liabilityStartDate.formatting.error = Liability start date - wrong format
 liabilityStartDate.outOfRange.error = Liability date must be today or in the past
 
-liabilityLiableDatePage.sectionHeader = Liability details
-liabilityLiableDatePage.title = What is your liability date?
-liabilityLiableDatePage.hint = To register for this service, you must expect your business to continue being liable for Plastic Packaging Tax until at least 1 April 2022, when the tax starts.
-liabilityLiableDatePage.question = Will you still be liable for the Plastic Packaging Tax by 1 April 2022?
-liabilityLiableDatePage.question.empty.error = Choose an option
-
 liabilityWeightPage.sectionHeader = Liability details
 liabilityWeightPage.title = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
-liabilityWeightPage.info = This includes all plastic packaging that you’ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
-liabilityWeightPage.info2 = If you’re unsure what to include, you can follow {0}.
-liabilityWeightPage.guidance.description = the current guidance for businesses (opens in a new tab)
-liabilityWeightPage.guidance.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
 liabilityWeightPage.question = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
 liabilityWeight.outOfRange.error = Weight must be 99,999,999,999kg or less
 liabilityWeight.empty.error = Enter the weight, in kilograms
@@ -291,7 +277,6 @@ reviewRegistration.organisationDetails.organisationName = Organisation name
 reviewRegistration.organisationDetails.businessRegistrationNumber = Company registration number
 reviewRegistration.organisationDetails.registeredBusinessAddress = Registered address
 reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique Taxpayer Reference
-reviewRegistration.sendYourApplication.title = Now send your application
 reviewRegistration.sendYourApplication.body = By submitting this registration you are confirming that, to the best of your knowledge, the details you are providing are correct.
 
 reviewRegistration.organisationDetails.soleTrader.firstName = First name
@@ -357,8 +342,6 @@ registrationType.group.hint = You cannot register charitable incorporated organi
 registrationType.type.empty.error = Value must be selected
 
 organisationDetails.sectionHeader = Organisation details
-organisationDetails.basedInUk.title = Is the organisation you want to register based in the UK?
-organisationDetails.basedInUk.empty.error = Choose an option
 
 organisationDetails.type.title = What type of organisation do you want to register?
 organisationDetails.type.empty.error = Select what type of organisation you want to register
@@ -449,18 +432,6 @@ notLiable.think.title = Tell us what you think
 notLiable.think.info = This is a new service and we want to know what you think of it.
 notLiable.think.feedback = {0}. Your thoughts and ideas will help us to make improvements.
 notLiable.think.feedback.link.description = Send us your feedback
-
-liabilityExpectToExceedThresholdWeightPage.sectionHeader = Liability details
-liabilityExpectToExceedThresholdWeightPage.title = Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
-liabilityExpectToExceedThresholdWeightPage.hint = This includes all plastic packaging that you manufacture, convert or import into the UK. The packaging could be made with recycled plastic or not.
-liabilityExpectToExceedThresholdWeightPage.question = Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
-liabilityExpectToExceedThresholdWeightPage.question.empty.error = Choose an option
-liabilityExpectToExceedThresholdWeightPage.info = This includes all plastic packaging that you’ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
-liabilityExpectToExceedThresholdWeightPage.info2 = If you’re unsure what to include, you can follow {0}.
-liabilityExpectToExceedThresholdWeightPage.guidance.description = the current guidance for businesses (opens in a new tab)
-liabilityExpectToExceedThresholdWeightPage.guidance.href = https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
-liabilityExpectToExceedThresholdWeightPage.radio.option.yes= Yes
-liabilityExpectToExceedThresholdWeightPage.radio.option.no= No
 
 liability.exceededThresholdWeight.sectionHeader = Liability details
 liability.exceededThresholdWeight.title = Has your organisation or group manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?
@@ -572,7 +543,6 @@ enrolment.confirmation.whatHappensNext.detail.3.link.text = What did you think o
 
 enrolment.not.verified.title = Sorry, your business could not be verified
 enrolment.not.verified.detail1 = The information you provided does not match the details we have about your business.
-enrolment.not.verified.detail2 = Try again
 
 verify.organisation.title = We need to ask some questions to verify the organisation
 verify.organisation.detail.1 = You will be asked to give details you many hold about the business.
@@ -611,8 +581,6 @@ organisation.already.in.group.detail.nominated = The nominated organisation {0} 
 group.member.already.registered.title = You cannot add {0} to the group
 group.member.already.registered.detail1 = {0} has already registered for PPT, so cannot be added to the group.
 group.member.already.registered.detail2 = {0} will need to de-register for PPT before you can add them to the group.
-
-amendRegistration.organisationDetails.title = Your PPT registration
 
 company.confirmAddress.title = Confirm the registered address for {0}
 
@@ -753,7 +721,6 @@ amend.partner.listPartners.title = You have {0} partners in your partnership
 amend.partner.listPartners.question = Do you need to add another partner?
 
 amend.partner.remove.title = Are you sure you want to remove {0} from the partnership?
-removePartner.empty.error = Please select Yes or No
 
 gform.link = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 

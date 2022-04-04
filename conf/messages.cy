@@ -86,9 +86,9 @@ startPage.whoShouldRegister.inset.bullet.2  = you expect to manufacture, convert
 startPage.whoShouldRegister.readMore  = Read more about {0} .
 startPage.whoShouldRegister.readMore.link  = registration, liability and exemptions (opens in a new tab)
 startPage.whoShouldRegister.readMore.href  =  https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
-startPage.beforeYouStart  = Before you start
+startPage.beforeYouStart  = Cyn i chi ddechrau
 startPage.beforeYouStart.para.1  = To register you’ll need:
-startPage.beforeYouStart.bullet.1  = company registration numbers for any organisations that are registering, {0} .
+startPage.beforeYouStart.bullet.1  = rhif cofrestru’r cwmni ar gyfer unrhyw sefydliadau sy’n cofrestru, {0} .
 startPage.beforeYouStart.bullet.1.link  = look up the company number if you’re not sure (opens in a new tab)
 startPage.beforeYouStart.bullet.1.href  =  https://www.gov.uk/get-information-about-a-company
 startPage.beforeYouStart.bullet.2  = Unique Taxpayer References for any organisations registered in the UK
@@ -98,7 +98,7 @@ startPage.beforeYouStart.para.2  = If you’re registering a group, the nominate
 startPage.buttonName  = Start now
 
 registrationPage.title  = Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
-registrationPage.subheading.complete  = Registration complete
+registrationPage.subheading.complete  = Cofrestriad wedi’i gwblhau
 registrationPage.subheading.incomplete  = Heb gwblhau’r cofrestriad
 registrationPage.completedSections  = Rydych wedi cwblhau {0} o {1} adran
 registrationPage.task.eligibility.heading  = Manylion rhwymedigaeth
@@ -126,25 +126,11 @@ task.status.inProgress  = Ar y gweill
 task.status.completed  = Wedi cwblhau
 task.status.cannotStartYet  = Methu dechrau eto
 
-liabilityStartDatePage.sectionHeader  = Plastic packaging details
-liabilityStartDatePage.title  = What is the date you first became liable?
-liabilityStartDatePage.hint  = For example, 12 11 2007
-liabilityStartDatePage.question  = What is the date you first became liable?
 liabilityStartDate.formatting.error  = Dyddiad dechrau’r rhwymedigaeth - fformat anghywir
 liabilityStartDate.outOfRange.error  = Mae’n rhaid i ddyddiad y rhwymedigaeth fod heddiw neu yn y gorffennol
 
-liabilityLiableDatePage.sectionHeader  = Manylion rhwymedigaeth
-liabilityLiableDatePage.title  = What is your liability date?
-liabilityLiableDatePage.hint  = To register for this service, you must expect your business to continue being liable for Plastic Packaging Tax until at least 1 April 2022, when the tax starts.
-liabilityLiableDatePage.question  = Will you still be liable for the Plastic Packaging Tax by 1 April 2022?
-liabilityLiableDatePage.question.empty.error  = Dewiswch opsiwn
-
 liabilityWeightPage.sectionHeader  = Manylion rhwymedigaeth
 liabilityWeightPage.title  = Faint o ddeunydd pacio plastig gorffenedig mae’ch sefydliad neu’ch grŵp yn amcangyfrif y bydd yn ei weithgynhyrchu neu’n ei fewnforio yn ystod y 12 mis nesaf?
-liabilityWeightPage.info  = This includes all plastic packaging that you’ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
-liabilityWeightPage.info2  = If you’re unsure what to include, you can follow {0}.
-liabilityWeightPage.guidance.description  = the current guidance for businesses (opens in a new tab)
-liabilityWeightPage.guidance.href  =  https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
 liabilityWeightPage.question  = Faint o ddeunydd pacio plastig gorffenedig mae’ch sefydliad neu’ch grŵp yn amcangyfrif y bydd yn ei weithgynhyrchu neu’n ei fewnforio yn ystod y 12 mis nesaf?
 liabilityWeight.outOfRange.error  = Mae’n rhaid i’r pwysau fod yn 99,999,999kg neu lai
 liabilityWeight.empty.error  = Nodwch y pwysau, mewn cilogramau
@@ -154,7 +140,7 @@ liabilityWeight.leadingBlankSpace.error  = Mae’n rhaid i’r pwysau beidio â 
 liabilityWeight.trailingBlankSpace.error  = Mae’n rhaid i’r pwysau beidio â chynnwys bylchau dilynol
 liabilityWeight.decimal.error  = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
-liabilityExpectedWeightPage.sectionHeader  = Eligibility check
+liabilityExpectedWeightPage.sectionHeader  = Gwiriad cymhwystra
 liabilityExpectedWeightPage.title  = A yw’ch sefydliad neu’ch grŵp yn disgwyl prosesu 10,000kg neu fwy o ddeunydd pacio plastig yn ystod y 12 mis o 1 Ebrill 2022 ymlaen?
 liabilityExpectedWeightPage.label  = Pwysau disgwyliedig, mewn cilogramau
 liabilityExpectedWeightPage.question  = A yw’ch sefydliad neu’ch grŵp yn disgwyl prosesu 10,000kg neu fwy o ddeunydd pacio plastig yn ystod y 12 mis o 1 Ebrill 2022 ymlaen?
@@ -184,7 +170,7 @@ liability.taxStartDate.realisedThresholdWouldBeExceeded.hint  = Dyma’r diwrnod
 liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error  = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod ar, neu ar ôl, {0}
 
 liability.checkAnswers.title  = Gwiriwch eich atebion
-liability.checkAnswers.weight  = Plastic packaging total weight
+liability.checkAnswers.weight  = Cyfanswm pwysau’r deunydd pacio plastig
 liability.checkAnswers.exceededThreshold  = 10,000kg neu fwy o ddeunydd pacio plastig ers 1 Ebrill 2022
 liability.checkAnswers.dateExceededThreshold  = Dyddiad cyrraedd y trothwy
 liability.checkAnswers.expectToExceededThreshold  = Disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig yn ystod y 30 diwrnod nesaf
@@ -196,7 +182,7 @@ liability.checkAnswers.membersUnderGroupControl  = Grŵp o dan yr un rheolaeth
 
 primaryContactDetails.sectionHeader  = Manylion cyswllt
 
-primaryContactDetails.fullName.default  = the primary contact
+primaryContactDetails.fullName.default  = y prif gyswllt
 
 primaryContactDetails.fullNamePage.title  = Pwy yw’r prif gyswllt?
 primaryContactDetails.fullNamePage.hint  = Dyma enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
@@ -227,7 +213,6 @@ primaryContactDetails.emailAddress.passcode.summary.detail  = Gall yr e-bost gym
 primaryContactDetails.emailAddress.passcode.summary.detail.2  = Gwiriwch eich ffolder sbam neu sothach. Os nad yw wedi cyrraedd o hyd, gallwch
 primaryContactDetails.emailAddress.passcode.summary.detail.link.text  = ddarparu cyfeiriad e-bost gwahanol
 
-
 primaryContactDetails.emailAddress.passcode.confirmation.title  = Cyfeiriad e-bost wedi’i gadarnhau
 primaryContactDetails.emailAddress.passcode.confirmation.detail  = Mae’r cyfeiriad e-bost hwn wedi’i gadarnhau erbyn hyn.
 
@@ -246,7 +231,7 @@ primaryContactDetails.confirmAddress.title  = A ydych am ddefnyddio’r cyfeiria
 primaryContactDetails.confirmAddress.heading  = A ydych am ddefnyddio’r cyfeiriad cofrestredig hwn fel y prif gyfeiriad cyswllt?
 primaryContactDetails.confirmAddress.empty.error  = Dewiswch opsiwn
 
-primaryContactDetails.address.title  = What is {0}’s business address?
+primaryContactDetails.address.title  = Beth yw cyfeiriad busnes {0}?
 primaryContactDetails.address.hint  = Dim ond i anfon hysbysiadau am gyfrif a Ffurflenni Treth y sefydliad y byddwn yn ei ddefnyddio.
 primaryContactDetails.address.addressLine1  = Cyfeiriad – llinell 1
 primaryContactDetails.address.addressLine1.empty.error  = Nodwch gyfeiriad - llinell 1
@@ -265,7 +250,7 @@ primaryContactDetails.address.lookup  = Search for a new address
 primaryContactDetails.address.countryCode  = Gwlad
 primaryContactDetails.address.countryCode.empty.error  = Dewiswch wlad
 
-primaryContactDetails.check.meta.title  = Check the main contact’s details
+primaryContactDetails.check.meta.title  = Gwirio manylion y prif gyswllt
 primaryContactDetails.check.title  = Gwiriwch eich atebion
 primaryContactDetails.check.label  = Prif fanylion cyswllt
 primaryContactDetails.check.fullName  = Enw cyswllt
@@ -275,23 +260,22 @@ primaryContactDetails.check.phoneNumber  = Rhif ffôn
 primaryContactDetails.check.email  = Cyfeiriad e-bost
 
 group.organisationList.sectionHeader  = Sefydliadau eraill yn y grŵp
-group.organisationList.title.multiple  = You have added {0} organisations
+group.organisationList.title.multiple  = Rydych wedi ychwanegu {0} sefydliad
 
-group.organisationList.nominatedOrganisation  = Nominated organisation
+group.organisationList.nominatedOrganisation  = Sefydliad enwebedig
 
 addOrganisation.add.heading  = A oes angen i chi ychwanegu sefydliad arall?
 addOrganisation.empty.error  = Dewiswch ‘Iawn’ neu ‘Na’
 reviewRegistration.organisationDetails.title  = Adolygu ac anfon eich cofrestriad
 reviewRegistration.organisationDetails.check.liability  = Manylion rhwymedigaeth
 reviewRegistration.organisationDetails.check.label.singleEntity  = Manylion y sefydliad
-reviewRegistration.organisationDetails.check.label.group  = Nominated organisation details
-reviewRegistration.organisationDetails.check.label.groupMembers  = Organisations in the group
+reviewRegistration.organisationDetails.check.label.group  = Manylion y sefydliad enwebedig
+reviewRegistration.organisationDetails.check.label.groupMembers  = Sefydliadau yn y grŵp
 reviewRegistration.organisationDetails.organisationType  = Math o sefydliad
 reviewRegistration.organisationDetails.organisationName  = Enw’r sefydliad
 reviewRegistration.organisationDetails.businessRegistrationNumber  = Rhif cofrestru’r cwmni
 reviewRegistration.organisationDetails.registeredBusinessAddress  = Cyfeiriad cofrestredig
 reviewRegistration.organisationDetails.uniqueTaxpayerReference  = Cyfeirnod Unigryw y Trethdalwr
-reviewRegistration.sendYourApplication.title  = Now send your application
 reviewRegistration.sendYourApplication.body  = Drwy anfon y cofrestriad hwn, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion hyn yn gywir.
 
 reviewRegistration.organisationDetails.soleTrader.firstName  = Enw cyntaf
@@ -357,8 +341,6 @@ registrationType.group.hint  = Ni allwch gofrestru Sefydliadau Corfforedig Eluse
 registrationType.type.empty.error  = Mae’n rhaid dewis gwerth
 
 organisationDetails.sectionHeader  = Manylion y sefydliad
-organisationDetails.basedInUk.title  =  Is the organisation you want to register based in the UK?
-organisationDetails.basedInUk.empty.error  = Dewiswch opsiwn
 
 organisationDetails.type.title  = Pa fath o sefydliad yr hoffech ei gofrestru?
 organisationDetails.type.empty.error  = Dewiswch y math o sefydliad yr hoffech ei gofrestru
@@ -417,7 +399,7 @@ nominated.partner.type.title  = Pa fath o sefydliad yw’r partner enwebedig?
 nominated.partner.name.empty.error  = Dewiswch fath o endid o’r opsiynau uchod
 other.partner.type.title  = Pa fath o sefydliad yw’r partner nesaf yr hoffech ei ychwanegu?
 
-partnerships.otherPartners.title  =  You have {0} partners in your partnership
+partnerships.otherPartners.title  =  Mae gennych {0} partner yn eich partneriaeth
 partnership.otherPartners.contactNamePage.title  = Pwy yw’r prif gyswllt?
 partnership.otherPartners.jobTitlePage.title  = Beth yw teitl swydd {0}?
 partnership.otherPartners.contactEmailAddressPage.title  = Beth yw cyfeiriad e-bost {0}?
@@ -448,18 +430,6 @@ notLiable.think.title  = Rhowch eich barn
 notLiable.think.info  = Mae hwn yn wasanaeth newydd ac rydym eisiau gwybod beth yw’ch barn amdano.
 notLiable.think.feedback  = {0}. Bydd eich meddyliau a’ch syniadau’n ein helpu i wneud gwelliannau.
 notLiable.think.feedback.link.description  = [Anfonwch eich adborth atom]
-
-liabilityExpectToExceedThresholdWeightPage.sectionHeader  = Manylion rhwymedigaeth
-liabilityExpectToExceedThresholdWeightPage.title  =  Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
-liabilityExpectToExceedThresholdWeightPage.hint  =  This includes all plastic packaging that you manufacture, convert or import into the UK. The packaging could be made with recycled plastic or not.
-liabilityExpectToExceedThresholdWeightPage.question  =  Do you expect to process more than 10,000kg of plastic packaging in the next 30 days?
-liabilityExpectToExceedThresholdWeightPage.question.empty.error  = Dewiswch opsiwn
-liabilityExpectToExceedThresholdWeightPage.info  =  This includes all plastic packaging that you’ve manufactured, converted or imported into the UK. The packaging could be made with recycled plastic or not.
-liabilityExpectToExceedThresholdWeightPage.info2  =  If you’re unsure what to include, you can follow {0}.
-liabilityExpectToExceedThresholdWeightPage.guidance.description  =  the current guidance for businesses (opens in a new tab)
-liabilityExpectToExceedThresholdWeightPage.guidance.href  =  https://www.gov.uk/guidance/check-if-you-need-to-register-for-plastic-packaging-tax
-liabilityExpectToExceedThresholdWeightPage.radio.option.yes = Iawn
-liabilityExpectToExceedThresholdWeightPage.radio.option.no = Na
 
 liability.exceededThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
 liability.exceededThresholdWeight.title  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
@@ -499,16 +469,16 @@ soleTraderEntityVerification.failure.detail  = Gwiriwch eich cofnodion Hunanases
 duplicateSubscription.title  = Mae’ch sefydliad eisoes wedi’i gofrestru
 duplicateSubscription.detail  = Mae rhywun yn {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
 
-pptHelpline.intro  =  Contact the Plastic Packaging Helpline if you have any questions.
-pptHelpline.telephone.title  =  Telephone:
+pptHelpline.intro  =  Cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM os oes gennych unrhyw gwestiynau.
+pptHelpline.telephone.title  =  Ffôn:
 pptHelpline.telephone.detail  =  0300 300 3000
-pptHelpline.textphone.title  =  Textphone:
+pptHelpline.textphone.title  =  Ffôn testun:
 pptHelpline.textphone.detail  =  0300 300 3001
-pptHelpline.telephone.outsideUK.title  =  Outside UK:
+pptHelpline.telephone.outsideUK.title  =  Y tu allan i’r DU:
 pptHelpline.telephone.outsideUK.detail  =  +44 0300 300 3002
-pptHelpline.openingTimes.title  =  Opening times:
-pptHelpline.openingTimes.detail.1  =  Monday to Friday: 8am to 8pm
-pptHelpline.openingTimes.detail.2  =  Closed Easter Sunday, Christmas Day, Boxing Day and New Year’s Day.
+pptHelpline.openingTimes.title  =  Oriau agor:
+pptHelpline.openingTimes.detail.1  =  Dydd Llun i ddydd Gwener: 08:30 i 17:00
+pptHelpline.openingTimes.detail.2  =  Ar gau ar Ddydd Sul y Pasg, Dydd Nadolig, Gŵyl San Steffan a Dydd Calan.
 
 corpTaxHelpline.intro  = Os ydych yn dal i gael problemau, cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM.
 corpTaxHelpline.telephone.title  = Ffôn
@@ -534,7 +504,7 @@ enrolment.failure.detail.1  = Eich rhif cofrestru ar gyfer y Dreth Deunydd Pacio
 enrolment.failure.detail.1.text  = roi gwybod am broblem os oes angen help arnoch
 
 enrolment.pptReference.title  = Beth yw’ch cyfeirnod Treth Deunydd Pacio Plastig?
-enrolment.pptReference.hint  =  You got this number when you registered for PPT. It is 15 characters in length. For example: XMPPT0001234567.
+enrolment.pptReference.hint  =  Cawsoch y rhif hwn pan wnaethoch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig. Mae’n 15 cymeriad. Er enghraifft: XMPPT0001234567.
 enrolment.pptReference.value.error.empty  = Nodwch gyfeirnod Treth Deunydd Pacio Plastig
 enrolment.pptReference.value.error.regex  = Nodwch gyfeirnod Treth Deunydd Pacio Plastig yn y fformat cywir
 
@@ -569,33 +539,32 @@ enrolment.confirmation.whatHappensNext.detail.2.link.text  = cyfrif treth busne
 enrolment.confirmation.whatHappensNext.detail.3  = {0}
 enrolment.confirmation.whatHappensNext.detail.3.link.text  = [Beth oedd eich barn am y gwasanaeth hwn?]
 
-enrolment.not.verified.title  = Sorry, your business could not be verified
+enrolment.not.verified.title  = Mae’n ddrwg gennym, nid oedd modd dilysu’ch busnes
 enrolment.not.verified.detail1  = The information you provided does not match the details we have about your business.
-enrolment.not.verified.detail2  = Try again
 
-verify.organisation.title  =  We need to ask some questions to verify the organisation
+verify.organisation.title  =  Mae’n rhaid i ni ofyn ychydig o gwestiynau i ddilysu’r sefydliad
 verify.organisation.detail.1  =  You will be asked to give details you many hold about the business.
-verify.organisation.detail.2  =  We ask these questions to protect against malicious or fraudulent attempts to access the service.
+verify.organisation.detail.2  =  Rydym yn gofyn y cwestiynau hyn er mwyn eich diogelu rhag ymdrechion maleisus neu dwyllodrus i gael mynediad at y gwasanaeth.
 
 group.membersUnderGroupControl.title  = A yw’r holl sefydliadau yn y grŵp o dan yr un rheolaeth?
 group.membersUnderGroupControl.error.empty  = Dewiswch ‘Iawn’ neu ‘Na’
 
 group.notMembersUnderGroupControl.title  = Ni allwch gofrestru fel grŵp
-group.notMembersUnderGroupControl.detail  =  You can apply as a single organisation or partnership.
+group.notMembersUnderGroupControl.detail  =  Gallwch wneud cais fel sefydliad unigol neu fel partneriaeth.
 
 group.removeMember.title  = A ydych yn siŵr eich bod am dynnu {0} o’r grŵp?
 group.removeMember.error.empty  = Dewiswch ‘Iawn’ neu ‘Na’
 
 organisationDetails.other.organisation.sectionHeader  = Sefydliadau eraill yn y grŵp
 organisationDetails.other.group.title  = Pa fath o sefydliad yr hoffech ei ychwanegu gyntaf?
-organisationDetails.other.next.group.title  =  What type of organisation do you want to add next?
+organisationDetails.other.next.group.title  =  Pa fath o sefydliad yr hoffech ei ychwanegu nesaf?
 organisationDetails.type.GroupPartnership  = Partneriaeth atebolrwydd cyfyngedig
 organisationDetails.other.type.hint  = [Mae’n rhaid i Sefydliadau Corfforedig Elusennol, ymddiriedolaethau, sefydliadau tramor heb safle yn y DU a chyrff cyhoeddus gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar wahân]
 
-enrolment.referenceNumber.already.used.title  =  Your PPT reference number has already been used
-enrolment.referenceNumber.already.used.detail1  =  The PPT reference number you entered has already been linked to a different Government Gateway.
-enrolment.referenceNumber.already.used.detail2  =  To access the account for that PPT reference number you need to sign in with the Government Gateway it was linked to.
-enrolment.referenceNumber.already.used.button  =  Back to your business tax account
+enrolment.referenceNumber.already.used.title  =  Mae’ch cyfeirnod Treth Deunydd Pacio Plastig eisoes wedi’i ddefnyddio
+enrolment.referenceNumber.already.used.detail1  =  Mae’r cyfeirnod Treth Deunydd Pacio Plastig a nodwyd gennych eisoes wedi’i gysylltu â chyfrif Porth y Llywodraeth gwahanol.
+enrolment.referenceNumber.already.used.detail2  =  I gael at y cyfrif ar gyfer y cyfeirnod Treth Deunydd Pacio Plastig hwnnw, bydd angen i chi fewngofnodi gan ddefnyddio’r cyfrif Porth y Llywodraeth sydd wedi’i gysylltu ag ef.
+enrolment.referenceNumber.already.used.button  =  Yn ôl i’ch cyfrif treth busnes
 
 nominated.organisation.already.registered.title  = Ni allwch sefydlu grŵp newydd
 nominated.organisation.already.registered.detail1  = Mae {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig, naill ai fel sefydliad unigol neu fel rhan o grŵp.
@@ -605,51 +574,49 @@ nominated.organisation.already.registered.detail3.link.text  = grŵp newydd gyda
 
 organisation.already.in.group.title  = Ni ellir ychwanegu {0} at y grŵp eto
 organisation.already.in.group.detail.member  = Rydych eisoes wedi ychwanegu {0} at y grŵp.
-organisation.already.in.group.detail.nominated  =  The nominated organisation {0} is already in the group.
+organisation.already.in.group.detail.nominated  =  Mae’r sefydliad enwebedig {0} eisoes yn y grŵp.
 
 group.member.already.registered.title  = Ni allwch ychwanegu {0} at y grŵp
 group.member.already.registered.detail1  = Mae {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig, felly does dim modd ei ychwanegu at y grŵp.
 group.member.already.registered.detail2  = Bydd angen i {0} ddatgofrestru rhag y Dreth Deunydd Pacio Plastig cyn i chi allu ei ychwanegu at y grŵp.
 
-amendRegistration.organisationDetails.title  = 
-
 company.confirmAddress.title  = Cadarnhewch y cyfeiriad cofrestredig ar gyfer {0}
 
-missing.organisationName  =  your organisation
+missing.organisationName  =  eich sefydliad
 
 ukAddress.title  = A yw’r cyfeiriad cyswllt ar gyfer {0} yn y DU?
 ukAddress.empty.error  = Dewiswch ‘Iawn’ neu ‘Na’
 
-addressLookup.business.select.title  =  Select the business address for {0}?
-addressLookup.business.select.heading  =  Select the business address for {0}?
-addressLookup.contact.select.title  = Select {0}’s business address?
-addressLookup.contact.select.heading  = Select {0}’s business address?
-addressLookup.partner.select.title  =  Select {0}’s contact address?
-addressLookup.partner.select.heading  =  Select {0}’s contact address?
+addressLookup.business.select.title  =  Dewiswch gyfeiriad y busnes ar gyfer {0}
+addressLookup.business.select.heading  =  Dewiswch gyfeiriad y busnes ar gyfer {0}
+addressLookup.contact.select.title  = Dewiswch gyfeiriad busnes {0}
+addressLookup.contact.select.heading  = Dewiswch gyfeiriad busnes {0}
+addressLookup.partner.select.title  =  Dewiswch gyfeiriad cyswllt {0}
+addressLookup.partner.select.heading  =  Dewiswch gyfeiriad cyswllt {0}
 
-addressLookup.business.lookup.title  =  What is the business address for {0}?
-addressLookup.business.lookup.heading  =  What is the business address for {0}?
-addressLookup.contact.lookup.title  = What is {0}’s business address?
-addressLookup.contact.lookup.heading  = What is {0}’s business address?
-addressLookup.partner.lookup.title  =  What is {0}’s contact address?
-addressLookup.partner.lookup.heading  =  What is {0}’s contact address?
+addressLookup.business.lookup.title  =  Beth yw cyfeiriad y busnes ar gyfer {0}?
+addressLookup.business.lookup.heading  =  Beth yw cyfeiriad y busnes ar gyfer {0}?
+addressLookup.contact.lookup.title  = Beth yw cyfeiriad busnes {0}?
+addressLookup.contact.lookup.heading  = Beth yw cyfeiriad busnes {0}?
+addressLookup.partner.lookup.title  =  Beth yw cyfeiriad cyswllt {0}?
+addressLookup.partner.lookup.heading  =  Beth yw cyfeiriad cyswllt {0}?
 
-addressLookup.business.confirm.title  =  Confirm the business address for {0}
-addressLookup.business.confirm.heading  =  Confirm the business address for {0}
-addressLookup.contact.confirm.title  =  Confirm the address for {0}
-addressLookup.contact.confirm.heading  =  Confirm the address for {0}
-addressLookup.partner.confirm.title  =  Confirm the address for {0}
-addressLookup.partner.confirm.heading  =  Confirm the address for {0}
+addressLookup.business.confirm.title  =  Cadarnhau cyfeiriad y busnes ar gyfer {0}
+addressLookup.business.confirm.heading  =  Cadarnhau cyfeiriad y busnes ar gyfer {0}
+addressLookup.contact.confirm.title  =  Cadarnhau’r cyfeiriad ar gyfer {0}
+addressLookup.contact.confirm.heading  =  Cadarnhau’r cyfeiriad ar gyfer {0}
+addressLookup.partner.confirm.title  =  Cadarnhau’r cyfeiriad ar gyfer {0}
+addressLookup.partner.confirm.heading  =  Cadarnhau’r cyfeiriad ar gyfer {0}
 
-addressLookup.business.edit.title  =  What is the business address for {0}?
-addressLookup.business.edit.heading  =  What is the business address for {0}?
-addressLookup.contact.edit.title  = What is {0}’s business address?
-addressLookup.contact.edit.heading  = What is {0}’s business address?
-addressLookup.partner.edit.title  =  What is {0}’s contact address?
-addressLookup.partner.edit.heading  =  What is {0}’s contact address?
+addressLookup.business.edit.title  =  Beth yw cyfeiriad y busnes ar gyfer {0}?
+addressLookup.business.edit.heading  =  Beth yw cyfeiriad y busnes ar gyfer {0}?
+addressLookup.contact.edit.title  = Beth yw cyfeiriad busnes {0}?
+addressLookup.contact.edit.heading  = Beth yw cyfeiriad busnes {0}?
+addressLookup.partner.edit.title  =  Beth yw cyfeiriad cyswllt {0}?
+addressLookup.partner.edit.heading  =  Beth yw cyfeiriad cyswllt {0}?
 
-addressCapture.business.heading  = What is {0}’s business address?
-addressCapture.contact.heading  =  What is {0}’s contact address?
+addressCapture.business.heading  = Beth yw cyfeiriad busnes {0}?
+addressCapture.contact.heading  =  Beth yw cyfeiriad cyswllt {0}?
 
 organisation.checkAnswers.title  = Gwiriwch eich atebion
 
@@ -678,25 +645,25 @@ contactDetails.member.check.companyNumber  =  Company number
 contactDetails.member.check.orgName  = Enw’r sefydliad
 contactDetails.member.check.utr  = Cyfeirnod Unigryw y Trethdalwr
 contactDetails.member.check.contact.name  = Enw cyswllt
-contactDetails.member.check.contact.email  =  Contact email
+contactDetails.member.check.contact.email  =  E-bost cyswllt
 contactDetails.member.check.contact.phone  = Rhif ffôn
 contactDetails.member.check.contact.address  = Cyfeiriad cyswllt
 
-addressLookup.member.contact.lookup.title  = What address do you want to use for {0}?
-addressLookup.member.contact.lookup.heading  = What address do you want to use for {0}?
+addressLookup.member.contact.lookup.title  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?
+addressLookup.member.contact.lookup.heading  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?
 
-addressLookup.member.contact.select.title  =  Select your address for {0}
-addressLookup.member.contact.select.heading  =  Select your address for {0}
+addressLookup.member.contact.select.title  =  Dewiswch eich cyfeiriad ar gyfer {0}
+addressLookup.member.contact.select.heading  =  Dewiswch eich cyfeiriad ar gyfer {0}
 
-addressLookup.member.contact.confirm.title  =  Confirm your address for {0}
-addressLookup.member.contact.confirm.heading  =  Confirm your address for {0}
+addressLookup.member.contact.confirm.title  =  Cadarnhau’ch cyfeiriad ar gyfer {0}
+addressLookup.member.contact.confirm.heading  =  Cadarnhau’ch cyfeiriad ar gyfer {0}
 
 partner.check.title  = Gwiriwch eich atebion
 partner.check.orgType  = Math o sefydliad
 partner.check.companyNumber  =  Company number
 partner.check.orgName  = Enw’r sefydliad
 partner.check.utr  = Cyfeirnod Unigryw y Trethdalwr
-partner.check.sautr  =  Self Assessment Unique Taxpayer Reference
+partner.check.sautr  =  Cyfeirnod Unigryw y Trethdalwr ar gyfer Hunanasesiad
 partner.check.dob  = Dyddiad geni
 partner.check.name  = Enw
 partner.check.nino  = Rhif Yswiriant Gwladol
@@ -748,10 +715,9 @@ amend.partner.manage.title  = Rheoli partneriaid yn y bartneriaeth
 amend.partner.manage.nominated  = Partner enwebedig
 amend.partner.manage.partners  = Partneriaid eraill yn y bartneriaeth
 
-amend.partner.listPartners.title  = partners in your partnership
+amend.partner.listPartners.title  = partneriaid yn eich partneriaeth
 amend.partner.listPartners.question  = A oes angen i chi ychwanegu partner arall?
 
 amend.partner.remove.title  = A ydych yn siŵr eich bod am dynnu {0} o’r bartneriaeth? – Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
-removePartner.empty.error  =  Please select Yes or No
 
 gform.link  =  https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
