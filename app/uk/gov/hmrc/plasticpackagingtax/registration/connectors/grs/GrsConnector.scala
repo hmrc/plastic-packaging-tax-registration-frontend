@@ -28,10 +28,13 @@ import uk.gov.hmrc.http.{
   HttpResponse,
   InternalServerException
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.GrsJourneyCreationRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResponse](
+abstract class GrsConnector[GrsCreateJourneyPayload <: GrsJourneyCreationRequest[
+  GrsCreateJourneyPayload
+], GrsResponse, TranslatedResponse](
   httpClient: HttpClient,
   metrics: Metrics,
   val grsCreateJourneyUrl: Option[String],
@@ -47,7 +50,7 @@ abstract class GrsConnector[GrsCreateJourneyPayload, GrsResponse, TranslatedResp
     payload: GrsCreateJourneyPayload
   )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] =
     create(grsCreateJourneyUrl.getOrElse(throw new IllegalStateException("No url is specified")),
-           payload
+           payload.setBusinessVerificationCheckFalse
     )
 
   def createJourney(payload: GrsCreateJourneyPayload, grsCreateJourneyUrl: String)(implicit
