@@ -28,7 +28,12 @@ case class SoleTraderGrsCreateRequest(
   regime: Regime = PPT,
   enableSautrCheck: Boolean = true,
   businessVerificationCheck: Boolean = true
-) extends GrsJourneyCreationRequest
+) extends GrsJourneyCreationRequest[SoleTraderGrsCreateRequest] {
+
+  override def setBusinessVerificationCheckFalse: SoleTraderGrsCreateRequest =
+    copy(businessVerificationCheck = false)
+
+}
 
 object SoleTraderGrsCreateRequest {
 

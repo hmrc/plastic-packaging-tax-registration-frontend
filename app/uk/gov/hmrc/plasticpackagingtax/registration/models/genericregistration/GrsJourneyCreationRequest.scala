@@ -28,11 +28,15 @@ object Regime extends Enumeration {
   implicit val format: Format[Regime] = Format(Reads.enumNameReads(Regime), Writes.enumNameWrites)
 }
 
-trait GrsJourneyCreationRequest {
+trait GrsJourneyCreationRequest[R <: GrsJourneyCreationRequest[R]] {
+  self: R =>
   val continueUrl: String
   val optServiceName: Option[String]
   val deskProServiceId: String
   val signOutUrl: String
   val regime: Regime
   val accessibilityUrl: String
+  val businessVerificationCheck: Boolean
+
+  def setBusinessVerificationCheckFalse: R
 }

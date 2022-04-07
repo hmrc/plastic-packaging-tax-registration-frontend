@@ -28,7 +28,12 @@ case class PartnershipGrsCreateRequest(
   regime: Regime = PPT,
   enableSautrCheck: Boolean = true,
   businessVerificationCheck: Boolean = true
-) extends GrsJourneyCreationRequest
+) extends GrsJourneyCreationRequest[PartnershipGrsCreateRequest] {
+
+  override def setBusinessVerificationCheckFalse: PartnershipGrsCreateRequest =
+    copy(businessVerificationCheck = false)
+
+}
 
 object PartnershipGrsCreateRequest {
 

@@ -27,7 +27,12 @@ case class IncorpEntityGrsCreateRequest(
   accessibilityUrl: String,
   regime: Regime = PPT,
   businessVerificationCheck: Boolean = true
-) extends GrsJourneyCreationRequest
+) extends GrsJourneyCreationRequest[IncorpEntityGrsCreateRequest] {
+
+  override def setBusinessVerificationCheckFalse: IncorpEntityGrsCreateRequest =
+    copy(businessVerificationCheck = false)
+
+}
 
 object IncorpEntityGrsCreateRequest {
 
