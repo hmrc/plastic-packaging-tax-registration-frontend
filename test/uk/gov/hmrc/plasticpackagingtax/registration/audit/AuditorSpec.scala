@@ -27,6 +27,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 
 class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with RegistrationBuilder {
 
@@ -107,6 +108,18 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
           ) mustBe true
         }
       }
+
+      "newRegistrationStarted invoked no org type" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.newRegistrationStarted("123456")
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 StartRegistrationEvent(UserType.NEW, "123456")
+          ) mustBe true
+        }
+      }
     }
 
     "not throw exception" when {
@@ -118,6 +131,52 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         eventually(timeout(Span(5, Seconds))) {
           verifyEventSentToAudit(auditUrl,
                                  StartRegistrationEvent(UserType.NEW, "123456")
+          ) mustBe true
+        }
+      }
+    }
+
+    "post resume registration event" when {
+      "resumePPTRegistration invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.resumePPTRegistration("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 ResumeRegistrationEvent(UserType.RESUME,
+                                                         "123456",
+                                                         Some(OrgType.UK_COMPANY)
+                                 )
+          ) mustBe true
+        }
+      }
+
+      "resumePPTRegistration invoked no org type" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.resumePPTRegistration("123456", None)
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 ResumeRegistrationEvent(UserType.RESUME, "123456", None)
+          ) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "resumePPTRegistration audit event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.resumePPTRegistration("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 ResumeRegistrationEvent(UserType.RESUME,
+                                                         "123456",
+                                                         Some(OrgType.UK_COMPANY)
+                                 )
           ) mustBe true
         }
       }
@@ -149,6 +208,15 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
     verifyEventSentToAudit(url,
                            StartRegistrationEvent.eventType,
                            Json.toJson(startRegistrationEvent).toString()
+    )
+
+  private def verifyEventSentToAudit(
+    url: String,
+    resumeRegistrationEvent: ResumeRegistrationEvent
+  ): Boolean =
+    verifyEventSentToAudit(url,
+                           ResumeRegistrationEvent.eventType,
+                           Json.toJson(resumeRegistrationEvent).toString()
     )
 
   private def verifyEventSentToAudit(url: String, eventType: String, body: String): Boolean =

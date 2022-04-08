@@ -17,23 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.audit
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.audit.UserType.UserType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 
-case class StartRegistrationEvent(userType: UserType, internalId: String) {}
+case class OrgTypeRegistrationEvent(internalId: String, orgType: Option[OrgType]) {}
 
-object StartRegistrationEvent {
-  implicit val format: OFormat[StartRegistrationEvent] = Json.format[StartRegistrationEvent]
-  val eventType: String                                = "startPPTRegistration"
-}
-
-case class ResumeRegistrationEvent(
-  userType: UserType,
-  internalId: String,
-  orgType: Option[OrgType]
-) {}
-
-object ResumeRegistrationEvent {
-  implicit val format: OFormat[ResumeRegistrationEvent] = Json.format[ResumeRegistrationEvent]
-  val eventType: String                                 = "resumePPTRegistration"
+object OrgTypeRegistrationEvent {
+  implicit val format: OFormat[OrgTypeRegistrationEvent] = Json.format[OrgTypeRegistrationEvent]
+  val eventType: String                                  = "orgTypeRegistration"
 }

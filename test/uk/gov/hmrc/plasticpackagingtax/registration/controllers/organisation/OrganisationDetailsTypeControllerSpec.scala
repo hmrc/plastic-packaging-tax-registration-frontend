@@ -17,8 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito.{atLeastOnce, reset, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
@@ -62,7 +62,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   )
 
   private val controller =
-    new OrganisationDetailsTypeController(authenticate = mockAuthAction,
+    new OrganisationDetailsTypeController(auditor = mockAuditor,
+                                          authenticate = mockAuthAction,
                                           journeyAction = mockJourneyAction,
                                           registrationConnector = mockRegistrationConnector,
                                           mcc = mcc,
@@ -275,6 +276,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.organisationDetails.organisationType mustBe Some(orgType)
+
+        verify(mockAuditor, atLeastOnce()).orgTypeSelected(any(), refEq(Some(orgType)))(any(),
+                                                                                        any()
+        )
 
         formAction._1 match {
           case "SaveAndContinue" =>
