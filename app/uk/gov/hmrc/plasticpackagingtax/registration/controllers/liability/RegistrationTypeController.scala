@@ -28,8 +28,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.registr
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
   routes => prelaunchLiabilityRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

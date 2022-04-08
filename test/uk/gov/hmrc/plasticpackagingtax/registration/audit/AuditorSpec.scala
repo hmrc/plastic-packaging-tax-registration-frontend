@@ -108,18 +108,6 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
           ) mustBe true
         }
       }
-
-      "newRegistrationStarted invoked no org type" in {
-        givenAuditReturns(Status.NO_CONTENT)
-
-        auditor.newRegistrationStarted("123456")
-
-        eventually(timeout(Span(5, Seconds))) {
-          verifyEventSentToAudit(auditUrl,
-                                 StartRegistrationEvent(UserType.NEW, "123456")
-          ) mustBe true
-        }
-      }
     }
 
     "not throw exception" when {
@@ -181,6 +169,44 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         }
       }
     }
+
+    "post org type registration event" when {
+      "orgTypeSelected invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.orgTypeSelected("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))
+          ) mustBe true
+        }
+      }
+
+      "orgTypeSelected invoked no org type" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.orgTypeSelected("123456", None)
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl, OrgTypeRegistrationEvent("123456", None)) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "orgTypeSelected audit event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.orgTypeSelected("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))
+          ) mustBe true
+        }
+      }
+    }
   }
 
   private def givenAuditReturns(statusCode: Int): Unit =
@@ -217,6 +243,15 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
     verifyEventSentToAudit(url,
                            ResumeRegistrationEvent.eventType,
                            Json.toJson(resumeRegistrationEvent).toString()
+    )
+
+  private def verifyEventSentToAudit(
+    url: String,
+    orgTypeRegistrationEvent: OrgTypeRegistrationEvent
+  ): Boolean =
+    verifyEventSentToAudit(url,
+                           OrgTypeRegistrationEvent.eventType,
+                           Json.toJson(orgTypeRegistrationEvent).toString()
     )
 
   private def verifyEventSentToAudit(url: String, eventType: String, body: String): Boolean =

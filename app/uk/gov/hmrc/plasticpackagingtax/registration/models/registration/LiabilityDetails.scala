@@ -22,7 +22,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
   LiabilityExpectedWeight,
   LiabilityWeight
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails.minimumLiabilityWeightKg
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class LiabilityDetails(
