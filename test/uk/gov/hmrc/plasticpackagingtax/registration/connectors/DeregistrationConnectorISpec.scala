@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, put}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status
-import play.api.test.Helpers.{await, OK}
+import play.api.test.Helpers.await
 import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.{
   DeregistrationDetails,

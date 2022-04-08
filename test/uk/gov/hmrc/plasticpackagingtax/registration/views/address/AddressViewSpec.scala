@@ -37,12 +37,9 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   private val headingKey  = "addressLookup.partner.lookup.heading"
   private val contactName = Some("the contact")
 
-  private def createView(
-    form: Form[Address] = Address.form(),
-    userFeatureFlags: Map[String, Boolean] = Map.empty
-  ): Document =
+  private def createView(form: Form[Address] = Address.form()): Document =
     page(form, countryService.getAll(), backLink, updateLink, headingKey, contactName)(
-      journeyRequest(userFeatureFlags),
+      journeyRequest,
       messages
     )
 

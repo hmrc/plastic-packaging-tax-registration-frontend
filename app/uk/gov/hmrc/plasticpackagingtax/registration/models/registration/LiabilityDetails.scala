@@ -17,17 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails.minimumLiabilityWeightKg
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class LiabilityDetails(
-  // Pre-launch - remove after launch
-  expectedWeight: Option[LiabilityExpectedWeight] = None,
   // Old Post-launch - remove after launch
   weight: Option[LiabilityWeight] = None,
   // New Post-launch
@@ -42,21 +36,11 @@ case class LiabilityDetails(
 ) {
 
   def isCompleted: Boolean =
-    startDate.nonEmpty && (isPreLaunchComplete || isPostLaunchComplete)
-
-  private def isPreLaunchComplete: Boolean =
-    expectedWeight.exists(
-      expectedWeight =>
-        expectedWeight.expectToExceedThresholdWeight.contains(
-          true
-        ) && expectedWeight.overLiabilityThreshold
-    )
+    startDate.nonEmpty && isPostLaunchComplete
 
   private def isPostLaunchComplete: Boolean = expectedWeightNext12m.isDefined
 
-  def isInProgress: Boolean = isPreLaunchInProgress || isPostLaunchInProgress
-
-  private def isPreLaunchInProgress: Boolean = expectedWeight.isDefined
+  def isInProgress: Boolean = isPostLaunchInProgress
 
   private def isPostLaunchInProgress: Boolean = exceededThresholdWeight.isDefined
 

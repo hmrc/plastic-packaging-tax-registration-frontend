@@ -30,7 +30,7 @@ class AllowedUsersProviderSpec extends AnyWordSpec with Matchers with MockitoSug
     "load correctly from configuration" in {
 
       val config = Configuration("allowedUsers.0.email" -> "allowed@test.com",
-                                 "allowedUsers.0.features.isPreLaunch" -> true
+                                 "allowedUsers.0.features.partnershipEnabled" -> true
       )
       val provider = new AllowedUsersProvider(config)
       provider.get() mustBe a[AllowedUsers]
@@ -39,7 +39,7 @@ class AllowedUsersProviderSpec extends AnyWordSpec with Matchers with MockitoSug
     "trim spaces during loading" in {
 
       val config = Configuration("allowedUsers.0.email" -> " allowed@test.com ",
-                                 "allowedUsers.0.features.isPreLaunch" -> true
+                                 "allowedUsers.0.features.partnershipEnabled" -> true
       )
       val provider = new AllowedUsersProvider(config)
       provider.get().isAllowed(allowedUser.email) mustBe true

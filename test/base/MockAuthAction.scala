@@ -109,7 +109,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   def authorisedUserWithPptSubscription(): Unit = authorizedUser(user = userWithPPTEnrolment)
 
-  def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPreLaunch -> true), expectedPredicate: Option[Predicate] = None): Unit = {
+  def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPartnershipEnabled -> true), expectedPredicate: Option[Predicate] = None): Unit = {
     when(appConfig.defaultFeatures).thenReturn(features)
     when(
       mockAuthConnector.authorise(

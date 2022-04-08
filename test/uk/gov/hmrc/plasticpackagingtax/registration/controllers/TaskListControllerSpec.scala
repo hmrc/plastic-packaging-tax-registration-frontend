@@ -29,9 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => prelaunchLiabilityRoutes
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   task_list_group,
@@ -138,14 +135,8 @@ class TaskListControllerSpec extends ControllerSpec {
 
     "set liability start links" when {
       mockRegistrationFind(aRegistration())
-      "preLaunch" in {
-        authorizedUser(features = Map(Features.isPreLaunch -> true))
-        verifyStartLink(
-          prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage().url
-        )
-      }
       "postLaunch" in {
-        authorizedUser(features = Map(Features.isPreLaunch -> false))
+        authorizedUser()
         verifyStartLink(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
       }
 

@@ -16,19 +16,15 @@
 
 package builders
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight,
-  RegType
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityWeight, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
 }
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
@@ -50,11 +46,6 @@ trait RegistrationBuilder {
                  incorpJourneyId = Some(UUID.randomUUID().toString),
                  registrationType = Some(RegType.SINGLE_ENTITY),
                  liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
-                                                     expectedWeight = Some(
-                                                       LiabilityExpectedWeight(Some(true),
-                                                                               Some(12000)
-                                                       )
-                                                     ),
                                                      exceededThresholdWeight = Some(false),
                                                      expectToExceedThresholdWeight = Some(true),
                                                      dateRealisedExpectedToExceedThresholdWeight =

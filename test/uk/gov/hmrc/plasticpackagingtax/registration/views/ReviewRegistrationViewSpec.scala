@@ -22,31 +22,23 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => liabilityPrelaunchRoutes
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
   UK_COMPANY
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   GroupMemberContactDetails,
@@ -213,30 +205,6 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
           "displaying liability details section" when {
 
-            "preLaunch" in {
-              val liabilityView =
-                page(registration =
-                  registration.copy(liabilityDetails =
-                    LiabilityDetails(
-                      expectedWeight =
-                        Some(LiabilityExpectedWeight(Some(true), totalKg = Some(11000))),
-                      isLiable = Some(true)
-                    )
-                  )
-                )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> true)),
-                  messages = messages
-                )
-
-              getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
-                "liability.checkAnswers.weight"
-              )
-
-              getValueFor(liabilitySection, 0, liabilityView) mustBe "11000 kg"
-              getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
-                liabilityPrelaunchRoutes.LiabilityWeightExpectedController.displayPage().url
-              )
-            }
-
             "postLaunch and already exceeded threshold" in {
               val liabilityView =
                 page(registration =
@@ -248,9 +216,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
                     )
                   )
-                )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
-                  messages = messages
-                )
+                )(journeyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
                 "liability.checkAnswers.exceededThreshold"
@@ -286,9 +252,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      startDate = Some(OldDate(Some(6), Some(3), Some(2022)))
                     )
                   )
-                )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)),
-                  messages = messages
-                )
+                )(journeyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
                 "liability.checkAnswers.exceededThreshold"

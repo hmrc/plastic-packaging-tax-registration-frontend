@@ -25,10 +25,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{RegType, Re
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.registration_type_page
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => prelaunchLiabilityRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -84,9 +80,6 @@ class RegistrationTypeController @Inject() (
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
-    if (isPreLaunch)
-      prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
-    else
-      routes.LiabilityWeightController.displayPage()
+    routes.LiabilityWeightController.displayPage()
 
 }

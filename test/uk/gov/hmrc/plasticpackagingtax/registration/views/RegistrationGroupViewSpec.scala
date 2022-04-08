@@ -26,12 +26,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_group
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -97,11 +94,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(withRegistrationType(Some(GROUP)),
                                          withLiabilityDetails(
-                                           LiabilityDetails(
-                                             expectedWeight =
-                                               Some(LiabilityExpectedWeight(Some(true), None)),
-                                             exceededThresholdWeight = Some(true)
-                                           )
+                                           LiabilityDetails(exceededThresholdWeight = Some(true))
                                          ),
                                          withIncorpJourneyId(None),
                                          withNoPrimaryContactDetails()

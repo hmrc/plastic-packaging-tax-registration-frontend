@@ -16,8 +16,8 @@
 
 package spec
 
-import base.PptTestData.{newUser, testUserFeatures}
-import base.{MockAuthAction, PptTestData => TestData}
+import base.MockAuthAction
+import base.PptTestData.newUser
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
@@ -97,27 +97,6 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
       appConfig = appConfig,
       pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
     )
-
-  def authenticatedRequest(userFeatureFlags: Map[String, Boolean] = testUserFeatures) =
-    new AuthenticatedRequest(FakeRequest().withCSRFToken,
-                             TestData.newUser(featureFlags = userFeatureFlags),
-                             appConfig
-    )
-
-  implicit def journeyRequest(
-    userFeatureFlags: Map[String, Boolean] = testUserFeatures
-  ): JourneyRequest[AnyContent] = {
-    val user = TestData.newUser(featureFlags = userFeatureFlags)
-    JourneyRequest(
-      authenticatedRequest =
-        new AuthenticatedRequest(FakeRequest().withCSRFToken, user, appConfig),
-      registration = aRegistration(),
-      appConfig = appConfig,
-      pptReference = user.enrolments.getEnrolment(PptEnrolment.Key).flatMap(
-        _.identifiers.headOption.map(_.value)
-      )
-    )
-  }
 
   protected val testCompanyName   = "Example Limited"
   protected val testCompanyNumber = "123456789"

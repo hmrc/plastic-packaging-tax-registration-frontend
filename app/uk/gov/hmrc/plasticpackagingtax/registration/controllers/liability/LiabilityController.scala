@@ -26,8 +26,4 @@ abstract class LiabilityController(mcc: MessagesControllerComponents)
     extends FrontendController(mcc) {
 
   protected val deMinimisKg: Long = LiabilityDetails.minimumLiabilityWeightKg
-
-  protected def isPreLaunch(implicit request: JourneyRequest[AnyContent]) =
-    request.isFeatureFlagEnabled(Features.isPreLaunch)
-
 }

@@ -25,7 +25,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
-import play.api.mvc.Call
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
@@ -59,7 +58,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   private val mockDuplicateSubscriptionPage = mock[duplicate_subscription_page]
   private val mcc                           = stubMessagesControllerComponents()
   private val mockRegistrationFilterService = mock[RegistrationGroupFilterService]
-  private val liabilityStartLink            = Call("GET", "/startRegistrationLink")
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,

@@ -27,7 +27,6 @@ import play.api.libs.json.JsObject
 import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
   StartRegistrationController,
   routes => pptRoutes
@@ -64,28 +63,6 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   }
 
   "Check liability details answers Controller" should {
-
-    "return 200" when {
-
-      "user is authorised and display page method is invoked" when {
-        "and 'isPreLaunch' is true" in {
-          when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
-          authorizedUser()
-          val result = controller.displayPage()(getRequest())
-
-          status(result) mustBe OK
-        }
-
-        "and 'isPreLaunch' is false" in {
-          when(config.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(true)
-          authorizedUser()
-          val result = controller.displayPage()(getRequest())
-
-          status(result) mustBe OK
-        }
-      }
-
-    }
 
     "set expected page links" when {
 

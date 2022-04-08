@@ -31,9 +31,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROU
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegistrationType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.registration_type_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => prelaunchLiabilityRoutes
-}
 
 class RegistrationTypeControllerSpec extends ControllerSpec {
 
@@ -94,16 +91,8 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
     }
 
     "display page with appropriate backlink" when {
-
-      "preLaunch" in {
-        authorizedUser(features = Map(Features.isPreLaunch -> true))
-        verifyExpectedBackLink(
-          prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage().url
-        )
-      }
-
       "postLaunch" in {
-        authorizedUser(features = Map(Features.isPreLaunch -> false))
+        authorizedUser()
         verifyExpectedBackLink(routes.LiabilityWeightController.displayPage().url)
       }
 

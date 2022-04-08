@@ -27,11 +27,9 @@ function pptPanel() {
 
     // create array of options to be added
     let text = [
-        "Pre-Launch",
         "Post-Launch"
     ];
     let value = [
-        "test.preLaunch@ppt.test",
         "test.postLaunch@ppt.test"
     ]
 
