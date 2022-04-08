@@ -284,50 +284,5 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
       }
     }
-
-    "should support isUkCompanyPrivateBeta flag" when {
-
-      "user submits form for uk company" in {
-
-        mockUkCompanyCreateIncorpJourneyId("/some-url")
-
-        journeySupportedForPrivateBeta(UK_COMPANY)
-      }
-
-      "user submits form for partnership" in {
-
-        journeyNotSupportedPrivateBeta(PARTNERSHIP)
-      }
-
-      "user submits form for overseas company with no branch in uk" in {
-
-        journeyNotSupportedPrivateBeta(OVERSEAS_COMPANY_NO_UK_BRANCH)
-      }
-
-      def journeyNotSupportedPrivateBeta(orgType: OrgType.Value) =
-        journeySupportedForPrivateBeta(orgType, false)
-
-      def journeySupportedForPrivateBeta(orgType: OrgType.Value, supported: Boolean = true) = {
-        authorizedUser(features =
-          Map(Features.isPreLaunch -> true, Features.isUkCompanyPrivateBeta -> true)
-        )
-        mockRegistrationFind(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
-        mockRegistrationUpdate()
-
-        val correctForm = Seq("answer" -> orgType.toString, saveAndContinueFormAction)
-        val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
-
-        status(result) mustBe SEE_OTHER
-        if (supported)
-          redirectLocation(result) must not be Some(
-            organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad().url
-          )
-        else
-          redirectLocation(result) mustBe Some(
-            organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad().url
-          )
-      }
-
-    }
   }
 }

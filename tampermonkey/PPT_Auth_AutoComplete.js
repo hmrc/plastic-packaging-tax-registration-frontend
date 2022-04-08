@@ -14,8 +14,6 @@
 
     document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/register-for-plastic-packaging-tax/start";
 
-    document.getElementById("email").value = "test.ukCompanyPrivateBeta@ppt.test";
-
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
     document.querySelector('header').appendChild(pptPanel())
@@ -29,12 +27,10 @@ function pptPanel() {
 
     // create array of options to be added
     let text = [
-        "Uk Company Private Beta",
         "Pre-Launch",
         "Post-Launch"
     ];
     let value = [
-        "test.ukCompanyPrivateBeta@ppt.test",
         "test.preLaunch@ppt.test",
         "test.postLaunch@ppt.test"
     ]
