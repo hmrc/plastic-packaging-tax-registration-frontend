@@ -26,7 +26,6 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.Call
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegistrationType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.registration_type_page

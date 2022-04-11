@@ -23,8 +23,6 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  CHARITABLE_INCORPORATED_ORGANISATION,
-  OVERSEAS_COMPANY_NO_UK_BRANCH,
   OVERSEAS_COMPANY_UK_BRANCH,
   OrgType,
   PARTNERSHIP,

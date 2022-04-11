@@ -25,7 +25,6 @@ import play.api.http.Status.OK
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }

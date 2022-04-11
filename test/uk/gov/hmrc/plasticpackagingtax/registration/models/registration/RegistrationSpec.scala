@@ -21,14 +21,10 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight,
-  RegType
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityWeight, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 import java.time.LocalDate
