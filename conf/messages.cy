@@ -140,11 +140,6 @@ liabilityWeight.leadingBlankSpace.error  = Mae’n rhaid i’r pwysau beidio â 
 liabilityWeight.trailingBlankSpace.error  = Mae’n rhaid i’r pwysau beidio â chynnwys bylchau dilynol
 liabilityWeight.decimal.error  = Mae’n rhaid i’r pwysau beidio â chynnwys degolion
 
-liabilityExpectedWeightPage.sectionHeader  = Gwiriad cymhwystra
-liabilityExpectedWeightPage.title  = A yw’ch sefydliad neu’ch grŵp yn disgwyl prosesu 10,000kg neu fwy o ddeunydd pacio plastig yn ystod y 12 mis o 1 Ebrill 2022 ymlaen?
-liabilityExpectedWeightPage.label  = Pwysau disgwyliedig, mewn cilogramau
-liabilityExpectedWeightPage.question  = A yw’ch sefydliad neu’ch grŵp yn disgwyl prosesu 10,000kg neu fwy o ddeunydd pacio plastig yn ystod y 12 mis o 1 Ebrill 2022 ymlaen?
-liabilityExpectedWeightPage.info  = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod ddisgwyl cyrraedd y trothwy hwn.
 liabilityExpectedWeight.answer.empty.error  = Dewiswch ‘Iawn’ os ydych yn disgwyl prosesu 10,000kg neu fwy o ddeunydd pacio plastig
 liabilityExpectedWeight.below.threshold.error  = Mae’n rhaid i’r pwysau disgwyliedig fod yn 10,000kg neu fwy
 liabilityExpectedWeight.format.error  = Mae’n rhaid nodi’r pwysau disgwyliedig fel rhifau yn unig
@@ -170,7 +165,6 @@ liability.taxStartDate.realisedThresholdWouldBeExceeded.hint  = Dyma’r diwrnod
 liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error  = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod ar, neu ar ôl, {0}
 
 liability.checkAnswers.title  = Gwiriwch eich atebion
-liability.checkAnswers.weight  = Cyfanswm pwysau’r deunydd pacio plastig
 liability.checkAnswers.exceededThreshold  = 10,000kg neu fwy o ddeunydd pacio plastig ers 1 Ebrill 2022
 liability.checkAnswers.dateExceededThreshold  = Dyddiad cyrraedd y trothwy
 liability.checkAnswers.expectToExceededThreshold  = Disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig yn ystod y 30 diwrnod nesaf
