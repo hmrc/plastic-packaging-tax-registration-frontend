@@ -90,12 +90,9 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
 
     }
 
-    "display page with appropriate backlink" when {
-      "postLaunch" in {
-        authorizedUser()
-        verifyExpectedBackLink(routes.LiabilityWeightController.displayPage().url)
-      }
-
+    "display page with appropriate backlink" in {
+      authorizedUser()
+      verifyExpectedBackLink(routes.LiabilityWeightController.displayPage().url)
     }
 
     "update registration" when {

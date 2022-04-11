@@ -28,7 +28,7 @@
 
 @(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
 
-@postLaunchRows = @{
+@summary = @{
     Seq(
         SummaryListRow(
             key = Key(
@@ -141,15 +141,10 @@
                     )
                 )
             ))
-        )
-    )
-}
-
-@commonRows = @{
-    Seq(
+        ),
         SummaryListRow(
             key = Key(
-                content = Text(messages("liability.checkAnswers.registrationType"))
+            content = Text(messages("liability.checkAnswers.registrationType"))
             ),
             value = Value(
                 registration.registrationType match {
@@ -174,12 +169,12 @@
             ),
             value = Value(
                 registration.groupDetail match {
-                    case Some(group) =>
-                        group.membersUnderGroupControl match {
-                            case Some(true) => Text(messages("general.true"))
-                            case Some(false) => Text(messages("general.false"))
-                            case _ => Empty
-                        }
+                case Some(group) =>
+                    group.membersUnderGroupControl match {
+                        case Some(true) => Text(messages("general.true"))
+                        case Some(false) => Text(messages("general.false"))
+                        case _ => Empty
+                    }
                     case _ => Empty
                 }
             ),
@@ -198,6 +193,6 @@
 
 @govukSummaryList(
     SummaryList(
-        rows = (postLaunchRows ++ commonRows).filterNot(_.value.content == Empty)
+        rows = summary.filterNot(_.value.content == Empty)
     )
 )

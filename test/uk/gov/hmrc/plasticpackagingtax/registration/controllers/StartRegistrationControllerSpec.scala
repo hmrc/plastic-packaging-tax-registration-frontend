@@ -56,20 +56,18 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
   "StartRegistrationController" should {
     "redirect to first liability check page" when {
-      "no existing registration" when {
-        "postLaunch" in {
-          authorizedUser()
-          verifyRedirect(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
-        }
+      "no existing registration" in {
+        authorizedUser()
+        verifyRedirect(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
+      }
 
-        def verifyRedirect(pageUrl: String): Unit = {
-          mockRegistrationFind(emptyRegistration)
+      def verifyRedirect(pageUrl: String): Unit = {
+        mockRegistrationFind(emptyRegistration)
 
-          val result = controller.startRegistration()(getRequest())
+        val result = controller.startRegistration()(getRequest())
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(pageUrl)
-        }
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(pageUrl)
       }
     }
     "redirect to task list page" when {

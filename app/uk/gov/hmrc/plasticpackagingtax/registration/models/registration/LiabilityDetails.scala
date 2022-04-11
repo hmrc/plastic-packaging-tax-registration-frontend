@@ -36,13 +36,9 @@ case class LiabilityDetails(
 ) {
 
   def isCompleted: Boolean =
-    startDate.nonEmpty && isPostLaunchComplete
+    startDate.nonEmpty && expectedWeightNext12m.isDefined
 
-  private def isPostLaunchComplete: Boolean = expectedWeightNext12m.isDefined
-
-  def isInProgress: Boolean = isPostLaunchInProgress
-
-  private def isPostLaunchInProgress: Boolean = exceededThresholdWeight.isDefined
+  def isInProgress: Boolean = exceededThresholdWeight.isDefined
 
   def status: TaskStatus =
     if (isCompleted) TaskStatus.Completed

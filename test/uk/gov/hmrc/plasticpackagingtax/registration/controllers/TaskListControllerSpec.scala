@@ -133,28 +133,14 @@ class TaskListControllerSpec extends ControllerSpec {
       }
     }
 
-    "set liability start links" when {
+    "set liability start links" in {
       mockRegistrationFind(aRegistration())
-      "postLaunch" in {
-        authorizedUser()
-        verifyStartLink(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
-      }
+      authorizedUser()
 
-      def verifyStartLink(startLink: String): Unit = {
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-
-        val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
-
-        verify(singleEntityPage).apply(any(), startLinkCaptor.capture())(any(), any())
-
-        startLinkCaptor.getValue.url mustBe startLink
-      }
+      verifyStartLink(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
     }
 
     "return error" when {
-
       "user is not authorised" in {
         unAuthorizedUser()
         mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
@@ -163,6 +149,15 @@ class TaskListControllerSpec extends ControllerSpec {
 
         intercept[RuntimeException](status(result))
       }
+    }
+
+    def verifyStartLink(startLink: String): Unit = {
+      val result = controller.displayPage()(getRequest())
+      status(result) mustBe OK
+
+      val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
+      verify(singleEntityPage).apply(any(), startLinkCaptor.capture())(any(), any())
+      startLinkCaptor.getValue.url mustBe startLink
     }
   }
 }

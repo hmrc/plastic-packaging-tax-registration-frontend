@@ -205,7 +205,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
           "displaying liability details section" when {
 
-            "postLaunch and already exceeded threshold" in {
+            "already exceeded threshold" in {
               val liabilityView =
                 page(registration =
                   registration.copy(liabilityDetails =
@@ -240,7 +240,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
             }
 
-            "postLaunch and not already exceeded threshold but expect to in next 30d" in {
+            "not already exceeded threshold but expect to in next 30d" in {
               val liabilityView =
                 page(registration =
                   registration.copy(liabilityDetails =

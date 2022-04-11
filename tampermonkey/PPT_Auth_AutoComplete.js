@@ -25,35 +25,6 @@ function pptPanel() {
 
     panel.appendChild(createQuickButton());
 
-    // create array of options to be added
-    let text = [
-        "Post-Launch"
-    ];
-    let value = [
-        "test.postLaunch@ppt.test"
-    ]
-
-    // create and append select list
-    var selectList = document.createElement("select");
-    selectList.style.position = "absolute"
-    selectList.style.top = "100px"
-    selectList.id = "mySelect";
-    selectList.className = "govuk-!-display-none-print"
-    panel.appendChild(selectList);
-
-    // create and append the options
-    for (var i = 0; i < text.length; i++) {
-        var option = document.createElement("option");
-        option.value = value[i];
-        option.text = text[i];
-        selectList.appendChild(option);
-    }
-
-    selectList.onchange = function (e) {
-        document.getElementById("email").value = this.value;
-    };
-
-
     return panel;
 }
 
