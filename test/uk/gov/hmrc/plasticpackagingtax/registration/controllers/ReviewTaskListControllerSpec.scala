@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
+import org.mockito.AdditionalAnswers.returnsFirstArg
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify, when}
@@ -78,6 +79,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     authorizedUser()
     given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
+    when(mockRegistrationFilterService.removeGroupDetails(any())).then(returnsFirstArg())
   }
 
   override protected def afterEach(): Unit = {

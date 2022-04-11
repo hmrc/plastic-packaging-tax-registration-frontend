@@ -161,9 +161,11 @@ class ReviewRegistrationController @Inject() (
 
   private def reviewRegistration()(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
 
-    val reg: Registration = removePartialGroupMembersIfGroup(request.registration)
+    val reg2: Registration = removePartialGroupMembersIfGroup(request.registration)
 
-    if (reg.isFirstGroupMember)
+    val reg = removeGroupDetailsIfNotGroup(reg2)
+
+    if (reg.isGroup && reg.isFirstGroupMember)
       markAsCannotYetStarted(reg).map { _ =>
         Redirect(routes.TaskListController.displayPage())
       }
@@ -192,6 +194,11 @@ class ReviewRegistrationController @Inject() (
   private def removePartialGroupMembersIfGroup(registration: Registration): Registration =
     if (registration.isGroup)
       registrationFilterService.removePartialGroupMembers(registration)
+    else registration
+
+  private def removeGroupDetailsIfNotGroup(registration: Registration): Registration =
+    if (!registration.isGroup)
+      registrationFilterService.removeGroupDetails(registration)
     else registration
 
 }
