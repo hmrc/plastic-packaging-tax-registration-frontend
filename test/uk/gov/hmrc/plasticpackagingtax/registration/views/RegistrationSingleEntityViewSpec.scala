@@ -163,8 +163,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             exceededThresholdWeight = Some(true),
+            LiabilityDetails(exceededThresholdWeight = Some(true),
                              dateExceededThresholdWeight =
                                Some(Date(LocalDate.parse("2022-03-05"))),
                              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),

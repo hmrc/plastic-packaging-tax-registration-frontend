@@ -181,9 +181,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
                                            Some(GroupDetail(membersUnderGroupControl = Some(true)))
                                          ),
                                          withLiabilityDetails(
-                                           LiabilityDetails(weight =
-                                                              Some(LiabilityWeight(Some(10000))),
-                                                            exceededThresholdWeight = Some(true),
+                                           LiabilityDetails(exceededThresholdWeight = Some(true),
                                                             dateExceededThresholdWeight = Some(
                                                               Date(LocalDate.parse("2022-03-05"))
                                                             ),

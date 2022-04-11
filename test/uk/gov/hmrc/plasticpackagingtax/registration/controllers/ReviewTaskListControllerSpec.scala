@@ -29,7 +29,6 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
@@ -479,7 +478,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     )
 
   private val liabilityDetails =
-    LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+    LiabilityDetails(startDate = None)
 
   private val primaryContactDetails = PrimaryContactDetails(name = Some("Jack Gatsby"),
                                                             jobTitle = Some("Developer"),

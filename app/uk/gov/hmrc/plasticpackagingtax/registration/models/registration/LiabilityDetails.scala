@@ -22,9 +22,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class LiabilityDetails(
-  // Old Post-launch - remove after launch
-  weight: Option[LiabilityWeight] = None,
-  // New Post-launch
   exceededThresholdWeight: Option[Boolean] = None,
   dateExceededThresholdWeight: Option[Date] = None,
   expectToExceedThresholdWeight: Option[Boolean] = None,

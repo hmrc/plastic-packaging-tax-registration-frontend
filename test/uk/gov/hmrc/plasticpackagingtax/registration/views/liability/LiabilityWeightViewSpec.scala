@@ -93,7 +93,7 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
 
       val form = LiabilityWeight
         .form()
-        .fill(aRegistration().liabilityDetails.weight.get)
+        .fill(LiabilityWeight(Some(1000)))
       val view = createView(form)
 
       view.getElementById("totalKg").attr("value") mustBe "1000"

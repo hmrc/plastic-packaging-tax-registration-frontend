@@ -16,10 +16,8 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
-import play.api.mvc.{AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 abstract class LiabilityController(mcc: MessagesControllerComponents)

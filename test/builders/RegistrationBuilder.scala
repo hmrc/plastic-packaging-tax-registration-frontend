@@ -45,8 +45,7 @@ trait RegistrationBuilder {
     Registration(id = "id",
                  incorpJourneyId = Some(UUID.randomUUID().toString),
                  registrationType = Some(RegType.SINGLE_ENTITY),
-                 liabilityDetails = LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))),
-                                                     exceededThresholdWeight = Some(false),
+                 liabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(false),
                                                      expectToExceedThresholdWeight = Some(true),
                                                      dateRealisedExpectedToExceedThresholdWeight =
                                                        Some(Date(LocalDate.parse("2022-03-05"))),
