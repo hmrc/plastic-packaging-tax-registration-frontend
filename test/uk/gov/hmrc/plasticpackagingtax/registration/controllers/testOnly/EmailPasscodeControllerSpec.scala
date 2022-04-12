@@ -28,10 +28,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
   DownstreamServiceError,
   FailedToFetchTestOnlyPasscode
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AllowedUsers,
-  AuthRegistrationOrAmendmentActionImpl
-}
 
 import scala.concurrent.Future
 

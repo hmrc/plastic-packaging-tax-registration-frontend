@@ -49,7 +49,6 @@ select the appropriate stubbing behaviour _(select all)_.
 * Visit http://localhost:9949/auth-login-stub/gg-sign-in
 * Enter the redirect url: http://localhost:8503/register-for-plastic-packaging-tax/start
 * Choose affinity group as `Organisation`
-* Enter the email `test.preLaunch@ppt.test` or `test.postLaunch@ppt.test`
 * Enter `Submit`
 
 ### User Journey autocompletion scripts

@@ -17,7 +17,5 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.config
 
 object Features {
-  val isPreLaunch: String            = "isPreLaunch"
-  val isUkCompanyPrivateBeta: String = "ukCompanyPrivateBeta"
-  val isPartnershipEnabled: String   = "partnershipEnabled"
+  val isPartnershipEnabled: String = "partnershipEnabled"
 }

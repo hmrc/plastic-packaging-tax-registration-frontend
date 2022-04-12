@@ -112,8 +112,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             exceededThresholdWeight = Some(true),
+            LiabilityDetails(exceededThresholdWeight = Some(true),
                              dateExceededThresholdWeight =
                                Some(Date(LocalDate.parse("2022-03-05"))),
                              startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
@@ -191,8 +190,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             exceededThresholdWeight = Some(true),
+            LiabilityDetails(exceededThresholdWeight = Some(true),
                              dateExceededThresholdWeight =
                                Some(Date(LocalDate.parse("2022-03-05"))),
                              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -273,8 +271,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             exceededThresholdWeight = Some(true),
+            LiabilityDetails(exceededThresholdWeight = Some(true),
                              dateExceededThresholdWeight =
                                Some(Date(LocalDate.parse("2022-03-05"))),
                              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -358,8 +355,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration: Registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             exceededThresholdWeight = Some(true),
+            LiabilityDetails(exceededThresholdWeight = Some(true),
                              dateExceededThresholdWeight =
                                Some(Date(LocalDate.parse("2022-03-05"))),
                              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -452,8 +448,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             exceededThresholdWeight = Some(true),
+            LiabilityDetails(exceededThresholdWeight = Some(true),
                              dateExceededThresholdWeight =
                                Some(Date(LocalDate.parse("2022-03-05"))),
                              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),

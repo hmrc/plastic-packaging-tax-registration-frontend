@@ -40,7 +40,6 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |microservice.services.contact-frontend.port=9250
         |microservice.services.ppt-account-frontend.host=localhost
         |microservice.services.ppt-account-frontend.port=8505
-        |features.isPreLaunch=false
         |urls.feedback.authenticatedLink="http://localhost:9250/contact/beta-feedback"
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
         |urls.mfaUplift="http://localhost:9553/bas-gateway/uplift-mfa"
@@ -122,12 +121,6 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     "have 'businessAccountUrl' defined" in {
       validAppConfig.businessAccountUrl must be("http://localhost:9020/business-account")
     }
-
-    "inspect feature flags" when {
-      "and check that 'isPreLaunch' is false" in {
-        validAppConfig.isDefaultFeatureFlagEnabled(Features.isPreLaunch) mustBe false
-      }
-    }
   }
 
   "with an empty config" should {
@@ -135,8 +128,8 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
     val emptyAppConfig: AppConfig = appConfig(Configuration(emptyConfig))
 
     "inspect feature flags" when {
-      "and check that 'isPreLaunch' default value is 'true'" in {
-        emptyAppConfig.isDefaultFeatureFlagEnabled(Features.isPreLaunch) mustBe false
+      "and check that 'isPartnershipEnabled' default value is 'true'" in {
+        emptyAppConfig.isDefaultFeatureFlagEnabled(Features.isPartnershipEnabled) mustBe false
       }
     }
   }

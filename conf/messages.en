@@ -140,11 +140,6 @@ liabilityWeight.leadingBlankSpace.error = Weight must not have leading spaces
 liabilityWeight.trailingBlankSpace.error = Weight must not have trailing spaces
 liabilityWeight.decimal.error = Weight must not include decimals
 
-liabilityExpectedWeightPage.sectionHeader = Eligibility check
-liabilityExpectedWeightPage.title = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
-liabilityExpectedWeightPage.label = Expected weight, in kilograms
-liabilityExpectedWeightPage.question = Does your organisation or group expect to process 10,000kg or more of plastic packaging in the 12 months from 1 April 2022?
-liabilityExpectedWeightPage.info = If you’re registering as a group, each member must expect to meet this threshold.
 liabilityExpectedWeight.answer.empty.error = Select yes if you expect to process 10,000kg or more of plastic packaging
 liabilityExpectedWeight.below.threshold.error = Expected weight must be 10,000kg or more
 liabilityExpectedWeight.format.error = Expected weight must be entered as numbers only
@@ -170,7 +165,6 @@ liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date 
 liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error = Date you realised you would meet the threshold must be on, or after, {0}
 
 liability.checkAnswers.title = Check your answers
-liability.checkAnswers.weight = Plastic packaging total weight
 liability.checkAnswers.exceededThreshold = 10,000kg or more plastic packaging since 1 April 2022
 liability.checkAnswers.dateExceededThreshold = Date met threshold
 liability.checkAnswers.expectToExceededThreshold = Expect to manufacture or import 10,000kg or more plastic packaging in next 30 days

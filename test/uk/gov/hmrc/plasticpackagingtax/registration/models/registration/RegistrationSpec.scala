@@ -21,14 +21,10 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight,
-  RegType
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityWeight, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 import java.time.LocalDate
@@ -139,10 +135,7 @@ class RegistrationSpec
       "liability weight captured" in {
         Registration(id = "123",
                      liabilityDetails =
-                       LiabilityDetails(expectedWeight =
-                                          Some(LiabilityExpectedWeight(Some(true), None)),
-                                        exceededThresholdWeight = Some(true)
-                       )
+                       LiabilityDetails(exceededThresholdWeight = Some(true))
         ).isStarted mustBe true
       }
     }
@@ -151,8 +144,7 @@ class RegistrationSpec
   "Registration liability status" should {
 
     val completedLiabilityDetails =
-      LiabilityDetails(expectedWeight = Some(LiabilityExpectedWeight(Some(true), Some(12000))),
-                       exceededThresholdWeight = Some(true),
+      LiabilityDetails(exceededThresholdWeight = Some(true),
                        dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
                        expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                        startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
@@ -176,13 +168,9 @@ class RegistrationSpec
     }
 
     "be in progress for single organisation registration with incomplete liability details" in {
-      Registration(
-        id = "123",
-        liabilityDetails =
-          completedLiabilityDetails.copy(expectedWeight =
-                                           Some(LiabilityExpectedWeight(Some(true), None)),
-                                         expectedWeightNext12m = None
-          )
+      Registration(id = "123",
+                   liabilityDetails =
+                     completedLiabilityDetails.copy(expectedWeightNext12m = None)
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
 

@@ -26,12 +26,10 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
-import play.api.mvc.Call
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
@@ -60,7 +58,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   private val mockDuplicateSubscriptionPage = mock[duplicate_subscription_page]
   private val mcc                           = stubMessagesControllerComponents()
   private val mockRegistrationFilterService = mock[RegistrationGroupFilterService]
-  private val liabilityStartLink            = Call("GET", "/startRegistrationLink")
 
   private val controller =
     new ReviewRegistrationController(authenticate = mockAuthAction,
@@ -483,7 +480,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     )
 
   private val liabilityDetails =
-    LiabilityDetails(weight = Some(LiabilityWeight(Some(1000))), startDate = None)
+    LiabilityDetails(startDate = None)
 
   private val primaryContactDetails = PrimaryContactDetails(name = Some("Jack Gatsby"),
                                                             jobTitle = Some("Developer"),

@@ -18,20 +18,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 import java.time.LocalDate
 
 class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
-
-  private val belowWeightThreshold = 9999
-  private val atWeightThreshold    = 10000
-  private val aboveWeightThreshold = 10001
 
   "Liability Details TaskStatus" should {
 
@@ -44,15 +37,6 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
 
     "be IN_PROGRESS " when {
       "liability details are partially filled" when {
-        "pre-launch" in {
-          val liabilityDetails = LiabilityDetails(expectedWeight =
-            Some(
-              LiabilityExpectedWeight(expectToExceedThresholdWeight = Some(true), totalKg = None)
-            )
-          )
-          liabilityDetails.status mustBe TaskStatus.InProgress
-        }
-
         "post-launch" in {
           val liabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true))
           liabilityDetails.status mustBe TaskStatus.InProgress
@@ -62,18 +46,6 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
     }
 
     "be COMPLETED " when {
-      "pre-launch" in {
-        val liabilityDetails = LiabilityDetails(
-          expectedWeight =
-            Some(
-              LiabilityExpectedWeight(expectToExceedThresholdWeight = Some(true),
-                                      totalKg = Some(12000)
-              )
-            ),
-          startDate = Some(OldDate(Some(5), Some(3), Some(2022)))
-        )
-        liabilityDetails.status mustBe TaskStatus.Completed
-      }
 
       "post-launch" in {
         val liabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true),

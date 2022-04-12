@@ -18,19 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.liability
 
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.{Document, Element}
-import org.mockito.ArgumentMatchers.refEq
-import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Call}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => prelaunchLiabilityRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
@@ -40,8 +33,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val mockAppConfig = mock[AppConfig]
-
   private val backLink = Call("GET", "backLink")
 
   private val page = inject[check_liability_details_answers_page]
@@ -49,79 +40,41 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   private val registration = aRegistration()
 
   "Check liability details answers View" should {
-    val preLaunchView = createView(preLaunch = true,
-                                   reg = registration,
-                                   backLink = routes.TaskListController.displayPage()
-    )
-
-    val postLaunchView = createView(preLaunch = false,
-                                    reg = registration,
-                                    backLink =
-                                      liabilityRoutes.RegistrationTypeController.displayPage()
-    )(journeyRequest(userFeatureFlags = Map(Features.isPreLaunch -> false)))
+    val view = createView(reg = registration,
+                          backLink =
+                            liabilityRoutes.RegistrationTypeController.displayPage()
+    )(journeyRequest)
 
     "have the correct title" in {
-      List(preLaunchView, postLaunchView).foreach { view =>
-        view.select("title").first must containMessage("liability.checkAnswers.title")
-      }
+      view.select("title").first must containMessage("liability.checkAnswers.title")
     }
 
     "contain timeout dialog function" in {
-      List(preLaunchView, postLaunchView).foreach { view =>
-        containTimeoutDialogFunction(view) mustBe true
-      }
+      containTimeoutDialogFunction(view) mustBe true
     }
 
     "display sign out link" in {
-      List(preLaunchView, postLaunchView).foreach { view =>
-        displaySignOutLink(view)
-      }
+      displaySignOutLink(view)
     }
 
     "display 'Back' button" when {
-      "pre-launch" in {
-        preLaunchView.getElementById("back-link") must haveHref(
-          routes.TaskListController.displayPage()
-        )
-      }
-
       "post-launch" in {
-        postLaunchView.getElementById("back-link") must haveHref(
+        view.getElementById("back-link") must haveHref(
           liabilityRoutes.RegistrationTypeController.displayPage()
         )
       }
     }
 
     "display title" in {
-      List(preLaunchView, postLaunchView).foreach { view =>
-        view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
-          "liability.checkAnswers.title"
-        )
-      }
+      view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
+        "liability.checkAnswers.title"
+      )
     }
 
     "display expected content" when {
-      "pre-launch" in {
-        assertSummaryRows(preLaunchView,
-                          List(
-                            SummaryRowDetail(
-                              "liability.checkAnswers.weight",
-                              "12000 kg",
-                              Some(
-                                prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
-                              )
-                            ),
-                            SummaryRowDetail(
-                              "liability.checkAnswers.registrationType",
-                              "A single organisation",
-                              Some(liabilityRoutes.RegistrationTypeController.displayPage())
-                            )
-                          )
-        )
-      }
 
       "post-launch" in {
-        assertSummaryRows(postLaunchView,
+        assertSummaryRows(view,
                           List(
                             SummaryRowDetail(
                               "liability.checkAnswers.exceededThreshold",
@@ -162,8 +115,8 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Continue' button" in {
-      preLaunchView must containElementWithID("submit")
-      preLaunchView.getElementById("submit").text() mustBe "Continue"
+      view must containElementWithID("submit")
+      view.getElementById("submit").text() mustBe "Continue"
     }
 
   }
@@ -173,14 +126,10 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     page.render(registration, backLink, journeyRequest, messages)
   }
 
-  private def createView(preLaunch: Boolean, reg: Registration, backLink: Call)(implicit
+  private def createView(reg: Registration, backLink: Call)(implicit
     request: JourneyRequest[AnyContent]
-  ): Document = {
-    when(mockAppConfig.isDefaultFeatureFlagEnabled(refEq(Features.isPreLaunch))).thenReturn(
-      preLaunch
-    )
+  ): Document =
     page(reg, backLink)(request, messages(request))
-  }
 
   private def assertSummaryRows(view: Document, rows: List[SummaryRowDetail]) = {
     val summaryRowKeys = view.getElementsByClass("govuk-summary-list__key")

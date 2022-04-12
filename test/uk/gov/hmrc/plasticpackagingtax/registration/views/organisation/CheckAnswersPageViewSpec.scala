@@ -31,7 +31,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   SOLE_TRADER,
   UK_COMPANY
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
   GroupMember,
   OrganisationDetails => GroupMemberOrganisationDetails

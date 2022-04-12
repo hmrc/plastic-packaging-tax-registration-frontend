@@ -40,11 +40,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  allowedUsers: AllowedUsers,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
-) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig) with AuthAction {
+) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with AuthAction {
   override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = true
   override val agentsAllowed: Boolean                  = false
@@ -52,12 +51,10 @@ class AuthActionImpl @Inject() (
 
 class AuthNoEnrolmentCheckActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  allowedUsers: AllowedUsers,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
-) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
-    with AuthNoEnrolmentCheckAction {
+) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with AuthNoEnrolmentCheckAction {
   override val mustBeEnrolled: Boolean                 = true
   override val redirectEnrolledUsersToReturns: Boolean = false
   override val agentsAllowed: Boolean                  = true
@@ -65,12 +62,10 @@ class AuthNoEnrolmentCheckActionImpl @Inject() (
 
 class AuthRegistrationOrAmendmentActionImpl @Inject() (
   override val authConnector: AuthConnector,
-  allowedUsers: AllowedUsers,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
-) extends AuthActionBase(authConnector, allowedUsers, metrics, mcc, appConfig)
-    with AuthNoEnrolmentCheckAction {
+) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with AuthNoEnrolmentCheckAction {
   override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = false
   override val agentsAllowed: Boolean                  = true
@@ -78,7 +73,6 @@ class AuthRegistrationOrAmendmentActionImpl @Inject() (
 
 abstract class AuthActionBase @Inject() (
   override val authConnector: AuthConnector,
-  allowedUsers: AllowedUsers,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
@@ -160,7 +154,7 @@ abstract class AuthActionBase @Inject() (
                                           Some(loginTimes)
           )
 
-          executeRequest(request, block, identityData, email.getOrElse(""), allEnrolments)
+          executeRequest(request, block, identityData, allEnrolments)
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
@@ -187,7 +181,6 @@ abstract class AuthActionBase @Inject() (
     request: Request[A],
     block: AuthenticatedRequest[A] => Future[Result],
     identityData: IdentityData,
-    email: String,
     allEnrolments: Enrolments
   ) = {
 
@@ -213,21 +206,12 @@ abstract class AuthActionBase @Inject() (
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
     else if (identityData.affinityGroup.contains(AffinityGroup.Agent) && pptReference.isEmpty)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
-    else if (
-      allowedUsers.isAllowed(email) || identityData.affinityGroup.contains(AffinityGroup.Agent)
-    )
+    else
       block {
         val user =
-          SignedInUser(allEnrolments,
-                       identityData,
-                       allowedUsers.getUserFeatures(email).getOrElse(appConfig.defaultFeatures)
-          )
+          SignedInUser(allEnrolments, identityData, appConfig.defaultFeatures)
         new AuthenticatedRequest(request, user, appConfig, pptReference)
       }
-    else {
-      logger.warn("User is not allowed, access denied")
-      Future.successful(Results.Redirect(routes.UnauthorisedController.onPageLoad()))
-    }
   }
 
 }

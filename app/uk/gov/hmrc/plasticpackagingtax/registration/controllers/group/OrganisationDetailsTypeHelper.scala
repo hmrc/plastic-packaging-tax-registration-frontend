@@ -60,20 +60,20 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     executionContext: ExecutionContext,
     headerCarrier: HeaderCarrier
   ): Future[Result] =
-    (organisationType.answer, request.isFeatureFlagEnabled(Features.isUkCompanyPrivateBeta)) match {
-      case (Some(OrgType.UK_COMPANY), _) =>
+    (organisationType.answer) match {
+      case Some(OrgType.UK_COMPANY) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH), _) =>
+      case Some(OrgType.OVERSEAS_COMPANY_UK_BRANCH) =>
         getUkCompanyRedirectUrl(businessVerificationCheck, memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.SOLE_TRADER), false) =>
+      case Some(OrgType.SOLE_TRADER) =>
         getSoleTraderRedirectUrl(memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.REGISTERED_SOCIETY), false) =>
+      case Some(OrgType.REGISTERED_SOCIETY) =>
         getRegisteredSocietyRedirectUrl(memberId)
           .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-      case (Some(OrgType.PARTNERSHIP), false) =>
+      case Some(OrgType.PARTNERSHIP) =>
         getPartnershipRedirectUrl(memberId, businessVerificationCheck)
       case _ =>
         Future(Redirect(organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()))
