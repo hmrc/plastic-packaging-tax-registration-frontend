@@ -27,6 +27,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Injecting
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 
 class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with RegistrationBuilder {
 
@@ -122,6 +123,90 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
         }
       }
     }
+
+    "post resume registration event" when {
+      "resumePPTRegistration invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.resumePPTRegistration("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 ResumeRegistrationEvent(UserType.RESUME,
+                                                         "123456",
+                                                         Some(OrgType.UK_COMPANY)
+                                 )
+          ) mustBe true
+        }
+      }
+
+      "resumePPTRegistration invoked no org type" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.resumePPTRegistration("123456", None)
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 ResumeRegistrationEvent(UserType.RESUME, "123456", None)
+          ) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "resumePPTRegistration audit event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.resumePPTRegistration("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 ResumeRegistrationEvent(UserType.RESUME,
+                                                         "123456",
+                                                         Some(OrgType.UK_COMPANY)
+                                 )
+          ) mustBe true
+        }
+      }
+    }
+
+    "post org type registration event" when {
+      "orgTypeSelected invoked" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.orgTypeSelected("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))
+          ) mustBe true
+        }
+      }
+
+      "orgTypeSelected invoked no org type" in {
+        givenAuditReturns(Status.NO_CONTENT)
+
+        auditor.orgTypeSelected("123456", None)
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl, OrgTypeRegistrationEvent("123456", None)) mustBe true
+        }
+      }
+    }
+
+    "not throw exception" when {
+      "orgTypeSelected audit event fails" in {
+        givenAuditReturns(Status.BAD_REQUEST)
+
+        auditor.orgTypeSelected("123456", Some(OrgType.UK_COMPANY))
+
+        eventually(timeout(Span(5, Seconds))) {
+          verifyEventSentToAudit(auditUrl,
+                                 OrgTypeRegistrationEvent("123456", Some(OrgType.UK_COMPANY))
+          ) mustBe true
+        }
+      }
+    }
   }
 
   private def givenAuditReturns(statusCode: Int): Unit =
@@ -149,6 +234,24 @@ class AuditorSpec extends ConnectorISpec with Injecting with ScalaFutures with R
     verifyEventSentToAudit(url,
                            StartRegistrationEvent.eventType,
                            Json.toJson(startRegistrationEvent).toString()
+    )
+
+  private def verifyEventSentToAudit(
+    url: String,
+    resumeRegistrationEvent: ResumeRegistrationEvent
+  ): Boolean =
+    verifyEventSentToAudit(url,
+                           ResumeRegistrationEvent.eventType,
+                           Json.toJson(resumeRegistrationEvent).toString()
+    )
+
+  private def verifyEventSentToAudit(
+    url: String,
+    orgTypeRegistrationEvent: OrgTypeRegistrationEvent
+  ): Boolean =
+    verifyEventSentToAudit(url,
+                           OrgTypeRegistrationEvent.eventType,
+                           Json.toJson(orgTypeRegistrationEvent).toString()
     )
 
   private def verifyEventSentToAudit(url: String, eventType: String, body: String): Boolean =

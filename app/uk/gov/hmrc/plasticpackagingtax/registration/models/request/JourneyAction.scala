@@ -65,7 +65,7 @@ class JourneyAction @Inject() (
             val hasPptRegistrationResumed =
               request.session.get("resumePPTRegistration").getOrElse("false")
             if (hasPptRegistrationResumed.equals("false"))
-              auditor.resumePPTRegistration(id)
+              auditor.resumePPTRegistration(id, r.organisationDetails.organisationType)
             Future.successful(Right(r))
           }
           .getOrElse {

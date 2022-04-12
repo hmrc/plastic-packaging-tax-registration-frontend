@@ -60,7 +60,9 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
           )
         ) mustBe Results.Ok
 
-        verify(mockAuditor, never()).resumePPTRegistration(ArgumentMatchers.eq("123"))(any(), any())
+        verify(mockAuditor, never()).resumePPTRegistration(ArgumentMatchers.eq("123"), any())(any(),
+                                                                                              any()
+        )
       }
     }
 
@@ -81,7 +83,7 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
         ) mustBe Results.Ok
 
         getHeaders.requestId mustBe Some(RequestId("req1"))
-        verify(mockAuditor).resumePPTRegistration(ArgumentMatchers.eq("123"))(any(), any())
+        verify(mockAuditor).resumePPTRegistration(ArgumentMatchers.eq("123"), any())(any(), any())
       }
     }
 

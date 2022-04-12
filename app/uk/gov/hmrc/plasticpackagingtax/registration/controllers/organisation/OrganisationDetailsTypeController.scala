@@ -19,6 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
@@ -47,6 +49,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
+  auditor: Auditor,
   authenticate: AuthAction,
   journeyAction: JourneyAction,
   override val appConfig: AppConfig,
@@ -99,6 +102,11 @@ class OrganisationDetailsTypeController @Inject() (
               case Right(_) =>
                 FormAction.bindFromRequest match {
                   case SaveAndContinue =>
+                    auditor.orgTypeSelected(request.user.identityData.internalId.getOrElse(
+                                              throw InsufficientEnrolments()
+                                            ),
+                                            organisationType.answer
+                    )
                     handleOrganisationType(organisationType, true, None)
                   case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
                 }

@@ -25,7 +25,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{RegType, Re
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.registration_type_page
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

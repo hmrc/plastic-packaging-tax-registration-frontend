@@ -27,7 +27,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
   Key,
   SummaryListRow
 }
-
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest

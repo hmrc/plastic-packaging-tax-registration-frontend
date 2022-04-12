@@ -17,6 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.audit
 
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -42,11 +43,20 @@ class Auditor @Inject() (auditConnector: AuditConnector) {
                                      StartRegistrationEvent(UserType.NEW, internalId)
     )
 
-  def resumePPTRegistration(
-    internalId: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Unit =
+  def resumePPTRegistration(internalId: String, orgType: Option[OrgType])(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Unit =
     auditConnector.sendExplicitAudit(ResumeRegistrationEvent.eventType,
-                                     ResumeRegistrationEvent(UserType.RESUME, internalId)
+                                     ResumeRegistrationEvent(UserType.RESUME, internalId, orgType)
+    )
+
+  def orgTypeSelected(internalId: String, orgType: Option[OrgType])(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Unit =
+    auditConnector.sendExplicitAudit((OrgTypeRegistrationEvent.eventType),
+                                     OrgTypeRegistrationEvent(internalId, orgType)
     )
 
 }
