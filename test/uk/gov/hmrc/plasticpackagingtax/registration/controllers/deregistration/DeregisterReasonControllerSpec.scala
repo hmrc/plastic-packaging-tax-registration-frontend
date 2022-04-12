@@ -27,11 +27,8 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterReasonForm
+import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationReason.CeasedTrading
-import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.{
-  DeregistrationDetails,
-  DeregistrationReason
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
   DeregistrationDetailRepositoryImpl,
   DeregistrationDetailsRepository,

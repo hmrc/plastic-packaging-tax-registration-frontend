@@ -25,4 +25,7 @@ class RegistrationGroupFilterService {
       registration.groupDetail.map(gd => gd.copy(members = gd.members.filter(_.isValid)))
     )
 
+  def removeGroupDetails(registration: Registration): Registration =
+    registration.copy(groupDetail = None)
+
 }

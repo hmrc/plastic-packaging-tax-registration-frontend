@@ -18,10 +18,7 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
-  AddressCaptureDetailRepositoryImpl,
-  DeregistrationDetailRepositoryImpl
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.DeregistrationDetailRepositoryImpl
 
 import scala.concurrent.ExecutionContext
 

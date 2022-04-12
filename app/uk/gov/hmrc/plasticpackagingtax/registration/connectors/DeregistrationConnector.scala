@@ -44,7 +44,7 @@ class DeregistrationConnector @Inject() (
     ).andThen { case _ => timer.stop() }
       .map {
         case response @ HttpResponse(OK, _, _) =>
-          Right()
+          Right(())
         case response =>
           Left(
             DownstreamServiceError(

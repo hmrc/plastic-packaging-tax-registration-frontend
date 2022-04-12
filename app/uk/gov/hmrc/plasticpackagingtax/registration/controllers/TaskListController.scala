@@ -18,7 +18,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
@@ -30,9 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
   task_list_single_entity
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => prelaunchLiabilityRoutes
-}
 
 import javax.inject.{Inject, Singleton}
 
@@ -48,6 +44,8 @@ class TaskListController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
+      val startLink = liabilityRoutes.ExceededThresholdWeightController.displayPage()
+
       if (request.registration.isGroup)
         Ok(groupPage(request.registration, startLink))
       else if (request.registration.isPartnershipWithPartnerCollection)
@@ -55,10 +53,5 @@ class TaskListController @Inject() (
       else
         Ok(singleEntityPage(request.registration, startLink))
     }
-
-  private def startLink(implicit request: JourneyRequest[AnyContent]) =
-    if (request.isFeatureFlagEnabled(Features.isPreLaunch))
-      prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage()
-    else liabilityRoutes.ExceededThresholdWeightController.displayPage()
 
 }

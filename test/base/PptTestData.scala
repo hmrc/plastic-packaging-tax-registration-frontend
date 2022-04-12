@@ -18,22 +18,19 @@ package base
 
 import org.joda.time.{DateTime, LocalDate}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolments}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
+import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolments}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
 
 object PptTestData {
-
-  val testUserFeatures: Map[String, Boolean] = Map(Features.isPreLaunch -> true)
 
   val nrsCredentials: Credentials =
     Credentials(providerId = "providerId", providerType = "providerType")
 
   def newUser(
     internalId: String = "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b",
-    featureFlags: Map[String, Boolean] = testUserFeatures,
+    featureFlags: Map[String, Boolean] = Map.empty,
     affinityGroup: Option[AffinityGroup] = None
   ): SignedInUser =
     SignedInUser(Enrolments(Set()),

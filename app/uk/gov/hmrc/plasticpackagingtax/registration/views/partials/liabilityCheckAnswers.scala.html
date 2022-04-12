@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.routes
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{routes => preLaunchRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 
@@ -29,31 +28,7 @@
 
 @(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
 
-@preLaunchRows = @{
-    Seq(
-        SummaryListRow(
-            key = Key(
-                content = Text(messages("liability.checkAnswers.weight"))
-            ),
-            value = Value(
-                content = Text(
-                    registration.liabilityDetails.expectedWeight.flatMap(_.totalKg).map(w => s"${w.toString} kg").getOrElse("")
-                )
-            ),
-            actions = Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = preLaunchRoutes.LiabilityWeightExpectedController.displayPage().url,
-                        content = Text(messages("site.link.change")),
-                        visuallyHiddenText = Some(messages("liability.checkAnswers.exceededThreshold"))
-                    )
-                )
-            ))
-        )
-    )
-}
-
-@postLaunchRows = @{
+@summary = @{
     Seq(
         SummaryListRow(
             key = Key(
@@ -166,15 +141,10 @@
                     )
                 )
             ))
-        )
-    )
-}
-
-@commonRows = @{
-    Seq(
+        ),
         SummaryListRow(
             key = Key(
-                content = Text(messages("liability.checkAnswers.registrationType"))
+            content = Text(messages("liability.checkAnswers.registrationType"))
             ),
             value = Value(
                 registration.registrationType match {
@@ -199,12 +169,12 @@
             ),
             value = Value(
                 registration.groupDetail match {
-                    case Some(group) =>
-                        group.membersUnderGroupControl match {
-                            case Some(true) => Text(messages("general.true"))
-                            case Some(false) => Text(messages("general.false"))
-                            case _ => Empty
-                        }
+                case Some(group) =>
+                    group.membersUnderGroupControl match {
+                        case Some(true) => Text(messages("general.true"))
+                        case Some(false) => Text(messages("general.false"))
+                        case _ => Empty
+                    }
                     case _ => Empty
                 }
             ),
@@ -223,7 +193,6 @@
 
 @govukSummaryList(
     SummaryList(
-        rows = ((if(request.isFeatureFlagEnabled(Features.isPreLaunch)) { preLaunchRows } else { postLaunchRows })
-                ++ commonRows).filterNot(_.value.content == Empty)
+        rows = summary.filterNot(_.value.content == Empty)
     )
 )

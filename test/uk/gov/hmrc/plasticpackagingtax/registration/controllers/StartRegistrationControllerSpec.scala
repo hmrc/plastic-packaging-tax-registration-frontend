@@ -20,18 +20,11 @@ import base.unit.ControllerSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => preLaunchLiabilityRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   Registration
@@ -48,11 +41,6 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
   private val partialRegistration = Registration(id = "123",
                                                  liabilityDetails = LiabilityDetails(
-                                                   expectedWeight = Some(
-                                                     LiabilityExpectedWeight(Some(true),
-                                                                             Some(12000)
-                                                     )
-                                                   ),
                                                    exceededThresholdWeight = Some(true),
                                                    dateExceededThresholdWeight =
                                                      Some(Date(LocalDate.parse("2022-03-05"))),
@@ -68,26 +56,18 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
   "StartRegistrationController" should {
     "redirect to first liability check page" when {
-      "no existing registration" when {
-        "preLaunch" in {
-          authorizedUser(features = Map(Features.isPreLaunch -> true))
-          verifyRedirect(
-            preLaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage().url
-          )
-        }
-        "postLaunch" in {
-          authorizedUser(features = Map(Features.isPreLaunch -> false))
-          verifyRedirect(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
-        }
+      "no existing registration" in {
+        authorizedUser()
+        verifyRedirect(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
+      }
 
-        def verifyRedirect(pageUrl: String): Unit = {
-          mockRegistrationFind(emptyRegistration)
+      def verifyRedirect(pageUrl: String): Unit = {
+        mockRegistrationFind(emptyRegistration)
 
-          val result = controller.startRegistration()(getRequest())
+        val result = controller.startRegistration()(getRequest())
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(pageUrl)
-        }
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(pageUrl)
       }
     }
     "redirect to task list page" when {

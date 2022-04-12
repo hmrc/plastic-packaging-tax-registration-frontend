@@ -25,12 +25,8 @@ import play.api.http.Status.OK
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.prelaunch.{
-  routes => prelaunchLiabilityRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
@@ -136,34 +132,14 @@ class TaskListControllerSpec extends ControllerSpec {
       }
     }
 
-    "set liability start links" when {
+    "set liability start links" in {
       mockRegistrationFind(aRegistration())
-      "preLaunch" in {
-        authorizedUser(features = Map(Features.isPreLaunch -> true))
-        verifyStartLink(
-          prelaunchLiabilityRoutes.LiabilityWeightExpectedController.displayPage().url
-        )
-      }
-      "postLaunch" in {
-        authorizedUser(features = Map(Features.isPreLaunch -> false))
-        verifyStartLink(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
-      }
+      authorizedUser()
 
-      def verifyStartLink(startLink: String): Unit = {
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-
-        val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
-
-        verify(singleEntityPage).apply(any(), startLinkCaptor.capture())(any(), any())
-
-        startLinkCaptor.getValue.url mustBe startLink
-      }
+      verifyStartLink(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
     }
 
     "return error" when {
-
       "user is not authorised" in {
         unAuthorizedUser()
         mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
@@ -172,6 +148,15 @@ class TaskListControllerSpec extends ControllerSpec {
 
         intercept[RuntimeException](status(result))
       }
+    }
+
+    def verifyStartLink(startLink: String): Unit = {
+      val result = controller.displayPage()(getRequest())
+      status(result) mustBe OK
+
+      val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
+      verify(singleEntityPage).apply(any(), startLinkCaptor.capture())(any(), any())
+      startLinkCaptor.getValue.url mustBe startLink
     }
   }
 }

@@ -21,7 +21,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Flash
 import play.api.test.Injecting
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
@@ -39,10 +39,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
   private val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
 
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
-    page()(authenticatedRequest(Map(Features.isPreLaunch -> false)), messages, flash)
-
-  private def createPreLaunchView(flash: Flash = new Flash(Map.empty)): Html =
-    page()(authenticatedRequest(Map(Features.isPreLaunch -> true)), messages, flash)
+    page()(authenticatedRequest, messages, flash)
 
   "Confirmation Page view" should {
 
@@ -120,26 +117,6 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
     }
 
     "display 'What happens next'" when {
-
-      "pre-launch" in {
-        val preLaunchView = createPreLaunchView()
-
-        preLaunchView.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(
-          "confirmationPage.whatHappensNext.title"
-        )
-
-        val whatHappensNextDetail = preLaunchView.select("div#what-happens-next p")
-        whatHappensNextDetail.get(0) must containMessage(
-          "confirmationPage.preLaunch.whatHappensNext.detail"
-        )
-        whatHappensNextDetail.get(1).text must include(
-          messages("confirmationPage.preLaunch.whatHappensNext.link",
-                   messages("confirmationPage.preLaunch.whatHappensNext.link.text")
-          )
-        )
-
-        whatHappensNextDetail.select("a").get(0) must haveHref(realAppConfig.pptAccountUrl)
-      }
 
       "post-launch" in {
         view.getElementsByClass(gdsPageSubHeading).get(0) must containMessage(

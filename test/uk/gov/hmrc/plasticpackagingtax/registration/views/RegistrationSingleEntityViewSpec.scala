@@ -27,11 +27,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{
-  LiabilityExpectedWeight,
-  LiabilityWeight
-}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   LiabilityDetails,
   MetaData,
@@ -100,11 +97,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
       "Liability Details 'In Progress'" when {
 
         val registration = aRegistration(
-          withLiabilityDetails(
-            LiabilityDetails(expectedWeight = Some(LiabilityExpectedWeight(Some(true), None)),
-                             exceededThresholdWeight = Some(true)
-            )
-          ),
+          withLiabilityDetails(LiabilityDetails(exceededThresholdWeight = Some(true))),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
@@ -170,8 +163,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(weight = Some(LiabilityWeight(Some(10000))),
-                             exceededThresholdWeight = Some(true),
+            LiabilityDetails(exceededThresholdWeight = Some(true),
                              dateExceededThresholdWeight =
                                Some(Date(LocalDate.parse("2022-03-05"))),
                              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),

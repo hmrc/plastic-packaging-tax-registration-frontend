@@ -14,8 +14,6 @@
 
     document.getElementsByName("redirectionUrl")[0].value = getBaseUrl() + "/register-for-plastic-packaging-tax/start";
 
-    document.getElementById("email").value = "test.ukCompanyPrivateBeta@ppt.test";
-
     document.getElementById("affinityGroupSelect").selectedIndex = 1;
 
     document.querySelector('header').appendChild(pptPanel())
@@ -26,39 +24,6 @@ function pptPanel() {
     var panel = document.createElement("div");
 
     panel.appendChild(createQuickButton());
-
-    // create array of options to be added
-    let text = [
-        "Uk Company Private Beta",
-        "Pre-Launch",
-        "Post-Launch"
-    ];
-    let value = [
-        "test.ukCompanyPrivateBeta@ppt.test",
-        "test.preLaunch@ppt.test",
-        "test.postLaunch@ppt.test"
-    ]
-
-    // create and append select list
-    var selectList = document.createElement("select");
-    selectList.style.position = "absolute"
-    selectList.style.top = "100px"
-    selectList.id = "mySelect";
-    selectList.className = "govuk-!-display-none-print"
-    panel.appendChild(selectList);
-
-    // create and append the options
-    for (var i = 0; i < text.length; i++) {
-        var option = document.createElement("option");
-        option.value = value[i];
-        option.text = text[i];
-        selectList.appendChild(option);
-    }
-
-    selectList.onchange = function (e) {
-        document.getElementById("email").value = this.value;
-    };
-
 
     return panel;
 }
