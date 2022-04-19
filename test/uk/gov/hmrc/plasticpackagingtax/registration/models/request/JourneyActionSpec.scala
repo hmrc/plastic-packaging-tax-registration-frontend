@@ -18,10 +18,10 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import base.unit.ControllerSpec
 import base.{MockAuthAction, PptTestData}
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{never, reset, times, verify}
+import org.mockito.Mockito.{never, reset, verify}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Result, Results}
 import play.api.test.FakeRequest

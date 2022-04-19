@@ -19,11 +19,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.duplicate_subscription_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
 class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
+
+  override val appConfig: AppConfig = inject[AppConfig]
 
   private val page: duplicate_subscription_page =
     inject[duplicate_subscription_page]
@@ -46,6 +49,20 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
       view.select("p.govuk-body").text() must include(
         messages("duplicateSubscription.detail", "Plastic Packaging Ltd")
       )
+    }
+
+    "display go to your account paragraph" in {
+      view.getElementById("go-to-ppt-account") must containMessage(
+        "duplicateSubscription.account.detail.link"
+      )
+      view.getElementById("go-to-ppt-account") must haveHref(appConfig.pptAccountUrl)
+    }
+
+    "display a bullet list" in {
+      val list = view.getElementsByClass("govuk-list--bullet")
+
+      list.get(0).child(0) must containMessage("duplicateSubscription.prepare.return.hint")
+      list.get(0).child(1) must containMessage("duplicateSubscription.ppt.registration.number.hint")
     }
   }
 

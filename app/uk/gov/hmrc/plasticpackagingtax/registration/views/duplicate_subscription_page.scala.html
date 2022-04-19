@@ -17,11 +17,16 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 
 @this(
         govukLayout: main_template,
         pageHeading: pageHeading,
-        paragraphBody: paragraphBody
+        paragraphBody: paragraphBody,
+        paragraph: paragraph,
+        link: link,
+        bulletList: bulletList,
+        appConfig: AppConfig
 )
 
 @()(implicit request: JourneyRequest[_], messages: Messages)
@@ -33,4 +38,17 @@
             request.registration.organisationDetails.businessName.getOrElse("your organisation")
         )
     )
+
+    @paragraph{
+        @link(
+            text = messages("duplicateSubscription.account.detail.link"),
+            call = Call("GET", appConfig.pptAccountUrl),
+            id = Some("go-to-ppt-account")
+        )
+    }
+
+    @bulletList(elements = Seq(
+        Html(messages("duplicateSubscription.prepare.return.hint")),
+        Html(messages("duplicateSubscription.ppt.registration.number.hint"))
+    ))
 }

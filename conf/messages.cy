@@ -317,7 +317,7 @@ confirmationPage.detail.3.link  = cyfrif Treth Deunydd Pacio Plastig
 confirmationPage.whatHappensNext.title  = Yr hyn sy’n digwydd nesaf
 confirmationPage.preLaunch.whatHappensNext.detail  = Mae’r Dreth Deunydd Pacio Plastig yn dechrau ar 1 Ebrill 2022.
 confirmationPage.preLaunch.whatHappensNext.link  = Ewch i’ch {0} i gael gwybod sut mae paratoi’ch Ffurflen Dreth.
-confirmationPage.preLaunch.whatHappensNext.link.text  = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol:
+confirmationPage.preLaunch.whatHappensNext.link.text  = [Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol]:
 confirmationPage.whatHappensNext.detail  = Ewch i’ch {0} i wneud y canlynol:
 confirmationPage.whatHappensNext.detail.link  = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol:
 confirmationPage.whatHappensNext.detail.item1  = cyflwyno Ffurflen Dreth
@@ -462,6 +462,9 @@ soleTraderEntityVerification.failure.detail  = Gwiriwch eich cofnodion Hunanases
 
 duplicateSubscription.title  = Mae’ch sefydliad eisoes wedi’i gofrestru
 duplicateSubscription.detail  = Mae rhywun yn {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
+duplicateSubscription.account.detail.link = [Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol]:
+duplicateSubscription.prepare.return.hint = dysgu sut mae paratoi Ffurflen Dreth
+duplicateSubscription.ppt.registration.number.hint = dod o hyd i’ch rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 
 pptHelpline.intro  =  Cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM os oes gennych unrhyw gwestiynau.
 pptHelpline.telephone.title  =  Ffôn:
