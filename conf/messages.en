@@ -464,7 +464,7 @@ soleTraderEntityVerification.failure.detail = Check your Self Assessment records
 
 duplicateSubscription.title = Your organisation is already registered
 duplicateSubscription.detail = Someone in {0} has already registered for Plastic Packaging Tax (PPT).
-duplicateSubscription.account.detail.link = Go to your PPT account to:
+duplicateSubscription.account.detail.link = [Go to your PPT account to]:
 duplicateSubscription.prepare.return.hint = find out how to prepare a return
 duplicateSubscription.ppt.registration.number.hint = find your Plastic Packaging Tax registration number
 
