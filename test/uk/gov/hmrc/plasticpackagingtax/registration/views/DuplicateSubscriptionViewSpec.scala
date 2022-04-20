@@ -52,10 +52,11 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display go to your account paragraph" in {
-      view.getElementById("go-to-ppt-account") must containMessage(
-        "duplicateSubscription.account.detail.link"
-      )
-      view.getElementById("go-to-ppt-account") must haveHref(appConfig.pptAccountUrl)
+      view.getElementById("go-to-ppt-account-paragraph").text() mustBe
+        messages("duplicateSubscription.account.detail",
+                 messages("duplicateSubscription.account.detail.link")
+        )
+      view.getElementById("go-to-ppt-account-link") must haveHref(appConfig.pptAccountUrl)
     }
 
     "display a bullet list" in {
