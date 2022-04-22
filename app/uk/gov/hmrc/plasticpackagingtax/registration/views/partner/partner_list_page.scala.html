@@ -38,7 +38,7 @@
 @numPartners = @{
     {
         otherPartners.size + 1
-    }.toString
+    }
 }
 
 @listofPartners = @{
@@ -52,16 +52,16 @@
                 ListMember(
                     name = partner.name,
                     change = Some(partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partner.id)),
-                    remove = Some(partnerRoutes.RemovePartnerController.displayPage(partner.id))
+                    remove = if(numPartners > 2) Some(partnerRoutes.RemovePartnerController.displayPage(partner.id)) else None
                 )
             )
 }
 
 @govukLayout(
-    title = Title("partnership.partnerList.title", numPartners),
+    title = Title("partnership.partnerList.title", numPartners.toString),
     backButton = Some(BackButton(messages("site.back"), commonRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @pageHeading(messages("partnership.partnerList.title", numPartners))
+    @pageHeading(messages("partnership.partnerList.title", numPartners.toString))
 
     @listMembers(listofPartners)
 

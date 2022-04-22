@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_list_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -34,11 +35,13 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
   )
 
-  private def createView(): Document =
-    page(AddPartner.form(),
-         getNominatedPartner(partnershipRegistration),
-         getOtherPartners(partnershipRegistration)
-    )(journeyRequest, messages)
+  private def createView(
+    otherPartner: Seq[Partner] = getOtherPartners(partnershipRegistration)
+  ): Document =
+    page(AddPartner.form(), getNominatedPartner(partnershipRegistration), otherPartner)(
+      journeyRequest,
+      messages
+    )
 
   "Partner List View" should {
 
@@ -89,6 +92,26 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
       }
     }
 
+    "not display the remove partner button" when {
+      "there are two partner only" in {
+        val newView = createView(Seq(aPartnershipPartner()))
+
+        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 0
+      }
+
+      "there is one partner only" in {
+        val newView = createView(Seq.empty)
+
+        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 0
+      }
+    }
+
+    "display the remove partner button" when {
+      "there are more than 2 partner" in {
+
+        view.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 3
+      }
+    }
     "display 'Save and continue' button" in {
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and continue"
