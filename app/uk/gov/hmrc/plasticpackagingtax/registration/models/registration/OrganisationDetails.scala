@@ -66,7 +66,8 @@ case class OrganisationDetails(
       partnershipDetails.flatMap { partnershipDetails =>
         partnershipDetails.partnershipType match {
           case PartnerTypeEnum.LIMITED_PARTNERSHIP | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
-              PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP =>
+              PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP |
+              PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
             partnershipDetails.partnershipBusinessDetails.flatMap { orgDetails =>
               orgDetails.registration
             }

@@ -34,6 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
   PartnerTypeEnum,
+  SCOTTISH_LIMITED_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
@@ -49,17 +50,19 @@ class OrganisationDetailsSpec
     extends AnyWordSpec with Matchers with TableDrivenPropertyChecks with PptTestData {
 
   val registeredOrgs = Table("Organisation Details",
-                             createOrg(UK_COMPANY, None, true),
-                             createOrg(SOLE_TRADER, None, true),
-                             createOrg(PARTNERSHIP, Some(GENERAL_PARTNERSHIP), true),
-                             createOrg(PARTNERSHIP, Some(SCOTTISH_PARTNERSHIP), true)
+                             createRegisteredUkCompanyOrg(),
+                             createdRegisteredSoleTradeOrg(),
+                             createRegisteredPartnership(GENERAL_PARTNERSHIP),
+                             createRegisteredPartnership(SCOTTISH_PARTNERSHIP),
+                             createRegisteredPartnership(SCOTTISH_LIMITED_PARTNERSHIP)
   )
 
   val unregisteredOrgs = Table("Organisation Details",
-                               createOrg(UK_COMPANY, None, false),
-                               createOrg(SOLE_TRADER, None, false),
-                               createOrg(PARTNERSHIP, Some(GENERAL_PARTNERSHIP), false),
-                               createOrg(PARTNERSHIP, Some(SCOTTISH_PARTNERSHIP), false)
+                               createFailedUkCompanyOrg(),
+                               createdFailedSoleTradeOrg(),
+                               createFailedPartnership(GENERAL_PARTNERSHIP),
+                               createFailedPartnership(SCOTTISH_PARTNERSHIP),
+                               createFailedPartnership(SCOTTISH_LIMITED_PARTNERSHIP)
   )
 
   "OrganisationDetails" should {
@@ -69,35 +72,17 @@ class OrganisationDetailsSpec
         OrganisationDetails().status mustBe TaskStatus.NotStarted
       }
       "in progress when not registered" in {
-        createOrg(UK_COMPANY, None, false).status mustBe TaskStatus.InProgress
+        createFailedUkCompanyOrg(None).status mustBe TaskStatus.InProgress
       }
-      "in progress when subscription check not done" in {
-        createOrg(UK_COMPANY,
-                  None,
-                  true,
-                  subscriptionStatus = None
-        ).status mustBe TaskStatus.InProgress
-      }
+
       "in progress when subscribed" in {
-        createOrg(UK_COMPANY,
-                  None,
-                  true,
-                  subscriptionStatus = Some(SUBSCRIBED)
-        ).status mustBe TaskStatus.InProgress
+        createRegisteredUkCompanyOrg(Some(SUBSCRIBED)).status mustBe TaskStatus.InProgress
       }
       "completed when registered and subscription status not-subscribed" in {
-        createOrg(UK_COMPANY,
-                  None,
-                  true,
-                  subscriptionStatus = Some(NOT_SUBSCRIBED)
-        ).status mustBe TaskStatus.Completed
+        createRegisteredUkCompanyOrg(Some(NOT_SUBSCRIBED)).status mustBe TaskStatus.Completed
       }
       "completed when registered and subscription status unknown" in {
-        createOrg(UK_COMPANY,
-                  None,
-                  true,
-                  subscriptionStatus = Some(UNKNOWN)
-        ).status mustBe TaskStatus.Completed
+        createRegisteredUkCompanyOrg(Some(UNKNOWN)).status mustBe TaskStatus.Completed
       }
     }
 
@@ -172,12 +157,12 @@ class OrganisationDetailsSpec
 
     "report business name" when {
       "incorporated business" in {
-        val corp = createOrg(UK_COMPANY, None, true)
+        val corp = createRegisteredUkCompanyOrg()
         corp.businessName mustBe Some(corp.incorporationDetails.get.companyName)
       }
 
       "sole trader" in {
-        val soleTrader        = createOrg(SOLE_TRADER, None, true)
+        val soleTrader        = createdRegisteredSoleTradeOrg()
         val soleTraderDetails = soleTrader.soleTraderDetails.get
         soleTrader.businessName mustBe Some(
           s"${soleTraderDetails.firstName} ${soleTraderDetails.lastName}"
@@ -196,177 +181,155 @@ class OrganisationDetailsSpec
     }
   }
 
-  private def createOrg(
-    orgType: OrgType,
-    partnershipType: Option[PartnerTypeEnum],
-    registered: Boolean,
+  private def createdRegisteredSoleTradeOrg(
     subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(SOLE_TRADER),
+                        soleTraderDetails = Some(
+                          SoleTraderDetails(firstName = "Alan",
+                                            lastName = "Johnson",
+                                            dateOfBirth = Some("12/12/1960"),
+                                            ninoOrTrn = "ABC123",
+                                            sautr = Some("12345678"),
+                                            registration = Some(
+                                              createRegistrationDetails(Some("PASS"),
+                                                                        "REGISTERED",
+                                                                        Some("XP001")
+                                              )
+                                            )
+                          )
+                        ),
+                        subscriptionStatus = subscriptionStatus
+    )
+
+  private def createRegistrationDetails(
+    status: Option[String],
+    registrationStatus: String,
+    partnerId: Option[String]
   ) =
-    orgType match {
-      case UK_COMPANY =>
-        OrganisationDetails(organisationType = Some(UK_COMPANY),
-                            incorporationDetails = Some(
-                              IncorporationDetails(companyNumber = "123",
-                                                   companyName = "Test",
-                                                   ctutr = "ABC",
-                                                   companyAddress = testCompanyAddress,
-                                                   registration =
-                                                     if (registered)
-                                                       Some(
-                                                         RegistrationDetails(
-                                                           identifiersMatch = true,
-                                                           verificationStatus =
-                                                             Some("PASS"),
-                                                           registrationStatus = "REGISTERED",
-                                                           registeredBusinessPartnerId =
-                                                             Some("XP001")
-                                                         )
-                                                       )
-                                                     else
-                                                       Some(
-                                                         RegistrationDetails(
-                                                           identifiersMatch = true,
-                                                           verificationStatus =
-                                                             Some("FAIL"),
-                                                           registrationStatus =
-                                                             "REGISTRATION_NOT_CALLED",
-                                                           registeredBusinessPartnerId = None
-                                                         )
-                                                       )
-                              )
-                            ),
-                            subscriptionStatus = subscriptionStatus
-        )
-      case SOLE_TRADER =>
-        OrganisationDetails(organisationType = Some(SOLE_TRADER),
-                            soleTraderDetails = Some(
-                              SoleTraderDetails(firstName = "Alan",
-                                                lastName = "Johnson",
-                                                dateOfBirth = Some("12/12/1960"),
-                                                ninoOrTrn = "ABC123",
-                                                sautr = Some("12345678"),
-                                                registration =
-                                                  if (registered)
-                                                    Some(
-                                                      RegistrationDetails(
-                                                        identifiersMatch = true,
-                                                        verificationStatus =
-                                                          Some("PASS"),
-                                                        registrationStatus =
-                                                          "REGISTERED",
-                                                        registeredBusinessPartnerId =
-                                                          Some("XP001")
-                                                      )
-                                                    )
-                                                  else
-                                                    Some(
-                                                      RegistrationDetails(
-                                                        identifiersMatch = true,
-                                                        verificationStatus =
-                                                          Some("FAIL"),
-                                                        registrationStatus =
-                                                          "REGISTRATION_NOT_CALLED",
-                                                        registeredBusinessPartnerId =
-                                                          None
-                                                      )
-                                                    )
-                              )
-                            ),
-                            subscriptionStatus = subscriptionStatus
-        )
-      case PARTNERSHIP =>
-        partnershipType match {
-          case Some(GENERAL_PARTNERSHIP) =>
-            OrganisationDetails(organisationType = Some(PARTNERSHIP),
-                                partnershipDetails = Some(
-                                  PartnershipDetails(partnershipType = GENERAL_PARTNERSHIP,
-                                                     partnershipName =
-                                                       Some("Big Bad General Partners"),
-                                                     partnershipBusinessDetails = Some(
-                                                       PartnershipBusinessDetails(
-                                                         sautr = "12345678",
-                                                         postcode =
-                                                           "BD19 3BD",
-                                                         registration =
-                                                           if (registered)
-                                                             Some(
-                                                               RegistrationDetails(
-                                                                 identifiersMatch =
-                                                                   true,
-                                                                 verificationStatus =
-                                                                   Some("PASS"),
-                                                                 registrationStatus =
-                                                                   "REGISTERED",
-                                                                 registeredBusinessPartnerId =
-                                                                   Some("XP001")
-                                                               )
-                                                             )
-                                                           else
-                                                             Some(
-                                                               RegistrationDetails(
-                                                                 identifiersMatch =
-                                                                   true,
-                                                                 verificationStatus =
-                                                                   Some("FAIL"),
-                                                                 registrationStatus =
-                                                                   "REGISTRATION_NOT_CALLED",
-                                                                 registeredBusinessPartnerId =
-                                                                   None
-                                                               )
-                                                             ),
-                                                         companyProfile = None
-                                                       )
-                                                     )
-                                  )
-                                ),
-                                subscriptionStatus = subscriptionStatus
-            )
-          case Some(SCOTTISH_PARTNERSHIP) =>
-            OrganisationDetails(organisationType = Some(PARTNERSHIP),
-                                partnershipDetails = Some(
-                                  PartnershipDetails(partnershipType = SCOTTISH_PARTNERSHIP,
-                                                     partnershipName =
-                                                       Some("Big Bad Scottish Partners"),
-                                                     partnershipBusinessDetails = Some(
-                                                       PartnershipBusinessDetails(
-                                                         sautr = "12345678",
-                                                         postcode = "BD19 3BD",
-                                                         registration =
-                                                           if (registered)
-                                                             Some(
-                                                               RegistrationDetails(
-                                                                 identifiersMatch = true,
-                                                                 verificationStatus =
-                                                                   Some("PASS"),
-                                                                 registrationStatus = "REGISTERED",
-                                                                 registeredBusinessPartnerId =
-                                                                   Some("XP001")
-                                                               )
-                                                             )
-                                                           else
-                                                             Some(
-                                                               RegistrationDetails(
-                                                                 identifiersMatch = true,
-                                                                 verificationStatus =
-                                                                   Some("FAIL"),
-                                                                 registrationStatus =
-                                                                   "REGISTRATION_NOT_CALLED",
-                                                                 registeredBusinessPartnerId = None
-                                                               )
-                                                             ),
-                                                         companyProfile = None
-                                                       )
-                                                     )
-                                  )
-                                ),
-                                subscriptionStatus = subscriptionStatus
-            )
-          case _ => fail("Unsupported partnership type")
-        }
-      case _ => fail("Unsupported organisation type")
-    }
+    RegistrationDetails(identifiersMatch = true,
+                        verificationStatus = status,
+                        registrationStatus = registrationStatus,
+                        registeredBusinessPartnerId = partnerId
+    )
+
+  private def createdFailedSoleTradeOrg(
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(SOLE_TRADER),
+                        soleTraderDetails = Some(
+                          SoleTraderDetails(firstName = "Alan",
+                                            lastName = "Johnson",
+                                            dateOfBirth = Some("12/12/1960"),
+                                            ninoOrTrn = "ABC123",
+                                            sautr = Some("12345678"),
+                                            registration = Some(
+                                              createRegistrationDetails(Some("FAIL"),
+                                                                        "REGISTRATION_NOT_CALLED",
+                                                                        None
+                                              )
+                                            )
+                          )
+                        ),
+                        subscriptionStatus = subscriptionStatus
+    )
+
+  private def createRegisteredUkCompanyOrg(
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(UK_COMPANY),
+                        incorporationDetails = Some(
+                          IncorporationDetails(companyNumber = "123",
+                                               companyName = "Test",
+                                               ctutr = "ABC",
+                                               companyAddress = testCompanyAddress,
+                                               registration = Some(
+                                                 createRegistrationDetails(Some("PASS"),
+                                                                           "REGISTERED",
+                                                                           Some("XP001")
+                                                 )
+                                               )
+                          )
+                        ),
+                        subscriptionStatus = subscriptionStatus
+    )
+
+  private def createFailedUkCompanyOrg(
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(UK_COMPANY),
+                        incorporationDetails = Some(
+                          IncorporationDetails(companyNumber = "123",
+                                               companyName = "Test",
+                                               ctutr = "ABC",
+                                               companyAddress = testCompanyAddress,
+                                               registration = Some(
+                                                 createRegistrationDetails(
+                                                   Some("FAIL"),
+                                                   "REGISTRATION_NOT_CALLED",
+                                                   None
+                                                 )
+                                               )
+                          )
+                        ),
+                        subscriptionStatus = subscriptionStatus
+    )
+
+  private def createRegisteredPartnership(
+    partnershipType: PartnerTypeEnum,
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                        partnershipDetails = Some(
+                          PartnershipDetails(partnershipType = partnershipType,
+                                             partnershipName = Some(partnershipType.toString),
+                                             partnershipBusinessDetails = Some(
+                                               PartnershipBusinessDetails(
+                                                 sautr = "12345678",
+                                                 postcode = "BD19 3BD",
+                                                 registration = Some(
+                                                   createRegistrationDetails(Some("PASS"),
+                                                                             "REGISTERED",
+                                                                             Some("XP001")
+                                                   )
+                                                 ),
+                                                 companyProfile = None
+                                               )
+                                             )
+                          )
+                        ),
+                        subscriptionStatus = subscriptionStatus
+    )
+
+  private def createFailedPartnership(
+    partnershipType: PartnerTypeEnum,
+    subscriptionStatus: Option[Status] = Some(NOT_SUBSCRIBED)
+  ): OrganisationDetails =
+    OrganisationDetails(organisationType = Some(PARTNERSHIP),
+                        partnershipDetails = Some(
+                          PartnershipDetails(partnershipType = partnershipType,
+                                             partnershipName =
+                                               Some(s"Big Bad ${partnershipType.toString}"),
+                                             partnershipBusinessDetails = Some(
+                                               PartnershipBusinessDetails(
+                                                 sautr = "12345678",
+                                                 postcode = "BD19 3BD",
+                                                 registration = Some(
+                                                   createRegistrationDetails(
+                                                     Some("FAIL"),
+                                                     "REGISTRATION_NOT_CALLED",
+                                                     None
+                                                   )
+                                                 ),
+                                                 companyProfile = None
+                                               )
+                                             )
+                          )
+                        ),
+                        subscriptionStatus = subscriptionStatus
+    )
 
   "should serialise to json as expected" in {
-    println(Json.toJson(createOrg(UK_COMPANY, None, false)).toString)
+    println(Json.toJson(createFailedUkCompanyOrg()).toString)
   }
 }
