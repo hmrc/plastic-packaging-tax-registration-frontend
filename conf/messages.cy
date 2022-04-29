@@ -462,10 +462,6 @@ soleTraderEntityVerification.failure.detail  = Gwiriwch eich cofnodion Hunanases
 
 duplicateSubscription.title  = Mae’ch sefydliad eisoes wedi’i gofrestru
 duplicateSubscription.detail  = Mae rhywun yn {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
-duplicateSubscription.account.detail.link = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol
-duplicateSubscription.account.detail = {0}:
-duplicateSubscription.prepare.return.hint = dysgu sut mae paratoi Ffurflen Dreth
-duplicateSubscription.ppt.registration.number.hint = dod o hyd i’ch rhif cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 
 pptHelpline.intro  =  Cysylltwch â Gwasanaeth Cwsmeriaid Cymraeg CThEM os oes gennych unrhyw gwestiynau.
 pptHelpline.telephone.title  =  Ffôn:

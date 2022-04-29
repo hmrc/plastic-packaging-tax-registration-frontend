@@ -50,21 +50,6 @@ class DuplicateSubscriptionViewSpec extends UnitViewSpec with Matchers {
         messages("duplicateSubscription.detail", "Plastic Packaging Ltd")
       )
     }
-
-    "display go to your account paragraph" in {
-      view.getElementById("go-to-ppt-account-paragraph").text() mustBe
-        messages("duplicateSubscription.account.detail",
-                 messages("duplicateSubscription.account.detail.link")
-        )
-      view.getElementById("go-to-ppt-account-link") must haveHref(appConfig.pptAccountUrl)
-    }
-
-    "display a bullet list" in {
-      val list = view.getElementsByClass("govuk-list--bullet")
-
-      list.get(0).child(0) must containMessage("duplicateSubscription.prepare.return.hint")
-      list.get(0).child(1) must containMessage("duplicateSubscription.ppt.registration.number.hint")
-    }
   }
 
   override def exerciseGeneratedRenderingMethods() = {
