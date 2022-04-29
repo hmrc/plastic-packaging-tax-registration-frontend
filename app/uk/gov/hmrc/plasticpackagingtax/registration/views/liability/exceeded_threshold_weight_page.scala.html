@@ -32,6 +32,15 @@
 
 @(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
 
+@hints = {
+    <p class="govuk-hint">@messages("liability.exceededThresholdWeight.hint")</p>
+
+    <p class="govuk-hint">@messages("liability.exceededThresholdWeight.hint.2")</p>
+
+}
+
+
+
 @govukLayout(
     title = Title("liability.exceededThresholdWeight.title"),
     backButton = None) {
@@ -47,7 +56,7 @@
     @formHelper(action = liabilityRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
 
         @govukRadios(Radios(
-            hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeight.hint")))),
+            hint = Some(Hint(content = HtmlContent(hints))),
             idPrefix = Some(form("answer").name),
             name = form("answer").name,
             items = Seq(
