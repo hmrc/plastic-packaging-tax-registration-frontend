@@ -427,7 +427,8 @@ notLiable.think.feedback.link.description  = Anfonwch eich adborth atom
 
 liability.exceededThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
 liability.exceededThresholdWeight.title  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
-liability.exceededThresholdWeight.hint  = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
+liability.exceededThresholdWeight.hint = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
+liability.exceededThresholdWeight.hint.2 = Dewiswch ‘Na’ os yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig o fewn y 30 diwrnod nesaf.
 liability.exceededThresholdWeight.question  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
 liability.exceededThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022
 
