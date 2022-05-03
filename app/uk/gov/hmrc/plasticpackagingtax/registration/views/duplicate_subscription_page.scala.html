@@ -32,14 +32,6 @@
 @()(implicit request: JourneyRequest[_], messages: Messages)
 
 
-@pptAccountLink = {
-    @link(
-        id = Some("go-to-ppt-account-link"),
-        text = messages("duplicateSubscription.account.detail.link"),
-        call = Call("GET", appConfig.pptAccountUrl)
-    )
-}
-
 @govukLayout(title = Title("duplicateSubscription.title")) {
     @pageHeading(text = messages("duplicateSubscription.title"))
     @paragraphBody(
@@ -47,14 +39,4 @@
             request.registration.organisationDetails.businessName.getOrElse("your organisation")
         )
     )
-
-    @paragraph(
-        content = Html(messages("duplicateSubscription.account.detail", pptAccountLink)),
-        id = Some("go-to-ppt-account-paragraph")
-    )
-
-    @bulletList(elements = Seq(
-        Html(messages("duplicateSubscription.prepare.return.hint")),
-        Html(messages("duplicateSubscription.ppt.registration.number.hint"))
-    ))
 }
