@@ -18,39 +18,45 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised
+import play.twirl.api.Html
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
+  unauthorised,
+  unauthorised_not_admin
+}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class UnauthorisedControllerSpec extends ControllerSpec {
 
-  private val page = mock[unauthorised]
+  private val page              = mock[unauthorised]
+  private val wrongCredRolePage = mock[unauthorised_not_admin]
+
+  when(page.apply()(any(), any())).thenReturn(Html("unauthorised"))
+  when(wrongCredRolePage.apply()(any(), any())).thenReturn(Html("wrong cred role"))
 
   val controller =
-    new UnauthorisedController(stubMessagesControllerComponents(), page)
-
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
-  }
-
-  override protected def afterEach(): Unit = {
-    reset(page)
-    super.afterEach()
-  }
+    new UnauthorisedController(stubMessagesControllerComponents(), page, wrongCredRolePage)
 
   "Unauthorised controller" should {
 
     "return 200 (OK)" when {
 
-      "display page method is invoked" in {
+      "display page method is invoked when cred role is User" in {
 
         val result = controller.onPageLoad()(getRequest())
 
         status(result) must be(OK)
+        contentAsString(result) should fullyMatch regex "unauthorised"
+      }
+
+      "display page method is invoked when cred role is not User" in {
+
+        val result = controller.onPageLoad(nonAdminCredRole = true)(getRequest())
+
+        status(result) must be(OK)
+        contentAsString(result) should fullyMatch regex "wrong cred role"
       }
     }
   }

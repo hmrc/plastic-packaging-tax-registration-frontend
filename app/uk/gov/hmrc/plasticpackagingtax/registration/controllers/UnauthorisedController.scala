@@ -16,21 +16,30 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised_not_admin
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
 class UnauthorisedController @Inject() (
   mcc: MessagesControllerComponents,
-  unauthorisedPage: unauthorised
+  unauthorisedPage: unauthorised,
+  unauthorisedNotAdminPage: unauthorised_not_admin
 ) extends FrontendController(mcc) with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] =
+  private val logger = Logger(this.getClass)
+
+  def onPageLoad(nonAdminCredRole: Boolean = false): Action[AnyContent] =
     Action { implicit request =>
-      Ok(unauthorisedPage())
+      if (nonAdminCredRole) {
+        logger.info(s"User without 'User' credential role - showing unauthorised page")
+        Ok(unauthorisedNotAdminPage())
+      } else
+        Ok(unauthorisedPage())
     }
 
 }

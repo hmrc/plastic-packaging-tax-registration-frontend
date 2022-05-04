@@ -79,7 +79,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
 
     "allow users with no existing enrolment to access registration screens by not enforcing an enrolment predicate" in {
       val user = PptTestData.newUser("123")
-      authorizedUser(user, expectedPredicate = Some(expectedAcceptableCredentialsPredicate))
+      authorizedUser(user,
+                     expectedPredicate = Some(User.and(expectedAcceptableCredentialsPredicate))
+      )
 
       await(
         registrationAuthAction.invokeBlock(authRequest(Headers(), user), okResponseGenerator)
@@ -143,6 +145,19 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
     }
 
+    "redirect to unauthorised page when the user's credential role is not User" in {
+      whenAuthFailsWith(UnsupportedCredentialRole())
+
+      val result =
+        registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()),
+                                           okResponseGenerator
+        )
+
+      redirectLocation(result) mustBe Some(
+        routes.UnauthorisedController.onPageLoad(nonAdminCredRole = true).url
+      )
+    }
+
     "redirect agents to unauthorised page if when try at access registration pages" in {
       val agent = PptTestData.newAgent("456")
       authorizedUser(agent)
@@ -171,12 +186,13 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
     }
 
     "only allow enrolment users to access amendment screens by enforcing an enrolment predicate" in {
-      val allowedEmail = "amina@hmrc.co.uk"
-      val user         = PptTestData.newUser("123")
+      val user = PptTestData.newUser("123")
       authorizedUser(
         user,
         expectedPredicate =
-          Some(Enrolment(PptEnrolment.Identifier).and(expectedAcceptableCredentialsPredicate))
+          Some(
+            User.and(Enrolment(PptEnrolment.Identifier).and(expectedAcceptableCredentialsPredicate))
+          )
       )
 
       await(
@@ -192,7 +208,9 @@ class AuthActionSpec extends ControllerSpec with MetricsMocks {
       authorizedUser(
         agent,
         expectedPredicate =
-          Some(Enrolment(PptEnrolment.Identifier).and(expectedAcceptableCredentialsPredicate))
+          Some(
+            User.and(Enrolment(PptEnrolment.Identifier).and(expectedAcceptableCredentialsPredicate))
+          )
       )
 
       val result =
