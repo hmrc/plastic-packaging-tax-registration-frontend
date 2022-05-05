@@ -112,18 +112,20 @@ abstract class AuthActionBase @Inject() (
     def getSelectedClientIdentifier(): Option[String] = request.session.get("clientPPT")
 
     def authPredicate: Predicate =
-      if (!mustBeEnrolled)
-        acceptableCredentialStrength
-      else
-        getSelectedClientIdentifier().map { clientIdentifier =>
-          // If this request is decorated with a selected client identifier this indicates
-          // an agent at work; we need to request the delegated authority
-          Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key,
-                                                            clientIdentifier
-          ).withDelegatedAuthRule("ppt-auth")
-        }.getOrElse {
-          Enrolment(PptEnrolment.Identifier)
-        }.and(acceptableCredentialStrength)
+      User.and(
+        if (!mustBeEnrolled)
+          acceptableCredentialStrength
+        else
+          getSelectedClientIdentifier().map { clientIdentifier =>
+            // If this request is decorated with a selected client identifier this indicates
+            // an agent at work; we need to request the delegated authority
+            Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key,
+                                                              clientIdentifier
+            ).withDelegatedAuthRule("ppt-auth")
+          }.getOrElse {
+            Enrolment(PptEnrolment.Identifier)
+          }.and(acceptableCredentialStrength)
+      )
 
     val authorisation = authTimer.time()
     authorised(authPredicate)
@@ -163,9 +165,9 @@ abstract class AuthActionBase @Inject() (
       case _: InsufficientEnrolments =>
         // Returns has the best not enrolled explanation page and knows how to handle agents in this state
         Results.Redirect(appConfig.pptAccountUrl)
-      case _: UnsupportedAffinityGroup =>
-        Results.Redirect(routes.UnauthorisedController.onPageLoad())
-      case _: AuthorisationException =>
+      case _: UnsupportedCredentialRole =>
+        Results.Redirect(routes.UnauthorisedController.onPageLoad(nonAdminCredRole = true))
+      case _: UnsupportedAffinityGroup | _: AuthorisationException =>
         Results.Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }

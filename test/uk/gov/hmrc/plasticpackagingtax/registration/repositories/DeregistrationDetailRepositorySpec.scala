@@ -21,6 +21,7 @@ import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.time.{Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
@@ -42,6 +43,8 @@ class DeregistrationDetailRepositorySpec
     extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
     with DefaultAwaitTimeout with MongoSupport {
 
+  override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
+
   private val appConfig  = mock[AppConfig]
   private val mockConfig = mock[Configuration]
   when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
@@ -55,10 +58,8 @@ class DeregistrationDetailRepositorySpec
 
   val deregistrationDetailRepository = new DeregistrationDetailRepositoryImpl(userDataRepository)
 
-  implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
-
-  private def authRequest(sessionId: String): AuthenticatedRequest[Any] =
-    new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),
+  implicit val request: AuthenticatedRequest[Any] =
+    new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> "12345"),
                              PptTestData.newUser("123"),
                              appConfig
     )

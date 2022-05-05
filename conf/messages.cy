@@ -408,6 +408,12 @@ unauthorised.paragraph.1  = Bydd y gwasanaeth Treth Deunydd Pacio Plastig yn cae
 unauthorised.paragraph.2  = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.paragraph.2.link  = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
+unauthorised.not.admin.heading = You must have administrator rights to use this service
+unauthorised.not.admin.paragraph.1 = Your Government Gateway ID does not have administrator rights.
+unauthorised.not.admin.paragraph.2 = Someone from your organisation with administrator rights can complete the Plastic Packaging Tax registration.
+unauthorised.not.admin.paragraph.3 = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
+unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
+
 organisationDetails.registerAsOtherOrganisation.title  = Cofrestru fel Sefydliad Corfforedig Elusennol, ymddiriedolaeth neu gwmni tramor heb safle yn y DU
 organisationDetails.registerAsOtherOrganisation.paragraph.1  = Gwasanaeth newydd yw hwn, ac nid oes modd delio â’r math hwn o sefydliad ar hyn o bryd.
 organisationDetails.registerAsOtherOrganisation.paragraph.2  = Gallwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig o hyd drwy {0}.
