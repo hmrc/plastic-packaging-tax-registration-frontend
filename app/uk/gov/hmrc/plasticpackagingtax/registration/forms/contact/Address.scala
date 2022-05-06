@@ -32,10 +32,7 @@ case class Address(
   countryCode: String = "GB"
 ) {
 
-  def isValid: Boolean =
-    addressLine1.trim.nonEmpty &&
-      addressLine2.exists(_.trim.nonEmpty) &&
-      countryCode.trim.nonEmpty
+  def isValid: Boolean = countryCode.trim.nonEmpty
 
   def isUkAndMissingPostcode(): Boolean = countryCode == "GB" && postCode.isEmpty
 
