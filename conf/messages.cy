@@ -364,6 +364,11 @@ organisationDetails.type.hint  = Cofrestru ar gyfer Treth Deunydd Pacio Plastig 
 
 partnership.type.title  = Pa fath o bartneriaeth rydych yn ei chofrestru?
 partnership.type.empty.error  = Dewiswch y math o bartneriaeth yr ydych yn ei chofrestru
+partnership.nominated.type.empty.error = Dewiswch pa fath o sefydliad yw’r partner enwebedig
+partnership.other.type.empty.error = Dewiswch pa fath o sefydliad yw’r partner
+partnership.type.link.text = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO) or an overseas organisation without a UK establishment
+nominated.partner.type.title = Pa fath o sefydliad yw’r partner enwebedig?
+other.partner.type.title = Pa fath o sefydliad yw’r partner nesaf yr hoffech ei ychwanegu?
 
 partnership.name.title  = Beth yw enw’r bartneriaeth?
 partnership.name.section-header = Partnership details
@@ -390,10 +395,6 @@ partner.type.ScottishLimitedPartnership  = Partneriaeth gyfyngedig yn yr Alban
 partner.type.CIO  = Sefydliad corfforedig elusennol
 partner.type.OverseasCompanyUkBranch  = Cwmni o’r tu allan i’r DU sydd â changen neu leoliad busnes yn y DU
 partner.type.OverseasCompanyNoUKBranch  = Cwmni o’r tu allan i’r DU heb gangen na lleoliad busnes yn y DU
-
-nominated.partner.type.title  = Pa fath o sefydliad yw’r partner enwebedig?
-nominated.partner.name.empty.error  = Dewiswch fath o endid o’r opsiynau uchod
-other.partner.type.title  = Pa fath o sefydliad yw’r partner nesaf yr hoffech ei ychwanegu?
 
 partnership.job-title-page.title = Beth yw teitl swydd {0}?
 partnership.job-title-page.section-header = Nominated partner details
