@@ -69,18 +69,20 @@ class PartnershipTypeController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
+  private val form: Form[PartnerType] = PartnerType.form(PartnerType.FormMode.PartnershipType)
+
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
-          Ok(page(PartnerType.form().fill(PartnerType(partnershipDetails.partnershipType))))
-        case _ => Ok(page(PartnerType.form()))
+          Ok(page(form.fill(PartnerType(partnershipDetails.partnershipType))))
+        case _ => Ok(page(form))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      PartnerType.form()
+      form
         .bindFromRequest()
         .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),
               partnerType =>

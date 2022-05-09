@@ -365,6 +365,9 @@ organisationDetails.type.hint = Register for Plastic Packaging Tax if you are a 
 
 partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Select the type of partnership you are registering
+partnership.nominated.type.empty.error = Select the nominated partner’s organisation type
+partnership.other.type.empty.error = //todo
+partnership.type.link.text = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO) or an overseas organisation without a UK establishment
 
 partnership.name.title = What is the name of the partnership?
 partnership.name.section-header = Partnership details
@@ -388,9 +391,9 @@ partner.type.LimitedLiabilityPartnership = Limited liability partnership
 partner.type.LimitedPartnership = Limited partnership
 partner.type.ScottishPartnership = Scottish partnership
 partner.type.ScottishLimitedPartnership = Scottish limited partnership
-partner.type.CIO = Charitable Incorporated Organisation (CIO)
-partner.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
-partner.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
+partner.type.CIO = Charitable incorporated organisation (CIO)
+partner.type.OverseasCompanyUkBranch = Overseas organisation with a UK establishment
+partner.type.OverseasCompanyNoUKBranch = Overseas organisation without a UK establishment
 
 nominated.partner.type.title = What type of organisation is the nominated partner?
 nominated.partner.name.empty.error = Please select an entity type from the options above

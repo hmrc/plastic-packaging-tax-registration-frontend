@@ -23,7 +23,7 @@ import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
   routes => organisationRoutes
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType.form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType.{form, FormMode}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
@@ -43,7 +43,9 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[partnership_type]
 
-  private def createView(form: Form[PartnerType] = PartnerType.form()): Document =
+  private def createView(
+    form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)
+  ): Document =
     page(form)(journeyRequest, messages)
 
   "Partnership Type View" should {
@@ -120,19 +122,40 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
     "display checked radio button" in {
 
       val form = PartnerType
-        .form()
-        .fill(PartnerType(LIMITED_LIABILITY_PARTNERSHIP.toString))
+        .form(FormMode.NominatedPartnerType)
+        .fill(PartnerType(LIMITED_LIABILITY_PARTNERSHIP))
       val view = createView(form)
 
       view.getElementById("answer-2").attr("value") mustBe LIMITED_LIABILITY_PARTNERSHIP.toString
     }
 
     "display error" when {
-
-      "no radio button checked" in {
+      "no radio button checked - partnership" in {
 
         val form = PartnerType
-          .form()
+          .form(FormMode.PartnershipType)
+          .bind(emptyFormData)
+        val view = createView(form)
+
+        view must haveGovukFieldError("answer",
+                                      "Select the type of partnership you are registering"
+        )
+        view must haveGovukGlobalErrorSummary
+      }
+      "no radio button checked - nominated" in {
+
+        val form = PartnerType
+          .form(FormMode.NominatedPartnerType)
+          .bind(emptyFormData)
+        val view = createView(form)
+
+        view must haveGovukFieldError("answer", "Select the nominated partner’s organisation type")
+        view must haveGovukGlobalErrorSummary
+      }
+      "no radio button checked - other" in {
+
+        val form = PartnerType
+          .form(FormMode.OtherPartnerType)
           .bind(emptyFormData)
         val view = createView(form)
 
@@ -145,8 +168,8 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form())(request, messages)
-    page.render(form(), request, messages)
+    page.f(form(FormMode.NominatedPartnerType))(request, messages)
+    page.render(form(FormMode.NominatedPartnerType), request, messages)
   }
 
 }

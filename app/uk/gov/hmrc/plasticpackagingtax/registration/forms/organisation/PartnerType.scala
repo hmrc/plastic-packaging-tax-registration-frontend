@@ -53,20 +53,29 @@ object PartnerTypeEnum extends Enumeration {
 case class PartnerType(answer: PartnerTypeEnum)
 
 object PartnerType extends CommonFormValidators {
-  private val emptyError = "partnership.type.empty.error"
 
-  def form(): Form[PartnerType] =
+  sealed trait FormMode
+
+  object FormMode {
+    case object PartnershipType      extends FormMode
+    case object NominatedPartnerType extends FormMode
+    case object OtherPartnerType     extends FormMode
+  }
+
+  private def emptyError(mode: FormMode): String =
+    mode match {
+      case FormMode.NominatedPartnerType => "partnership.nominated.type.empty.error"
+      case FormMode.OtherPartnerType     => "partnership.other.type.empty.error"
+      case FormMode.PartnershipType      => "partnership.type.empty.error"
+    }
+
+  def form(mode: FormMode): Form[PartnerType] =
     Form(
       mapping(
-        "answer" -> nonEmptyString(emptyError)
-          .verifying(emptyError, contains(PartnerTypeEnum.values.toSeq.map(_.toString)))
+        "answer" -> nonEmptyString(emptyError(mode))
+          .verifying(emptyError(mode), contains(PartnerTypeEnum.values.toSeq.map(_.toString)))
+          .transform[PartnerTypeEnum](PartnerTypeEnum.withName, _.toString)
       )(PartnerType.apply)(PartnerType.unapply)
     )
-
-  def apply(value: String): PartnerType =
-    PartnerType(PartnerTypeEnum.withName(value))
-
-  def unapply(partnerType: PartnerType): Option[String] =
-    Some(partnerType.answer.toString)
 
 }

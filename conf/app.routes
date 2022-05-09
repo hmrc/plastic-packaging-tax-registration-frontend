@@ -105,8 +105,9 @@ GET        /alf-callback        uk.gov.hmrc.plasticpackagingtax.registration.con
 
 # Partnership Registrations
 GET        /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.displayNewPartner()
-GET        /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.displayExistingPartner(partnerId: String)
 POST       /partnership-partner-type    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.submitNewPartner()
+
+GET        /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.displayExistingPartner(partnerId: String)
 POST       /partnership-partner-type/:partnerId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeController.submitExistingPartner(partnerId: String)
 
 GET        /partnership-registration-available-soon    uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerRegistrationAvailableSoonController.onPageLoad()

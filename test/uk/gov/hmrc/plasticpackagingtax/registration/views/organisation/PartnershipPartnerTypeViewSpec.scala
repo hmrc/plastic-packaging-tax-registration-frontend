@@ -25,6 +25,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType.FormMode
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   CHARITABLE_INCORPORATED_ORGANISATION,
   LIMITED_LIABILITY_PARTNERSHIP,
@@ -64,13 +65,17 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
     )
   }
 
-  private def createViewNominated(form: Form[PartnerType] = PartnerType.form()): Document =
+  private def createViewNominated(
+    form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)
+  ): Document =
     page(form, registrationWithOtherPartners.nominatedPartner.map(_.id), submitLink)(
       journeyReqForOthers,
       messages
     )
 
-  private def createViewForOthers(form: Form[PartnerType] = PartnerType.form()): Document =
+  private def createViewForOthers(
+    form: Form[PartnerType] = PartnerType.form(FormMode.OtherPartnerType)
+  ): Document =
     page(form, None, submitLink)(journeyReqForOthers, messages)
 
   "Confirm Partnership Type View for Nominated" should {
@@ -164,8 +169,15 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PartnerType.form(), None, submitLink)(journeyRequest, messages)
-    page.render(PartnerType.form(), None, submitLink, journeyRequest, messages)
+    page.f(PartnerType.form(FormMode.NominatedPartnerType), None, submitLink)(journeyRequest,
+                                                                              messages
+    )
+    page.render(PartnerType.form(FormMode.NominatedPartnerType),
+                None,
+                submitLink,
+                journeyRequest,
+                messages
+    )
   }
 
   def radioInputMustBe(

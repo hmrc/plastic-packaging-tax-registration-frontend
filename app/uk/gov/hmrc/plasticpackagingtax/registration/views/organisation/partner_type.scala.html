@@ -29,7 +29,8 @@
     govukRadios : GovukRadios,
     sectionHeader: sectionHeader,
     saveButtons: saveButtons,
-    errorSummary: errorSummary
+    errorSummary: errorSummary,
+    link: link
 )
 
 
@@ -79,6 +80,14 @@
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
                 ))
+
+        <p class="govuk-body">
+            @link(
+            id = Some("g-from-link-"),
+            text = messages("partnership.type.link.text"),
+            call = Call("GET", "/G-form") //todo
+            )
+        </p>
 
         @saveButtons()
     }
