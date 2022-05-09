@@ -33,22 +33,25 @@
 @jobTitleField = @{form("value")}
 
 @govukLayout(
-  title = Title(headingKey = "partnership.otherPartners.jobTitlePage.title", contactName),
-  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
-  @errorSummary(form.errors)
+    title = Title(headingKey = "partnership.job-title-page.title", contactName),
+    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
 
-  @formHelper(action = updateCall, 'autoComplete -> "off") {
-    @govukInput(
-        Input(
-            id = s"${jobTitleField.name}",
-            name = jobTitleField.name,
-            value = jobTitleField.value,
-            errorMessage = jobTitleField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-            label = Label(
-                isPageHeading = true,
-                classes = gdsLabelPageHeading,
-                content = Text(messages("partnership.otherPartners.jobTitlePage.title", contactName))))
-            )
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("partnership.job-title-page.section-header"))
+
+    @formHelper(action = updateCall, 'autoComplete -> "off") {
+        @govukInput(
+            Input(
+                id = s"${jobTitleField.name}",
+                name = jobTitleField.name,
+                value = jobTitleField.value,
+                errorMessage = jobTitleField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+                label = Label(
+                    isPageHeading = true,
+                    classes = gdsLabelPageHeading,
+                    content = Text(messages("partnership.job-title-page.title", contactName))))
+        )
         @saveButtons()
     }
- }
+}

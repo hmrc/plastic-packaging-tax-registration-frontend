@@ -189,7 +189,7 @@ primaryContactDetails.fullNamePage.value.error.specialCharacters  = Mae’n rhai
 primaryContactDetails.jobTitlePage.title  = Beth yw teitl swydd {0}?
 primaryContactDetails.jobTitle.empty.error  = Nodwch deitl y swydd
 primaryContactDetails.jobTitle.tooLong.error  = Mae’n rhaid i deitl y swydd beidio â bod yn hirach na 155 o gymeriadau
-primaryContactDetails.jobTitle.nonAlphaChar.error  = Nodwch deitl y swydd yn y fformat cywir
+primaryContactDetails.jobTitle.nonAlphaChar.error = Job title must only include letters and spaces
 
 primaryContactDetails.emailAddress.title  = Beth yw cyfeiriad e-bost {0}?
 primaryContactDetails.emailAddress.hint  = Dim ond i anfon hysbysiadau am y cofrestriad hwn, y cyfrif a’r Ffurflenni Treth y byddwn yn ei ddefnyddio.
@@ -394,6 +394,9 @@ partner.type.OverseasCompanyNoUKBranch  = Cwmni o’r tu allan i’r DU heb gang
 nominated.partner.type.title  = Pa fath o sefydliad yw’r partner enwebedig?
 nominated.partner.name.empty.error  = Dewiswch fath o endid o’r opsiynau uchod
 other.partner.type.title  = Pa fath o sefydliad yw’r partner nesaf yr hoffech ei ychwanegu?
+
+partnership.job-title-page.title = Beth yw teitl swydd {0}?
+partnership.job-title-page.section-header = Nominated partner details
 
 partnerships.otherPartners.title  =  Mae gennych {0} partner yn eich partneriaeth
 partnership.otherPartners.contactNamePage.title  = Pwy yw’r prif gyswllt?
