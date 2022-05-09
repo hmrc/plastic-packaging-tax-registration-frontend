@@ -19,10 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation
 import play.api.data.Forms.text
 import play.api.data.{Form, Forms}
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.{
-  isMatchingPattern,
-  isNonEmpty
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.{isMatchingPattern, isNonEmpty}
 
 import java.util.regex.Pattern
 
@@ -31,26 +28,25 @@ case class PartnershipName(value: String)
 object PartnershipName {
 
   implicit val format: OFormat[PartnershipName] = Json.format[PartnershipName]
-  val partnershipNameEmptyError                 = "partnership.name.empty.error"
-  val partnershipNameFormatError                = "partnership.name.format.error"
-
-  private val PARTNERSHIP_NAME_REGEX =
-    Pattern.compile("""^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\[\]£€¥\\—–‐-]{1,160}$""")
-
-  val maxLength       = 160
-  val partnershipName = "value"
+  private val PARTNERSHIP_NAME_REGEX            = Pattern.compile("""^[a-zA-Z0-9À-ÿ !#$%&'‘’"“”«»()*+,./:;=?@\[\]£€¥\\—–‐-]{1,160}$""")
+  private val maxLength                         = 160
+  private val partnershipName                   = "value"
 
   private val mapping = Forms.mapping(
     partnershipName ->
       text()
-        .verifying(partnershipNameEmptyError, isNonEmpty)
-        .verifying(partnershipNameFormatError,
-                   partnershipName =>
-                     !isNonEmpty(partnershipName) || isMatchingPattern(partnershipName,
-                                                                       PARTNERSHIP_NAME_REGEX
-                     )
-        )
+        .verifying("partnership.name.empty.error", isNonEmpty)
+        .verifying("partnership.name.too-long", isShortEnough).verifying() // todo interpolate error with maxLength?
+        .verifying("partnership.name.format.error", matchesRegex)
   )(PartnershipName.apply)(PartnershipName.unapply)
+
+  private def isShortEnough: String => Boolean = {
+    name => name.length <= maxLength
+  }
+
+  private def matchesRegex: String => Boolean = {
+    partnershipName => !isNonEmpty(partnershipName) || isMatchingPattern(partnershipName, PARTNERSHIP_NAME_REGEX)
+  }
 
   def form(): Form[PartnershipName] = Form(mapping)
 }

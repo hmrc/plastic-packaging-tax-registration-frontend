@@ -366,8 +366,10 @@ partnership.type.title  = Pa fath o bartneriaeth rydych yn ei chofrestru?
 partnership.type.empty.error  = Dewiswch y math o bartneriaeth yr ydych yn ei chofrestru
 
 partnership.name.title  = Beth yw enw’r bartneriaeth?
+partnership.name.section-header = Partnership details
 partnership.name.empty.error  = Nodwch enw eich partneriaeth
 partnership.name.format.error  = Nodwch enw eich partneriaeth yn y fformat cywir
+partnership.name.too-long = Name must be 160 characters of fewer
 
 partnership.registrationAvailableSoon.header  = Partneriaeth
 partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir

@@ -367,8 +367,10 @@ partnership.type.title = What type of partnership are you registering?
 partnership.type.empty.error = Select the type of partnership you are registering
 
 partnership.name.title = What is the name of the partnership?
-partnership.name.empty.error = Please enter your partnership name
-partnership.name.format.error = Please enter your partnership name in correct format
+partnership.name.section-header = Partnership details
+partnership.name.empty.error = Enter your partnership name
+partnership.name.format.error = Enter your partnership name in correct format
+partnership.name.too-long = Name must be 160 characters of fewer
 
 partnership.registrationAvailableSoon.header = Partnership
 partnership.registrationAvailableSoon.title = Partnership registration will be available soon
