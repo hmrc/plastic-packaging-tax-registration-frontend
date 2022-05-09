@@ -68,7 +68,7 @@
   @errorSummary(form.errors)
 
   @sectionHeading.map { heading =>
-    @sectionHeader(heading)
+    @sectionHeader(messages(heading))
   }
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {

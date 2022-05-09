@@ -99,7 +99,8 @@ class PartnerEmailAddressController @Inject() (
           renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
                                                getProspectiveEmail(),
                                                routes.PartnerEmailAddressController.displayNewPartner(),
-                                               routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode()
+                                               routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode(),
+            Some("partnership.job-title-page.section-header")
           )
         )
 
