@@ -36,7 +36,7 @@
 
 @(form: Form[Boolean], registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
-@numPartners = @{ (registration.otherPartners.size + 1).toString }
+@numPartners = @{ registration.otherPartners.size + 1 }
 
 @partners = @{
     ListMember(
@@ -50,19 +50,19 @@
                         ListMember(name = partner.name,
                             change =
                                 Some(routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id)),
-                            remove = Some(routes.ConfirmRemovePartnerController.displayPage(partner.id))
+                            remove = if(numPartners > 2) Some(routes.ConfirmRemovePartnerController.displayPage(partner.id)) else None
                         )
                 )
 }
 
 @govukLayout(
-    title = Title("amend.partner.listPartners.title", numPartners),
+    title = Title("amend.partner.listPartners.title", numPartners.toString),
     backButton = Some(BackButton(messages("site.back"), routes.ManagePartnersController.displayPage(), messages("site.back.hiddenText")))
 ) {
 
     @errorSummary(form.errors)
 
-    @pageHeading(text = messages("amend.partner.listPartners.title", numPartners))
+    @pageHeading(text = messages("amend.partner.listPartners.title", numPartners.toString))
 
     @listMembers(partners)
 
