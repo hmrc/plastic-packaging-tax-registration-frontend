@@ -363,7 +363,7 @@ organisationDetails.type.GroupNominatedPartnership  = Partneriaeth atebolrwydd c
 organisationDetails.type.hint  = Cofrestru ar gyfer Treth Deunydd Pacio Plastig os ydych yn Sefydliad Corfforedig Elusennol, yn ymddiriedolaeth, yn sefydliad tramor heb safle yn y DU, neu’n gorff cyhoeddus
 
 partnership.type.title  = Pa fath o bartneriaeth rydych yn ei chofrestru?
-partnership.type.empty.error  = Mae’n rhaid dewis gwerth
+partnership.type.empty.error  = Dewiswch y math o bartneriaeth yr ydych yn ei chofrestru
 
 partnership.name.title  = Beth yw enw’r bartneriaeth?
 partnership.name.empty.error  = Nodwch enw eich partneriaeth

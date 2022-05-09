@@ -53,12 +53,12 @@ object PartnerTypeEnum extends Enumeration {
 case class PartnerType(answer: PartnerTypeEnum)
 
 object PartnerType extends CommonFormValidators {
-  lazy val emptyError = "partnership.partner.name.empty.error"
+  private val emptyError = "partnership.type.empty.error"
 
   def form(): Form[PartnerType] =
     Form(
       mapping(
-        "answer" -> text()
+        "answer" -> nonEmptyString(emptyError)
           .verifying(emptyError, contains(PartnerTypeEnum.values.toSeq.map(_.toString)))
       )(PartnerType.apply)(PartnerType.unapply)
     )

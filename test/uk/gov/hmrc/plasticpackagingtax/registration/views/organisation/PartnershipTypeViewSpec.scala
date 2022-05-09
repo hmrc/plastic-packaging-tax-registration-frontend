@@ -136,7 +136,9 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer", "This field is required")
+        view must haveGovukFieldError("answer",
+                                      "Select the type of partnership you are registering"
+        )
         view must haveGovukGlobalErrorSummary
       }
     }

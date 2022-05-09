@@ -70,11 +70,11 @@ class PartnershipTypeController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
-          Future(Ok(page(PartnerType.form().fill(PartnerType(partnershipDetails.partnershipType)))))
-        case _ => Future(Ok(page(PartnerType.form())))
+          Ok(page(PartnerType.form().fill(PartnerType(partnershipDetails.partnershipType))))
+        case _ => Ok(page(PartnerType.form()))
       }
     }
 
