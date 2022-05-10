@@ -51,15 +51,16 @@ abstract class PartnerPhoneNumberControllerBase(
   protected def doDisplay(
     partnerId: Option[String],
     backCall: Call,
-    submitCall: Call
+    submitCall: Call,
+    sectionHeading: Option[String] = None
   ): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       getPartner(partnerId).map { partner =>
-        renderPageFor(partner, backCall, submitCall)
+        renderPageFor(partner, backCall, submitCall, sectionHeading)
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call, sectionHeading: Option[String])(implicit
     request: JourneyRequest[AnyContent]
   ): Result =
     partner.contactDetails.map {
@@ -71,7 +72,7 @@ abstract class PartnerPhoneNumberControllerBase(
             case _ =>
               PhoneNumber.form()
           }
-          Ok(page(form, backCall, submitCall, contactName))
+          Ok(page(form, backCall, submitCall, contactName, sectionHeading))
         }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
 
@@ -108,7 +109,7 @@ abstract class PartnerPhoneNumberControllerBase(
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName))),
+            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName, None))),
           phoneNumber =>
             updateAction(phoneNumber).map { _ =>
               FormAction.bindFromRequest match {

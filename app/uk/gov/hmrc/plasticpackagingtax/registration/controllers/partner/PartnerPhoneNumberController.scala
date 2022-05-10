@@ -45,7 +45,8 @@ class PartnerPhoneNumberController @Inject() (
   def displayNewPartner(): Action[AnyContent] =
     doDisplay(None,
               partnerRoutes.PartnerContactNameController.displayNewPartner(),
-              partnerRoutes.PartnerPhoneNumberController.submitNewPartner()
+              partnerRoutes.PartnerPhoneNumberController.submitNewPartner(),
+      Some("partnership.job-title-page.section-header")
     )
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =

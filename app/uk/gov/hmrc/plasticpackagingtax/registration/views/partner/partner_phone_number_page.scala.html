@@ -28,7 +28,7 @@
   errorSummary: errorSummary,
   formHelper: FormWithCSRF
 )
-@(form: Form[PhoneNumber], backLink: Call, updateCall: Call, contactName: String)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[PhoneNumber], backLink: Call, updateCall: Call, contactName: String, sectionHeading: Option[String])(implicit request: JourneyRequest[_], messages: Messages)
 
 @phoneNumberField = @{form("value")}
 
@@ -36,6 +36,10 @@
   title = Title(headingKey = "partnership.otherPartners.contactPhoneNumberPage.title", contactName),
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
+
+    @sectionHeading.map { heading =>
+        @sectionHeader(messages(heading))
+    }
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {
     @govukInput(

@@ -30,13 +30,14 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[partner_phone_number_page]
 
-  private val backLink   = Call("GET", "/back-link")
+  private val backLink = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
   private val contactName = "A Contact"
+  private val sectionHeading = None
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
-    page(form, backLink, updateLink, contactName)(journeyRequest, messages)
+    page(form, backLink, updateLink, contactName, sectionHeading)(journeyRequest, messages)
 
   "Phone number View" should {
 
@@ -92,8 +93,8 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(PhoneNumber.form(), backLink, updateLink, contactName)(journeyRequest, messages)
-    page.render(PhoneNumber.form(), backLink, updateLink, contactName, journeyRequest, messages)
+    page.f(PhoneNumber.form(), backLink, updateLink, contactName, sectionHeading)(journeyRequest, messages)
+    page.render(PhoneNumber.form(), backLink, updateLink, contactName, sectionHeading,journeyRequest, messages)
   }
 
 }
