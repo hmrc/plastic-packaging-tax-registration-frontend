@@ -41,7 +41,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
          Some(emailAddress),
          backLink,
          updateCall,
-         Some(messages("primaryContactDetails.sectionHeader"))
+         Some("primaryContactDetails.sectionHeader")
     )(journeyRequest, messages)
 
   "Email Address Passcode View" should {
@@ -186,7 +186,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
                 Some("test@test.com"),
                 backLink,
                 updateCall,
-                Some(messages("primaryContactDetails.sectionHeader")),
+                Some("primaryContactDetails.sectionHeader"),
                 request,
                 messages
     )

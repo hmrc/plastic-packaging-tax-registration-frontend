@@ -59,7 +59,8 @@ class PartnerPhoneNumberController @Inject() (
              partnerRoutes.PartnerContactNameController.displayNewPartner(),
              partnerRoutes.PartnerPhoneNumberController.submitNewPartner(),
              partnerRoutes.PartnerContactAddressController.captureNewPartner(),
-             commonRoutes.TaskListController.displayPage()
+             commonRoutes.TaskListController.displayPage(),
+
     )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
@@ -67,7 +68,7 @@ class PartnerPhoneNumberController @Inject() (
              routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
              routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
              routes.PartnerContactAddressController.captureExistingPartner(partnerId),
-             partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId)
+             partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId),
     )
 
 }

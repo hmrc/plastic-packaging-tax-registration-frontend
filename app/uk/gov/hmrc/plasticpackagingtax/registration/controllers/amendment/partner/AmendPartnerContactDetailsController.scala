@@ -258,8 +258,8 @@ class AmendPartnerContactDetailsController @Inject() (
           routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
       updateCall =
         routes.AmendPartnerContactDetailsController.updatePhoneNumber(partner.id),
-      contactName = partner.name
-    )
+      contactName = partner.name,
+      isNominated)
 
   def address(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>
