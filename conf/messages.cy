@@ -655,6 +655,9 @@ contactDetails.member.check.contact.name  = Enw cyswllt
 contactDetails.member.check.contact.email  =  E-bost cyswllt
 contactDetails.member.check.contact.phone  = Rhif ffôn
 contactDetails.member.check.contact.address  = Cyfeiriad cyswllt
+contactDetails.member.nominated.first.hint = Dyma cyntaf enw’r  person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+contactDetails.member.nominated.last.hint = Dyma olaf enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+contactDetails.member.para = Nodwch y cyswllt cywir yma. Fel arfer, dyma’r person sy’n gyfrifol am rwymedigaeth y sefydliad ar gyfer y Dreth Deunydd Pacio Plastig.
 
 addressLookup.member.contact.lookup.title  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?
 addressLookup.member.contact.lookup.heading  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?

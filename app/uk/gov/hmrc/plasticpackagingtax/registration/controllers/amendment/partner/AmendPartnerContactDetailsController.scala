@@ -19,35 +19,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 import play.api.data.Form
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
-  AmendmentController,
-  routes => amendmentRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
-  AddressLookupIntegration,
-  EmailVerificationActions
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
-  EmailAddress,
-  EmailAddressPasscode,
-  JobTitle,
-  PhoneNumber
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{AmendmentController, routes => amendmentRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{AddressLookupIntegration, EmailVerificationActions}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, EmailAddressPasscode, JobTitle, PhoneNumber}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  AmendRegistrationUpdateService,
-  Registration
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.services.{
-  AddressCaptureConfig,
-  AddressCaptureService,
-  EmailVerificationService
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{AmendRegistrationUpdateService, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, AddressCaptureService, EmailVerificationService}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
   email_address_passcode_confirmation_page,
   email_address_passcode_page,
@@ -79,20 +58,15 @@ class AmendPartnerContactDetailsController @Inject() (
   jobTitlePage: partner_job_title_page,
   addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration
-    with EmailVerificationActions {
+    extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration with EmailVerificationActions {
 
   def contactName(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       val partner = getPartner(partnerId)
       val form = MemberName.form().fill(
         MemberName(
-          firstName = partner.contactDetails.flatMap(_.firstName).getOrElse(
-            throw new IllegalStateException("Partner first name absent")
-          ),
-          lastName = partner.contactDetails.flatMap(_.lastName).getOrElse(
-            throw new IllegalStateException("Partner last name absent")
-          )
+          firstName = partner.contactDetails.flatMap(_.firstName).getOrElse(throw new IllegalStateException("Partner first name absent")),
+          lastName = partner.contactDetails.flatMap(_.lastName).getOrElse(throw new IllegalStateException("Partner last name absent"))
         )
       )
 
@@ -105,24 +79,22 @@ class AmendPartnerContactDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[MemberName]) =>
-            Future.successful(
-              BadRequest(
-                buildContactNamePage(formWithErrors, getPartner(partnerId), isNominated(partnerId))
-              )
-            ),
+            Future.successful(BadRequest(buildContactNamePage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
           partnerName =>
             updateRegistration(
               { registration: Registration =>
-                registration.withUpdatedPartner(partnerId,
-                                                partner =>
-                                                  partner.copy(contactDetails =
-                                                    partner.contactDetails.map(
-                                                      _.copy(firstName =
-                                                               Some(partnerName.firstName),
-                                                             lastName = Some(partnerName.lastName)
-                                                      )
-                                                    )
-                                                  )
+                registration.withUpdatedPartner(
+                  partnerId,
+                  partner =>
+                    partner.copy(contactDetails =
+                      partner.contactDetails.map(
+                        _.copy(
+                          firstName =
+                            Some(partnerName.firstName),
+                          lastName = Some(partnerName.lastName)
+                        )
+                      )
+                    )
                 )
               },
               successfulRedirect(partnerId)
@@ -130,26 +102,24 @@ class AmendPartnerContactDetailsController @Inject() (
         )
     }
 
-  private def buildContactNamePage(form: Form[MemberName], partner: Partner, isNominated: Boolean)(
-    implicit request: Request[_]
-  ) =
-    contactNamePage(form = form,
-                    partnershipName = partner.name,
-                    backLink =
-                      if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
-                      else
-                        routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
-                    updateCall =
-                      routes.AmendPartnerContactDetailsController.updateContactName(partner.id)
+  private def buildContactNamePage(form: Form[MemberName], partner: Partner, isNominated: Boolean)(implicit request: Request[_]) =
+    contactNamePage(
+      form = form,
+      partnershipName = partner.name,
+      isNominated,
+      backLink =
+        if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
+        else
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
+      updateCall =
+        routes.AmendPartnerContactDetailsController.updateContactName(partner.id)
     )
 
   def emailAddress(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       val form = EmailAddress.form().fill(
         EmailAddress(
-          getPartner(partnerId).contactDetails.flatMap(_.emailAddress).getOrElse(
-            throw new IllegalStateException("Partner email address absent")
-          )
+          getPartner(partnerId).contactDetails.flatMap(_.emailAddress).getOrElse(throw new IllegalStateException("Partner email address absent"))
         )
       )
       Ok(buildContactEmailPage(form, getPartner(partnerId), isNominated(partnerId)))
@@ -162,32 +132,23 @@ class AmendPartnerContactDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[EmailAddress]) =>
-            Future.successful(
-              BadRequest(
-                buildContactEmailPage(formWithErrors, getPartner(partnerId), isNominated(partnerId))
-              )
-            ),
+            Future.successful(BadRequest(buildContactEmailPage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
           emailAddress =>
             doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
               isEmailVerificationRequired =>
                 if (!isEmailVerificationRequired)
-                  updateRegistration({ registration: Registration =>
-                                       registration.withUpdatedPartner(
-                                         partnerId,
-                                         partner => applyEmailAddressTo(partner, emailAddress.value)
-                                       )
-                                     },
-                                     successfulRedirect(partnerId)
+                  updateRegistration(
+                    { registration: Registration =>
+                      registration.withUpdatedPartner(partnerId, partner => applyEmailAddressTo(partner, emailAddress.value))
+                    },
+                    successfulRedirect(partnerId)
                   )
                 else
-                  promptForEmailVerificationCode(request,
-                                                 emailAddress,
-                                                 routes.AmendPartnerContactDetailsController.emailAddress(
-                                                   partner.id
-                                                 ),
-                                                 routes.AmendPartnerContactDetailsController.confirmEmailCode(
-                                                   partner.id
-                                                 )
+                  promptForEmailVerificationCode(
+                    request,
+                    emailAddress,
+                    routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
+                    routes.AmendPartnerContactDetailsController.confirmEmailCode(partner.id)
                   )
             }
         )
@@ -197,14 +158,11 @@ class AmendPartnerContactDetailsController @Inject() (
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       val partner = getPartner(partnerId)
       Ok(
-        renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
-                                             getProspectiveEmail(),
-                                             routes.AmendPartnerContactDetailsController.emailAddress(
-                                               partner.id
-                                             ),
-                                             routes.AmendPartnerContactDetailsController.checkEmailVerificationCode(
-                                               partnerId
-                                             )
+        renderEnterEmailVerificationCodePage(
+          EmailAddressPasscode.form(),
+          getProspectiveEmail(),
+          routes.AmendPartnerContactDetailsController.emailAddress(partner.id),
+          routes.AmendPartnerContactDetailsController.checkEmailVerificationCode(partnerId)
         )
       )
     }
@@ -243,43 +201,33 @@ class AmendPartnerContactDetailsController @Inject() (
         if (isVerified)
           updateRegistration(
             { registration: Registration =>
-              registration.withUpdatedPartner(
-                partnerId,
-                partner => applyEmailAddressTo(partner, prospectiveEmail)
-              )
+              registration.withUpdatedPartner(partnerId, partner => applyEmailAddressTo(partner, prospectiveEmail))
             },
             successfulRedirect(partnerId)
           )
         else
-          Future.successful(
-            Redirect(routes.AmendPartnerContactDetailsController.emailAddress(partnerId))
-          )
+          Future.successful(Redirect(routes.AmendPartnerContactDetailsController.emailAddress(partnerId)))
       }
     }
 
-  private def buildContactEmailPage(
-    form: Form[EmailAddress],
-    partner: Partner,
-    isNominated: Boolean
-  )(implicit request: JourneyRequest[_]) =
-    contactEmailPage(form = form,
-                     backLink =
-                       if (isNominated)
-                         amendmentRoutes.AmendRegistrationController.displayPage()
-                       else
-                         routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
-                     updateCall =
-                       routes.AmendPartnerContactDetailsController.updateEmailAddress(partner.id),
-                     contactName = partner.name
+  private def buildContactEmailPage(form: Form[EmailAddress], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
+    contactEmailPage(
+      form = form,
+      backLink =
+        if (isNominated)
+          amendmentRoutes.AmendRegistrationController.displayPage()
+        else
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
+      updateCall =
+        routes.AmendPartnerContactDetailsController.updateEmailAddress(partner.id),
+      contactName = partner.name
     )
 
   def phoneNumber(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       val form = PhoneNumber.form().fill(
         PhoneNumber(
-          getPartner(partnerId).contactDetails.flatMap(_.phoneNumber).getOrElse(
-            throw new IllegalStateException("Partner phone number absent")
-          )
+          getPartner(partnerId).contactDetails.flatMap(_.phoneNumber).getOrElse(throw new IllegalStateException("Partner phone number absent"))
         )
       )
       Ok(buildContactPhoneNumberPage(form, getPartner(partnerId), isNominated(partnerId)))
@@ -291,14 +239,7 @@ class AmendPartnerContactDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(
-              BadRequest(
-                buildContactPhoneNumberPage(formWithErrors,
-                                            getPartner(partnerId),
-                                            isNominated(partnerId)
-                )
-              )
-            ),
+            Future.successful(BadRequest(buildContactPhoneNumberPage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
           phoneNumber =>
             updateRegistration(
               { registration: Registration =>
@@ -315,24 +256,17 @@ class AmendPartnerContactDetailsController @Inject() (
         )
     }
 
-  private def buildContactPhoneNumberPage(
-    form: Form[PhoneNumber],
-    partner: Partner,
-    isNominated: Boolean
-  )(implicit request: JourneyRequest[_]) =
-    contactPhoneNumberPage(form = form,
-                           backLink =
-                             if (isNominated)
-                               amendmentRoutes.AmendRegistrationController.displayPage()
-                             else
-                               routes.PartnerContactDetailsCheckAnswersController.displayPage(
-                                 partner.id
-                               ),
-                           updateCall =
-                             routes.AmendPartnerContactDetailsController.updatePhoneNumber(
-                               partner.id
-                             ),
-                           contactName = partner.name
+  private def buildContactPhoneNumberPage(form: Form[PhoneNumber], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
+    contactPhoneNumberPage(
+      form = form,
+      backLink =
+        if (isNominated)
+          amendmentRoutes.AmendRegistrationController.displayPage()
+        else
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
+      updateCall =
+        routes.AmendPartnerContactDetailsController.updatePhoneNumber(partner.id),
+      contactName = partner.name
     )
 
   def address(partnerId: String): Action[AnyContent] =
@@ -373,9 +307,7 @@ class AmendPartnerContactDetailsController @Inject() (
       val partner = getPartner(partnerId)
       val form = JobTitle.form().fill(
         JobTitle(value =
-          partner.contactDetails.flatMap(_.jobTitle).getOrElse(
-            throw new IllegalStateException("Nominated Partner job title absent")
-          )
+          partner.contactDetails.flatMap(_.jobTitle).getOrElse(throw new IllegalStateException("Nominated Partner job title absent"))
         )
       )
 
@@ -388,23 +320,20 @@ class AmendPartnerContactDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[JobTitle]) =>
-            Future.successful(
-              BadRequest(
-                buildJobTitlePage(formWithErrors, getPartner(partnerId), isNominated(partnerId))
-              )
-            ),
+            Future.successful(BadRequest(buildJobTitlePage(formWithErrors, getPartner(partnerId), isNominated(partnerId)))),
           jobTitle =>
             updateRegistration(
               { registration: Registration =>
-                registration.withUpdatedPartner(partnerId,
-                                                partner =>
-                                                  partner.copy(contactDetails =
-                                                    partner.contactDetails.map(
-                                                      _.copy(jobTitle =
-                                                        Some(jobTitle.value)
-                                                      )
-                                                    )
-                                                  )
+                registration.withUpdatedPartner(
+                  partnerId,
+                  partner =>
+                    partner.copy(contactDetails =
+                      partner.contactDetails.map(
+                        _.copy(jobTitle =
+                          Some(jobTitle.value)
+                        )
+                      )
+                    )
                 )
               },
               successfulRedirect(partnerId)
@@ -412,23 +341,20 @@ class AmendPartnerContactDetailsController @Inject() (
         )
     }
 
-  private def buildJobTitlePage(form: Form[JobTitle], partner: Partner, isNominated: Boolean)(
-    implicit request: JourneyRequest[_]
-  ) =
-    jobTitlePage(form = form,
-                 contactName = partner.name,
-                 backLink =
-                   if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
-                   else
-                     routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
-                 updateCall =
-                   routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
+  private def buildJobTitlePage(form: Form[JobTitle], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
+    jobTitlePage(
+      form = form,
+      contactName = partner.name,
+      backLink =
+        if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
+        else
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
+      updateCall =
+        routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
     )
 
   private def getPartner(partnerId: String)(implicit request: JourneyRequest[_]): Partner =
-    request.registration.findPartner(partnerId).getOrElse(
-      throw new IllegalStateException("Partner not found")
-    )
+    request.registration.findPartner(partnerId).getOrElse(throw new IllegalStateException("Partner not found"))
 
   private def isNominated(partnerId: String)(implicit request: JourneyRequest[_]) =
     request.registration.isNominatedPartner(Some(partnerId))
