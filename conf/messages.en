@@ -411,6 +411,8 @@ partnership.otherPartners.checkAnswers.jobTitle = Job title
 partnership.otherPartners.checkAnswers.emailAddress = Email address
 partnership.otherPartners.checkAnswers.phoneNumber = Telephone number
 
+partnership.nominated-email-verified.section-heading = Nominated partner details
+
 unauthorised.heading = You must be registered to use this service
 unauthorised.paragraph.1 = You need to {0} to use this service.
 unauthorised.paragraph.1.link = register for Plastic Packaging Tax

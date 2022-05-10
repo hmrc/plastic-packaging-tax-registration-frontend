@@ -409,6 +409,8 @@ partnership.otherPartners.checkAnswers.jobTitle  = Teitl y swydd
 partnership.otherPartners.checkAnswers.emailAddress  = Cyfeiriad e-bost
 partnership.otherPartners.checkAnswers.phoneNumber  = Rhif ffôn
 
+partnership.nominated-email-verified.section-heading = Nominated partner details
+
 unauthorised.heading  = Nid ydych wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 unauthorised.paragraph.1  = Bydd y gwasanaeth Treth Deunydd Pacio Plastig yn cael ei lansio ym mis Ebrill 2022, ac ar hyn o bryd mae ar gael i nifer cyfyngedig o bobl am eu hadborth.
 unauthorised.paragraph.2  = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
