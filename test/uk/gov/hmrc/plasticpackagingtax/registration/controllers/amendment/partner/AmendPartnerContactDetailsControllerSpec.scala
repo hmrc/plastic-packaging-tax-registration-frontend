@@ -273,7 +273,7 @@ class AmendPartnerContactDetailsControllerSpec
             reg.nominatedPartner.get.contactDetails.get.firstName.get mustBe "John"
             reg.nominatedPartner.get.contactDetails.get.lastName.get mustBe "Johnson"
           },
-          amendmentRoutes.AmendRegistrationController.displayPage(),
+          () => amendmentRoutes.AmendRegistrationController.displayPage(),
           "Amend Partner Contact Name"
         ),
         (
@@ -285,7 +285,7 @@ class AmendPartnerContactDetailsControllerSpec
             reg.otherPartners.head.contactDetails.get.firstName.get mustBe "Gerald"
             reg.otherPartners.head.contactDetails.get.lastName.get mustBe "Gebritte"
           },
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+          () => routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
           "Amend Partner Contact Name"
         ),
         (
@@ -296,7 +296,7 @@ class AmendPartnerContactDetailsControllerSpec
           (reg: Registration) => {
             reg.otherPartners.head.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
           },
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+          () => routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
           "Amend Partner Contact Email Address"
         ),
         (
@@ -307,7 +307,7 @@ class AmendPartnerContactDetailsControllerSpec
           (reg: Registration) => {
             reg.nominatedPartner.get.contactDetails.get.phoneNumber.get mustBe "075792743"
           },
-          amendmentRoutes.AmendRegistrationController.displayPage(),
+          () => amendmentRoutes.AmendRegistrationController.displayPage(),
           "Amend Partner Contact Phone Number"
         ),
         (
@@ -318,7 +318,7 @@ class AmendPartnerContactDetailsControllerSpec
           (reg: Registration) => {
             reg.otherPartners.head.contactDetails.get.phoneNumber.get mustBe "075792743"
           },
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+          () => routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
           "Amend Partner Contact Phone Number"
         )
       )
@@ -343,14 +343,14 @@ class AmendPartnerContactDetailsControllerSpec
           createValidForm: () => AnyRef,
           call: Request[AnyContent] => Future[Result],
           test: Registration => scalatest.Assertion,
-          redirect: Call,
+          redirect: () => Call,
           _
         ) =>
           s"$testName updated" in {
             val resp = call(postRequestEncoded(form = createValidForm(), sessionId = "123"))
 
             status(resp) mustBe SEE_OTHER
-            redirectLocation(resp) mustBe Some(redirect.url)
+            redirectLocation(resp) mustBe Some(redirect().url)
 
             val registrationCaptor: ArgumentCaptor[Registration] =
               ArgumentCaptor.forClass(classOf[Registration])
@@ -366,26 +366,26 @@ class AmendPartnerContactDetailsControllerSpec
           (
             "nominated",
             nominatedPartner.id,
-            amendmentRoutes.AmendRegistrationController.displayPage(),
+            () => amendmentRoutes.AmendRegistrationController.displayPage(),
             (registration: Registration) => registration.nominatedPartner.get.contactDetails.get.address.get
           ),
           (
             "other",
             otherPartner.id,
-            routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+            () => routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
             (registration: Registration) => registration.otherPartners.head.contactDetails.get.address.get
           )
         )
 
       "contact address updated" when {
         forAll(updateAddressTestData) {
-          (partnerType: String, partnerId: String, redirect: Call, addressExtractor: Registration => Address) =>
+          (partnerType: String, partnerId: String, redirect: () => Call, addressExtractor: Registration => Address) =>
             s"amending $partnerType partner" in {
               simulateValidAddressCapture()
 
               val resp = controller.updateAddress(partnerId)(getRequest())
 
-              redirectLocation(resp) mustBe Some(redirect.url)
+              redirectLocation(resp) mustBe Some(redirect().url)
 
               val registrationCaptor: ArgumentCaptor[Registration] =
                 ArgumentCaptor.forClass(classOf[Registration])
