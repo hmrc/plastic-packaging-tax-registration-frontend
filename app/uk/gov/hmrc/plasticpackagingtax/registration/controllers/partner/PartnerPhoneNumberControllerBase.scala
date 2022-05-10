@@ -51,16 +51,16 @@ abstract class PartnerPhoneNumberControllerBase(
   protected def doDisplay(
     partnerId: Option[String],
     backCall: Call,
-    submitCall: Call,
-    sectionHeading: Option[String] = None
+    submitCall: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       getPartner(partnerId).map { partner =>
+        val sectionHeading = request.registration.isNominatedPartner(partnerId)
         renderPageFor(partner, backCall, submitCall, sectionHeading)
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call, sectionHeading: Option[String])(implicit
+  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call, sectionHeading: Boolean)(implicit
     request: JourneyRequest[AnyContent]
   ): Result =
     partner.contactDetails.map {
@@ -90,7 +90,8 @@ abstract class PartnerPhoneNumberControllerBase(
           case _               => updateInflightPartner(phoneNumber)
         }
       getPartner(partnerId).map { partner =>
-        handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, updateAction)
+        val sectionHeading = request.registration.isNominatedPartner(partnerId)
+        handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, sectionHeading,updateAction)
       }.getOrElse(
         Future.failed(throw new IllegalStateException("Expected existing partner missing"))
       )
@@ -102,6 +103,7 @@ abstract class PartnerPhoneNumberControllerBase(
     submitCall: Call,
     onwardsCall: Call,
     dropoutCall: Call,
+    sectionHeading: Boolean,
     updateAction: PhoneNumber => Future[Registration]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     partner.contactDetails.flatMap(_.name).map { contactName =>
@@ -109,7 +111,7 @@ abstract class PartnerPhoneNumberControllerBase(
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName, None))),
+            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName,sectionHeading))),
           phoneNumber =>
             updateAction(phoneNumber).map { _ =>
               FormAction.bindFromRequest match {

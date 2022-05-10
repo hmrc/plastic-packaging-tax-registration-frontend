@@ -267,8 +267,7 @@ class AmendPartnerContactDetailsController @Inject() (
       updateCall =
         routes.AmendPartnerContactDetailsController.updatePhoneNumber(partner.id),
       contactName = partner.name,
-      sectionHeading = if(isNominated) Some("Nominated partner details") else None
-    )
+      isNominated)
 
   def address(partnerId: String): Action[AnyContent] =
     (authenticate andThen amendmentJourneyAction).async { implicit request =>

@@ -34,7 +34,7 @@ class PartnerPhoneNumberPageViewSpec extends UnitViewSpec with Matchers {
   private val updateLink = Call("PUT", "/update")
 
   private val contactName = "A Contact"
-  private val sectionHeading = None
+  private val sectionHeading = true
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
     page(form, backLink, updateLink, contactName, sectionHeading)(journeyRequest, messages)

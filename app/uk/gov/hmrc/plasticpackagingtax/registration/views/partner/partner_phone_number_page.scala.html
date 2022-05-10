@@ -28,7 +28,9 @@
   errorSummary: errorSummary,
   formHelper: FormWithCSRF
 )
-@(form: Form[PhoneNumber], backLink: Call, updateCall: Call, contactName: String, sectionHeading: Option[String])(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[PhoneNumber], backLink: Call, updateCall: Call, contactName: String, sectionHeading: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
+
+@captionContent = @{ if(sectionHeading) {"partnership.job-title-page.section-header"} else {"contactDetails.member.other.caption"}}
 
 @phoneNumberField = @{form("value")}
 
@@ -37,9 +39,7 @@
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
-    @sectionHeading.map { heading =>
-        @sectionHeader(messages(heading))
-    }
+  @sectionHeader(messages(captionContent))
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {
     @govukInput(
