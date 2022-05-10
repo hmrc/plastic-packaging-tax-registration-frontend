@@ -19,11 +19,11 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.partner
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm.form
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner.{NO, YES}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.list_partners_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -110,6 +110,42 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
           page(errorForm, partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
 
         view.select("#error-summary-title").size() mustBe 1
+      }
+    }
+
+    "not display the remove partner button" when {
+      "there are two partner only" in {
+        val regWithTwoPartner = aRegistration(
+          withPartnershipDetails(
+            Some(
+              generalPartnershipDetailsWithPartners.copy(partners =
+                Seq(aPartnershipPartner, aLimitedCompanyPartner)
+              )
+            )
+          )
+        )
+
+        val newView = createView(regWithTwoPartner)
+
+        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 0
+      }
+
+      "there is one partner only" in {
+        val regWithOnePartner = aRegistration(
+          withPartnershipDetails(
+            Some(generalPartnershipDetailsWithPartners.copy(partners = Seq(aPartnershipPartner)))
+          )
+        )
+
+        val newView = createView(regWithOnePartner)
+
+        newView.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 0
+      }
+    }
+
+    "display the remove partner button" when {
+      "there are more than 2 partner" in {
+        view.getElementsByClass("hmrc-add-to-a-list__remove").size() mustBe 3
       }
     }
   }
