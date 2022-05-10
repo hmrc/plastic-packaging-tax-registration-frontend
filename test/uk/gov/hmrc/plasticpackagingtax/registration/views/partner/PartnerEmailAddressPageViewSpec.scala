@@ -35,12 +35,18 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
   private val contactName = "A Contact"
 
-  private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
-    page(form, backLink, updateLink, contactName)(journeyRequest, messages)
+  private val nominated        = true
+  private val notNominated     = false
+
+  private def createViewNominated(form: Form[EmailAddress] = EmailAddress.form()): Document =
+    page(form, backLink, updateLink, contactName, nominated)(journeyRequest, messages)
+
+  private def createViewOther(form: Form[EmailAddress] = EmailAddress.form()): Document =
+    page(form, backLink, updateLink, contactName, notNominated)(journeyRequest, messages)
 
   "Email address View" should {
 
-    val view = createView()
+    val view = createViewNominated()
 
     "contain timeout dialog function" in {
 
@@ -86,15 +92,15 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
       val form = EmailAddress
         .form()
         .fillAndValidate(EmailAddress(""))
-      val view = createView(form)
+      val view = createViewNominated(form)
 
       view must haveGovukGlobalErrorSummary
     }
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(EmailAddress.form(), backLink, updateLink, contactName)(journeyRequest, messages)
-    page.render(EmailAddress.form(), backLink, updateLink, contactName, journeyRequest, messages)
+    page.f(EmailAddress.form(), backLink, updateLink, contactName, nominated)(journeyRequest, messages)
+    page.render(EmailAddress.form(), backLink, updateLink, contactName, nominated, journeyRequest, messages)
   }
 
 }

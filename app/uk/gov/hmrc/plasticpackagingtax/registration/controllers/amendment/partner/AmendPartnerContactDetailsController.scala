@@ -27,17 +27,8 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.P
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{AmendRegistrationUpdateService, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, AddressCaptureService, EmailVerificationService}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
-  email_address_passcode_confirmation_page,
-  email_address_passcode_page,
-  too_many_attempts_passcode_page
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
-  partner_email_address_page,
-  partner_job_title_page,
-  partner_member_name_page,
-  partner_phone_number_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{partner_email_address_page, partner_job_title_page, partner_member_name_page, partner_phone_number_page}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -220,7 +211,8 @@ class AmendPartnerContactDetailsController @Inject() (
           routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
       updateCall =
         routes.AmendPartnerContactDetailsController.updateEmailAddress(partner.id),
-      contactName = partner.name
+      contactName = partner.name,
+      isNominated
     )
 
   def phoneNumber(partnerId: String): Action[AnyContent] =

@@ -84,6 +84,8 @@ class AmendPartnerContactDetailsControllerSpec
   private val otherPartnerEmailAddress = otherPartner.contactDetails.get.emailAddress.get
   private val otherPartnerPhoneNumber  = otherPartner.contactDetails.get.phoneNumber.get
 
+  private val isNominated = true
+
   private val controller = new AmendPartnerContactDetailsController(
     authenticate = mockAuthAllowEnrolmentAction,
     mcc = mcc,
@@ -107,7 +109,7 @@ class AmendPartnerContactDetailsControllerSpec
     simulateUpdateSubscriptionSuccess()
 
     when(mockContactNamePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Name"))
-    when(mockContactEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Email Address"))
+    when(mockContactEmailPage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Email Address"))
     when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Phone Number"))
     when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
     when(email_address_passcode_page.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
@@ -167,7 +169,8 @@ class AmendPartnerContactDetailsControllerSpec
               formCaptor.capture(),
               ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(nominatedPartner.id)),
-              ArgumentMatchers.eq(nominatedPartner.name)
+              ArgumentMatchers.eq(nominatedPartner.name),
+              ArgumentMatchers.eq(isNominated)
             )(any(), any())
             formCaptor.getValue.value mustBe Some(EmailAddress(nominatedPartnerEmailAddress))
           }
@@ -182,7 +185,8 @@ class AmendPartnerContactDetailsControllerSpec
               formCaptor.capture(),
               ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(otherPartner.id)),
-              ArgumentMatchers.eq(otherPartner.name)
+              ArgumentMatchers.eq(otherPartner.name),
+              ArgumentMatchers.eq(isNominated)
             )(any(), any())
             formCaptor.getValue.value mustBe Some(EmailAddress(otherPartnerEmailAddress))
           }
