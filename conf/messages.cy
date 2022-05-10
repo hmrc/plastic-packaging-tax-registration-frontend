@@ -594,7 +594,7 @@ company.confirmAddress.title  = Cadarnhewch y cyfeiriad cofrestredig ar gyfer {0
 missing.organisationName  =  eich sefydliad
 
 ukAddress.title  = A yw’r cyfeiriad cyswllt ar gyfer {0} yn y DU?
-ukAddress.empty.error  = Dewiswch ‘Iawn’ neu ‘Na’
+ukAddress.empty.error = Dewiswch ‘Iawn’ os yw’r cyfeiriad yn y DU neu ar Ynys Manaw
 
 addressLookup.business.select.title  =  Dewiswch gyfeiriad y busnes ar gyfer {0}
 addressLookup.business.select.heading  =  Dewiswch gyfeiriad y busnes ar gyfer {0}

@@ -597,7 +597,7 @@ company.confirmAddress.title = Confirm the registered address for {0}
 missing.organisationName = your organisation
 
 ukAddress.title = Is the contact address for {0} in the UK?
-ukAddress.empty.error = Please select Yes or No
+ukAddress.empty.error = Select yes if the address is in the UK or the Isle of Man
 
 addressLookup.business.select.title = Select the business address for {0}?
 addressLookup.business.select.heading = Select the business address for {0}?
