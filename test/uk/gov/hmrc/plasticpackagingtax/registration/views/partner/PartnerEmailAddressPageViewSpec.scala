@@ -46,41 +46,76 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
   "Email address View" should {
 
-    val view = createViewNominated()
+    val viewNom   = createViewNominated()
+    val viewOther = createViewOther()
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(viewNom) mustBe true
 
     }
 
     "display sign out link" in {
 
-      displaySignOutLink(view)
+      displaySignOutLink(viewNom)
 
     }
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(backLink.url)
+      viewNom.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
 
-      view.select("title").text() must include(
+      viewNom.select("title").text() must include(
         messages("partnership.otherPartners.contactEmailAddressPage.title", contactName)
       )
     }
 
     "display email address input box" in {
 
-      view must containElementWithID("value")
+      viewNom must containElementWithID("value")
+    }
+
+    "nominated" should {
+
+      "display a caption" in {
+
+        viewNom.getElementById("section-header").text() must include("Nominated partner details")
+
+      }
+
+      "display a hint for each name input" in {
+
+        viewNom.getElementById("value-hint").text() must include(
+          "We’ll only use this to send notifications about this registration, the account and returns."
+        )
+
+      }
+    }
+
+    "other" should {
+
+      "display a caption" in {
+
+        viewOther.getElementById("section-header").text() must include("Other partner details")
+
+      }
+
+      "not display a hint for each name input" in {
+
+        viewNom.getElementById("value-hint").text() must include(
+          "We’ll only use this to send notifications about this registration, the account and returns."
+        )
+
+      }
     }
 
     "display 'Save and continue' button" in {
 
-      view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      viewNom must containElementWithID("submit")
+      viewNom.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }
