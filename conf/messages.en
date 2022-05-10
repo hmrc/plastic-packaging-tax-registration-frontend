@@ -411,6 +411,8 @@ partnership.otherPartners.checkAnswers.jobTitle = Job title
 partnership.otherPartners.checkAnswers.emailAddress = Email address
 partnership.otherPartners.checkAnswers.phoneNumber = Telephone number
 
+partnership.nominated-email-verified.section-heading = Nominated partner details
+
 unauthorised.heading = You must be registered to use this service
 unauthorised.paragraph.1 = You need to {0} to use this service.
 unauthorised.paragraph.1.link = register for Plastic Packaging Tax
@@ -658,6 +660,11 @@ contactDetails.member.check.contact.name = Contact name
 contactDetails.member.check.contact.email = Contact email
 contactDetails.member.check.contact.phone = Telephone number
 contactDetails.member.check.contact.address = Contact address
+contactDetails.member.nominated.first.hint = This is the first name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+contactDetails.member.nominated.last.hint = This is the last name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+contactDetails.member.para = Enter the correct contact here. This is usually the person responsible for the organisation’s Plastic Packaging Tax liability.
+contactDetails.member.nominated.caption = Nominated partner details
+contactDetails.member.other.caption = Other partner details
 
 addressLookup.member.contact.lookup.title = What address do you want to use for {0}?
 addressLookup.member.contact.lookup.heading = What address do you want to use for {0}?

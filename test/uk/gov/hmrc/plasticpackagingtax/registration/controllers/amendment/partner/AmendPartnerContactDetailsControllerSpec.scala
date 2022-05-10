@@ -29,21 +29,13 @@ import play.api.mvc._
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
-  routes => amendmentRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{routes => amendmentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  AmendRegistrationUpdateService,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{AmendRegistrationUpdateService, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.services.{
-  AddressCaptureConfig,
-  EmailVerificationService
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, EmailVerificationService}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
   email_address_passcode_confirmation_page,
   email_address_passcode_page,
@@ -61,14 +53,11 @@ import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 import scala.concurrent.Future
 
 class AmendPartnerContactDetailsControllerSpec
-    extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction
-    with TableDrivenPropertyChecks with Injecting {
+    extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks with Injecting {
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val inMemoryRegistrationUpdater = new AmendRegistrationUpdateService(
-    inMemoryRegistrationAmendmentRepository
-  )
+  private val inMemoryRegistrationUpdater = new AmendRegistrationUpdateService(inMemoryRegistrationAmendmentRepository)
 
   private val mockEmailVerificationService = mock[EmailVerificationService]
 
@@ -80,9 +69,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val mockContactPhoneNumberPage      = mock[partner_phone_number_page]
   private val mockJobTitlePage                = mock[partner_job_title_page]
 
-  private val partnershipRegistration = aRegistration(
-    withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
-  )
+  private val partnershipRegistration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   private val nominatedPartner             = partnershipRegistration.nominatedPartner.get
   private val nominatedPartnerFirstName    = nominatedPartner.contactDetails.get.firstName.get
@@ -119,24 +106,12 @@ class AmendPartnerContactDetailsControllerSpec
     simulateGetSubscriptionSuccess(partnershipRegistration)
     simulateUpdateSubscriptionSuccess()
 
-    when(mockContactNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Amend Partner Contact Name")
-    )
-    when(mockContactEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Amend Partner Contact Email Address")
-    )
-    when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Amend Partner Contact Phone Number")
-    )
-    when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
-      HtmlFormat.raw("Amend Partner Job Title")
-    )
-    when(
-      email_address_passcode_page.apply(any(), any(), any(), any(), any())(any(), any())
-    ).thenReturn(HtmlFormat.empty)
-    when(emailCorrectPasscodePage.apply(any(), any(), any())(any(), any())).thenReturn(
-      HtmlFormat.empty
-    )
+    when(mockContactNamePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Name"))
+    when(mockContactEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Email Address"))
+    when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Phone Number"))
+    when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
+    when(email_address_passcode_page.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(emailCorrectPasscodePage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -148,150 +123,115 @@ class AmendPartnerContactDetailsControllerSpec
   "Amend Partner Contact Details Controller" should {
 
     val showPageTestData =
-      Table(("Test Name", "Display Call", "Verification"),
-            ("nominated partner contact name",
-             (req: Request[AnyContent]) => controller.contactName(nominatedPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[MemberName]] =
-                 ArgumentCaptor.forClass(classOf[Form[MemberName]])
-               verify(mockContactNamePage).apply(formCaptor.capture(),
-                                                 ArgumentMatchers.eq(nominatedPartner.name),
-                                                 ArgumentMatchers.eq(
-                                                   amendmentRoutes.AmendRegistrationController.displayPage()
-                                                 ),
-                                                 ArgumentMatchers.eq(
-                                                   routes.AmendPartnerContactDetailsController.updateContactName(
-                                                     nominatedPartner.id
-                                                   )
-                                                 )
-               )(any(), any())
-               formCaptor.getValue.value mustBe Some(
-                 MemberName(nominatedPartnerFirstName, nominatedPartnerLastName)
-               )
-             }
-            ),
-            ("other partner contact name",
-             (req: Request[AnyContent]) => controller.contactName(otherPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[MemberName]] =
-                 ArgumentCaptor.forClass(classOf[Form[MemberName]])
-               verify(mockContactNamePage).apply(formCaptor.capture(),
-                                                 ArgumentMatchers.eq(otherPartner.name),
-                                                 ArgumentMatchers.eq(
-                                                   routes.PartnerContactDetailsCheckAnswersController.displayPage(
-                                                     otherPartner.id
-                                                   )
-                                                 ),
-                                                 ArgumentMatchers.eq(
-                                                   routes.AmendPartnerContactDetailsController.updateContactName(
-                                                     otherPartner.id
-                                                   )
-                                                 )
-               )(any(), any())
-               formCaptor.getValue.value mustBe Some(
-                 MemberName(otherPartnerFirstName, otherPartnerLastName)
-               )
-             }
-            ),
-            ("nominated partner email address",
-             (req: Request[AnyContent]) => controller.emailAddress(nominatedPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[EmailAddress]] =
-                 ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
-               verify(mockContactEmailPage).apply(formCaptor.capture(),
-                                                  ArgumentMatchers.eq(
-                                                    amendmentRoutes.AmendRegistrationController.displayPage()
-                                                  ),
-                                                  ArgumentMatchers.eq(
-                                                    routes.AmendPartnerContactDetailsController.updateEmailAddress(
-                                                      nominatedPartner.id
-                                                    )
-                                                  ),
-                                                  ArgumentMatchers.eq(nominatedPartner.name)
-               )(any(), any())
-               formCaptor.getValue.value mustBe Some(EmailAddress(nominatedPartnerEmailAddress))
-             }
-            ),
-            ("other partner email address",
-             (req: Request[AnyContent]) => controller.emailAddress(otherPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[EmailAddress]] =
-                 ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
-               verify(mockContactEmailPage).apply(formCaptor.capture(),
-                                                  ArgumentMatchers.eq(
-                                                    routes.PartnerContactDetailsCheckAnswersController.displayPage(
-                                                      otherPartner.id
-                                                    )
-                                                  ),
-                                                  ArgumentMatchers.eq(
-                                                    routes.AmendPartnerContactDetailsController.updateEmailAddress(
-                                                      otherPartner.id
-                                                    )
-                                                  ),
-                                                  ArgumentMatchers.eq(otherPartner.name)
-               )(any(), any())
-               formCaptor.getValue.value mustBe Some(EmailAddress(otherPartnerEmailAddress))
-             }
-            ),
-            ("nominated partner phone number",
-             (req: Request[AnyContent]) => controller.phoneNumber(nominatedPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[PhoneNumber]] =
-                 ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
-               verify(mockContactPhoneNumberPage).apply(formCaptor.capture(),
-                                                        ArgumentMatchers.eq(
-                                                          amendmentRoutes.AmendRegistrationController.displayPage()
-                                                        ),
-                                                        ArgumentMatchers.eq(
-                                                          routes.AmendPartnerContactDetailsController.updatePhoneNumber(
-                                                            nominatedPartner.id
-                                                          )
-                                                        ),
-                                                        ArgumentMatchers.eq(nominatedPartner.name)
-               )(any(), any())
-               formCaptor.getValue.value mustBe Some(PhoneNumber(nominatedPartnerPhoneNumber))
-             }
-            ),
-            ("other partner phone number",
-             (req: Request[AnyContent]) => controller.phoneNumber(otherPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[PhoneNumber]] =
-                 ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
-               verify(mockContactPhoneNumberPage).apply(formCaptor.capture(),
-                                                        ArgumentMatchers.eq(
-                                                          routes.PartnerContactDetailsCheckAnswersController.displayPage(
-                                                            otherPartner.id
-                                                          )
-                                                        ),
-                                                        ArgumentMatchers.eq(
-                                                          routes.AmendPartnerContactDetailsController.updatePhoneNumber(
-                                                            otherPartner.id
-                                                          )
-                                                        ),
-                                                        ArgumentMatchers.eq(otherPartner.name)
-               )(any(), any())
-               formCaptor.getValue.value mustBe Some(PhoneNumber(otherPartnerPhoneNumber))
-             }
-            ),
-            ("nominated partner job title",
-             (req: Request[AnyContent]) => controller.jobTitle(nominatedPartner.id)(req),
-             () => {
-               val formCaptor: ArgumentCaptor[Form[JobTitle]] =
-                 ArgumentCaptor.forClass(classOf[Form[JobTitle]])
-               verify(mockJobTitlePage).apply(formCaptor.capture(),
-                                              ArgumentMatchers.eq(nominatedPartner.name),
-                                              ArgumentMatchers.eq(
-                                                amendmentRoutes.AmendRegistrationController.displayPage()
-                                              ),
-                                              ArgumentMatchers.eq(
-                                                routes.AmendPartnerContactDetailsController.updateJobTitle(
-                                                  nominatedPartner.id
-                                                )
-                                              )
-               )(any(), any())
-               formCaptor.getValue.value mustBe Some(JobTitle(nominatedPartnerJobTitle))
-             }
-            )
+      Table(
+        ("Test Name", "Display Call", "Verification"),
+        (
+          "nominated partner contact name",
+          (req: Request[AnyContent]) => controller.contactName(nominatedPartner.id)(req),
+          () => {
+            val formCaptor: ArgumentCaptor[Form[MemberName]] =
+              ArgumentCaptor.forClass(classOf[Form[MemberName]])
+            verify(mockContactNamePage).apply(
+              formCaptor.capture(),
+              ArgumentMatchers.eq(nominatedPartner.name),
+              ArgumentMatchers.eq(true),
+              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
+              ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateContactName(nominatedPartner.id))
+            )(any(), any())
+            formCaptor.getValue.value mustBe Some(MemberName(nominatedPartnerFirstName, nominatedPartnerLastName))
+          }
+        ),
+        (
+          "other partner contact name",
+          (req: Request[AnyContent]) => controller.contactName(otherPartner.id)(req),
+          () => {
+            val formCaptor: ArgumentCaptor[Form[MemberName]] =
+              ArgumentCaptor.forClass(classOf[Form[MemberName]])
+            verify(mockContactNamePage).apply(
+              formCaptor.capture(),
+              ArgumentMatchers.eq(otherPartner.name),
+              ArgumentMatchers.eq(false),
+              ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
+              ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateContactName(otherPartner.id))
+            )(any(), any())
+            formCaptor.getValue.value mustBe Some(MemberName(otherPartnerFirstName, otherPartnerLastName))
+          }
+        ),
+        (
+          "nominated partner email address",
+          (req: Request[AnyContent]) => controller.emailAddress(nominatedPartner.id)(req),
+          () => {
+            val formCaptor: ArgumentCaptor[Form[EmailAddress]] =
+              ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
+            verify(mockContactEmailPage).apply(
+              formCaptor.capture(),
+              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
+              ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(nominatedPartner.id)),
+              ArgumentMatchers.eq(nominatedPartner.name)
+            )(any(), any())
+            formCaptor.getValue.value mustBe Some(EmailAddress(nominatedPartnerEmailAddress))
+          }
+        ),
+        (
+          "other partner email address",
+          (req: Request[AnyContent]) => controller.emailAddress(otherPartner.id)(req),
+          () => {
+            val formCaptor: ArgumentCaptor[Form[EmailAddress]] =
+              ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
+            verify(mockContactEmailPage).apply(
+              formCaptor.capture(),
+              ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
+              ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(otherPartner.id)),
+              ArgumentMatchers.eq(otherPartner.name)
+            )(any(), any())
+            formCaptor.getValue.value mustBe Some(EmailAddress(otherPartnerEmailAddress))
+          }
+        ),
+        (
+          "nominated partner phone number",
+          (req: Request[AnyContent]) => controller.phoneNumber(nominatedPartner.id)(req),
+          () => {
+            val formCaptor: ArgumentCaptor[Form[PhoneNumber]] =
+              ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
+            verify(mockContactPhoneNumberPage).apply(
+              formCaptor.capture(),
+              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
+              ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updatePhoneNumber(nominatedPartner.id)),
+              ArgumentMatchers.eq(nominatedPartner.name)
+            )(any(), any())
+            formCaptor.getValue.value mustBe Some(PhoneNumber(nominatedPartnerPhoneNumber))
+          }
+        ),
+        (
+          "other partner phone number",
+          (req: Request[AnyContent]) => controller.phoneNumber(otherPartner.id)(req),
+          () => {
+            val formCaptor: ArgumentCaptor[Form[PhoneNumber]] =
+              ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
+            verify(mockContactPhoneNumberPage).apply(
+              formCaptor.capture(),
+              ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
+              ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updatePhoneNumber(otherPartner.id)),
+              ArgumentMatchers.eq(otherPartner.name)
+            )(any(), any())
+            formCaptor.getValue.value mustBe Some(PhoneNumber(otherPartnerPhoneNumber))
+          }
+        ),
+        (
+          "nominated partner job title",
+          (req: Request[AnyContent]) => controller.jobTitle(nominatedPartner.id)(req),
+          () => {
+            val formCaptor: ArgumentCaptor[Form[JobTitle]] =
+              ArgumentCaptor.forClass(classOf[Form[JobTitle]])
+            verify(mockJobTitlePage).apply(
+              formCaptor.capture(),
+              ArgumentMatchers.eq(nominatedPartner.name),
+              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
+              ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateJobTitle(nominatedPartner.id))
+            )(any(), any())
+            formCaptor.getValue.value mustBe Some(JobTitle(nominatedPartnerJobTitle))
+          }
+        )
       )
 
     forAll(showPageTestData) {
@@ -323,79 +263,69 @@ class AmendPartnerContactDetailsControllerSpec
 
     val updateSubscriptionTestData =
       Table(
-        ("TestName",
-         "Invalid Form",
-         "Valid Form",
-         "Update Call",
-         "Update Test",
-         "Redirect Location",
-         "Invalid Expected Page Content"
+        ("TestName", "Invalid Form", "Valid Form", "Update Call", "Update Test", "Redirect Location", "Invalid Expected Page Content"),
+        (
+          "nominated partner contact name",
+          () => MemberName("", ""),
+          () => MemberName("John", "Johnson"),
+          (req: Request[AnyContent]) => controller.updateContactName(nominatedPartner.id)(req),
+          (reg: Registration) => {
+            reg.nominatedPartner.get.contactDetails.get.firstName.get mustBe "John"
+            reg.nominatedPartner.get.contactDetails.get.lastName.get mustBe "Johnson"
+          },
+          amendmentRoutes.AmendRegistrationController.displayPage(),
+          "Amend Partner Contact Name"
         ),
-        ("nominated partner contact name",
-         () => MemberName("", ""),
-         () => MemberName("John", "Johnson"),
-         (req: Request[AnyContent]) => controller.updateContactName(nominatedPartner.id)(req),
-         (reg: Registration) => {
-           reg.nominatedPartner.get.contactDetails.get.firstName.get mustBe "John"
-           reg.nominatedPartner.get.contactDetails.get.lastName.get mustBe "Johnson"
-         },
-         amendmentRoutes.AmendRegistrationController.displayPage(),
-         "Amend Partner Contact Name"
+        (
+          "other partner contact name",
+          () => MemberName("", ""),
+          () => MemberName("Gerald", "Gebritte"),
+          (req: Request[AnyContent]) => controller.updateContactName(otherPartner.id)(req),
+          (reg: Registration) => {
+            reg.otherPartners.head.contactDetails.get.firstName.get mustBe "Gerald"
+            reg.otherPartners.head.contactDetails.get.lastName.get mustBe "Gebritte"
+          },
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+          "Amend Partner Contact Name"
         ),
-        ("other partner contact name",
-         () => MemberName("", ""),
-         () => MemberName("Gerald", "Gebritte"),
-         (req: Request[AnyContent]) => controller.updateContactName(otherPartner.id)(req),
-         (reg: Registration) => {
-           reg.otherPartners.head.contactDetails.get.firstName.get mustBe "Gerald"
-           reg.otherPartners.head.contactDetails.get.lastName.get mustBe "Gebritte"
-         },
-         routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
-         "Amend Partner Contact Name"
+        (
+          "other partner email address",
+          () => EmailAddress("xxx"),
+          () => EmailAddress("updated-email@ppt.com"),
+          (req: Request[AnyContent]) => controller.updateEmailAddress(otherPartner.id)(req),
+          (reg: Registration) => {
+            reg.otherPartners.head.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
+          },
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+          "Amend Partner Contact Email Address"
         ),
-        ("other partner email address",
-         () => EmailAddress("xxx"),
-         () => EmailAddress("updated-email@ppt.com"),
-         (req: Request[AnyContent]) => controller.updateEmailAddress(otherPartner.id)(req),
-         (reg: Registration) => {
-           reg.otherPartners.head.contactDetails.get.emailAddress.get mustBe "updated-email@ppt.com"
-         },
-         routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
-         "Amend Partner Contact Email Address"
+        (
+          "nominated partner phone number",
+          () => PhoneNumber("xxx"),
+          () => PhoneNumber("075792743"),
+          (req: Request[AnyContent]) => controller.updatePhoneNumber(nominatedPartner.id)(req),
+          (reg: Registration) => {
+            reg.nominatedPartner.get.contactDetails.get.phoneNumber.get mustBe "075792743"
+          },
+          amendmentRoutes.AmendRegistrationController.displayPage(),
+          "Amend Partner Contact Phone Number"
         ),
-        ("nominated partner phone number",
-         () => PhoneNumber("xxx"),
-         () => PhoneNumber("075792743"),
-         (req: Request[AnyContent]) => controller.updatePhoneNumber(nominatedPartner.id)(req),
-         (reg: Registration) => {
-           reg.nominatedPartner.get.contactDetails.get.phoneNumber.get mustBe "075792743"
-         },
-         amendmentRoutes.AmendRegistrationController.displayPage(),
-         "Amend Partner Contact Phone Number"
-        ),
-        ("other partner phone number",
-         () => PhoneNumber("xxx"),
-         () => PhoneNumber("075792743"),
-         (req: Request[AnyContent]) => controller.updatePhoneNumber(otherPartner.id)(req),
-         (reg: Registration) => {
-           reg.otherPartners.head.contactDetails.get.phoneNumber.get mustBe "075792743"
-         },
-         routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
-         "Amend Partner Contact Phone Number"
+        (
+          "other partner phone number",
+          () => PhoneNumber("xxx"),
+          () => PhoneNumber("075792743"),
+          (req: Request[AnyContent]) => controller.updatePhoneNumber(otherPartner.id)(req),
+          (reg: Registration) => {
+            reg.otherPartners.head.contactDetails.get.phoneNumber.get mustBe "075792743"
+          },
+          routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+          "Amend Partner Contact Phone Number"
         )
       )
 
     "redisplay page" when {
       forAll(updateSubscriptionTestData) {
-        (
-          testName: String,
-          createInvalidForm: () => AnyRef,
-          _,
-          call: Request[AnyContent] => Future[Result],
-          _,
-          _,
-          expectedPageContent
-        ) =>
+        (testName: String, createInvalidForm: () => AnyRef, _, call: Request[AnyContent] => Future[Result], _, _, expectedPageContent) =>
           s"supplied $testName fails validation" in {
             val resp = call(postRequestEncoded(form = createInvalidForm(), sessionId = "123"))
 
@@ -424,38 +354,32 @@ class AmendPartnerContactDetailsControllerSpec
 
             val registrationCaptor: ArgumentCaptor[Registration] =
               ArgumentCaptor.forClass(classOf[Registration])
-            verify(mockSubscriptionConnector).updateSubscription(any(),
-                                                                 registrationCaptor.capture()
-            )(any())
+            verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(any())
 
             test(registrationCaptor.getValue)
           }
       }
 
       val updateAddressTestData =
-        Table(("Partner Type", "Partner ID", "Redirect", "Updated Address Extractor"),
-              ("nominated",
-               nominatedPartner.id,
-               amendmentRoutes.AmendRegistrationController.displayPage(),
-               (registration: Registration) =>
-                 registration.nominatedPartner.get.contactDetails.get.address.get
-              ),
-              ("other",
-               otherPartner.id,
-               routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
-               (registration: Registration) =>
-                 registration.otherPartners.head.contactDetails.get.address.get
-              )
+        Table(
+          ("Partner Type", "Partner ID", "Redirect", "Updated Address Extractor"),
+          (
+            "nominated",
+            nominatedPartner.id,
+            amendmentRoutes.AmendRegistrationController.displayPage(),
+            (registration: Registration) => registration.nominatedPartner.get.contactDetails.get.address.get
+          ),
+          (
+            "other",
+            otherPartner.id,
+            routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id),
+            (registration: Registration) => registration.otherPartners.head.contactDetails.get.address.get
+          )
         )
 
       "contact address updated" when {
         forAll(updateAddressTestData) {
-          (
-            partnerType: String,
-            partnerId: String,
-            redirect: Call,
-            addressExtractor: Registration => Address
-          ) =>
+          (partnerType: String, partnerId: String, redirect: Call, addressExtractor: Registration => Address) =>
             s"amending $partnerType partner" in {
               simulateValidAddressCapture()
 
@@ -465,9 +389,7 @@ class AmendPartnerContactDetailsControllerSpec
 
               val registrationCaptor: ArgumentCaptor[Registration] =
                 ArgumentCaptor.forClass(classOf[Registration])
-              verify(mockSubscriptionConnector).updateSubscription(any(),
-                                                                   registrationCaptor.capture()
-              )(any())
+              verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(any())
 
               val updatedRegistration = registrationCaptor.getValue
               addressExtractor(updatedRegistration) mustBe validCapturedAddress
@@ -482,42 +404,26 @@ class AmendPartnerContactDetailsControllerSpec
 
         // Email verification will check if this address is already verified; trying to let the user through with no
         // friction if we already know this address
-        when(
-          mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"),
-                                                       any()
-          )(any())
-        ).thenReturn(Future.successful(false))
+        when(mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"), any())(any())).thenReturn(
+          Future.successful(false)
+        )
         // Email verification will be called to setup an email verification journey for the new email address
         when(
           mockEmailVerificationService.sendVerificationCode(
             ArgumentMatchers.eq("new-email@ppt.com"),
             any(),
-            ArgumentMatchers.eq(
-              routes.AmendPartnerContactDetailsController.updateEmailAddress(
-                nominatedPartner.id
-              ).url
-            )
+            ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(nominatedPartner.id).url)
           )(any())
         ).thenReturn(Future.successful("an-email-verification-journey-id"))
 
-        val resp = await(
-          controller.updateEmailAddress(nominatedPartner.id)(
-            postRequestEncoded(EmailAddress("new-email@ppt.com"))
-          )
-        )
+        val resp = await(controller.updateEmailAddress(nominatedPartner.id)(postRequestEncoded(EmailAddress("new-email@ppt.com"))))
 
         status(Future.successful(resp)) mustBe SEE_OTHER
-        redirectLocation(Future.successful(resp)) mustBe Some(
-          routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url
-        )
+        redirectLocation(Future.successful(resp)) mustBe Some(routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url)
 
         inMemoryRegistrationAmendmentRepository.get().map { updatedRegistration =>
-          updatedRegistration.get.primaryContactDetails.prospectiveEmail mustBe Some(
-            "new-email@ppt.com"
-          )
-          updatedRegistration.get.primaryContactDetails.journeyId mustBe Some(
-            "an-email-verification-journey-id"
-          )
+          updatedRegistration.get.primaryContactDetails.prospectiveEmail mustBe Some("new-email@ppt.com")
+          updatedRegistration.get.primaryContactDetails.journeyId mustBe Some("an-email-verification-journey-id")
         }
       }
 
@@ -563,14 +469,10 @@ class AmendPartnerContactDetailsControllerSpec
           )(any())
         ).thenReturn(Future.successful(EmailVerificationJourneyStatus.COMPLETE))
 
-        val resp = controller.checkEmailVerificationCode(nominatedPartner.id)(
-          postRequestEncoded(EmailAddressPasscode("ABCDE"))
-        )
+        val resp = controller.checkEmailVerificationCode(nominatedPartner.id)(postRequestEncoded(EmailAddressPasscode("ABCDE")))
 
         status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(
-          routes.AmendPartnerContactDetailsController.emailVerified(nominatedPartner.id).url
-        )
+        redirectLocation(resp) mustBe Some(routes.AmendPartnerContactDetailsController.emailVerified(nominatedPartner.id).url)
       }
 
       "user is prompted for confirm verified nominated partner email address" in {
@@ -608,17 +510,15 @@ class AmendPartnerContactDetailsControllerSpec
 
         // Email verification will be called to check this email address has actually been verified
         // and that the user has not url skipped to the end of the journey
-        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(
-          Future.successful(true)
-        )
+        when(mockEmailVerificationService.isEmailVerified(any(), any())(any())).thenReturn(Future.successful(true))
 
         val resp = controller.confirmEmailUpdate(nominatedPartner.id)(getRequest())
         status(resp) mustBe SEE_OTHER
 
         val updatedRegistration = getUpdatedRegistration()
-        updatedRegistration.findPartner(nominatedPartner.id).flatMap(
-          _.contactDetails.flatMap(_.emailAddress)
-        ) mustBe Some("verified-amended-email@localhost")
+        updatedRegistration.findPartner(nominatedPartner.id).flatMap(_.contactDetails.flatMap(_.emailAddress)) mustBe Some(
+          "verified-amended-email@localhost"
+        )
       }
 
       "nominated partner job title is updated" in {
@@ -627,14 +527,10 @@ class AmendPartnerContactDetailsControllerSpec
         simulateGetSubscriptionSuccess(partnershipRegistration)
         simulateUpdateSubscriptionSuccess()
 
-        val resp = controller.updateJobTitle(nominatedPartner.id)(
-          postRequestEncoded(JobTitle("New job title"))
-        )
+        val resp = controller.updateJobTitle(nominatedPartner.id)(postRequestEncoded(JobTitle("New job title")))
         status(resp) mustBe SEE_OTHER
 
-        getUpdatedRegistration().findPartner(nominatedPartner.id).flatMap(
-          _.contactDetails.flatMap(_.jobTitle)
-        ) mustBe Some("New job title")
+        getUpdatedRegistration().findPartner(nominatedPartner.id).flatMap(_.contactDetails.flatMap(_.jobTitle)) mustBe Some("New job title")
       }
     }
   }

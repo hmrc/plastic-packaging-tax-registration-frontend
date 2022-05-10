@@ -22,10 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes 
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  NewRegistrationUpdateService,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{NewRegistrationUpdateService, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
@@ -121,8 +118,10 @@ class PartnerEmailAddressController @Inject() (
   def emailVerifiedNewPartner(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.inflightPartner.map { _ =>
-        showEmailVerifiedPage(routes.PartnerEmailAddressController.confirmNewPartnerEmailCode(),
-                              routes.PartnerEmailAddressController.confirmEmailUpdateNewPartner()
+        showEmailVerifiedPage(
+          routes.PartnerEmailAddressController.confirmNewPartnerEmailCode(),
+          routes.PartnerEmailAddressController.confirmEmailUpdateNewPartner(),
+          Some("partnership.nominated-email-verified.section-heading")
         )
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
