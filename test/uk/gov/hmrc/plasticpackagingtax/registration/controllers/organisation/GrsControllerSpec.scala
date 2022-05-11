@@ -347,7 +347,7 @@ class GrsControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          orgRoutes.RegisterAsOtherOrganisationController.onPageLoad().url
+          uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.NotableErrorController.soleTraderVerificationFailure().url
         )
       }
     }
