@@ -85,6 +85,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val otherPartnerPhoneNumber  = otherPartner.contactDetails.get.phoneNumber.get
 
   private val isNominated = true
+  private val other = true
 
   private val controller = new AmendPartnerContactDetailsController(
     authenticate = mockAuthAllowEnrolmentAction,
@@ -154,7 +155,7 @@ class AmendPartnerContactDetailsControllerSpec
             verify(mockContactNamePage).apply(
               formCaptor.capture(),
               ArgumentMatchers.eq(otherPartner.name),
-              ArgumentMatchers.eq(false),
+              ArgumentMatchers.eq(other),
               ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateContactName(otherPartner.id))
             )(any(), any())
@@ -188,7 +189,7 @@ class AmendPartnerContactDetailsControllerSpec
               ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(otherPartner.id)),
               ArgumentMatchers.eq(otherPartner.name),
-              ArgumentMatchers.eq(isNominated)
+              ArgumentMatchers.eq(other)
             )(any(), any())
             formCaptor.getValue.value mustBe Some(EmailAddress(otherPartnerEmailAddress))
           }
