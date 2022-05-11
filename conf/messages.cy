@@ -189,7 +189,7 @@ primaryContactDetails.fullNamePage.value.error.specialCharacters  = Mae’n rhai
 primaryContactDetails.jobTitlePage.title  = Beth yw teitl swydd {0}?
 primaryContactDetails.jobTitle.empty.error  = Nodwch deitl y swydd
 primaryContactDetails.jobTitle.tooLong.error  = Mae’n rhaid i deitl y swydd beidio â bod yn hirach na 155 o gymeriadau
-primaryContactDetails.jobTitle.nonAlphaChar.error = Job title must only include letters and spaces
+primaryContactDetails.jobTitle.nonAlphaChar.error = Mae’n rhaid i deitl y swydd gynnwys llythrennau a bylchau yn unig
 
 primaryContactDetails.emailAddress.title  = Beth yw cyfeiriad e-bost {0}?
 primaryContactDetails.emailAddress.hint  = Dim ond i anfon hysbysiadau am y cofrestriad hwn, y cyfrif a’r Ffurflenni Treth y byddwn yn ei ddefnyddio.
@@ -366,15 +366,15 @@ partnership.type.title  = Pa fath o bartneriaeth rydych yn ei chofrestru?
 partnership.type.empty.error  = Dewiswch y math o bartneriaeth yr ydych yn ei chofrestru
 partnership.nominated.type.empty.error = Dewiswch pa fath o sefydliad yw’r partner enwebedig
 partnership.other.type.empty.error = Dewiswch pa fath o sefydliad yw’r partner
-partnership.type.link.text = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO) or an overseas organisation without a UK establishment
+partnership.type.link.text = Cofrestru ar gyfer Treth Deunydd Pacio Plastig os ydych yn Sefydliad Corfforedig Elusennol, yn ymddiriedolaeth, yn sefydliad tramor heb safle yn y DU, neu’n gorff cyhoeddus
 nominated.partner.type.title = Pa fath o sefydliad yw’r partner enwebedig?
 other.partner.type.title = Pa fath o sefydliad yw’r partner nesaf yr hoffech ei ychwanegu?
 
 partnership.name.title  = Beth yw enw’r bartneriaeth?
-partnership.name.section-header = Partnership details
+partnership.name.section-header = Manylion y bartneriaeth
 partnership.name.empty.error  = Nodwch enw eich partneriaeth
 partnership.name.format.error  = Nodwch enw eich partneriaeth yn y fformat cywir
-partnership.name.too-long = Name must be 160 characters of fewer
+partnership.name.too-long = Mae’n rhaid i’r enw fod yn 160 o gymeriadau neu lai
 
 partnership.registrationAvailableSoon.header  = Partneriaeth
 partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir
@@ -397,7 +397,7 @@ partner.type.OverseasCompanyUkBranch  = Cwmni o’r tu allan i’r DU sydd â ch
 partner.type.OverseasCompanyNoUKBranch  = Cwmni o’r tu allan i’r DU heb gangen na lleoliad busnes yn y DU
 
 partnership.job-title-page.title = Beth yw teitl swydd {0}?
-partnership.job-title-page.section-header = Nominated partner details
+partnership.job-title-page.section-header = Manylion y partner enwebedig
 
 partnerships.otherPartners.title  =  Mae gennych {0} partner yn eich partneriaeth
 partnership.otherPartners.contactNamePage.title  = Pwy yw’r prif gyswllt?
@@ -409,16 +409,16 @@ partnership.otherPartners.checkAnswers.jobTitle  = Teitl y swydd
 partnership.otherPartners.checkAnswers.emailAddress  = Cyfeiriad e-bost
 partnership.otherPartners.checkAnswers.phoneNumber  = Rhif ffôn
 
-partnership.nominated-email-verified.section-heading = Nominated partner details
+partnership.nominated-email-verified.section-heading = Manylion y partner enwebedig
 
 unauthorised.heading  = Nid ydych wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 unauthorised.paragraph.1  = Bydd y gwasanaeth Treth Deunydd Pacio Plastig yn cael ei lansio ym mis Ebrill 2022, ac ar hyn o bryd mae ar gael i nifer cyfyngedig o bobl am eu hadborth.
 unauthorised.paragraph.2  = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.paragraph.2.link  = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
-unauthorised.not.admin.heading = You must have administrator rights to use this service
-unauthorised.not.admin.paragraph.1 = Your Government Gateway ID does not have administrator rights.
-unauthorised.not.admin.paragraph.2 = Someone from your organisation with administrator rights can complete the Plastic Packaging Tax registration.
+unauthorised.not.admin.heading = Mae’n rhaid i chi feddu ar hawliau gweinyddwr i ddefnyddio’r gwasanaeth hwn
+unauthorised.not.admin.paragraph.1 = Nid oes gan eich Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth hawliau gweinyddwr.
+unauthorised.not.admin.paragraph.2 = Gall rhywun o’ch sefydliad â hawliau gweinyddwr gwblhau’r cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig.
 unauthorised.not.admin.paragraph.3 = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
