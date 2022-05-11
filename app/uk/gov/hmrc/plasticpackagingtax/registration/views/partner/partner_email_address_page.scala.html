@@ -26,23 +26,32 @@
   govukInput: GovukInput,
   sectionHeader: sectionHeader,
   errorSummary: errorSummary,
-  formHelper: FormWithCSRF
+  formHelper: FormWithCSRF,
+  paragraph: paragraph
 )
-@(form: Form[EmailAddress], backLink: Call, updateCall: Call, contactName: String)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[EmailAddress], backLink: Call, updateCall: Call, contactName: String, isNominated: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
 
 @emailAddressField = @{form("value")}
 
+@caption = @{ if(isNominated) { sectionHeader(messages("contactDetails.member.nominated.caption")) } else { sectionHeader(messages("contactDetails.member.other.caption")) } }
+
 @govukLayout(
   title = Title(headingKey = "partnership.otherPartners.contactEmailAddressPage.title", contactName),
+
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+
+  @caption
+
   @errorSummary(form.errors)
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {
+
     @govukInput(
         Input(
             id = s"${emailAddressField.name}",
             name = emailAddressField.name,
             value = emailAddressField.value,
+            hint = Some(Hint(content = Text(messages("contactDetails.member.emailAddress.hint")))),
             errorMessage = emailAddressField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             label = Label(
                 isPageHeading = true,

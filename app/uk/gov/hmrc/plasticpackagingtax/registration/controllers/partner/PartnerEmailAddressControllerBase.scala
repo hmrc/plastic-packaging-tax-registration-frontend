@@ -20,21 +20,11 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.EmailVerificationActions
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthActioning,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{AuthActioning, FormAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Registration,
-  RegistrationUpdater
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Registration, RegistrationUpdater}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -56,11 +46,14 @@ abstract class PartnerEmailAddressControllerBase(
   ): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       getPartner(partnerId).map { partner =>
-        renderPageFor(partner, backCall, submitCall)
+
+        val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
+
+        renderPageFor(partner, isNominated, backCall, submitCall)
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
     }
 
-  private def renderPageFor(partner: Partner, backCall: Call, submitCall: Call)(implicit
+  private def renderPageFor(partner: Partner, isNominated: Boolean, backCall: Call, submitCall: Call)(implicit
     request: JourneyRequest[AnyContent]
   ): Result =
     partner.contactDetails.map { contactDetails =>
@@ -71,7 +64,7 @@ abstract class PartnerEmailAddressControllerBase(
           case _ =>
             EmailAddress.form()
         }
-        Ok(page(form, backCall, submitCall, contactName))
+        Ok(page(form, backCall, submitCall, contactName, isNominated))
       }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
@@ -89,14 +82,18 @@ abstract class PartnerEmailAddressControllerBase(
         updateEmailAddress(partnerId, emailAddress)
 
       getPartner(partnerId).map { partner =>
+
+        val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
+
         handleSubmission(partner,
-                         backCall,
-                         submitCall,
-                         onwardsCall,
-                         dropoutCall,
-                         updateAction,
-                         emailVerificationContinueUrl,
-                         confirmEmailAddressCall
+          isNominated,
+          backCall,
+          submitCall,
+          onwardsCall,
+          dropoutCall,
+          updateAction,
+          emailVerificationContinueUrl,
+          confirmEmailAddressCall
         )
       }.getOrElse(
         Future.successful(throw new IllegalStateException("Expected existing partner missing"))
@@ -105,6 +102,7 @@ abstract class PartnerEmailAddressControllerBase(
 
   private def handleSubmission(
     partner: Partner,
+    isNominated: Boolean,
     backCall: Call,
     submitCall: Call,
     onwardCall: Call,
@@ -119,7 +117,7 @@ abstract class PartnerEmailAddressControllerBase(
         (formWithErrors: Form[EmailAddress]) =>
           partner.contactDetails.flatMap(_.name).map {
             contactName =>
-              Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName)))
+              Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName, isNominated)))
           }.getOrElse(
             Future.successful(
               throw new IllegalStateException("Expected partner contact name missing")
