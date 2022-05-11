@@ -35,46 +35,87 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
 
   private val contactName = "A Contact"
 
-  private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
-    page(form, backLink, updateLink, contactName)(journeyRequest, messages)
+  private val nominated        = true
+  private val notNominated     = false
+
+  private def createViewNominated(form: Form[EmailAddress] = EmailAddress.form()): Document =
+    page(form, backLink, updateLink, contactName, nominated)(journeyRequest, messages)
+
+  private def createViewOther(form: Form[EmailAddress] = EmailAddress.form()): Document =
+    page(form, backLink, updateLink, contactName, notNominated)(journeyRequest, messages)
 
   "Email address View" should {
 
-    val view = createView()
+    val viewNom   = createViewNominated()
+    val viewOther = createViewOther()
 
     "contain timeout dialog function" in {
 
-      containTimeoutDialogFunction(view) mustBe true
+      containTimeoutDialogFunction(viewNom) mustBe true
 
     }
 
     "display sign out link" in {
 
-      displaySignOutLink(view)
+      displaySignOutLink(viewNom)
 
     }
 
     "display 'Back' button" in {
 
-      view.getElementById("back-link") must haveHref(backLink.url)
+      viewNom.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
 
-      view.select("title").text() must include(
+      viewNom.select("title").text() must include(
         messages("partnership.otherPartners.contactEmailAddressPage.title", contactName)
       )
     }
 
     "display email address input box" in {
 
-      view must containElementWithID("value")
+      viewNom must containElementWithID("value")
+    }
+
+    "nominated" should {
+
+      "display a caption" in {
+
+        viewNom.getElementById("section-header").text() must include("Nominated partner details")
+
+      }
+
+      "display a hint for each name input" in {
+
+        viewNom.getElementById("value-hint").text() must include(
+          "We’ll only use this to send notifications about this registration, the account and returns."
+        )
+
+      }
+    }
+
+    "other" should {
+
+      "display a caption" in {
+
+        viewOther.getElementById("section-header").text() must include("Other partner details")
+
+      }
+
+      "not display a hint for each name input" in {
+
+        viewNom.getElementById("value-hint").text() must include(
+          "We’ll only use this to send notifications about this registration, the account and returns."
+        )
+
+      }
     }
 
     "display 'Save and continue' button" in {
 
-      view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
+      viewNom must containElementWithID("submit")
+      viewNom.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }
@@ -86,15 +127,15 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
       val form = EmailAddress
         .form()
         .fillAndValidate(EmailAddress(""))
-      val view = createView(form)
+      val view = createViewNominated(form)
 
       view must haveGovukGlobalErrorSummary
     }
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(EmailAddress.form(), backLink, updateLink, contactName)(journeyRequest, messages)
-    page.render(EmailAddress.form(), backLink, updateLink, contactName, journeyRequest, messages)
+    page.f(EmailAddress.form(), backLink, updateLink, contactName, nominated)(journeyRequest, messages)
+    page.render(EmailAddress.form(), backLink, updateLink, contactName, nominated, journeyRequest, messages)
   }
 
 }

@@ -189,7 +189,7 @@ primaryContactDetails.fullNamePage.value.error.specialCharacters  = Mae’n rhai
 primaryContactDetails.jobTitlePage.title  = Beth yw teitl swydd {0}?
 primaryContactDetails.jobTitle.empty.error  = Nodwch deitl y swydd
 primaryContactDetails.jobTitle.tooLong.error  = Mae’n rhaid i deitl y swydd beidio â bod yn hirach na 155 o gymeriadau
-primaryContactDetails.jobTitle.nonAlphaChar.error  = Nodwch deitl y swydd yn y fformat cywir
+primaryContactDetails.jobTitle.nonAlphaChar.error = Mae’n rhaid i deitl y swydd gynnwys llythrennau a bylchau yn unig
 
 primaryContactDetails.emailAddress.title  = Beth yw cyfeiriad e-bost {0}?
 primaryContactDetails.emailAddress.hint  = Dim ond i anfon hysbysiadau am y cofrestriad hwn, y cyfrif a’r Ffurflenni Treth y byddwn yn ei ddefnyddio.
@@ -363,11 +363,18 @@ organisationDetails.type.GroupNominatedPartnership  = Partneriaeth atebolrwydd c
 organisationDetails.type.hint  = Cofrestru ar gyfer Treth Deunydd Pacio Plastig os ydych yn Sefydliad Corfforedig Elusennol, yn ymddiriedolaeth, yn sefydliad tramor heb safle yn y DU, neu’n gorff cyhoeddus
 
 partnership.type.title  = Pa fath o bartneriaeth rydych yn ei chofrestru?
-partnership.type.empty.error  = Mae’n rhaid dewis gwerth
+partnership.type.empty.error  = Dewiswch y math o bartneriaeth yr ydych yn ei chofrestru
+partnership.nominated.type.empty.error = Dewiswch pa fath o sefydliad yw’r partner enwebedig
+partnership.other.type.empty.error = Dewiswch pa fath o sefydliad yw’r partner
+partnership.type.link.text = Cofrestru ar gyfer Treth Deunydd Pacio Plastig os ydych yn Sefydliad Corfforedig Elusennol, yn ymddiriedolaeth, yn sefydliad tramor heb safle yn y DU, neu’n gorff cyhoeddus
+nominated.partner.type.title = Pa fath o sefydliad yw’r partner enwebedig?
+other.partner.type.title = Pa fath o sefydliad yw’r partner nesaf yr hoffech ei ychwanegu?
 
 partnership.name.title  = Beth yw enw’r bartneriaeth?
+partnership.name.section-header = Manylion y bartneriaeth
 partnership.name.empty.error  = Nodwch enw eich partneriaeth
 partnership.name.format.error  = Nodwch enw eich partneriaeth yn y fformat cywir
+partnership.name.too-long = Mae’n rhaid i’r enw fod yn 160 o gymeriadau neu lai
 
 partnership.registrationAvailableSoon.header  = Partneriaeth
 partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir
@@ -389,9 +396,8 @@ partner.type.CIO  = Sefydliad corfforedig elusennol
 partner.type.OverseasCompanyUkBranch  = Cwmni o’r tu allan i’r DU sydd â changen neu leoliad busnes yn y DU
 partner.type.OverseasCompanyNoUKBranch  = Cwmni o’r tu allan i’r DU heb gangen na lleoliad busnes yn y DU
 
-nominated.partner.type.title  = Pa fath o sefydliad yw’r partner enwebedig?
-nominated.partner.name.empty.error  = Dewiswch fath o endid o’r opsiynau uchod
-other.partner.type.title  = Pa fath o sefydliad yw’r partner nesaf yr hoffech ei ychwanegu?
+partnership.job-title-page.title = Beth yw teitl swydd {0}?
+partnership.job-title-page.section-header = Manylion y partner enwebedig
 
 partnerships.otherPartners.title  =  Mae gennych {0} partner yn eich partneriaeth
 partnership.otherPartners.contactNamePage.title  = Pwy yw’r prif gyswllt?
@@ -403,14 +409,16 @@ partnership.otherPartners.checkAnswers.jobTitle  = Teitl y swydd
 partnership.otherPartners.checkAnswers.emailAddress  = Cyfeiriad e-bost
 partnership.otherPartners.checkAnswers.phoneNumber  = Rhif ffôn
 
+partnership.nominated-email-verified.section-heading = Manylion y partner enwebedig
+
 unauthorised.heading  = Nid ydych wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 unauthorised.paragraph.1  = Bydd y gwasanaeth Treth Deunydd Pacio Plastig yn cael ei lansio ym mis Ebrill 2022, ac ar hyn o bryd mae ar gael i nifer cyfyngedig o bobl am eu hadborth.
 unauthorised.paragraph.2  = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.paragraph.2.link  = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
-unauthorised.not.admin.heading = You must have administrator rights to use this service
-unauthorised.not.admin.paragraph.1 = Your Government Gateway ID does not have administrator rights.
-unauthorised.not.admin.paragraph.2 = Someone from your organisation with administrator rights can complete the Plastic Packaging Tax registration.
+unauthorised.not.admin.heading = Mae’n rhaid i chi feddu ar hawliau gweinyddwr i ddefnyddio’r gwasanaeth hwn
+unauthorised.not.admin.paragraph.1 = Nid oes gan eich Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth hawliau gweinyddwr.
+unauthorised.not.admin.paragraph.2 = Gall rhywun o’ch sefydliad â hawliau gweinyddwr gwblhau’r cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig.
 unauthorised.not.admin.paragraph.3 = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
@@ -586,7 +594,7 @@ company.confirmAddress.title  = Cadarnhewch y cyfeiriad cofrestredig ar gyfer {0
 missing.organisationName  =  eich sefydliad
 
 ukAddress.title  = A yw’r cyfeiriad cyswllt ar gyfer {0} yn y DU?
-ukAddress.empty.error  = Dewiswch ‘Iawn’ neu ‘Na’
+ukAddress.empty.error = Dewiswch ‘Iawn’ os yw’r cyfeiriad yn y DU neu ar Ynys Manaw
 
 addressLookup.business.select.title  =  Dewiswch gyfeiriad y busnes ar gyfer {0}
 addressLookup.business.select.heading  =  Dewiswch gyfeiriad y busnes ar gyfer {0}
@@ -649,6 +657,11 @@ contactDetails.member.check.contact.name  = Enw cyswllt
 contactDetails.member.check.contact.email  =  E-bost cyswllt
 contactDetails.member.check.contact.phone  = Rhif ffôn
 contactDetails.member.check.contact.address  = Cyfeiriad cyswllt
+contactDetails.member.nominated.first.hint = Dyma cyntaf enw’r  person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+contactDetails.member.nominated.last.hint = Dyma olaf enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+contactDetails.member.para = Nodwch y cyswllt cywir yma. Fel arfer, dyma’r person sy’n gyfrifol am rwymedigaeth y sefydliad ar gyfer y Dreth Deunydd Pacio Plastig.
+contactDetails.member.nominated.caption = Manylion y partner enwebedig
+contactDetails.member.other.caption = Other partner details
 
 addressLookup.member.contact.lookup.title  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?
 addressLookup.member.contact.lookup.heading  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?
@@ -722,3 +735,33 @@ amend.partner.listPartners.question  = A oes angen i chi ychwanegu partner arall
 amend.partner.remove.title  = A ydych yn siŵr eich bod am dynnu {0} o’r bartneriaeth? – Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 
 gform.link  =  https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
+
+deregistration.deregister.title = Deregister from Plastic Packaging Tax
+deregistration.deregister.eligibility = You can deregister from Plastic Packaging Tax if you:
+deregistration.deregister.eligibility.1 = registered incorrectly
+deregistration.deregister.eligibility.2 = cease trading
+deregistration.deregister.eligibility.3 = have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.deregister.eligibility.4 = want to register as part of a group
+deregistration.deregister.detail1 = We’ll need to approve your deregistration request.
+deregistration.deregister.detail2 = When you deregister, your tax liability will stop.
+deregistration.deregister.label = Are you sure you want to deregister from Plastic Packaging Tax?
+deregistration.deregister.empty.error = Select yes if you want to deregister from Plastic Packaging Tax
+
+deregistration.reason.title = Why do you want to deregister?
+deregistration.reason.type.RegisteredIncorrectly = Registered incorrectly
+deregistration.reason.type.CeasedTrading = Ceased trading
+deregistration.reason.type.BelowDe-minimus = Have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.reason.type.TakenintoGroupRegistration = Want to register as part of a group
+deregistration.reason.empty.error = Select your reason for deregistration
+
+deregistration.confirmation.title = Your deregistration request has been submitted
+deregistration.confirmation.subheading = What happens next
+deregistration.confirmation.detail1 = We’ll send you a letter to say if we’ve approved your request.
+deregistration.confirmation.detail2 = You can still view and update your {0} until your deregistration request is approved.
+deregistration.confirmation.detail2.link = Plastic Packaging Tax account
+
+deregister.checkAnswers.title = Check your answers
+deregister.checkAnswers.heading = Check your answers
+deregister.checkAnswers.wantToDeregister = Want to deregister
+deregister.checkAnswers.reasonToDeregister = Why you want to deregister
+deregister.checkAnswers.confirm = Confirm and continue

@@ -189,7 +189,7 @@ primaryContactDetails.fullNamePage.value.error.specialCharacters = Name must onl
 primaryContactDetails.jobTitlePage.title = What is {0}’s job title?
 primaryContactDetails.jobTitle.empty.error = Enter a job title
 primaryContactDetails.jobTitle.tooLong.error = Job title must be no longer than 155 characters
-primaryContactDetails.jobTitle.nonAlphaChar.error = Enter a job title in the correct format
+primaryContactDetails.jobTitle.nonAlphaChar.error = Job title must only include letters and spaces
 
 primaryContactDetails.emailAddress.title = What is {0}’s email address?
 primaryContactDetails.emailAddress.hint = We’ll only use this to send notifications about this registration, the account and returns.
@@ -364,11 +364,18 @@ organisationDetails.type.GroupNominatedPartnership = Limited liability partnersh
 organisationDetails.type.hint = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO), a trust, an overseas organisation without a UK establishment, or a public body
 
 partnership.type.title = What type of partnership are you registering?
-partnership.type.empty.error = Value must be selected
+partnership.type.empty.error = Select the type of partnership you are registering
+partnership.nominated.type.empty.error = Select the nominated partner’s organisation type
+partnership.other.type.empty.error = Select the partner organisation type
+partnership.type.link.text = Register for Plastic Packaging Tax if you are a charitable incorporated organisation (CIO) or an overseas organisation without a UK establishment
+nominated.partner.type.title = What type of organisation is the nominated partner?
+other.partner.type.title = What type of organisation do you want to add next?
 
 partnership.name.title = What is the name of the partnership?
-partnership.name.empty.error = Please enter your partnership name
-partnership.name.format.error = Please enter your partnership name in correct format
+partnership.name.section-header = Partnership details
+partnership.name.empty.error = Enter your partnership name
+partnership.name.format.error = Enter your partnership name in correct format
+partnership.name.too-long = Name must be 160 characters of fewer
 
 partnership.registrationAvailableSoon.header = Partnership
 partnership.registrationAvailableSoon.title = Partnership registration will be available soon
@@ -386,13 +393,13 @@ partner.type.LimitedLiabilityPartnership = Limited liability partnership
 partner.type.LimitedPartnership = Limited partnership
 partner.type.ScottishPartnership = Scottish partnership
 partner.type.ScottishLimitedPartnership = Scottish limited partnership
-partner.type.CIO = Charitable Incorporated Organisation (CIO)
-partner.type.OverseasCompanyUkBranch = Non-UK company with a branch or place of business in the UK
-partner.type.OverseasCompanyNoUKBranch = Non-UK company without a branch or place of business in the UK
+partner.type.CIO = Charitable incorporated organisation (CIO)
+partner.type.OverseasCompanyUkBranch = Overseas organisation with a UK establishment
+partner.type.OverseasCompanyNoUKBranch = Overseas organisation without a UK establishment
 
-nominated.partner.type.title = What type of organisation is the nominated partner?
-nominated.partner.name.empty.error = Please select an entity type from the options above
-other.partner.type.title = What type of organisation is the next partner you want to add?
+
+partnership.job-title-page.title = What is {0}’s job title?
+partnership.job-title-page.section-header = Nominated partner details
 
 partnerships.otherPartners.title = You have {0} partners in your partnership
 partnership.otherPartners.contactNamePage.title = Who is the main contact for {0}?
@@ -403,6 +410,8 @@ partnership.otherPartners.checkAnswers.contactName = Name
 partnership.otherPartners.checkAnswers.jobTitle = Job title
 partnership.otherPartners.checkAnswers.emailAddress = Email address
 partnership.otherPartners.checkAnswers.phoneNumber = Telephone number
+
+partnership.nominated-email-verified.section-heading = Nominated partner details
 
 unauthorised.heading = You must be registered to use this service
 unauthorised.paragraph.1 = You need to {0} to use this service.
@@ -588,7 +597,7 @@ company.confirmAddress.title = Confirm the registered address for {0}
 missing.organisationName = your organisation
 
 ukAddress.title = Is the contact address for {0} in the UK?
-ukAddress.empty.error = Please select Yes or No
+ukAddress.empty.error = Select yes if the address is in the UK or the Isle of Man
 
 addressLookup.business.select.title = Select the business address for {0}?
 addressLookup.business.select.heading = Select the business address for {0}?
@@ -651,6 +660,11 @@ contactDetails.member.check.contact.name = Contact name
 contactDetails.member.check.contact.email = Contact email
 contactDetails.member.check.contact.phone = Telephone number
 contactDetails.member.check.contact.address = Contact address
+contactDetails.member.nominated.first.hint = This is the first name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+contactDetails.member.nominated.last.hint = This is the last name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns.
+contactDetails.member.para = Enter the correct contact here. This is usually the person responsible for the organisation’s Plastic Packaging Tax liability.
+contactDetails.member.nominated.caption = Nominated partner details
+contactDetails.member.other.caption = Other partner details
 
 addressLookup.member.contact.lookup.title = What address do you want to use for {0}?
 addressLookup.member.contact.lookup.heading = What address do you want to use for {0}?

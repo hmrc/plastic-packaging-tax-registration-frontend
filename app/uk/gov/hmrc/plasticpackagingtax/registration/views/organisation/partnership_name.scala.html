@@ -40,6 +40,8 @@
 
     @errorSummary(form.errors)
 
+    @sectionHeader(messages("partnership.name.section-header"))
+
     @formHelper(action = partnerRoutes.PartnershipNameController.submit(), 'autoComplete -> "off") {
 
         @govukInput(

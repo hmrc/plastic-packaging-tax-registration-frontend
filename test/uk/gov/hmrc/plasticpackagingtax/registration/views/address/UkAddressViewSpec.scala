@@ -66,9 +66,9 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
       view must containElementWithID("ukAddress-2")
     }
 
-    "display 'Continue' button" in {
+    "display 'Save and continue' button" in {
       view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Continue"
+      view.getElementById("submit").text() mustBe "Save and continue"
     }
 
   }

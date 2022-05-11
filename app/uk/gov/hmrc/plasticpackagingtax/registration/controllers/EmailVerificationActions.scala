@@ -123,11 +123,11 @@ trait EmailVerificationActions {
         )
     }
 
-  def showEmailVerifiedPage(backCall: Call, submitCall: Call)(implicit
-    request: JourneyRequest[AnyContent],
-    messages: Messages
-  ): Result =
-    Ok(emailCorrectPasscodePage(backCall, submitCall, None))
+  def showEmailVerifiedPage(backCall: Call, submitCall: Call, sectionHeadingKey: Option[String] = None)
+    (implicit request: JourneyRequest[AnyContent], messages: Messages): Result = {
+      val possibleSectionHeadingText = sectionHeadingKey.map {messages(_)}
+      Ok(emailCorrectPasscodePage(backCall, submitCall, possibleSectionHeadingText))
+  }
 
   def showTooManyAttemptsPage()(implicit
     request: JourneyRequest[AnyContent],
@@ -185,9 +185,10 @@ trait EmailVerificationActions {
     form: Form[EmailAddressPasscode],
     prospectiveEmailAddress: String,
     backCall: Call,
-    submitCall: Call
+    submitCall: Call,
+    sectionHeading: Option[String] = None
   )(implicit request: JourneyRequest[AnyContent], messages: Messages): HtmlFormat.Appendable =
-    emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall, None)
+    emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall, sectionHeading)
 
   protected def processVerificationCodeSubmission(
     backCall: Call,

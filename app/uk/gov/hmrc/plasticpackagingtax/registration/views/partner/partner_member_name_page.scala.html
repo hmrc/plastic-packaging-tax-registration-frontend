@@ -26,23 +26,31 @@
         saveButtons: saveButtons,
         govukInput: GovukInput,
         govukFieldset: GovukFieldset,
-        paragraph: paragraph,
+        paragraphBody: paragraphBody,
         sectionHeader: sectionHeader,
         errorSummary: errorSummary
 )
 
 
-@(form: Form[MemberName], partnershipName: String, backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[MemberName], partnershipName: String, isNominated: Boolean, backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
 
 @firstNameField = @{form("firstName")}
 @lastNameField = @{form("lastName")}
 
+@hintTextFirst = @{ if(isNominated) {Some(Hint(content = Text(messages("contactDetails.member.nominated.first.hint"))))} else {None} }
+@hintTextLast  = @{ if(isNominated) {Some(Hint(content = Text(messages("contactDetails.member.nominated.last.hint"))))} else {None} }
+@paraText      = @{ if(!isNominated) { paragraphBody(message = messages("contactDetails.member.para")) } else { None } }
+@caption       = @{ if(isNominated) { sectionHeader(messages("contactDetails.member.nominated.caption")) } else { sectionHeader(messages("contactDetails.member.other.caption")) } }
+
 @fieldSetBody = {
+
+    @paraText
 
 @govukInput(Input(
     id    = firstNameField.name,
     name  = firstNameField.name,
     value = firstNameField.value,
+    hint = hintTextFirst,
     errorMessage = firstNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
     label = Label(
         content = Text(messages("contactDetails.member.firstName")),
@@ -53,6 +61,7 @@
     id    = lastNameField.name,
     name  = lastNameField.name,
     value = lastNameField.value,
+    hint = hintTextLast,
     errorMessage = lastNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
     label = Label(
         content = Text(messages("contactDetails.member.lastName")),
@@ -64,6 +73,9 @@
 @govukLayout(
     title = Title("partnership.otherPartners.contactNamePage.title", partnershipName),
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+
+    @caption
+
     @errorSummary(form.errors)
 
     @formHelper(action = updateCall, 'autoComplete -> "off") {

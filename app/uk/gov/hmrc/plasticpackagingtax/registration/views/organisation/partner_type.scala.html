@@ -29,7 +29,8 @@
     govukRadios : GovukRadios,
     sectionHeader: sectionHeader,
     saveButtons: saveButtons,
-    errorSummary: errorSummary
+    errorSummary: errorSummary,
+    link: link
 )
 
 
@@ -41,6 +42,14 @@
             case false => "other.partner.type.title"
         }}
 
+    @caption = @{
+        if(request.registration.isNominatedPartner(partnerId)) {
+            sectionHeader(messages("contactDetails.member.nominated.caption"))
+        } else {
+            sectionHeader(messages("contactDetails.member.other.caption"))
+        }
+    }
+
     @radioItem(ppType: PartnerTypeEnum) = @{
         RadioItem(content = Text(displayName(ppType)), value = Some(ppType), checked = form("answer").value.contains(ppType.toString))
     }
@@ -48,7 +57,10 @@
     @govukLayout(
         title = Title(titleMessage),
         backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
-            @errorSummary(form.errors)
+
+        @errorSummary(form.errors)
+
+        @caption
 
         @pageHeading(messages(titleMessage))
 
@@ -79,6 +91,14 @@
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
                 ))
+
+        <p class="govuk-body">
+            @link(
+            id = Some("g-from-link"),
+            text = messages("partnership.type.link.text"),
+            call = Call("GET", messages("gform.link"))
+            )
+        </p>
 
         @saveButtons()
     }

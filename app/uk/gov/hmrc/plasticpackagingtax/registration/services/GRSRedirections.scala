@@ -35,7 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyReques
 
 import scala.concurrent.Future
 
-// Can be migrated from trait to a service to reduce dependency injections in callers
+// TODO !Can be migrated from trait to a service to reduce dependency injections in callers
 trait GRSRedirections extends I18nSupport {
 
   def appConfig: AppConfig

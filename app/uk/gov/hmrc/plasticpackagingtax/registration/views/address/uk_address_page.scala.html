@@ -30,7 +30,7 @@
         paragraph: paragraph,
         saveButtons: saveButtons,
         errorSummary: errorSummary,
-        continueButton: continue
+        saveButton: saveAndContinue
 )
 
 @(form: Form[Boolean], backLink: Call, entityName: Option[String])(implicit request: Request[_], messages: Messages)
@@ -59,7 +59,7 @@
             ))
         ))
 
-        @continueButton()
+        @saveButton()
     }
 
 }

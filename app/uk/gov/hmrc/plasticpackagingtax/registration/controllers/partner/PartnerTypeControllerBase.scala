@@ -29,6 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType.FormMode
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   LIMITED_LIABILITY_PARTNERSHIP,
@@ -63,26 +64,30 @@ abstract class PartnerTypeControllerBase(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with GRSRedirections {
 
+  private def form(nominated: Boolean): Form[PartnerType] =
+    PartnerType.form(if (nominated) FormMode.NominatedPartnerType else FormMode.OtherPartnerType)
+
   protected def doDisplayPage(
     partnerId: Option[String] = None,
     submitCall: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      val partner = partnerId match {
-        case Some(partnerId) => request.registration.findPartner(partnerId)
-        case _               => request.registration.inflightPartner
-      }
+      val partner: Option[Partner] =
+        partnerId.fold(request.registration.inflightPartner)(request.registration.findPartner)
+      val nominated = request.registration.isNominatedPartner(partnerId)
+
       partner match {
         case Some(partner) =>
-          Ok(page(PartnerType.form().fill(PartnerType(partner.partnerType)), partnerId, submitCall))
-        case _ => Ok(page(PartnerType.form(), partnerId, submitCall))
+          Ok(page(form(nominated).fill(PartnerType(partner.partnerType)), partnerId, submitCall))
+        case _ => Ok(page(form(nominated), partnerId, submitCall))
       }
     }
 
   protected def doSubmit(partnerId: Option[String] = None, submitCall: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
-        PartnerType.form()
+        val nominated = request.registration.isNominatedPartner(partnerId)
+        form(nominated)
           .bindFromRequest()
           .fold(
             (formWithErrors: Form[PartnerType]) =>
