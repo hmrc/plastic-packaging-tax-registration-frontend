@@ -50,7 +50,7 @@ abstract class GrsConnector[GrsCreateJourneyPayload <: GrsJourneyCreationRequest
     payload: GrsCreateJourneyPayload
   )(implicit wts: Writes[GrsCreateJourneyPayload], hc: HeaderCarrier): Future[RedirectUrl] =
     create(grsCreateJourneyUrl.getOrElse(throw new IllegalStateException("No url is specified")),
-           payload.setBusinessVerificationCheckFalse
+           payload
     )
 
   def createJourney(payload: GrsCreateJourneyPayload, grsCreateJourneyUrl: String)(implicit
@@ -74,7 +74,9 @@ abstract class GrsConnector[GrsCreateJourneyPayload <: GrsJourneyCreationRequest
     hc: HeaderCarrier
   ): Future[RedirectUrl] = {
     val timerCtx = metrics.defaultRegistry.timer(createJourneyTimerTag).time()
-    httpClient.POST[GrsCreateJourneyPayload, HttpResponse](url, payload)
+    httpClient.POST[GrsCreateJourneyPayload, HttpResponse](url,
+                                                           payload.setBusinessVerificationCheckFalse
+    )
       .andThen {
         case _ => timerCtx.stop()
       }
