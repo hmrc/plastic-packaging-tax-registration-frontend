@@ -735,3 +735,33 @@ amend.partner.listPartners.question  = A oes angen i chi ychwanegu partner arall
 amend.partner.remove.title  = A ydych yn siŵr eich bod am dynnu {0} o’r bartneriaeth? – Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 
 gform.link  =  https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
+
+deregistration.deregister.title = Deregister from Plastic Packaging Tax
+deregistration.deregister.eligibility = You can deregister from Plastic Packaging Tax if you:
+deregistration.deregister.eligibility.1 = registered incorrectly
+deregistration.deregister.eligibility.2 = cease trading
+deregistration.deregister.eligibility.3 = have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.deregister.eligibility.4 = want to register as part of a group
+deregistration.deregister.detail1 = We’ll need to approve your deregistration request.
+deregistration.deregister.detail2 = When you deregister, your tax liability will stop.
+deregistration.deregister.label = Are you sure you want to deregister from Plastic Packaging Tax?
+deregistration.deregister.empty.error = Select yes if you want to deregister from Plastic Packaging Tax
+
+deregistration.reason.title = Why do you want to deregister?
+deregistration.reason.type.RegisteredIncorrectly = Registered incorrectly
+deregistration.reason.type.CeasedTrading = Ceased trading
+deregistration.reason.type.BelowDe-minimus = Have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.reason.type.TakenintoGroupRegistration = Want to register as part of a group
+deregistration.reason.empty.error = Select your reason for deregistration
+
+deregistration.confirmation.title = Your deregistration request has been submitted
+deregistration.confirmation.subheading = What happens next
+deregistration.confirmation.detail1 = We’ll send you a letter to say if we’ve approved your request.
+deregistration.confirmation.detail2 = You can still view and update your {0} until your deregistration request is approved.
+deregistration.confirmation.detail2.link = Plastic Packaging Tax account
+
+deregister.checkAnswers.title = Check your answers
+deregister.checkAnswers.heading = Check your answers
+deregister.checkAnswers.wantToDeregister = Want to deregister
+deregister.checkAnswers.reasonToDeregister = Why you want to deregister
+deregister.checkAnswers.confirm = Confirm and continue
