@@ -85,7 +85,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val otherPartnerPhoneNumber  = otherPartner.contactDetails.get.phoneNumber.get
 
   private val isNominated = true
-  private val other = true
+  private val other = false
 
   private val controller = new AmendPartnerContactDetailsController(
     authenticate = mockAuthAllowEnrolmentAction,
