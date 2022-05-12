@@ -155,7 +155,7 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
       radioInputMustBe(4, LIMITED_LIABILITY_PARTNERSHIP)
       radioInputMustBe(5, SCOTTISH_PARTNERSHIP)
       radioInputMustBe(6, SCOTTISH_LIMITED_PARTNERSHIP)
-      radioInputMustBe(8, OVERSEAS_COMPANY_UK_BRANCH)
+      radioInputMustBe(7, OVERSEAS_COMPANY_UK_BRANCH)
     }
 
     "display 'Save and continue' button" in {
