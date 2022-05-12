@@ -33,20 +33,23 @@
         paragraph: paragraph,
         saveButtons: saveButtons,
         errorSummary: errorSummary,
-        continueButton: continue
+        continueButton: continue,
+        sectionHeader: sectionHeader
 )
 
 @(form: Form[RemovePartner], partner: Partner)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
-    title = Title(headingKey = "amend.partner.remove.title", partner.name),
+    title = Title(headingKey = "partnership.removePartner.title", partner.name),
     backButton = Some(BackButton(messages("site.back"), routes.PartnersListController.displayPage(), messages("site.back.hiddenText")))
 ) {
+
+    @sectionHeader(messages("partnership.removePartner.caption"))
 
     @formHelper(action = routes.ConfirmRemovePartnerController.submit(partner.id), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages("amend.partner.remove.title", partner.name)),
+                content = Text(messages("partnership.removePartner.title", partner.name)),
                 classes = gdsFieldsetPageHeading,
                 isPageHeading = true
             )),
@@ -58,7 +61,7 @@
                     RadioItem(content = HtmlContent(messages("general.false")), value = Some(NO), checked = form.value.contains(NO))
                 ),
                 classes = "govuk-radios--inline",
-                errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+                errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message, partner.name)))),
             ))
         ))
 
