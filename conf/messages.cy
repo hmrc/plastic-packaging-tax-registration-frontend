@@ -661,7 +661,7 @@ contactDetails.member.nominated.first.hint = Dyma cyntaf enw’r  person a fydd 
 contactDetails.member.nominated.last.hint = Dyma olaf enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
 contactDetails.member.para = Nodwch y cyswllt cywir yma. Fel arfer, dyma’r person sy’n gyfrifol am rwymedigaeth y sefydliad ar gyfer y Dreth Deunydd Pacio Plastig.
 contactDetails.member.nominated.caption = Manylion y partner enwebedig
-contactDetails.member.other.caption = Other partner details
+contactDetails.member.other.caption = Manylion y partner arall
 
 addressLookup.member.contact.lookup.title  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?
 addressLookup.member.contact.lookup.heading  = Pa gyfeiriad yr hoffech ei ddefnyddio ar gyfer {0}?
