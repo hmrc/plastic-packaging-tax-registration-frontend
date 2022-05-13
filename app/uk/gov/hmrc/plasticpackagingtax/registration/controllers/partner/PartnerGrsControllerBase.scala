@@ -80,11 +80,6 @@ abstract class PartnerGrsControllerBase(
                 case SOLE_TRADER_VERIFICATION_FAILED =>
                   Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
                 case DUPLICATE_SUBSCRIPTION =>
-                  if (registration.isGroup)
-                    Redirect(
-                      groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered()
-                    )
-                  else
                     Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
                   Redirect(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad())
