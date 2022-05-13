@@ -693,7 +693,8 @@ partnership.partnerList.subHeading  = A oes angen i chi ychwanegu partner arall?
 addPartner.empty.error  = Dewiswch ‘Iawn’ os oes angen i chi ychwanegu partner arall
 
 partnership.removePartner.title  = A ydych yn siŵr eich bod am dynnu {0} o’r bartneriaeth?
-partnership.removePartner.error.empty  = Dewiswch ‘Iawn’ neu ‘Na’
+partnership.removePartner.error.empty  = Dewiswch ‘Iawn’ os ydych am dynnu {0} o’r bartneriaeth
+partnership.removePartner.caption = Partneriaid yn y bartneriaeth
 
 amend.organisation.title  = Manylion eich sefydliad
 amend.individual.title  = Eich manylion
