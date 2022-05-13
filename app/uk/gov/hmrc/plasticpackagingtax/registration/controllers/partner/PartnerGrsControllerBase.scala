@@ -24,24 +24,15 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
-  DUPLICATE_SUBSCRIPTION,
-  RegistrationStatus,
-  STATUS_OK,
-  UNSUPPORTED_ORGANISATION
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{BUSINESS_VERIFICATION_FAILED, DUPLICATE_SUBSCRIPTION, GRS_FAILED, RegistrationStatus, SOLE_TRADER_VERIFICATION_FAILED, STATUS_OK, UNSUPPORTED_ORGANISATION}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Registration,
-  RegistrationUpdater
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Registration, RegistrationUpdater}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -82,8 +73,19 @@ abstract class PartnerGrsControllerBase(
               status match {
                 case STATUS_OK =>
                   Redirect(getRedirect)
+                case GRS_FAILED =>
+                  Redirect(commonRoutes.NotableErrorController.grsFailure())
+                case BUSINESS_VERIFICATION_FAILED =>
+                  Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
+                case SOLE_TRADER_VERIFICATION_FAILED =>
+                  Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
                 case DUPLICATE_SUBSCRIPTION =>
-                  Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
+                  if (registration.isGroup)
+                    Redirect(
+                      groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered()
+                    )
+                  else
+                    Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
                   Redirect(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad())
               }
@@ -92,18 +94,31 @@ abstract class PartnerGrsControllerBase(
         }
     }
 
-  private def registrationStatus(registration: Registration, partnerId: Option[String])(implicit
-    hc: HeaderCarrier
-  ): Future[RegistrationStatus] =
-    registration.organisationDetails.partnerBusinessPartnerId(partnerId) match {
-      case Some(businessPartnerId) =>
-        checkSubscriptionStatus(businessPartnerId).map {
-          case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
-          case _          => STATUS_OK
+    private def registrationStatus(
+      registration: Registration,
+      partnerId: Option[String])(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[RegistrationStatus] =
+      if (registration.organisationDetails.businessVerificationFailed)
+        registration.organisationDetails.organisationType match {
+          case Some(OrgType.SOLE_TRADER) =>
+            Future.successful(SOLE_TRADER_VERIFICATION_FAILED)
+          case _ =>
+            Future.successful(BUSINESS_VERIFICATION_FAILED)
         }
-      case None =>
-        Future.successful(UNSUPPORTED_ORGANISATION)
-    }
+      else
+        registration.organisationDetails.partnerBusinessPartnerId(partnerId) match {
+          case Some(businessPartnerId) =>
+            checkSubscriptionStatus(businessPartnerId).map {
+              case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
+              case _          => STATUS_OK
+            }
+          case None =>
+            Future.successful(registration.organisationDetails.grsRegistration match {
+              case Some(
+                    RegistrationDetails(false, Some("UNCHALLENGED"), "REGISTRATION_NOT_CALLED", _)
+                  ) => SOLE_TRADER_VERIFICATION_FAILED
+              case _ => GRS_FAILED
+            })
+        }
 
   private def checkSubscriptionStatus(
     businessPartnerId: String
