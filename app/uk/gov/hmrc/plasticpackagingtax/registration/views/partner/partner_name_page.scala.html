@@ -40,6 +40,8 @@
 
     @errorSummary(form.errors)
 
+    @sectionHeader(messages("partnership.partners.in.the.partnership"))
+
     @formHelper(action = updateCall, 'autoComplete -> "off") {
 
         @govukInput(

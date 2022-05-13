@@ -376,6 +376,8 @@ partnership.name.empty.error  = Nodwch enw eich partneriaeth
 partnership.name.format.error  = Nodwch enw eich partneriaeth yn y fformat cywir
 partnership.name.too-long = Mae’n rhaid i’r enw fod yn 160 o gymeriadau neu lai
 
+partnership.partners.in.the.partnership = Partneriaid yn y bartneriaeth
+
 partnership.registrationAvailableSoon.header  = Partneriaeth
 partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir
 partnership.registrationAvailableSoon  = {0] a byddwn yn cysylltu â chi pan fydd y gwasanaeth ar gael.
@@ -659,7 +661,10 @@ contactDetails.member.check.contact.phone  = Rhif ffôn
 contactDetails.member.check.contact.address  = Cyfeiriad cyswllt
 contactDetails.member.nominated.first.hint = Dyma cyntaf enw’r  person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
 contactDetails.member.nominated.last.hint = Dyma olaf enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+
 contactDetails.member.para = Nodwch y cyswllt cywir yma. Fel arfer, dyma’r person sy’n gyfrifol am rwymedigaeth y sefydliad ar gyfer y Dreth Deunydd Pacio Plastig.
+contactDetails.member.nominated.para = Dyma enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+
 contactDetails.member.nominated.caption = Manylion y partner enwebedig
 contactDetails.member.other.caption = Manylion y partner arall
 

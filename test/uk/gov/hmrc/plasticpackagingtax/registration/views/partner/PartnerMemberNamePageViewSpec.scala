@@ -84,17 +84,14 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       }
 
-      "display a hint for each name input" in {
+      "display a paragraph text" in {
 
-        viewNom.getElementById("firstName-hint").text() must include(
-          "This is the first name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns."
-        )
-
-        viewNom.getElementById("lastName-hint").text() must include(
-          "This is the last name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns."
+        viewNom.getElementsByClass("govuk-body").text() must include(
+          "This is the name of the person who will manage the organisation’s Plastic Packaging Tax account, receive updates about the account and submit returns."
         )
 
       }
+
     }
 
     "other" should {
@@ -102,14 +99,6 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
       "display a caption" in {
 
         viewOther.getElementById("section-header").text() must include("Other partner details")
-
-      }
-
-      "not display a hint for each name input" in {
-
-        viewOther.getElementById("firstName-hint") mustBe null
-
-        viewOther.getElementById("lastName-hint") mustBe null
 
       }
 

@@ -77,7 +77,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
     "display header" in {
 
       view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("organisationDetails.sectionHeader")
+        messages("partnership.name.section-header")
       )
     }
 
