@@ -285,7 +285,7 @@ reviewRegistration.partner.orgType  = Math o sefydliad
 reviewRegistration.partner.companyNumber  =  Rhif y cwmni
 reviewRegistration.partner.orgName  = Enw’r sefydliad
 reviewRegistration.partner.utr  = Cyfeirnod Unigryw y Trethdalwr
-reviewRegistration.partner.sautr  =  Self Assessment Unique Taxpayer Reference
+reviewRegistration.partner.sautr  =  Mae’n rhaid i deitl y swydd gynnwys llythrennau a bylchau yn unig
 reviewRegistration.partner.dob  = Dyddiad geni
 reviewRegistration.partner.name  = Enw
 reviewRegistration.partner.nino  = Rhif Yswiriant Gwladol
@@ -551,7 +551,7 @@ enrolment.confirmation.whatHappensNext.detail.3  = {0}
 enrolment.confirmation.whatHappensNext.detail.3.link.text  = Beth oedd eich barn am y gwasanaeth hwn?
 
 enrolment.not.verified.title  = Mae’n ddrwg gennym, nid oedd modd dilysu’ch busnes
-enrolment.not.verified.detail1  = The information you provided does not match the details we have about your business.
+enrolment.not.verified.detail1  = Nid yw’r wybodaeth a roddwyd gennych yn cyd-fynd â’r manylion sydd gennym ynglŷn â’ch busnes.
 
 verify.organisation.title  =  Mae’n rhaid i ni ofyn ychydig o gwestiynau i ddilysu’r sefydliad
 verify.organisation.detail.1  =  Gofynnir i chi roi manylion a allai fod gennych ynglŷn â’r busnes.
