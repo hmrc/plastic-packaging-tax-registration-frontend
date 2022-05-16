@@ -91,16 +91,6 @@
 
 @beforeContentBlock = {
 
-    @hmrcUserResearchBanner(
-        UserResearchBanner(
-            utils.getCurrentLang(request).code.take(2) match {
-                case "cy" => Cy
-                case "en" => En
-                case _ => En
-            }, appConfig.userResearchUrl
-       )
-    )
-
     @{
         def playLangToUiLanguage(l: Lang) = l.code.take(2) match {
             case "cy" => Cy
