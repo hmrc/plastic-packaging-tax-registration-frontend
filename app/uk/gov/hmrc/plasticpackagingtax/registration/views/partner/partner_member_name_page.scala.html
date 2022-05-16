@@ -37,9 +37,7 @@
 @firstNameField = @{form("firstName")}
 @lastNameField = @{form("lastName")}
 
-@hintTextFirst = @{ if(isNominated) {Some(Hint(content = Text(messages("contactDetails.member.nominated.first.hint"))))} else {None} }
-@hintTextLast  = @{ if(isNominated) {Some(Hint(content = Text(messages("contactDetails.member.nominated.last.hint"))))} else {None} }
-@paraText      = @{ if(!isNominated) { paragraphBody(message = messages("contactDetails.member.para")) } else { None } }
+@paraText      = @{ if(isNominated) { paragraphBody(message = messages("contactDetails.member.nominated.para")) } else { paragraphBody(message = messages("contactDetails.member.para")) } }
 @caption       = @{ if(isNominated) { sectionHeader(messages("contactDetails.member.nominated.caption")) } else { sectionHeader(messages("contactDetails.member.other.caption")) } }
 
 @fieldSetBody = {
@@ -50,7 +48,6 @@
     id    = firstNameField.name,
     name  = firstNameField.name,
     value = firstNameField.value,
-    hint = hintTextFirst,
     errorMessage = firstNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
     label = Label(
         content = Text(messages("contactDetails.member.firstName")),
@@ -61,7 +58,6 @@
     id    = lastNameField.name,
     name  = lastNameField.name,
     value = lastNameField.value,
-    hint = hintTextLast,
     errorMessage = lastNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
     label = Label(
         content = Text(messages("contactDetails.member.lastName")),

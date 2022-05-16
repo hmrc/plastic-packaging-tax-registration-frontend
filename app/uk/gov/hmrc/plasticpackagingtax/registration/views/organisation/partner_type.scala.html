@@ -84,9 +84,7 @@
                     radioItem(LIMITED_LIABILITY_PARTNERSHIP),
                     radioItem(SCOTTISH_PARTNERSHIP),
                     radioItem(SCOTTISH_LIMITED_PARTNERSHIP),
-                    radioItem(CHARITABLE_INCORPORATED_ORGANISATION),
-                    radioItem(OVERSEAS_COMPANY_UK_BRANCH),
-                    radioItem(OVERSEAS_COMPANY_NO_UK_BRANCH)
+                    radioItem(OVERSEAS_COMPANY_UK_BRANCH)
                 ),
                 classes = "govuk-radios",
                 errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),

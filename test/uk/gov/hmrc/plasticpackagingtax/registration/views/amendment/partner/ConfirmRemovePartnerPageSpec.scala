@@ -19,9 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.partner
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
+import play.api.data.Form
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName.partnerName
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.confirm_remove_partner_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+
+import java.util.UUID
 
 @ViewTest
 class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
@@ -30,9 +34,12 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
 
   private val partner = aLimitedCompanyPartner()
 
+  private def createView(form: Form[RemovePartner] = RemovePartner.form()): Document =
+    page(form, partner)(journeyRequest, messages)
+
   "Confirm Remove Partner page" should {
 
-    val view: Document = page(RemovePartner.form(), partner)(journeyRequest, messages)
+    val view = createView()
 
     "contain title" in {
       view.select("title").text() must include(
@@ -40,9 +47,13 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
       )
     }
 
+    "Display caption" in {
+      view.getElementById("section-header").text() mustBe messages("partnership.removePartner.caption")
+    }
+
     "contain heading" in {
       view.select("h1").text() mustBe messages(key = "amend.partner.remove.title",
-                                               args = partner.name
+        args = partner.name
       )
     }
 
@@ -56,6 +67,17 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
     "display 'Continue' button" in {
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Continue"
+    }
+
+    "display error" when {
+
+      "no radio button checked" in {
+        val form = RemovePartner
+          .form()
+          .bind(emptyFormData)
+        val view = createView(form)
+        view must haveGovukFieldError("value", messages("partnership.removePartner.error.empty", partner.name))
+      }
     }
   }
 

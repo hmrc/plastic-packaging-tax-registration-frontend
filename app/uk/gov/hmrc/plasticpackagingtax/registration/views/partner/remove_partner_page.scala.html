@@ -29,7 +29,8 @@
   govukRadios : GovukRadios,
   paragraph: paragraph,
   saveButtons: saveButtons,
-  errorSummary: errorSummary
+  errorSummary: errorSummary,
+  sectionHeader: sectionHeader
 )
 
 
@@ -42,6 +43,8 @@
   backButton = Some(BackButton(messages("site.back"), routes.PartnerListController.displayPage(), messages("site.back.hiddenText", partnerName)))) {
 
     @errorSummary(form.errors)
+
+   @sectionHeader(messages("partnership.partners.in.the.partnership"))
 
     @formHelper(action = routes.RemovePartnerController.submit(partnerId), 'autoComplete -> "off") {
 

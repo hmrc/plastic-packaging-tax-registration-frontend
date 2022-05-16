@@ -285,7 +285,7 @@ reviewRegistration.partner.orgType  = Math o sefydliad
 reviewRegistration.partner.companyNumber  =  Rhif y cwmni
 reviewRegistration.partner.orgName  = Enw’r sefydliad
 reviewRegistration.partner.utr  = Cyfeirnod Unigryw y Trethdalwr
-reviewRegistration.partner.sautr  =  Self Assessment Unique Taxpayer Reference
+reviewRegistration.partner.sautr  =  Mae’n rhaid i deitl y swydd gynnwys llythrennau a bylchau yn unig
 reviewRegistration.partner.dob  = Dyddiad geni
 reviewRegistration.partner.name  = Enw
 reviewRegistration.partner.nino  = Rhif Yswiriant Gwladol
@@ -375,6 +375,8 @@ partnership.name.section-header = Manylion y bartneriaeth
 partnership.name.empty.error  = Nodwch enw eich partneriaeth
 partnership.name.format.error  = Nodwch enw eich partneriaeth yn y fformat cywir
 partnership.name.too-long = Mae’n rhaid i’r enw fod yn 160 o gymeriadau neu lai
+
+partnership.partners.in.the.partnership = Partneriaid yn y bartneriaeth
 
 partnership.registrationAvailableSoon.header  = Partneriaeth
 partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir
@@ -471,9 +473,9 @@ businessEntityVerification.failure.title  = Nid yw’r manylion a nodwyd gennych
 businessEntityVerification.failure.heading  = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
 businessEntityVerification.failure.detail  = Gwiriwch gofnodion Treth Gorfforaeth eich cwmni a rhowch gynnig arall arni ymhen 24 awr.
 
-soleTraderEntityVerification.failure.title  = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
-soleTraderEntityVerification.failure.heading  = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
-soleTraderEntityVerification.failure.detail  = Gwiriwch eich cofnodion Hunanasesiad a rhowch gynnig arall arni ymhen 24 awr.
+soleTraderEntityVerification.failure.title = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
+soleTraderEntityVerification.failure.heading = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
+soleTraderEntityVerification.failure.detail = Gwiriwch eich cofnodion Hunanasesiad a rhowch gynnig arall arni.
 
 duplicateSubscription.title  = Mae’ch sefydliad eisoes wedi’i gofrestru
 duplicateSubscription.detail  = Mae rhywun yn {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
@@ -549,7 +551,7 @@ enrolment.confirmation.whatHappensNext.detail.3  = {0}
 enrolment.confirmation.whatHappensNext.detail.3.link.text  = Beth oedd eich barn am y gwasanaeth hwn?
 
 enrolment.not.verified.title  = Mae’n ddrwg gennym, nid oedd modd dilysu’ch busnes
-enrolment.not.verified.detail1  = The information you provided does not match the details we have about your business.
+enrolment.not.verified.detail1  = Nid yw’r wybodaeth a roddwyd gennych yn cyd-fynd â’r manylion sydd gennym ynglŷn â’ch busnes.
 
 verify.organisation.title  =  Mae’n rhaid i ni ofyn ychydig o gwestiynau i ddilysu’r sefydliad
 verify.organisation.detail.1  =  Gofynnir i chi roi manylion a allai fod gennych ynglŷn â’r busnes.
@@ -659,7 +661,10 @@ contactDetails.member.check.contact.phone  = Rhif ffôn
 contactDetails.member.check.contact.address  = Cyfeiriad cyswllt
 contactDetails.member.nominated.first.hint = Dyma cyntaf enw’r  person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
 contactDetails.member.nominated.last.hint = Dyma olaf enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+
 contactDetails.member.para = Nodwch y cyswllt cywir yma. Fel arfer, dyma’r person sy’n gyfrifol am rwymedigaeth y sefydliad ar gyfer y Dreth Deunydd Pacio Plastig.
+contactDetails.member.nominated.para = Dyma enw’r person a fydd yn rheoli cyfrif Treth Deunydd Pacio Plastig y sefydliad, yn cael diweddariadau am y cyfrif ac yn cyflwyno Ffurflenni Treth.
+
 contactDetails.member.nominated.caption = Manylion y partner enwebedig
 contactDetails.member.other.caption = Manylion y partner arall
 
@@ -693,7 +698,8 @@ partnership.partnerList.subHeading  = A oes angen i chi ychwanegu partner arall?
 addPartner.empty.error  = Dewiswch ‘Iawn’ os oes angen i chi ychwanegu partner arall
 
 partnership.removePartner.title  = A ydych yn siŵr eich bod am dynnu {0} o’r bartneriaeth?
-partnership.removePartner.error.empty  = Dewiswch ‘Iawn’ neu ‘Na’
+partnership.removePartner.error.empty  = Dewiswch ‘Iawn’ os ydych am dynnu {0} o’r bartneriaeth
+partnership.removePartner.caption = Partneriaid yn y bartneriaeth
 
 amend.organisation.title  = Manylion eich sefydliad
 amend.individual.title  = Eich manylion
