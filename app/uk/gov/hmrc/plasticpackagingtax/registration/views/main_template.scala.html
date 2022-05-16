@@ -14,11 +14,10 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcTrackingConsentSnippet, HmrcReportTechnicalIssueHelper}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardFooter, HmrcTrackingConsentSnippet, HmrcReportTechnicalIssueHelper, HmrcStandardHeader}
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.TimeoutDialogConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.{phaseBanner, siteHeader}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
@@ -26,6 +25,9 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.play.language.LanguageUtils
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 
 @this(
         appConfig: AppConfig,
@@ -37,12 +39,12 @@
         hmrcLanguageSelect: HmrcLanguageSelect,
         hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
         hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-        siteHeader: siteHeader,
-        phaseBanner: phaseBanner,
         hmrcFooter: HmrcStandardFooter,
         hmrcTimeoutDialog: HmrcTimeoutDialog,
         hmrcUserResearchBanner: HmrcUserResearchBanner,
-        utils: LanguageUtils
+        hmrcStandardHeader: HmrcStandardHeader,
+        utils: LanguageUtils,
+        alphaBanner: StandardBetaBanner,
 )
 @(title: Title,
   backButton: Option[BackButton] = None,
@@ -99,8 +101,6 @@
        )
     )
 
-    @phaseBanner("beta")
-
     @{
         def playLangToUiLanguage(l: Lang) = l.code.take(2) match {
             case "cy" => Cy
@@ -133,12 +133,38 @@
     @hmrcReportTechnicalIssueHelper()
 }
 
+@signOutHref = @{
+    if (request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]])
+        Some(pptRoutes.SignOutController.signOut(uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason.UserAction).url)
+    else
+        None
+}
+
+@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
+    @feedbackUrl = @{
+        if (isAuthenticated) {
+            s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
+        } else {
+            s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
+        }
+    }
+
 @govukLayout(
     pageTitle = Some(title.toString),
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
     bodyEndBlock = None,
     scriptsBlock = Some(scripts),
-    headerBlock = Some(siteHeader()),
+    headerBlock = Some(hmrcStandardHeader(
+        serviceUrl  = Some(pptRoutes.StartRegistrationController.startRegistration.url),
+        signOutUrl  = signOutHref,
+        phaseBanner = Some(alphaBanner(feedbackUrl)),
+        userResearchBanner = Some(UserResearchBanner(
+            utils.getCurrentLang(request).code.take(2) match {
+                case "cy" => Cy
+                case "en" => En
+                case _ => En
+            }, appConfig.userResearchUrl))
+)),
     footerBlock = Some(hmrcFooter())
 )(content)
