@@ -43,7 +43,7 @@ trait RegistrationBuilder {
 
   private def modelWithDefaults: Registration =
     Registration(id = "id",
-                 incorpJourneyId = Some(UUID.randomUUID().toString),
+                 incorpJourneyId = Some("some-journey-id"),
                  registrationType = Some(RegType.SINGLE_ENTITY),
                  liabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(false),
                                                      expectToExceedThresholdWeight = Some(true),

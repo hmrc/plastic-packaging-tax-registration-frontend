@@ -74,7 +74,7 @@ abstract class PartnerGrsControllerBase(
                 case UNSUPPORTED_ORGANISATION =>
                   Redirect(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad())
                 case GRS_FAILED =>
-                  Redirect(commonRoutes.NotableErrorController.grsFailure())
+                  throw new Exception(s"Unexpected response from GRS during journey-id $journeyId")
               }
             }
           case Left(error) => throw error
@@ -83,16 +83,16 @@ abstract class PartnerGrsControllerBase(
 
   private def registrationStatus(registration: Registration, partnerId: Option[String])(implicit
     hc: HeaderCarrier
-  ): Future[RegistrationStatus] =
+  ): Future[RegistrationStatus] = {
     registration.organisationDetails.partnerBusinessPartnerId(partnerId) match {
-      case Some(businessPartnerId) =>
-        checkSubscriptionStatus(businessPartnerId).map {
+      case Some(businessPartnerId) => checkSubscriptionStatus(businessPartnerId).map {
           case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
-          case _          => STATUS_OK
+          case _ => STATUS_OK
         }
       case None =>
         Future.successful(GRS_FAILED)
     }
+  }
 
   private def checkSubscriptionStatus(
     businessPartnerId: String
