@@ -44,7 +44,7 @@
         hmrcUserResearchBanner: HmrcUserResearchBanner,
         hmrcStandardHeader: HmrcStandardHeader,
         utils: LanguageUtils,
-        alphaBanner: StandardBetaBanner,
+        stdBanner: StandardBetaBanner,
 )
 @(title: Title,
   backButton: Option[BackButton] = None,
@@ -158,7 +158,7 @@
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = Some(pptRoutes.StartRegistrationController.startRegistration.url),
         signOutUrl  = signOutHref,
-        phaseBanner = Some(alphaBanner(feedbackUrl)),
+        phaseBanner = Some(stdBanner(feedbackUrl)),
         userResearchBanner = Some(UserResearchBanner(
             utils.getCurrentLang(request).code.take(2) match {
                 case "cy" => Cy
