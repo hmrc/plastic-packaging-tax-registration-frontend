@@ -473,9 +473,9 @@ businessEntityVerification.failure.title  = Nid yw’r manylion a nodwyd gennych
 businessEntityVerification.failure.heading  = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
 businessEntityVerification.failure.detail  = Gwiriwch gofnodion Treth Gorfforaeth eich cwmni a rhowch gynnig arall arni ymhen 24 awr.
 
-soleTraderEntityVerification.failure.title  = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
-soleTraderEntityVerification.failure.heading  = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
-soleTraderEntityVerification.failure.detail  = Gwiriwch eich cofnodion Hunanasesiad a rhowch gynnig arall arni ymhen 24 awr.
+soleTraderEntityVerification.failure.title = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
+soleTraderEntityVerification.failure.heading = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion.
+soleTraderEntityVerification.failure.detail = Gwiriwch eich cofnodion Hunanasesiad a rhowch gynnig arall arni.
 
 duplicateSubscription.title  = Mae’ch sefydliad eisoes wedi’i gofrestru
 duplicateSubscription.detail  = Mae rhywun yn {0} eisoes wedi cofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
