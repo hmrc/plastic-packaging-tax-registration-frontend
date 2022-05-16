@@ -141,13 +141,13 @@
 }
 
 @isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
-    @feedbackUrl = @{
-        if (isAuthenticated) {
-            s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
-        } else {
-            s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
-        }
+@feedbackUrl = @{
+    if (isAuthenticated) {
+        s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
+    } else {
+        s"${appConfig.unauthenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"
     }
+}
 
 @govukLayout(
     pageTitle = Some(title.toString),
