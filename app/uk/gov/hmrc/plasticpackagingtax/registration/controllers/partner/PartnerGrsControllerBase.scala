@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
-import play.api.Logger
+import play.api.{Logger, Logging}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -24,24 +24,13 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
-  DUPLICATE_SUBSCRIPTION,
-  RegistrationStatus,
-  STATUS_OK,
-  UNSUPPORTED_ORGANISATION
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{DUPLICATE_SUBSCRIPTION, GRS_FAILED, RegistrationStatus, STATUS_OK, UNSUPPORTED_ORGANISATION}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  Registration,
-  RegistrationUpdater
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Registration, RegistrationUpdater}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -59,9 +48,7 @@ abstract class PartnerGrsControllerBase(
   val registrationUpdater: RegistrationUpdater,
   mcc: MessagesControllerComponents
 )(implicit executionContext: ExecutionContext)
-    extends FrontendController(mcc) with I18nSupport {
-
-  private val logger = Logger(this.getClass)
+    extends FrontendController(mcc) with I18nSupport with Logging {
 
   protected def grsCallback(
     journeyId: String,
@@ -86,6 +73,8 @@ abstract class PartnerGrsControllerBase(
                   Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
                 case UNSUPPORTED_ORGANISATION =>
                   Redirect(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad())
+                case GRS_FAILED =>
+                  Redirect(commonRoutes.NotableErrorController.grsFailure())
               }
             }
           case Left(error) => throw error
@@ -102,7 +91,7 @@ abstract class PartnerGrsControllerBase(
           case _          => STATUS_OK
         }
       case None =>
-        Future.successful(UNSUPPORTED_ORGANISATION)
+        Future.successful(GRS_FAILED)
     }
 
   private def checkSubscriptionStatus(
