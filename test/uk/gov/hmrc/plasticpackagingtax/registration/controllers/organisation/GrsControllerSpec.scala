@@ -22,6 +22,7 @@ import org.mockito.Mockito.verify
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
+import play.api.mvc.Result
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
@@ -29,25 +30,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes =>
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationDetails,
-  PartnershipBusinessDetails,
-  SoleTraderDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  OrganisationDetails,
-  Registration
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
-  NOT_SUBSCRIBED,
-  SUBSCRIBED
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorporationDetails, PartnershipBusinessDetails, SoleTraderDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import scala.concurrent.Future
 
 class GrsControllerSpec extends ControllerSpec {
 
@@ -276,10 +266,10 @@ class GrsControllerSpec extends ControllerSpec {
     "show error page" when {
       "business partner id is absent" in {
         authorizedUser()
-        val result = simulateUnregisteredLimitedCompanyCallback()
+        val result: Future[Result] = simulateUnregisteredLimitedCompanyCallback()
+        val exception = intercept[Exception](await(result))
+        exception.getMessage must include ("some-journey-id")
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.grsFailure().url)
       }
     }
 

@@ -96,7 +96,7 @@ class GrsController @Inject() (
                 case STATUS_OK =>
                   Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
                 case GRS_FAILED =>
-                  Redirect(commonRoutes.NotableErrorController.grsFailure())
+                  throw new Exception(s"Unexpected response from GRS during journey-id $journeyId")
                 case BUSINESS_VERIFICATION_FAILED =>
                   Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
                 case SOLE_TRADER_VERIFICATION_FAILED =>
