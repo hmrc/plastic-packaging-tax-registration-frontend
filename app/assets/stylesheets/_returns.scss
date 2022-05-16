@@ -11,3 +11,59 @@ th.govuk-table__header.row-border {
 td.govuk-table__cell.row-border {
   border-bottom: 1px solid #b1b4b6 !important;
 }
+
+.hmrc-user-research-banner {
+  display: none;
+  position: relative;
+  color: govuk-colour("white");
+  background-color: $govuk-brand-colour;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  @include govuk-responsive-padding(6, "top");
+  @include govuk-responsive-padding(6, "bottom");
+  @include govuk-font($size: 19);
+
+  &__container {
+    position: relative;
+    left: 80px;
+  }
+
+  &__title {
+    @include govuk-responsive-margin(1, "bottom");
+  }
+
+  &__link {
+    @include hmrc-white-link();
+  }
+
+  &--show {
+    display: block;
+  }
+
+  &__close {
+    @include hmrc-white-link();
+    @include govuk-responsive-margin(2, "top");
+
+    outline: 0;
+    border: 0;
+    background: none;
+    text-decoration: underline;
+    box-shadow: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: inherit;
+    float: right;
+    position: absolute;
+    top: -10px;
+    right: 160px;
+
+    &--variation-1 {
+      @include govuk-media-query ($from: desktop) {
+        position: absolute;
+        margin-top: 0;
+        top: 0;
+        right: 0;
+      }
+    }
+  }
+}

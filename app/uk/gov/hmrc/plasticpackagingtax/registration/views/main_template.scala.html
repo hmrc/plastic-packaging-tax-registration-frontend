@@ -20,9 +20,12 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.{phaseBanner, siteHeader}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcLanguageSelect
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+@import uk.gov.hmrc.play.language.LanguageUtils
 
 @this(
         appConfig: AppConfig,
@@ -37,7 +40,9 @@
         siteHeader: siteHeader,
         phaseBanner: phaseBanner,
         hmrcFooter: HmrcStandardFooter,
-        hmrcTimeoutDialog: HmrcTimeoutDialog
+        hmrcTimeoutDialog: HmrcTimeoutDialog,
+        hmrcUserResearchBanner: HmrcUserResearchBanner,
+        utils: LanguageUtils
 )
 @(title: Title,
   backButton: Option[BackButton] = None,
@@ -83,6 +88,17 @@
 }
 
 @beforeContentBlock = {
+
+    @hmrcUserResearchBanner(
+        UserResearchBanner(
+            utils.getCurrentLang(request).code.take(2) match {
+                case "cy" => Cy
+                case "en" => En
+                case _ => En
+            }, appConfig.userResearchUrl
+       )
+    )
+
     @phaseBanner("beta")
 
     @{
@@ -90,7 +106,7 @@
             case "cy" => Cy
             case "en" => En
             case _ => En
-}
+        }
 
         if(appConfig.welshEnabled) {
             hmrcLanguageSelect(LanguageSelect(

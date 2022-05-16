@@ -159,9 +159,10 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   lazy val feedbackUnauthenticatedLink: String =
     config.get[String]("urls.feedback.unauthenticatedLink")
 
-  lazy val exitSurveyUrl  = config.get[String]("urls.exitSurvey")
-  lazy val hmrcPrivacyUrl = config.get[String]("urls.hmrcPrivacy")
-  lazy val govUkUrl       = config.get[String]("urls.govUk")
+  lazy val exitSurveyUrl   = config.get[String]("urls.exitSurvey")
+  lazy val hmrcPrivacyUrl  = config.get[String]("urls.hmrcPrivacy")
+  lazy val govUkUrl        = config.get[String]("urls.govUk")
+  lazy val userResearchUrl = config.get[String]("urls.userResearchUrl")
 
   lazy val pptRegistrationUrl: String  = s"$pptServiceHost/registrations"
   lazy val pptSubscriptionsUrl: String = s"$pptServiceHost/subscriptions"
@@ -232,4 +233,5 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
     "/accessibility-statement" + accessibilityStatementServicePath
 
   lazy val goLiveDate: LocalDate = LocalDate.parse(config.get[String]("go-live-date"))
+
 }
