@@ -30,25 +30,15 @@ import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  PARTNERSHIP,
-  SOLE_TRADER,
-  UK_COMPANY
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  EisError,
-  SubscriptionCreateOrUpdateResponseFailure
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFilterService
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  duplicate_subscription_page,
-  review_registration_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{duplicate_subscription_page, review_registration_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.util.UUID
@@ -490,8 +480,10 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                                               Address(addressLine1 =
                                                                         "2 Scala Street",
                                                                       addressLine2 = Some("Soho"),
+                                                                      addressLine3 = None,
                                                                       townOrCity = "London",
-                                                                      postCode = Some("W1T 2HN")
+                                                                      maybePostcode = Some("W1T 2HN"),
+                                                                      countryCode = "GB"
                                                               )
                                                             )
   )

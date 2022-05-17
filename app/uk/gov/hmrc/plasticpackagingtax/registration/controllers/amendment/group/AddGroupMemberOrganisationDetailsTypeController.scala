@@ -48,13 +48,7 @@ class AddGroupMemberOrganisationDetailsTypeController @Inject() (
   val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
   val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
-    extends OrganisationDetailsTypeControllerBase(authenticate,
-                                                  journeyAction,
-                                                  appConfig,
-                                                  page,
-                                                  registrationUpdater,
-                                                  mcc
-    ) {
+    extends OrganisationDetailsTypeControllerBase(authenticate, journeyAction, appConfig, page, registrationUpdater, mcc) {
 
   def displayPage(): Action[AnyContent] =
     doDisplayPage(None, routes.AddGroupMemberOrganisationDetailsTypeController.submit())

@@ -45,50 +45,38 @@ class GrsControllerSpec extends ControllerSpec {
   private val registration = aRegistration()
 
   private val controller =
-    new GrsController(authenticate = mockAuthAction,
-                      mockJourneyAction,
-                      mockRegistrationConnector,
-                      mockUkCompanyGrsConnector,
-                      mockSoleTraderGrsConnector,
-                      mockRegisteredSocietyGrsConnector,
-                      mockPartnershipGrsConnector,
-                      mockSubscriptionsConnector,
-                      mcc
+    new GrsController(
+      authenticate = mockAuthAction,
+      mockJourneyAction,
+      mockRegistrationConnector,
+      mockUkCompanyGrsConnector,
+      mockSoleTraderGrsConnector,
+      mockRegisteredSocietyGrsConnector,
+      mockPartnershipGrsConnector,
+      mockSubscriptionsConnector,
+      addressConversionUtils,
+      mcc
     )(ec)
 
-  private val unregisteredLimitedCompany = aRegistration(
-    withOrganisationDetails(unregisteredUkCompanyOrgDetails())
-  )
+  private val unregisteredLimitedCompany = aRegistration(withOrganisationDetails(unregisteredUkCompanyOrgDetails()))
 
-  private val verificationFailedLimitedCompany: Registration = aRegistration(
-    withOrganisationDetails(verificationFailedUkCompanyOrgDetails())
-  )
+  private val verificationFailedLimitedCompany: Registration = aRegistration(withOrganisationDetails(verificationFailedUkCompanyOrgDetails()))
 
   private val verificationFailedSoleTrader: Registration =
     aRegistration(withSoleTraderDetails(Some(verificationFailedSoleTraderDetails)))
 
-  private val registeredLimitedCompany = aRegistration(
-    withOrganisationDetails(registeredUkCompanyOrgDetails())
-  )
+  private val registeredLimitedCompany = aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()))
 
-  private val registeredRegisteredSociety = aRegistration(
-    withOrganisationDetails(registeredRegisteredSocietyOrgDetails())
-  )
+  private val registeredRegisteredSociety = aRegistration(withOrganisationDetails(registeredRegisteredSocietyOrgDetails()))
 
-  private val unregisteredSoleTrader = aRegistration(
-    withOrganisationDetails(unregisteredSoleTraderOrgDetails())
-  )
+  private val unregisteredSoleTrader = aRegistration(withOrganisationDetails(unregisteredSoleTraderOrgDetails()))
 
   private val unregisteredGeneralPartnership = aRegistration(
-    withOrganisationDetails(
-      unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership"))
-    )
+    withOrganisationDetails(unregisteredPartnershipDetails(GENERAL_PARTNERSHIP, Some("General Partnership")))
   )
 
   private val unregisteredScottishPartnership = aRegistration(
-    withOrganisationDetails(
-      unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP, Some("Scottish Partnership"))
-    )
+    withOrganisationDetails(unregisteredPartnershipDetails(SCOTTISH_PARTNERSHIP, Some("Scottish Partnership")))
   )
 
   "GRS Callback" should {
@@ -100,9 +88,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateLimitedCompanyCallback(incorporationDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          orgRoutes.ConfirmBusinessAddressController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(orgRoutes.ConfirmBusinessAddressController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -110,9 +96,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateSoleTraderCallback(soleTraderDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          orgRoutes.ConfirmBusinessAddressController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(orgRoutes.ConfirmBusinessAddressController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -120,9 +104,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateRegisteredSocietyCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          orgRoutes.ConfirmBusinessAddressController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(orgRoutes.ConfirmBusinessAddressController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -130,9 +112,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateGeneralPartnershipCallback(partnershipBusinessDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          orgRoutes.ConfirmBusinessAddressController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(orgRoutes.ConfirmBusinessAddressController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
 
@@ -140,9 +120,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateScottishPartnershipCallback(partnershipBusinessDetails)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          orgRoutes.ConfirmBusinessAddressController.displayPage().url
-        )
+        redirectLocation(result) mustBe Some(orgRoutes.ConfirmBusinessAddressController.displayPage().url)
         getLastSavedRegistration.incorpJourneyId mustBe registration.incorpJourneyId
       }
     }
@@ -156,10 +134,8 @@ class GrsControllerSpec extends ControllerSpec {
         organisationDetails.incorporationDetails mustBe Some(incorporationDetails)
         organisationDetails.soleTraderDetails mustBe None
         organisationDetails.partnershipDetails mustBe None
-        organisationDetails.businessRegisteredAddress mustBe Some(
-          incorporationDetails.companyAddress.toPptAddress
-        )
-
+        organisationDetails.businessRegisteredAddress mustBe addressConversionUtils
+          .toPptAddress(incorporationDetails.companyAddress)
         organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
 
@@ -267,8 +243,8 @@ class GrsControllerSpec extends ControllerSpec {
       "business partner id is absent" in {
         authorizedUser()
         val result: Future[Result] = simulateUnregisteredLimitedCompanyCallback()
-        val exception = intercept[Exception](await(result))
-        exception.getMessage must include ("some-journey-id")
+        val exception              = intercept[Exception](await(result))
+        exception.getMessage must include("some-journey-id")
 
       }
     }
@@ -279,9 +255,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateBusinessVerificationFailureLimitedCompanyCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          pptRoutes.NotableErrorController.businessVerificationFailure().url
-        )
+        redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.businessVerificationFailure().url)
       }
 
       "sole trader business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED" in {
@@ -289,9 +263,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = simulateBusinessVerificationFailureSoleTraderCallback()
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          pptRoutes.NotableErrorController.soleTraderVerificationFailure().url
-        )
+        redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.soleTraderVerificationFailure().url)
       }
     }
 
@@ -306,9 +278,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          pptRoutes.NotableErrorController.duplicateRegistration().url
-        )
+        redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.duplicateRegistration().url)
       }
     }
 
@@ -325,9 +295,7 @@ class GrsControllerSpec extends ControllerSpec {
         val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered().url
-        )
+        redirectLocation(result) mustBe Some(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered().url)
       }
     }
 
@@ -397,9 +365,7 @@ class GrsControllerSpec extends ControllerSpec {
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def simulateGeneralPartnershipCallback(
-    partnershipBusinessDetails: PartnershipBusinessDetails
-  ) = {
+  private def simulateGeneralPartnershipCallback(partnershipBusinessDetails: PartnershipBusinessDetails) = {
     authorizedUser()
     mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredGeneralPartnership)
@@ -408,9 +374,7 @@ class GrsControllerSpec extends ControllerSpec {
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def simulateScottishPartnershipCallback(
-    partnershipBusinessDetails: PartnershipBusinessDetails
-  ) = {
+  private def simulateScottishPartnershipCallback(partnershipBusinessDetails: PartnershipBusinessDetails) = {
     authorizedUser()
     mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredScottishPartnership)

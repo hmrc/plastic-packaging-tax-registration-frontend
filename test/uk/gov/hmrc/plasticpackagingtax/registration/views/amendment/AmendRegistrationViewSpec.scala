@@ -130,7 +130,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                     bra => bra.townOrCity
                   ).get,
                   registration.organisationDetails.businessRegisteredAddress.map(
-                    bra => bra.postCode.getOrElse("")
+                    bra => bra.maybePostcode.getOrElse("")
                   ).get,
                   countryService.getName(
                     registration.organisationDetails.businessRegisteredAddress.map(
@@ -165,7 +165,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                       nominatedPartner.contactDetails.get.address.get.addressLine2.getOrElse(""),
                       nominatedPartner.contactDetails.get.address.get.addressLine3.getOrElse(""),
                       nominatedPartner.contactDetails.get.address.get.townOrCity,
-                      nominatedPartner.contactDetails.get.address.get.postCode.getOrElse(""),
+                      nominatedPartner.contactDetails.get.address.get.maybePostcode.getOrElse(""),
                       countryService.getName(
                         registration.primaryContactDetails.address.get.countryCode
                       )
@@ -179,7 +179,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                       registration.primaryContactDetails.address.get.addressLine2.getOrElse(""),
                       registration.primaryContactDetails.address.get.addressLine3.getOrElse(""),
                       registration.primaryContactDetails.address.get.townOrCity,
-                      registration.primaryContactDetails.address.get.postCode.getOrElse(""),
+                      registration.primaryContactDetails.address.get.maybePostcode.getOrElse(""),
                       countryService.getName(
                         registration.primaryContactDetails.address.get.countryCode
                       )

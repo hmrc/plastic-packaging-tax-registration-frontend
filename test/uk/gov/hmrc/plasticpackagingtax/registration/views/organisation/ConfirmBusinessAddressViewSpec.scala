@@ -40,7 +40,9 @@ class ConfirmBusinessAddressViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(): Document =
-    page(incorporationAddressDetails.toPptAddress, "company name", "url")(journeyRequest, messages)
+    addressConversionUtils.toPptAddress(incorporationAddressDetails).fold(Document.createShell("")) {
+      page(_, "company name", "url")(journeyRequest, messages)
+    }
 
   "Confirm Address View" should {
 
@@ -60,9 +62,7 @@ class ConfirmBusinessAddressViewSpec extends UnitViewSpec with Matchers {
 
     "display title" in {
 
-      view.select("title").text() must include(
-        messages("company.confirmAddress.title", "company name")
-      )
+      view.select("title").text() must include(messages("company.confirmAddress.title", "company name"))
     }
 
     "display 'Save and continue' button" in {
@@ -74,15 +74,13 @@ class ConfirmBusinessAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(incorporationAddressDetails.toPptAddress, "company name", "url")(journeyRequest,
-                                                                            messages
-    )
-    page.render(incorporationAddressDetails.toPptAddress,
-                "company name",
-                "url",
-                journeyRequest,
-                messages
-    )
+    addressConversionUtils.toPptAddress(incorporationAddressDetails).map {
+      page.f(_, "company name", "url")(journeyRequest, messages)
+    }
+
+    addressConversionUtils.toPptAddress(incorporationAddressDetails).map {
+      page.render(_, "company name", "url", journeyRequest, messages)
+    }
   }
 
 }

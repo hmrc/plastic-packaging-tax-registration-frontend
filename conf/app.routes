@@ -200,6 +200,10 @@ POST       /group-member-type/:memberId     uk.gov.hmrc.plasticpackagingtax.regi
 GET        /group-member-grs-callback               uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.GroupMemberGrsController.grsCallbackNewMember(journeyId)
 GET        /group-member-grs-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.GroupMemberGrsController.grsCallbackAmendMember(journeyId, memberId)
 
+GET        /confirm-address/:memberId/   uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ConfirmBusinessAddressController.displayPage(memberId, redirectTo)
+GET        /confirm-address-callback/:memberId    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ConfirmBusinessAddressController.addressCaptureCallback(memberId)
+GET        /edit-address/:memberId                uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ConfirmBusinessAddressController.changeBusinessAddress(memberId, redirectTo)
+
 GET        /group-nominated-organisation-already-registered    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.nominatedOrganisationAlreadyRegistered()
 GET        /organisation-already-in-group    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.organisationAlreadyInGroup()
 GET        /group-organisation-already-registered    uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.NotableErrorController.groupMemberAlreadyRegistered()

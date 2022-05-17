@@ -214,8 +214,10 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
                                     address = Some(
                                       Address(addressLine1 = "2 Scala Street",
                                               addressLine2 = Some("Soho"),
+                                              addressLine3 = None,
                                               townOrCity = "London",
-                                              postCode = Some("W1T 2HN")
+                                              maybePostcode = Some("W1T 2HN"),
+                                              countryCode = "GB"
                                       )
                                     ),
                                     journeyId = Some("journey-id")

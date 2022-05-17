@@ -73,10 +73,11 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
                                                        ),
                                                        addressDetails =
                                                          Address(addressLine1 = "1",
+                                                                 addressLine2 = None,
+                                                                 addressLine3 = None,
                                                                  townOrCity = "New Street",
-                                                                 postCode = Some("AB12CD"),
-                                                                 countryCode =
-                                                                   "GB"
+                                                                 maybePostcode = Some("AB12CD"),
+                                                                 countryCode = "GB"
                                                          )
                                            ),
                                            GroupMember(customerIdentification1 = "DEF",
@@ -89,10 +90,11 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
                                                        ),
                                                        addressDetails =
                                                          Address(addressLine1 = "2",
+                                                                 addressLine2 = None,
+                                                                 addressLine3 = None,
                                                                  townOrCity = "New Street",
-                                                                 postCode = Some("AB12CD"),
-                                                                 countryCode =
-                                                                   "GB"
+                                                                 maybePostcode = Some("AB12CD"),
+                                                                 countryCode = "GB"
                                                          )
                                            )
                              )

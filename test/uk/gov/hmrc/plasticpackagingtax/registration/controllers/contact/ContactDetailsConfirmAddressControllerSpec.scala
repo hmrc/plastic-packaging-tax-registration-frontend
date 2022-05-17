@@ -66,7 +66,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       )
     ),
     withOrganisationDetails(
-      OrganisationDetails(businessRegisteredAddress = Some(testCompanyAddress.toPptAddress),
+      OrganisationDetails(businessRegisteredAddress = addressConversionUtils.toPptAddress(testCompanyAddress),
                           organisationType = Some(UK_COMPANY)
       )
     )
@@ -199,8 +199,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.primaryContactDetails.address.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.primaryContactDetails.address.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.primaryContactDetails.address.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.primaryContactDetails.address.get.postCode mustBe expected.postal_code
-      modifiedRegistration.primaryContactDetails.address.get.countryCode mustBe expected.country.get
+      modifiedRegistration.primaryContactDetails.address.get.maybePostcode mustBe expected.postal_code
+      modifiedRegistration.primaryContactDetails.address.get.countryCode mustBe "GB"
       modifiedRegistration.primaryContactDetails.useRegisteredAddress mustBe Some(true)
     }
 
@@ -209,8 +209,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine2 mustBe expected.address_line_1
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.addressLine3 mustBe expected.address_line_2
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.townOrCity mustBe expected.locality.get
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.postCode mustBe expected.postal_code
-      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe expected.country.get
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.maybePostcode mustBe expected.postal_code
+      modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe "GB"
     }
 
     forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>

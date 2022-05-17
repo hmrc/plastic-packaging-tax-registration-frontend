@@ -143,20 +143,22 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                                email = Some("test@test.com"),
                                                                address = Some(
                                                                  Address(addressLine1 = "1",
+                                                                         addressLine2 = None,
+                                                                         addressLine3 = None,
                                                                          townOrCity = "New Street",
-                                                                         postCode = Some("AB12CD"),
-                                                                         countryCode =
-                                                                           "GB"
+                                                                         maybePostcode = Some("AB12CD"),
+                                                                         countryCode = "GB"
                                                                  )
                                                                )
                                                              )
                                                            ),
                                                            addressDetails =
                                                              Address(addressLine1 = "1",
+                                                                     addressLine2 = None,
+                                                                     addressLine3 = None,
                                                                      townOrCity = "New Street",
-                                                                     postCode = Some("AB12CD"),
-                                                                     countryCode =
-                                                                       "GB"
+                                                                     maybePostcode = Some("AB12CD"),
+                                                                     countryCode = "GB"
                                                              )
                                                ),
                                                GroupMember(customerIdentification1 = "DEF",
@@ -176,20 +178,22 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                                                email = Some("test2@test.com"),
                                                                address = Some(
                                                                  Address(addressLine1 = "2",
+                                                                         addressLine2 = None,
+                                                                         addressLine3 = None,
                                                                          townOrCity = "New Street",
-                                                                         postCode = Some("AB12CE"),
-                                                                         countryCode =
-                                                                           "GB"
+                                                                         maybePostcode = Some("AB12CE"),
+                                                                         countryCode = "GB"
                                                                  )
                                                                )
                                                              )
                                                            ),
                                                            addressDetails =
                                                              Address(addressLine1 = "2",
+                                                                     addressLine2 = None,
+                                                                     addressLine3 = None,
                                                                      townOrCity = "New Street",
-                                                                     postCode = Some("AB12CD"),
-                                                                     countryCode =
-                                                                       "GB"
+                                                                     maybePostcode = Some("AB12CD"),
+                                                                     countryCode = "GB"
                                                              )
                                                )
                                  )
@@ -641,7 +645,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             getValueFor(nominatedPartnerSection,
                         9,
                         partnershipView
-            ) mustBe "1 High Street Leeds LS1 1AA United Kingdom"
+            ) mustBe "1 High Street Cloverfield Leeds LS1 1AA United Kingdom"
 
           }
 
