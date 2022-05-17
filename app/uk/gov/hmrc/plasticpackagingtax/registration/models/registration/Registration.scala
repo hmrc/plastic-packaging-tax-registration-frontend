@@ -17,11 +17,13 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 import java.time.LocalDate
@@ -40,14 +42,15 @@ case class Registration(
 ) {
 
   def toRegistration: Registration =
-    Registration(id = this.id,
-                 incorpJourneyId = this.incorpJourneyId,
-                 registrationType = this.registrationType,
-                 groupDetail = this.groupDetail,
-                 liabilityDetails = this.liabilityDetails,
-                 primaryContactDetails = this.primaryContactDetails,
-                 organisationDetails = this.organisationDetails,
-                 metaData = this.metaData
+    Registration(
+      id = this.id,
+      incorpJourneyId = this.incorpJourneyId,
+      registrationType = this.registrationType,
+      groupDetail = this.groupDetail,
+      liabilityDetails = this.liabilityDetails,
+      primaryContactDetails = this.primaryContactDetails,
+      organisationDetails = this.organisationDetails,
+      metaData = this.metaData
     )
 
   def checkAndSubmitStatus: TaskStatus =
@@ -61,12 +64,13 @@ case class Registration(
       TaskStatus.CannotStartYet
 
   def numberOfCompletedSections: Int =
-    Array(isLiabilityDetailsComplete,
-          isCompanyDetailsComplete,
-          !isPartnershipWithPartnerCollection && isPrimaryContactDetailsComplete,
-          isGroup && isOtherOrganisationsInGroupComplete,
-          isPartnershipWithPartnerCollection && isNominatedPartnerDetailsComplete && isOtherPartnersDetailsComplete,
-          isRegistrationComplete
+    Array(
+      isLiabilityDetailsComplete,
+      isCompanyDetailsComplete,
+      !isPartnershipWithPartnerCollection && isPrimaryContactDetailsComplete,
+      isGroup && isOtherOrganisationsInGroupComplete,
+      isPartnershipWithPartnerCollection && isNominatedPartnerDetailsComplete && isOtherPartnersDetailsComplete,
+      isRegistrationComplete
     ).count(isComplete => isComplete)
 
   def isGroup: Boolean = registrationType.contains(RegType.GROUP)
@@ -76,18 +80,10 @@ case class Registration(
   def isPartnershipWithPartnerCollection: Boolean =
     organisationDetails.organisationType.contains(OrgType.PARTNERSHIP) &&
       (
-        organisationDetails.partnershipDetails.exists(
-          _.partnershipType.contains(PartnerTypeEnum.GENERAL_PARTNERSHIP)
-        ) ||
-          organisationDetails.partnershipDetails.exists(
-            _.partnershipType.contains(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)
-          ) ||
-          organisationDetails.partnershipDetails.exists(
-            _.partnershipType.contains(PartnerTypeEnum.LIMITED_PARTNERSHIP)
-          ) ||
-          organisationDetails.partnershipDetails.exists(
-            _.partnershipType.contains(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP)
-          )
+        organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.GENERAL_PARTNERSHIP)) ||
+          organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)) ||
+          organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.LIMITED_PARTNERSHIP)) ||
+          organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP))
       )
 
   def numberOfSections: Int = if (isGroup) 5 else 4
@@ -177,8 +173,10 @@ case class Registration(
 
   val isFirstGroupMember: Boolean = groupDetail.exists(_.members.isEmpty)
 
-  def populateBusinessRegisteredAddress(): Registration =
-    this.copy(organisationDetails = this.organisationDetails.withBusinessRegisteredAddress())
+  def populateBusinessRegisteredAddress(addressConversionUtils: AddressConversionUtils): Registration =
+    this.copy(organisationDetails =
+      this.organisationDetails.withBusinessRegisteredAddress(addressConversionUtils)
+    )
 
   val lastMember: Option[GroupMember] = groupDetail.flatMap(_.members.lastOption)
 
@@ -218,17 +216,28 @@ case class Registration(
   def withUpdatedPartner(partnerId: String, partnerUpdate: Partner => Partner): Registration =
     this.copy(organisationDetails =
       this.organisationDetails.copy(partnershipDetails =
-        this.organisationDetails.partnershipDetails.map(
-          _.copy(partners = this.organisationDetails.partnershipDetails.map(_.partners.map {
-            partner =>
-              if (partner.id == partnerId)
-                partnerUpdate(partner)
-              else
-                partner
-          }).getOrElse(Seq()))
-        )
+        this.organisationDetails.partnershipDetails.map(_.copy(partners = this.organisationDetails.partnershipDetails.map(_.partners.map {
+          partner =>
+            if (partner.id == partnerId)
+              partnerUpdate(partner)
+            else
+              partner
+        }).getOrElse(Seq())))
       )
     )
+
+  def withUpdatedMemberAddress(memberId: String, address: Address): Registration =
+    this.copy(groupDetail = this.groupDetail flatMap {
+      group =>
+        Some(group.copy(members = group.members map { mem =>
+          if (mem.id == memberId)
+            mem.copy(addressDetails =
+              address
+            )
+          else
+            mem
+        }))
+    })
 
   val nominatedPartner: Option[Partner] =
     organisationDetails.partnershipDetails.flatMap(_.nominatedPartner)

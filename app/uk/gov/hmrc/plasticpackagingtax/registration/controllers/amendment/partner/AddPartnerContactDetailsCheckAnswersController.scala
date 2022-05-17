@@ -18,10 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{
-  AmendmentController,
-  routes => amendRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{AmendmentController, routes => amendRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
   SubscriptionCreateOrUpdateResponseFailure,
@@ -43,20 +40,12 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(
-        page(
-          request.registration.inflightPartner.getOrElse(
-            throw new IllegalStateException("Missing partner")
-          )
-        )
-      )
+      Ok(page(request.registration.inflightPartner.getOrElse(throw new IllegalStateException("Missing partner"))))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      journeyAction.updateRegistration(
-        _ => request.registration.withPromotedInflightPartner()
-      ).map {
+      journeyAction.updateRegistration(_ => request.registration.withPromotedInflightPartner()).map {
         case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManagePartnersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>

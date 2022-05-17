@@ -34,12 +34,7 @@ class AddGroupMemberContactDetailsTelephoneNumberController @Inject() (
   page: member_phone_number_page,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsTelephoneNumberControllerBase(authenticate,
-                                                        journeyAction,
-                                                        mcc,
-                                                        page,
-                                                        registrationUpdater
-    ) {
+    extends ContactDetailsTelephoneNumberControllerBase(authenticate, journeyAction, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] = doDisplayPage(memberId)
 

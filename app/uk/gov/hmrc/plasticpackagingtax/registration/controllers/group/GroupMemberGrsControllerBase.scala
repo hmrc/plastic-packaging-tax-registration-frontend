@@ -20,10 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
-  PartnershipGrsConnector,
-  UkCompanyGrsConnector
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{PartnershipGrsConnector, UkCompanyGrsConnector}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActioning
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   DUPLICATE_SUBSCRIPTION,
@@ -32,31 +29,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.Reg
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorporationDetails,
-  PartnershipBusinessDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{
-  MEMBER_IN_GROUP,
-  MEMBER_IS_NOMINATED
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  GroupError,
-  GroupErrorType,
-  GroupMember,
-  OrganisationDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  GroupDetail,
-  Registration,
-  RegistrationUpdater
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorporationDetails, PartnershipBusinessDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{MEMBER_IN_GROUP, MEMBER_IS_NOMINATED}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupError, GroupErrorType, GroupMember, OrganisationDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, Registration, RegistrationUpdater}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -68,15 +48,17 @@ abstract class GroupMemberGrsControllerBase(
   subscriptionsConnector: SubscriptionsConnector,
   partnershipGrsConnector: PartnershipGrsConnector,
   val registrationUpdater: RegistrationUpdater,
+  val addressConversionUtils: AddressConversionUtils,
   mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  protected def grsCallback(
-    journeyId: String,
-    memberId: Option[String],
-    getRedirect: String => Call
-  ): Action[AnyContent] =
+  def findCurrentMember(memberId: Option[String], registration: Registration): String =
+    memberId.fold(registration.lastMember)(registration.findMember).getOrElse(
+      throw new IllegalStateException("GRS member callback with no group members found")
+    ).id
+
+  protected def grsCallback(journeyId: String, memberId: Option[String], getRedirect: String => Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
         updateRegistrationDetails(journeyId, memberId).flatMap {
@@ -84,41 +66,22 @@ abstract class GroupMemberGrsControllerBase(
             registrationStatus(registration, memberId).flatMap {
               case STATUS_OK =>
                 save(registration).map { _ =>
-                  Redirect(
-                    getRedirect(
-                      memberId.getOrElse(
-                        registration.lastMember.map(_.id).getOrElse(
-                          throw new IllegalStateException("Expected group member missing")
-                        )
-                      )
-                    )
-                  )
+                  val member = findCurrentMember(memberId, registration)
+                  Redirect(routes.ConfirmBusinessAddressController.displayPage(member, getRedirect(member).url))
                 }
               case DUPLICATE_SUBSCRIPTION =>
-                val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED,
-                                            groupMemberName(registration, memberId)
-                )
-                updateWithGroupError(groupError).map(
-                  _ => Redirect(routes.NotableErrorController.groupMemberAlreadyRegistered())
-                )
+                val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED, groupMemberName(registration, memberId))
+                updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.groupMemberAlreadyRegistered()))
             }
           case Left(groupError) =>
-            updateWithGroupError(groupError).map(
-              _ => Redirect(routes.NotableErrorController.organisationAlreadyInGroup())
-            )
+            updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.organisationAlreadyInGroup()))
         }
     }
 
-  private def registrationStatus(registration: Registration, memberId: Option[String])(implicit
-    hc: HeaderCarrier
-  ): Future[RegistrationStatus] = {
+  private def registrationStatus(registration: Registration, memberId: Option[String])(implicit hc: HeaderCarrier): Future[RegistrationStatus] = {
     val organisationDetails: Option[OrganisationDetails] =
       registration.findMember(
-        memberId.getOrElse(
-          registration.lastMember.map(_.id).getOrElse(
-            throw new IllegalStateException("Expected group member missing")
-          )
-        )
+        memberId.getOrElse(registration.lastMember.map(_.id).getOrElse(throw new IllegalStateException("Expected group member missing")))
       ).flatMap(_.organisationDetails)
 
     val status: Future[SubscriptionStatus.Status] =
@@ -132,9 +95,7 @@ abstract class GroupMemberGrsControllerBase(
     }
   }
 
-  private def checkSubscriptionStatus(
-    businessPartnerId: String
-  )(implicit hc: HeaderCarrier): Future[SubscriptionStatus.Status] =
+  private def checkSubscriptionStatus(businessPartnerId: String)(implicit hc: HeaderCarrier): Future[SubscriptionStatus.Status] =
     subscriptionsConnector.getSubscriptionStatus(businessPartnerId).map(_.status)
 
   private def updateRegistrationDetails(journeyId: String, memberId: Option[String])(implicit
@@ -144,8 +105,7 @@ abstract class GroupMemberGrsControllerBase(
     val orgType: Option[OrgType] =
       request.registration.groupDetail.flatMap(_.currentMemberOrganisationType)
     orgType match {
-      case Some(value)
-          if value == OrgType.UK_COMPANY | value == OrgType.OVERSEAS_COMPANY_UK_BRANCH =>
+      case Some(value) if value == OrgType.UK_COMPANY | value == OrgType.OVERSEAS_COMPANY_UK_BRANCH =>
         updateUkCompanyDetails(journeyId, memberId, value)
       case Some(OrgType.PARTNERSHIP) =>
         updatePartnershipDetails(journeyId, memberId, OrgType.PARTNERSHIP)
@@ -153,8 +113,7 @@ abstract class GroupMemberGrsControllerBase(
     }
   }
 
-  private def updateUkCompanyDetails(journeyId: String, memberId: Option[String], orgType: OrgType)(
-    implicit
+  private def updateUkCompanyDetails(journeyId: String, memberId: Option[String], orgType: OrgType)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Either[GroupError, Registration]] =
@@ -172,26 +131,26 @@ abstract class GroupMemberGrsControllerBase(
       result      = updateGroupDetails(groupMember)
     } yield result
 
-  private def updateOrCreateMember(
-    details: IncorporationDetails,
-    orgType: OrgType,
-    memberId: Option[String]
-  )(implicit request: JourneyRequest[AnyContent]): GroupMember =
+  private def updateOrCreateMember(details: IncorporationDetails, orgType: OrgType, memberId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): GroupMember =
     memberId match {
       case Some(memberId) =>
         request.registration.groupDetail.flatMap(gd => gd.findGroupMember(memberId)) match {
           case Some(groupMember) =>
-            groupMember.copy(customerIdentification1 = details.companyNumber,
-                             customerIdentification2 = Some(details.ctutr),
-                             organisationDetails = Some(
-                               OrganisationDetails(
-                                 organisationType = orgType.toString,
-                                 organisationName = details.companyName,
-                                 businessPartnerId =
-                                   details.registration.flatMap(_.registeredBusinessPartnerId)
-                               )
-                             ),
-                             addressDetails = details.companyAddress.toPptAddress
+            groupMember.copy(
+              customerIdentification1 = details.companyNumber,
+              customerIdentification2 = Some(details.ctutr),
+              organisationDetails = Some(
+                OrganisationDetails(
+                  organisationType = orgType.toString,
+                  organisationName = details.companyName,
+                  businessPartnerId =
+                    details.registration.flatMap(_.registeredBusinessPartnerId)
+                )
+              ),
+              addressDetails = addressConversionUtils.toPptAddress(details.companyAddress)
+                .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
             )
           case None => throw new IllegalStateException("Expected group member absent")
         }
@@ -199,25 +158,24 @@ abstract class GroupMemberGrsControllerBase(
     }
 
   private def createGroupMember(details: IncorporationDetails, orgType: OrgType): GroupMember =
-    GroupMember(customerIdentification1 = details.companyNumber,
-                customerIdentification2 = Some(details.ctutr),
-                organisationDetails =
-                  Some(
-                    OrganisationDetails(orgType.toString,
-                                        details.companyName,
-                                        details.registration.flatMap { reg =>
-                                          reg.registeredBusinessPartnerId
-                                        }
-                    )
-                  ),
-                addressDetails = details.companyAddress.toPptAddress
+    GroupMember(
+      customerIdentification1 = details.companyNumber,
+      customerIdentification2 = Some(details.ctutr),
+      organisationDetails =
+        Some(
+          OrganisationDetails(
+            orgType.toString,
+            details.companyName,
+            details.registration.flatMap { reg =>
+              reg.registeredBusinessPartnerId
+            }
+          )
+        ),
+      addressDetails = addressConversionUtils.toPptAddress(details.companyAddress)
+        .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
     )
 
-  private def updatePartnershipDetails(
-    journeyId: String,
-    memberId: Option[String],
-    orgType: OrgType
-  )(implicit
+  private def updatePartnershipDetails(journeyId: String, memberId: Option[String], orgType: OrgType)(implicit
     hc: HeaderCarrier,
     request: JourneyRequest[AnyContent]
   ): Future[Either[GroupError, Registration]] =
@@ -227,30 +185,29 @@ abstract class GroupMemberGrsControllerBase(
       result      = updateGroupDetails(groupMember)
     } yield result
 
-  private def updateOrCreateMember(
-    details: PartnershipBusinessDetails,
-    orgType: OrgType,
-    memberId: Option[String]
-  )(implicit request: JourneyRequest[AnyContent]): GroupMember =
+  private def updateOrCreateMember(details: PartnershipBusinessDetails, orgType: OrgType, memberId: Option[String])(implicit
+    request: JourneyRequest[AnyContent]
+  ): GroupMember =
     memberId match {
       case Some(memberId) =>
         details.companyProfile match {
           case Some(companyProfile) =>
             request.registration.groupDetail.flatMap(gd => gd.findGroupMember(memberId)) match {
               case Some(groupMember) =>
-                groupMember.copy(customerIdentification1 = companyProfile.companyNumber,
-                                 customerIdentification2 = Some(details.sautr),
-                                 organisationDetails = Some(
-                                   OrganisationDetails(organisationType = orgType.toString,
-                                                       organisationName =
-                                                         companyProfile.companyName,
-                                                       businessPartnerId =
-                                                         details.registration.flatMap(
-                                                           _.registeredBusinessPartnerId
-                                                         )
-                                   )
-                                 ),
-                                 addressDetails = companyProfile.companyAddress.toPptAddress
+                groupMember.copy(
+                  customerIdentification1 = companyProfile.companyNumber,
+                  customerIdentification2 = Some(details.sautr),
+                  organisationDetails = Some(
+                    OrganisationDetails(
+                      organisationType = orgType.toString,
+                      organisationName =
+                        companyProfile.companyName,
+                      businessPartnerId =
+                        details.registration.flatMap(_.registeredBusinessPartnerId)
+                    )
+                  ),
+                  addressDetails = addressConversionUtils.toPptAddress(companyProfile.companyAddress)
+                    .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
                 )
               case None => throw new IllegalStateException("Expected group member absent")
             }
@@ -259,31 +216,27 @@ abstract class GroupMemberGrsControllerBase(
       case None => createGroupMember(details, orgType)
     }
 
-  private def createGroupMember(
-    details: PartnershipBusinessDetails,
-    orgType: OrgType
-  ): GroupMember = {
-    val companyProfile = details.companyProfile.fold(
-      throw new IllegalStateException("No Company Profile")
-    )(profile => profile)
-    GroupMember(customerIdentification1 = companyProfile.companyNumber,
-                customerIdentification2 = Some(details.sautr),
-                organisationDetails =
-                  Some(
-                    OrganisationDetails(orgType.toString,
-                                        companyProfile.companyName,
-                                        details.registration.flatMap { reg =>
-                                          reg.registeredBusinessPartnerId
-                                        }
-                    )
-                  ),
-                addressDetails = companyProfile.companyAddress.toPptAddress
+  private def createGroupMember(details: PartnershipBusinessDetails, orgType: OrgType): GroupMember = {
+    val companyProfile = details.companyProfile.fold(throw new IllegalStateException("No Company Profile"))(profile => profile)
+    GroupMember(
+      customerIdentification1 = companyProfile.companyNumber,
+      customerIdentification2 = Some(details.sautr),
+      organisationDetails =
+        Some(
+          OrganisationDetails(
+            orgType.toString,
+            companyProfile.companyName,
+            details.registration.flatMap { reg =>
+              reg.registeredBusinessPartnerId
+            }
+          )
+        ),
+      addressDetails = addressConversionUtils.toPptAddress(companyProfile.companyAddress)
+        .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
     )
   }
 
-  private def updateGroupDetails(
-    groupMember: GroupMember
-  )(implicit request: JourneyRequest[_]): Either[GroupError, Registration] = {
+  private def updateGroupDetails(groupMember: GroupMember)(implicit request: JourneyRequest[_]): Either[GroupError, Registration] = {
 
     val registration = request.registration
 
@@ -304,27 +257,17 @@ abstract class GroupMemberGrsControllerBase(
 
   }
 
-  def isMemberNominated(
-    member: GroupMember,
-    groupDetail: GroupDetail,
-    registration: Registration
-  ): Boolean =
+  def isMemberNominated(member: GroupMember, groupDetail: GroupDetail, registration: Registration): Boolean =
     groupDetail.members.contains(member) ||
-      registration.organisationDetails.incorporationDetails.exists(
-        details => details.isGroupMemberSameAsNominated(member.customerIdentification1)
-      ) ||
+      registration.organisationDetails.incorporationDetails.exists(details => details.isGroupMemberSameAsNominated(member.customerIdentification1)) ||
       registration.organisationDetails.partnershipDetails.exists(
         details => details.isGroupMemberSameAsNominatedPartnership(member.customerIdentification1)
       )
 
-  private def save(
-    registration: Registration
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[_]) =
+  private def save(registration: Registration)(implicit hc: HeaderCarrier, request: JourneyRequest[_]) =
     registrationUpdater.updateRegistration(_ => registration)
 
-  private def updateWithGroupError(
-    groupError: GroupError
-  )(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
+  private def updateWithGroupError(groupError: GroupError)(implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Registration] =
     registrationUpdater.updateRegistration(
       registration =>
         registration.copy(groupDetail =

@@ -20,12 +20,9 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.PartnerName.partnerName
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.confirm_remove_partner_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-
-import java.util.UUID
 
 @ViewTest
 class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {

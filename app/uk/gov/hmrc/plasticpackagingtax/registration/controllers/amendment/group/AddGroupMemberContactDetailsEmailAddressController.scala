@@ -34,12 +34,7 @@ class AddGroupMemberContactDetailsEmailAddressController @Inject() (
   page: member_email_address_page,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsEmailAddressControllerBase(authenticate,
-                                                     journeyAction,
-                                                     mcc,
-                                                     page,
-                                                     registrationUpdater
-    ) {
+    extends ContactDetailsEmailAddressControllerBase(authenticate, journeyAction, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] = doDisplayPage(memberId)
 

@@ -29,19 +29,10 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AmendmentJourneyAction,
-  AuthenticatedRequest
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.services.{
-  AddressCaptureConfig,
-  AddressCaptureService,
-  CountryService
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.{
-  address_page,
-  uk_address_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, AuthenticatedRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, AddressCaptureService, CountryService}
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.{address_page, uk_address_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
@@ -56,6 +47,7 @@ class AddressCaptureControllerSpec
   )
 
   private val realAppConfig = inject[AppConfig]
+  override val addressConversionUtils: AddressConversionUtils = inject[AddressConversionUtils]
 
   private val mockAddressLookupFrontendConnector = mock[AddressLookupFrontendConnector]
   private val mockInUkPage                       = mock[uk_address_page]
@@ -76,7 +68,8 @@ class AddressCaptureControllerSpec
     appConfig = realAppConfig,
     addressInUkPage = mockInUkPage,
     addressPage = mockAddressPage,
-    countryService = new CountryService()
+    countryService = new CountryService(),
+    addressConversionUtils = addressConversionUtils
   )
 
   private val addressCaptureConfig = AddressCaptureConfig(backLink = "/back-link",
@@ -170,7 +163,7 @@ class AddressCaptureControllerSpec
             capturedAddress.get.addressLine1 mustBe validAlfAddress.address.lines.head
             capturedAddress.get.addressLine2 mustBe validAlfAddress.address.lines(1)
             capturedAddress.get.addressLine3 mustBe validAlfAddress.address.lines(2)
-            capturedAddress.get.postCode mustBe validAlfAddress.address.postcode.get
+            capturedAddress.get.maybePostcode mustBe Some(validAlfAddress.address.postcode)
             capturedAddress.get.countryCode mustBe validAlfAddress.address.country.map(_.code)
         }
       }
@@ -235,7 +228,7 @@ class AddressCaptureControllerSpec
             capturedAddress.get.addressLine1 mustBe validAddress.head._2
             capturedAddress.get.addressLine2 mustBe validAddress(1)._2
             capturedAddress.get.townOrCity mustBe validAddress(2)._2
-            capturedAddress.get.postCode mustBe validAddress(3)._2
+            capturedAddress.get.maybePostcode mustBe Some(validAddress(3)._2)
             capturedAddress.get.countryCode mustBe validAddress(4)._2
         }
       }

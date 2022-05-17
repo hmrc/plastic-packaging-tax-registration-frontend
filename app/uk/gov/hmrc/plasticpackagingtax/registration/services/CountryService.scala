@@ -36,12 +36,16 @@ class CountryService {
 
   def getAll(): Map[String, String] = countries
 
+  def getKeyForName(countryName: String): Option[String] = {
+    val allCountries = getAll()
+    allCountries.filter {
+      kvp => kvp._2.contains(countryName)
+    }.keySet.headOption
+  }
+
   private def parseCountriesResource(): Map[String, String] = {
 
-    val countryMap = Json.parse(getClass.getResourceAsStream("/resources/countriesEN.json")).as[Map[
-      String,
-      FcoCountry
-    ]]
+    val countryMap = Json.parse(getClass.getResourceAsStream("/resources/countriesEN.json")).as[Map[String, FcoCountry]]
       .map { entry =>
         entry._1 -> entry._2.name
       }

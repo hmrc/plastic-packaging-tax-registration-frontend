@@ -19,33 +19,29 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.contact
 import base.unit.CommonTestUtils
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.{
-  addressLine1,
-  addressLine2,
-  addressLine3,
-  countryCode,
-  postCode,
-  townOrCity
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{
-  AddressLookupAddress,
-  AddressLookupConfirmation
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{AddressLookupAddress, AddressLookupConfirmation, AddressLookupCountry}
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 
-class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
+class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with GuiceOneAppPerSuite {
+
+  val addressConversionUtils: AddressConversionUtils =
+    app.injector.instanceOf[AddressConversionUtils]
+
   "Address validation rules" should {
 
     "return success" when {
 
       "all address fields are valid" in {
 
-        val input = Map(addressLine1 -> "Address Line 1",
-                        addressLine2 -> "Address Line 2",
-                        addressLine3 -> "Address Line 3",
-                        townOrCity   -> "Town or City",
-                        postCode     -> "LS4 1RH",
-                        countryCode  -> "GB"
+        val input = Map(
+          "addressLine1" -> "Address Line 1",
+          "addressLine2" -> "Address Line 2",
+          "addressLine3" -> "Address Line 3",
+          "townOrCity"   -> "Town or City",
+          "postCode"     -> "LS4 1RH",
+          "countryCode"  -> "GB"
         )
 
         val form = Address.form().bind(input)
@@ -54,11 +50,12 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "address mandatory fields are valid" in {
 
-        val input = Map(addressLine1 -> "Address Line 1 .'-&",
-                        addressLine2 -> "Address Line 2 .'-&",
-                        townOrCity   -> "Town or City .'-&",
-                        postCode     -> "LS4 1RH",
-                        countryCode  -> "GB"
+        val input = Map(
+          "addressLine1" -> "Address Line 1 .'-&",
+          "addressLine2" -> "Address Line 2 .'-&",
+          "townOrCity"   -> "Town or City .'-&",
+          "postCode"     -> "LS4 1RH",
+          "countryCode"  -> "GB"
         )
 
         val form = Address.form().bind(input)
@@ -67,11 +64,12 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "address mandatory fields with lower case post code are valid " in {
 
-        val input = Map(addressLine1 -> "Address Line 1 .'-&",
-                        addressLine2 -> "Address Line 2 .'-&",
-                        townOrCity   -> "Town or City .'-&",
-                        postCode     -> "ls4 1rh",
-                        countryCode  -> "GB"
+        val input = Map(
+          "addressLine1" -> "Address Line 1 .'-&",
+          "addressLine2" -> "Address Line 2 .'-&",
+          "townOrCity"   -> "Town or City .'-&",
+          "postCode"     -> "ls4 1rh",
+          "countryCode"  -> "GB"
         )
 
         val form = Address.form().bind(input)
@@ -84,11 +82,12 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
       "mandatory fields provided with empty data" in {
 
         val input =
-          Map(addressLine1 -> "", townOrCity -> "", postCode -> "", countryCode -> "GB")
+          Map("addressLine1" -> "", "townOrCity" -> "", "postCode" -> "", "countryCode" -> "GB")
         val expectedErrors =
-          Seq(FormError(addressLine1, "primaryContactDetails.address.addressLine1.empty.error"),
-              FormError(townOrCity, "primaryContactDetails.address.townOrCity.empty.error"),
-              FormError(postCode, "primaryContactDetails.address.postCode.empty.error")
+          Seq(
+            FormError("addressLine1", "primaryContactDetails.address.addressLine1.empty.error"),
+            FormError("townOrCity", "primaryContactDetails.address.townOrCity.empty.error"),
+            FormError("postCode", "primaryContactDetails.address.postCode.empty.error")
           )
 
         testFailedValidationErrors(input, expectedErrors)
@@ -96,19 +95,21 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "contains incorrect data" in {
 
-        val input = Map(addressLine1 -> "Address Line 1888888888888888888888888888888888888",
-                        addressLine2 -> "Address Line 2%%$%$%$%",
-                        addressLine3 -> "Address Line 3**********",
-                        townOrCity   -> "Town or City££$£$£$+",
-                        postCode     -> "LS4 1RH £$£$£$++---",
-                        countryCode  -> "GB"
+        val input = Map(
+          "addressLine1" -> "Address Line 1888888888888888888888888888888888888",
+          "addressLine2" -> "Address Line 2%%$%$%$%",
+          "addressLine3" -> "Address Line 3**********",
+          "townOrCity"   -> "Town or City££$£$£$+",
+          "postCode"     -> "LS4 1RH £$£$£$++---",
+          "countryCode"  -> "GB"
         )
         val expectedErrors =
-          Seq(FormError(addressLine1, "primaryContactDetails.address.addressLine1.format.error"),
-              FormError(addressLine2, "primaryContactDetails.address.addressLine2.format.error"),
-              FormError(addressLine3, "primaryContactDetails.address.addressLine3.format.error"),
-              FormError(townOrCity, "primaryContactDetails.address.townOrCity.format.error"),
-              FormError(postCode, "primaryContactDetails.address.postCode.format.error")
+          Seq(
+            FormError("addressLine1", "primaryContactDetails.address.addressLine1.format.error"),
+            FormError("addressLine2", "primaryContactDetails.address.addressLine2.format.error"),
+            FormError("addressLine3", "primaryContactDetails.address.addressLine3.format.error"),
+            FormError("townOrCity", "primaryContactDetails.address.townOrCity.format.error"),
+            FormError("postCode", "primaryContactDetails.address.postCode.format.error")
           )
 
         testFailedValidationErrors(input, expectedErrors)
@@ -116,15 +117,16 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
       "contains invalid postcode" in {
 
-        val input = Map(addressLine1 -> "Address Line 1",
-                        addressLine2 -> "Address Line 2",
-                        addressLine3 -> "Address Line 3",
-                        townOrCity   -> "Town ",
-                        postCode     -> "LSA41RH",
-                        countryCode  -> "GB"
+        val input = Map(
+          "addressLine1" -> "Address Line 1",
+          "addressLine2" -> "Address Line 2",
+          "addressLine3" -> "Address Line 3",
+          "townOrCity"   -> "Town ",
+          "postCode"     -> "LSA41RH",
+          "countryCode"  -> "GB"
         )
         val expectedErrors =
-          Seq(FormError(postCode, "primaryContactDetails.address.postCode.format.error"))
+          Seq(FormError("postCode", "primaryContactDetails.address.postCode.format.error"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -132,47 +134,53 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils {
 
     "be created from AddressLookupConfirmation" when {
 
-      def addressLookupConfirmation(lines: List[String], postcode: Option[String] = None) =
+      def addressLookupConfirmation(lines: List[String], postcode: Option[String], country: Option[AddressLookupCountry] = None) =
         AddressLookupConfirmation(
           auditRef = "ref",
           id = Some("id"),
-          address = AddressLookupAddress(lines = lines, postcode = postcode, country = None)
+          address = AddressLookupAddress(lines = lines, postcode = postcode, country = country)
         )
 
       "four address lines and a postcode are returned" in {
-        val address = Address(
-          addressLookupConfirmation(List("line1", "line2", "line3", "town"), Some("postCode"))
-        )
+        val address = addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "line2", "line3", "town"), Some("postCode")))
         address.addressLine1 mustBe "line1"
         address.addressLine2 mustBe Some("line2")
         address.addressLine3 mustBe Some("line3")
         address.townOrCity mustBe "town"
-        address.postCode mustBe Some("postCode")
+        address.maybePostcode mustBe Some("postCode")
       }
 
-      "three address lines are returned" in {
-        val address = Address(addressLookupConfirmation(List("line1", "line2", "town")))
+      "three address lines and postcode are returned" in {
+        val address = addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "line2", "town"), Some("postCode")))
         address.addressLine1 mustBe "line1"
         address.addressLine2 mustBe Some("line2")
         address.addressLine3 mustBe None
         address.townOrCity mustBe "town"
+        address.maybePostcode mustBe Some("postCode")
       }
 
-      "two address lines (and no postcode) are returned" in {
-        val address = Address(addressLookupConfirmation(List("line1", "town")))
+      "two address lines and a postcode is returned" in {
+        val address = addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "town"), Some("postCode")))
         address.addressLine1 mustBe "line1"
         address.addressLine2 mustBe None
         address.addressLine3 mustBe None
         address.townOrCity mustBe "town"
-        address.postCode mustBe None
+        address.maybePostcode mustBe Some("postCode")
+      }
+
+      "address with overseas country is returned" in {
+        val address =
+          addressConversionUtils.toPptAddress(addressLookupConfirmation(List("line1", "town"), None, Some(AddressLookupCountry("IE", "Ireland"))))
+        address.addressLine1 mustBe "line1"
+        address.addressLine2 mustBe None
+        address.addressLine3 mustBe None
+        address.townOrCity mustBe "town"
+        address.countryCode mustBe "IE"
       }
     }
   }
 
-  def testFailedValidationErrors(
-    input: Map[String, String],
-    expectedErrors: Seq[FormError]
-  ): Unit = {
+  def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {
     val form = Address.form().bind(input)
     expectedErrors.foreach(form.errors must contain(_))
   }
