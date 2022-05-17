@@ -135,10 +135,7 @@ class GrsController @Inject() (
           }
         case None =>
           Future.successful(registration.organisationDetails.grsRegistration match {
-            case Some(
-                  RegistrationDetails(false, Some("UNCHALLENGED"), "REGISTRATION_NOT_CALLED", _)
-                ) =>
-              SOLE_TRADER_VERIFICATION_FAILED
+            case Some(reg) if !reg.identifiersMatch => SOLE_TRADER_VERIFICATION_FAILED //todo stand in for check your details
             case _ => GRS_FAILED
           })
       }
