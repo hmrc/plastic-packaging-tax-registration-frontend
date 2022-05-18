@@ -19,7 +19,6 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.govukfrontend.views.html.components._",
       "uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._",
       "uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles._"),
-    // auto format code following .scalafmt.conf
     // ***************
     // Use the silencer plugin to suppress warnings
     // You may turn it on for `views` too to suppress warnings from unused imports in compiled twirl templates, but this will hide other warnings.
