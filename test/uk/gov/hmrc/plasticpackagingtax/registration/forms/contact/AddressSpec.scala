@@ -21,6 +21,8 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.FormError
+import play.api.libs.json.Json
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{AddressLookupAddress, AddressLookupConfirmation, AddressLookupCountry}
 import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 
@@ -178,6 +180,29 @@ class AddressSpec extends AnyWordSpec with Matchers with CommonTestUtils with Gu
         address.countryCode mustBe "IE"
       }
     }
+  }
+
+  "Address" should {
+    //To handle invalid address state saved before live issue fix on 18th May 2022
+    "read a UKAddress with an empty string from Json when there is no postcode" in {
+
+      val gbAddressNoPostcode = Json.obj(
+        "addressLine1" -> "testLine1",
+        "addressLine2" -> "testLine2",
+        "addressLine3" -> "testLine3",
+        "townOrCity" -> "town",
+        "countryCode" -> "GB"
+      )
+
+      gbAddressNoPostcode.as[Address] mustBe UKAddress(
+        addressLine1 = "testLine1",
+        addressLine2 = Some("testLine2"),
+        addressLine3 = Some("testLine3"),
+        townOrCity = "town",
+        postCode = ""
+      )
+    }
+
   }
 
   def testFailedValidationErrors(input: Map[String, String], expectedErrors: Seq[FormError]): Unit = {

@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.contact
 
 import play.api.data.Forms.{optional, text}
 import play.api.data.{Form, Forms, Mapping}
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
@@ -61,15 +62,25 @@ object Address extends CommonFormValidators {
   }
 
   val nonUKFormat: OFormat[NonUKAddress] = Json.format[NonUKAddress]
-  val ukFormat: OFormat[UKAddress]       = Json.format[UKAddress]
+
+  val ukReads: Reads[UKAddress] = (
+    (__ \ "addressLine1").read[String] and
+      (__ \ "addressLine2").readNullable[String] and
+      (__ \ "addressLine3").readNullable[String] and
+      (__ \ "townOrCity").read[String] and
+      (__ \ "postCode").readNullable[String].map(pc => pc.getOrElse("")) and
+      (__ \ "countryCode").read[String]
+    )(UKAddress)
+
+  val ukWrites: OWrites[UKAddress]       = Json.writes[UKAddress]
 
   implicit val reads: Reads[Address] = (__ \ "countryCode").read[String] flatMap {
-    case "GB" => ukFormat.widen[Address]
+    case "GB" => ukReads.widen[Address]
     case _    => nonUKFormat.widen[Address]
   }
 
   implicit val writes: Writes[Address] = Writes[Address] {
-    case ukAddress: UKAddress       => ukFormat.writes(ukAddress)
+    case ukAddress: UKAddress       => ukWrites.writes(ukAddress)
     case nonUKAddress: NonUKAddress => nonUKFormat.writes(nonUKAddress)
   }
 
