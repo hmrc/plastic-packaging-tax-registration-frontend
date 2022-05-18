@@ -34,17 +34,10 @@ class AddGroupMemberContactDetailsConfirmAddressController @Inject() (
   mcc: MessagesControllerComponents,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(authenticate,
-                                                       journeyAction,
-                                                       addressCaptureService,
-                                                       mcc,
-                                                       registrationUpdater
-    ) {
+    extends ContactDetailsConfirmAddressControllerBase(authenticate, journeyAction, addressCaptureService, mcc, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    doDisplayPage(memberId,
-                  routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId)
-    )
+    doDisplayPage(memberId, routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId))
 
   def addressCaptureCallback(memberId: String): Action[AnyContent] =
     onAddressCaptureCallback(memberId)

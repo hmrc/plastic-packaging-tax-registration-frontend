@@ -43,9 +43,7 @@ class AddGroupMemberContactDetailsCheckAnswersController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
         page(
-          request.registration.groupDetail.flatMap(_.findGroupMember(memberId)).getOrElse(
-            throw new IllegalStateException("Missing group member")
-          ),
+          request.registration.groupDetail.flatMap(_.findGroupMember(memberId)).getOrElse(throw new IllegalStateException("Missing group member")),
           getBackLink(memberId),
           getSubmitCall(memberId)
         )

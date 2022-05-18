@@ -20,10 +20,9 @@ import org.scalatestplus.mockito.MockitoSugar
 import spec.{PptTestData, ViewMatchers}
 
 abstract class UnitViewSpec
-    extends MessagesSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers
-    with ViewAssertions with PptTestData {
+    extends MessagesSpec with MockRegistrationConnector with MockitoSugar with ViewMatchers with ViewAssertions with PptTestData {
 
-  protected val emptyFormData: Map[String, String] = Map.empty
+  protected val emptyFormData: Map[String, String]   = Map.empty
 
   "Exercise generated rendering methods" in {
     exerciseGeneratedRenderingMethods()

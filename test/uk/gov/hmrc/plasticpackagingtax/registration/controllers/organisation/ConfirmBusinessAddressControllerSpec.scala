@@ -25,6 +25,7 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.{NonUKAddress, UKAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -34,19 +35,18 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ConfirmBusinessAddressController(authenticate = mockAuthAction,
-                                         journeyAction = mockJourneyAction,
-                                         registrationConnector = mockRegistrationConnector,
-                                         mockAddressCaptureService,
-                                         mcc = mcc,
-                                         page = page
+    new ConfirmBusinessAddressController(
+      authenticate = mockAuthAction,
+      journeyAction = mockJourneyAction,
+      registrationConnector = mockRegistrationConnector,
+      mockAddressCaptureService,
+      mcc = mcc,
+      page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Address], any(), any())(any(), any())).thenReturn(
-      HtmlFormat.raw("business registered address")
-    )
+    when(page.apply(any[Address], any(), any())(any(), any())).thenReturn(HtmlFormat.raw("business registered address"))
     authorizedUser()
     mockRegistrationUpdate()
     simulateSuccessfulAddressCaptureInit(None)
@@ -83,15 +83,15 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
       "registered business address is invalid" in {
-        val registration = aRegistration()
+        val registration   = aRegistration()
+        val newAddressLine = "100 Really Long Street Name Which is Well in Excess of 35 characters"
         mockRegistrationFind(
           registration.copy(organisationDetails =
             registration.organisationDetails.copy(businessRegisteredAddress =
-              registration.organisationDetails.businessRegisteredAddress.map(
-                _.copy(addressLine1 =
-                  "100 Really Long Street Name Which is Well in Excess of 35 characters"
-                )
-              )
+              registration.organisationDetails.businessRegisteredAddress.map {
+                case addr: UKAddress     => addr.copy(addressLine1 = newAddressLine)
+                case nonUK: NonUKAddress => nonUK.copy(addressLine1 = newAddressLine)
+              }
             )
           )
         )
@@ -108,9 +108,7 @@ class ConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCa
 
         redirectLocation(resp) mustBe Some(commonRoutes.TaskListController.displayPage().url)
 
-        modifiedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(
-          validCapturedAddress
-        )
+        modifiedRegistration.organisationDetails.businessRegisteredAddress mustBe Some(validCapturedAddress)
       }
     }
 

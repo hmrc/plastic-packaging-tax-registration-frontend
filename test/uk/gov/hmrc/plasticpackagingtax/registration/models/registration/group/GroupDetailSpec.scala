@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
@@ -76,32 +76,29 @@ class GroupDetailSpec extends AnyWordSpec with Matchers {
   }
 
   private def aGroupMember(name: String) =
-    GroupMember(customerIdentification1 = "cid1",
-                customerIdentification2 = Some("cid2"),
-                organisationDetails = Some(
-                  OrganisationDetails(organisationType = "UK Company",
-                                      organisationName = name,
-                                      businessPartnerId = Some("BP-123")
-                  )
-                ),
-                contactDetails = Some(
-                  GroupMemberContactDetails(firstName = "John",
-                                            lastName = "Benkson",
-                                            phoneNumber = Some("07875234567"),
-                                            email = Some("john@ppt.com"),
-                                            address = Some(anAddress())
-                  )
-                ),
-                addressDetails = anAddress()
+    GroupMember(
+      customerIdentification1 = "cid1",
+      customerIdentification2 = Some("cid2"),
+      organisationDetails = Some(OrganisationDetails(organisationType = "UK Company", organisationName = name, businessPartnerId = Some("BP-123"))),
+      contactDetails = Some(
+        GroupMemberContactDetails(
+          firstName = "John",
+          lastName = "Benkson",
+          phoneNumber = Some("07875234567"),
+          email = Some("john@ppt.com"),
+          address = Some(anAddress())
+        )
+      ),
+      addressDetails = anAddress()
     )
 
   private def anAddress() =
-    new Address(addressLine1 = "addressLine1",
-                addressLine2 = Some("addressLine2"),
-                addressLine3 = Some("addressLine3"),
-                townOrCity = "Wakefield",
-                postCode = Some("WF15 4HD"),
-                countryCode = "GB"
+    new UKAddress(
+      addressLine1 = "addressLine1",
+      addressLine2 = Some("addressLine2"),
+      addressLine3 = Some("addressLine3"),
+      townOrCity = "Wakefield",
+      postCode = "WF15 4HD"
     )
 
 }

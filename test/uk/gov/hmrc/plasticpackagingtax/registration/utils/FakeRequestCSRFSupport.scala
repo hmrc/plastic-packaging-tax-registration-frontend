@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package uk.gov.hmrc.plasticpackagingtax.registration.utils
 
 import play.api.mvc.Request
 import play.api.test.{CSRFTokenHelper, FakeRequest}

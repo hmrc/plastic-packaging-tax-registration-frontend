@@ -22,6 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -34,15 +35,18 @@ class GroupMemberGrsController @Inject() (
   subscriptionsConnector: SubscriptionsConnector,
   partnershipGrsConnector: PartnershipGrsConnector,
   registrationUpdater: NewRegistrationUpdateService,
+  addressConversionUtils: AddressConversionUtils,
   mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
-    extends GroupMemberGrsControllerBase(authenticate,
-                                         journeyAction,
-                                         ukCompanyGrsConnector,
-                                         subscriptionsConnector,
-                                         partnershipGrsConnector,
-                                         registrationUpdater,
-                                         mcc
+    extends GroupMemberGrsControllerBase(
+      authenticate,
+      journeyAction,
+      ukCompanyGrsConnector,
+      subscriptionsConnector,
+      partnershipGrsConnector,
+      registrationUpdater,
+      addressConversionUtils,
+      mcc
     ) {
 
   def grsCallbackNewMember(journeyId: String): Action[AnyContent] =

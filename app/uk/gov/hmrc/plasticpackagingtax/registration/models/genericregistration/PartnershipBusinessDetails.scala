@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 
 case class CompanyProfile(
   companyNumber: String,
@@ -35,7 +36,7 @@ case class GrsPartnershipBusinessDetails(
   companyProfile: Option[GrsCompanyProfile],
   override val identifiersMatch: Boolean,
   override val businessVerification: Option[GrsBusinessVerification],
-  override val registration: GrsRegistration
+  override val registration: GrsRegistration,
 ) extends GrsResponse
 
 object GrsPartnershipBusinessDetails {
@@ -54,7 +55,9 @@ case class PartnershipBusinessDetails(
 
   def companyName: Option[String] = companyProfile.map(_.companyName)
 
-  def companyAddress: Option[Address] = companyProfile.map(_.companyAddress.toPptAddress)
+  def companyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] = companyProfile.flatMap { profile =>
+    addressConversionUtils.toPptAddress(profile.companyAddress)
+  }
 
   def isGroupMemberSameAsNominatedPartnership(customerIdentification1: String): Boolean =
     companyProfile.exists(_.companyNumber.equalsIgnoreCase(customerIdentification1))

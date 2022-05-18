@@ -34,7 +34,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJour
 import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 import scala.concurrent.Future
 

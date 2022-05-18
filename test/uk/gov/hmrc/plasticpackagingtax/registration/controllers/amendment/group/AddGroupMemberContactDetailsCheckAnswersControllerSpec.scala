@@ -32,17 +32,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registra
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.amend_member_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
-class AddGroupMemberContactDetailsCheckAnswersControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction {
+class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerSpec with MockAmendmentJourneyAction {
 
   private val mcc     = stubMessagesControllerComponents()
   private val cyaPage = mock[amend_member_contact_check_answers_page]
 
-  when(cyaPage.apply(any(), any(), any())(any(), any())).thenReturn(
-    HtmlFormat.raw("Amend Reg - New Group Member CYA")
-  )
+  when(cyaPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Group Member CYA"))
 
   private val controller = new AddGroupMemberContactDetailsCheckAnswersController(
     authenticate = mockAuthAllowEnrolmentAction,
@@ -51,9 +48,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec
     page = cyaPage
   )
 
-  private val groupRegistrationInAmendment = aRegistration(
-    withGroupDetail(Some(groupDetailsWithMembers))
-  )
+  private val groupRegistrationInAmendment = aRegistration(withGroupDetail(Some(groupDetailsWithMembers)))
 
   override protected def beforeEach(): Unit = {
     inMemoryRegistrationAmendmentRepository.reset()
@@ -95,9 +90,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec
 
         val registrationCaptor: ArgumentCaptor[Registration] =
           ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
-          any()
-        )
+        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(any())
 
         registrationCaptor.getValue mustBe groupRegistrationInAmendment
       }
@@ -108,9 +101,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec
         val resp = controller.submit()(postRequest(JsObject.empty))
 
         status(resp) mustBe SEE_OTHER
-        redirectLocation(resp) mustBe Some(
-          routes.ManageGroupMembersController.displayPage().toString
-        )
+        redirectLocation(resp) mustBe Some(routes.ManageGroupMembersController.displayPage().toString)
       }
       "redirect to the post reg amend error page" when {
         "update fails due to exception being thrown" in {
@@ -120,9 +111,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec
           val resp = controller.submit()(postRequest(JsObject.empty))
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
-            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
-          )
+          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
         }
         "update fails due to error returned from ETMP" in {
           authorisedUserWithPptSubscription()
@@ -131,9 +120,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec
           val resp = controller.submit()(postRequest(JsObject.empty))
 
           status(resp) mustBe SEE_OTHER
-          redirectLocation(resp) mustBe Some(
-            amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString
-          )
+          redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
         }
       }
     }

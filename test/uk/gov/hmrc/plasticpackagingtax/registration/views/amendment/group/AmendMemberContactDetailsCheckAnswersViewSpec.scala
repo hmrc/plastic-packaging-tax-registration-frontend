@@ -70,7 +70,7 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
             address.addressLine2.getOrElse(""),
             address.addressLine3.getOrElse(""),
             address.townOrCity,
-            address.postCode.getOrElse(""),
+            address.maybePostcode.getOrElse(""),
             countryService.getName(address.countryCode)
         ).filter(_.nonEmpty).mkString(" ")
 

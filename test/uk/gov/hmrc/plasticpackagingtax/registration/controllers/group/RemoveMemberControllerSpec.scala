@@ -164,8 +164,10 @@ class RemoveMemberControllerSpec extends ControllerSpec {
                 organisationDetails =
                   Some(OrganisationDetails("Limited Company", s"Company $id", Some("12313123"))),
                 addressDetails = Address(addressLine1 = "addressLine1",
+                                         addressLine2 = Some("addressLine2"),
+                                         addressLine3 = None,
                                          townOrCity = "addressLine2",
-                                         postCode = Some("postCode"),
+                                         maybePostcode = Some("postCode"),
                                          countryCode = "UK"
                 )
     )

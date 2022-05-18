@@ -41,9 +41,7 @@ case class GroupMember(
   lazy val businessTypeDisplayName: String =
     businessType match {
       case Some(organisationType) =>
-        OrgType.withNameOpt(organisationType).getOrElse(
-          throw new IllegalStateException("Organisation type is absent")
-        )
+        OrgType.withNameOpt(organisationType).getOrElse(throw new IllegalStateException("Organisation type is absent"))
       case None => throw new IllegalStateException("Organisation type is absent")
     }
 
@@ -74,9 +72,7 @@ case class GroupMember(
       contactDetails.exists(_.isValid) &&
       addressDetails.isValid
 
-  private def withUpdatedContactDetails(
-    update: GroupMemberContactDetails => GroupMemberContactDetails
-  ) =
+  private def withUpdatedContactDetails(update: GroupMemberContactDetails => GroupMemberContactDetails) =
     this.copy(contactDetails = Some(this.contactDetails match {
       case Some(cd) => update(cd)
       case None     => throw new IllegalStateException("No contact details found")

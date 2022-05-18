@@ -34,12 +34,7 @@ class AddGroupMemberContactDetailsNameController @Inject() (
   page: member_name_page,
   registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsNameControllerBase(authenticate,
-                                             journeyAction,
-                                             mcc,
-                                             page,
-                                             registrationUpdater
-    ) {
+    extends ContactDetailsNameControllerBase(authenticate, journeyAction, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
     doDisplayPage(memberId, getBackLink, getSubmitCall)
