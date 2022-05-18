@@ -26,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.rou
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
   PARTNERSHIP,
   SOLE_TRADER,
@@ -45,7 +46,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.check_answers_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 @ViewTest
 class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {

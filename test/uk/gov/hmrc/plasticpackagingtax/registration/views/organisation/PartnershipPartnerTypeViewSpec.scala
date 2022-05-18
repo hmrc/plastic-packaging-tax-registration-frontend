@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTy
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 @ViewTest
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {

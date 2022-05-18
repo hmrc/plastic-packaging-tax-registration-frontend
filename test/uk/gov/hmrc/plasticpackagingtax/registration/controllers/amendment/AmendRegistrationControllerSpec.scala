@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJour
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.amend_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.amend_error_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 class AmendRegistrationControllerSpec
     extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package uk.gov.hmrc.plasticpackagingtax.registration.utils
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.Json
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.{NonUKAddress, UKAddress}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
-import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 
 class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
@@ -80,6 +79,34 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
           Some("test town"),
           "test city",
           "AA11AA"
+        ))
+
+      }
+    }
+
+    "provided with an incorporation address with a non-UK country" should {
+      "generate a NonUKAddress" in {
+
+        val stubOverseasAddress = Json.obj(
+          "address_line_1" -> "testLine1",
+          "address_line_2" -> "test town",
+          "care_of" -> "test name",
+          "country" -> "Spain",
+          "locality" -> "test city",
+          "po_box" -> "123",
+          "premises" -> "1",
+          "region" -> "test region"
+        )
+
+        val incAddress = stubOverseasAddress.as[IncorporationAddressDetails]
+
+        acu.toPptAddress(incAddress) mustBe Some(NonUKAddress(
+          "1",
+          Some("testLine1"),
+          Some("test town"),
+          "test city",
+          None,
+          "ES"
         ))
 
       }

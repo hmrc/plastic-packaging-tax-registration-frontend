@@ -38,7 +38,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{Authenticate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{SubscriptionCreateOrUpdateResponseSuccess, SubscriptionStatus, SubscriptionStatusResponse}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions

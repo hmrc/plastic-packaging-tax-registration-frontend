@@ -38,9 +38,7 @@ class CountryService {
 
   def getKeyForName(countryName: String): Option[String] = {
     val allCountries = getAll()
-    allCountries.filter {
-      kvp => kvp._2.contains(countryName)
-    }.keySet.headOption
+    allCountries.map(_.swap).get(countryName)
   }
 
   private def parseCountriesResource(): Map[String, String] = {

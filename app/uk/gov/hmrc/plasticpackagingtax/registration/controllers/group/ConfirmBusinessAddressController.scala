@@ -82,8 +82,7 @@ class ConfirmBusinessAddressController @Inject() (
         backLink = routes.ConfirmBusinessAddressController.displayPage(memberId, redirectTo).url,
         successLink = routes.ConfirmBusinessAddressController.addressCaptureCallback(memberId).url,
         alfHeadingsPrefix = "addressLookup.business",
-        entityName =
-          Option(request.registration.findMember(memberId).getOrElse(throw new IllegalStateException("Provided member not found")).businessName),
+        entityName = request.registration.findMember(memberId).map(_.businessName),
         pptHeadingKey = "addressCapture.business.heading",
         pptHintKey = None,
         forceUkAddress = true
