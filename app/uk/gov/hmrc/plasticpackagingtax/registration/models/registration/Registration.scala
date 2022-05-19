@@ -181,7 +181,7 @@ case class Registration(
   val lastMember: Option[GroupMember] = groupDetail.flatMap(_.members.lastOption)
 
   def findMember(memberId: String): Option[GroupMember] =
-    groupDetail.flatMap(_.findGroupMember(memberId))
+    groupDetail.flatMap(_.findGroupMember(Some(memberId), None))
 
   def inflightPartner: Option[Partner] =
     organisationDetails.partnershipDetails.flatMap(_.inflightPartner)

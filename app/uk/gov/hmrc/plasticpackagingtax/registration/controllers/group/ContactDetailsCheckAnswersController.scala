@@ -40,7 +40,7 @@ class ContactDetailsCheckAnswersController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
         page(
-          request.registration.groupDetail.flatMap(_.findGroupMember(memberId)).getOrElse(
+          request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(
             throw new IllegalStateException("Missing group member")
           )
         )
