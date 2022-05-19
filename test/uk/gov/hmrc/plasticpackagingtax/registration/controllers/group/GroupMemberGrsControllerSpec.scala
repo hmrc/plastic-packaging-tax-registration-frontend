@@ -29,7 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{OrgType, PARTNERSHIP}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{CompanyProfile, IncorporationDetails}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{MEMBER_IN_GROUP, MEMBER_IS_NOMINATED}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IN_GROUP
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupError, GroupMember, OrganisationDetails => GroupOrgDetails}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
@@ -135,8 +135,8 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
       }
 
-      "show error page and do not store business entity information" when {
-        s"registering a $orgType group member with same company number" in {
+      "change an add member to a change member journey" when {
+        s"registering a $orgType group member with same company number as another group member" in {
           authorizedUser()
           val existingMember = orgType match {
             case PARTNERSHIP =>
@@ -167,77 +167,20 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
           mockRegistrationUpdate()
 
           groupMemberSize(registration) mustBe 1
-          val result =
-            controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+
+          val result = controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.NotableErrorController.organisationAlreadyInGroup().url)
+
+          if(orgType.equals(OrgType.PARTNERSHIP)){
+            redirectLocation(result).get should include("/register-for-plastic-packaging-tax/confirm-address")
+          } else {
+            redirectLocation(result) mustBe Some(routes.ConfirmBusinessAddressController.displayPage(
+              "123456ABC", "/register-for-plastic-packaging-tax/group-member-contact-name/123456ABC").url
+            )
+          }
 
           groupMemberSize(getLastSavedRegistration) mustBe 1
-          groupError(getLastSavedRegistration) mustBe Some(GroupError(MEMBER_IN_GROUP, "Existing Company"))
-        }
-
-        s"registering a $orgType group member with the same company number as Nominated organisation" in {
-          authorizedUser()
-          var registration: Registration = registrationWithSelectedGroupMember(orgType)
-
-          orgType match {
-            case PARTNERSHIP =>
-              registration = registration.copy(organisationDetails =
-                registeredLimitedLiabilityhPartnershipOrgDetails()
-              )
-              mockRegistrationFind(registration)
-              mockRegistrationUpdate()
-              groupMemberSize(registration) mustBe 0
-              val updatedPartnershipBusinessDetails =
-                partnershipBusinessDetails.copy(companyProfile =
-                  Some(
-                    CompanyProfile(
-                      companyNumber =
-                        registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyNumber,
-                      companyName =
-                        registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyName,
-                      companyAddress =
-                        registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyAddress
-                    )
-                  )
-                )
-              mockGetPartnershipBusinessDetails(updatedPartnershipBusinessDetails)
-              val result =
-                controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
-
-              status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(routes.NotableErrorController.organisationAlreadyInGroup().url)
-
-              groupMemberSize(getLastSavedRegistration) mustBe 0
-              groupError(getLastSavedRegistration) mustBe Some(
-                GroupError(
-                  MEMBER_IS_NOMINATED,
-                  registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyName
-                )
-              )
-            case _ =>
-              registration = registrationWithSelectedGroupMember(orgType)
-              mockRegistrationFind(registration)
-              mockRegistrationUpdate()
-              groupMemberSize(registration) mustBe 0
-              val detailsFromGrs = incorporationDetails.copy(
-                companyNumber =
-                  registration.organisationDetails.incorporationDetails.get.companyNumber,
-                companyName = registration.organisationDetails.incorporationDetails.get.companyName
-              )
-              mockGetUkCompanyDetails(detailsFromGrs)
-              val result =
-                controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
-
-              status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(routes.NotableErrorController.organisationAlreadyInGroup().url)
-
-              groupMemberSize(getLastSavedRegistration) mustBe 0
-              groupError(getLastSavedRegistration) mustBe Some(
-                GroupError(MEMBER_IS_NOMINATED, registration.organisationDetails.incorporationDetails.get.companyName)
-              )
-          }
 
         }
       }
