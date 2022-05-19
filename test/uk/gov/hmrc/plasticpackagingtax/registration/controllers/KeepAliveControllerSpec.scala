@@ -40,7 +40,7 @@ class KeepAliveControllerSpec extends ControllerSpec {
   private val mockUserDataRepository = mock[MongoUserDataRepository]
 
   private val controller =
-    new KeepAliveController(authenticate = mockAuthAllowEnrolmentAction,
+    new KeepAliveController(authenticate = mockEnrolledAuthAction,
                             userDataRepository = mockUserDataRepository,
                             mcc = mcc
     )

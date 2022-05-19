@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
@@ -29,11 +29,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerPhoneNumberController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  page: partner_phone_number_page,
-  registrationUpdateService: NewRegistrationUpdateService
+                                               authenticate: NotEnrolledAuthAction,
+                                               journeyAction: JourneyAction,
+                                               mcc: MessagesControllerComponents,
+                                               page: partner_phone_number_page,
+                                               registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends PartnerPhoneNumberControllerBase(authenticate = authenticate,
                                              journeyAction = journeyAction,

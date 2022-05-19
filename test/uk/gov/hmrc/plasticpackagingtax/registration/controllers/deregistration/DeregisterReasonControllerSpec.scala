@@ -49,7 +49,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
     DeregistrationDetails(deregister = Some(true), reason = None)
 
   private val controller =
-    new DeregisterReasonController(authenticate = mockAuthAllowEnrolmentAction,
+    new DeregisterReasonController(authenticate = mockEnrolledAuthAction,
                                    mcc = mcc,
                                    deregistrationDetailRepository = repository,
                                    page = page

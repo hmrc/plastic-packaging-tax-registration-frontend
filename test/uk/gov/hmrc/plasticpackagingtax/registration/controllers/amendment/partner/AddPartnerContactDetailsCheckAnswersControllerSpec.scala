@@ -43,7 +43,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
   when(cyaPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Partner CYA"))
 
   private val controller = new AddPartnerContactDetailsCheckAnswersController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     journeyAction = mockAmendmentJourneyAction,
     mcc = mcc,
     page = cyaPage

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsEmailAddressControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
@@ -28,11 +28,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsEmailAddressController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents,
-  page: member_email_address_page,
-  registrationUpdater: AmendRegistrationUpdateService
+                                                                     authenticate: EnrolledAuthAction,
+                                                                     journeyAction: AmendmentJourneyAction,
+                                                                     mcc: MessagesControllerComponents,
+                                                                     page: member_email_address_page,
+                                                                     registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsEmailAddressControllerBase(authenticate, journeyAction, mcc, page, registrationUpdater) {
 

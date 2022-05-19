@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.amend_registration_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.amend_error_page
@@ -27,11 +27,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AmendRegistrationController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  mcc: MessagesControllerComponents,
-  amendmentJourneyAction: AmendmentJourneyAction,
-  amendRegistrationPage: amend_registration_page,
-  amendErrorPage: amend_error_page
+                                              authenticate: EnrolledAuthAction,
+                                              mcc: MessagesControllerComponents,
+                                              amendmentJourneyAction: AmendmentJourneyAction,
+                                              amendRegistrationPage: amend_registration_page,
+                                              amendErrorPage: amend_error_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) {
 

@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
@@ -35,10 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendOrganisationDetailsController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  mcc: MessagesControllerComponents,
-  addressCaptureService: AddressCaptureService,
-  amendmentJourneyAction: AmendmentJourneyAction
+                                                     authenticate: EnrolledAuthAction,
+                                                     mcc: MessagesControllerComponents,
+                                                     addressCaptureService: AddressCaptureService,
+                                                     amendmentJourneyAction: AmendmentJourneyAction
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) {
 

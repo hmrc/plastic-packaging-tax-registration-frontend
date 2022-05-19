@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.addresslookup.AddressLookupFrontendConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.AddressLookupIntegration
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthRegistrationOrAmendmentActionImpl
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.PermissiveAuthActionImpl
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.address.UkAddressForm
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.addresslookup.{AddressLookupOnRamp, MissingAddressIdException}
@@ -38,15 +38,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressCaptureController @Inject() (
-  authenticate: AuthRegistrationOrAmendmentActionImpl,
-  mcc: MessagesControllerComponents,
-  addressCaptureService: AddressCaptureService,
-  addressLookupFrontendConnector: AddressLookupFrontendConnector,
-  appConfig: AppConfig,
-  addressInUkPage: uk_address_page,
-  addressPage: address_page,
-  countryService: CountryService,
-  addressConversionUtils: AddressConversionUtils
+                                           authenticate: PermissiveAuthActionImpl,
+                                           mcc: MessagesControllerComponents,
+                                           addressCaptureService: AddressCaptureService,
+                                           addressLookupFrontendConnector: AddressLookupFrontendConnector,
+                                           appConfig: AppConfig,
+                                           addressInUkPage: uk_address_page,
+                                           addressPage: address_page,
+                                           countryService: CountryService,
+                                           addressConversionUtils: AddressConversionUtils
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport with AddressLookupIntegration {
 

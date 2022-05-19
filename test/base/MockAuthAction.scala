@@ -32,9 +32,9 @@ import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthActionImpl,
-  AuthNoEnrolmentCheckActionImpl,
-  AuthRegistrationOrAmendmentActionImpl
+  NotEnrolledAuthActionImpl,
+  EnrolledAuthActionImpl,
+  PermissiveAuthActionImpl
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
@@ -46,20 +46,20 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val appConfig: AppConfig             = mock[AppConfig]
 
-  val mockAuthAction = new AuthActionImpl(mockAuthConnector,
+  val mockAuthAction = new NotEnrolledAuthActionImpl(mockAuthConnector,
                                           metricsMock,
                                           stubMessagesControllerComponents(),
                                           appConfig
   )
 
-  val mockAuthAllowEnrolmentAction = new AuthNoEnrolmentCheckActionImpl(
+  val mockEnrolledAuthAction = new EnrolledAuthActionImpl(
     mockAuthConnector,
     metricsMock,
     stubMessagesControllerComponents(),
     appConfig
   )
 
-  val mockRegistrationOrAmendmentAction = new AuthRegistrationOrAmendmentActionImpl(
+  val mockPermissiveAuthAction= new PermissiveAuthActionImpl(
     mockAuthConnector,
     metricsMock,
     stubMessagesControllerComponents(),

@@ -42,7 +42,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
   when(cyaPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Group Member CYA"))
 
   private val controller = new AddGroupMemberContactDetailsCheckAnswersController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     journeyAction = mockAmendmentJourneyAction,
     mcc = mcc,
     page = cyaPage

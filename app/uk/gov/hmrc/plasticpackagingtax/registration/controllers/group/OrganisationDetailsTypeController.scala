@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
@@ -34,16 +34,16 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  appConfig: AppConfig,
-  page: organisation_type,
-  registrationUpdater: NewRegistrationUpdateService,
-  val soleTraderGrsConnector: SoleTraderGrsConnector,
-  val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  val partnershipGrsConnector: PartnershipGrsConnector,
-  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
+                                                    authenticate: NotEnrolledAuthAction,
+                                                    journeyAction: JourneyAction,
+                                                    mcc: MessagesControllerComponents,
+                                                    appConfig: AppConfig,
+                                                    page: organisation_type,
+                                                    registrationUpdater: NewRegistrationUpdateService,
+                                                    val soleTraderGrsConnector: SoleTraderGrsConnector,
+                                                    val ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                                    val partnershipGrsConnector: PartnershipGrsConnector,
+                                                    val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector
 )(implicit ec: ExecutionContext)
     extends OrganisationDetailsTypeControllerBase(authenticate,
                                                   journeyAction,

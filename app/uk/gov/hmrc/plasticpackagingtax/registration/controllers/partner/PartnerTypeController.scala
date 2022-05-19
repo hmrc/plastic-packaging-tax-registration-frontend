@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
@@ -34,16 +34,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerTypeController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  registrationUpdater: NewRegistrationUpdateService,
-  mcc: MessagesControllerComponents,
-  page: partner_type,
-  val appConfig: AppConfig,
-  val soleTraderGrsConnector: SoleTraderGrsConnector,
-  val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  val partnershipGrsConnector: PartnershipGrsConnector
+                                        authenticate: NotEnrolledAuthAction,
+                                        journeyAction: JourneyAction,
+                                        registrationUpdater: NewRegistrationUpdateService,
+                                        mcc: MessagesControllerComponents,
+                                        page: partner_type,
+                                        val appConfig: AppConfig,
+                                        val soleTraderGrsConnector: SoleTraderGrsConnector,
+                                        val ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                        val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                        val partnershipGrsConnector: PartnershipGrsConnector
 )(implicit ec: ExecutionContext)
     extends PartnerTypeControllerBase(authenticate,
                                       journeyAction = journeyAction,

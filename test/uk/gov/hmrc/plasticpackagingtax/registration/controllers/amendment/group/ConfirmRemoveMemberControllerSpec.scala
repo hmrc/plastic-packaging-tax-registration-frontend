@@ -45,7 +45,7 @@ class ConfirmRemoveMemberControllerSpec
   private val sessionId = UUID.randomUUID().toString
 
   private val controller =
-    new ConfirmRemoveMemberController(mockAuthAllowEnrolmentAction,
+    new ConfirmRemoveMemberController(mockEnrolledAuthAction,
                                       mockAmendmentJourneyAction,
                                       mcc,
                                       page

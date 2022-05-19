@@ -49,18 +49,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
-  auditor: Auditor,
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val appConfig: AppConfig,
-  override val soleTraderGrsConnector: SoleTraderGrsConnector,
-  override val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  override val partnershipGrsConnector: PartnershipGrsConnector,
-  override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  override val registrationConnector: RegistrationConnector,
-  override val registrationUpdater: NewRegistrationUpdateService,
-  mcc: MessagesControllerComponents,
-  page: organisation_type
+                                                    auditor: Auditor,
+                                                    authenticate: NotEnrolledAuthAction,
+                                                    journeyAction: JourneyAction,
+                                                    override val appConfig: AppConfig,
+                                                    override val soleTraderGrsConnector: SoleTraderGrsConnector,
+                                                    override val ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                                    override val partnershipGrsConnector: PartnershipGrsConnector,
+                                                    override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                                    override val registrationConnector: RegistrationConnector,
+                                                    override val registrationUpdater: NewRegistrationUpdateService,
+                                                    mcc: MessagesControllerComponents,
+                                                    page: organisation_type
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport
     with OrganisationDetailsTypeHelper {

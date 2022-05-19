@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeightDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
@@ -33,12 +33,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ExceededThresholdWeightDateController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents,
-  page: exceeded_threshold_weight_date_page,
-  exceededThresholdWeightDate: ExceededThresholdWeightDate
+                                                        authenticate: NotEnrolledAuthAction,
+                                                        journeyAction: JourneyAction,
+                                                        override val registrationConnector: RegistrationConnector,
+                                                        mcc: MessagesControllerComponents,
+                                                        page: exceeded_threshold_weight_date_page,
+                                                        exceededThresholdWeightDate: ExceededThresholdWeightDate
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

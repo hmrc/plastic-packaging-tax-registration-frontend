@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerGrsControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
@@ -34,15 +34,15 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerGrsController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  ukCompanyGrsConnector: UkCompanyGrsConnector,
-  soleTraderGrsConnector: SoleTraderGrsConnector,
-  partnershipGrsConnector: PartnershipGrsConnector,
-  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  registrationUpdater: AmendRegistrationUpdateService,
-  subscriptionsConnector: SubscriptionsConnector,
-  mcc: MessagesControllerComponents
+                                          authenticate: EnrolledAuthAction,
+                                          journeyAction: AmendmentJourneyAction,
+                                          ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                          soleTraderGrsConnector: SoleTraderGrsConnector,
+                                          partnershipGrsConnector: PartnershipGrsConnector,
+                                          registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                          registrationUpdater: AmendRegistrationUpdateService,
+                                          subscriptionsConnector: SubscriptionsConnector,
+                                          mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends PartnerGrsControllerBase(authenticate = authenticate,
                                      journeyAction = journeyAction,

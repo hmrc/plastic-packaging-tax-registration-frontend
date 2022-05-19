@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.MembersUnderGroupControl
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   Cacheable,
@@ -36,11 +36,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MembersUnderGroupControlController @Inject() (
-  authenticate: AuthAction,
-  mcc: MessagesControllerComponents,
-  journeyAction: JourneyAction,
-  page: members_under_group_control_page,
-  override val registrationConnector: RegistrationConnector
+                                                     authenticate: NotEnrolledAuthAction,
+                                                     mcc: MessagesControllerComponents,
+                                                     journeyAction: JourneyAction,
+                                                     page: members_under_group_control_page,
+                                                     override val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

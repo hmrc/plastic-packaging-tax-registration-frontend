@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
@@ -36,16 +36,16 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerNameController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  registrationUpdater: NewRegistrationUpdateService,
-  override val appConfig: AppConfig,
-  override val soleTraderGrsConnector: SoleTraderGrsConnector,
-  override val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  override val partnershipGrsConnector: PartnershipGrsConnector,
-  override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  mcc: MessagesControllerComponents,
-  page: partner_name_page
+                                        authenticate: NotEnrolledAuthAction,
+                                        journeyAction: JourneyAction,
+                                        registrationUpdater: NewRegistrationUpdateService,
+                                        override val appConfig: AppConfig,
+                                        override val soleTraderGrsConnector: SoleTraderGrsConnector,
+                                        override val ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                        override val partnershipGrsConnector: PartnershipGrsConnector,
+                                        override val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                        mcc: MessagesControllerComponents,
+                                        page: partner_name_page
 )(implicit ec: ExecutionContext)
     extends PartnerNameControllerBase(authenticate = authenticate,
                                       journeyAction = journeyAction,

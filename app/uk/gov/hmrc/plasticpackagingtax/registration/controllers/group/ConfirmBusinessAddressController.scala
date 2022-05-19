@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
@@ -35,12 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
-  addressCaptureService: AddressCaptureService,
-  mcc: MessagesControllerComponents,
-  page: confirm_business_address
+                                                   authenticate: NotEnrolledAuthAction,
+                                                   journeyAction: JourneyAction,
+                                                   override val registrationConnector: RegistrationConnector,
+                                                   addressCaptureService: AddressCaptureService,
+                                                   mcc: MessagesControllerComponents,
+                                                   page: confirm_business_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

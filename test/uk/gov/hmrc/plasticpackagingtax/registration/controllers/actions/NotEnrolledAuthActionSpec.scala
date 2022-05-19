@@ -29,22 +29,22 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.Authenticated
 
 import scala.concurrent.Future
 
-class AuthActionSpec extends ControllerSpec with MetricsMocks {
+class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
 
   private val okResponseGenerator = (_: AuthenticatedRequest[_]) => Future(Results.Ok)
 
   private val expectedAcceptableCredentialsPredicate =
     AffinityGroup.Agent.or(CredentialStrength(CredentialStrength.strong))
 
-  private def registrationAuthAction: AuthAction =
-    new AuthActionImpl(mockAuthConnector,
+  private def registrationAuthAction: NotEnrolledAuthAction =
+    new NotEnrolledAuthActionImpl(mockAuthConnector,
                        metricsMock,
                        stubMessagesControllerComponents(),
                        appConfig
     )
 
-  private def amendmentAuthAction: AuthNoEnrolmentCheckAction =
-    new AuthNoEnrolmentCheckActionImpl(mockAuthConnector,
+  private def amendmentAuthAction: EnrolledAuthAction =
+    new EnrolledAuthActionImpl(mockAuthConnector,
                                        metricsMock,
                                        stubMessagesControllerComponents(),
                                        appConfig

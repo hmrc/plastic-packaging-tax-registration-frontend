@@ -35,7 +35,7 @@ class DeregistrationSubmittedControllerSpec
   when(mockPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("Deregistration Submitted"))
 
   private val deregistrationSubmittedController =
-    new DeregistrationSubmittedController(mockAuthAllowEnrolmentAction, mcc, mockPage)
+    new DeregistrationSubmittedController(mockEnrolledAuthAction, mcc, mockPage)
 
   "Deregistration Submitted Controller" should {
     "display page" when {

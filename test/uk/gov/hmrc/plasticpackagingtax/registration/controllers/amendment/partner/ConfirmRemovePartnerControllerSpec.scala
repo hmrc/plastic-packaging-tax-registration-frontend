@@ -45,7 +45,7 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with MockAmendme
   )
 
   private val confirmRemovePartnerController = new ConfirmRemovePartnerController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     amendmentJourneyAction = mockAmendmentJourneyAction,
     mcc = mcc,
     page = mockConfirmRemovePartnerPage

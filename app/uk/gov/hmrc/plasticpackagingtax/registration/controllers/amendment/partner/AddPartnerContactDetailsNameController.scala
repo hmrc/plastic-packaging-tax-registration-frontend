@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerContactNameControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
@@ -31,11 +31,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsNameController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents,
-  page: partner_member_name_page,
-  registrationUpdateService: AmendRegistrationUpdateService
+                                                         authenticate: EnrolledAuthAction,
+                                                         journeyAction: AmendmentJourneyAction,
+                                                         mcc: MessagesControllerComponents,
+                                                         page: partner_member_name_page,
+                                                         registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends PartnerContactNameControllerBase(authenticate = authenticate,
                                              journeyAction = journeyAction,

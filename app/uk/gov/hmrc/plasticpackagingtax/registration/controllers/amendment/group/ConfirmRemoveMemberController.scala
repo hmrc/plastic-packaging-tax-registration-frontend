@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendmentController
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
@@ -35,10 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmRemoveMemberController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  amendmentJourneyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents,
-  page: confirm_remove_member_page
+                                                authenticate: EnrolledAuthAction,
+                                                amendmentJourneyAction: AmendmentJourneyAction,
+                                                mcc: MessagesControllerComponents,
+                                                page: confirm_remove_member_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) with I18nSupport
     with RemoveMemberAction {

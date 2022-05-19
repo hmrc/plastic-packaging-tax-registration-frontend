@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerTypeControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
@@ -35,16 +35,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddPartnerOrganisationDetailsTypeController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  registrationUpdater: AmendRegistrationUpdateService,
-  mcc: MessagesControllerComponents,
-  page: partner_type,
-  val appConfig: AppConfig,
-  val soleTraderGrsConnector: SoleTraderGrsConnector,
-  val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  val partnershipGrsConnector: PartnershipGrsConnector
+                                                              authenticate: EnrolledAuthAction,
+                                                              journeyAction: AmendmentJourneyAction,
+                                                              registrationUpdater: AmendRegistrationUpdateService,
+                                                              mcc: MessagesControllerComponents,
+                                                              page: partner_type,
+                                                              val appConfig: AppConfig,
+                                                              val soleTraderGrsConnector: SoleTraderGrsConnector,
+                                                              val ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                                              val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                                              val partnershipGrsConnector: PartnershipGrsConnector
 )(implicit ec: ExecutionContext)
     extends PartnerTypeControllerBase(authenticate,
                                       journeyAction = journeyAction,

@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureService
@@ -27,11 +27,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerContactAddressController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  addressCaptureService: AddressCaptureService,
-  mcc: MessagesControllerComponents,
-  registrationUpdater: NewRegistrationUpdateService
+                                                  authenticate: NotEnrolledAuthAction,
+                                                  journeyAction: JourneyAction,
+                                                  addressCaptureService: AddressCaptureService,
+                                                  mcc: MessagesControllerComponents,
+                                                  registrationUpdater: NewRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
     extends PartnerContactAddressControllerBase(authenticate,
                                                 journeyAction,

@@ -40,7 +40,7 @@ class AmendOrganisationDetailsControllerSpec
   private val registration = aRegistration()
 
   private val controller =
-    new AmendOrganisationDetailsController(mockAuthAllowEnrolmentAction,
+    new AmendOrganisationDetailsController(mockEnrolledAuthAction,
                                            mcc,
                                            mockAddressCaptureService,
                                            mockAmendmentJourneyAction

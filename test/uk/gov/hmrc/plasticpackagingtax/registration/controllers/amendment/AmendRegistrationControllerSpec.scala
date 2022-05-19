@@ -49,7 +49,7 @@ class AmendRegistrationControllerSpec
   )
 
   private val controller =
-    new AmendRegistrationController(mockAuthAllowEnrolmentAction,
+    new AmendRegistrationController(mockEnrolledAuthAction,
                                     mcc,
                                     mockAmendmentJourneyAction,
                                     amendRegistrationPage,
