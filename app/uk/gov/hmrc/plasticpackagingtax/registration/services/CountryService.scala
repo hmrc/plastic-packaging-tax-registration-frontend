@@ -17,7 +17,8 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
 import com.google.inject.Singleton
-import play.api.libs.json.{Json, OFormat}
+import org.slf4j.LoggerFactory
+import play.api.libs.json.{Json, OFormat, __}
 
 import scala.collection.immutable.ListMap
 
@@ -29,6 +30,7 @@ object FcoCountry {
 
 @Singleton
 class CountryService {
+  private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 
   val countries = parseCountriesResource()
 
@@ -38,7 +40,13 @@ class CountryService {
 
   def getKeyForName(countryName: String): Option[String] = {
     val allCountries = getAll()
-    allCountries.map(_.swap).get(countryName)
+
+    val countryCode = allCountries.map(_.swap).get(countryName)
+
+    countryCode.orElse{
+      logger.warn(s"Failed to identify country code for [$countryName]")
+      None
+    }
   }
 
   private def parseCountriesResource(): Map[String, String] = {
