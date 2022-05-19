@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
   AmendRegistrationUpdateService,
@@ -36,11 +36,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsConfirmAddressController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  addressCaptureService: AddressCaptureService,
-  mcc: MessagesControllerComponents,
-  registrationUpdater: AmendRegistrationUpdateService
+                                                                   authenticate: EnrolledAuthAction,
+                                                                   journeyAction: AmendmentJourneyAction,
+                                                                   addressCaptureService: AddressCaptureService,
+                                                                   mcc: MessagesControllerComponents,
+                                                                   registrationUpdater: AmendRegistrationUpdateService
 )(implicit val ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

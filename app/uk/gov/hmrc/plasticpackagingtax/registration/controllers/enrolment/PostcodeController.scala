@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.Postcode
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.postcode_page
@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PostcodeController @Inject() (
-  authenticate: AuthAction,
-  mcc: MessagesControllerComponents,
-  cache: UserEnrolmentDetailsRepository,
-  page: postcode_page
+                                     authenticate: NotEnrolledAuthAction,
+                                     mcc: MessagesControllerComponents,
+                                     cache: UserEnrolmentDetailsRepository,
+                                     page: postcode_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

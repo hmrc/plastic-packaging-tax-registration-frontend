@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.enrolment.UserEnrolmentConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.{
   EnrolmentFailureCode,
   UserEnrolmentFailedResponse,
@@ -34,11 +34,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class CheckAnswersController @Inject() (
-  authenticate: AuthAction,
-  mcc: MessagesControllerComponents,
-  cache: UserEnrolmentDetailsRepository,
-  userEnrolmentConnector: UserEnrolmentConnector,
-  page: check_answers_page
+                                         authenticate: NotEnrolledAuthAction,
+                                         mcc: MessagesControllerComponents,
+                                         cache: UserEnrolmentDetailsRepository,
+                                         userEnrolmentConnector: UserEnrolmentConnector,
+                                         page: check_answers_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

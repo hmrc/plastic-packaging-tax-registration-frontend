@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
@@ -28,9 +28,9 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class StartRegistrationController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents
+                                              authenticate: NotEnrolledAuthAction,
+                                              journeyAction: JourneyAction,
+                                              mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) {
 
   def startRegistration(): Action[AnyContent] =

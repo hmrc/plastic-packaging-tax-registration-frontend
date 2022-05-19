@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerEmailAddressControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
@@ -38,15 +38,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddPartnerContactDetailsEmailAddressController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents,
-  page: partner_email_address_page,
-  val emailPasscodePage: email_address_passcode_page,
-  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
-  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
-  registrationUpdateService: AmendRegistrationUpdateService,
-  val emailVerificationService: EmailVerificationService
+                                                                 authenticate: EnrolledAuthAction,
+                                                                 journeyAction: AmendmentJourneyAction,
+                                                                 mcc: MessagesControllerComponents,
+                                                                 page: partner_email_address_page,
+                                                                 val emailPasscodePage: email_address_passcode_page,
+                                                                 val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+                                                                 val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+                                                                 registrationUpdateService: AmendRegistrationUpdateService,
+                                                                 val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
     extends PartnerEmailAddressControllerBase(authenticate = authenticate,
                                               journeyAction = journeyAction,

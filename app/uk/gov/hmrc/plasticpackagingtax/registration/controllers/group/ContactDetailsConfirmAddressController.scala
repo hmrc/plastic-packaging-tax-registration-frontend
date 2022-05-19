@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureService
@@ -27,11 +27,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  addressCaptureService: AddressCaptureService,
-  mcc: MessagesControllerComponents,
-  registrationUpdater: NewRegistrationUpdateService
+                                                         authenticate: NotEnrolledAuthAction,
+                                                         journeyAction: JourneyAction,
+                                                         addressCaptureService: AddressCaptureService,
+                                                         mcc: MessagesControllerComponents,
+                                                         registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
     extends ContactDetailsConfirmAddressControllerBase(authenticate,
                                                        journeyAction,

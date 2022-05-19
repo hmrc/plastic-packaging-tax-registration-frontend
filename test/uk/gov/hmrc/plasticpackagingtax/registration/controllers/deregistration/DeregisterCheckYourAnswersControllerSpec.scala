@@ -57,7 +57,7 @@ class DeregisterCheckYourAnswersControllerSpec
     )
 
   private val controller =
-    new DeregisterCheckYourAnswersController(authenticate = mockAuthAllowEnrolmentAction,
+    new DeregisterCheckYourAnswersController(authenticate = mockEnrolledAuthAction,
                                              mcc = mcc,
                                              deregistrationDetailRepository = repository,
                                              deregistrationConnector = mockDegistrationConnector,

@@ -48,7 +48,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
   private val groupMemberAlreadyRegisteredPage = mock[group_member_already_registered_page]
 
   private val controller =
-    new NotableErrorController(authenticate = mockAuthAllowEnrolmentAction,
+    new NotableErrorController(authenticate = mockPermissiveAuthAction,
                                mockJourneyAction,
                                mcc = mcc,
                                nominatedOrganisationAlreadyRegisteredPage =

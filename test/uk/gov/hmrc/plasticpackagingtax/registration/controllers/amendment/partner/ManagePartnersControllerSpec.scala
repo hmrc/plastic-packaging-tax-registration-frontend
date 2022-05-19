@@ -41,7 +41,7 @@ class ManagePartnersControllerSpec extends ControllerSpec with MockAmendmentJour
   )
 
   private val managePartnersController = new ManagePartnersController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     amendmentJourneyAction = mockAmendmentJourneyAction,
     mcc = mcc,
     page = mockManagePartnersPage

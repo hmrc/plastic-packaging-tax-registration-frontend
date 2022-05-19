@@ -61,7 +61,7 @@ class AmendContactDetailsControllerSpec
   )
 
   private val controller =
-    new AmendContactDetailsController(mockAuthAllowEnrolmentAction,
+    new AmendContactDetailsController(mockEnrolledAuthAction,
                                       mcc,
                                       mockAmendmentJourneyAction,
                                       amendNamePage,

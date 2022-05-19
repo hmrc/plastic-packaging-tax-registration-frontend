@@ -42,7 +42,7 @@ class PartnerContactDetailsCheckAnswersControllerSpec
   )
 
   private val controller = new PartnerContactDetailsCheckAnswersController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     amendmentJourneyAction = mockAmendmentJourneyAction,
     mcc = mcc,
     page = mockPartnerCYAsPage

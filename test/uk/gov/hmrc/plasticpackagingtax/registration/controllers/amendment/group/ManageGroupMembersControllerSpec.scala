@@ -38,7 +38,7 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with MockAmendment
 
   when(view.apply(any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new ManageGroupMembersController(mockAuthAllowEnrolmentAction,
+  val sut = new ManageGroupMembersController(mockEnrolledAuthAction,
                                              mockAmendmentJourneyAction,
                                              Helpers.stubMessagesControllerComponents(),
                                              view

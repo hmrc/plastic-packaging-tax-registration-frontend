@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   UkCompanyGrsConnector
 }
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
+  NotEnrolledAuthAction,
   FormAction,
   SaveAndContinue
 }
@@ -56,16 +56,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipTypeController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  val appConfig: AppConfig,
-  val soleTraderGrsConnector: SoleTraderGrsConnector,
-  val ukCompanyGrsConnector: UkCompanyGrsConnector,
-  val partnershipGrsConnector: PartnershipGrsConnector,
-  val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents,
-  page: partnership_type
+                                            authenticate: NotEnrolledAuthAction,
+                                            journeyAction: JourneyAction,
+                                            val appConfig: AppConfig,
+                                            val soleTraderGrsConnector: SoleTraderGrsConnector,
+                                            val ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                            val partnershipGrsConnector: PartnershipGrsConnector,
+                                            val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                            override val registrationConnector: RegistrationConnector,
+                                            mcc: MessagesControllerComponents,
+                                            page: partnership_type
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport with GRSRedirections {
 

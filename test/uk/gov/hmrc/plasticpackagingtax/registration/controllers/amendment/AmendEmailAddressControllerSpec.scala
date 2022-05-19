@@ -120,7 +120,7 @@ class AmendEmailAddressControllerSpec
     )
 
   "Amend Email Address Controller" should {
-    val controller = new AmendEmailAddressController(mockAuthAllowEnrolmentAction,
+    val controller = new AmendEmailAddressController(mockEnrolledAuthAction,
                                                      mcc,
                                                      mockAmendmentJourneyAction,
                                                      amendEmailPage,

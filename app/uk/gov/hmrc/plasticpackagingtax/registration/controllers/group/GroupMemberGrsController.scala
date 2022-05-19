@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
@@ -29,14 +29,14 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class GroupMemberGrsController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  ukCompanyGrsConnector: UkCompanyGrsConnector,
-  subscriptionsConnector: SubscriptionsConnector,
-  partnershipGrsConnector: PartnershipGrsConnector,
-  registrationUpdater: NewRegistrationUpdateService,
-  addressConversionUtils: AddressConversionUtils,
-  mcc: MessagesControllerComponents
+                                           authenticate: NotEnrolledAuthAction,
+                                           journeyAction: JourneyAction,
+                                           ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                           subscriptionsConnector: SubscriptionsConnector,
+                                           partnershipGrsConnector: PartnershipGrsConnector,
+                                           registrationUpdater: NewRegistrationUpdateService,
+                                           addressConversionUtils: AddressConversionUtils,
+                                           mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends GroupMemberGrsControllerBase(
       authenticate,

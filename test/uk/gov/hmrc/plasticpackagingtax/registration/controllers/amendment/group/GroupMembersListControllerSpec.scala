@@ -43,7 +43,7 @@ class GroupMembersListControllerSpec
 
   when(view.apply(any(), any())(any(), any())).thenReturn(Html("view"))
 
-  val sut = new GroupMembersListController(mockAuthAllowEnrolmentAction,
+  val sut = new GroupMembersListController(mockEnrolledAuthAction,
                                            mockAmendmentJourneyAction,
                                            stubMessagesControllerComponents(),
                                            view

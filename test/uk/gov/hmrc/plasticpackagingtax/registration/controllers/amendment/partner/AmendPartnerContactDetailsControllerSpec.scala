@@ -88,7 +88,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val other = false
 
   private val controller = new AmendPartnerContactDetailsController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     mcc = mcc,
     amendmentJourneyAction = mockAmendmentJourneyAction,
     contactNamePage = mockContactNamePage,

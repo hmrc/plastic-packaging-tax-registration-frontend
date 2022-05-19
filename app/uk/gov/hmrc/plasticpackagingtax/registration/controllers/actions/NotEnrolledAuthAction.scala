@@ -38,34 +38,34 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionImpl @Inject() (
+class NotEnrolledAuthActionImpl @Inject()(
   override val authConnector: AuthConnector,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
-) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with AuthAction {
+) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with NotEnrolledAuthAction {
   override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = true
   override val agentsAllowed: Boolean                  = false
 }
 
-class AuthNoEnrolmentCheckActionImpl @Inject() (
+class EnrolledAuthActionImpl @Inject()(
   override val authConnector: AuthConnector,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
-) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with AuthNoEnrolmentCheckAction {
+) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with EnrolledAuthAction {
   override val mustBeEnrolled: Boolean                 = true
   override val redirectEnrolledUsersToReturns: Boolean = false
   override val agentsAllowed: Boolean                  = true
 }
 
-class AuthRegistrationOrAmendmentActionImpl @Inject() (
+class PermissiveAuthActionImpl @Inject()(
   override val authConnector: AuthConnector,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
   appConfig: AppConfig
-) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with AuthNoEnrolmentCheckAction {
+) extends AuthActionBase(authConnector, metrics, mcc, appConfig) with PermissiveAuthAction {
   override val mustBeEnrolled: Boolean                 = false
   override val redirectEnrolledUsersToReturns: Boolean = false
   override val agentsAllowed: Boolean                  = true
@@ -222,11 +222,11 @@ trait AuthActioning
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with ActionFunction[Request, AuthenticatedRequest]
 
-@ImplementedBy(classOf[AuthActionImpl])
-trait AuthAction extends AuthActioning
+@ImplementedBy(classOf[NotEnrolledAuthActionImpl])
+trait NotEnrolledAuthAction extends AuthActioning
 
-@ImplementedBy(classOf[AuthNoEnrolmentCheckActionImpl])
-trait AuthNoEnrolmentCheckAction extends AuthActioning
+@ImplementedBy(classOf[EnrolledAuthActionImpl])
+trait EnrolledAuthAction extends AuthActioning
 
-@ImplementedBy(classOf[AuthRegistrationOrAmendmentActionImpl])
-trait AuthRegistrationOrAmendmentAction extends AuthActioning
+@ImplementedBy(classOf[PermissiveAuthActionImpl])
+trait PermissiveAuthAction extends AuthActioning

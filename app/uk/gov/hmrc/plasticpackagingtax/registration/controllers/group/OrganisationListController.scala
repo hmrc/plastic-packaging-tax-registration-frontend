@@ -22,7 +22,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
+  NotEnrolledAuthAction,
   FormAction,
   SaveAndContinue
 }
@@ -35,11 +35,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class OrganisationListController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents,
-  page: organisation_list
+                                             authenticate: NotEnrolledAuthAction,
+                                             journeyAction: JourneyAction,
+                                             override val registrationConnector: RegistrationConnector,
+                                             mcc: MessagesControllerComponents,
+                                             page: organisation_list
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

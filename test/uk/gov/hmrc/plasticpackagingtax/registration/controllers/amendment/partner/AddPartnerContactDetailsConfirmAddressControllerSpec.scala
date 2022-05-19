@@ -40,7 +40,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
 
   private val controller =
     new AddPartnerContactDetailsConfirmAddressController(
-      authenticate = mockAuthAllowEnrolmentAction,
+      authenticate = mockEnrolledAuthAction,
       journeyAction = mockAmendmentJourneyAction,
       registrationUpdater =
         new AmendRegistrationUpdateService(inMemoryRegistrationAmendmentRepository),

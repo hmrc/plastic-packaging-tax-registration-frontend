@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{
   BUSINESS_VERIFICATION_FAILED,
@@ -63,16 +63,16 @@ object RegistrationStatus extends Enumeration {
 
 @Singleton
 class GrsController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
-  ukCompanyGrsConnector: UkCompanyGrsConnector,
-  soleTraderGrsConnector: SoleTraderGrsConnector,
-  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  partnershipGrsConnector: PartnershipGrsConnector,
-  subscriptionsConnector: SubscriptionsConnector,
-  addressConversionUtils: AddressConversionUtils,
-  mcc: MessagesControllerComponents
+                                authenticate: NotEnrolledAuthAction,
+                                journeyAction: JourneyAction,
+                                override val registrationConnector: RegistrationConnector,
+                                ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                soleTraderGrsConnector: SoleTraderGrsConnector,
+                                registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                partnershipGrsConnector: PartnershipGrsConnector,
+                                subscriptionsConnector: SubscriptionsConnector,
+                                addressConversionUtils: AddressConversionUtils,
+                                mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

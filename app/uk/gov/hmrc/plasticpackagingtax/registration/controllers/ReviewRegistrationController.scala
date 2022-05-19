@@ -22,7 +22,7 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -41,15 +41,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReviewRegistrationController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  subscriptionsConnector: SubscriptionsConnector,
-  metrics: Metrics,
-  override val registrationConnector: RegistrationConnector,
-  auditor: Auditor,
-  reviewRegistrationPage: review_registration_page,
-  registrationFilterService: RegistrationGroupFilterService
+                                               authenticate: NotEnrolledAuthAction,
+                                               journeyAction: JourneyAction,
+                                               mcc: MessagesControllerComponents,
+                                               subscriptionsConnector: SubscriptionsConnector,
+                                               metrics: Metrics,
+                                               override val registrationConnector: RegistrationConnector,
+                                               auditor: Auditor,
+                                               reviewRegistrationPage: review_registration_page,
+                                               registrationFilterService: RegistrationGroupFilterService
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

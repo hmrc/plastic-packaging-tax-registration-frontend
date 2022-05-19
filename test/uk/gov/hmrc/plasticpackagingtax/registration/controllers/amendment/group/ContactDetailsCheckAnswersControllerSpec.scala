@@ -39,7 +39,7 @@ class ContactDetailsCheckAnswersControllerSpec
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsCheckAnswersController(authenticate = mockAuthAllowEnrolmentAction,
+    new ContactDetailsCheckAnswersController(authenticate = mockEnrolledAuthAction,
                                              amendmentJourneyAction = mockAmendmentJourneyAction,
                                              mcc = mcc,
                                              page = page

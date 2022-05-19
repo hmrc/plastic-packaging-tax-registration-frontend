@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -33,12 +33,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxStartDateController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  taxStarDateService: TaxStartDateService,
-  mcc: MessagesControllerComponents,
-  page: tax_start_date_page,
-  override val registrationConnector: RegistrationConnector
+                                         authenticate: NotEnrolledAuthAction,
+                                         journeyAction: JourneyAction,
+                                         taxStarDateService: TaxStartDateService,
+                                         mcc: MessagesControllerComponents,
+                                         page: tax_start_date_page,
+                                         override val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
