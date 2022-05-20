@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
