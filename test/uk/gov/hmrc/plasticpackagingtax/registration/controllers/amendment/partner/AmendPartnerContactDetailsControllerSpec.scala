@@ -36,6 +36,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.Ema
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{AmendRegistrationUpdateService, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, EmailVerificationService}
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
   email_address_passcode_confirmation_page,
   email_address_passcode_page,
@@ -48,7 +49,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.{
   partner_phone_number_page
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 import scala.concurrent.Future
 
@@ -88,7 +88,7 @@ class AmendPartnerContactDetailsControllerSpec
   private val other = false
 
   private val controller = new AmendPartnerContactDetailsController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     mcc = mcc,
     amendmentJourneyAction = mockAmendmentJourneyAction,
     contactNamePage = mockContactNamePage,

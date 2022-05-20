@@ -18,10 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  GroupError,
-  GroupMember
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupError, GroupMember}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
 case class GroupDetail(
@@ -36,7 +33,7 @@ case class GroupDetail(
       TaskStatus.NotStarted
     else TaskStatus.Completed
 
-  def businessName(memberId: String): Option[String] = findGroupMember(memberId).map(_.businessName)
+  def businessName(memberId: String): Option[String] = findGroupMember(Some(memberId), None).map(_.businessName)
 
   def withUpdatedOrNewMember(member: GroupMember): GroupDetail =
     this.copy(members = updateOrAddMember(member))
@@ -53,7 +50,13 @@ case class GroupDetail(
       updatedMembers
   }
 
-  def findGroupMember(memberId: String): Option[GroupMember] = members.find(m => m.id == memberId)
+  def findGroupMember(memberId: Option[String], crn: Option[String]): Option[GroupMember] = {
+    (memberId, crn) match {
+      case (Some(id), _) => members.find(m => m.id == id)
+      case (_, Some(companyNumber)) => members.find(m => m.customerIdentification1 == companyNumber)
+      case _ => None
+    }
+  }
 
   lazy val latestMember: Option[GroupMember] = members.lastOption
 }

@@ -24,7 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.PartnerNameControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
@@ -35,16 +35,16 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerNameController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  override val appConfig: AppConfig,
-  ukCompanyGrsConnector: UkCompanyGrsConnector,
-  soleTraderGrsConnector: SoleTraderGrsConnector,
-  partnershipGrsConnector: PartnershipGrsConnector,
-  registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
-  registrationUpdater: AmendRegistrationUpdateService,
-  mcc: MessagesControllerComponents,
-  page: partner_name_page
+                                           authenticate: EnrolledAuthAction,
+                                           journeyAction: AmendmentJourneyAction,
+                                           override val appConfig: AppConfig,
+                                           ukCompanyGrsConnector: UkCompanyGrsConnector,
+                                           soleTraderGrsConnector: SoleTraderGrsConnector,
+                                           partnershipGrsConnector: PartnershipGrsConnector,
+                                           registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
+                                           registrationUpdater: AmendRegistrationUpdateService,
+                                           mcc: MessagesControllerComponents,
+                                           page: partner_name_page
 )(implicit val executionContext: ExecutionContext)
     extends PartnerNameControllerBase(authenticate = authenticate,
                                       journeyAction = journeyAction,

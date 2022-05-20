@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.AmendmentController
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.member_contact_check_answers_page
@@ -27,10 +27,10 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  amendmentJourneyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents,
-  page: member_contact_check_answers_page
+                                                       authenticate: EnrolledAuthAction,
+                                                       amendmentJourneyAction: AmendmentJourneyAction,
+                                                       mcc: MessagesControllerComponents,
+                                                       page: member_contact_check_answers_page
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) {
 
@@ -38,7 +38,7 @@ class ContactDetailsCheckAnswersController @Inject() (
     (authenticate andThen amendmentJourneyAction) { implicit request =>
       Ok(
         page(
-          request.registration.groupDetail.flatMap(_.findGroupMember(memberId)).getOrElse(
+          request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None)).getOrElse(
             throw new IllegalStateException("Missing group member")
           )
         )

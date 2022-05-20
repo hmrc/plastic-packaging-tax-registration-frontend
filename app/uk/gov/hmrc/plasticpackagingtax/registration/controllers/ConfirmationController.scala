@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthActionImpl
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthActionImpl
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -26,9 +26,9 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ConfirmationController @Inject() (
-  authenticate: AuthActionImpl,
-  mcc: MessagesControllerComponents,
-  page: confirmation_page
+                                         authenticate: NotEnrolledAuthActionImpl,
+                                         mcc: MessagesControllerComponents,
+                                         page: confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

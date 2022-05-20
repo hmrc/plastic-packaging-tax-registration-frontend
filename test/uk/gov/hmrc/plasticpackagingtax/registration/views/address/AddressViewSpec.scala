@@ -22,6 +22,7 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.address_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -38,10 +39,7 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   private val contactName = Some("the contact")
 
   private def createView(form: Form[Address] = Address.form()): Document =
-    page(form, countryService.getAll(), backLink, updateLink, headingKey, contactName)(
-      journeyRequest,
-      messages
-    )
+    page(form, countryService.getAll(), backLink, updateLink, headingKey, contactName)(journeyRequest, messages)
 
   "Address View" should {
 
@@ -60,27 +58,19 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title" in {
-      view.select("title").text() must include(
-        messages("addressLookup.partner.lookup.heading", contactName.get)
-      )
+      view.select("title").text() must include(messages("addressLookup.partner.lookup.heading", contactName.get))
     }
 
     "display header" in {
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("primaryContactDetails.sectionHeader")
-      )
+      view.getElementsByClass("govuk-caption-l").text() must include(messages("primaryContactDetails.sectionHeader"))
     }
 
     "display hint" in {
-      view.getElementsByClass("govuk-body").get(0).text() must include(
-        messages("primaryContactDetails.address.hint")
-      )
+      view.getElementsByClass("govuk-body").get(0).text() must include(messages("primaryContactDetails.address.hint"))
     }
 
     "display visually hidden labels" in {
-      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(
-        messages("site.back.hiddenText")
-      )
+      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(messages("site.back.hiddenText"))
     }
 
     "display input boxes" in {
@@ -102,12 +92,13 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   "Email address view when filled" should {
     "display data" in {
       val anAddress =
-        Address(addressLine1 = "Address Line 1",
-                addressLine2 = Some("Address Line 2"),
-                addressLine3 = Some("Address Line 3"),
-                townOrCity = "townOrCity",
-                postCode = Some("LS3 3UJ"),
-                countryCode = "GB"
+        Address(
+          addressLine1 = "Address Line 1",
+          addressLine2 = Some("Address Line 2"),
+          addressLine3 = Some("Address Line 3"),
+          townOrCity = "townOrCity",
+          maybePostcode = Some("LS3 3UJ"),
+          countryCode = "GB"
         )
 
       val form = Address
@@ -128,13 +119,7 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
     "mandatory address fields have not been submitted" in {
       val anInvalidAddress =
-        Address(addressLine1 = "",
-                addressLine2 = None,
-                addressLine3 = None,
-                townOrCity = "",
-                postCode = Some(""),
-                countryCode = ""
-        )
+        Address(addressLine1 = "", addressLine2 = None, addressLine3 = None, townOrCity = "", maybePostcode = Some(""), countryCode = "")
 
       val form = Address
         .form()
@@ -151,11 +136,12 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
     "address fields are not valid" in {
       val anInvalidAddress =
-        Address(addressLine1 = "*&%^",
-                addressLine2 = Some("Address Line 2*&%^"),
-                addressLine3 = Some("Address Line 3*&%^"),
-                townOrCity = "*&%^",
-                postCode = Some("*&%^")
+        UKAddress(
+          addressLine1 = "*&%^",
+          addressLine2 = Some("Address Line 2*&%^"),
+          addressLine3 = Some("Address Line 3*&%^"),
+          townOrCity = "*&%^",
+          postCode = "*&%^"
         )
 
       val form = Address
@@ -174,24 +160,8 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form(),
-           countryService.getAll(),
-           backLink,
-           updateLink,
-           headingKey,
-           contactName,
-           None
-    )(journeyRequest, messages)
-    page.render(Address.form(),
-                countryService.getAll(),
-                backLink,
-                updateLink,
-                headingKey,
-                contactName,
-                None,
-                journeyRequest,
-                messages
-    )
+    page.f(Address.form(), countryService.getAll(), backLink, updateLink, headingKey, contactName, None)(journeyRequest, messages)
+    page.render(Address.form(), countryService.getAll(), backLink, updateLink, headingKey, contactName, None, journeyRequest, messages)
   }
 
 }

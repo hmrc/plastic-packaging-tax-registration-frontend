@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.not_members_under_group_control_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -27,10 +27,10 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotMembersUnderGroupControlController @Inject() (
-  authenticate: AuthAction,
-  mcc: MessagesControllerComponents,
-  journeyAction: JourneyAction,
-  page: not_members_under_group_control_page
+                                                        authenticate: NotEnrolledAuthAction,
+                                                        mcc: MessagesControllerComponents,
+                                                        journeyAction: JourneyAction,
+                                                        page: not_members_under_group_control_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

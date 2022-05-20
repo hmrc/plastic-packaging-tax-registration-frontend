@@ -18,12 +18,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  PartnerTypeEnum,
-  SCOTTISH_LIMITED_PARTNERSHIP
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, PartnerTypeEnum, SCOTTISH_LIMITED_PARTNERSHIP}
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 
 case class PartnershipDetails(
   partnershipType: PartnerTypeEnum,
@@ -49,9 +45,9 @@ case class PartnershipDetails(
       case _                             => false
     }
 
-  val partnershipOrCompanyAddress: Option[Address] = partnershipType match {
+  def partnershipOrCompanyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] = partnershipType match {
     case LIMITED_LIABILITY_PARTNERSHIP | LIMITED_PARTNERSHIP | SCOTTISH_LIMITED_PARTNERSHIP =>
-      partnershipBusinessDetails.flatMap(_.companyAddress)
+      partnershipBusinessDetails.flatMap(_.companyAddress(addressConversionUtils))
     case _ => None
   }
 

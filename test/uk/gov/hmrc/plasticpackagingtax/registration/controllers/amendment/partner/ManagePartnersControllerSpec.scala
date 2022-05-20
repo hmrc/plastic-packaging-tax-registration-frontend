@@ -29,7 +29,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.manage_partners_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 class ManagePartnersControllerSpec extends ControllerSpec with MockAmendmentJourneyAction {
 
@@ -41,7 +41,7 @@ class ManagePartnersControllerSpec extends ControllerSpec with MockAmendmentJour
   )
 
   private val managePartnersController = new ManagePartnersController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     amendmentJourneyAction = mockAmendmentJourneyAction,
     mcc = mcc,
     page = mockManagePartnersPage

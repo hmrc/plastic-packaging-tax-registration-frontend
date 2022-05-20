@@ -19,12 +19,13 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.PlaySpec
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
 
 class GroupMemberSpec extends PlaySpec with TableDrivenPropertyChecks {
 
   val groupMember: GroupMember = GroupMember(
     customerIdentification1 = "",
-    addressDetails = Address(addressLine1 = "", townOrCity = "", postCode = None)
+    addressDetails = UKAddress(addressLine1 = "", addressLine2 = None, addressLine3 = None, townOrCity = "", postCode = "")
   )
 
   val inputData = Table(
@@ -195,9 +196,10 @@ class GroupMemberSpec extends PlaySpec with TableDrivenPropertyChecks {
                 addressDetails =
                   Address(addressLine1 = addressLine1,
                           addressLine2 = Some(addressLine2),
+                          addressLine3 = None,
                           countryCode = countryCode,
                           townOrCity = "London",
-                          postCode = Some("NG67JK")
+                          maybePostcode = Some("NG67JK"),
                   )
     )
 

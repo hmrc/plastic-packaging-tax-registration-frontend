@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolment_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
-  authenticate: AuthAction,
+  authenticate: NotEnrolledAuthAction,
   journeyAction: JourneyAction,
   mcc: MessagesControllerComponents,
   errorPage: error_page,

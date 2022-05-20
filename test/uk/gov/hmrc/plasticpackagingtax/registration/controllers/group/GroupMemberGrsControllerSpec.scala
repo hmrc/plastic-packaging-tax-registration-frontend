@@ -21,70 +21,43 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentCaptor, Mockito}
 import org.scalatest.Inspectors.forAll
+import org.scalatest.matchers.dsl.MatcherWords
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{await, redirectLocation, status}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  OrgType,
-  PARTNERSHIP
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  CompanyProfile,
-  IncorporationDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.{
-  MEMBER_IN_GROUP,
-  MEMBER_IS_NOMINATED
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{
-  GroupError,
-  GroupMember,
-  OrganisationDetails => GroupOrgDetails
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  GroupDetail,
-  NewRegistrationUpdateService,
-  Registration
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{
-  NOT_SUBSCRIBED,
-  SUBSCRIBED
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{OrgType, PARTNERSHIP}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{CompanyProfile, IncorporationDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IN_GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupError, GroupMember, OrganisationDetails => GroupOrgDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
-class GroupMemberGrsControllerSpec extends ControllerSpec {
+class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
   private val mcc = stubMessagesControllerComponents()
 
-  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
-    mockRegistrationConnector
-  )
+  protected val mockNewRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new GroupMemberGrsController(authenticate = mockAuthAction,
-                                 mockJourneyAction,
-                                 mockUkCompanyGrsConnector,
-                                 mockSubscriptionsConnector,
-                                 mockPartnershipGrsConnector,
-                                 mockNewRegistrationUpdater,
-                                 mcc
+    new GroupMemberGrsController(
+      authenticate = mockAuthAction,
+      mockJourneyAction,
+      mockUkCompanyGrsConnector,
+      mockSubscriptionsConnector,
+      mockPartnershipGrsConnector,
+      mockNewRegistrationUpdater,
+      addressConversionUtils,
+      mcc
     )(ec)
 
-  private def registrationWithSelectedGroupMember(
-    orgType: OrgType,
-    existingMembers: Seq[GroupMember] = Seq.empty
-  ) =
+  private def registrationWithSelectedGroupMember(orgType: OrgType, existingMembers: Seq[GroupMember] = Seq.empty) =
     aRegistration(
       withGroupDetail(
-        Some(
-          GroupDetail(membersUnderGroupControl = Some(true),
-                      members = existingMembers,
-                      currentMemberOrganisationType = Some(orgType)
-          )
-        )
+        Some(GroupDetail(membersUnderGroupControl = Some(true), members = existingMembers, currentMemberOrganisationType = Some(orgType)))
       )
     )
 
@@ -99,20 +72,14 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
   }
 
   override protected def afterEach(): Unit = {
-    reset(mockUkCompanyGrsConnector,
-          mockRegistrationConnector,
-          mockSubscriptionsConnector,
-          mockPartnershipGrsConnector
-    )
+    reset(mockUkCompanyGrsConnector, mockRegistrationConnector, mockSubscriptionsConnector, mockPartnershipGrsConnector)
     super.afterEach()
   }
-
-  private def stripMemberId(url: String) = url.substring(0, url.lastIndexOf("/"))
 
   "group member incorpIdCallback" should {
 
     forAll(supportedOrgTypes) { orgType =>
-      "redirect to the group member name details page" when {
+      "redirect to the confirm address page" when {
 
         s"registering a new $orgType member" in {
           val result = orgType match {
@@ -122,30 +89,18 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
               simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType))
           }
           status(result) mustBe SEE_OTHER
-          stripMemberId(redirectLocation(result).get) mustBe stripMemberId(
-            routes.ContactDetailsNameController.displayPage(groupMember.id).url
-          )
+          redirectLocation(result).get should include("confirm-address")
         }
 
         s"registering an existing $orgType member" in {
           val result = orgType match {
             case PARTNERSHIP =>
-              simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType,
-                                                                              Seq(groupMember)
-                                          ),
-                                          Some(groupMember.id)
-              )
+              simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType, Seq(groupMember)), Some(groupMember.id))
             case _ =>
-              simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType,
-                                                                                 Seq(groupMember)
-                                             ),
-                                             Some(groupMember.id)
-              )
+              simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType, Seq(groupMember)), Some(groupMember.id))
           }
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).get mustBe routes.ContactDetailsNameController.displayPage(
-            groupMember.id
-          ).url
+          redirectLocation(result).get should include("confirm-address")
         }
       }
 
@@ -161,7 +116,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
                 partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
               memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
               memberDetails.organisationDetails.get.organisationName mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyName
-              memberDetails.addressDetails mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress.toPptAddress
+              Some(memberDetails.addressDetails) mustBe addressConversionUtils.toPptAddress(
+                partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress
+              )
             case _ =>
               await(simulateLimitedCompanyCallback(registrationWithSelectedGroupMember(orgType)))
               await(simulatePartnershipCallback(registrationWithSelectedGroupMember(orgType)))
@@ -171,26 +128,21 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
 
               memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
               memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
-              memberDetails.addressDetails mustBe incorporationDetails.companyAddress.toPptAddress
+              Some(memberDetails.addressDetails) mustBe addressConversionUtils.toPptAddress(incorporationDetails.companyAddress)
           }
 
         }
 
       }
 
-      "show error page and do not store business entity information" when {
-        s"registering a $orgType group member with same company number" in {
+      "change an add member to a change member journey" when {
+        s"registering a $orgType group member with same company number as another group member" in {
           authorizedUser()
           val existingMember = orgType match {
             case PARTNERSHIP =>
               val detailsFromGrs =
                 partnershipBusinessDetails.copy(companyProfile =
-                  Some(
-                    CompanyProfile(companyNumber = "22222",
-                                   companyName = "Existing Company",
-                                   companyAddress = testCompanyAddress
-                    )
-                  )
+                  Some(CompanyProfile(companyNumber = "22222", companyName = "Existing Company", companyAddress = testCompanyAddress))
                 )
               mockGetPartnershipBusinessDetails(detailsFromGrs)
               groupMember.copy(
@@ -215,87 +167,20 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
 
           groupMemberSize(registration) mustBe 1
-          val result =
-            controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
+
+          val result = controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(
-            routes.NotableErrorController.organisationAlreadyInGroup().url
-          )
+
+          if(orgType.equals(OrgType.PARTNERSHIP)){
+            redirectLocation(result).get should include("/register-for-plastic-packaging-tax/confirm-address")
+          } else {
+            redirectLocation(result) mustBe Some(routes.ConfirmBusinessAddressController.displayPage(
+              "123456ABC", "/register-for-plastic-packaging-tax/group-member-contact-name/123456ABC").url
+            )
+          }
 
           groupMemberSize(getLastSavedRegistration) mustBe 1
-          groupError(getLastSavedRegistration) mustBe Some(
-            GroupError(MEMBER_IN_GROUP, "Existing Company")
-          )
-        }
-
-        s"registering a $orgType group member with the same company number as Nominated organisation" in {
-          authorizedUser()
-          var registration: Registration = registrationWithSelectedGroupMember(orgType)
-
-          orgType match {
-            case PARTNERSHIP =>
-              registration = registration.copy(organisationDetails =
-                registeredLimitedLiabilityhPartnershipOrgDetails()
-              )
-              mockRegistrationFind(registration)
-              mockRegistrationUpdate()
-              groupMemberSize(registration) mustBe 0
-              val updatedPartnershipBusinessDetails =
-                partnershipBusinessDetails.copy(companyProfile =
-                  Some(
-                    CompanyProfile(
-                      companyNumber =
-                        registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyNumber,
-                      companyName =
-                        registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyName,
-                      companyAddress =
-                        registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyAddress
-                    )
-                  )
-                )
-              mockGetPartnershipBusinessDetails(updatedPartnershipBusinessDetails)
-              val result =
-                controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
-
-              status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(
-                routes.NotableErrorController.organisationAlreadyInGroup().url
-              )
-
-              groupMemberSize(getLastSavedRegistration) mustBe 0
-              groupError(getLastSavedRegistration) mustBe Some(
-                GroupError(
-                  MEMBER_IS_NOMINATED,
-                  registration.organisationDetails.partnershipDetails.get.partnershipBusinessDetails.get.companyProfile.get.companyName
-                )
-              )
-            case _ =>
-              registration = registrationWithSelectedGroupMember(orgType)
-              mockRegistrationFind(registration)
-              mockRegistrationUpdate()
-              groupMemberSize(registration) mustBe 0
-              val detailsFromGrs = incorporationDetails.copy(
-                companyNumber =
-                  registration.organisationDetails.incorporationDetails.get.companyNumber,
-                companyName = registration.organisationDetails.incorporationDetails.get.companyName
-              )
-              mockGetUkCompanyDetails(detailsFromGrs)
-              val result =
-                controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
-
-              status(result) mustBe SEE_OTHER
-              redirectLocation(result) mustBe Some(
-                routes.NotableErrorController.organisationAlreadyInGroup().url
-              )
-
-              groupMemberSize(getLastSavedRegistration) mustBe 0
-              groupError(getLastSavedRegistration) mustBe Some(
-                GroupError(MEMBER_IS_NOMINATED,
-                           registration.organisationDetails.incorporationDetails.get.companyName
-                )
-              )
-          }
 
         }
       }
@@ -306,9 +191,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           authorizedUser()
           orgType match {
             case PARTNERSHIP =>
-              mockGetPartnershipBusinessDetails(
-                partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
-              )
+              mockGetPartnershipBusinessDetails(partnershipBusinessDetails.copy(companyProfile = Some(companyProfile)))
             case _ =>
               mockGetUkCompanyDetails(incorporationDetails)
           }
@@ -338,18 +221,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
           authorizedUser()
           orgType match {
             case PARTNERSHIP =>
-              mockGetPartnershipBusinessDetails(
-                partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
-              )
+              mockGetPartnershipBusinessDetails(partnershipBusinessDetails.copy(companyProfile = Some(companyProfile)))
             case _ =>
-              mockGetUkCompanyDetails(
-                IncorporationDetails("123467890",
-                                     testCompanyName,
-                                     testUtr,
-                                     testCompanyAddress,
-                                     Some(registrationDetails)
-                )
-              )
+              mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, testUtr, testCompanyAddress, Some(registrationDetails)))
           }
           val registration = registrationWithSelectedGroupMember(orgType)
           mockRegistrationFind(registration)
@@ -360,9 +234,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
             controller.grsCallbackNewMember(registration.incorpJourneyId.get)(getRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(
-            routes.NotableErrorController.groupMemberAlreadyRegistered().url
-          )
+          redirectLocation(result) mustBe Some(routes.NotableErrorController.groupMemberAlreadyRegistered().url)
 
         }
       }
@@ -400,19 +272,9 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
   private def groupError(registration: Registration) =
     registration.groupDetail.flatMap(_.groupError)
 
-  private def simulateLimitedCompanyCallback(
-    registration: Registration,
-    memberId: Option[String] = None
-  ) = {
+  private def simulateLimitedCompanyCallback(registration: Registration, memberId: Option[String] = None) = {
     authorizedUser()
-    mockGetUkCompanyDetails(
-      IncorporationDetails("123467890",
-                           testCompanyName,
-                           testUtr,
-                           testCompanyAddress,
-                           Some(registrationDetails)
-      )
-    )
+    mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, testUtr, testCompanyAddress, Some(registrationDetails)))
     mockRegistrationFind(registration)
     mockRegistrationUpdate()
 
@@ -423,10 +285,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec {
     }
   }
 
-  private def simulatePartnershipCallback(
-    registration: Registration,
-    memberId: Option[String] = None
-  ) = {
+  private def simulatePartnershipCallback(registration: Registration, memberId: Option[String] = None) = {
     authorizedUser()
     mockGetPartnershipBusinessDetails(
       partnershipBusinessDetails.copy(companyProfile =

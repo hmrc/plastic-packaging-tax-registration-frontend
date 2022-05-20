@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -27,10 +27,10 @@ import play.api.i18n.Messages
 import javax.inject.Inject
 
 class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  page: email_address_passcode_confirmation_page
+                                                                           authenticate: NotEnrolledAuthAction,
+                                                                           journeyAction: JourneyAction,
+                                                                           mcc: MessagesControllerComponents,
+                                                                           page: email_address_passcode_confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

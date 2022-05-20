@@ -23,19 +23,29 @@ class CountryServiceSpec extends AnyWordSpecLike {
 
   private val countryService = new CountryService()
 
-  "Country Service" should {
+  ".getAll" should {
     "read country details from resource file" in {
       countryService.getAll().size mustBe 195
     }
+  }
+
+  ".getName" should {
     "return country names" in {
       countryService.getName("GB") mustBe "United Kingdom"
     }
+
     "throw an exception" when {
       "attempt to lookup unknown country code" in {
         intercept[Exception] {
           countryService.getName("XX")
         }
       }
+    }
+  }
+
+  ".getKeyForName" should {
+    "retrieve the key for a country name" in {
+      countryService.getKeyForName("United Kingdom") mustBe Some("GB")
     }
   }
 }

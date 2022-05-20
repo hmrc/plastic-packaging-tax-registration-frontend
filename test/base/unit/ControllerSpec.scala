@@ -29,17 +29,10 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.Html
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  Continue,
-  SaveAndComeBackLater,
-  SaveAndContinue,
-  Unknown
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{Continue, SaveAndComeBackLater, SaveAndContinue, Unknown}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AmendmentJourneyAction,
-  AuthenticatedRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, AuthenticatedRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,8 +41,6 @@ trait ControllerSpec
     extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
     with GuiceOneAppPerSuite with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout
     with MockJourneyAction with MockConnectors with PptTestData {
-
-  import utils.FakeRequestCSRFSupport._
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 

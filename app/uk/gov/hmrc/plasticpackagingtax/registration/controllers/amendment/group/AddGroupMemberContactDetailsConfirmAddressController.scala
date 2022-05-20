@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsConfirmAddressControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
@@ -28,23 +28,16 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsConfirmAddressController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  addressCaptureService: AddressCaptureService,
-  mcc: MessagesControllerComponents,
-  registrationUpdater: AmendRegistrationUpdateService
+                                                                       authenticate: EnrolledAuthAction,
+                                                                       journeyAction: AmendmentJourneyAction,
+                                                                       addressCaptureService: AddressCaptureService,
+                                                                       mcc: MessagesControllerComponents,
+                                                                       registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(authenticate,
-                                                       journeyAction,
-                                                       addressCaptureService,
-                                                       mcc,
-                                                       registrationUpdater
-    ) {
+    extends ContactDetailsConfirmAddressControllerBase(authenticate, journeyAction, addressCaptureService, mcc, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    doDisplayPage(memberId,
-                  routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId)
-    )
+    doDisplayPage(memberId, routes.AddGroupMemberContactDetailsCheckAnswersController.displayPage(memberId))
 
   def addressCaptureCallback(memberId: String): Action[AnyContent] =
     onAddressCaptureCallback(memberId)

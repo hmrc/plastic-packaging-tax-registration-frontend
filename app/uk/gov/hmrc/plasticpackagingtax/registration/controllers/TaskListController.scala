@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
   routes => liabilityRoutes
 }
@@ -34,12 +34,12 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class TaskListController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  singleEntityPage: task_list_single_entity,
-  groupPage: task_list_group,
-  partnershipPage: task_list_partnership
+                                     authenticate: NotEnrolledAuthAction,
+                                     journeyAction: JourneyAction,
+                                     mcc: MessagesControllerComponents,
+                                     singleEntityPage: task_list_single_entity,
+                                     groupPage: task_list_group,
+                                     partnershipPage: task_list_partnership
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

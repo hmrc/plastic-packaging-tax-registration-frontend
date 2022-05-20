@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.check_answers_page
@@ -29,11 +29,11 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CheckAnswersController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents,
-  page: check_answers_page
+                                         authenticate: NotEnrolledAuthAction,
+                                         journeyAction: JourneyAction,
+                                         override val registrationConnector: RegistrationConnector,
+                                         mcc: MessagesControllerComponents,
+                                         page: check_answers_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

@@ -42,7 +42,7 @@ class DeregisterControllerSpec
     ArgumentCaptor.forClass(classOf[Form[Boolean]])
 
   private val deregisterController = new DeregisterController(
-    mockAuthAllowEnrolmentAction,
+    mockEnrolledAuthAction,
     mcc,
     inMemoryDeregistrationDetailRepository,
     appConfig,

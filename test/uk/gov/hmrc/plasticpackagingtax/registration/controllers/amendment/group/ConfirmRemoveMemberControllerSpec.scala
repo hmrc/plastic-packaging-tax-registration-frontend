@@ -32,7 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDe
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.confirm_remove_member_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 import java.util.UUID
 
@@ -45,7 +45,7 @@ class ConfirmRemoveMemberControllerSpec
   private val sessionId = UUID.randomUUID().toString
 
   private val controller =
-    new ConfirmRemoveMemberController(mockAuthAllowEnrolmentAction,
+    new ConfirmRemoveMemberController(mockEnrolledAuthAction,
                                       mockAmendmentJourneyAction,
                                       mcc,
                                       page

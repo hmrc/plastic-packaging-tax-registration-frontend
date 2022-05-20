@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
+  NotEnrolledAuthAction,
   FormAction,
   Continue => ContinueAction
 }
@@ -47,12 +47,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsEmailAddressPasscodeController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  emailVerificationService: EmailVerificationService,
-  override val registrationConnector: RegistrationConnector,
-  page: email_address_passcode_page
+                                                               authenticate: NotEnrolledAuthAction,
+                                                               journeyAction: JourneyAction,
+                                                               mcc: MessagesControllerComponents,
+                                                               emailVerificationService: EmailVerificationService,
+                                                               override val registrationConnector: RegistrationConnector,
+                                                               page: email_address_passcode_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

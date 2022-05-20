@@ -27,6 +27,7 @@ import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{
   EmailAddress,
   EmailAddressPasscode
@@ -51,7 +52,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{
   too_many_attempts_passcode_page
 }
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
 
 import scala.concurrent.Future
 
@@ -120,7 +120,7 @@ class AmendEmailAddressControllerSpec
     )
 
   "Amend Email Address Controller" should {
-    val controller = new AmendEmailAddressController(mockAuthAllowEnrolmentAction,
+    val controller = new AmendEmailAddressController(mockEnrolledAuthAction,
                                                      mcc,
                                                      mockAmendmentJourneyAction,
                                                      amendEmailPage,

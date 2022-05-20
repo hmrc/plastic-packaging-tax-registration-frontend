@@ -32,7 +32,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registra
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 class AddPartnerContactDetailsCheckAnswersControllerSpec
     extends ControllerSpec with MockAmendmentJourneyAction {
@@ -43,7 +43,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
   when(cyaPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Partner CYA"))
 
   private val controller = new AddPartnerContactDetailsCheckAnswersController(
-    authenticate = mockAuthAllowEnrolmentAction,
+    authenticate = mockEnrolledAuthAction,
     journeyAction = mockAmendmentJourneyAction,
     mcc = mcc,
     page = cyaPage

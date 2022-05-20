@@ -17,7 +17,6 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration
 
 import play.api.libs.json._
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 
 case class IncorporationAddressDetails(
   address_line_1: Option[String] = None,
@@ -30,34 +29,18 @@ case class IncorporationAddressDetails(
   country: Option[String] = None
 ) {
 
-  def toHtml =
-    Seq(this.care_of.getOrElse("").trim,
-        this.po_box.getOrElse("").trim,
-        this.address_line_1.getOrElse("").trim,
-        this.address_line_2.getOrElse("").trim,
-        this.premises.getOrElse("").trim,
-        this.locality.getOrElse("").trim,
-        this.postal_code.getOrElse("").trim,
-        this.country.getOrElse("").trim
+  def toHtml: String =
+    Seq(
+      this.care_of.getOrElse("").trim,
+      this.po_box.getOrElse("").trim,
+      this.address_line_1.getOrElse("").trim,
+      this.address_line_2.getOrElse("").trim,
+      this.premises.getOrElse("").trim,
+      this.locality.getOrElse("").trim,
+      this.postal_code.getOrElse("").trim,
+      this.country.getOrElse("").trim
     )
       .filter(_.nonEmpty).mkString("<br>")
-
-  def toPptAddress =
-    this.premises match {
-      case Some(premises) =>
-        Address(addressLine1 = premises.trim,
-                addressLine2 = this.address_line_1.map(_.trim),
-                addressLine3 = this.address_line_2.map(_.trim),
-                townOrCity = this.locality.getOrElse("").trim,
-                postCode = this.postal_code.map(_.trim)
-        )
-      case None =>
-        Address(addressLine1 = this.address_line_1.getOrElse("").trim,
-                addressLine2 = this.address_line_2.map(_.trim),
-                townOrCity = this.locality.getOrElse("").trim,
-                postCode = this.postal_code.map(_.trim)
-        )
-    }
 
 }
 

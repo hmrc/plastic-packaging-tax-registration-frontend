@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.ContactDetailsTelephoneNumberControllerBase
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendRegistrationUpdateService
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
@@ -28,18 +28,13 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsTelephoneNumberController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  journeyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents,
-  page: member_phone_number_page,
-  registrationUpdater: AmendRegistrationUpdateService
+                                                                        authenticate: EnrolledAuthAction,
+                                                                        journeyAction: AmendmentJourneyAction,
+                                                                        mcc: MessagesControllerComponents,
+                                                                        page: member_phone_number_page,
+                                                                        registrationUpdater: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsTelephoneNumberControllerBase(authenticate,
-                                                        journeyAction,
-                                                        mcc,
-                                                        page,
-                                                        registrationUpdater
-    ) {
+    extends ContactDetailsTelephoneNumberControllerBase(authenticate, journeyAction, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] = doDisplayPage(memberId)
 

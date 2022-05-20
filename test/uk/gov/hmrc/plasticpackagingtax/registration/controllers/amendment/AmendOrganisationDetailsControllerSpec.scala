@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registra
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class AmendOrganisationDetailsControllerSpec
   private val registration = aRegistration()
 
   private val controller =
-    new AmendOrganisationDetailsController(mockAuthAllowEnrolmentAction,
+    new AmendOrganisationDetailsController(mockEnrolledAuthAction,
                                            mcc,
                                            mockAddressCaptureService,
                                            mockAmendmentJourneyAction

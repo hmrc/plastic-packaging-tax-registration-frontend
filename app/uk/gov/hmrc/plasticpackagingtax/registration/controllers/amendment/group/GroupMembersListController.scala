@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
@@ -30,10 +30,10 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class GroupMembersListController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  amendmentJourneyAction: AmendmentJourneyAction,
-  mcc: MessagesControllerComponents,
-  page: list_group_members_page
+                                             authenticate: EnrolledAuthAction,
+                                             amendmentJourneyAction: AmendmentJourneyAction,
+                                             mcc: MessagesControllerComponents,
+                                             page: list_group_members_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =

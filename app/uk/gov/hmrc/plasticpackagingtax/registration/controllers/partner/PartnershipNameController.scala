@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.PartnershipGrsConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
@@ -40,13 +40,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipNameController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  appConfig: AppConfig,
-  partnershipGrsConnector: PartnershipGrsConnector,
-  override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents,
-  page: partnership_name
+                                            authenticate: NotEnrolledAuthAction,
+                                            journeyAction: JourneyAction,
+                                            appConfig: AppConfig,
+                                            partnershipGrsConnector: PartnershipGrsConnector,
+                                            override val registrationConnector: RegistrationConnector,
+                                            mcc: MessagesControllerComponents,
+                                            page: partnership_name
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

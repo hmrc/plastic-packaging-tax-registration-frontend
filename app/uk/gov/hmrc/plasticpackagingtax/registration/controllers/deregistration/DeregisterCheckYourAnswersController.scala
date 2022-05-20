@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DeregistrationConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.DeregistrationDetailRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -29,11 +29,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterCheckYourAnswersController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  mcc: MessagesControllerComponents,
-  deregistrationDetailRepository: DeregistrationDetailRepository,
-  deregistrationConnector: DeregistrationConnector,
-  page: deregister_check_your_answers_page
+                                                       authenticate: EnrolledAuthAction,
+                                                       mcc: MessagesControllerComponents,
+                                                       deregistrationDetailRepository: DeregistrationDetailRepository,
+                                                       deregistrationConnector: DeregistrationConnector,
+                                                       page: deregister_check_your_answers_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

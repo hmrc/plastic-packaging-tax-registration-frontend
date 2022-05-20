@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.IsUkAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.is_uk_address_page
@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IsUkAddressController @Inject() (
-  authenticate: AuthAction,
-  mcc: MessagesControllerComponents,
-  cache: UserEnrolmentDetailsRepository,
-  page: is_uk_address_page
+                                        authenticate: NotEnrolledAuthAction,
+                                        mcc: MessagesControllerComponents,
+                                        cache: UserEnrolmentDetailsRepository,
+                                        page: is_uk_address_page
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

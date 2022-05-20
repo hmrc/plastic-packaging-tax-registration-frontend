@@ -78,8 +78,10 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                 address = Some(
                                   Address(addressLine1 = "first line",
                                           addressLine2 = Some("second line"),
+                                          addressLine3 = None,
                                           townOrCity = "Leeds",
-                                          postCode = Some("LS1 8TY")
+                                          maybePostcode = Some("LS1 8TY"),
+                                         countryCode = "GB"
                                   )
                                 )
           )
@@ -97,8 +99,10 @@ class PrimaryContactDetailsSpec extends AnyWordSpec with Matchers {
                                 address = Some(
                                   Address(addressLine1 = "first line",
                                           addressLine2 = Some("second line"),
+                                          addressLine3 = None,
                                           townOrCity = "Leeds",
-                                          postCode = Some("LS1 8TY")
+                                          maybePostcode = Some("LS1 8TY"),
+                                          countryCode = "GB"
                                   )
                                 )
           )

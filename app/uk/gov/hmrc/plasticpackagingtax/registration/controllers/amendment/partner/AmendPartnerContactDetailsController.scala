@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.partn
 
 import play.api.data.Form
 import play.api.mvc._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.AuthNoEnrolmentCheckAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.{AmendmentController, routes => amendmentRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{AddressLookupIntegration, EmailVerificationActions}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, EmailAddressPasscode, JobTitle, PhoneNumber}
@@ -35,19 +35,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendPartnerContactDetailsController @Inject() (
-  authenticate: AuthNoEnrolmentCheckAction,
-  mcc: MessagesControllerComponents,
-  amendmentJourneyAction: AmendmentJourneyAction,
-  contactNamePage: partner_member_name_page,
-  contactEmailPage: partner_email_address_page,
-  val emailPasscodePage: email_address_passcode_page,
-  val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
-  val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
-  val registrationUpdater: AmendRegistrationUpdateService,
-  val emailVerificationService: EmailVerificationService,
-  contactPhoneNumberPage: partner_phone_number_page,
-  jobTitlePage: partner_job_title_page,
-  addressCaptureService: AddressCaptureService
+                                                       authenticate: EnrolledAuthAction,
+                                                       mcc: MessagesControllerComponents,
+                                                       amendmentJourneyAction: AmendmentJourneyAction,
+                                                       contactNamePage: partner_member_name_page,
+                                                       contactEmailPage: partner_email_address_page,
+                                                       val emailPasscodePage: email_address_passcode_page,
+                                                       val emailCorrectPasscodePage: email_address_passcode_confirmation_page,
+                                                       val emailIncorrectPasscodeTooManyAttemptsPage: too_many_attempts_passcode_page,
+                                                       val registrationUpdater: AmendRegistrationUpdateService,
+                                                       val emailVerificationService: EmailVerificationService,
+                                                       contactPhoneNumberPage: partner_phone_number_page,
+                                                       jobTitlePage: partner_job_title_page,
+                                                       addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
     extends AmendmentController(mcc, amendmentJourneyAction) with AddressLookupIntegration with EmailVerificationActions {
 

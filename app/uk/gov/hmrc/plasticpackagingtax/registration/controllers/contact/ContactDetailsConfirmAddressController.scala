@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  AuthAction,
+  NotEnrolledAuthAction,
   FormAction,
   SaveAndContinue
 }
@@ -37,11 +37,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
-  authenticate: AuthAction,
-  journeyAction: JourneyAction,
-  override val registrationConnector: RegistrationConnector,
-  mcc: MessagesControllerComponents,
-  page: confirm_address
+                                                         authenticate: NotEnrolledAuthAction,
+                                                         journeyAction: JourneyAction,
+                                                         override val registrationConnector: RegistrationConnector,
+                                                         mcc: MessagesControllerComponents,
+                                                         page: confirm_address
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 

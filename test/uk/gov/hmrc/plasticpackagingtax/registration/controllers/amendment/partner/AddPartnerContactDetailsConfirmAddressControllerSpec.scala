@@ -27,7 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.AmendReg
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport.CSRFFakeRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class AddPartnerContactDetailsConfirmAddressControllerSpec
 
   private val controller =
     new AddPartnerContactDetailsConfirmAddressController(
-      authenticate = mockAuthAllowEnrolmentAction,
+      authenticate = mockEnrolledAuthAction,
       journeyAction = mockAmendmentJourneyAction,
       registrationUpdater =
         new AmendRegistrationUpdateService(inMemoryRegistrationAmendmentRepository),
