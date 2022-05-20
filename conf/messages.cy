@@ -771,3 +771,10 @@ deregister.checkAnswers.heading = Check your answers
 deregister.checkAnswers.wantToDeregister = Want to deregister
 deregister.checkAnswers.reasonToDeregister = Why you want to deregister
 deregister.checkAnswers.confirm = Confirm and continue
+
+
+registration-failed.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+registration-failed.detail1 = Mae’ch atebion wedi’u cadw. Byddant ar gael am 30 diwrnod.
+registration-failed.detail2 = Gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
+registration-failed.detail2-link = roi gwybod am broblem os oes angen help arnoch
+

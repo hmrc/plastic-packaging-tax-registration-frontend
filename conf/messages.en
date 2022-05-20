@@ -775,7 +775,7 @@ deregister.checkAnswers.wantToDeregister = Want to deregister
 deregister.checkAnswers.reasonToDeregister = Why you want to deregister
 deregister.checkAnswers.confirm = Confirm and continue
 
-registration-failed.title = Registration failed
-registration-failed.detail1 = This service was unable to complete the registration of your organisation. An error has been logged and we will investigate.
-registration-failed.detail2 = To continue, {0} for assistance (opens in new tab).
-registration-failed.detail2-link = contact us
+registration-failed.title = Sorry, there is a problem with the service
+registration-failed.detail1 = Your answers have been saved. They will be available for 30 days.
+registration-failed.detail2 = You can {0}. We will respond to you within 2 working days.
+registration-failed.detail2-link = report a problem if you need help
