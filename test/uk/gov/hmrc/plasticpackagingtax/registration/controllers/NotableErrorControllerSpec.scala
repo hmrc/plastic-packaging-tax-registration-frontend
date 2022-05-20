@@ -27,33 +27,32 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolme
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.business_verification_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.sole_trader_verification_failure_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  duplicate_subscription_page,
-  error_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{duplicate_subscription_page, error_page, registration_failed_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val errorPage                        = mock[error_page]
-  private val enrolmentFailurePage             = mock[enrolment_failure_page]
-  private val grsFailurePage                   = mock[grs_failure_page]
-  private val businessVerificationFailedPage   = mock[business_verification_failure_page]
+  private val errorPage = mock[error_page]
+  private val enrolmentFailurePage = mock[enrolment_failure_page]
+  private val grsFailurePage = mock[grs_failure_page]
+  private val businessVerificationFailedPage = mock[business_verification_failure_page]
   private val soleTraderVerificationFailedPage = mock[sole_trader_verification_failure_page]
-  private val duplicateSubscriptionPage        = mock[duplicate_subscription_page]
+  private val duplicateSubscriptionPage = mock[duplicate_subscription_page]
+  private val registrationFailedPage = mock[registration_failed_page]
 
   private val controller =
     new NotableErrorController(authenticate = mockAuthAction,
-                               mockJourneyAction,
-                               mcc = mcc,
-                               errorPage = errorPage,
-                               errorNoSavePage = enrolmentFailurePage,
-                               grsFailurePage = grsFailurePage,
-                               businessVerificationFailurePage = businessVerificationFailedPage,
-                               soleTraderVerificationFailurePage = soleTraderVerificationFailedPage,
-                               duplicateSubscriptionPage = duplicateSubscriptionPage
+      mockJourneyAction,
+      mcc = mcc,
+      errorPage = errorPage,
+      errorNoSavePage = enrolmentFailurePage,
+      grsFailurePage = grsFailurePage,
+      businessVerificationFailurePage = businessVerificationFailedPage,
+      soleTraderVerificationFailurePage = soleTraderVerificationFailedPage,
+      duplicateSubscriptionPage = duplicateSubscriptionPage,
+      registrationFailedPage = registrationFailedPage
     )
 
   override protected def beforeEach(): Unit = {

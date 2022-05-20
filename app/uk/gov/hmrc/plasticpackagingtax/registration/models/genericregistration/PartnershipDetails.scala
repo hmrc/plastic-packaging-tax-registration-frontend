@@ -77,7 +77,7 @@ case class PartnerPartnershipDetails(
   partnershipBusinessDetails: Option[PartnershipBusinessDetails] = None
 ) {
 
-  lazy val name: Option[String] =
+  def name: Option[String] =
     Seq(partnershipName,
         partnershipBusinessDetails.flatMap(_.companyProfile.map(_.companyName))
     ).flatten.headOption
