@@ -774,3 +774,8 @@ deregister.checkAnswers.heading = Check your answers
 deregister.checkAnswers.wantToDeregister = Want to deregister
 deregister.checkAnswers.reasonToDeregister = Why you want to deregister
 deregister.checkAnswers.confirm = Confirm and continue
+
+registration-failed.title = Registration failed
+registration-failed.detail1 = This service was unable to complete the registration of your organisation. An error has been logged and we will investigate.
+registration-failed.detail2 = To continue, {0} for assistance (opens in new tab).
+registration-failed.detail2-link = contact us

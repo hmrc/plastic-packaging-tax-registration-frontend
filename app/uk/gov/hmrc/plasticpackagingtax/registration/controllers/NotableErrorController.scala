@@ -24,10 +24,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.enrolme
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.grs_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.business_verification_failure_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.sole_trader_verification_failure_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  duplicate_subscription_page,
-  error_page
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{duplicate_subscription_page, error_page, registration_failed_page}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +39,8 @@ class NotableErrorController @Inject() (
   grsFailurePage: grs_failure_page,
   businessVerificationFailurePage: business_verification_failure_page,
   soleTraderVerificationFailurePage: sole_trader_verification_failure_page,
-  duplicateSubscriptionPage: duplicate_subscription_page
+  duplicateSubscriptionPage: duplicate_subscription_page,
+  registrationFailedPage: registration_failed_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def subscriptionFailure(): Action[AnyContent] =
@@ -74,5 +72,13 @@ class NotableErrorController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       Ok(duplicateSubscriptionPage())
     }
+
+  //noinspection ScalaUnusedSymbol
+  def registrationFailed(timestamp: String): Action[AnyContent] = {
+    // Note - timestamp will appear as part of referrer link on "contact us" hyperlink
+    authenticate { implicit request =>
+      InternalServerError(registrationFailedPage())
+    }
+  }
 
 }

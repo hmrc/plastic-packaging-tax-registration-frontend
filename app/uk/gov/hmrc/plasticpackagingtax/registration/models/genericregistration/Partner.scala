@@ -32,21 +32,51 @@ case class Partner(
   contactDetails: Option[PartnerContactDetails] = None
 ) {
 
-  lazy val name: String = partnerType match {
-    case PartnerTypeEnum.SOLE_TRADER =>
-      soleTraderDetails.map(_.name).getOrElse(
-        throw new IllegalStateException("Sole Trader details name absent")
-      )
-    case PartnerTypeEnum.SCOTTISH_PARTNERSHIP | PartnerTypeEnum.GENERAL_PARTNERSHIP |
-        PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP |
-        PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP =>
-      partnerPartnershipDetails.flatMap(_.name).getOrElse(
-        throw new IllegalStateException("Partnership details name absent")
-      )
-    case _ =>
-      incorporationDetails.map(_.companyName).getOrElse(
-        throw new IllegalStateException("Incorporation details name absent")
-      )
+  def registrationDetails: Option[RegistrationDetails] = {
+    partnerType match {
+      case PartnerTypeEnum.SOLE_TRADER => soleTraderRegistration
+      case PartnerTypeEnum.SCOTTISH_PARTNERSHIP
+           | PartnerTypeEnum.GENERAL_PARTNERSHIP
+           | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+           | PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP => partnerRegistration
+      case _ => incorporationRegistration
+    }
+  }
+
+  private def soleTraderRegistration = soleTraderDetails.flatMap(_.registration)
+
+  private def partnerRegistration =
+    partnerPartnershipDetails.flatMap(_.partnershipBusinessDetails.flatMap(_.registration))
+
+  private def incorporationRegistration = incorporationDetails.flatMap(_.registration)
+
+  def name: String = {
+    partnerType match {
+      case PartnerTypeEnum.SOLE_TRADER => soleTraderName
+      case PartnerTypeEnum.SCOTTISH_PARTNERSHIP
+           | PartnerTypeEnum.GENERAL_PARTNERSHIP
+           | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
+           | PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP => partnerName
+      case _ => incorporationName
+    }
+  }
+
+  private def incorporationName = {
+    incorporationDetails.map(_.companyName).getOrElse(
+      throw new IllegalStateException("Incorporation details name absent")
+    )
+  }
+
+  private def partnerName = {
+    partnerPartnershipDetails.flatMap(_.name).getOrElse(
+      throw new IllegalStateException("Partnership details name absent")
+    )
+  }
+
+  private def soleTraderName = {
+    soleTraderDetails.map(_.name).getOrElse(
+      throw new IllegalStateException("Sole Trader details name absent")
+    )
   }
 
   def withContactAddress(contactAddress: Option[Address]): Partner =
