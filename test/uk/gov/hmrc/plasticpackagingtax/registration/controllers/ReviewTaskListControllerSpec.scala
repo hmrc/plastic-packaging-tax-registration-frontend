@@ -66,7 +66,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     authorizedUser()
     given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
-    when(mockRegistrationFilterService.removeGroupDetails(any())).then(returnsFirstArg())
+    when(mockRegistrationFilterService.removeGroupDetails(any())).thenAnswer(returnsFirstArg())
   }
 
   override protected def afterEach(): Unit = {

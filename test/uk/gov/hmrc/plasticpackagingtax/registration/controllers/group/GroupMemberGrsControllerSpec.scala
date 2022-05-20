@@ -29,8 +29,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamService
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{OrgType, PARTNERSHIP}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{CompanyProfile, IncorporationDetails}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IN_GROUP
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupError, GroupMember, OrganisationDetails => GroupOrgDetails}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupMember, OrganisationDetails => GroupOrgDetails}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, NewRegistrationUpdateService, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{NOT_SUBSCRIBED, SUBSCRIBED}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatusResponse
@@ -268,9 +267,6 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
   private def groupMemberSize(registration: Registration): Int =
     registration.groupDetail.map(_.members.size).getOrElse(0)
-
-  private def groupError(registration: Registration) =
-    registration.groupDetail.flatMap(_.groupError)
 
   private def simulateLimitedCompanyCallback(registration: Registration, memberId: Option[String] = None) = {
     authorizedUser()
