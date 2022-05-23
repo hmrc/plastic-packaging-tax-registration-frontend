@@ -27,6 +27,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, AddressCaptureService}
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.URLSanitisationUtils
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -44,7 +45,6 @@ class ConfirmBusinessAddressController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  //TODO: Ensure redirectTo is sanitised to stop hijacking attack
   def displayPage(memberId: String, redirectTo: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       val member = request.registration.findMember(memberId).getOrElse(throw new IllegalStateException("Provided group memberId not found"))
@@ -52,11 +52,15 @@ class ConfirmBusinessAddressController @Inject() (
       val orgType = member.organisationDetails
         .fold(throw new IllegalStateException("Failed to get org type for member"))(dets => OrgType.withName(dets.organisationType))
 
-      member.addressDetails match {
-        case registeredBusinessAddress if isAddressValidForOrgType(registeredBusinessAddress, Some(orgType)) =>
-          Future.successful(Ok(page(registeredBusinessAddress, member.businessName, redirectTo)))
-        case _ =>
-          initialiseAddressLookup(memberId, request, redirectTo)
+      URLSanitisationUtils.asRelativeUrl(redirectTo).fold(
+        throw new IllegalStateException(s"Redirect to url of $redirectTo was invalid")
+      ){ url =>
+        member.addressDetails match {
+          case registeredBusinessAddress if isAddressValidForOrgType(registeredBusinessAddress, Some(orgType)) =>
+            Future.successful(Ok(page(registeredBusinessAddress, member.businessName, url)))
+          case _ =>
+            initialiseAddressLookup(memberId, request, redirectTo)
+        }
       }
     }
 
