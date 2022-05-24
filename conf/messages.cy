@@ -773,8 +773,8 @@ deregister.checkAnswers.reasonToDeregister = Why you want to deregister
 deregister.checkAnswers.confirm = Confirm and continue
 
 
-registration-failed.title = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
-registration-failed.detail1 = Mae’ch atebion wedi’u cadw. Byddant ar gael am 30 diwrnod.
-registration-failed.detail2 = Gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
-registration-failed.detail2-link = roi gwybod am broblem os oes angen help arnoch
+registration-failed.title = Registration failed
+registration-failed.detail1 = We’re unable to complete your registration.
+registration-failed.detail2 = {0} so that we can help you with your registration.
+registration-failed.detail2-link = Contact us
 
