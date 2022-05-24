@@ -104,6 +104,14 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
       registeredBusinessPartnerId = Some(safeNumber)
     )
 
+  protected val failedRegistrationDetails: RegistrationDetails =
+    RegistrationDetails(
+      identifiersMatch = true,
+      verificationStatus = None,
+      registrationStatus = "REGISTRATION_FAILED",
+      registeredBusinessPartnerId = None
+    )
+
   protected val unregisteredRegistrationDetails: RegistrationDetails =
     RegistrationDetails(
       identifiersMatch = true,

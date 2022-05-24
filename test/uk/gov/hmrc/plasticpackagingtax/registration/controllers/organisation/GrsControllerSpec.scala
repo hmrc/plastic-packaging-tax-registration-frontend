@@ -242,10 +242,14 @@ class GrsControllerSpec extends ControllerSpec {
     "show error page" when {
       "business partner id is absent" in {
         authorizedUser()
-        val result: Future[Result] = simulateUnregisteredLimitedCompanyCallback()
+        mockGetUkCompanyDetails(unregisteredIncorporationDetails)
+        mockRegistrationFind(unregisteredLimitedCompany)
+        mockRegistrationUpdate()
+    
+        val result: Future[Result] = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
+
         val exception              = intercept[Exception](await(result))
         exception.getMessage must include("some-journey-id")
-
       }
     }
 
@@ -260,7 +264,11 @@ class GrsControllerSpec extends ControllerSpec {
 
       "sole trader business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED" in {
         authorizedUser()
-        val result = simulateBusinessVerificationFailureSoleTraderCallback()
+        mockGetSoleTraderDetails(verificationFailedSoleTraderDetails)
+        mockRegistrationFind(verificationFailedSoleTrader)
+        mockRegistrationUpdate()
+
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(pptRoutes.NotableErrorController.soleTraderVerificationFailure().url)
@@ -299,13 +307,19 @@ class GrsControllerSpec extends ControllerSpec {
       }
     }
 
-    "show unsupported organisation page" when {
-      "a limited company registration fails due to a specific scenario which GRS cannot support (at the time of coding)" in {
-        val result = simulateLimitedCompanyCallbackWithUnmatchedIdentifiers()
+    "show registration failed page" when {
+      "the registration fails and the identifiers dont match" in {
+        val grsResponse = incorporationDetails.copy(registration = Some(failedRegistrationDetails))
+        authorizedUser()
+        mockGetUkCompanyDetails(grsResponse)
+        mockRegistrationFind(registeredLimitedCompany)
+        mockRegistrationUpdate()
+
+        val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.NotableErrorController.soleTraderVerificationFailure().url
+        redirectLocation(result).get must include(
+          uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes.NotableErrorController.registrationFailed("").url
         )
       }
     }
@@ -329,28 +343,11 @@ class GrsControllerSpec extends ControllerSpec {
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
-  private def simulateUnregisteredLimitedCompanyCallback() = {
-    authorizedUser()
-    mockGetUkCompanyDetails(unregisteredIncorporationDetails)
-    mockRegistrationFind(unregisteredLimitedCompany)
-    mockRegistrationUpdate()
-
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
-  }
 
   private def simulateBusinessVerificationFailureLimitedCompanyCallback() = {
     authorizedUser()
     mockGetUkCompanyDetails(verificationFailedIncorporationDetails)
     mockRegistrationFind(verificationFailedLimitedCompany)
-    mockRegistrationUpdate()
-
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
-  }
-
-  private def simulateBusinessVerificationFailureSoleTraderCallback() = {
-    authorizedUser()
-    mockGetSoleTraderDetails(verificationFailedSoleTraderDetails)
-    mockRegistrationFind(verificationFailedSoleTrader)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
@@ -378,17 +375,6 @@ class GrsControllerSpec extends ControllerSpec {
     authorizedUser()
     mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
     mockRegistrationFind(unregisteredScottishPartnership)
-    mockRegistrationUpdate()
-
-    controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
-  }
-
-  private def simulateLimitedCompanyCallbackWithUnmatchedIdentifiers() = {
-    val grsResponse =
-      incorporationDetails.copy(registration = Some(identifiersUnmatchedRegistrationDetails))
-    authorizedUser()
-    mockGetUkCompanyDetails(grsResponse)
-    mockRegistrationFind(registeredLimitedCompany)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
