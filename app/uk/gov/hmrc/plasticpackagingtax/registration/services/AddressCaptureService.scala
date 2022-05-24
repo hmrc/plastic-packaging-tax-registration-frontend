@@ -42,7 +42,7 @@ case class AddressCaptureConfig(
   pptHeadingKey: String,
   entityName: Option[String] = None,
   pptHintKey: Option[String] = None,
-  forceUkAddress: Boolean = false
+  forceUkAddress: Boolean
 )
 
 object AddressCaptureConfig {

@@ -271,7 +271,8 @@ class AmendPartnerContactDetailsController @Inject() (
           alfHeadingsPrefix = "addressLookup.partner",
           entityName = Some(getPartner(partnerId).name),
           pptHeadingKey = "addressCapture.contact.heading",
-          pptHintKey = None
+          pptHintKey = None,
+          forceUkAddress = false
         )
       ).map(redirect => Redirect(redirect))
     }

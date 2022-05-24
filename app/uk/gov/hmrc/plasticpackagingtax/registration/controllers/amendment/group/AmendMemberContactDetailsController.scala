@@ -241,7 +241,8 @@ class AmendMemberContactDetailsController @Inject() (
                              entityName =
                                request.registration.findMember(memberId).map(_.businessName),
                              pptHeadingKey = "addressCapture.contact.heading",
-                             pptHintKey = None
+                             pptHintKey = None,
+                             forceUkAddress = false
         )
       ).map(redirect => Redirect(redirect))
     }

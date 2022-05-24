@@ -47,10 +47,10 @@ abstract class ContactDetailsConfirmAddressControllerBase(
         AddressCaptureConfig(backLink = backLink.url,
                              successLink = getAddressCaptureCallback(memberId).url,
                              alfHeadingsPrefix = "addressLookup.partner",
-                             entityName =
-                               request.registration.findMember(memberId).map(_.businessName),
+                             entityName = request.registration.findMember(memberId).map(_.businessName),
                              pptHeadingKey = "addressCapture.contact.heading",
-                             pptHintKey = None
+                             pptHintKey = None,
+                             forceUkAddress = false
         )
       ).map(redirect => Redirect(redirect))
     }

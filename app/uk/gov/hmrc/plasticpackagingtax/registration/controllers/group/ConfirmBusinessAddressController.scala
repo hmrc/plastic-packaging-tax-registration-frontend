@@ -25,6 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.OrganisationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, AddressCaptureService}
 import uk.gov.hmrc.plasticpackagingtax.registration.utils.URLSanitisationUtils
@@ -59,7 +60,10 @@ class ConfirmBusinessAddressController @Inject() (
           case registeredBusinessAddress if isAddressValidForOrgType(registeredBusinessAddress, Some(orgType)) =>
             Future.successful(Ok(page(registeredBusinessAddress, member.businessName, url)))
           case _ =>
-            initialiseAddressLookup(memberId, request, redirectTo)
+            orgType match {
+              case OVERSEAS_COMPANY_UK_BRANCH => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
+              case _ => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
+            }
         }
       }
     }
@@ -75,10 +79,22 @@ class ConfirmBusinessAddressController @Inject() (
 
   def changeBusinessAddress(memberId: String, redirectTo: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      initialiseAddressLookup(memberId, request, redirectTo)
+      val res = for {
+        member <- request.registration.findMember(memberId)
+        orgDetails <- member.organisationDetails
+        orgType = orgDetails.organisationType
+      } yield {
+        if(orgType == OrgType.value(OVERSEAS_COMPANY_UK_BRANCH)) {
+          initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
+        } else {
+          initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
+        }
+      }
+
+      res.getOrElse(initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false))
     }
 
-  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent], redirectTo: String)(implicit
+  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent], redirectTo: String, forceUKAddress: Boolean)(implicit
     header: HeaderCarrier
   ): Future[Result] =
     addressCaptureService.initAddressCapture(
@@ -89,7 +105,7 @@ class ConfirmBusinessAddressController @Inject() (
         entityName = request.registration.findMember(memberId).map(_.businessName),
         pptHeadingKey = "addressCapture.business.heading",
         pptHintKey = None,
-        forceUkAddress = true
+        forceUkAddress = false
       )
     )(request).map(redirect => Redirect(redirect))
 

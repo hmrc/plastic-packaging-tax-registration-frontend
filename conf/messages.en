@@ -632,6 +632,9 @@ addressLookup.partner.edit.heading = What is {0}’s contact address?
 addressCapture.business.heading = What is {0}’s business address?
 addressCapture.contact.heading = What is {0}’s contact address?
 
+addressCapture.business.heading.isUK = Is the business address for {0} in the UK?
+addressCapture.contact.heading.isUK = Is the contact address for {0} in the UK?
+
 organisation.checkAnswers.title = Check your answers
 
 contactDetails.member.firstName = First name

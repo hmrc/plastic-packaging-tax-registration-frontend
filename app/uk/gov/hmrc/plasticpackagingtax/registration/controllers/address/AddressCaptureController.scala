@@ -64,7 +64,7 @@ class AddressCaptureController @Inject() (
   def addressInUk(): Action[AnyContent] =
     authenticate.async { implicit request =>
       getAddressCaptureConfig().map { config =>
-        Ok(addressInUkPage(UkAddressForm.form(), Call("GET", config.backLink), config.entityName))
+        Ok(addressInUkPage(UkAddressForm.form(), Call("GET", config.backLink), config.entityName, config.pptHeadingKey + ".isUK"))
       }
     }
 
@@ -75,7 +75,7 @@ class AddressCaptureController @Inject() (
           .form()
           .bindFromRequest()
           .fold(
-            error => Future.successful(BadRequest(addressInUkPage(error, Call("GET", config.backLink), config.entityName))),
+            error => Future.successful(BadRequest(addressInUkPage(error, Call("GET", config.backLink), config.entityName, config.pptHeadingKey + ".isUK"))),
             ukAddress =>
               if (ukAddress)
                 initialiseAddressLookup(config).map(onRamp => Redirect(onRamp.redirectUrl))

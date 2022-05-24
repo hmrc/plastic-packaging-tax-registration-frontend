@@ -33,7 +33,7 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
 
   "UK Address View" should {
 
-    val view: Document = page(UkAddressForm.form(), backLink, Some("entity"))
+    val view: Document = page(UkAddressForm.form(), backLink, Some("entity"), "addressCapture.contact.heading.isUK")
 
     "contain timeout dialog function" in {
       containTimeoutDialogFunction(view) mustBe true
@@ -74,8 +74,8 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(UkAddressForm.form(), backLink, Some("entity"))(journeyRequest, messages)
-    page.render(UkAddressForm.form(), backLink, Some("entity"), journeyRequest, messages)
+    page.f(UkAddressForm.form(), backLink, Some("entity"), "addressCapture.business.heading.isUK")(journeyRequest, messages)
+    page.render(UkAddressForm.form(), backLink, Some("entity"), "addressCapture.business.heading.isUK", journeyRequest, messages)
   }
 
 }

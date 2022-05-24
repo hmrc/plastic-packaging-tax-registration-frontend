@@ -44,7 +44,8 @@ class AddressCaptureServiceSpec
                                                           alfHeadingsPrefix = "alf.prefix",
                                                           pptHeadingKey = "ppt.heading",
                                                           entityName = Some("Entity"),
-                                                          pptHintKey = None
+                                                          pptHintKey = None,
+                                                          forceUkAddress = false
   )
 
   "Address Capture Service" should {

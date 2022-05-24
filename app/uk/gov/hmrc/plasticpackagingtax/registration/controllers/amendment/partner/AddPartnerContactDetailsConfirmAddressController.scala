@@ -54,7 +54,8 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
           alfHeadingsPrefix = "addressLookup.partner",
           entityName = request.registration.inflightPartner.map(_.name),
           pptHeadingKey = "addressCapture.contact.heading",
-          pptHintKey = None
+          pptHintKey = None,
+          forceUkAddress = false
         )
       ).map(redirect => Redirect(redirect))
     }

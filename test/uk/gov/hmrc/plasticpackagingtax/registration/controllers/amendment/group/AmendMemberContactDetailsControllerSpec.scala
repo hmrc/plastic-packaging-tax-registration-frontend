@@ -237,7 +237,8 @@ class AmendMemberContactDetailsControllerSpec
                              pptHeadingKey = "addressCapture.contact.heading",
                              entityName =
                                populatedRegistration.findMember(memberId).map(_.businessName),
-                             pptHintKey = None
+                             pptHintKey = None,
+                             forceUkAddress = false
         )
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
