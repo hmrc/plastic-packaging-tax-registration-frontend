@@ -55,7 +55,8 @@ class ContactDetailsAddressController @Inject() (
           alfHeadingsPrefix = "addressLookup.contact",
           entityName = request.registration.organisationDetails.businessName,
           pptHeadingKey = "addressCapture.contact.heading",
-          pptHintKey = None
+          pptHintKey = None,
+          forceUkAddress = false
         )
       ).map(redirect => Redirect(redirect))
 

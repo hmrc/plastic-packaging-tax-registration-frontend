@@ -50,7 +50,8 @@ class ContactDetailsAddressControllerSpec extends ControllerSpec with AddressCap
                                alfHeadingsPrefix = "addressLookup.contact",
                                pptHeadingKey = "addressCapture.contact.heading",
                                entityName = registration.organisationDetails.businessName,
-                               pptHintKey = None
+                               pptHintKey = None,
+                               forceUkAddress = false
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 

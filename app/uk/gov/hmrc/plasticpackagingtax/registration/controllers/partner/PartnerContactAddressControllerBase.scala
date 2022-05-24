@@ -58,7 +58,8 @@ abstract class PartnerContactAddressControllerBase(
                              alfHeadingsPrefix = "addressLookup.contact",
                              entityName = getPartner(partnerId).map(_.name),
                              pptHeadingKey = "addressCapture.contact.heading",
-                             pptHintKey = None
+                             pptHintKey = None,
+                             forceUkAddress = false
         )
       ).map(redirect => Redirect(redirect))
     }

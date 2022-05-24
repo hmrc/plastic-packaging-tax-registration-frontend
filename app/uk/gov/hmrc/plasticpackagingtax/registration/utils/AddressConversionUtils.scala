@@ -25,27 +25,20 @@ import javax.inject.Inject
 
 class AddressConversionUtils @Inject() (countryService: CountryService) {
 
-  def toPptAddress(incAddress: IncorporationAddressDetails): Option[Address] = {
-
-    def getCountryCode: Option[String] =
-      incAddress.country.flatMap {
-        countryService.getKeyForName
-      }
+  def toPptAddress(incAddress: IncorporationAddressDetails): Address = {
 
     val linesOneToThree =
       Seq(incAddress.premises, incAddress.address_line_1, incAddress.address_line_2)
         .flatten.map(_.trim).filter(_.nonEmpty)
 
-    getCountryCode map { country =>
       Address(
         addressLine1 = linesOneToThree.headOption.getOrElse(""),
         addressLine2 = linesOneToThree.lift(1),
         addressLine3 = linesOneToThree.lift(2),
         townOrCity = incAddress.locality.getOrElse("").trim,
         maybePostcode = incAddress.postal_code.map(_.trim),
-        countryCode = country
+        countryCode = incAddress.country.flatMap(countryService.getKeyForName).getOrElse("")
       )
-    }
   }
 
   def toPptAddress(addressLookupConfirmation: AddressLookupConfirmation): Address = {

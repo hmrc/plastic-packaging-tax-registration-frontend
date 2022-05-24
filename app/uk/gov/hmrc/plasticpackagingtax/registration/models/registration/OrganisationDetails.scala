@@ -103,7 +103,7 @@ case class OrganisationDetails(
   def withBusinessRegisteredAddress(addressConversionUtils: AddressConversionUtils): OrganisationDetails = {
     val businessAddress = organisationType match {
       case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
-        incorporationDetails.flatMap(incorporationDetails => addressConversionUtils.toPptAddress(incorporationDetails.companyAddress))
+        incorporationDetails.map(incorporationDetails => addressConversionUtils.toPptAddress(incorporationDetails.companyAddress))
       case _ => None
     }
     this.copy(businessRegisteredAddress = businessAddress, isBusinessAddressFromGrs = Some(businessAddress.isDefined))

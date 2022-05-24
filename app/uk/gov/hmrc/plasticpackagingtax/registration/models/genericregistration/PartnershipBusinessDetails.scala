@@ -55,7 +55,7 @@ case class PartnershipBusinessDetails(
 
   def companyName: Option[String] = companyProfile.map(_.companyName)
 
-  def companyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] = companyProfile.flatMap { profile =>
+  def companyAddress(addressConversionUtils: AddressConversionUtils): Option[Address] = companyProfile.map { profile =>
     addressConversionUtils.toPptAddress(profile.companyAddress)
   }
 

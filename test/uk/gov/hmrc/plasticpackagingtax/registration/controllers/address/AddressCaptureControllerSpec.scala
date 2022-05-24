@@ -53,7 +53,7 @@ class AddressCaptureControllerSpec
   private val mockInUkPage                       = mock[uk_address_page]
   private val mockAddressPage                    = mock[address_page]
 
-  when(mockInUkPage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(mockInUkPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("Is UK Address?")
   )
   when(

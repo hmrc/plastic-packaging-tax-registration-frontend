@@ -31,7 +31,7 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers with Gui
     "convert to Address" when {
       "premises is provided" in {
         val incAddressWithPremises = incAddress(withPremises = true)
-        val pptAddress             = addressConversionUtils.toPptAddress(incAddressWithPremises).get
+        val pptAddress             = addressConversionUtils.toPptAddress(incAddressWithPremises)
 
         pptAddress.addressLine1 mustBe incAddressWithPremises.premises.get
         pptAddress.addressLine2 mustBe incAddressWithPremises.address_line_1.map(_.trim)
@@ -42,7 +42,7 @@ class IncorporationAddressDetailsSpec extends AnyWordSpec with Matchers with Gui
 
       "premises not provided" in {
         val incAddressNoPremises = incAddress(withPremises = false)
-        val pptAddress           = addressConversionUtils.toPptAddress(incAddressNoPremises).get
+        val pptAddress           = addressConversionUtils.toPptAddress(incAddressNoPremises)
 
         pptAddress.addressLine1 mustBe incAddressNoPremises.address_line_1.get
         pptAddress.addressLine2 mustBe incAddressNoPremises.address_line_2.map(_.trim)

@@ -42,10 +42,9 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
     country = Some("United Kingdom")
   )
 
-  private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form()): Document =
-    addressConversionUtils.toPptAddress(incorporationAddressDetails).fold(Document.createShell("")) { addr =>
-      page(form, addr)(journeyRequest, messages)
-    }
+  private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form()): Document = {
+    page(form, addressConversionUtils.toPptAddress(incorporationAddressDetails))(journeyRequest, messages)
+  }
 
   "Confirm Address View" should {
 
@@ -115,18 +114,13 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
+      page.f(ConfirmAddress.form(), addressConversionUtils.toPptAddress(incorporationAddressDetails))(journeyRequest, messages)
 
-    addressConversionUtils.toPptAddress(incorporationAddressDetails).fold(Document.createShell("")) { addr =>
-      page.f(ConfirmAddress.form(), addr)(journeyRequest, messages)
-    }
-
-    addressConversionUtils.toPptAddress(incorporationAddressDetails).fold(Document.createShell("")) { addr =>
       page.render(ConfirmAddress.form(),
-        addr,
+        addressConversionUtils.toPptAddress(incorporationAddressDetails),
         journeyRequest,
         messages
       )
     }
-  }
 
 }

@@ -57,7 +57,8 @@ class AmendOrganisationDetailsController @Inject() (
                            alfHeadingsPrefix = "addressLookup.business",
                            entityName = request.registration.organisationDetails.businessName,
                            pptHeadingKey = "addressCapture.business.heading",
-                           pptHintKey = None
+                           pptHintKey = None,
+                           forceUkAddress = false
       )
     )(request).map(redirect => Redirect(redirect))
 

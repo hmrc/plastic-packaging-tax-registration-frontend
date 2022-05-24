@@ -134,8 +134,8 @@ class GrsControllerSpec extends ControllerSpec {
         organisationDetails.incorporationDetails mustBe Some(incorporationDetails)
         organisationDetails.soleTraderDetails mustBe None
         organisationDetails.partnershipDetails mustBe None
-        organisationDetails.businessRegisteredAddress mustBe addressConversionUtils
-          .toPptAddress(incorporationDetails.companyAddress)
+        organisationDetails.businessRegisteredAddress mustBe Some(addressConversionUtils
+          .toPptAddress(incorporationDetails.companyAddress))
         organisationDetails.subscriptionStatus mustBe Some(NOT_SUBSCRIBED)
       }
 

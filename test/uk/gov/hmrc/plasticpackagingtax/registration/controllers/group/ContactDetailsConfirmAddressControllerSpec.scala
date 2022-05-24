@@ -74,7 +74,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec with Add
             alfHeadingsPrefix = "addressLookup.partner",
             pptHeadingKey = "addressCapture.contact.heading",
             entityName = Some(groupMember.businessName),
-            pptHintKey = None
+            pptHintKey = None,
+            forceUkAddress = false
           )
         simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 

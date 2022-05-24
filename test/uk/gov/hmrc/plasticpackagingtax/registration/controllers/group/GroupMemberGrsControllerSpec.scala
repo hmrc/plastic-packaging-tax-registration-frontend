@@ -115,7 +115,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
                 partnershipBusinessDetails.copy(companyProfile = Some(companyProfile))
               memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
               memberDetails.organisationDetails.get.organisationName mustBe partnershipDetailsWithCompanyProfile.companyProfile.get.companyName
-              Some(memberDetails.addressDetails) mustBe addressConversionUtils.toPptAddress(
+              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(
                 partnershipDetailsWithCompanyProfile.companyProfile.get.companyAddress
               )
             case _ =>
@@ -127,7 +127,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
               memberDetails.organisationDetails.get.organisationType mustBe orgType.toString
               memberDetails.organisationDetails.get.organisationName mustBe incorporationDetails.companyName
-              Some(memberDetails.addressDetails) mustBe addressConversionUtils.toPptAddress(incorporationDetails.companyAddress)
+              memberDetails.addressDetails mustBe addressConversionUtils.toPptAddress(incorporationDetails.companyAddress)
           }
 
         }

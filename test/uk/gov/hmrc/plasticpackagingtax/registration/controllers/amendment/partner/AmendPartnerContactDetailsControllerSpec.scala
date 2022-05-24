@@ -259,7 +259,8 @@ class AmendPartnerContactDetailsControllerSpec
         alfHeadingsPrefix = "addressLookup.partner",
         pptHeadingKey = "addressCapture.contact.heading",
         entityName = Some(nominatedPartner.name),
-        pptHintKey = None
+        pptHintKey = None,
+        forceUkAddress = false
       )
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 

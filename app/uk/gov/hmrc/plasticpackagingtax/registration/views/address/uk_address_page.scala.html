@@ -33,7 +33,7 @@
         saveButton: saveAndContinue
 )
 
-@(form: Form[Boolean], backLink: Call, entityName: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], backLink: Call, entityName: Option[String], title: String)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title(headingKey = "ukAddress.title", headingArg = entityName.getOrElse(messages("missing.organisationName"))),
@@ -43,7 +43,7 @@
     @formHelper(action = routes.AddressCaptureController.submitAddressInUk(), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
             legend = Some(Legend(
-                content = Text(messages("ukAddress.title", entityName.getOrElse(messages("missing.organisationName")))),
+                content = Text(messages(title, entityName.getOrElse(messages("missing.organisationName")))),
                 classes = gdsFieldsetPageHeading,
                 isPageHeading = true
             )),

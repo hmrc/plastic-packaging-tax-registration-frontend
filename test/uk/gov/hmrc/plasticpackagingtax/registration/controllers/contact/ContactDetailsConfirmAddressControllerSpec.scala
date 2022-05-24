@@ -66,7 +66,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       )
     ),
     withOrganisationDetails(
-      OrganisationDetails(businessRegisteredAddress = addressConversionUtils.toPptAddress(testCompanyAddress),
+      OrganisationDetails(businessRegisteredAddress = Some(addressConversionUtils.toPptAddress(testCompanyAddress)),
                           organisationType = Some(UK_COMPANY)
       )
     )

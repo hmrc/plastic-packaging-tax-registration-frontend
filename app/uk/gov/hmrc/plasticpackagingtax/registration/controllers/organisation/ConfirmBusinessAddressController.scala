@@ -23,6 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConne
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
@@ -59,16 +60,23 @@ class ConfirmBusinessAddressController @Inject() (
             )
           )
         case _ =>
-          initialiseAddressLookup(request)
+          orgType match {
+            case Some(OVERSEAS_COMPANY_UK_BRANCH) => initialiseAddressLookup(request, forceUKAddress = false)
+            case _ => initialiseAddressLookup(request, forceUKAddress = true)
+          }
       }
     }
 
   def changeBusinessAddress(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      initialiseAddressLookup(request)
+      request.registration.organisationDetails.organisationType match {
+        case Some(OVERSEAS_COMPANY_UK_BRANCH) => initialiseAddressLookup(request, forceUKAddress = false)
+        case _ => initialiseAddressLookup(request, forceUKAddress = true)
+      }
     }
 
-  private def initialiseAddressLookup(request: JourneyRequest[AnyContent])(implicit header: HeaderCarrier): Future[Result] =
+  private def initialiseAddressLookup(request: JourneyRequest[AnyContent], forceUKAddress: Boolean)(
+    implicit header: HeaderCarrier): Future[Result] =
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
         backLink = routes.ConfirmBusinessAddressController.displayPage().url,
@@ -78,7 +86,7 @@ class ConfirmBusinessAddressController @Inject() (
         entityName = request.registration.organisationDetails.businessName,
         pptHeadingKey = "addressCapture.business.heading",
         pptHintKey = None,
-        forceUkAddress = true
+        forceUkAddress = forceUKAddress
       )
     )(request).map(redirect => Redirect(redirect))
 

@@ -143,7 +143,6 @@ abstract class GroupMemberGrsControllerBase(
           )
         ),
         addressDetails = addressConversionUtils.toPptAddress(details.companyAddress)
-          .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
       )
     }
 
@@ -170,7 +169,6 @@ abstract class GroupMemberGrsControllerBase(
           )
         ),
       addressDetails = addressConversionUtils.toPptAddress(details.companyAddress)
-        .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
     )
 
   private def updatePartnershipDetails(journeyId: String, memberId: Option[String], orgType: OrgType)(implicit
@@ -201,7 +199,6 @@ abstract class GroupMemberGrsControllerBase(
           )
         ),
         addressDetails = addressConversionUtils.toPptAddress(companyProfile.companyAddress)
-          .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
       )
     }
 
@@ -234,7 +231,6 @@ abstract class GroupMemberGrsControllerBase(
           )
         ),
       addressDetails = addressConversionUtils.toPptAddress(companyProfile.companyAddress)
-        .getOrElse(throw new IllegalStateException("Failed to create PPT address from company address"))
     )
   }
 

@@ -45,13 +45,13 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
         val incAddress = stubRegisteredOfficeAddressNoPostcode.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe Some(UKAddress(
+        acu.toPptAddress(incAddress) mustBe UKAddress(
           "1",
           Some("testLine1"),
           Some("test town"),
           "test city",
           ""
-        ))
+        )
 
       }
     }
@@ -73,13 +73,13 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
         val incAddress = stubRegisteredOfficeAddressWithPostcode.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe Some(UKAddress(
+        acu.toPptAddress(incAddress) mustBe UKAddress(
           "1",
           Some("testLine1"),
           Some("test town"),
           "test city",
           "AA11AA"
-        ))
+        )
 
       }
     }
@@ -100,14 +100,14 @@ class AddressConversionUtilsSpec extends AnyWordSpec with Matchers {
 
         val incAddress = stubOverseasAddress.as[IncorporationAddressDetails]
 
-        acu.toPptAddress(incAddress) mustBe Some(NonUKAddress(
+        acu.toPptAddress(incAddress) mustBe NonUKAddress(
           "1",
           Some("testLine1"),
           Some("test town"),
           "test city",
           None,
           "ES"
-        ))
+        )
 
       }
     }
