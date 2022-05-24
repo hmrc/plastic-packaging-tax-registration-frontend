@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
+import org.joda.time.DateTime
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc._
+import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
@@ -66,91 +68,66 @@ class GrsController @Inject() (
                                 addressConversionUtils: AddressConversionUtils,
                                 mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
-
-  private val logger = Logger(this.getClass)
+    extends FrontendController(mcc) with Cacheable with I18nSupport with Logging {
 
   def grsCallback(journeyId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async {
       implicit request =>
         saveRegistrationDetails(journeyId).flatMap {
-          case Right(registration) =>
-            registrationStatus(registration).map { status =>
-              logger.info(
-                s"PPT GRS callback for journeyId [$journeyId] " +
-                  s"and organisation type [${registration.organisationDetails.organisationType.getOrElse("")}] " +
-                  s"had registration status [$status] " +
-                  s"and details [${registration.organisationDetails.grsRegistration.getOrElse("None")}]"
-              )
-              status match {
-                case STATUS_OK => {
-                  Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
-                }
-                case GRS_FAILED => {
-                  throw new Exception(s"Unexpected response from GRS during journey-id $journeyId")
-                }
-                case BUSINESS_VERIFICATION_FAILED => {
-                  Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
-                }
-                case SOLE_TRADER_VERIFICATION_FAILED => {
-                  Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
-                }
-                case DUPLICATE_SUBSCRIPTION => {
-                  if (registration.isGroup)
-                    Redirect(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered())
-                  else
-                    Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
-                }
-                case UNSUPPORTED_ORGANISATION => {
-                  Redirect(orgRoutes.RegisterAsOtherOrganisationController.onPageLoad())
+          case Right(registration) => 
+            logger.info(
+              s"PPT GRS callback for journeyId [$journeyId] " +
+                s"and organisation type [${registration.organisationDetails.organisationType}] " +
+                s"and details [${registration.organisationDetails.grsRegistration}]"
+            )
+
+            if (registration.organisationDetails.businessVerificationFailed)
+              Future.successful(businessVerificationFailed(registration))
+            else {
+              registration.organisationDetails.businessPartnerId match {
+                case Some(businessPartnerId) =>
+                  checkSubscriptionStatus(businessPartnerId, registration).map {
+                    case SUBSCRIBED => duplicateSubscription(registration)
+                    case _ => Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
+                  }
+                case None => {
+                  Future.successful(registration.organisationDetails.grsRegistration match {
+                    case Some(RegistrationDetails(identifiersMatch, _, "REGISTRATION_FAILED", None)) => if (!identifiersMatch) matchingFailed(registration) else registrationFailed 
+                    case _ => throw new Exception(s"Unexpected response from GRS during journey-id $journeyId")
+                  })
                 }
               }
             }
           case Left(error) => throw error
         }
+      
     }
 
-  private def registrationStatus(registration: Registration)
-    (implicit hc: HeaderCarrier, request: JourneyRequest[AnyContent]): Future[Call] = {
-
-    // Note - business-verification may be disabled
-    val nextPage: Call = if (registration.organisationDetails.businessVerificationFailed) {
-      registration.organisationDetails.organisationType match {
-        case PartnerTypeEnum.SOLE_TRADER
-          | PartnerTypeEnum.SCOTTISH_PARTNERSHIP
-          | PartnerTypeEnum.GENERAL_PARTNERSHIP
-          | PartnerTypeEnum.LIMITED_LIABILITY_PARTNERSHIP
-          | PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP => {
-          commonRoutes.NotableErrorController.soleTraderVerificationFailure()
-        }
-        case _ => commonRoutes.NotableErrorController.businessVerificationFailure()
-      }
-
-      Future.successful(nextPage)
-    }
-
-    else {
-
-    registration.organisationDetails.businessPartnerId match {
-
-      // Success - we got a business-partner-id
-      case Some(businessPartnerId) => {
-        checkSubscriptionStatus(businessPartnerId, registration).map {
-          case SUBSCRIBED => DUPLICATE_SUBSCRIPTION
-          case _ => STATUS_OK
-        }
-      }
-
-      // Something wrong
-      case None => {
-        Future.successful(registration.organisationDetails.grsRegistration match {
-          case Some(reg) if !reg.identifiersMatch => SOLE_TRADER_VERIFICATION_FAILED //todo stand in for check your details
-          case _ => GRS_FAILED
-        })
+    //this is very similar to below, do we want to combine them?
+    private def businessVerificationFailed(registration: Registration): Result = {
+    registration.organisationDetails.organisationType match {
+      case Some(SOLE_TRADER) | Some(OrgType.PARTNERSHIP) =>
+        Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
+      case _ =>
+        Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
       }
     }
+
+  private def matchingFailed(registration: Registration): Result = {
+    // Note this could also handle business-verification fails
+    val orgTypeEnum = registration.organisationDetails.organisationType.getOrElse(throw new IllegalStateException("Missing OrgType whilst handling organisation callback from GRS"))
+    orgTypeEnum match {
+      case OrgType.SOLE_TRADER | OrgType.PARTNERSHIP => Redirect(commonRoutes.NotableErrorController.soleTraderVerificationFailure())
+      case _ => Redirect(commonRoutes.NotableErrorController.businessVerificationFailure())
     }
   }
+
+private def registrationFailed =
+  Redirect(commonRoutes.NotableErrorController.registrationFailed(DateTime.now().toString))
+
+private def duplicateSubscription(registration: Registration) = 
+  if (registration.isGroup) Redirect(groupRoutes.NotableErrorController.nominatedOrganisationAlreadyRegistered())
+  else Redirect(commonRoutes.NotableErrorController.duplicateRegistration())
 
   private def checkSubscriptionStatus(businessPartnerId: String, registration: Registration)(implicit
     hc: HeaderCarrier,
