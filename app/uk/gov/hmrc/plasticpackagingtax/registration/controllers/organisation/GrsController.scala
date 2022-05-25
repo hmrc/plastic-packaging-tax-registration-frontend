@@ -90,12 +90,12 @@ class GrsController @Inject() (
                     case SUBSCRIBED => duplicateSubscription(registration)
                     case _ => Redirect(orgRoutes.ConfirmBusinessAddressController.displayPage())
                   }
-                case None => {
+                case None =>
                   Future.successful(registration.organisationDetails.grsRegistration match {
-                    case Some(RegistrationDetails(identifiersMatch, _, "REGISTRATION_FAILED", None)) => if (!identifiersMatch) matchingFailed(registration) else registrationFailed 
+                    case Some(RegistrationDetails(false, _, _, None)) => matchingFailed(registration)
+                    case Some(RegistrationDetails(true, _, "REGISTRATION_FAILED", None)) => registrationFailed
                     case _ => throw new Exception(s"Unexpected response from GRS during journey-id $journeyId")
                   })
-                }
               }
             }
           case Left(error) => throw error
