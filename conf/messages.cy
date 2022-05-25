@@ -629,8 +629,8 @@ addressLookup.partner.edit.heading  =  Beth yw cyfeiriad cyswllt {0}?
 addressCapture.business.heading  = Beth yw cyfeiriad busnes {0}?
 addressCapture.contact.heading  =  Beth yw cyfeiriad cyswllt {0}?
 
-addressCapture.business.heading.isUK = Is the business address for {0} in the UK?
-addressCapture.contact.heading.isUK = Is the contact address for {0} in the UK?
+addressCapture.business.heading.isUK = A yw cyfeiriad y busnes ar gyfer {0} yn y DU?
+addressCapture.contact.heading.isUK = A yw’r cyfeiriad cyswllt ar gyfer {0} yn y DU?
 
 organisation.checkAnswers.title  = Gwiriwch eich atebion
 
