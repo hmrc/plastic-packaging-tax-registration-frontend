@@ -776,8 +776,8 @@ deregister.checkAnswers.reasonToDeregister = Why you want to deregister
 deregister.checkAnswers.confirm = Confirm and continue
 
 
-registration-failed.title = Registration failed
-registration-failed.detail1 = We’re unable to complete your registration.
-registration-failed.detail2 = {0} so that we can help you with your registration.
-registration-failed.detail2-link = Contact us
+registration-failed.title = Cofrestriad wedi methu
+registration-failed.detail1 = Ni allwn gwblhau’ch cofrestriad.
+registration-failed.detail2 = {0} fel y gallwn eich helpu gyda’ch cofrestriad.
+registration-failed.detail2-link = Cysylltwch â ni
 
