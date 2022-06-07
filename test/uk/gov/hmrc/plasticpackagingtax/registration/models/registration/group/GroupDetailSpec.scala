@@ -18,9 +18,12 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
+
+import java.util.UUID
 
 class GroupDetailSpec extends AnyWordSpec with Matchers {
 
@@ -30,6 +33,14 @@ class GroupDetailSpec extends AnyWordSpec with Matchers {
       "members is empty" in {
         val groupDetail = GroupDetail()
         groupDetail.status mustBe TaskStatus.NotStarted
+      }
+    }
+
+    "be IN_PROGRESS" when {
+      "there is a member with no contact details" in {
+        val groupDetail = GroupDetail().withUpdatedOrNewMember(aGroupMember("Barbie Plastic Ltd")
+          .copy(contactDetails = None))
+        groupDetail.status mustBe TaskStatus.InProgress
       }
     }
 

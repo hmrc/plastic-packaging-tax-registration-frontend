@@ -76,9 +76,9 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
   "Review registration controller" should {
 
-    "return 200" when {
+    "show the review registration page to an authorised user" when {
 
-      "user is authorised and display page method is invoked with uk company" in {
+      ".displayPage is invoked with a uk company" in {
         val registration: Registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(UK_COMPANY),
@@ -108,39 +108,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         )
       }
 
-      "user is authorised and registration contains a partial group member" in {
-
-        val registrationWitPartialGroupMembers: Registration =
-          createRegistrationWithGroupMember(groupMember,
-                                            groupMember.copy(customerIdentification1 = "")
-          )
-
-        val expectedReg: Registration = registrationWitPartialGroupMembers.copy(groupDetail =
-          Some(GroupDetail(membersUnderGroupControl = Some(true), members = List(groupMember)))
-        )
-
-        mockRegistrationFind(registrationWitPartialGroupMembers)
-        when(mockRegistrationFilterService.removePartialGroupMembers(any())).thenReturn(expectedReg)
-        mockRegistrationUpdate()
-
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(expectedReg))(
-          any(),
-          any()
-        )
-
-        verify(mockRegistrationConnector).update(
-          ArgumentMatchers.eq(
-            expectedReg.copy(metaData =
-              registrationWitPartialGroupMembers.metaData.copy(registrationReviewed = true)
-            )
-          )
-        )(any())
-      }
-
-      "user is authorised and display page method is invoked with sole trader" in {
+      ".displayPage is invoked with a sole trader" in {
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(SOLE_TRADER),
@@ -157,7 +125,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         status(result) mustBe OK
       }
 
-      "user is authorised and display page method is invoked with partnership" in {
+      ".displayPage is invoked with a partnership" in {
         val registration = aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(PARTNERSHIP),
@@ -180,8 +148,70 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
       }
     }
 
-    "return 303" when {
-      "form is submitted" in {
+    "redirect to the task-list for an authorised user" when {
+
+      "the registration contains a partial group member" in {
+
+        val registrationWitPartialGroupMembers: Registration =
+          createRegistrationWithGroupMember(groupMember,
+            groupMember.copy(customerIdentification1 = "")
+          )
+
+        val expectedReg: Registration = registrationWitPartialGroupMembers.copy(groupDetail =
+          Some(GroupDetail(membersUnderGroupControl = Some(true), members = List(groupMember)))
+        )
+
+        mockRegistrationFind(registrationWitPartialGroupMembers)
+        when(mockRegistrationFilterService.removePartialGroupMembers(any())).thenReturn(expectedReg)
+        mockRegistrationUpdate()
+
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+      }
+
+      "all group members have been removed" in {
+        val registrationRequest: Registration =
+          createRegistrationWithGroupMember(groupMember.copy(customerIdentification1 = ""))
+
+        val sanitisedReg = registrationRequest.copy(groupDetail =
+          registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
+        );
+
+        when(mockRegistrationFilterService.removePartialGroupMembers(any()))
+          .thenReturn(sanitisedReg)
+        mockRegistrationFind(registrationRequest)
+        mockRegistrationUpdate
+
+        val result = controller.displayPage()(postRequest(JsObject.empty))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+      }
+
+      "the registration is not in ready state" in {
+        val unreadyRegistration =
+          aCompletedGeneralPartnershipRegistration
+            .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
+            .copy(organisationDetails =
+              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(organisationType =
+                None
+              )
+            )
+        mockRegistrationFind(unreadyRegistration)
+
+        val result = controller.displayPage()(postRequest(JsObject.empty))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+      }
+
+    }
+
+    "redirect to the confirmation page" when {
+
+      "the review registration details form is submitted" in {
 
         val registrations = Table("Registration",
                                   aCompletedUkCompanyRegistration,
@@ -214,52 +244,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         }
 
       }
-
-      "display page and registration not in ready state" in {
-        val unreadyRegistration =
-          aCompletedGeneralPartnershipRegistration
-            .copy(incorpJourneyId = Some(UUID.randomUUID().toString))
-            .copy(organisationDetails =
-              aCompletedGeneralPartnershipRegistration.organisationDetails.copy(organisationType =
-                None
-              )
-            )
-        mockRegistrationFind(unreadyRegistration)
-
-        val result = controller.displayPage()(postRequest(JsObject.empty))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
-      }
-
-      "display task list page when all groupMember are removed" in {
-        val registrationRequest: Registration =
-          createRegistrationWithGroupMember(groupMember.copy(customerIdentification1 = ""))
-
-        val sanitisedReg = registrationRequest.copy(groupDetail =
-          registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
-        );
-
-        when(mockRegistrationFilterService.removePartialGroupMembers(any()))
-          .thenReturn(sanitisedReg)
-        mockRegistrationFind(registrationRequest)
-        mockRegistrationUpdate
-
-        val result = controller.displayPage()(postRequest(JsObject.empty))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
-
-        verify(mockRegistrationConnector).update(
-          ArgumentMatchers.eq(
-            sanitisedReg.copy(metaData =
-              registrationRequest.metaData.copy(registrationReviewed = false,
-                                                registrationCompleted = false
-              )
-            )
-          )
-        )(any())
-      }
     }
 
     "throw exceptions" when {
@@ -281,25 +265,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
       "display page and get details fails for partnership" in {
         mockRegistrationFindFailure()
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[Exception](status(result))
-      }
-
-      "display page and update cache fail" in {
-        val registrationRequest: Registration =
-          createRegistrationWithGroupMember(groupMember.copy(customerIdentification1 = ""))
-        mockRegistrationFind(registrationRequest)
-
-        val sanitisedReg = registrationRequest.copy(groupDetail =
-          registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
-        );
-
-        when(mockRegistrationFilterService.removePartialGroupMembers(any()))
-          .thenReturn(sanitisedReg)
-
-        mockRegistrationException()
 
         val result = controller.displayPage()(getRequest())
 
