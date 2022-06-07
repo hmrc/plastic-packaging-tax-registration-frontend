@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.15
+// @version      15.16
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -215,17 +215,20 @@ const startPage = () => {
 const registrationPage = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/task-list')) {
 
-        let LIABILITY_DETAILS_STATUS = 'li:nth-child(1) .govuk-tag';
-        let LIABILITY_DETAILS_LINK = 'li:nth-child(1) .govuk-link';
+        let LIABILITY_DETAILS_STATUS = 'li.app-task:nth-child(1) .govuk-tag';
+        let LIABILITY_DETAILS_LINK = 'li.app-task:nth-child(1) .govuk-link';
 
-        let BUSINESS_DETAILS_STATUS = 'li:nth-child(2) .govuk-tag';
-        let BUSINESS_DETAILS_LINK = 'li:nth-child(2) .govuk-link';
+        let BUSINESS_DETAILS_STATUS = 'li.app-task:nth-child(2) .govuk-tag';
+        let BUSINESS_DETAILS_LINK = 'li.app-task:nth-child(2) .govuk-link';
 
-        let PRIMARY_CONTACT_DETAILS_STATUS = 'li:nth-child(3) .govuk-tag';
-        let PRIMARY_CONTACT_DETAILS_LINK = 'li:nth-child(3) .govuk-link';
+        let PRIMARY_CONTACT_DETAILS_STATUS = 'li.app-task:nth-child(3) .govuk-tag';
+        let PRIMARY_CONTACT_DETAILS_LINK = 'li.app-task:nth-child(3) .govuk-link';
 
-        let REVIEW_STATUS = 'li:nth-child(4) .govuk-tag';
-        let REVIEW_LINK = 'li:nth-child(4) .govuk-link';
+        let REVIEW_STATUS = 'li.app-task:nth-child(4) .govuk-tag';
+        let REVIEW_LINK = 'li.app-task:nth-child(4) .govuk-link';
+
+        let REVIEW_GROUP_STATUS = 'li.app-task:nth-child(5) .govuk-tag';
+        let REVIEW_GROUP_LINK = 'li.app-task:nth-child(5) .govuk-link';
 
         if (document.querySelector(LIABILITY_DETAILS_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
             document.querySelector(LIABILITY_DETAILS_LINK).click()
@@ -235,6 +238,8 @@ const registrationPage = () => {
             document.querySelector(PRIMARY_CONTACT_DETAILS_LINK).click()
         } else if (document.querySelector(REVIEW_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
             document.querySelector(REVIEW_LINK).click()
+        } else if (document.querySelector(REVIEW_GROUP_STATUS).textContent.trim().toUpperCase() !== 'COMPLETED') {
+            document.querySelector(REVIEW_GROUP_LINK).click()
         }
     }
 }
@@ -264,7 +269,7 @@ const organisationType = () => {
 }
 
 const partnership = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/partnership$')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/partnership-type$')) {
         document.getElementById('answer').checked = true
         document.getElementsByClassName('govuk-button')[0].click()
     }
