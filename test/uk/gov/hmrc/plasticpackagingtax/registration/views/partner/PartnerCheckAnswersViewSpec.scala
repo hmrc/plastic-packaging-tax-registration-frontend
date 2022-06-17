@@ -89,7 +89,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
           None: Option[Call]
          ),
          (messages("partner.check.utr"),
-          limitedCompanyPartner.incorporationDetails.get.ctutr,
+          limitedCompanyPartner.incorporationDetails.get.ctutr.get,
           None: Option[Call]
          ),
          (messages("partner.check.contact.name"),

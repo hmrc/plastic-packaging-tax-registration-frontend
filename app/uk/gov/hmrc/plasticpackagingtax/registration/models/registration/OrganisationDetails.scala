@@ -18,21 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration
 
 import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  OVERSEAS_COMPANY_UK_BRANCH,
-  OrgType,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  UK_COMPANY
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{
-  LIMITED_LIABILITY_PARTNERSHIP,
-  PartnerTypeEnum,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, PartnerTypeEnum, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.{SUBSCRIBED, Status}
 import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
@@ -92,7 +80,8 @@ case class OrganisationDetails(
     registrationStatus.contains("REGISTRATION_NOT_CALLED") && verificationStatus.contains("FAIL")
 
   lazy val businessName: Option[String] = organisationType match {
-    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+    case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) |
+         Some(OVERSEAS_COMPANY_NO_UK_BRANCH) | Some(CHARITABLE_INCORPORATED_ORGANISATION) | Some(TRUST) =>
       incorporationDetails.map(_.companyName)
     case Some(SOLE_TRADER) => soleTraderDetails.map(st => s"${st.firstName} ${st.lastName}")
     case Some(PARTNERSHIP) =>
@@ -102,7 +91,8 @@ case class OrganisationDetails(
 
   def withBusinessRegisteredAddress(addressConversionUtils: AddressConversionUtils): OrganisationDetails = {
     val businessAddress = organisationType match {
-      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) =>
+      case Some(UK_COMPANY) | Some(REGISTERED_SOCIETY) | Some(OVERSEAS_COMPANY_UK_BRANCH) |
+           Some(OVERSEAS_COMPANY_NO_UK_BRANCH) | Some(CHARITABLE_INCORPORATED_ORGANISATION) | Some(TRUST) =>
         incorporationDetails.map(incorporationDetails => addressConversionUtils.toPptAddress(incorporationDetails.companyAddress))
       case _ => None
     }

@@ -137,7 +137,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected val incorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyNumber, testCompanyName, testUtr, testCompanyAddress, Some(registrationDetails))
+    IncorporationDetails(testCompanyNumber, testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails))
 
   protected val grsRegistrationDetails: GrsRegistration =
     GrsRegistration(registrationStatus = "REGISTERED", registeredBusinessPartnerId = Some(safeNumber))
@@ -152,10 +152,10 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     )
 
   protected val unregisteredIncorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyNumber, testCompanyName, testUtr, testCompanyAddress, Some(unregisteredRegistrationDetails))
+    IncorporationDetails(testCompanyNumber, testCompanyName, Some(testUtr), testCompanyAddress, Some(unregisteredRegistrationDetails))
 
   protected val verificationFailedIncorporationDetails: IncorporationDetails =
-    IncorporationDetails(testCompanyNumber, testCompanyName, testUtr, testCompanyAddress, Some(verificationFailedRegistrationDetails))
+    IncorporationDetails(testCompanyNumber, testCompanyName, Some(testUtr), testCompanyAddress, Some(verificationFailedRegistrationDetails))
 
   protected val verificationFailedSoleTraderDetails: SoleTraderDetails =
     SoleTraderDetails(
@@ -500,7 +500,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
         IncorporationDetails(
           companyNumber = "123456",
           companyName = "Plastic Packaging Ltd",
-          ctutr = "123456ABC",
+          ctutr = Some("123456ABC"),
           companyAddress = IncorporationAddressDetails(),
           registration = Some(
             RegistrationDetails(

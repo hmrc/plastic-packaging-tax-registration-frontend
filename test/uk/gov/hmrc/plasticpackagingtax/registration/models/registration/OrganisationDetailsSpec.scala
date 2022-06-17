@@ -213,7 +213,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
         IncorporationDetails(
           companyNumber = "123",
           companyName = "Test",
-          ctutr = "ABC",
+          ctutr = Some("ABC"),
           companyAddress = testCompanyAddress,
           registration = Some(createRegistrationDetails(Some("PASS"), "REGISTERED", Some("XP001")))
         )
@@ -228,7 +228,7 @@ class OrganisationDetailsSpec @Inject() (acUtils: AddressConversionUtils)
         IncorporationDetails(
           companyNumber = "123",
           companyName = "Test",
-          ctutr = "ABC",
+          ctutr = Some("ABC"),
           companyAddress = testCompanyAddress,
           registration = Some(createRegistrationDetails(Some("FAIL"), "REGISTRATION_NOT_CALLED", None))
         )
