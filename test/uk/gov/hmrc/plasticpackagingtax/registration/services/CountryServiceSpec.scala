@@ -34,11 +34,13 @@ class CountryServiceSpec extends AnyWordSpecLike {
       countryService.getName("GB") mustBe "United Kingdom"
     }
 
-    "throw an exception" when {
-      "attempt to lookup unknown country code" in {
-        intercept[Exception] {
+    "throw an illegal state exception" when {
+      "country cannot be found for code provided" in {
+        val ex = intercept[IllegalStateException] {
           countryService.getName("XX")
         }
+
+        ex.getMessage mustBe "Could not find a country name for key of XX"
       }
     }
   }

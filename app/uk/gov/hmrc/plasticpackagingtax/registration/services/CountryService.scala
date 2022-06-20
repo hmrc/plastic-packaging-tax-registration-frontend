@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory
 import play.api.libs.json.{Json, OFormat}
 
 import scala.collection.immutable.ListMap
+import scala.util.Try
 
 case class FcoCountry(name: String)
 case class Synonyms(synonyms: List[String])
@@ -40,7 +41,10 @@ class CountryService {
   val countries = parseCountriesResource()
   val synonyms = parseSynonymsResource()
 
-  def getName(code: String): String = countries(code)
+  def getName(code: String): String = {
+    Try(countries(code))
+      .getOrElse(throw new IllegalStateException(s"Could not find a country name for key of $code"))
+  }
 
   def getAll(): Map[String, String] = countries
   def getAllSynonyms(): Map[String, List[String]] = synonyms
