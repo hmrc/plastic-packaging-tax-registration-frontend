@@ -29,8 +29,10 @@ case class GroupDetail(
 ) {
 
   def status: TaskStatus =
-    if (members.isEmpty)
+    if(members.isEmpty)
       TaskStatus.NotStarted
+    else if(members.exists(member => !member.isValid))
+      TaskStatus.InProgress
     else TaskStatus.Completed
 
   def businessName(memberId: String): Option[String] = findGroupMember(Some(memberId), None).map(_.businessName)
