@@ -115,7 +115,6 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             val expectedOrganisationDetails =
               Seq(registration.organisationDetails.businessName.get,
                   journeyRequestWithEnrolledUser.pptReference.get,
-                  viewUtils.displayOldDate(registration.liabilityDetails.startDate).get,
                   viewUtils.displayLocalDate(registration.dateOfRegistration).get,
                   registration.organisationDetails.businessRegisteredAddress.map(
                     bra => bra.addressLine1
