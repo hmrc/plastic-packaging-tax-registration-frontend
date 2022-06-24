@@ -83,9 +83,10 @@ class ExceededThresholdWeightController @Inject() (
   }
 
   private def nextPage(alreadyExceeded: Boolean): Call =
-    if (alreadyExceeded)
-      routes.ExceededThresholdWeightDateController.displayPage()
-    else
-      routes.ExpectToExceedThresholdWeightController.displayPage()
+    routes.ExpectToExceedThresholdWeightController.displayPage()
+    //if (alreadyExceeded)
+    //  routes.ExceededThresholdWeightDateController.displayPage()
+    //else
+    //  routes.ExpectToExceedThresholdWeightController.displayPage() //thisis the yes no page for Forward look
 
 }
