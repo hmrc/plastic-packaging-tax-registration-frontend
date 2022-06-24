@@ -117,6 +117,30 @@ class TaxStartDateServiceSpec extends PlaySpec {
     }
   }
 
+  "Answering yes to only the backwards question" should {
+    "mean the user is liable from the 1st day of the following month" ignore {
+    }
+  }
+
+  "Answering yes to only the forwards question" should {
+    "mean the user is liable from the date they gave" ignore {
+    }
+  }
+
+  "Answering yes to both questions" when {
+    "the backwards calculation gives the earliest date" should {
+      "mean the user is liable from the first day of the month following the date they gave to the backward question" ignore {}
+    }
+    
+    "the forwards calculation gives the earliest date" should {
+      "mean the user is liable from the date they gave to the forward question" ignore {}
+    }
+
+    "the two calculation give the same date" should {
+      "make no difference" ignore {}
+    }
+  }
+
   "return 1st day of the month following the date capture" when {
     "plastic package limit are exceeded" in {
       val liabilityDetailsForBreachedThreshold = LiabilityDetails(
