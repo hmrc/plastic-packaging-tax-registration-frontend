@@ -59,14 +59,14 @@ class TaxStartDateServiceSpec extends PlaySpec {
         val missingBackwardsYesNo = completedLiabilityDetails.copy(exceededThresholdWeight = None)
         the [IllegalStateException] thrownBy {
           taxStartDateService.taxStartDate(missingBackwardsYesNo) 
-        } must have message "Missing answer for 'exceededThresholdWeight'"
+        } must have message "Missing field 'exceededThresholdWeight'"
       }
 
       "the forwards yes-no answer is missing" in {
         val missingForwardsYesNo = completedLiabilityDetails.copy(expectToExceedThresholdWeight = None)
         the [IllegalStateException] thrownBy {
           taxStartDateService.taxStartDate(missingForwardsYesNo)
-        } must have message "Missing answer for 'expectToExceedThresholdWeight'"
+        } must have message "Missing field 'expectToExceedThresholdWeight'"
       }
 
 

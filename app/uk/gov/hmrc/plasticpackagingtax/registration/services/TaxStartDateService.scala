@@ -19,8 +19,17 @@ package uk.gov.hmrc.plasticpackagingtax.registration.services
 import com.google.inject.ImplementedBy
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.services.MustHaveFieldExtensions.ExtendedObject
 
 import java.time.LocalDate
+import scala.language.implicitConversions
+
+object MustHaveFieldExtensions {
+  implicit class ExtendedObject[O] (o: O) {
+    def mustHave[A](f: O => Option[A])(fieldName: String): O =
+      if (f(o).isEmpty) throw new IllegalStateException(s"Missing field '$fieldName'") else o 
+  }
+}
 
 class TaxStartDateServiceImpl extends TaxStartDateService {
 
@@ -32,27 +41,30 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
   //      details.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
   //    else Some(LocalDate.of(1996, 3, 27))
 
-
   def taxStartDate(liabilityDetails: LiabilityDetails): Option[LocalDate] = {
+  
+    liabilityDetails
+      .mustHave(_.exceededThresholdWeight)("exceededThresholdWeight")
+      .mustHave(_.expectToExceedThresholdWeight)("expectToExceedThresholdWeight")
     
-    if (liabilityDetails.exceededThresholdWeight.isEmpty)
-      throw new IllegalStateException("Missing answer for 'exceededThresholdWeight'")
-    
-    if (liabilityDetails.dateExceededThresholdWeight.isEmpty && liabilityDetails.exceededThresholdWeight.get)
-      throw new IllegalStateException("Missing answer for 'dateExceededThresholdWeight'")
-
-    if (liabilityDetails.expectToExceedThresholdWeight.isEmpty)
-      throw new IllegalStateException("Missing answer for 'expectToExceedThresholdWeight'")
+    for{
+      backwardsIsYes: Boolean <- liabilityDetails.exceededThresholdWeight
       
-    if (liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.isEmpty && liabilityDetails.expectToExceedThresholdWeight.get)
-      throw new IllegalStateException("Missing answer for 'dateRealisedExpectedToExceedThresholdWeight'")
+    } yield {
 
-    if (liabilityDetails.exceededThresholdWeight.contains(true))
-      liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
-    else if (liabilityDetails.expectToExceedThresholdWeight.contains(true))
-      liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
-    else 
-      throw new IllegalStateException("huh?") 
+      if (liabilityDetails.dateExceededThresholdWeight.isEmpty && backwardsIsYes)
+        throw new IllegalStateException("Missing answer for 'dateExceededThresholdWeight'")
+
+      if (liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.isEmpty && liabilityDetails.expectToExceedThresholdWeight.get)
+        throw new IllegalStateException("Missing answer for 'dateRealisedExpectedToExceedThresholdWeight'")
+
+      if (backwardsIsYes)
+        liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o)).get
+      else if (liabilityDetails.expectToExceedThresholdWeight.contains(true))
+        liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date).get
+      else
+        throw new IllegalStateException("huh?")
+    }
   }
 
   private def calculateExceedStartDate(date: Date): LocalDate =
