@@ -32,4 +32,14 @@ trait Mappings extends Formatters with Constraints {
   ): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
 
+  protected def optLocalDate(
+                           emptyDateKey: String,
+                           singleRequiredKey: String,
+                           twoRequiredKey: String,
+                           invalidKey: String,
+                           args: Seq[String] = Seq.empty
+                         ): FieldMapping[LocalDate] =
+    of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
+
+
 }

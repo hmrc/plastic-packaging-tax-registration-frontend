@@ -18,19 +18,42 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
+import play.api.i18n.Messages
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues, Date}
 
-object ExceededThresholdWeight extends CommonFormValidators with CommonFormValues {
+import java.time.LocalDate
+
+import java.time.Clock
+import javax.inject.Inject
+
+//potential refactor: yesNo isnt actually needed here, we can just do date.isDefined, it holds the same meaning
+case class ExceededThresholdWeightAnswer(yesNo: Boolean, date: LocalDate)
+
+class ExceededThresholdWeight @Inject() (appConfig: AppConfig, clock: Clock) extends CommonFormValidators with CommonFormValues with Mappings {
 
   val emptyError = "liability.exceededThresholdWeight.question.empty.error"
 
-  def form(): Form[Boolean] =
+  val dateFormattingError   = "liability.exceededThresholdWeightDate.formatting.error"
+  val dateOutOfRangeError   = "liability.exceededThresholdWeightDate.outOfRange.error"
+  val dateEmptyError        = "liability.exceededThresholdWeightDate.empty.error"
+  val twoRequiredKey        = "liability.exceededThresholdWeightDate.two.required.fields"
+  val requiredKey           = "liability.exceededThresholdWeightDate.one.field"
+  val isBeforeLiveDateError = "liability.exceededThresholdWeightDate.before.goLiveDate.error"
+
+
+  def form()(implicit messages: Messages): Form[ExceededThresholdWeightAnswer] =
     Form(
       mapping(
         "answer" -> nonEmptyString(emptyError)
           .verifying(emptyError, contains(Seq(YES, NO)))
-          .transform[Boolean](_ == YES, _.toString)
-      )(identity)(Some.apply)
+          .transform[Boolean](_ == YES, _.toString),
+          "exceeded-threshold-weight-date" -> localDate(dateEmptyError, requiredKey, twoRequiredKey, dateFormattingError)
+            .verifying(
+            isInDateRange(dateOutOfRangeError, isBeforeLiveDateError)(appConfig, clock, messages)
+          )
+      )(ExceededThresholdWeightAnswer.apply)(ExceededThresholdWeightAnswer.unapply)
     )
 
 }
