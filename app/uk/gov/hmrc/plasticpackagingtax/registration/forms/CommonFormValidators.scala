@@ -88,11 +88,12 @@ trait CommonFormValidators {
       (input: String) =>
         isNotExceedingMaxLength(input, length) && isValidPostcode(input.toUpperCase)
 
-  def nonEmptyString(errorKey: String): Mapping[String] =
+  def nonEmptyString(errorKey: String): Mapping[String] = {
     optional(text)
       .verifying(errorKey, _.nonEmpty)
       .transform[String](_.get, Some.apply)
       .verifying(errorKey, _.trim.nonEmpty)
+  }
 
   private def isValidAnyName(pattern: Pattern, len: Int): String => Boolean =
     (name: String) => (name.size > len || name.isEmpty) || isMatchingPattern(name, pattern)
