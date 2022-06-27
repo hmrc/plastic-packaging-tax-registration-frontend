@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
-import com.google.inject.ImplementedBy
+import play.api.mvc.Result
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.services.MustHaveFieldExtension.ExtendedObject
@@ -42,13 +42,19 @@ object MustHaveFieldExtension {
 }
 
 
-case class TaxStartDate private(private val isLiable: Boolean, private val _oldDate: Option[LocalDate] = None) {
-  def oldDate: Option[LocalDate] = _oldDate
+case class TaxStartDate private(private val maybeLiableFrom: Option[LocalDate]) {
+  def act(notLiableAction: => Result, isLiableAction: LocalDate => Result): Result =
+    maybeLiableFrom match {
+      case None => notLiableAction
+      case Some(date) => isLiableAction(date)
+    }
+
+  def oldDate: Option[LocalDate] = maybeLiableFrom
 }
 
 object TaxStartDate {
-  def notLiable: TaxStartDate = TaxStartDate(isLiable = false, None)
-  def liableFrom(date: LocalDate): TaxStartDate = TaxStartDate(isLiable = true, Some(date))
+  def notLiable: TaxStartDate = TaxStartDate(None)
+  def liableFrom(date: LocalDate): TaxStartDate = TaxStartDate(Some(date))
 }
 
 

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
@@ -43,19 +43,12 @@ class TaxStartDateController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage: Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    (authenticate andThen journeyAction) { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate2(request.registration.liabilityDetails)
-      taxStartDate.oldDate match {
-        case Some(date) =>
-          updateRegistration(date).map { _ =>
-            Ok(
-              page(date,
-                   request.registration.liabilityDetails.exceededThresholdWeight.getOrElse(false)
-              )
-            )
-          }
-        case _ => throw new IllegalStateException("Problem calculating the Tax Start Date")
-      }
+      taxStartDate.act(
+        notLiableAction = Redirect(routes.NotLiableController.displayPage()),
+        isLiableAction = date => Ok(page(date, false))
+      )
     }
 
   def submit(): Action[AnyContent] =
@@ -64,6 +57,7 @@ class TaxStartDateController @Inject() (
     }
 
   private def updateRegistration(
+    // TODO note we're not updating registration cache here, plan is to do it on submit from liability CYA page
     startDate: LocalDate
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>

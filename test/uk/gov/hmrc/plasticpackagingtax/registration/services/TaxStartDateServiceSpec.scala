@@ -16,7 +16,12 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
+import org.mockito.Mockito.{never, reset, times, verify}
+import org.mockito.ArgumentMatchers._
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
+import play.api.mvc.Result
 import uk.gov.hmrc.plasticpackagingtax.registration.forms
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
@@ -24,14 +29,37 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Liabilit
 
 import java.time.LocalDate
 
-class YesNoDate private(private val maybeDate: Option[LocalDate]) {
-  def fold[B](ifEmpty: => B)(f: LocalDate => B): B = maybeDate.fold(ifEmpty)(f)
+
+class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
+  // TODO move to own files
+
+  trait PossibleActions {
+    def notLiableAction: Result
+    def isLiableAction(date: LocalDate): Result 
+  }
+  
+  private val actions = mock[PossibleActions]
+  val aDate: LocalDate = LocalDate.ofEpochDay(0)
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(actions)
+  }
+
+  "Act should follow the not liable action" in {
+    TaxStartDate.notLiable.act(actions.notLiableAction, actions.isLiableAction)
+    verify(actions, times(1)).notLiableAction
+    verify(actions, never).isLiableAction(any())
+  }
+
+  "Act should follow the is liable action" in {
+    TaxStartDate.liableFrom(aDate).act(actions.notLiableAction, actions.isLiableAction)
+    verify(actions, never).notLiableAction
+    verify(actions, times(1)).isLiableAction(any())
+  }
+
 }
 
-object YesNoDate {
-  def yesAndDate(date: LocalDate) : YesNoDate = new YesNoDate(Some(date))
-  def no() : YesNoDate = new YesNoDate(None)
-}
 
 class TaxStartDateServiceSpec extends PlaySpec {
 
@@ -117,7 +145,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
       val bothAnswersAreNo = LiabilityDetails(
         exceededThresholdWeight = Some(false), 
         expectToExceedThresholdWeight = Some(false)) 
-      taxStartDateService.calculateTaxStartDate2(bothAnswersAreNo) mustBe TaxStartDate(isLiable = false)
+      taxStartDateService.calculateTaxStartDate2(bothAnswersAreNo) mustBe TaxStartDate.notLiable
     }
   }
 
@@ -130,7 +158,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         expectToExceedThresholdWeight = Some(false)
       )
       val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-      taxStartDateService.calculateTaxStartDate2(onlyBackwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+      taxStartDateService.calculateTaxStartDate2(onlyBackwardsIsYes) mustBe TaxStartDate.liableFrom(firstDayOfNextMonth)
     }
   }
 
@@ -142,7 +170,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         exceededThresholdWeight = Some(false),
       )
       val sameDateAsUserEntered: LocalDate = LocalDate.of(2022, 4, 17)
-      taxStartDateService.calculateTaxStartDate2(onlyForwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(sameDateAsUserEntered))
+      taxStartDateService.calculateTaxStartDate2(onlyForwardsIsYes) mustBe TaxStartDate.liableFrom(sameDateAsUserEntered)
     }
   }
 
@@ -156,7 +184,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 2))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.calculateTaxStartDate2(backwardsStartDateIsEarlier) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+        taxStartDateService.calculateTaxStartDate2(backwardsStartDateIsEarlier) mustBe TaxStartDate.liableFrom(firstDayOfNextMonth)
       }
     }
     
@@ -169,7 +197,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 17))),
         )
         val sameDateAsUserEntered: LocalDate = LocalDate.of(2022, 4, 17)
-        taxStartDateService.calculateTaxStartDate2(forwardsStartDateIsEarlier) mustBe TaxStartDate(isLiable = true, Some(sameDateAsUserEntered))
+        taxStartDateService.calculateTaxStartDate2(forwardsStartDateIsEarlier) mustBe TaxStartDate.liableFrom(sameDateAsUserEntered)
       }
     }
 
@@ -182,7 +210,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 1))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.calculateTaxStartDate2(bothStartDatesAreTheSame) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+        taxStartDateService.calculateTaxStartDate2(bothStartDatesAreTheSame) mustBe TaxStartDate.liableFrom(firstDayOfNextMonth)
       }
     }
   }
