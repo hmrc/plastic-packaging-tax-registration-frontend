@@ -43,7 +43,7 @@ object GrsIncorporationDetails {
 case class IncorporationDetails(
   companyNumber: String,
   companyName: String,
-  ctutr: String,
+  ctutr: Option[String],
   companyAddress: IncorporationAddressDetails,
   override val registration: Option[RegistrationDetails]
 ) extends HasRegistrationDetails {
@@ -60,7 +60,7 @@ object IncorporationDetails {
   def apply(grsIncorporationDetails: GrsIncorporationDetails): IncorporationDetails =
     IncorporationDetails(grsIncorporationDetails.companyProfile.companyNumber,
                          grsIncorporationDetails.companyProfile.companyName,
-                         grsIncorporationDetails.ctutr,
+                         Some(grsIncorporationDetails.ctutr),
                          grsIncorporationDetails.companyProfile.unsanitisedCHROAddress,
                          Some(
                            RegistrationDetails(
