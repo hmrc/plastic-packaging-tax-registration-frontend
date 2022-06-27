@@ -52,7 +52,7 @@ object TaxStartDate {
 }
 
 
-class TaxStartDateServiceImpl extends TaxStartDateService {
+class TaxStartDateService {
 
   //todo actually calculate
   def calculateTaxStartDate(details: LiabilityDetails): Option[LocalDate] = Some(LocalDate.of(1996, 3, 27))
@@ -90,7 +90,3 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
 
 }
 
-@ImplementedBy(classOf[TaxStartDateServiceImpl])
-trait TaxStartDateService {
-  def calculateTaxStartDate(details: LiabilityDetails): Option[LocalDate]
-}

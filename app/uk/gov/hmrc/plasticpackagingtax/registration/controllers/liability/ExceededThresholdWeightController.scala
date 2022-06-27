@@ -21,11 +21,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -61,9 +63,9 @@ class ExceededThresholdWeightController @Inject() (
     update { registration =>
       val updatedLiabilityDetails = {
         if (alreadyExceeded)
-          registration.liabilityDetails.copy(exceededThresholdWeight = Some(true),
-                                             expectToExceedThresholdWeight = None,
-                                             dateRealisedExpectedToExceedThresholdWeight = None
+          registration.liabilityDetails.copy(
+            exceededThresholdWeight = Some(true),
+            dateExceededThresholdWeight = Some(Date(LocalDate.of(2022, 4, 14))) // TODO hard coded for now
           )
         else
           registration.liabilityDetails.copy(exceededThresholdWeight = Some(false))

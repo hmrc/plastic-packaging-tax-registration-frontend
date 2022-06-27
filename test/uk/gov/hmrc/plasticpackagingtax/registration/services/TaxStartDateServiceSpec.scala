@@ -36,7 +36,7 @@ object YesNoDate {
 class TaxStartDateServiceSpec extends PlaySpec {
 
   private val dateExceededThresholdWeight = LocalDate.of(2022, 4, 30)
-  private val taxStartDateService = new TaxStartDateServiceImpl
+  private val taxStartDateService = new TaxStartDateService
 
   private val completedLiabilityDetails = LiabilityDetails(
     exceededThresholdWeight = Some(true), 

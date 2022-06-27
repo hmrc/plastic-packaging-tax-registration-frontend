@@ -20,12 +20,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -69,10 +71,19 @@ class ExpectToExceedThresholdWeightController @Inject() (
     expectToExceedThresholdWeight: Boolean
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedLiableDetails =
-        registration.liabilityDetails.copy(expectToExceedThresholdWeight =
-          Some(expectToExceedThresholdWeight)
-        )
+      val updatedLiableDetails = {
+        if (expectToExceedThresholdWeight) {
+          registration.liabilityDetails.copy(
+            expectToExceedThresholdWeight = Some(true),
+            dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 7))) // TODO hard coded for now
+          )
+        }
+        else {
+          registration.liabilityDetails.copy(
+            expectToExceedThresholdWeight = Some(false),
+          )
+        }
+      }
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 

@@ -44,7 +44,8 @@ class TaxStartDateController @Inject() (
 
   def displayPage: Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails) match {
+      val taxStartDate = taxStarDateService.calculateTaxStartDate2(request.registration.liabilityDetails)
+      taxStartDate.oldDate match {
         case Some(date) =>
           updateRegistration(date).map { _ =>
             Ok(
