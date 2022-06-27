@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
@@ -30,6 +31,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Liabilit
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+@Ignore
 class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
   val mockPage: expect_to_exceed_threshold_weight_page =
