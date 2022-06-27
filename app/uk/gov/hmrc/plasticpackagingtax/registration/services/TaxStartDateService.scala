@@ -58,14 +58,20 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
       if (backwardsIsYes) {
         val backwardsDate = liabilityDetails.mustHave(_.dateExceededThresholdWeight, "dateExceededThresholdWeight")
       }
-      val a = liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
+      val backwardsStartDate = liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
 
       if (forwardsIsYes) {
         val forwardsDate = liabilityDetails.mustHave(_.dateRealisedExpectedToExceedThresholdWeight, "dateRealisedExpectedToExceedThresholdWeight")
-        TaxStartDate(isLiable = true, oldDate = liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date))
       }
-      else TaxStartDate(isLiable = true, oldDate = a)
-      //      throw new IllegalStateException("huh?")
+      val forwardsStartDate = liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
+
+      val startDate: LocalDate = (backwardsStartDate, forwardsStartDate) match {
+        case (Some(backwardsStartDate), None) => backwardsStartDate
+        case (None, Some(forwardsStartDate)) => forwardsStartDate
+        case (Some(backwardsStartDate), Some(forwardsStartDate)) => backwardsStartDate
+      } 
+      
+      TaxStartDate(isLiable = true, oldDate = Some(startDate))
     }
   }
 
