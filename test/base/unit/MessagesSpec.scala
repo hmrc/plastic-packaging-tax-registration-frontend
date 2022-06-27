@@ -28,7 +28,7 @@ import play.api.test.Injecting
 abstract class MessagesSpec extends AnyWordSpec with GuiceOneAppPerSuite with Injecting {
 
   override def fakeApplication(): Application = {
-    SharedMetricRegistries.clear() //todo turn jvm metrics off for local.
+    SharedMetricRegistries.clear()
     new GuiceApplicationBuilder().build()
   }
 

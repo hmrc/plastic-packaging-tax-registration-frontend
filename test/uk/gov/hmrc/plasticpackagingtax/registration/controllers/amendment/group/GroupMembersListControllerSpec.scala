@@ -80,7 +80,7 @@ class GroupMembersListControllerSpec
 
         redirectLocation(result) shouldBe Some(
           group.routes.AddGroupMemberOrganisationDetailsTypeController.displayPage().url
-        ) //todo update this route, when merged with other ticket.
+        )
       }
 
       "submitted no" in {
