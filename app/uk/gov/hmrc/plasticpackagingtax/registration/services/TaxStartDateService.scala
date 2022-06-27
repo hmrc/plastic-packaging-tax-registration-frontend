@@ -40,7 +40,16 @@ object MustHaveFieldExtension {
   }
 }
 
-case class TaxStartDate (isLiable: Boolean, oldDate: Option[LocalDate] = None)
+case class TaxStartDate private(private val isLiable: Boolean, private val _oldDate: Option[LocalDate] = None)
+{
+  def oldDate: Option[LocalDate] = _oldDate
+}
+
+object TaxStartDate {
+  def notLiable: TaxStartDate = TaxStartDate(isLiable = false, None)
+  def liableFrom(date: LocalDate): TaxStartDate = TaxStartDate(isLiable = true, Some(date))
+}
+
 
 class TaxStartDateServiceImpl extends TaxStartDateService {
 
@@ -75,7 +84,7 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
         case (Some(backwardsStartDate), Some(forwardsStartDate)) => earliestOf(backwardsStartDate, forwardsStartDate)
       } 
       
-      TaxStartDate(isLiable = true, oldDate = Some(taxStartDate))
+      TaxStartDate.liableFrom(taxStartDate)
     }
   }
 
