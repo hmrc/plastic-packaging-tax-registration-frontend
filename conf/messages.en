@@ -456,8 +456,8 @@ liability.expectToExceedThreshold.date.hint = For example, 15 6 2022
 liability.expectToExceedThreshold.date.none = Enter the date you realised you would meet the threshold
 liability.expectToExceedThreshold.date.invalid = Date you realised you would meet the threshold must be a real date
 liability.expectToExceedThreshold.date.future = Date you realised you would meet the threshold must be today or in the past
-liability.expectToExceedThreshold.two.required.fields = Date you met the threshold must include the {0}
-liability.expectToExceedThreshold.one.field = Date you met the threshold must include the {0}
+liability.expectToExceedThreshold.two.required.fields = [GET CONTENT] must include the {0}
+liability.expectToExceedThreshold.one.field = [GET CONTENT] must include the {0}
 
 liability.exceededThresholdWeightDate.sectionHeader = Liability details
 liability.exceededThresholdWeightDate.title = When did your organisation or group meet the 10,000kg threshold?
