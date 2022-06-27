@@ -44,7 +44,7 @@ class ExceededThresholdWeightController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       (request.registration.liabilityDetails.exceededThresholdWeight, request.registration.liabilityDetails.dateExceededThresholdWeight)  match {
-        case (Some(yesNo), Some(date)) => Ok(page(exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.date))))
+        case (Some(yesNo), date) => Ok(page(exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date)))))
         case _          => Ok(page(exceededThresholdWeight.form()))
       }
     }
@@ -64,7 +64,7 @@ class ExceededThresholdWeightController @Inject() (
       val updatedLiabilityDetails = {
         registration.liabilityDetails.copy(
           exceededThresholdWeight = Some(alreadyExceeded.yesNo),
-          dateExceededThresholdWeight = Some(Date(alreadyExceeded.date))
+          dateExceededThresholdWeight = alreadyExceeded.date.map(x => Date.apply(x))
         )
       }
       registration.copy(liabilityDetails = updatedLiabilityDetails)
