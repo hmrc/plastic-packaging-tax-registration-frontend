@@ -50,8 +50,7 @@ class TaxStartDateController @Inject() (
           updateRegistration(date).map { _ =>
             Ok(
               page(date,
-                   request.registration.liabilityDetails.exceededThresholdWeight.getOrElse(false),
-                   backLink()
+                   request.registration.liabilityDetails.exceededThresholdWeight.getOrElse(false)
               )
             )
           }
@@ -79,10 +78,5 @@ class TaxStartDateController @Inject() (
         )
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
-
-  private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
-    if (request.registration.liabilityDetails.exceededThresholdWeight.contains(true))
-      routes.ExceededThresholdWeightDateController.displayPage()
-    else routes.ExpectToExceedThresholdWeightDateController.displayPage()
 
 }

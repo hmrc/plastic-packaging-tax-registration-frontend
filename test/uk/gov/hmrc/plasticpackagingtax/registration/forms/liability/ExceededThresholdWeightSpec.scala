@@ -16,17 +16,39 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
+import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
+import play.api.i18n.Messages
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+
+import java.time.{Clock, Instant, LocalDate}
+import java.util.TimeZone
 
 class ExceededThresholdWeightSpec extends PlaySpec {
-  val sut: Form[Boolean] = ExceededThresholdWeight.form()
 
+  val mockMessages: Messages = mock[Messages]
+  when(mockMessages.apply(anyString(), any())).thenReturn("some message")
+
+  private val mockAppConfig = mock[AppConfig]
+  private val fakeClock =
+    Clock.fixed(Instant.parse("2022-05-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
+
+  val sut: Form[ExceededThresholdWeightAnswer] = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
+
+  // todo fix all test
   "The form" must {
 
     "bind correctly" when {
       "yes is provided" in {
-        sut.bind(Map("answer" -> "yes")).value mustBe Some(true)
+        val t = sut.fill(
+          ExceededThresholdWeightAnswer(true, LocalDate.of(2022, 5, 15)))
+//          "answer" -> "yes",
+//          "exceeded-threshold-weight-date" -> LocalDate.of(2022, 5, 15).toString
+//        ))
+        t.value.map(_.yesNo) mustBe Some(true)
         sut.bind(Map("answer" -> "yes")).errors mustBe Nil
       }
 

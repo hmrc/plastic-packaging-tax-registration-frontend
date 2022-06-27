@@ -155,6 +155,9 @@ liability.expectToExceedThreshold.date.hint  = Er enghraifft, 15 6 2022.
 liability.expectToExceedThreshold.date.none  = Nodwch y dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy
 liability.expectToExceedThreshold.date.invalid  = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod yn ddyddiad go iawn
 liability.expectToExceedThreshold.date.future  = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod heddiw neu yn y gorffennol
+liability.expectToExceedThreshold.two.required.fields = [GET WELSH CONTENT] must include the {0}
+liability.expectToExceedThreshold.one.field = [GET WELSH CONTENT] must include the {0}
+
 
 liability.taxStartDate.title  = Eich dyddiad dechrau treth
 liability.taxStartDate.pageHeading  = Eich dyddiad dechrau treth

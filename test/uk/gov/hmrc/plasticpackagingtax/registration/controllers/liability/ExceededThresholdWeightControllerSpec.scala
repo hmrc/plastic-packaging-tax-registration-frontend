@@ -20,7 +20,6 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, clearInvocations, verify, when}
-import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status
@@ -30,13 +29,13 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import scala.concurrent.Future
 
-@Ignore
 class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
   val mockPage: exceeded_threshold_weight_page = mock[exceeded_threshold_weight_page]
@@ -44,11 +43,15 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
-  val controller = new ExceededThresholdWeightController(authenticate = mockAuthAction,
-                                                         mockJourneyAction,
-                                                         mockRegistrationConnector,
-                                                         mcc = mcc,
-                                                         page = mockPage
+  val form = mock[ExceededThresholdWeight]
+
+  val controller = new ExceededThresholdWeightController(
+    authenticate = mockAuthAction,
+    mockJourneyAction,
+    mockRegistrationConnector,
+    mcc = mcc,
+    form,
+    page = mockPage
   )
 
   "displayPage" when {
