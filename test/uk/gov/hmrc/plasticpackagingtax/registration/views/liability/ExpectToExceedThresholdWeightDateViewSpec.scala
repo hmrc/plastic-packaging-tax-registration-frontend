@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.liability
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
+import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers
 import play.api.data.{Form, FormError}
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -32,6 +33,7 @@ import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
 
 @ViewTest
+@Ignore
 class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
 
   private val mockAppConfig = mock[AppConfig]

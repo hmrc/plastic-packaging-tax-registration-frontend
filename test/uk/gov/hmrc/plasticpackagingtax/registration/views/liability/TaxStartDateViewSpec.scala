@@ -34,7 +34,6 @@ class TaxStartDateViewSpec extends UnitViewSpec {
 
   private val page = inject[tax_start_date_page]
 
-  private val backLink             = Call("GET", "backLink")
   private val startDate: LocalDate = LocalDate.of(2022, 4, 1)
 
   "liability tax start date page" should {
@@ -95,11 +94,11 @@ class TaxStartDateViewSpec extends UnitViewSpec {
   private def createView(startDate: LocalDate, hasExceededThresholdWeight: Boolean, backLink: Call)(
     implicit request: JourneyRequest[AnyContent]
   ): Document =
-    page(startDate, hasExceededThresholdWeight, backLink)(request, messages(request))
+    page(startDate, hasExceededThresholdWeight)(request, messages(request))
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(startDate, true, backLink)(journeyRequest, messages)
-    page.render(startDate, true, backLink, journeyRequest, messages)
+    page.f(startDate, true)(journeyRequest, messages)
+    page.render(startDate, true, journeyRequest, messages)
   }
 
 }

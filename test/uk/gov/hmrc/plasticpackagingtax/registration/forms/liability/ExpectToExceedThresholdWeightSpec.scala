@@ -19,37 +19,37 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 
-class ExpectToExceedThresholdWeightSpec extends PlaySpec {
-
-  val sut: Form[Boolean] = ExpectToExceedThresholdWeight.form()
-
-  "ExpectToExceedThresholdWeight" must {
-    "bind correctly" when {
-      "'yes' is provided" in {
-        sut.bind(Map("answer" -> "yes")).value mustBe Some(true)
-        sut.bind(Map("answer" -> "yes")).errors mustBe Nil
-      }
-
-      "'no' is provided" in {
-        sut.bind(Map("answer" -> "no")).value mustBe Some(false)
-        sut.bind(Map("answer" -> "no")).errors mustBe Nil
-      }
-    }
-
-    "error correctly" when {
-      "answer empty" in {
-        sut.bind(Map.empty[String, String]).value mustBe None
-        sut.bind(Map.empty[String, String]).errors.map(_.message) mustBe Seq(
-          ExpectToExceedThresholdWeight.emptyError
-        )
-      }
-
-      "answer is trash" in {
-        sut.bind(Map("answer" -> "trash")).value mustBe None
-        sut.bind(Map("answer" -> "trash")).errors.map(_.message) mustBe Seq(
-          ExpectToExceedThresholdWeight.emptyError
-        )
-      }
-    }
-  }
-}
+//class ExpectToExceedThresholdWeightSpec extends PlaySpec {
+//
+//  val sut: Form[Boolean] = ExpectToExceedThresholdWeight.form()
+//
+//  "ExpectToExceedThresholdWeight" must {
+//    "bind correctly" when {
+//      "'yes' is provided" in {
+//        sut.bind(Map("answer" -> "yes")).value mustBe Some(true)
+//        sut.bind(Map("answer" -> "yes")).errors mustBe Nil
+//      }
+//
+//      "'no' is provided" in {
+//        sut.bind(Map("answer" -> "no")).value mustBe Some(false)
+//        sut.bind(Map("answer" -> "no")).errors mustBe Nil
+//      }
+//    }
+//
+//    "error correctly" when {
+//      "answer empty" in {
+//        sut.bind(Map.empty[String, String]).value mustBe None
+//        sut.bind(Map.empty[String, String]).errors.map(_.message) mustBe Seq(
+//          ExpectToExceedThresholdWeight.emptyError
+//        )
+//      }
+//
+//      "answer is trash" in {
+//        sut.bind(Map("answer" -> "trash")).value mustBe None
+//        sut.bind(Map("answer" -> "trash")).errors.map(_.message) mustBe Seq(
+//          ExpectToExceedThresholdWeight.emptyError
+//        )
+//      }
+//    }
+//  }
+//}

@@ -27,93 +27,93 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExce
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
-@ViewTest
-class ExpectToExceedThrliability_expect_to_exceed_threshold_weight_pageesholdWeightViewSpec
-    extends UnitViewSpec with Matchers {
-
-  private val page = inject[expect_to_exceed_threshold_weight_page]
-
-  private def createView(form: Form[Boolean] = ExpectToExceedThresholdWeight.form()): Document =
-    page(form)(journeyRequest, messages)
-
-  "Liability section expect process more weight view" should {
-
-    val view = createView()
-
-    "contain timeout dialog function" in {
-
-      containTimeoutDialogFunction(view) mustBe true
-    }
-
-    "display sign out link" in {
-
-      displaySignOutLink(view)
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(
-        liabilityRoutes.ExceededThresholdWeightController.displayPage()
-      )
-    }
-
-    "display title" in {
-
-      view.select("title").text() must include(
-        messages("liability.expectToExceedThresholdWeight.title")
-      )
-    }
-
-    "display header" in {
-
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("liability.expectToExceedThresholdWeight.sectionHeader")
-      )
-    }
-
-    "display radio inputs" in {
-
-      view must containElementWithID("answer")
-      view.getElementsByClass("govuk-label").first().text() mustBe "Yes"
-      view must containElementWithID("answer-2")
-      view.getElementsByClass("govuk-label").get(1).text() mustBe "No"
-    }
-
-    "display 'Save and continue' button" in {
-
-      view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
-    }
-
-  }
-
-  "Liability section 'Liable Date' view when filled" should {
-
-    "display radio button checked" in {
-
-      val form = ExpectToExceedThresholdWeight.form().fill(true)
-      val view = createView(form)
-
-      view.getElementById("answer").attr("value") mustBe "yes"
-    }
-
-    "display error" when {
-
-      "no radio button checked" in {
-
-        val form = ExpectToExceedThresholdWeight.form()
-          .bind(emptyFormData)
-        val view = createView(form)
-
-        view must haveGovukFieldError("answer", messages(ExpectToExceedThresholdWeight.emptyError))
-        view must haveGovukGlobalErrorSummary
-      }
-    }
-  }
-
-  override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(ExpectToExceedThresholdWeight.form())(request, messages)
-    page.render(ExpectToExceedThresholdWeight.form(), request, messages)
-  }
-
-}
+//@ViewTest
+//class ExpectToExceedThrliability_expect_to_exceed_threshold_weight_pageesholdWeightViewSpec
+//    extends UnitViewSpec with Matchers {
+//
+//  private val page = inject[expect_to_exceed_threshold_weight_page]
+//
+//  private def createView(form: Form[Boolean] = ExpectToExceedThresholdWeight.form()): Document =
+//    page(form)(journeyRequest, messages)
+//
+//  "Liability section expect process more weight view" should {
+//
+//    val view = createView()
+//
+//    "contain timeout dialog function" in {
+//
+//      containTimeoutDialogFunction(view) mustBe true
+//    }
+//
+//    "display sign out link" in {
+//
+//      displaySignOutLink(view)
+//    }
+//
+//    "display 'Back' button" in {
+//
+//      view.getElementById("back-link") must haveHref(
+//        liabilityRoutes.ExceededThresholdWeightController.displayPage()
+//      )
+//    }
+//
+//    "display title" in {
+//
+//      view.select("title").text() must include(
+//        messages("liability.expectToExceedThresholdWeight.title")
+//      )
+//    }
+//
+//    "display header" in {
+//
+//      view.getElementsByClass("govuk-caption-l").text() must include(
+//        messages("liability.expectToExceedThresholdWeight.sectionHeader")
+//      )
+//    }
+//
+//    "display radio inputs" in {
+//
+//      view must containElementWithID("answer")
+//      view.getElementsByClass("govuk-label").first().text() mustBe "Yes"
+//      view must containElementWithID("answer-2")
+//      view.getElementsByClass("govuk-label").get(1).text() mustBe "No"
+//    }
+//
+//    "display 'Save and continue' button" in {
+//
+//      view must containElementWithID("submit")
+//      view.getElementById("submit").text() mustBe "Save and continue"
+//    }
+//
+//  }
+//
+//  "Liability section 'Liable Date' view when filled" should {
+//
+//    "display radio button checked" in {
+//
+//      val form = ExpectToExceedThresholdWeight.form().fill(true)
+//      val view = createView(form)
+//
+//      view.getElementById("answer").attr("value") mustBe "yes"
+//    }
+//
+//    "display error" when {
+//
+//      "no radio button checked" in {
+//
+//        val form = ExpectToExceedThresholdWeight.form()
+//          .bind(emptyFormData)
+//        val view = createView(form)
+//
+//        view must haveGovukFieldError("answer", messages(ExpectToExceedThresholdWeight.emptyError))
+//        view must haveGovukGlobalErrorSummary
+//      }
+//    }
+//  }
+//
+//  override def exerciseGeneratedRenderingMethods(): Unit = {
+//    page.f(ExpectToExceedThresholdWeight.form())(request, messages)
+//    page.render(ExpectToExceedThresholdWeight.form(), request, messages)
+//  }
+//
+//}

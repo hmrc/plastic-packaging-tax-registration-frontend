@@ -126,9 +126,8 @@ case class Registration(
     if (companyDetailsStatus != TaskStatus.Completed)
       TaskStatus.CannotStartYet
     else
-    // TODO: update when we're verifying emails for nominated partners
-    if (isPartnershipWithPartnerCollection) TaskStatus.Completed
-    else this.primaryContactDetails.status(metaData.emailVerified)
+      if (isPartnershipWithPartnerCollection) TaskStatus.Completed
+      else this.primaryContactDetails.status(metaData.emailVerified)
 
   def nominatedPartnerDetailsStatus: TaskStatus =
     this.organisationDetails.nominatedPartner match {
