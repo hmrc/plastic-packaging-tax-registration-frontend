@@ -121,8 +121,15 @@ class TaxStartDateServiceSpec extends PlaySpec {
     }
   }
 
+
   "Answering yes to only the backwards question" should {
-    "mean the user is liable from the 1st day of the following month" ignore {
+    "mean the user is liable from the 1st day of the following month" in {
+      val onlyBackwardsIsYes = LiabilityDetails(
+        exceededThresholdWeight = Some(true),
+        dateExceededThresholdWeight = Some(Date(LocalDate.of(2022, 4, 14))), 
+        expectToExceedThresholdWeight = Some(false))
+      val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
+      taxStartDateService.taxStartDate(onlyBackwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
     }
   }
 
