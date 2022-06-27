@@ -23,6 +23,8 @@ import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate.day
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.YesNoValues
 
 import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
@@ -33,8 +35,10 @@ class ExceededThresholdWeightSpec extends PlaySpec {
   when(mockMessages.apply(anyString(), any())).thenReturn("some message")
 
   private val mockAppConfig = mock[AppConfig]
+  when(mockAppConfig.goLiveDate).thenReturn(LocalDate.parse("2022-04-01"))
+
   private val fakeClock =
-    Clock.fixed(Instant.parse("2022-05-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
+    Clock.fixed(Instant.parse("2022-06-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
 
   val sut: Form[ExceededThresholdWeightAnswer] = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
 
@@ -43,18 +47,17 @@ class ExceededThresholdWeightSpec extends PlaySpec {
 
     "bind correctly" when {
       "yes is provided" in {
-        val t = sut.fill(
-          ExceededThresholdWeightAnswer(true, Some(LocalDate.of(2022, 5, 15))))
-//          "answer" -> "yes",
-//          "exceeded-threshold-weight-date" -> LocalDate.of(2022, 5, 15).toString
-//        ))
-        t.value.map(_.yesNo) mustBe Some(true)
-        sut.bind(Map("answer" -> "yes")).errors mustBe Nil
+       val boundForm = sut.bind(Map("answer" -> YesNoValues.YES,
+          "exceeded-threshold-weight-date.day" -> "15",
+          "exceeded-threshold-weight-date.month" -> "5",
+          "exceeded-threshold-weight-date.year" -> "2022"))
+        boundForm.value mustBe Some(ExceededThresholdWeightAnswer(true,Some(LocalDate.of(2022,5,15))))
+        boundForm.errors mustBe Nil
       }
 
-      "no is provided" in {
-        sut.bind(Map("answer" -> "no")).value mustBe Some(false)
-        sut.bind(Map("answer" -> "no")).errors mustBe Nil
+      "no is provided" in {//todo: break into two tests - date provided AND date isn't provided
+        sut.bind(Map("answer" -> YesNoValues.YES)).value mustBe Some(false)
+        sut.bind(Map("answer" -> YesNoValues.YES)).errors mustBe Nil
       }
     }
 
@@ -74,4 +77,10 @@ class ExceededThresholdWeightSpec extends PlaySpec {
       }
     }
   }
+
+  private def toMap(day: String, month: String, year: String): Map[String, String] =
+    Map("expect-to-exceed-threshold-weight-date.day" -> day,
+      "expect-to-exceed-threshold-weight-date.month" -> month,
+      "expect-to-exceed-threshold-weight-date.year" -> year
+    )
 }
