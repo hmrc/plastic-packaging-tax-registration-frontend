@@ -17,20 +17,48 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import play.api.data.Forms.mapping
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
+import play.api.data.Forms.{default, mapping, text, tuple}
+import play.api.i18n.Messages
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues, YesNoValues}
+import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-object ExpectToExceedThresholdWeight extends CommonFormValidators with CommonFormValues {
+import java.time.{Clock, LocalDate}
+import javax.inject.Inject
+
+case class ExpectToExceedThresholdWeightAnswer(yesNo: Boolean, date: Option[LocalDate])
+
+class ExpectToExceedThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with CommonFormValues with Mappings {
 
   val emptyError = "liability.expectToExceedThresholdWeight.question.empty.error"
 
-  def form(): Form[Boolean] =
+  val dateFormattingError = "liability.expectToExceedThreshold.date.invalid"
+  val dateOutOfRangeError = "liability.expectToExceedThreshold.date.future"
+  val twoRequiredKey      = "liability.expectToExceedThreshold.two.required.fields"
+  val requiredKey         = "liability.expectToExceedThreshold.one.field"
+
+  val beforeLiveDateError =
+    "liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error"
+
+  def apply()(implicit messages: Messages): Form[ExpectToExceedThresholdWeightAnswer] =
     Form(
       mapping(
         "answer" -> nonEmptyString(emptyError)
-          .verifying(emptyError, contains(Seq(YES, NO)))
-          .transform[Boolean](_ == YES, _.toString)
-      )(identity)(Some.apply)
-    )
+          .verifying(emptyError, contains(Seq(YesNoValues.YES, YesNoValues.NO)))
+          .transform[Boolean](_ == YesNoValues.YES, bool => if (bool) YesNoValues.YES else YesNoValues.NO),
+        "expect-to-exceed-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
+          tuple(
+            "day" -> default(text(), ""),
+            "month" -> default(text(), ""),
+            "year" -> default(text(), "")
+          ).verifying(firstError(
+            nonEmptyDate(requiredKey),
+            validDate(dateFormattingError))
+          ).transform[LocalDate](
+            { case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt) },
+            date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
+          ).verifying(isInDateRange(dateOutOfRangeError, beforeLiveDateError)(appConfig, clock, messages))
+        ))(ExpectToExceedThresholdWeightAnswer.apply)(ExpectToExceedThresholdWeightAnswer.unapply))
 
 }

@@ -20,7 +20,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
@@ -35,22 +36,24 @@ class ExpectToExceedThresholdWeightController @Inject() (
                                                           journeyAction: JourneyAction,
                                                           override val registrationConnector: RegistrationConnector,
                                                           mcc: MessagesControllerComponents,
-                                                          page: expect_to_exceed_threshold_weight_page
+                                                          page: expect_to_exceed_threshold_weight_page,
+                                                          form: ExpectToExceedThresholdWeight
+
+
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.liabilityDetails.expectToExceedThresholdWeight match {
-        case Some(data) =>
-          Ok(page(ExpectToExceedThresholdWeight.form().fill(data)))
-        case _ => Ok(page(ExpectToExceedThresholdWeight.form()))
+      (request.registration.liabilityDetails.expectToExceedThresholdWeight, request.registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight) match {
+        case (Some(yesNo), date) => Ok(page(form().fill(ExpectToExceedThresholdWeightAnswer(yesNo,date.map(_.date)))))
+        case _ => Ok(page(form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      ExpectToExceedThresholdWeight.form()
+      form()
         .bindFromRequest()
         .fold(formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
               expectToExceed =>
@@ -66,12 +69,13 @@ class ExpectToExceedThresholdWeightController @Inject() (
     }
 
   private def updateRegistration(
-    expectToExceedThresholdWeight: Boolean
+    expectToExceedThresholdWeight: ExpectToExceedThresholdWeightAnswer
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedLiableDetails =
-        registration.liabilityDetails.copy(expectToExceedThresholdWeight =
-          Some(expectToExceedThresholdWeight)
+        registration.liabilityDetails.copy(
+          expectToExceedThresholdWeight = Some(expectToExceedThresholdWeight.yesNo),
+          dateRealisedExpectedToExceedThresholdWeight = expectToExceedThresholdWeight.date.map(Date.apply)
         )
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
