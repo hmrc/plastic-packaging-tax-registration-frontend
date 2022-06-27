@@ -136,27 +136,27 @@ class TaxStartDateServiceSpec extends PlaySpec {
 
   "Answering yes to only the forwards question" should {
     "mean the user is liable from the date they gave" in {
-      val onlyBackwardsIsYes = LiabilityDetails(
+      val onlyForwardsIsYes = LiabilityDetails(
         expectToExceedThresholdWeight = Some(true),
         dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 17))),
         exceededThresholdWeight = Some(false),
       )
       val sameDateAsUserEntered: LocalDate = LocalDate.of(2022, 4, 17)
-      taxStartDateService.taxStartDate(onlyBackwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(sameDateAsUserEntered))
+      taxStartDateService.taxStartDate(onlyForwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(sameDateAsUserEntered))
     }
   }
 
   "Answering yes to both questions" when {
     "the backwards calculation gives the earliest date" should {
       "mean the user is liable from the first day of the month following the date they gave to the backward question" in {
-        val onlyBackwardsIsYes = LiabilityDetails(
+        val backwardsStartDateIsEarlier = LiabilityDetails(
           exceededThresholdWeight = Some(true),
           dateExceededThresholdWeight = Some(Date(LocalDate.of(2022, 4, 14))),
           expectToExceedThresholdWeight = Some(true),
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 2))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.taxStartDate(onlyBackwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+        taxStartDateService.taxStartDate(backwardsStartDateIsEarlier) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
       }
     }
     
@@ -165,7 +165,16 @@ class TaxStartDateServiceSpec extends PlaySpec {
     }
 
     "the two calculation give the same date" should {
-      "make no difference" ignore {}
+      "make no difference" in {
+        val bothStartDatesAreTheSame = LiabilityDetails(
+          exceededThresholdWeight = Some(true),
+          dateExceededThresholdWeight = Some(Date(LocalDate.of(2022, 4, 14))),
+          expectToExceedThresholdWeight = Some(true),
+          dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 1))),
+        )
+        val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
+        taxStartDateService.taxStartDate(bothStartDatesAreTheSame) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+      }
     }
   }
 
