@@ -53,7 +53,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     reset(page, mockTaxStartDateService, mockRegistrationConnector)
-    given(page.apply(any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockTaxStartDateService.calculateTaxStartDate(any()))
       .willReturn(Some(calculateTaxStartDate))
     mockRegistrationUpdate
@@ -69,7 +69,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
         val result = sut.displayPage()(getRequest())
 
         status(result) mustBe OK
-        verify(page).apply(startDate = ArgumentMatchers.eq(LocalDate.of(2022, 4, 1)), any(), any())(
+        verify(page).apply(startDate = ArgumentMatchers.eq(LocalDate.of(2022, 4, 1)), any())(
           any(),
           any()
         )
@@ -130,9 +130,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
 
         verify(page).apply(
           any(),
-          any(),
-          backLink =
-            ArgumentMatchers.eq(routes.ExpectToExceedThresholdWeightDateController.displayPage())
+          any()
         )(any(), any())
       }
     }
@@ -151,8 +149,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
 
         verify(page).apply(
           any(),
-          any(),
-          backLink = ArgumentMatchers.eq(routes.ExceededThresholdWeightDateController.displayPage())
+          any()
         )(any(), any())
       }
     }

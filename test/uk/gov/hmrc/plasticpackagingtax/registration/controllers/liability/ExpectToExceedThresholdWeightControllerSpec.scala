@@ -26,23 +26,26 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
-  val mockPage: expect_to_exceed_threshold_weight_page =
+  val mockPage: expect_to_exceed_threshold_weight_page = {
     mock[expect_to_exceed_threshold_weight_page]
-
+  }
+  val mockFormProvider = mock[ExpectToExceedThresholdWeight]
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
   val controller: ExpectToExceedThresholdWeightController =
     new ExpectToExceedThresholdWeightController(authenticate = mockAuthAction,
-                                                mockJourneyAction,
-                                                mockRegistrationConnector,
-                                                mcc = mcc,
-                                                page = mockPage
+      mockJourneyAction,
+      mockRegistrationConnector,
+      mcc = mcc,
+      page = mockPage,
+      form = mockFormProvider
     )
 
   when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
@@ -95,7 +98,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> "yes")
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
@@ -111,7 +114,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> "no")
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
 
@@ -146,7 +149,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> "yes")
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[DownstreamServiceError](status(result))
         }
@@ -157,7 +160,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           mockRegistrationException()
 
           val correctForm = Seq("answer" -> "yes")
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[RuntimeException](status(result))
         }

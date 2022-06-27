@@ -16,12 +16,32 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
+import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
+import play.api.i18n.Messages
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+
+import java.time.{Clock, Instant, LocalDate}
+import java.util.TimeZone
 
 class ExpectToExceedThresholdWeightSpec extends PlaySpec {
+  val mockMessages: Messages = mock[Messages]
+  when(mockMessages.apply(anyString(), any())).thenReturn("some message")
 
-  val sut: Form[Boolean] = ExpectToExceedThresholdWeight.form()
+  private val mockAppConfig = mock[AppConfig]
+  when(mockAppConfig.goLiveDate).thenReturn(LocalDate.parse("2022-04-01"))
+
+  private val fakeClock =
+    Clock.fixed(Instant.parse("2022-05-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
+
+  val formProvider: ExpectToExceedThresholdWeight = new ExpectToExceedThresholdWeight(mockAppConfig, fakeClock)
+
+  private val sut: Form[ExpectToExceedThresholdWeightAnswer] =
+  formProvider()(mockMessages)
+
 
   "ExpectToExceedThresholdWeight" must {
     "bind correctly" when {
@@ -40,14 +60,14 @@ class ExpectToExceedThresholdWeightSpec extends PlaySpec {
       "answer empty" in {
         sut.bind(Map.empty[String, String]).value mustBe None
         sut.bind(Map.empty[String, String]).errors.map(_.message) mustBe Seq(
-          ExpectToExceedThresholdWeight.emptyError
+          formProvider.emptyError
         )
       }
 
       "answer is trash" in {
         sut.bind(Map("answer" -> "trash")).value mustBe None
         sut.bind(Map("answer" -> "trash")).errors.map(_.message) mustBe Seq(
-          ExpectToExceedThresholdWeight.emptyError
+          formProvider.emptyError
         )
       }
     }

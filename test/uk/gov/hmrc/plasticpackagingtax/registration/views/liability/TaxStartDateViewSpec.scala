@@ -20,21 +20,16 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include, not}
 import play.api.mvc.{AnyContent, Call}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 import java.time.LocalDate
 
-@ViewTest
 class TaxStartDateViewSpec extends UnitViewSpec {
 
   private val page = inject[tax_start_date_page]
 
-  private val backLink             = Call("GET", "backLink")
   private val startDate: LocalDate = LocalDate.of(2022, 4, 1)
 
   "liability tax start date page" should {
@@ -95,11 +90,11 @@ class TaxStartDateViewSpec extends UnitViewSpec {
   private def createView(startDate: LocalDate, hasExceededThresholdWeight: Boolean, backLink: Call)(
     implicit request: JourneyRequest[AnyContent]
   ): Document =
-    page(startDate, hasExceededThresholdWeight, backLink)(request, messages(request))
+    page(startDate, hasExceededThresholdWeight)(request, messages(request))
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(startDate, true, backLink)(journeyRequest, messages)
-    page.render(startDate, true, backLink, journeyRequest, messages)
+    page.f(startDate, true)(journeyRequest, messages)
+    page.render(startDate, true, journeyRequest, messages)
   }
 
 }

@@ -20,20 +20,19 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
-@ViewTest
-class ExpectToExceedThrliability_expect_to_exceed_threshold_weight_pageesholdWeightViewSpec
+import java.time.LocalDate
+
+class ExpectToExceedThresholdWeightViewSpec
     extends UnitViewSpec with Matchers {
 
   private val page = inject[expect_to_exceed_threshold_weight_page]
+  private val formProvider: ExpectToExceedThresholdWeight = inject[ExpectToExceedThresholdWeight]
 
-  private def createView(form: Form[Boolean] = ExpectToExceedThresholdWeight.form()): Document =
+  private def createView(form: Form[ExpectToExceedThresholdWeightAnswer] = formProvider()): Document =
     page(form)(journeyRequest, messages)
 
   "Liability section expect process more weight view" should {
@@ -91,7 +90,7 @@ class ExpectToExceedThrliability_expect_to_exceed_threshold_weight_pageesholdWei
 
     "display radio button checked" in {
 
-      val form = ExpectToExceedThresholdWeight.form().fill(true)
+      val form = formProvider().fill(ExpectToExceedThresholdWeightAnswer(true, Some(LocalDate.now())))
       val view = createView(form)
 
       view.getElementById("answer").attr("value") mustBe "yes"
@@ -101,19 +100,19 @@ class ExpectToExceedThrliability_expect_to_exceed_threshold_weight_pageesholdWei
 
       "no radio button checked" in {
 
-        val form = ExpectToExceedThresholdWeight.form()
+        val form = formProvider()
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer", messages(ExpectToExceedThresholdWeight.emptyError))
+        view must haveGovukFieldError("answer", messages(formProvider.emptyError))
         view must haveGovukGlobalErrorSummary
       }
     }
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(ExpectToExceedThresholdWeight.form())(request, messages)
-    page.render(ExpectToExceedThresholdWeight.form(), request, messages)
+    page.f(formProvider())(request, messages)
+    page.render(formProvider(), request, messages)
   }
 
 }
