@@ -209,18 +209,4 @@ class TaxStartDateServiceSpec extends PlaySpec {
     }
   }
 
-  "return an error" when {
-    "no exceeded threshold date is set" ignore {
-      taxStartDateService
-        .calculateTaxStartDate2(LiabilityDetails(exceededThresholdWeight = Some(true))) mustBe None
-    }
-
-    "no dateRealisedExpectedToExceedThresholdWeight is set" ignore {
-      taxStartDateService
-        .calculateTaxStartDate2(
-          LiabilityDetails(expectToExceedThresholdWeight = Some(true))
-        ) mustBe None
-    }
-  }
-
 }
