@@ -26,10 +26,17 @@ import scala.language.implicitConversions
 
 object MustHaveFieldExtension {
   implicit class ExtendedObject[O](o: O) {
+    
     def mustHave[A](f: O => Option[A], fieldName: String): A =
       f(o).getOrElse {
         throw new IllegalStateException(s"Missing field '$fieldName'")
       }
+
+    def mightHaveIf[A](f: O => Option[A], fieldName: String, predicate: Boolean): O =
+      if (predicate && f(o).isEmpty) {
+          throw new IllegalStateException(s"Missing field '$fieldName'")
+      }
+      else o
   }
 }
 
@@ -50,19 +57,16 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
     val backwardsIsYes = liabilityDetails.mustHave(_.exceededThresholdWeight, "exceededThresholdWeight")
     val forwardsIsYes = liabilityDetails.mustHave(_.expectToExceedThresholdWeight, "expectToExceedThresholdWeight")
     
+    liabilityDetails
+      .mightHaveIf(_.dateExceededThresholdWeight, "dateExceededThresholdWeight", backwardsIsYes)
+      .mightHaveIf(_.dateRealisedExpectedToExceedThresholdWeight, "dateRealisedExpectedToExceedThresholdWeight", forwardsIsYes)
+    
     if (!backwardsIsYes && !forwardsIsYes) {
       TaxStartDate(isLiable = false)
     }
     else {
 
-      if (backwardsIsYes) {
-        val backwardsDate = liabilityDetails.mustHave(_.dateExceededThresholdWeight, "dateExceededThresholdWeight")
-      }
       val backwardsStartDate = liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
-
-      if (forwardsIsYes) {
-        val forwardsDate = liabilityDetails.mustHave(_.dateRealisedExpectedToExceedThresholdWeight, "dateRealisedExpectedToExceedThresholdWeight")
-      }
       val forwardsStartDate = liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
 
       val taxStartDate: LocalDate = (backwardsStartDate, forwardsStartDate) match {
