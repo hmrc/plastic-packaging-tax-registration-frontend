@@ -59,9 +59,6 @@ class ExpectToExceedThresholdWeightController @Inject() (
               expectToExceed =>
                 updateRegistration(expectToExceed).map {
                   case Right(_) =>  Redirect(routes.TaxStartDateController.displayPage())
-//                    if (expectToExceed)
-//                      Redirect(routes.ExpectToExceedThresholdWeightDateController.displayPage())
-//                    else Redirect(routes.NotLiableController.displayPage())
                   case Left(error) => throw error
                 }
         )

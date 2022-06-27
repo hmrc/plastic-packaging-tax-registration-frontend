@@ -64,7 +64,7 @@ class ExceededThresholdWeightController @Inject() (
       val updatedLiabilityDetails = {
         registration.liabilityDetails.copy(
           exceededThresholdWeight = Some(alreadyExceeded.yesNo),
-          dateExceededThresholdWeight = alreadyExceeded.date.map(x => Date.apply(x))
+          dateExceededThresholdWeight = alreadyExceeded.date.map(Date.apply)
         )
       }
       registration.copy(liabilityDetails = updatedLiabilityDetails)
@@ -80,13 +80,5 @@ class ExceededThresholdWeightController @Inject() (
         case _           => Redirect(routes.ExpectToExceedThresholdWeightController.displayPage())
       })
   }
-
-  //delete
-  private def nextPage(alreadyExceeded: Boolean): Call =
-    routes.ExpectToExceedThresholdWeightController.displayPage()
-    //if (alreadyExceeded)
-    //  routes.ExceededThresholdWeightDateController.displayPage()
-    //else
-    //  routes.ExpectToExceedThresholdWeightController.displayPage() //thisis the yes no page for Forward look
 
 }
