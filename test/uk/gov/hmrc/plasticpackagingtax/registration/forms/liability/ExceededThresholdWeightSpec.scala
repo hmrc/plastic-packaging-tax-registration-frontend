@@ -44,7 +44,7 @@ class ExceededThresholdWeightSpec extends PlaySpec {
     "bind correctly" when {
       "yes is provided" in {
         val t = sut.fill(
-          ExceededThresholdWeightAnswer(true, LocalDate.of(2022, 5, 15)))
+          ExceededThresholdWeightAnswer(true, Some(LocalDate.of(2022, 5, 15))))
 //          "answer" -> "yes",
 //          "exceeded-threshold-weight-date" -> LocalDate.of(2022, 5, 15).toString
 //        ))
