@@ -29,11 +29,13 @@
  continueButton:    continue,
  sectionHeader:     sectionHeader
 )
-@(startDate: LocalDate, hasExceededThresholdWeight: Boolean, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(startDate: LocalDate, hasExceededThresholdWeight: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
 
 @govukLayout(
     title = Title("liability.taxStartDate.title"),
-    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(messages("site.back"),
+    pptRoutes.ExpectToExceedThresholdWeightController.displayPage(),
+    messages("site.back.hiddenText")))) {
 
     @sectionHeader(messages("liability.sectionHeader"))
     @pageHeading(messages("liability.taxStartDate.pageHeading"))

@@ -21,10 +21,11 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,58 +36,49 @@ class ExceededThresholdWeightController @Inject() (
                                                     journeyAction: JourneyAction,
                                                     override val registrationConnector: RegistrationConnector,
                                                     mcc: MessagesControllerComponents,
+                                                    exceededThresholdWeight: ExceededThresholdWeight,
                                                     page: exceeded_threshold_weight_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      request.registration.liabilityDetails.exceededThresholdWeight match {
-        case Some(data) => Ok(page(ExceededThresholdWeight.form().fill(data)))
-        case _          => Ok(page(ExceededThresholdWeight.form()))
+      (request.registration.liabilityDetails.exceededThresholdWeight, request.registration.liabilityDetails.dateExceededThresholdWeight)  match {
+        case (Some(yesNo), date) => Ok(page(exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date)))))
+        case _          => Ok(page(exceededThresholdWeight.form()))
       }
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      ExceededThresholdWeight.form().bindFromRequest().fold(hasErrors, onSuccess)
+      exceededThresholdWeight.form().bindFromRequest().fold(hasErrors, onSuccess)
     }
 
-  private def hasErrors(form: Form[Boolean])(implicit request: Request[_]): Future[Result] =
+  private def hasErrors(form: Form[_])(implicit request: Request[_]): Future[Result] =
     Future.successful(BadRequest(page(form)))
 
   private def updateRegistration(
-    alreadyExceeded: Boolean
+    alreadyExceeded: ExceededThresholdWeightAnswer
   )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       val updatedLiabilityDetails = {
-        if (alreadyExceeded)
-          registration.liabilityDetails.copy(exceededThresholdWeight = Some(true),
-                                             expectToExceedThresholdWeight = None,
-                                             dateRealisedExpectedToExceedThresholdWeight = None
-          )
-        else
-          registration.liabilityDetails.copy(exceededThresholdWeight = Some(false))
+        registration.liabilityDetails.copy(
+          exceededThresholdWeight = Some(alreadyExceeded.yesNo),
+          dateExceededThresholdWeight = alreadyExceeded.date.map(Date.apply)
+        )
       }
       registration.copy(liabilityDetails = updatedLiabilityDetails)
     }
 
   private def onSuccess(
-    alreadyExceeded: Boolean
+    alreadyExceeded: ExceededThresholdWeightAnswer
   )(implicit request: JourneyRequest[_]): Future[Result] = {
     val future = updateRegistration(alreadyExceeded)
     future
       .map({
         case Left(error) => throw error
-        case _           => Redirect(nextPage(alreadyExceeded))
+        case _           => Redirect(routes.ExpectToExceedThresholdWeightController.displayPage())
       })
   }
-
-  private def nextPage(alreadyExceeded: Boolean): Call =
-    routes.ExpectToExceedThresholdWeightController.displayPage()
-    //if (alreadyExceeded)
-    //  routes.ExceededThresholdWeightDateController.displayPage()
-    //else
-    //  routes.ExpectToExceedThresholdWeightController.displayPage() //thisis the yes no page for Forward look
 
 }
