@@ -26,8 +26,41 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.services.MustHaveFieldExtension.ExtendedObject
 
 import java.time.LocalDate
+
+
+class MustHaveFieldExtensionSpec extends PlaySpec with BeforeAndAfterEach {
+  // TODO move to own files
+
+  case class Example(x: Option[String])
+  
+  "mustHave should return the field contents" in {
+    val example = Example(Some("the contents of x"))
+    example.mustHave(_.x, "x") mustBe "the contents of x" 
+  }
+  
+  "mustHave should complain about an empty field" in {
+    val example = Example(None)
+    the [IllegalStateException] thrownBy example.mustHave(_.x, "x") must have message "Missing field 'x'" 
+  }
+  
+  "mightHaveIf should ignore an empty field" in {
+    val example = Example(None)
+    noException should be thrownBy example.mightHaveIf(_.x, "x", predicate = false)
+  }
+  
+  "mightHaveIf should complain about an empty field" in {
+    val example = Example(None)
+    the [IllegalStateException] thrownBy example.mightHaveIf(_.x, "x", predicate = true) must have message "Missing field 'x'"
+  }
+  
+  "mightHaveIf should be happy with a defined field" in {
+    val example = Example(Some("the contents of x"))
+    noException should be thrownBy example.mightHaveIf(_.x, "x", predicate = true)
+  }
+}
 
 
 class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
