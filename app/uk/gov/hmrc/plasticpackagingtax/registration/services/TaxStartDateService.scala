@@ -45,7 +45,7 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
   //      details.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
   //    else Some(LocalDate.of(1996, 3, 27))
 
-  def taxStartDate(liabilityDetails: LiabilityDetails): TaxStartDate = {
+  def calculateTaxStartDate2(liabilityDetails: LiabilityDetails): TaxStartDate = {
 
     val backwardsIsYes = liabilityDetails.mustHave(_.exceededThresholdWeight, "exceededThresholdWeight")
     val forwardsIsYes = liabilityDetails.mustHave(_.expectToExceedThresholdWeight, "expectToExceedThresholdWeight")
@@ -65,15 +65,18 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
       }
       val forwardsStartDate = liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
 
-      val startDate: LocalDate = (backwardsStartDate, forwardsStartDate) match {
+      val taxStartDate: LocalDate = (backwardsStartDate, forwardsStartDate) match {
         case (Some(backwardsStartDate), None) => backwardsStartDate
         case (None, Some(forwardsStartDate)) => forwardsStartDate
-        case (Some(backwardsStartDate), Some(forwardsStartDate)) => backwardsStartDate
+        case (Some(backwardsStartDate), Some(forwardsStartDate)) => earliestOf(backwardsStartDate, forwardsStartDate)
       } 
       
-      TaxStartDate(isLiable = true, oldDate = Some(startDate))
+      TaxStartDate(isLiable = true, oldDate = Some(taxStartDate))
     }
   }
+
+  private def earliestOf(a: LocalDate, b: LocalDate): LocalDate = 
+    if (a.isBefore(b)) a else b
 
   private def calculateExceedStartDate(date: Date): LocalDate =
     date.date.plusMonths(1).withDayOfMonth(1)
