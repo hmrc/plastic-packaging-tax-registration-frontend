@@ -33,6 +33,8 @@ object MustHaveFieldExtension {
   }
 }
 
+case class TaxStartDate (isLiable: Boolean, oldDate: Option[LocalDate] = None)
+
 class TaxStartDateServiceImpl extends TaxStartDateService {
 
   //todo actually calculate
@@ -43,23 +45,28 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
   //      details.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
   //    else Some(LocalDate.of(1996, 3, 27))
 
-  def taxStartDate(liabilityDetails: LiabilityDetails): Option[LocalDate] = {
+  def taxStartDate(liabilityDetails: LiabilityDetails): TaxStartDate = {
 
     val backwardsIsYes = liabilityDetails.mustHave(_.exceededThresholdWeight, "exceededThresholdWeight")
     val forwardsIsYes = liabilityDetails.mustHave(_.expectToExceedThresholdWeight, "expectToExceedThresholdWeight")
-
-    if (backwardsIsYes) {
-      val backwardsDate = liabilityDetails.mustHave(_.dateExceededThresholdWeight, "dateExceededThresholdWeight")
-    }
-    val a = liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
-
-    if (forwardsIsYes) {
-      val forwardsDate = liabilityDetails.mustHave(_.dateRealisedExpectedToExceedThresholdWeight, "dateRealisedExpectedToExceedThresholdWeight")
-      liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
-    }
-    else a
-//      throw new IllegalStateException("huh?")
     
+    if (!backwardsIsYes && !forwardsIsYes) {
+      TaxStartDate(isLiable = false)
+    }
+    else {
+
+      if (backwardsIsYes) {
+        val backwardsDate = liabilityDetails.mustHave(_.dateExceededThresholdWeight, "dateExceededThresholdWeight")
+      }
+      val a = liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
+
+      if (forwardsIsYes) {
+        val forwardsDate = liabilityDetails.mustHave(_.dateRealisedExpectedToExceedThresholdWeight, "dateRealisedExpectedToExceedThresholdWeight")
+        TaxStartDate(isLiable = true, oldDate = liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date))
+      }
+      else TaxStartDate(isLiable = true, oldDate = a)
+      //      throw new IllegalStateException("huh?")
+    }
   }
 
   private def calculateExceedStartDate(date: Date): LocalDate =

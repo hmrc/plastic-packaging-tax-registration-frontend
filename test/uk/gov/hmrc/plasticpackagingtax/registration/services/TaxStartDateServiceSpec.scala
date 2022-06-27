@@ -113,7 +113,11 @@ class TaxStartDateServiceSpec extends PlaySpec {
   }
 
   "Answering no to both questions" should {
-    "mean the user is not liable" ignore {
+    "mean the user is not liable" in {
+      val bothAnswersAreNo = LiabilityDetails(
+        exceededThresholdWeight = Some(false), 
+        expectToExceedThresholdWeight = Some(false)) 
+      taxStartDateService.taxStartDate(bothAnswersAreNo) mustBe TaxStartDate(isLiable = false)
     }
   }
 
@@ -148,7 +152,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         exceededThresholdWeight = Some(true),
         dateExceededThresholdWeight = Some(forms.Date(dateExceededThresholdWeight))
       )
-      taxStartDateService.taxStartDate(liabilityDetailsForBreachedThreshold) mustBe Some(LocalDate.of(2022, 5, 1))
+      taxStartDateService.taxStartDate(liabilityDetailsForBreachedThreshold).oldDate mustBe Some(LocalDate.of(2022, 5, 1))
     }
   }
 
@@ -159,7 +163,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         dateRealisedExpectedToExceedThresholdWeight = Some(forms.Date(LocalDate.of(2022, 4, 30))),
         exceededThresholdWeight = Some(false)
       )
-      taxStartDateService.taxStartDate(liabilityDetailsForThresholdWouldBeBreached) mustBe Some(dateExceededThresholdWeight)
+      taxStartDateService.taxStartDate(liabilityDetailsForThresholdWouldBeBreached).oldDate mustBe Some(dateExceededThresholdWeight)
     }
   }
 
