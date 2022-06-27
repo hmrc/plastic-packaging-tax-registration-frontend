@@ -35,8 +35,9 @@ class ExpectToExceedThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock
 
   val dateFormattingError = "liability.expectToExceedThreshold.date.invalid"
   val dateOutOfRangeError = "liability.expectToExceedThreshold.date.future"
-  val twoRequiredKey      = "liability.expectToExceedThreshold.two.required.fields"
-  val requiredKey         = "liability.expectToExceedThreshold.one.field"
+  val dateEmptyError = "liability.expectToExceedThreshold.date.none"
+  val twoRequiredKey = "liability.expectToExceedThreshold.two.required.fields"
+  val requiredKey = "liability.expectToExceedThreshold.one.field"
 
   val beforeLiveDateError =
     "liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error"
@@ -48,17 +49,14 @@ class ExpectToExceedThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock
           .verifying(emptyError, contains(Seq(YesNoValues.YES, YesNoValues.NO)))
           .transform[Boolean](_ == YesNoValues.YES, bool => if (bool) YesNoValues.YES else YesNoValues.NO),
         "expect-to-exceed-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
-          tuple(
-            "day" -> default(text(), ""),
-            "month" -> default(text(), ""),
-            "year" -> default(text(), "")
-          ).verifying(firstError(
-            nonEmptyDate(requiredKey),
-            validDate(dateFormattingError))
-          ).transform[LocalDate](
-            { case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt) },
-            date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-          ).verifying(isInDateRange(dateOutOfRangeError, beforeLiveDateError)(appConfig, clock, messages))
-        ))(ExpectToExceedThresholdWeightAnswer.apply)(ExpectToExceedThresholdWeightAnswer.unapply))
+          localDate(emptyDateKey =
+            dateEmptyError,
+            requiredKey,
+            twoRequiredKey,
+            dateFormattingError
+          ).verifying(
+            isInDateRange(dateOutOfRangeError, beforeLiveDateError)(appConfig, clock, messages)
+          ))
+      )(ExpectToExceedThresholdWeightAnswer.apply)(ExpectToExceedThresholdWeightAnswer.unapply))
 
 }
