@@ -60,7 +60,7 @@ class PartnerCheckAnswersController @Inject() (
         case Some(1) =>
           Redirect(
             routes.PartnerListController.displayPage()
-          ) // TODO: redirect to other partner capture flow when available
+          )
         case _ => Redirect(routes.PartnerListController.displayPage())
       }
     }
