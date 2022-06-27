@@ -79,7 +79,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         "the forwards yes-no answer was yes" in  {
           the [IllegalStateException] thrownBy {
             taxStartDateService.taxStartDate(missingForwardsDate)
-          } must have message "Missing answer for 'dateRealisedExpectedToExceedThresholdWeight'"
+          } must have message "Missing field 'dateRealisedExpectedToExceedThresholdWeight'"
         }
         
         "but not when the forwards yes-no answer was no" in {
@@ -99,7 +99,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         "the backwards yes-no answer was yes" in {
           the [IllegalStateException] thrownBy {
             taxStartDateService.taxStartDate(missingBackwardsDate)
-          } must have message "Missing answer for 'dateExceededThresholdWeight'"
+          } must have message "Missing field 'dateExceededThresholdWeight'"
         }
         
         "but not when the backwards yes-no answer was no" in {

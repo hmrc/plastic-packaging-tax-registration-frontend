@@ -19,15 +19,17 @@ package uk.gov.hmrc.plasticpackagingtax.registration.services
 import com.google.inject.ImplementedBy
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.services.MustHaveFieldExtensions.ExtendedObject
+import uk.gov.hmrc.plasticpackagingtax.registration.services.MustHaveFieldExtension.ExtendedObject
 
 import java.time.LocalDate
 import scala.language.implicitConversions
 
-object MustHaveFieldExtensions {
-  implicit class ExtendedObject[O] (o: O) {
-    def mustHave[A](f: O => Option[A])(fieldName: String): O =
-      if (f(o).isEmpty) throw new IllegalStateException(s"Missing field '$fieldName'") else o 
+object MustHaveFieldExtension {
+  implicit class ExtendedObject[O](o: O) {
+    def mustHave[A](f: O => Option[A], fieldName: String): A =
+      f(o).getOrElse {
+        throw new IllegalStateException(s"Missing field '$fieldName'")
+      }
   }
 }
 
@@ -42,29 +44,22 @@ class TaxStartDateServiceImpl extends TaxStartDateService {
   //    else Some(LocalDate.of(1996, 3, 27))
 
   def taxStartDate(liabilityDetails: LiabilityDetails): Option[LocalDate] = {
-  
-    liabilityDetails
-      .mustHave(_.exceededThresholdWeight)("exceededThresholdWeight")
-      .mustHave(_.expectToExceedThresholdWeight)("expectToExceedThresholdWeight")
-    
-    for{
-      backwardsIsYes: Boolean <- liabilityDetails.exceededThresholdWeight
-      
-    } yield {
 
-      if (liabilityDetails.dateExceededThresholdWeight.isEmpty && backwardsIsYes)
-        throw new IllegalStateException("Missing answer for 'dateExceededThresholdWeight'")
+    val backwardsIsYes = liabilityDetails.mustHave(_.exceededThresholdWeight, "exceededThresholdWeight")
+    val forwardsIsYes = liabilityDetails.mustHave(_.expectToExceedThresholdWeight, "expectToExceedThresholdWeight")
 
-      if (liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.isEmpty && liabilityDetails.expectToExceedThresholdWeight.get)
-        throw new IllegalStateException("Missing answer for 'dateRealisedExpectedToExceedThresholdWeight'")
-
-      if (backwardsIsYes)
-        liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o)).get
-      else if (liabilityDetails.expectToExceedThresholdWeight.contains(true))
-        liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date).get
-      else
-        throw new IllegalStateException("huh?")
+    if (backwardsIsYes) {
+      val backwardsDate = liabilityDetails.mustHave(_.dateExceededThresholdWeight, "dateExceededThresholdWeight")
     }
+    val a = liabilityDetails.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
+
+    if (forwardsIsYes) {
+      val forwardsDate = liabilityDetails.mustHave(_.dateRealisedExpectedToExceedThresholdWeight, "dateRealisedExpectedToExceedThresholdWeight")
+      liabilityDetails.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
+    }
+    else a
+//      throw new IllegalStateException("huh?")
+    
   }
 
   private def calculateExceedStartDate(date: Date): LocalDate =
