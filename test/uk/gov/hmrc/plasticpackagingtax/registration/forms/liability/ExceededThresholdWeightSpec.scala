@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
+import org.scalatest.Ignore
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
@@ -27,6 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
 
+@Ignore
 class ExceededThresholdWeightSpec extends PlaySpec {
 
   val mockMessages: Messages = mock[Messages]
