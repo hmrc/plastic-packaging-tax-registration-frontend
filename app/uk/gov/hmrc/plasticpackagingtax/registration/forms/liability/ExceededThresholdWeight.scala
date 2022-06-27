@@ -21,17 +21,16 @@ import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues, Date}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues, Date, YesNoValues}
 
 import java.time.LocalDate
-
 import java.time.Clock
 import javax.inject.Inject
 
 //potential refactor: yesNo isnt actually needed here, we can just do date.isDefined, it holds the same meaning
 case class ExceededThresholdWeightAnswer(yesNo: Boolean, date: LocalDate)
 
-class ExceededThresholdWeight @Inject() (appConfig: AppConfig, clock: Clock) extends CommonFormValidators with CommonFormValues with Mappings {
+class ExceededThresholdWeight @Inject() (appConfig: AppConfig, clock: Clock) extends CommonFormValidators with Mappings {
 
   val emptyError = "liability.exceededThresholdWeight.question.empty.error"
 
@@ -47,8 +46,8 @@ class ExceededThresholdWeight @Inject() (appConfig: AppConfig, clock: Clock) ext
     Form(
       mapping(
         "answer" -> nonEmptyString(emptyError)
-          .verifying(emptyError, contains(Seq(YES, NO)))
-          .transform[Boolean](_ == YES, _.toString),
+          .verifying(emptyError, contains(Seq(YesNoValues.YES, YesNoValues.NO)))
+          .transform[Boolean](_ == YesNoValues.YES, _.toString),
           "exceeded-threshold-weight-date" -> localDate(dateEmptyError, requiredKey, twoRequiredKey, dateFormattingError)
             .verifying(
             isInDateRange(dateOutOfRangeError, isBeforeLiveDateError)(appConfig, clock, messages)

@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.plasticpackagingtax.registration.forms.YesNoValues
+
 @this(
       radios: GovukRadios
         )
@@ -43,13 +45,13 @@
             content = HtmlContent(hint)
         )},
             items = Seq(RadioItem(id = Some("answer"),
-            value = Some("true"),
+            value = Some(YesNoValues.YES),
             content = Text(messages("general.true")),
             checked = form("answer").value.contains("true"),
             conditionalHtml = ifYes
         ),
             RadioItem(id = Some("value-no"),
-            value = Some("false"),
+            value = Some(YesNoValues.NO),
             content = Text(messages("general.false")),
             checked = form("answer").value.contains("false"),
             conditionalHtml = ifNo
