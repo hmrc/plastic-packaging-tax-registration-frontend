@@ -424,6 +424,14 @@ unauthorised.not.admin.paragraph.2 = Gall rhywun o’ch sefydliad â hawliau gwe
 unauthorised.not.admin.paragraph.3 = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
+unauthorised.agent.title = ???
+unauthorised.agent.heading = ???
+unauthorised.agent.paragraph.1 = ???
+unauthorised.agent.paragraph.2 = ???
+unauthorised.agent.paragraph.3 = ???
+unauthorised.agent.paragraph.4 = ???
+unauthorised.agent.paragraph.4.link.text = ???
+
 organisationDetails.registerAsOtherOrganisation.title  = Cofrestru fel Sefydliad Corfforedig Elusennol, ymddiriedolaeth neu gwmni tramor heb safle yn y DU
 organisationDetails.registerAsOtherOrganisation.paragraph.1  = Gwasanaeth newydd yw hwn, ac nid oes modd delio â’r math hwn o sefydliad ar hyn o bryd.
 organisationDetails.registerAsOtherOrganisation.paragraph.2  = Gallwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig o hyd drwy {0}.
