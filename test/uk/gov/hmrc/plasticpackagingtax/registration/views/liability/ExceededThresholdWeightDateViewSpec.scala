@@ -153,7 +153,7 @@ class ExceededThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
         form.errors,
         Seq(
           FormError("exceeded-threshold-weight-date",
-                    List("Date you met the threshold must be on, or after, 1  April 2022"),
+                    List("Date you met the threshold must be on, or after, 1 April 2022"),
                     List()
           )
         )
