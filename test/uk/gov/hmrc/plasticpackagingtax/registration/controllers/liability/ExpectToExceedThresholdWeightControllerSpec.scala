@@ -39,7 +39,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
   val mockPage: expect_to_exceed_threshold_weight_page = {
     mock[expect_to_exceed_threshold_weight_page]
   }
-  val mockFormProvider = app.injector.instanceOf[ExpectToExceedThresholdWeight]
+  val mockFormProvider = inject[ExpectToExceedThresholdWeight]
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
   val controller: ExpectToExceedThresholdWeightController =
