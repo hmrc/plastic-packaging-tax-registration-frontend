@@ -448,7 +448,10 @@ liability.exceededThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
 liability.exceededThresholdWeight.title  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
 liability.exceededThresholdWeight.hint = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
 liability.exceededThresholdWeight.hint.2 = Dewiswch ‘Na’ os yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig o fewn y 30 diwrnod nesaf.
-liability.exceededThresholdWeight.question  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
+liability.exceededThresholdWeight.question = A ydych chi wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
+liability.exceededThresholdWeight.line1 = Dyma gyfanswm yr holl blastig rydych wedi’i weithgynhyrchu neu ei fewnforio ers mis Ebrill. 
+liability.exceededThresholdWeight.line2 = Er enghraifft, gwnaethoch weithgynhyrchu 5,000kg ym mis Ebrill, 2,000kg ym mis Mai a 3,000kg ym mis Mehefin.
+liability.exceededThresholdWeight.line3 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
 liability.exceededThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022
 
 liability.expectToExceedThresholdWeight.sectionHeader = Manylion rhwymedigaeth
@@ -461,7 +464,7 @@ liability.expectToExceedThresholdWeight.line2 = Os ydych yn cofrestru fel grŵp,
 liability.expectToExceedThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig yn ystod y 30 diwrnod nesaf
 
 liability.exceededThresholdWeightDate.sectionHeader  = Manylion rhwymedigaeth
-liability.exceededThresholdWeightDate.title  = Pryd gwnaeth eich sefydliad neu’ch grŵp gyrraedd y trothwy 10,000kg?
+liability.exceededThresholdWeightDate.title = Pryd gwnaethoch gyrraedd y trothwy 10,000kg?
 liability.exceededThresholdWeightDate.hint  = Er enghraifft, 15 5 2022
 liability.exceededThresholdWeightDate.formatting.error  = Mae’n rhaid i’r dyddiad y gwnaethoch gyrraedd y trothwy fod yn ddyddiad go iawn
 liability.exceededThresholdWeightDate.outOfRange.error  = Mae’n rhaid i’r dyddiad y gwnaethoch gyrraedd y trothwy fod heddiw neu yn y gorffennol

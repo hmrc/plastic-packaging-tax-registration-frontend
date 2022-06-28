@@ -15,10 +15,8 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 
 @this(
     formHelper: FormWithCSRF,
@@ -29,49 +27,49 @@
     errorSummary: errorSummary,
     saveAndContinue: saveAndContinue,
     govukDateInput : GovukDateInput,
-    conditionalYesNo : conditionalYesNoRadio
-
-
+    conditionalYesNo : conditionalYesNoRadio,
+    paragraphBody: paragraphBody,    
 )
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@ifYes={
+@ifYes = {
 @govukDateInput(
-        DateInput(
-                id = "exceeded-threshold-weight-date",
-                hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint")))),
-                errorMessage = errorMessages,
-                fieldset = Some(Fieldset(
-                                        legend = Some(Legend(
-                                        content = Text(messages("liability.exceededThresholdWeightDate.title")),
-                                        classes = gdsFieldsetPageHeading,
-                                        isPageHeading = false))
-                                        )
-                                ),
-                                items = Seq(
-                                    InputItem(
-                                        id = s"${dayField.name}",
-                                        name = dayField.name,
-                                        label = Some(messages("date.day")),
-                                        value = dayField.value,
-                                        classes = s"govuk-input--width-2 ${if( dayField.hasErrors) "govuk-input--error"}"
-                                    ),
-                                    InputItem(
-                                        id = s"${monthField.name}",
-                                        name = monthField.name,
-                                        label = Some(messages("date.month")),
-                                        value = monthField.value,
-                                        classes = s"govuk-input--width-2 ${if( monthField.hasErrors) "govuk-input--error"}"
-                                    ),
-                                    InputItem(
-                                        id = s"${yearField.name}",
-                                        name = yearField.name,
-                                        label = Some(messages("date.year")),
-                                        value = yearField.value,
-                                        classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
-                                    )))
-)}
+    DateInput(
+        id = "exceeded-threshold-weight-date",
+        hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint")))),
+        errorMessage = errorMessages,
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("liability.exceededThresholdWeightDate.title")),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = false))
+        )
+        ),
+        items = Seq(
+            InputItem(
+                id = s"${dayField.name}",
+                name = dayField.name,
+                label = Some(messages("date.day")),
+                value = dayField.value,
+                classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
+            ),
+            InputItem(
+                id = s"${monthField.name}",
+                name = monthField.name,
+                label = Some(messages("date.month")),
+                value = monthField.value,
+                classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
+            ),
+            InputItem(
+                id = s"${yearField.name}",
+                name = yearField.name,
+                label = Some(messages("date.year")),
+                value = yearField.value,
+                classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
+            )))
+)
+}
 
 
 @dayField = @{form("exceeded-threshold-weight-date.day")}
@@ -101,10 +99,13 @@
 
     @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
 
+    @pageHeading(messages("liability.exceededThresholdWeight.question"))
+    @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
+    @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
+    @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
+
     @formHelper(action = liabilityRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
-
-    @conditionalYesNo(form, Some("liability.exceededThresholdWeight.question"), Some(ifYes))
-
+        @conditionalYesNo(form, None, Some(ifYes))
         @saveButtons()
     }
 }
