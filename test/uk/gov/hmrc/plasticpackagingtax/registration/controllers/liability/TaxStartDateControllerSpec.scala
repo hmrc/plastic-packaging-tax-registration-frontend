@@ -45,7 +45,6 @@ class TaxStartDateControllerSpec extends ControllerSpec {
     mockTaxStartDateService,
     mcc,
     page,
-    mockRegistrationConnector
   )
 
   override protected def beforeEach(): Unit = {
