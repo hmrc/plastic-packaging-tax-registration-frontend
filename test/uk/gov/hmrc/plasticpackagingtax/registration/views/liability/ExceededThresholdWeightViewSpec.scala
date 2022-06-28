@@ -22,10 +22,10 @@ import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.YesNoValues
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -40,11 +40,12 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
   val mockMessages: Messages = mock[Messages]
   when(mockMessages.apply(anyString(), any())).thenReturn("some message")
 
-  private val mockAppConfig = mock[AppConfig]
   private val fakeClock =
     Clock.fixed(Instant.parse("2022-05-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
 
-  private val form: Form[ExceededThresholdWeightAnswer] = new ExceededThresholdWeight(appConfig, fakeClock).form()(mockMessages)
+  private val formProvider = new ExceededThresholdWeight(appConfig, fakeClock)
+
+  val form =  formProvider.form()(mockMessages)
 
   private val page = inject[exceeded_threshold_weight_page]
 
@@ -77,10 +78,11 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display radio inputs" in {
-      view must containElementWithID("answer")
-      view.getElementsByClass("govuk-label").first().text() mustBe "Yes"
-      view must containElementWithID("answer-2")
-      view.getElementsByClass("govuk-label").get(1).text() mustBe "No"
+      view must containElementWithID("value-yes")
+      view.getElementById("value-yes").attr("value") mustBe YesNoValues.YES
+      view must containElementWithID("value-no")
+      view.getElementById("value-no").attr("value") mustBe YesNoValues.NO
+
     }
 
     "display 'Save and continue' button" in {
@@ -91,10 +93,10 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     // TODO need a working way to test which radio is checked (or neither) when form is first displayed
 
     "display error" when {
-      "no radio button checked" in {
-        val bindedForm = form.bind(emptyFormData)
-        val view = createView(form)
-       // view must haveGovukFieldError("answer", messages(bindedForm.emptyError))
+      "when form has error" in {
+        val bindedForm = form.withError("answerError","general.true")
+        val view = createView(bindedForm)
+        view must haveGovukFieldError("exceeded-threshold-weight-date", "Yes")
         view must haveGovukGlobalErrorSummary
       }
     }

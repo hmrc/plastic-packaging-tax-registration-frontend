@@ -20,16 +20,12 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include, not}
 import play.api.mvc.{AnyContent, Call}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 import java.time.LocalDate
 
-@ViewTest
 class TaxStartDateViewSpec extends UnitViewSpec {
 
   private val page = inject[tax_start_date_page]
