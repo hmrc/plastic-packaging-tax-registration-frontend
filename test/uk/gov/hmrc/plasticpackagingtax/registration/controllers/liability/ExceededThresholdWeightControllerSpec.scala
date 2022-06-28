@@ -41,7 +41,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import java.time.LocalDate
 import scala.concurrent.Future
 
-@Ignore
 class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
   val mockPage: exceeded_threshold_weight_page = mock[exceeded_threshold_weight_page]
