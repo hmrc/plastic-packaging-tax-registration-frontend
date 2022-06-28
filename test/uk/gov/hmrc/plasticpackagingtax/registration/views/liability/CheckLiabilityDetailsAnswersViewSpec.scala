@@ -17,13 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views.liability
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.{AnyContent, Call}
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles
@@ -41,8 +39,8 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
   "Check liability details answers View" should {
     val view = createView(reg = registration,
-                          backLink =
-                            liabilityRoutes.RegistrationTypeController.displayPage()
+      backLink =
+        liabilityRoutes.RegistrationTypeController.displayPage()
     )(journeyRequest)
 
     "have the correct title" in {
@@ -73,45 +71,44 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display expected content" when {
 
-      "post-launch" in {
-        assertSummaryRows(view,
-                          List(
-                            SummaryRowDetail(
-                              "liability.checkAnswers.exceededThreshold",
-                              "No",
-                              Some(liabilityRoutes.ExceededThresholdWeightController.displayPage())
-                            ),
-                            SummaryRowDetail(
-                              "liability.checkAnswers.expectToExceededThreshold",
-                              "Yes",
-                              Some(
-                                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
-                              )
-                            ),
-                            SummaryRowDetail(
-                              "liability.checkAnswers.dateRealisedExpectToExceededThreshold",
-                              "05 March 2022",
-                              Some(
-                                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()//TODO: look at this after page deleted
-                              )
-                            ),
-                            SummaryRowDetail("liability.checkAnswers.startDate",
-                                             "01 April 2022",
-                                             None
-                            ),
-                            SummaryRowDetail(
-                              "liability.checkAnswers.expectedWeightNext12m",
-                              "12000 kg",
-                              Some(liabilityRoutes.LiabilityWeightController.displayPage())
-                            ),
-                            SummaryRowDetail(
-                              "liability.checkAnswers.registrationType",
-                              "A single organisation",
-                              Some(liabilityRoutes.RegistrationTypeController.displayPage())
-                            )
-                          )
+
+      assertSummaryRows(view,
+        List(
+          SummaryRowDetail(
+            "liability.checkAnswers.exceededThreshold",
+            "No",
+            Some(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
+          ),
+          SummaryRowDetail(
+            "liability.checkAnswers.expectToExceededThreshold",
+            "Yes",
+            Some(
+              liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url
+            )
+          ),
+          SummaryRowDetail(
+            "liability.checkAnswers.dateRealisedExpectToExceededThreshold",
+            "05 March 2022",
+            Some(
+              liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url + "#expect-to-exceed-threshold-weight-date.day"
+            )
+          ),
+          SummaryRowDetail("liability.checkAnswers.startDate",
+            "01 April 2022",
+            None
+          ),
+          SummaryRowDetail(
+            "liability.checkAnswers.expectedWeightNext12m",
+            "12000 kg",
+            Some(liabilityRoutes.LiabilityWeightController.displayPage().url)
+          ),
+          SummaryRowDetail(
+            "liability.checkAnswers.registrationType",
+            "A single organisation",
+            Some(liabilityRoutes.RegistrationTypeController.displayPage().url)
+          )
         )
-      }
+      )
     }
 
     "display 'Continue' button" in {
@@ -127,30 +124,25 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   private def createView(reg: Registration, backLink: Call)(implicit
-    request: JourneyRequest[AnyContent]
+                                                            request: JourneyRequest[AnyContent]
   ): Document =
     page(reg, backLink)(request, messages(request))
 
-  private def assertSummaryRows(view: Document, rows: List[SummaryRowDetail]) = {
-    val summaryRowKeys = view.getElementsByClass("govuk-summary-list__key")
-    rows.zip(summaryRowKeys).foreach { row =>
-      row._2 must containMessage(row._1.label)
-    }
+  private def assertSummaryRows(view: Document, expectedRows: List[SummaryRowDetail]) = {
+    val actualRows = view.getElementsByClass("govuk-summary-list__row")
 
-    val summaryRowValues = view.getElementsByClass("govuk-summary-list__value")
-    rows.zip(summaryRowValues).foreach { row =>
-      row._2 must containText(row._1.value)
-    }
 
-    val summaryRowLinks = view.getElementsByClass("govuk-summary-list__value").filter {
-      elem: Element => elem.hasClass("govuk-link")
-    }
-    rows.zip(summaryRowLinks).foreach { row =>
-      if (row._1.actionLink.isDefined)
-        row._2 must haveHref(row._1.actionLink.get)
+    actualRows.zip(expectedRows).zipWithIndex.foreach { case ((actualRow, expectedRow), index) =>
+      s"Row ${index+1} has correct key, value and action" in {
+        actualRow.getElementsByClass("govuk-summary-list__key").first must containMessage(expectedRow.label)
+        actualRow.getElementsByClass("govuk-summary-list__value").first must containText(expectedRow.value)
+        if (expectedRow.actionLink.isDefined)
+          actualRow.getElementsByTag("a").first must haveHref(expectedRow.actionLink.get)
+        else assert(actualRow.getElementsByTag("a").isEmpty)
+      }
     }
   }
 
-  private case class SummaryRowDetail(label: String, value: String, actionLink: Option[Call])
+  private case class SummaryRowDetail(label: String, value: String, actionLink: Option[String])
 
 }
