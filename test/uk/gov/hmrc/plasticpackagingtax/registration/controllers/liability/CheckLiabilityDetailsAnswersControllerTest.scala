@@ -22,9 +22,10 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
+import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{StartRegistrationController, routes => pptRoutes}
@@ -35,13 +36,14 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_l
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   private val page                            = mock[check_liability_details_answers_page]
   private val mcc                             = stubMessagesControllerComponents()
   private val mockStartRegistrationController = mock[StartRegistrationController]
   private val mockTaxStartDateService         = mock[TaxStartDateService]
-  private val aDate           = LocalDate.of(2022, 4, 1)
+  private val aDate                           = LocalDate.of(2022, 4, 1)
 
   private val startLiabilityLink = Call("GET", "/start-liability")
 
@@ -71,6 +73,25 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   }
 
   "Check liability details answers Controller" should {
+
+    "displayPage" when {
+
+      "user is authorised" should {
+        "return 200" in {
+          authorizedUser()
+
+          val registration = aRegistration()
+          mockRegistrationFind(registration)
+
+          val result: Future[Result] = controller.displayPage()(getRequest())
+          status(result) shouldEqual Status.OK
+
+          verify(mockTaxStartDateService).calculateTaxStartDate(
+            ArgumentMatchers.eq(registration.liabilityDetails)
+          )
+        }
+      }
+    }
 
     "set expected page links" when {
 

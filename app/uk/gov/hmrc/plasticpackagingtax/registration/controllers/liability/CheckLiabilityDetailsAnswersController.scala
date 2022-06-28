@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrol
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, LiabilityDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
@@ -44,13 +44,20 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration, backLink))
+      val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
+
+      taxStartDate.act(
+        notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
+        isLiableAction = (startDate, _) => {
+          Ok(page(request.registration.copy(liabilityDetails = updateLiabilityStartDate(startDate)), backLink))
+        }
+      )
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
+
       taxStartDate.act(
         notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
         isLiableAction = (taxStartDate, _) => {
@@ -71,15 +78,18 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
   private def updateRegistration(startDate: LocalDate)
                                 (implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedLiabilityDetails =
-        registration.liabilityDetails.copy(startDate =
-          Some(
-            OldDate(Some(startDate.getDayOfMonth),
-              Some(startDate.getMonth.getValue),
-              Some(startDate.getYear)
-            )
-          )
-        )
-      registration.copy(liabilityDetails = updatedLiabilityDetails)
+      registration.copy(liabilityDetails = updateLiabilityStartDate(startDate))
     }
+
+  private def updateLiabilityStartDate(startDate: LocalDate)
+                              (implicit request: JourneyRequest[AnyContent]): LiabilityDetails = {
+    request.registration.liabilityDetails.copy(startDate =
+      Some(
+        OldDate(Some(startDate.getDayOfMonth),
+          Some(startDate.getMonth.getValue),
+          Some(startDate.getYear)
+        )
+      )
+    )
+  }
 }
