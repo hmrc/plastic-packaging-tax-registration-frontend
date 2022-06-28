@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.YesNoValues
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 
@@ -72,10 +73,10 @@ class ExpectToExceedThresholdWeightViewSpec
 
     "display radio inputs" in {
 
-      view must containElementWithID("answer")
-      view.getElementsByClass("govuk-label").first().text() mustBe "Yes"
-      view must containElementWithID("answer-2")
-      view.getElementsByClass("govuk-label").get(1).text() mustBe "No"
+      view must containElementWithID("value-yes")
+      view.getElementById("value-yes").attr("value") mustBe YesNoValues.YES
+      view must containElementWithID("value-no")
+      view.getElementById("value-no").attr("value") mustBe YesNoValues.NO
     }
 
     "display 'Save and continue' button" in {
