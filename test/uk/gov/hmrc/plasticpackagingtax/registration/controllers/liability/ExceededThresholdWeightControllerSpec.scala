@@ -22,22 +22,25 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, clearInvocations, verify, when}
 import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
+import play.api.data.{Form, Forms}
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
+import play.api.i18n.Messages
 import play.api.libs.json.JsObject
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import play.api.data.Forms.{ignored, localDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
-@Ignore
 class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
   val mockPage: exceeded_threshold_weight_page = mock[exceeded_threshold_weight_page]
@@ -45,7 +48,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
-  val form = mock[ExceededThresholdWeight]
+  val form = inject[ExceededThresholdWeight]
 
   val controller = new ExceededThresholdWeightController(
     authenticate = mockAuthAction,
@@ -73,7 +76,8 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
         authorizedUser()
         val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
-        when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(true))
+        when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
+        when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
         when(mockRegistrationConnector.find(any[String])(any())).thenReturn(
           Future.successful(Right(Some(existingRegistration)))
         )
@@ -86,7 +90,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         val captor = ArgumentCaptor.forClass(classOf[Form[Boolean]])
         verify(mockPage).apply(captor.capture())(any(), any())
         val form: Form[Boolean] = captor.getValue
-        form.value shouldBe Some(true)
+        form.value shouldBe Some(ExceededThresholdWeightAnswer(false, None))
       }
     }
 
@@ -112,14 +116,17 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
       "user answers yes" in {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
-        val correctForm = Seq("answer" -> "yes")
+        val correctForm = Seq("answer" -> "yes",
+          "exceeded-threshold-weight-date.day" -> "5",
+          "exceeded-threshold-weight-date.month" -> "5",
+          "exceeded-threshold-weight-date.year" -> "2022")
+
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
-        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe None
-        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
+        modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(Date(LocalDate.of(2022,5,5)))
         redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightDateController.displayPage().url
+          routes.ExpectToExceedThresholdWeightController.displayPage().url
         )
       }
     }
@@ -135,7 +142,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdateFailure()
 
-        val correctForm = Seq("answer" -> "yes")
+        val correctForm = Seq("answer" -> "yes",
+          "exceeded-threshold-weight-date.day" -> "5",
+          "exceeded-threshold-weight-date.month" -> "5",
+          "exceeded-threshold-weight-date.year" -> "2022")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[DownstreamServiceError](await(result))
@@ -146,7 +156,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationException()
 
-        val correctForm = Seq("answer" -> "yes")
+        val correctForm = Seq("answer" -> "yes",
+          "exceeded-threshold-weight-date.day" -> "5",
+          "exceeded-threshold-weight-date.month" -> "5",
+          "exceeded-threshold-weight-date.year" -> "2022")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[RuntimeException](await(result))

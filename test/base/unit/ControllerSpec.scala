@@ -25,7 +25,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.Helpers.contentAsString
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import play.api.test.{DefaultAwaitTimeout, FakeRequest, Injecting}
 import play.twirl.api.Html
 import spec.PptTestData
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpec
     extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
     with GuiceOneAppPerSuite with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout
-    with MockJourneyAction with MockConnectors with PptTestData {
+    with MockJourneyAction with MockConnectors with PptTestData with Injecting {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 
@@ -75,7 +75,7 @@ trait ControllerSpec
       .withHeaders(testUserHeaders.toSeq: _*)
       .withCSRFToken
 
-  private def postRequest(sessionId: String = "123"): FakeRequest[AnyContentAsEmpty.type] =
+  protected def postRequest(sessionId: String = "123"): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "")
       .withSession((AmendmentJourneyAction.SessionId, sessionId))
 
