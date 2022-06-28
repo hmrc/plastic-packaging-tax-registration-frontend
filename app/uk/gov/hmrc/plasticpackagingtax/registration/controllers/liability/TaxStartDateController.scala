@@ -42,14 +42,16 @@ class TaxStartDateController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage: Action[AnyContent] =
+  def displayPage: Action[AnyContent] = {
+    // TODO conditional text for view
     (authenticate andThen journeyAction) { implicit request =>
-      val taxStartDate = taxStarDateService.calculateTaxStartDate2(request.registration.liabilityDetails)
+      val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
       taxStartDate.act(
         notLiableAction = Redirect(routes.NotLiableController.displayPage()),
         isLiableAction = date => Ok(page(date, false))
       )
     }
+  }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { _ =>

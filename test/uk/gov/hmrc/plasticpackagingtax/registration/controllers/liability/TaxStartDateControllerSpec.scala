@@ -18,15 +18,16 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqq}
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.SEE_OTHER
 import play.api.libs.json.JsObject
+import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{TaxStartDate, TaxStartDateService}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -38,7 +39,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
   private val page                    = mock[tax_start_date_page]
   private val mockTaxStartDateService = mock[TaxStartDateService]
   private val mcc                     = stubMessagesControllerComponents()
-  private val calculateTaxStartDate   = LocalDate.of(2022, 4, 1)
+  private val aDate   = LocalDate.of(2022, 4, 1)
 
   val sut = new TaxStartDateController(mockAuthAction,
                                        mockJourneyAction,
@@ -51,121 +52,61 @@ class TaxStartDateControllerSpec extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     reset(page, mockTaxStartDateService, mockRegistrationConnector)
     given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
-    given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(Some(calculateTaxStartDate))
-    given(mockTaxStartDateService.calculateTaxStartDate2(any())).willReturn(TaxStartDate.liableFrom(calculateTaxStartDate))
+    given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFrom(aDate))
     mockRegistrationUpdate()
     super.beforeEach()
   }
 
+  private def authoriseAndSetRegistration = {
+    authorizedUser()
+    val registration: Registration = aRegistration()
+    mockRegistrationFind(registration)
+    registration
+  }
+
   "Tax Start Date page " should {
-    "return 200" when {
-      "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-
-        val result = sut.displayPage()(getRequest())
-
-        status(result) mustBe OK
-        verify(page).apply(startDate = ArgumentMatchers.eq(LocalDate.of(2022, 4, 1)), any())(
-          any(),
-          any()
-        )
-      }
+    
+    "bounce to the not liable page" in {
+      val registration: Registration = authoriseAndSetRegistration
+      given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.notLiable)
+      val result = await(sut.displayPage()(getRequest()))
+      
+      verify(mockTaxStartDateService).calculateTaxStartDate(ArgumentMatchers.eq(registration.liabilityDetails))
+      result mustBe Redirect(routes.NotLiableController.displayPage())
     }
 
+    "display tax start date page" in {
+      val registration: Registration = authoriseAndSetRegistration
+      given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFrom(aDate))
+      given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.raw("tax start date blah"))
+      val result = await(sut.displayPage()(getRequest()))
+      
+      verify(mockTaxStartDateService).calculateTaxStartDate(eqq(registration.liabilityDetails))
+      verify(page).apply(eqq(aDate), eqq(false))(any(), any()) // TODO <--- tests for false vs true
+      result mustBe Ok(HtmlFormat.raw("tax start date blah"))
+    }
+    
     "return an error" when {
       "user is not authorised and display page method is invoked" in {
         unAuthorizedUser()
-
         val result = sut.displayPage()(getRequest())
-
         intercept[RuntimeException](status(result))
       }
 
-      "could not calculate date and display page method is invoked" ignore {
-        // TODO possibly redundant test / replace it
-        authorizedUser()
-        when(mockTaxStartDateService.calculateTaxStartDate(any())).thenReturn(None)
-
-        val result = sut.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
     }
 
-    "calculate tax start date" when {
-      "display page method is invoked" ignore {
-        // TODO repair test once new tax start calculation in
-        authorizedUser()
-        val registration: Registration = aRegistration()
-        mockRegistrationFind(registration)
+    "submit" should {
+      "redirect to Capture Weight page" when {
+        "submit" in {
+          authorizedUser()
+          mockRegistrationFind(aRegistration())
 
-        await(sut.displayPage()(getRequest()))
+          val result = sut.submit()(postRequest(JsObject.empty))
 
-        verify(mockTaxStartDateService).calculateTaxStartDate(
-          ArgumentMatchers.eq(registration.liabilityDetails)
-        )
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.LiabilityWeightController.displayPage().url)
+        }
       }
-    }
+    }  }
 
-    "save the start date" when {
-      "calculating the tax start date" ignore {
-        // TODO broken as we no longer save tax date to cache here -> anything to salvage from test or bin it?
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-
-        val result = sut.displayPage()(getRequest())
-        status(result) mustBe OK
-
-        modifiedRegistration.liabilityDetails.startDate.get.asLocalDate mustBe calculateTaxStartDate
-      }
-    }
-
-    "return the realised exceed threshold back link" when {
-      "user expected to exceed the threshold and display page method is invoked" ignore {
-        // TODO - redundant test? or needs updating?
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-
-        await(sut.displayPage()(getRequest()))
-
-        verify(page).apply(
-          any(),
-          any(),
-        )(any(), any())
-      }
-    }
-
-    "return the exceeded threshold link" when {
-      "the threshold is breached and display page method is invoked" ignore {
-        // TODO - redundant test? or needs updating?
-        authorizedUser()
-
-        mockRegistrationFind(
-          aRegistration(
-            withLiabilityDetails(LiabilityDetails(exceededThresholdWeight = Some(true)))
-          )
-        )
-
-        await(sut.displayPage()(getRequest()))
-
-        verify(page).apply(
-          any(),
-          any(),
-        )(any(), any())
-      }
-    }
-
-    "redirect to Capture Weight page" when {
-      "submit" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-
-        val result = sut.submit()(postRequest(JsObject.empty))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.LiabilityWeightController.displayPage().url)
-      }
-    }
-  }
 }

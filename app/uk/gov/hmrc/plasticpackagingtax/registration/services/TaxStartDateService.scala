@@ -60,15 +60,7 @@ object TaxStartDate {
 
 class TaxStartDateService {
 
-  //todo actually calculate
-  def calculateTaxStartDate(details: LiabilityDetails): Option[LocalDate] = Some(LocalDate.of(1996, 3, 27))
-  //    if (details.exceededThresholdWeight.contains(true))
-  //      details.dateExceededThresholdWeight.map(o => calculateExceedStartDate(o))
-  //    else if (details.expectToExceedThresholdWeight.contains(true))
-  //      details.dateRealisedExpectedToExceedThresholdWeight.map(_.date)
-  //    else Some(LocalDate.of(1996, 3, 27))
-
-  def calculateTaxStartDate2(liabilityDetails: LiabilityDetails): TaxStartDate = {
+  def calculateTaxStartDate(liabilityDetails: LiabilityDetails): TaxStartDate = {
 
     val backwardsIsYes = liabilityDetails.mustHave(_.exceededThresholdWeight, "exceededThresholdWeight")
     val forwardsIsYes = liabilityDetails.mustHave(_.expectToExceedThresholdWeight, "expectToExceedThresholdWeight")
