@@ -19,11 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.liability
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include, not}
-import play.api.mvc.{AnyContent, Call}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -33,16 +28,11 @@ import java.time.LocalDate
 class TaxStartDateViewSpec extends UnitViewSpec {
 
   private val page = inject[tax_start_date_page]
+  private val aDate: LocalDate = LocalDate.of(2022, 4, 14)
 
-  private val startDate: LocalDate = LocalDate.of(2022, 4, 1)
+  "liability tax start date page" when {
 
-  "liability tax start date page" should {
-
-    val view =
-      createView(startDate,
-                 true,
-                 liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
-      )
+    val view: Document = page(aDate, isDateFromBackwardsTest = true)(journeyRequest, messages(request))
 
     "have the correct Title" in {
       view.select("title").first must containMessage("liability.taxStartDate.title")
@@ -58,30 +48,26 @@ class TaxStartDateViewSpec extends UnitViewSpec {
     }
 
     "have a page heading" in {
-      view.getElementsByClass("govuk-heading-l").text() mustBe messages(
-        "liability.taxStartDate.pageHeading"
-      )
+      view.getElementsByClass("govuk-heading-l").text() mustBe messages("liability.taxStartDate.pageHeading")
     }
 
-    "have a page content including the tax start date" when {
-      "threshold has been breached" in {
-        val elem = view.getElementsByClass("govuk-body")
+    "have show the start date" in {
+      view.getElementsByClass("govuk-body").get(0).text() mustBe messages("liability.taxStartDate.hint", "14 April 2022")
+    }
 
-        elem.get(0).text() mustBe messages("liability.taxStartDate.hint", "1 April 2022")
-        elem.get(1).text() mustBe messages("liability.taxStartDate.threshHoldBreached.hint")
+    "explain how the date was arrived at" when {
+      "showing the date from the backwards test" in {
+        page(aDate, isDateFromBackwardsTest = true)
+          .getElementsByClass("govuk-body")
+          .get(1)
+          .text() mustBe messages("liability.taxStartDate.threshHoldBreached.hint")
       }
 
-      "threshold is expected to be exceeded" in {
-        val elem =
-          createView(startDate,
-                     false,
-                     liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
-          ).getElementsByClass("govuk-body")
-
-        elem.get(0).text() mustBe messages("liability.taxStartDate.hint", "1 April 2022")
-        elem.get(1).text() mustBe messages(
-          "liability.taxStartDate.realisedThresholdWouldBeExceeded.hint"
-        )
+      "showing the date from the forwards test" in {
+        page(aDate, isDateFromBackwardsTest = false)
+          .getElementsByClass("govuk-body")
+          .get(1)
+          .text() mustBe messages("liability.taxStartDate.realisedThresholdWouldBeExceeded.hint")
       }
     }
 
@@ -91,14 +77,9 @@ class TaxStartDateViewSpec extends UnitViewSpec {
     }
   }
 
-  private def createView(startDate: LocalDate, hasExceededThresholdWeight: Boolean, backLink: Call)(
-    implicit request: JourneyRequest[AnyContent]
-  ): Document =
-    page(startDate, hasExceededThresholdWeight)(request, messages(request))
-
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(startDate, true)(journeyRequest, messages)
-    page.render(startDate, true, journeyRequest, messages)
+    page.f(aDate, true)(journeyRequest, messages)
+    page.render(aDate, isDateFromBackwardsTest = true, journeyRequest, messages)
   }
 
 }
