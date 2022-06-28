@@ -20,6 +20,7 @@ import base.unit.ControllerSpec
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, clearInvocations, verify, when}
+import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.{Form, Forms}
 import play.api.http.Status
@@ -40,6 +41,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import java.time.LocalDate
 import scala.concurrent.Future
 
+@Ignore
 class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
   val mockPage: exceeded_threshold_weight_page = mock[exceeded_threshold_weight_page]

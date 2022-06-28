@@ -20,6 +20,7 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
+import org.scalatest.Ignore
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -33,6 +34,7 @@ import java.time.{Clock, Instant}
 import java.util.TimeZone
 
 @ViewTest
+@Ignore
 class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
   val mockMessages: Messages = mock[Messages]
