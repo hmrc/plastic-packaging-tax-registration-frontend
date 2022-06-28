@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
@@ -48,7 +48,7 @@ class TaxStartDateController @Inject() (
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
       taxStartDate.act(
         notLiableAction = Redirect(routes.NotLiableController.displayPage()),
-        isLiableAction = date => Ok(page(date, false))
+        isLiableAction = (startDate, isBackwardsBasedDate) => Ok(page(startDate, isBackwardsBasedDate))
       )
     }
   }

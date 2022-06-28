@@ -42,19 +42,25 @@ object MustHaveFieldExtension {
 }
 
 
-case class TaxStartDate private(private val maybeLiableFrom: Option[LocalDate]) {
-  def act(notLiableAction: => Result, isLiableAction: LocalDate => Result): Result =
+case class TaxStartDate private(
+  private val maybeLiableFrom: Option[LocalDate], 
+  private val isDateFromBackwardsTest: Boolean
+) {
+  
+  def act(notLiableAction: => Result, isLiableAction: (LocalDate, Boolean) => Result): Result =
     maybeLiableFrom match {
       case None => notLiableAction
-      case Some(date) => isLiableAction(date)
+      case Some(date) => isLiableAction(date, isDateFromBackwardsTest)
     }
 
+  // TODO Zap
   def oldDate: Option[LocalDate] = maybeLiableFrom
 }
 
 object TaxStartDate {
-  def notLiable: TaxStartDate = TaxStartDate(None)
-  def liableFrom(date: LocalDate): TaxStartDate = TaxStartDate(Some(date))
+  def notLiable: TaxStartDate = TaxStartDate(None, isDateFromBackwardsTest = false)
+  def liableFromBackwardsTest(date: LocalDate): TaxStartDate = TaxStartDate(Some(date), isDateFromBackwardsTest = true)
+  def liableFromForwardsTest(date: LocalDate): TaxStartDate = TaxStartDate(Some(date), isDateFromBackwardsTest = false)
 }
 
 
@@ -74,14 +80,17 @@ class TaxStartDateService {
 
     (backwardsStartDate, forwardsStartDate) match {
       case (None, None) => TaxStartDate.notLiable
-      case (Some(backwardsStartDate), None) => TaxStartDate.liableFrom(backwardsStartDate)
-      case (None, Some(forwardsStartDate)) => TaxStartDate.liableFrom(forwardsStartDate)
-      case (Some(backwardsStartDate), Some(forwardsStartDate)) => TaxStartDate.liableFrom(earliestOf(backwardsStartDate, forwardsStartDate))
+      case (Some(backwardsStartDate), None) => TaxStartDate.liableFromBackwardsTest(backwardsStartDate)
+      case (None, Some(forwardsStartDate)) => TaxStartDate.liableFromForwardsTest(forwardsStartDate)
+      case (Some(backwardsStartDate), Some(forwardsStartDate)) => takeEarliestOf(backwardsStartDate, forwardsStartDate)
     }
   }
 
-  private def earliestOf(a: LocalDate, b: LocalDate): LocalDate =
-    if (a.isBefore(b)) a else b
+  private def takeEarliestOf(backwardsDate: LocalDate, forwardsDate: LocalDate): TaxStartDate =
+    if (backwardsDate.isAfter(forwardsDate)) 
+      TaxStartDate.liableFromForwardsTest(forwardsDate) 
+    else 
+      TaxStartDate.liableFromBackwardsTest(backwardsDate)
 
   private def calculateExceedStartDate(date: Date): LocalDate =
     date.date.plusMonths(1).withDayOfMonth(1)

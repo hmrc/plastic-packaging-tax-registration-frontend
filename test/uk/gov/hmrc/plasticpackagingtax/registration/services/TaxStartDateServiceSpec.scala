@@ -68,7 +68,7 @@ class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
 
   trait PossibleActions {
     def notLiableAction: Result
-    def isLiableAction(date: LocalDate): Result 
+    def isLiableAction(date: LocalDate, isDateFromBackwardsTest: Boolean): Result 
   }
   
   private val actions = mock[PossibleActions]
@@ -82,15 +82,24 @@ class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
   "Act should follow the not liable action" in {
     TaxStartDate.notLiable.act(actions.notLiableAction, actions.isLiableAction)
     verify(actions, times(1)).notLiableAction
-    verify(actions, never).isLiableAction(any())
+    verify(actions, never).isLiableAction(any(), any())
   }
 
-  "Act should follow the is liable action" in {
-    TaxStartDate.liableFrom(aDate).act(actions.notLiableAction, actions.isLiableAction)
-    verify(actions, never).notLiableAction
-    verify(actions, times(1)).isLiableAction(any())
-  }
+  "Act should follow the is liable action" when {
 
+    "liable because of the backwards test" in {
+      TaxStartDate.liableFromBackwardsTest(aDate).act(actions.notLiableAction, actions.isLiableAction)
+      verify(actions, never).notLiableAction
+      verify(actions, times(1)).isLiableAction(aDate, isDateFromBackwardsTest = true)
+    }
+
+    "liable because of the forwards test" in {
+      TaxStartDate.liableFromForwardsTest(aDate).act(actions.notLiableAction, actions.isLiableAction)
+      verify(actions, never).notLiableAction
+      verify(actions, times(1)).isLiableAction(aDate, isDateFromBackwardsTest = false)
+    }
+
+  }
 }
 
 
@@ -191,7 +200,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         expectToExceedThresholdWeight = Some(false)
       )
       val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-      taxStartDateService.calculateTaxStartDate(onlyBackwardsIsYes) mustBe TaxStartDate.liableFrom(firstDayOfNextMonth)
+      taxStartDateService.calculateTaxStartDate(onlyBackwardsIsYes) mustBe TaxStartDate.liableFromBackwardsTest(firstDayOfNextMonth)
     }
   }
 
@@ -203,7 +212,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         exceededThresholdWeight = Some(false),
       )
       val sameDateAsUserEntered: LocalDate = LocalDate.of(2022, 4, 17)
-      taxStartDateService.calculateTaxStartDate(onlyForwardsIsYes) mustBe TaxStartDate.liableFrom(sameDateAsUserEntered)
+      taxStartDateService.calculateTaxStartDate(onlyForwardsIsYes) mustBe TaxStartDate.liableFromForwardsTest(sameDateAsUserEntered)
     }
   }
 
@@ -217,7 +226,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 2))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.calculateTaxStartDate(backwardsStartDateIsEarlier) mustBe TaxStartDate.liableFrom(firstDayOfNextMonth)
+        taxStartDateService.calculateTaxStartDate(backwardsStartDateIsEarlier) mustBe TaxStartDate.liableFromBackwardsTest(firstDayOfNextMonth)
       }
     }
     
@@ -230,7 +239,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 17))),
         )
         val sameDateAsUserEntered: LocalDate = LocalDate.of(2022, 4, 17)
-        taxStartDateService.calculateTaxStartDate(forwardsStartDateIsEarlier) mustBe TaxStartDate.liableFrom(sameDateAsUserEntered)
+        taxStartDateService.calculateTaxStartDate(forwardsStartDateIsEarlier) mustBe TaxStartDate.liableFromForwardsTest(sameDateAsUserEntered)
       }
     }
 
@@ -243,7 +252,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 1))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.calculateTaxStartDate(bothStartDatesAreTheSame) mustBe TaxStartDate.liableFrom(firstDayOfNextMonth)
+        taxStartDateService.calculateTaxStartDate(bothStartDatesAreTheSame) mustBe TaxStartDate.liableFromBackwardsTest(firstDayOfNextMonth)
       }
     }
   }
