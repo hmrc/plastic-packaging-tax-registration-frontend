@@ -149,15 +149,15 @@ liabilityExpectedWeight.decimal.error  = Mae’n rhaid i’r pwysau disgwyliedig
 liabilityExpectedWeight.leadingBlankSpace.error  = Mae’n rhaid i’r pwysau disgwyliedig beidio â chynnwys bylchau blaen
 liabilityExpectedWeight.trailingBlankSpace.error  = Mae’n rhaid i’r pwysau disgwyliedig beidio â chynnwys bylchau llusg
 
-liability.sectionHeader  = Manylion rhwymedigaeth
-liability.expectToExceedThreshold.date.question  = Pryd gwnaethoch sylweddoli y byddai’ch sefydliad neu’ch grŵp yn cyrraedd y trothwy 10,000kg?
-liability.expectToExceedThreshold.date.hint  = Er enghraifft, 15 6 2022.
-liability.expectToExceedThreshold.date.none  = Nodwch y dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy
-liability.expectToExceedThreshold.date.invalid  = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod yn ddyddiad go iawn
-liability.expectToExceedThreshold.date.future  = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod heddiw neu yn y gorffennol
+liability.sectionHeader = Manylion rhwymedigaeth
+liability.expectToExceedThreshold.date.question = Ar ba ddyddiad yr oedd gennych sail resymol dros gredu hyn?
+liability.expectToExceedThreshold.date.line1 = Enghraifft: Ar 12 Mehefin, rydych yn derbyn archeb i weithgynhyrchu 11,000kg o ddeunydd pacio plastig erbyn 25 Mehefin. Dylech nodi ‘12 Mehefin’, gan mai dyma’r dyddiad yr oedd gennych sail resymol dros gredu y byddech yn cyrraedd y trothwy.
+liability.expectToExceedThreshold.date.hint = Er enghraifft, 15 6 2022.
+liability.expectToExceedThreshold.date.none = Nodwch y dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy
+liability.expectToExceedThreshold.date.invalid = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod yn ddyddiad go iawn
+liability.expectToExceedThreshold.date.future = Mae’n rhaid i’r dyddiad y gwnaethoch sylweddoli y byddech yn cyrraedd y trothwy fod heddiw neu yn y gorffennol
 liability.expectToExceedThreshold.two.required.fields = [GET WELSH CONTENT] must include the {0}
 liability.expectToExceedThreshold.one.field = [GET WELSH CONTENT] must include the {0}
-
 
 liability.taxStartDate.title  = Eich dyddiad dechrau treth
 liability.taxStartDate.pageHeading  = Eich dyddiad dechrau treth
@@ -451,10 +451,13 @@ liability.exceededThresholdWeight.hint.2 = Dewiswch ‘Na’ os yw’ch sefydlia
 liability.exceededThresholdWeight.question  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
 liability.exceededThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022
 
-liability.expectToExceedThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
-liability.expectToExceedThresholdWeight.title  = A yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig yn ystod y 30 diwrnod nesaf?
-liability.expectToExceedThresholdWeight.hint  = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod ddisgwyl cyrraedd y trothwy hwn.
-liability.expectToExceedThresholdWeight.question  = A yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig yn ystod y 30 diwrnod nesaf?
+liability.expectToExceedThresholdWeight.sectionHeader = Manylion rhwymedigaeth
+liability.expectToExceedThresholdWeight.title = A yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig yn ystod y 30 diwrnod nesaf?
+liability.expectToExceedThresholdWeight.hint = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod ddisgwyl cyrraedd y trothwy hwn.
+liability.expectToExceedThresholdWeight.question = Ar unrhyw ddiwrnod ers 1 Ebrill 2022, a oedd gennych sail resymol dros gredu y byddech yn gweithgynhyrchu neu’n mewnforio 10,000kg neu fwy o gydrannau deunydd pacio plastig gorffenedig cyn pen 30 diwrnod?
+liability.expectToExceedThresholdWeight.line1 = Enghraifft: Ar 16 Mai 2022, rydych yn derbyn archeb i weithgynhyrchu 20,000kg o ddeunydd pacio plastig erbyn 28 Mai 2022. Mae hyn yn cyrraedd y trothwy 10,000kg a chyn pen 30 diwrnod.
+liability.expectToExceedThresholdWeight.line2 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod allu ateb ‘Iawn’. 
+liability.expectToExceedThresholdWeight.line2 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod allu ateb ‘Iawn’. 
 liability.expectToExceedThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig yn ystod y 30 diwrnod nesaf
 
 liability.exceededThresholdWeightDate.sectionHeader  = Manylion rhwymedigaeth
