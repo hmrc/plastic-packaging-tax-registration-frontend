@@ -53,7 +53,7 @@ if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
             legend = Some(Legend(
             content = Text(messages("liability.expectToExceedThreshold.date.question")),
             classes = gdsFieldsetPageHeading,
-            isPageHeading = true))
+            isPageHeading = false))
             )),
             items = Seq(
             InputItem(

@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_
 import java.time.LocalDate
 
 class ExpectToExceedThresholdWeightViewSpec
-    extends UnitViewSpec with Matchers {
+  extends UnitViewSpec with Matchers {
 
   private val page = inject[expect_to_exceed_threshold_weight_page]
   private val formProvider: ExpectToExceedThresholdWeight = inject[ExpectToExceedThresholdWeight]
@@ -94,7 +94,7 @@ class ExpectToExceedThresholdWeightViewSpec
       val form = formProvider().fill(ExpectToExceedThresholdWeightAnswer(true, Some(LocalDate.now())))
       val view = createView(form)
 
-      view.getElementById("answer").attr("value") mustBe "yes"
+      view.getElementById("value-yes").attr("value") mustBe "yes"
     }
 
     "display error" when {
@@ -109,6 +109,77 @@ class ExpectToExceedThresholdWeightViewSpec
         view must haveGovukGlobalErrorSummary
       }
     }
+
+
+    "Expect to Exceed Threshold Date" should {
+
+      val view = createView()
+
+      "contain timeout dialog function" in {
+        containTimeoutDialogFunction(view) mustBe true
+      }
+
+
+      "display section header" in {
+        view.select("span#section-header").text() must include(messages("liability.sectionHeader"))
+      }
+
+      "display question" in {
+        view.select("#conditional-value-yes > div > fieldset > legend").text() must include(
+          messages("liability.expectToExceedThreshold.date.question")
+        )
+      }
+
+      "display question hint" in {
+        view.getElementById("expect-to-exceed-threshold-weight-date-hint") must containMessage(
+          "liability.expectToExceedThreshold.date.hint"
+        )
+      }
+
+      "display day input box" in {
+        view.getElementsByAttributeValueMatching("for", "day").text() must include(
+          messages("date.day")
+        )
+      }
+
+      "display month input box" in {
+        view.getElementsByAttributeValueMatching("for", "month").text() must include(
+          messages("date.month")
+        )
+      }
+
+      "display year input box" in {
+        view.getElementsByAttributeValueMatching("for", "year").text() must include(
+          messages("date.year")
+        )
+      }
+
+      "display 'Save and continue' button" in {
+        view must containElementWithID("submit")
+        view.getElementById("submit").text() mustBe "Save and continue"
+      }
+
+      "display data in date inputs" in {
+        val form = formProvider()
+          .fill(ExpectToExceedThresholdWeightAnswer(true, Some(LocalDate.of(2022, 5, 1))))
+        val view = createView(form)
+
+        view.getElementById("expect-to-exceed-threshold-weight-date.day").attr("value") mustBe "1"
+        view.getElementById("expect-to-exceed-threshold-weight-date.month").attr("value") mustBe "5"
+        view.getElementById("expect-to-exceed-threshold-weight-date.year").attr("value") mustBe "2022"
+      }
+
+      "display error" when {
+        "no date entered" in {
+          val bindedForm = formProvider().withError("answerError", "general.true")
+          val view = createView(bindedForm)
+          view must haveGovukFieldError("expect-to-exceed-threshold-weight-date", "Yes")
+          view must haveGovukGlobalErrorSummary
+        }
+      }
+
+    }
+
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
