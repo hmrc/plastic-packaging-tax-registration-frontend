@@ -103,7 +103,7 @@
 
     @formHelper(action = liabilityRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
 
-    @conditionalYesNo(form, "liability.exceededThresholdWeight.question", Some(ifYes))
+    @conditionalYesNo(form, Some("liability.exceededThresholdWeight.question"), Some(ifYes))
 
         @saveButtons()
     }

@@ -98,7 +98,7 @@ if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
     @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
-        @conditionalYesNo(form, "", Some(ifYes))
+        @conditionalYesNo(form, None, Some(ifYes))
         @saveButtons()
     }
 }
