@@ -34,8 +34,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExceededThr
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import play.api.data.Forms.ignored
+import play.api.data.Forms.{ignored, localDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ExceededThresholdWeightControllerSpec extends ControllerSpec {
@@ -45,14 +47,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
-  val form = mock[ExceededThresholdWeight]
-
-  def stubForm(outcome: ExceededThresholdWeightAnswer) =
-    when(form.form()(any())).thenReturn(Form("stuff" -> ignored(outcome)))
-
-  def errorForm() =
-    when(form.form()(any())).thenReturn(Form("stuff" -> ignored(ExceededThresholdWeightAnswer(true, None))).withError("blah", "msg.key"))
-
+  val form = inject[ExceededThresholdWeight]
 
   val controller = new ExceededThresholdWeightController(
     authenticate = mockAuthAction,
@@ -79,8 +74,6 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         clearInvocations(mockPage) // todo oh dear move to before hook
 
         authorizedUser()
-        stubForm(ExceededThresholdWeightAnswer(yesNo = false, None))
-
         val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
         when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
         when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
@@ -122,14 +115,17 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
       "user answers yes" in {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
-        val correctForm = Seq("answer" -> "yes")
+        val correctForm = Seq("answer" -> "yes",
+          "exceeded-threshold-weight-date.day" -> "5",
+          "exceeded-threshold-weight-date.month" -> "5",
+          "exceeded-threshold-weight-date.year" -> "2022")
+
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
-        modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe None
-        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
+        modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(Date(LocalDate.of(2022,5,5)))
         redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightDateController.displayPage().url
+          routes.ExpectToExceedThresholdWeightController.displayPage().url
         )
       }
     }
@@ -145,7 +141,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdateFailure()
 
-        val correctForm = Seq("answer" -> "yes")
+        val correctForm = Seq("answer" -> "yes",
+          "exceeded-threshold-weight-date.day" -> "5",
+          "exceeded-threshold-weight-date.month" -> "5",
+          "exceeded-threshold-weight-date.year" -> "2022")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[DownstreamServiceError](await(result))
@@ -156,7 +155,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationException()
 
-        val correctForm = Seq("answer" -> "yes")
+        val correctForm = Seq("answer" -> "yes",
+          "exceeded-threshold-weight-date.day" -> "5",
+          "exceeded-threshold-weight-date.month" -> "5",
+          "exceeded-threshold-weight-date.year" -> "2022")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[RuntimeException](await(result))
