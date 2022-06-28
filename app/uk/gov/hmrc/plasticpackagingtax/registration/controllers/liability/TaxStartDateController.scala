@@ -36,15 +36,13 @@ class TaxStartDateController @Inject() (
 ) 
   extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage: Action[AnyContent] = {
-    // TODO conditional text for view
+  def displayPage: Action[AnyContent] = 
     (authenticate andThen journeyAction) { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
       taxStartDate.act(
         notLiableAction = Redirect(routes.NotLiableController.displayPage()),
         isLiableAction = (startDate, isBackwardsBasedDate) => Ok(page(startDate, isBackwardsBasedDate))
-      )
-    }
+    )
   }
 
   def submit(): Action[AnyContent] =

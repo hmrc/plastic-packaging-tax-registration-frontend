@@ -257,26 +257,4 @@ class TaxStartDateServiceSpec extends PlaySpec {
     }
   }
 
-  "return 1st day of the month following the date capture" when {
-    "plastic package limit are exceeded" in {
-      val liabilityDetailsForBreachedThreshold = LiabilityDetails(
-        expectToExceedThresholdWeight = Some(false), 
-        exceededThresholdWeight = Some(true),
-        dateExceededThresholdWeight = Some(forms.Date(dateExceededThresholdWeight))
-      )
-      taxStartDateService.calculateTaxStartDate(liabilityDetailsForBreachedThreshold).oldDate mustBe Some(LocalDate.of(2022, 5, 1))
-    }
-  }
-
-  "return the capture date" when {
-    "plastic package limit will be exceed in the next 30 days" in {
-      val liabilityDetailsForThresholdWouldBeBreached = LiabilityDetails(
-        expectToExceedThresholdWeight = Some(true),
-        dateRealisedExpectedToExceedThresholdWeight = Some(forms.Date(LocalDate.of(2022, 4, 30))),
-        exceededThresholdWeight = Some(false)
-      )
-      taxStartDateService.calculateTaxStartDate(liabilityDetailsForThresholdWouldBeBreached).oldDate mustBe Some(dateExceededThresholdWeight)
-    }
-  }
-
 }

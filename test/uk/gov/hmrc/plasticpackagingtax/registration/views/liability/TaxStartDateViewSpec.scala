@@ -32,7 +32,7 @@ class TaxStartDateViewSpec extends UnitViewSpec {
 
   "liability tax start date page" when {
 
-    val view: Document = page(aDate, isDateFromBackwardsTest = true)(journeyRequest, messages(request))
+    val view: Document = page(aDate, isDateFromBackwardsTest = true)
 
     "have the correct Title" in {
       view.select("title").first must containMessage("liability.taxStartDate.title")

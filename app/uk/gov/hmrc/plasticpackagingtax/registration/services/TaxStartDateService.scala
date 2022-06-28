@@ -46,15 +46,11 @@ case class TaxStartDate private(
   private val maybeLiableFrom: Option[LocalDate], 
   private val isDateFromBackwardsTest: Boolean
 ) {
-  
   def act(notLiableAction: => Result, isLiableAction: (LocalDate, Boolean) => Result): Result =
     maybeLiableFrom match {
       case None => notLiableAction
       case Some(date) => isLiableAction(date, isDateFromBackwardsTest)
     }
-
-  // TODO Zap
-  def oldDate: Option[LocalDate] = maybeLiableFrom
 }
 
 object TaxStartDate {
