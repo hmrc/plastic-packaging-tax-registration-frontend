@@ -43,7 +43,6 @@ class ExceededThresholdWeightSpec extends PlaySpec {
 
   val sut: Form[ExceededThresholdWeightAnswer] = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
 
-  // todo fix all test
   "The form" must {
 
     "bind correctly" when {
@@ -55,7 +54,7 @@ class ExceededThresholdWeightSpec extends PlaySpec {
         boundForm.errors mustBe Nil
       }
 
-      "no is provided with No date" in {//todo: break into two tests - date provided AND date isn't provided
+      "no is provided with No date" in {
         val boundForm = sut.bind(Map("answer" -> YesNoValues.NO))
         boundForm.value mustBe Some(ExceededThresholdWeightAnswer(false, None))
         boundForm.errors mustBe Nil

@@ -27,10 +27,10 @@ import scala.util.Try
 trait Constraints {
 
   private def isDateInFuture(clock: Clock): LocalDate => Boolean =
-    date => !date.isAfter(LocalDate.now(clock))
+    date => date.isAfter(LocalDate.now(clock))
 
   private def isDateBeforeLiveDate(appConfig: AppConfig): LocalDate => Boolean =
-    date => !date.isBefore(appConfig.goLiveDate)
+    date => date.isBefore(appConfig.goLiveDate)
 
   private def getMonth(appConfig: AppConfig)(implicit messages: Messages) =
     messages(s"date.month.${appConfig.goLiveDate.getMonthValue}")
@@ -42,15 +42,15 @@ trait Constraints {
   ): Constraint[LocalDate] = {
     val goLiveDate = appConfig.goLiveDate
     Constraint {
-      case request if !isDateBeforeLiveDate(appConfig).apply(request) =>
+      case request if isDateBeforeLiveDate(appConfig).apply(request) =>
         Invalid(
           ValidationError(
             messages(beforeLiveDateErrorKey,
-                     s"${goLiveDate.getDayOfMonth}  ${getMonth(appConfig)} ${goLiveDate.getYear}"
+                     s"${goLiveDate.getDayOfMonth} ${getMonth(appConfig)} ${goLiveDate.getYear}"
             )
           )
         )
-      case request if !isDateInFuture(clock).apply(request) =>
+      case request if isDateInFuture(clock).apply(request) =>
         Invalid(ValidationError(errorKey))
       case _ => Valid
     }
