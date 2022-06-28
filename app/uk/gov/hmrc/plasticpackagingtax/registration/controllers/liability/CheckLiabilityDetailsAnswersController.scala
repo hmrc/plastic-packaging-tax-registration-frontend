@@ -50,14 +50,15 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
 
-      val taxStartDate = taxStarDateService.calculateTaxStartDate2(request.registration.liabilityDetails)
-      taxStartDate.oldDate match {
-        case Some(date) =>
-          updateRegistration(date).map { _ =>
+      val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
+      taxStartDate.act(
+        notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
+        isLiableAction = (taxStartDate, _) => {
+          updateRegistration(taxStartDate).map { _ =>
             Redirect(commonRoutes.TaskListController.displayPage())
           }
-        case _ => throw new IllegalStateException("Problem calculating the Tax Start Date")
-      }
+        }
+      )
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =

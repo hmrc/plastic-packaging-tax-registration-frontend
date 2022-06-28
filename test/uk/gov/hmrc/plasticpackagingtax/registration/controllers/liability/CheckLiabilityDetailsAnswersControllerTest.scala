@@ -41,7 +41,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   private val mcc                             = stubMessagesControllerComponents()
   private val mockStartRegistrationController = mock[StartRegistrationController]
   private val mockTaxStartDateService         = mock[TaxStartDateService]
-  private val calculateTaxStartDate           = LocalDate.of(2022, 4, 1)
+  private val aDate           = LocalDate.of(2022, 4, 1)
 
   private val startLiabilityLink = Call("GET", "/start-liability")
 
@@ -60,7 +60,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
     mockRegistrationFind(registration)
     given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
-    given(mockTaxStartDateService.calculateTaxStartDate2(any())).willReturn(TaxStartDate.liableFrom(calculateTaxStartDate))
+    given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
     when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
     mockRegistrationUpdate()
   }
@@ -116,11 +116,11 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
 
-        verify(mockTaxStartDateService).calculateTaxStartDate2(
+        verify(mockTaxStartDateService).calculateTaxStartDate(
           ArgumentMatchers.eq(registration.liabilityDetails)
         )
 
-        modifiedRegistration.liabilityDetails.startDate.get.asLocalDate mustBe calculateTaxStartDate
+        modifiedRegistration.liabilityDetails.startDate.get.asLocalDate mustBe aDate
       }
     }
   }

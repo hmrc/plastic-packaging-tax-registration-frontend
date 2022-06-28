@@ -45,7 +45,7 @@
             content = HtmlContent(hint)
         )},
             items = Seq(
-                RadioItem(id = Some("answer"),
+                RadioItem(id = Some("value-yes"),
                 value = Some(YesNoValues.YES),
                 content = Text(messages("general.true")),
                 checked = form("answer").value.contains(YesNoValues.YES),
