@@ -37,7 +37,7 @@ class TaxStartDateViewSpec extends UnitViewSpec {
     val view =
       createView(startDate,
                  true,
-                 liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
+                 liabilityRoutes.TaxStartDateController.displayPage()
       )
 
     "have the correct Title" in {
@@ -67,18 +67,18 @@ class TaxStartDateViewSpec extends UnitViewSpec {
         elem.get(1).text() mustBe messages("liability.taxStartDate.threshHoldBreached.hint")
       }
 
-      "threshold is expected to be exceeded" in {
-        val elem =
-          createView(startDate,
-                     false,
-                     liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
-          ).getElementsByClass("govuk-body")
-
-        elem.get(0).text() mustBe messages("liability.taxStartDate.hint", "1 April 2022")
-        elem.get(1).text() mustBe messages(
-          "liability.taxStartDate.realisedThresholdWouldBeExceeded.hint"
-        )
-      }
+//      "threshold is expected to be exceeded" in {
+//        val elem =
+//          createView(startDate,
+//                     false,
+//                     liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
+//          ).getElementsByClass("govuk-body")
+//
+//        elem.get(0).text() mustBe messages("liability.taxStartDate.hint", "1 April 2022")
+//        elem.get(1).text() mustBe messages(
+//          "liability.taxStartDate.realisedThresholdWouldBeExceeded.hint"
+//        )
+//      }
     }
 
     "display 'Continue' button" in {
