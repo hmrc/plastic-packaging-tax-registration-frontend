@@ -65,7 +65,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = routes.ExceededThresholdWeightController.displayPage().url,
+                        href = routes.ExceededThresholdWeightController.displayPage().url + "#exceeded-threshold-weight-date.day",
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.dateExceededThreshold"))
                     )
@@ -107,7 +107,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = routes.ExpectToExceedThresholdWeightController.displayPage().url,
+                        href = routes.ExpectToExceedThresholdWeightController.displayPage().url + "#expect-to-exceed-threshold-weight-date.day",
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.dateRealisedExpectToExceededThreshold"))
                     )
