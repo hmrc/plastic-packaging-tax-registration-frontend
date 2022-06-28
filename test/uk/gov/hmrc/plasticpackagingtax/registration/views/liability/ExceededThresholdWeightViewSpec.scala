@@ -38,7 +38,6 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
   val mockMessages: Messages = mock[Messages]
   when(mockMessages.apply(anyString(), any())).thenReturn("some message")
 
-  private val mockAppConfig = mock[AppConfig]
   private val fakeClock =
     Clock.fixed(Instant.parse("2022-05-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
 

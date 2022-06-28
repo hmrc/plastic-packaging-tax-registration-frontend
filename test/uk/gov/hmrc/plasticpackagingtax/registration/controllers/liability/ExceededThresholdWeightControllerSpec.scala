@@ -21,18 +21,20 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, clearInvocations, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.Form
+import play.api.data.{Form, Forms}
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
+import play.api.i18n.Messages
 import play.api.libs.json.JsObject
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExceededThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import play.api.data.Forms.ignored
 
 import scala.concurrent.Future
 
@@ -44,6 +46,13 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
   val form = mock[ExceededThresholdWeight]
+
+  def stubForm(outcome: ExceededThresholdWeightAnswer) =
+    when(form.form()(any())).thenReturn(Form("stuff" -> ignored(outcome)))
+
+  def errorForm() =
+    when(form.form()(any())).thenReturn(Form("stuff" -> ignored(ExceededThresholdWeightAnswer(true, None))).withError("blah", "msg.key"))
+
 
   val controller = new ExceededThresholdWeightController(
     authenticate = mockAuthAction,
@@ -70,8 +79,11 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         clearInvocations(mockPage) // todo oh dear move to before hook
 
         authorizedUser()
+        stubForm(ExceededThresholdWeightAnswer(yesNo = false, None))
+
         val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
-        when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(true))
+        when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
+        when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
         when(mockRegistrationConnector.find(any[String])(any())).thenReturn(
           Future.successful(Right(Some(existingRegistration)))
         )
@@ -84,7 +96,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         val captor = ArgumentCaptor.forClass(classOf[Form[Boolean]])
         verify(mockPage).apply(captor.capture())(any(), any())
         val form: Form[Boolean] = captor.getValue
-        form.value shouldBe Some(true)
+        form.value shouldBe Some(ExceededThresholdWeightAnswer(false, None))
       }
     }
 
