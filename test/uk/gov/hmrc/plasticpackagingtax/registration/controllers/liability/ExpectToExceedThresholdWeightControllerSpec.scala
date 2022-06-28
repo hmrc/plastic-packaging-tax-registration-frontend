@@ -27,16 +27,19 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, YesNoValues}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import java.time.LocalDate
 
 class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
   val mockPage: expect_to_exceed_threshold_weight_page = {
     mock[expect_to_exceed_threshold_weight_page]
   }
-  val mockFormProvider = mock[ExpectToExceedThresholdWeight]
+  val mockFormProvider = app.injector.instanceOf[ExpectToExceedThresholdWeight]
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
   val controller: ExpectToExceedThresholdWeightController =
@@ -97,14 +100,15 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 
-        val correctForm = Seq("answer" -> "yes")
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
+        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe
+          Some(Date(LocalDate.of(2022, 5, 15)))
 
         redirectLocation(result) mustBe Some(
-          routes.ExpectToExceedThresholdWeightDateController.displayPage().url
+          routes.TaxStartDateController.displayPage().url
         )
       }
 
@@ -119,8 +123,9 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
 
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
+        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
 
-        redirectLocation(result) mustBe Some(routes.NotLiableController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.TaxStartDateController.displayPage().url)
       }
 
       "return 400 (BAD_REQUEST)" when {
@@ -148,8 +153,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdateFailure()
 
-          val correctForm = Seq("answer" -> "yes")
-          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
 
           intercept[DownstreamServiceError](status(result))
         }
@@ -159,12 +163,18 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           mockRegistrationFind(aRegistration())
           mockRegistrationException()
 
-          val correctForm = Seq("answer" -> "yes")
-          val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
 
           intercept[RuntimeException](status(result))
         }
       }
     }
+  }
+
+  private def createRequestBody: Seq[(String, String)] = {
+    Seq("answer" -> YesNoValues.YES,
+      "expect-to-exceed-threshold-weight-date.day" -> "15",
+      "expect-to-exceed-threshold-weight-date.month" -> "5",
+      "expect-to-exceed-threshold-weight-date.year" -> "2022")
   }
 }
