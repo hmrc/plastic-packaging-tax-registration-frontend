@@ -21,7 +21,7 @@
         )
 
 @(  form: Form[_],
-    headingKey: String,
+    maybeHeadingKey: Option[String],
     ifYes: Option[Html] = None,
     ifNo: Option[Html] = None,
     hint: Option[Html] = None,
@@ -36,7 +36,7 @@
             name = form("answer").name,
             fieldset = Some(Fieldset(
             legend = Some(Legend(
-            content = Text(messages(headingKey, headingMessageArgs:_*)),
+            content = maybeHeadingKey.fold(Empty: Content)(headingKey => Text(messages(headingKey, headingMessageArgs:_*))),
             isPageHeading = isPageHeading,
             classes = classes
             ))
