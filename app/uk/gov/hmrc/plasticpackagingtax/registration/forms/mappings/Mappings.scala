@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings
 
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
+import play.api.i18n.Messages
 
 import java.time.LocalDate
 
@@ -29,7 +30,7 @@ trait Mappings extends Formatters with Constraints {
     twoRequiredKey: String,
     invalidKey: String,
     args: Seq[String] = Seq.empty
-  ): FieldMapping[LocalDate] =
+  )(implicit messages: Messages) : FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
 
   protected def optLocalDate(
@@ -38,7 +39,7 @@ trait Mappings extends Formatters with Constraints {
                            twoRequiredKey: String,
                            invalidKey: String,
                            args: Seq[String] = Seq.empty
-                         ): FieldMapping[LocalDate] =
+                         )(implicit messages: Messages) : FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
 
 

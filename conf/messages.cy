@@ -21,6 +21,10 @@ site.button.tryAgain  = Rhowch gynnig arall arni
 
 general.true  = Iawn
 general.false  = Na
+general.day = diwrnod
+general.month = mis
+general.year = flwyddyn
+general.and = {0} a’r {1}
 
 sessionTimout.title  = Er eich diogelwch, rydych wedi cael eich allgofnodi
 sessionTimout.detail  = Mae’ch atebion wedi’u cadw.
