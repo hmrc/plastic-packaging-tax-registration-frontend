@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
-import play.api.mvc.Result
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.services.MustHaveFieldExtension.ExtendedObject
@@ -46,7 +45,7 @@ case class TaxStartDate private(
   private val maybeLiableFrom: Option[LocalDate], 
   private val isDateFromBackwardsTest: Boolean
 ) {
-  def act(notLiableAction: => Result, isLiableAction: (LocalDate, Boolean) => Result): Result =
+  def act[R](notLiableAction: => R, isLiableAction: (LocalDate, Boolean) => R): R =
     maybeLiableFrom match {
       case None => notLiableAction
       case Some(date) => isLiableAction(date, isDateFromBackwardsTest)
