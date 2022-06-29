@@ -44,6 +44,6 @@ class StartRegistrationController @Inject() (
     }
 
   def startLink(implicit request: JourneyRequest[AnyContent]): Call =
-    liabilityRoutes.ExceededThresholdWeightController.displayPage()
+    liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
 
 }

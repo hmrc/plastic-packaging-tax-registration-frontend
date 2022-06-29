@@ -16,22 +16,92 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.services
 
+import org.mockito.Mockito.{never, reset, times, verify}
+import org.mockito.ArgumentMatchers._
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
+import play.api.mvc.Result
 import uk.gov.hmrc.plasticpackagingtax.registration.forms
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.LiabilityDetails
+import uk.gov.hmrc.plasticpackagingtax.registration.services.MustHaveFieldExtension.ExtendedObject
 
 import java.time.LocalDate
 
-class YesNoDate private(private val maybeDate: Option[LocalDate]) {
-  def fold[B](ifEmpty: => B)(f: LocalDate => B): B = maybeDate.fold(ifEmpty)(f)
+
+class MustHaveFieldExtensionSpec extends PlaySpec with BeforeAndAfterEach {
+  // TODO move to own files
+
+  case class Example(x: Option[String])
+  
+  "mustHave should return the field contents" in {
+    val example = Example(Some("the contents of x"))
+    example.mustHave(_.x, "x") mustBe "the contents of x" 
+  }
+  
+  "mustHave should complain about an empty field" in {
+    val example = Example(None)
+    the [IllegalStateException] thrownBy example.mustHave(_.x, "x") must have message "Missing field 'x'" 
+  }
+  
+  "mightHaveIf should ignore an empty field" in {
+    val example = Example(None)
+    noException should be thrownBy example.mightHaveIf(_.x, "x", predicate = false)
+  }
+  
+  "mightHaveIf should complain about an empty field" in {
+    val example = Example(None)
+    the [IllegalStateException] thrownBy example.mightHaveIf(_.x, "x", predicate = true) must have message "Missing field 'x'"
+  }
+  
+  "mightHaveIf should be happy with a defined field" in {
+    val example = Example(Some("the contents of x"))
+    noException should be thrownBy example.mightHaveIf(_.x, "x", predicate = true)
+  }
 }
 
-object YesNoDate {
-  def yesAndDate(date: LocalDate) : YesNoDate = new YesNoDate(Some(date))
-  def no() : YesNoDate = new YesNoDate(None)
+
+class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
+  // TODO move to own files
+
+  trait PossibleActions {
+    def notLiableAction: Result
+    def isLiableAction(date: LocalDate, isDateFromBackwardsTest: Boolean): Result 
+  }
+  
+  private val actions = mock[PossibleActions]
+  val aDate: LocalDate = LocalDate.ofEpochDay(0)
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(actions)
+  }
+
+  "Act should follow the not liable action" in {
+    TaxStartDate.notLiable.act(actions.notLiableAction, actions.isLiableAction)
+    verify(actions, times(1)).notLiableAction
+    verify(actions, never).isLiableAction(any(), any())
+  }
+
+  "Act should follow the is liable action" when {
+
+    "liable because of the backwards test" in {
+      TaxStartDate.liableFromBackwardsTest(aDate).act(actions.notLiableAction, actions.isLiableAction)
+      verify(actions, never).notLiableAction
+      verify(actions, times(1)).isLiableAction(aDate, isDateFromBackwardsTest = true)
+    }
+
+    "liable because of the forwards test" in {
+      TaxStartDate.liableFromForwardsTest(aDate).act(actions.notLiableAction, actions.isLiableAction)
+      verify(actions, never).notLiableAction
+      verify(actions, times(1)).isLiableAction(aDate, isDateFromBackwardsTest = false)
+    }
+
+  }
 }
+
 
 class TaxStartDateServiceSpec extends PlaySpec {
 
@@ -51,21 +121,21 @@ class TaxStartDateServiceSpec extends PlaySpec {
 
       "all answers are missing" in {
         an [IllegalStateException] must be thrownBy {
-          taxStartDateService.calculateTaxStartDate2(LiabilityDetails())
+          taxStartDateService.calculateTaxStartDate(LiabilityDetails())
         }
       }
 
       "the backwards yes-no answer is missing" in {
         val missingBackwardsYesNo = completedLiabilityDetails.copy(exceededThresholdWeight = None)
         the [IllegalStateException] thrownBy {
-          taxStartDateService.calculateTaxStartDate2(missingBackwardsYesNo) 
+          taxStartDateService.calculateTaxStartDate(missingBackwardsYesNo) 
         } must have message "Missing field 'exceededThresholdWeight'"
       }
 
       "the forwards yes-no answer is missing" in {
         val missingForwardsYesNo = completedLiabilityDetails.copy(expectToExceedThresholdWeight = None)
         the [IllegalStateException] thrownBy {
-          taxStartDateService.calculateTaxStartDate2(missingForwardsYesNo)
+          taxStartDateService.calculateTaxStartDate(missingForwardsYesNo)
         } must have message "Missing field 'expectToExceedThresholdWeight'"
       }
 
@@ -78,13 +148,13 @@ class TaxStartDateServiceSpec extends PlaySpec {
         
         "the forwards yes-no answer was yes" in  {
           the [IllegalStateException] thrownBy {
-            taxStartDateService.calculateTaxStartDate2(missingForwardsDate)
+            taxStartDateService.calculateTaxStartDate(missingForwardsDate)
           } must have message "Missing field 'dateRealisedExpectedToExceedThresholdWeight'"
         }
         
         "but not when the forwards yes-no answer was no" in {
           val missingForwardsDate2 = missingForwardsDate.copy(expectToExceedThresholdWeight = Some(false))
-          noException should be thrownBy taxStartDateService.calculateTaxStartDate2(missingForwardsDate2)
+          noException should be thrownBy taxStartDateService.calculateTaxStartDate(missingForwardsDate2)
         }
         
       }
@@ -98,13 +168,13 @@ class TaxStartDateServiceSpec extends PlaySpec {
         
         "the backwards yes-no answer was yes" in {
           the [IllegalStateException] thrownBy {
-            taxStartDateService.calculateTaxStartDate2(missingBackwardsDate)
+            taxStartDateService.calculateTaxStartDate(missingBackwardsDate)
           } must have message "Missing field 'dateExceededThresholdWeight'"
         }
         
         "but not when the backwards yes-no answer was no" in {
           val missingBackwardsDate2 = missingBackwardsDate.copy(exceededThresholdWeight = Some(false))
-          noException should be thrownBy taxStartDateService.calculateTaxStartDate2(missingBackwardsDate2)
+          noException should be thrownBy taxStartDateService.calculateTaxStartDate(missingBackwardsDate2)
         }
         
       }
@@ -117,7 +187,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
       val bothAnswersAreNo = LiabilityDetails(
         exceededThresholdWeight = Some(false), 
         expectToExceedThresholdWeight = Some(false)) 
-      taxStartDateService.calculateTaxStartDate2(bothAnswersAreNo) mustBe TaxStartDate(isLiable = false)
+      taxStartDateService.calculateTaxStartDate(bothAnswersAreNo) mustBe TaxStartDate.notLiable
     }
   }
 
@@ -130,7 +200,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         expectToExceedThresholdWeight = Some(false)
       )
       val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-      taxStartDateService.calculateTaxStartDate2(onlyBackwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+      taxStartDateService.calculateTaxStartDate(onlyBackwardsIsYes) mustBe TaxStartDate.liableFromBackwardsTest(firstDayOfNextMonth)
     }
   }
 
@@ -142,7 +212,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
         exceededThresholdWeight = Some(false),
       )
       val sameDateAsUserEntered: LocalDate = LocalDate.of(2022, 4, 17)
-      taxStartDateService.calculateTaxStartDate2(onlyForwardsIsYes) mustBe TaxStartDate(isLiable = true, Some(sameDateAsUserEntered))
+      taxStartDateService.calculateTaxStartDate(onlyForwardsIsYes) mustBe TaxStartDate.liableFromForwardsTest(sameDateAsUserEntered)
     }
   }
 
@@ -156,7 +226,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 2))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.calculateTaxStartDate2(backwardsStartDateIsEarlier) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+        taxStartDateService.calculateTaxStartDate(backwardsStartDateIsEarlier) mustBe TaxStartDate.liableFromBackwardsTest(firstDayOfNextMonth)
       }
     }
     
@@ -169,7 +239,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 4, 17))),
         )
         val sameDateAsUserEntered: LocalDate = LocalDate.of(2022, 4, 17)
-        taxStartDateService.calculateTaxStartDate2(forwardsStartDateIsEarlier) mustBe TaxStartDate(isLiable = true, Some(sameDateAsUserEntered))
+        taxStartDateService.calculateTaxStartDate(forwardsStartDateIsEarlier) mustBe TaxStartDate.liableFromForwardsTest(sameDateAsUserEntered)
       }
     }
 
@@ -182,30 +252,8 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 1))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.calculateTaxStartDate2(bothStartDatesAreTheSame) mustBe TaxStartDate(isLiable = true, Some(firstDayOfNextMonth))
+        taxStartDateService.calculateTaxStartDate(bothStartDatesAreTheSame) mustBe TaxStartDate.liableFromBackwardsTest(firstDayOfNextMonth)
       }
-    }
-  }
-
-  "return 1st day of the month following the date capture" when {
-    "plastic package limit are exceeded" in {
-      val liabilityDetailsForBreachedThreshold = LiabilityDetails(
-        expectToExceedThresholdWeight = Some(false), 
-        exceededThresholdWeight = Some(true),
-        dateExceededThresholdWeight = Some(forms.Date(dateExceededThresholdWeight))
-      )
-      taxStartDateService.calculateTaxStartDate2(liabilityDetailsForBreachedThreshold).oldDate mustBe Some(LocalDate.of(2022, 5, 1))
-    }
-  }
-
-  "return the capture date" when {
-    "plastic package limit will be exceed in the next 30 days" in {
-      val liabilityDetailsForThresholdWouldBeBreached = LiabilityDetails(
-        expectToExceedThresholdWeight = Some(true),
-        dateRealisedExpectedToExceedThresholdWeight = Some(forms.Date(LocalDate.of(2022, 4, 30))),
-        exceededThresholdWeight = Some(false)
-      )
-      taxStartDateService.calculateTaxStartDate2(liabilityDetailsForThresholdWouldBeBreached).oldDate mustBe Some(dateExceededThresholdWeight)
     }
   }
 

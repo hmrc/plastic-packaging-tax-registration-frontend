@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import java.time.LocalDate
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+
+@import java.time.LocalDate
 
 @this(
  formHelper:        FormWithCSRF,
@@ -29,24 +29,28 @@
  continueButton:    continue,
  sectionHeader:     sectionHeader
 )
-@(startDate: LocalDate, hasExceededThresholdWeight: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
+@(startDate: LocalDate, isDateFromBackwardsTest: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
 
 @govukLayout(
     title = Title("liability.taxStartDate.title"),
-    backButton = Some(BackButton(messages("site.back"),
-    pptRoutes.ExpectToExceedThresholdWeightController.displayPage(),
-    messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(
+        messages("site.back"), 
+        pptRoutes.ExceededThresholdWeightController.displayPage(),
+        messages("site.back.hiddenText")))) {
 
     @sectionHeader(messages("liability.sectionHeader"))
     @pageHeading(messages("liability.taxStartDate.pageHeading"))
+
     @paragraphBody(messages("liability.taxStartDate.hint",
-                                startDate.getDayOfMonth + " " +
-                                messages(s"date.month.${startDate.getMonthValue}") + " " +
-                                startDate.getYear ))
+        startDate.getDayOfMonth + " " +
+                messages(s"date.month.${startDate.getMonthValue}") + " " +
+                startDate.getYear))
+    
     @paragraphBody(
-        if(hasExceededThresholdWeight)
+        if(isDateFromBackwardsTest)
             messages("liability.taxStartDate.threshHoldBreached.hint")
-        else messages("liability.taxStartDate.realisedThresholdWouldBeExceeded.hint")
+        else 
+            messages("liability.taxStartDate.realisedThresholdWouldBeExceeded.hint")
     )
 
     @formHelper(action = pptRoutes.TaxStartDateController.submit(), 'autoComplete -> "off") {

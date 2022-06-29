@@ -18,31 +18,54 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, LiabilityDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckLiabilityDetailsAnswersController @Inject() (
-                                                         authenticate: NotEnrolledAuthAction,
-                                                         journeyAction: JourneyAction,
-                                                         mcc: MessagesControllerComponents,
-                                                         page: check_liability_details_answers_page
-) extends LiabilityController(mcc) with I18nSupport {
+class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolledAuthAction,
+                                                        journeyAction: JourneyAction,
+                                                        mcc: MessagesControllerComponents,
+                                                        override val registrationConnector: RegistrationConnector,
+                                                        taxStarDateService: TaxStartDateService,
+                                                        page: check_liability_details_answers_page)
+                                                       (implicit ec: ExecutionContext) extends LiabilityController(mcc)
+  with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(page(request.registration, backLink))
+      val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
+
+      taxStartDate.act(
+        notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
+        isLiableAction = (startDate, _) => {
+          Ok(page(request.registration.copy(liabilityDetails = updateLiabilityStartDate(startDate)), backLink))
+        }
+      )
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { _ =>
-      Future.successful(Redirect(commonRoutes.TaskListController.displayPage()))
+    (authenticate andThen journeyAction).async { implicit request =>
+      val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
+
+      taxStartDate.act(
+        notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
+        isLiableAction = (taxStartDate, _) => {
+          updateRegistration(taxStartDate).map { _ =>
+            Redirect(commonRoutes.TaskListController.displayPage())
+          }
+        }
+      )
     }
 
   private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
@@ -52,4 +75,21 @@ class CheckLiabilityDetailsAnswersController @Inject() (
       case _ => routes.RegistrationTypeController.displayPage()
     }
 
+  private def updateRegistration(startDate: LocalDate)
+                                (implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
+    update { registration =>
+      registration.copy(liabilityDetails = updateLiabilityStartDate(startDate))
+    }
+
+  private def updateLiabilityStartDate(startDate: LocalDate)
+                              (implicit request: JourneyRequest[AnyContent]): LiabilityDetails = {
+    request.registration.liabilityDetails.copy(startDate =
+      Some(
+        OldDate(Some(startDate.getDayOfMonth),
+          Some(startDate.getMonth.getValue),
+          Some(startDate.getYear)
+        )
+      )
+    )
+  }
 }

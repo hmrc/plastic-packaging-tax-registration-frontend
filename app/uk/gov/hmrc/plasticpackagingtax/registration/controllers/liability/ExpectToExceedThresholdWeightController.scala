@@ -55,10 +55,11 @@ class ExpectToExceedThresholdWeightController @Inject() (
     (authenticate andThen journeyAction).async { implicit request =>
       form()
         .bindFromRequest()
-        .fold(formWithErrors => Future.successful(BadRequest(page(formWithErrors))),
+        .fold(formWithErrors =>
+          Future.successful(BadRequest(page(formWithErrors))),
               expectToExceed =>
                 updateRegistration(expectToExceed).map {
-                  case Right(_) =>  Redirect(routes.TaxStartDateController.displayPage())
+                  case Right(_) => Redirect(routes.ExceededThresholdWeightController.displayPage())
                   case Left(error) => throw error
                 }
         )

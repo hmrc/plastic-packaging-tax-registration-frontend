@@ -17,66 +17,37 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
 import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.tax_start_date_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxStartDateController @Inject() (
-                                         authenticate: NotEnrolledAuthAction,
-                                         journeyAction: JourneyAction,
-                                         taxStarDateService: TaxStartDateService,
-                                         mcc: MessagesControllerComponents,
-                                         page: tax_start_date_page,
-                                         override val registrationConnector: RegistrationConnector
-)(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport {
+  authenticate: NotEnrolledAuthAction,
+  journeyAction: JourneyAction,
+  taxStarDateService: TaxStartDateService,
+  mcc: MessagesControllerComponents,
+  page: tax_start_date_page,
+) 
+  extends FrontendController(mcc) with I18nSupport {
 
-  def displayPage: Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      val taxStartDate = taxStarDateService.calculateTaxStartDate2(request.registration.liabilityDetails)
-      taxStartDate.oldDate match {
-        case Some(date) =>
-          updateRegistration(date).map { _ =>
-            Ok(
-              page(date,
-                   request.registration.liabilityDetails.exceededThresholdWeight.getOrElse(false)
-              )
-            )
-          }
-        case _ => throw new IllegalStateException("Problem calculating the Tax Start Date")
-      }
-    }
+  def displayPage: Action[AnyContent] = 
+    (authenticate andThen journeyAction) { implicit request =>
+      val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
+      taxStartDate.act(
+        notLiableAction = Redirect(routes.NotLiableController.displayPage()),
+        isLiableAction = (startDate, isBackwardsBasedDate) => Ok(page(startDate, isBackwardsBasedDate))
+    )
+  }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { _ =>
-      Future.successful(Redirect(routes.LiabilityWeightController.displayPage()))
-    }
-
-  private def updateRegistration(
-    startDate: LocalDate
-  )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
-    update { registration =>
-      val updatedLiabilityDetails =
-        registration.liabilityDetails.copy(startDate =
-          Some(
-            OldDate(Some(startDate.getDayOfMonth),
-                    Some(startDate.getMonth.getValue),
-                    Some(startDate.getYear)
-            )
-          )
-        )
-      registration.copy(liabilityDetails = updatedLiabilityDetails)
+    (authenticate andThen journeyAction) {
+      Redirect(routes.LiabilityWeightController.displayPage())
     }
 
 }

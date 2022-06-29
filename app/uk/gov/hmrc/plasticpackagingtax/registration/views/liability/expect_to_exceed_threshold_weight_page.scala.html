@@ -15,9 +15,8 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 
 @this(
     formHelper: FormWithCSRF,
@@ -28,7 +27,8 @@
     saveButtons: saveButtons,
     errorSummary: errorSummary,
     govukDateInput : GovukDateInput,
-    conditionalYesNo : conditionalYesNoRadio
+    conditionalYesNo : conditionalYesNoRadio,
+    paragraphBody: paragraphBody,
 )
 
 
@@ -43,6 +43,11 @@ val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<b
 if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
+@yesContent = {
+    @pageHeading(messages("liability.expectToExceedThreshold.date.question")) 
+    @paragraphBody(messages("liability.expectToExceedThreshold.date.line1"))
+}
+    
 @ifYes={
 @govukDateInput(
     DateInput(
@@ -51,9 +56,9 @@ if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
         errorMessage = errorMessages,
         fieldset = Some(Fieldset(
             legend = Some(Legend(
-            content = Text(messages("liability.expectToExceedThreshold.date.question")),
+            content = HtmlContent(yesContent), 
             classes = gdsFieldsetPageHeading,
-            isPageHeading = true))
+            isPageHeading = false))
             )),
             items = Seq(
             InputItem(
@@ -80,19 +85,18 @@ if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
         )
 }
 
-@govukLayout(
-    title = Title("liability.expectToExceedThresholdWeight.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.ExceededThresholdWeightController.displayPage(), messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
 
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.expectToExceedThresholdWeight.sectionHeader"))
+    
+    @pageHeading(messages("liability.expectToExceedThresholdWeight.question"))
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
-
-    @conditionalYesNo(form, "liability.expectToExceedThresholdWeight.question", Some(ifYes))
-
-
+        @conditionalYesNo(form, None, Some(ifYes))
         @saveButtons()
     }
 }
