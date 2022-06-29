@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 class LiabilityChangeController @Inject()(mcc: MessagesControllerComponents, liabilityPage: liability_change)
     extends FrontendController(mcc) with I18nSupport {
 
-  val displayStartPage: Action[AnyContent] = Action { implicit request =>
+  def displayPage: Action[AnyContent] = Action { implicit request =>
     Ok(liabilityPage())
   }
 

@@ -21,16 +21,20 @@ import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWei
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 
-case class LiabilityDetails(
-  exceededThresholdWeight: Option[Boolean] = None,
-  dateExceededThresholdWeight: Option[Date] = None,
-  expectToExceedThresholdWeight: Option[Boolean] = None,
-  dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
-  expectedWeightNext12m: Option[LiabilityWeight] = None,
-  // Derived fields - not directly input by user
-  startDate: Option[OldDate] = None,
-  isLiable: Option[Boolean] = None
-) {
+case object NewLiability {
+  implicit val format: OFormat[NewLiability.type] = Json.format[NewLiability.type]
+}
+
+case class LiabilityDetails(exceededThresholdWeight: Option[Boolean] = None,
+                            dateExceededThresholdWeight: Option[Date] = None,
+                            expectToExceedThresholdWeight: Option[Boolean] = None,
+                            dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
+                            expectedWeightNext12m: Option[LiabilityWeight] = None,
+                            // Derived fields - not directly input by user
+                            startDate: Option[OldDate] = None,
+                            isLiable: Option[Boolean] = None,
+                            isNewLiability: Option[NewLiability.type] = None
+                           ) {
 
   def isCompleted: Boolean =
     startDate.nonEmpty && expectedWeightNext12m.isDefined

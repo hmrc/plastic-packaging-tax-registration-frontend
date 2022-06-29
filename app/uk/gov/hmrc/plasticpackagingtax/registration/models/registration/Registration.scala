@@ -53,13 +53,8 @@ case class Registration(
       metaData = this.metaData
     )
 
-  def liabilityRequiresRework: Boolean = {
-    val registrationStatus: TaskStatus = checkAndSubmitStatus
-    val liabilityStatus: TaskStatus    = liabilityDetailsStatus
-
-    (registrationStatus == TaskStatus.Completed || registrationStatus == TaskStatus.InProgress) &&
-      (liabilityStatus == TaskStatus.Completed || liabilityStatus == TaskStatus.InProgress) &&
-      dateOfRegistration.get.isBefore(LocalDate.of(2022, 7, 1)) // TODO - change to whatever date this gets deployed. Maybe put the date in config?
+  def isNewLiability: Boolean = {
+    liabilityDetails.isNewLiability.isDefined
   }
 
   def checkAndSubmitStatus: TaskStatus =

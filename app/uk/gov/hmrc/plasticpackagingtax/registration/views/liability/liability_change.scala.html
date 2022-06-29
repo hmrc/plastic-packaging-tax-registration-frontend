@@ -17,12 +17,14 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
 
 @this(
         govukLayout: main_template,
         pageHeading: pageHeading,
         paragraph: paragraph,
-        config: AppConfig
+        config: AppConfig,
+        govukButton: GovukButton
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -33,5 +35,13 @@
     @pageHeading(messages("liabilityChange.heading"))
 
     @paragraph(content = Html(messages("liabilityChange.paragraph.1")))
+
+    @govukButton(
+        Button(
+            href = Some(pptRoutes.TaxStartDateController.displayPage().url),
+            isStartButton = true,
+            content = Text(messages("liabilityChange.buttonName"))
+        )
+    )
 
 }
