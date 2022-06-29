@@ -109,7 +109,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(false)
         redirectLocation(result) mustBe Some(
-          routes.ExpectToExceedThresholdWeightController.displayPage().url
+          routes.TaxStartDateController.displayPage().url
         )
       }
 
@@ -126,7 +126,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
         modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(Date(LocalDate.of(2022,5,5)))
         redirectLocation(result) mustBe Some(
-          routes.ExpectToExceedThresholdWeightController.displayPage().url
+          routes.TaxStartDateController.displayPage().url
         )
       }
     }

@@ -58,7 +58,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
     "redirect to first liability check page" when {
       "no existing registration" in {
         authorizedUser()
-        verifyRedirect(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
+        verifyRedirect(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)
       }
 
       def verifyRedirect(pageUrl: String): Unit = {

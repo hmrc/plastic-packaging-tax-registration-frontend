@@ -50,11 +50,8 @@ class ExpectToExceedThresholdWeightViewSpec
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(
-        liabilityRoutes.ExceededThresholdWeightController.displayPage()
-      )
+    "not display 'Back' button" in {
+      view.getElementById("back-link") mustBe null
     }
 
     "display title" in {

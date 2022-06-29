@@ -136,7 +136,7 @@ class TaskListControllerSpec extends ControllerSpec {
       mockRegistrationFind(aRegistration())
       authorizedUser()
 
-      verifyStartLink(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
+      verifyStartLink(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)
     }
 
     "return error" when {
