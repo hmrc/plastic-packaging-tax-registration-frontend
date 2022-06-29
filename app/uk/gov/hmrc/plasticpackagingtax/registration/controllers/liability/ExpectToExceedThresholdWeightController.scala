@@ -59,7 +59,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
           Future.successful(BadRequest(page(formWithErrors))),
               expectToExceed =>
                 updateRegistration(expectToExceed).map {
-                  case Right(_) =>  Redirect(routes.TaxStartDateController.displayPage())
+                  case Right(_) => Redirect(routes.ExceededThresholdWeightController.displayPage())
                   case Left(error) => throw error
                 }
         )

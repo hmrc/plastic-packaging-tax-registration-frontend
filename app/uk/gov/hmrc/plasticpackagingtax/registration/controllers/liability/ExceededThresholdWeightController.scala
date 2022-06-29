@@ -77,7 +77,7 @@ class ExceededThresholdWeightController @Inject() (
     future
       .map({
         case Left(error) => throw error
-        case _           => Redirect(routes.ExpectToExceedThresholdWeightController.displayPage())
+        case _           => Redirect(routes.TaxStartDateController.displayPage())
       })
   }
 

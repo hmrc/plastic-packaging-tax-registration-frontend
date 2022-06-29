@@ -108,7 +108,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           Some(Date(LocalDate.of(2022, 5, 15)))
 
         redirectLocation(result) mustBe Some(
-          routes.TaxStartDateController.displayPage().url
+          routes.ExceededThresholdWeightController.displayPage().url
         )
       }
 
@@ -125,7 +125,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
         modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
 
-        redirectLocation(result) mustBe Some(routes.TaxStartDateController.displayPage().url)
+        redirectLocation(result) mustBe Some(routes.ExceededThresholdWeightController.displayPage().url)
       }
 
       "return 400 (BAD_REQUEST)" when {

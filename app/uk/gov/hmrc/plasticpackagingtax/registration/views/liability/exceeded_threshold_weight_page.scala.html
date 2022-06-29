@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 
 @this(
     formHelper: FormWithCSRF,
@@ -90,10 +90,12 @@
 }
 
 
-
 @govukLayout(
-    title = Title("liability.exceededThresholdWeight.title"),
-    backButton = None) {
+    title = Title("liability.exceededThresholdWeight.title"), 
+    backButton = Some(BackButton(
+        messages("site.back"), 
+        pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
+        messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
 
@@ -104,7 +106,7 @@
     @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
     @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
 
-    @formHelper(action = liabilityRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = pptRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
         @conditionalYesNo(form, None, Some(ifYes))
         @saveButtons()
     }
