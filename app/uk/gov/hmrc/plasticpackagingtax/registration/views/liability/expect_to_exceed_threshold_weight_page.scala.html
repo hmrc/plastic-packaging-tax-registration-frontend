@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 
 @this(
     formHelper: FormWithCSRF,
@@ -85,9 +85,7 @@ if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
         )
 }
 
-@govukLayout(
-    title = Title("liability.expectToExceedThresholdWeight.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.ExceededThresholdWeightController.displayPage(), messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
 
     @errorSummary(form.errors)
 

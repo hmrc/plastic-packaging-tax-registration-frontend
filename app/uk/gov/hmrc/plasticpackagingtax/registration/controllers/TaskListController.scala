@@ -44,7 +44,7 @@ class TaskListController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      val startLink = liabilityRoutes.ExceededThresholdWeightController.displayPage()
+      val startLink = liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
 
       if (request.registration.isGroup)
         Ok(groupPage(request.registration, startLink))

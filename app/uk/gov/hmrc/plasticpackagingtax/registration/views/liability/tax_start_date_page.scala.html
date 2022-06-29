@@ -33,9 +33,10 @@
 
 @govukLayout(
     title = Title("liability.taxStartDate.title"),
-    backButton = Some(BackButton(messages("site.back"),
-    pptRoutes.ExpectToExceedThresholdWeightController.displayPage(),
-    messages("site.back.hiddenText")))) {
+    backButton = Some(BackButton(
+        messages("site.back"), 
+        pptRoutes.ExceededThresholdWeightController.displayPage(),
+        messages("site.back.hiddenText")))) {
 
     @sectionHeader(messages("liability.sectionHeader"))
     @pageHeading(messages("liability.taxStartDate.pageHeading"))
