@@ -30,7 +30,7 @@ import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{StartRegistrationController, routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{NewLiability, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{TaxStartDate, TaxStartDateService}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -59,7 +59,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(page, mockTaxStartDateService, mockRegistrationConnector)
-    val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
+    val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
     mockRegistrationFind(registration)
     given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
@@ -105,7 +105,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       "group registration enabled and group of organisation is selected" in {
         authorizedUser()
 
-        val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)))
+        val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
         mockRegistrationFind(registration)
         given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
         when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)

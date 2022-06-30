@@ -44,6 +44,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
         |urls.mfaUplift="http://localhost:9553/bas-gateway/uplift-mfa"
         |urls.businessAccount="http://localhost:9020/business-account"
+        |features.forceUsersToUseNewLiabilityJourney=true
       """.stripMargin
     )
 
