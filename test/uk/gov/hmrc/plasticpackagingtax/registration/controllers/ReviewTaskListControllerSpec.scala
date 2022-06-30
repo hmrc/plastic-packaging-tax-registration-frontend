@@ -69,7 +69,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     when(mockRegistrationFilterService.removeGroupDetails(any())).thenAnswer(returnsFirstArg())
-    when(appConfig.forceUsersToUseNewLiabilityJourney).thenReturn(false) //todo test for true
   }
 
   override protected def afterEach(): Unit = {

@@ -221,9 +221,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
       .getOrElse(Map.empty)
   }
 
-  val forceUsersToUseNewLiabilityJourney: Boolean =
-    config.get[Boolean]("features.forceUsersToUseNewLiabilityJourney")
-
   lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
 
   lazy val mfaUpliftUrl: String = config.get[String]("urls.mfaUplift")

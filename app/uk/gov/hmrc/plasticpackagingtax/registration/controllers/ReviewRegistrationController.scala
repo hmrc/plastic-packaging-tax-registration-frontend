@@ -60,14 +60,10 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      !appConfig.forceUsersToUseNewLiabilityJourney || request.registration.hasCompletedNewLiability match {
-        case true =>
-          if (request.registration.isCheckAndSubmitReady) reviewRegistration()
-          else {
-            Future.successful(Redirect(routes.TaskListController.displayPage()))
-          }
-        case false => Future.successful(Redirect(pptRoutes.LiabilityChangeController.displayPage()))
-      }
+        if (request.registration.isCheckAndSubmitReady) reviewRegistration()
+        else {
+          Future.successful(Redirect(routes.TaskListController.displayPage()))
+        }
     }
 
   def submit(): Action[AnyContent] =
