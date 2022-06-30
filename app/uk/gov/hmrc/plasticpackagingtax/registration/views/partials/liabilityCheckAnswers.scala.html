@@ -32,6 +32,48 @@
     Seq(
         SummaryListRow(
             key = Key(
+                content = Text(messages("liability.checkAnswers.expectToExceededThreshold"))
+                ),
+                value = Value(
+                    registration.liabilityDetails.expectToExceedThresholdWeight match {
+                        case Some(true) => Text(messages("general.true"))
+                        case Some(false) => Text(messages("general.false"))
+                        case None => Empty
+                    }
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = routes.ExpectToExceedThresholdWeightController.displayPage().url,
+                            content = Text(messages("site.link.change")),
+                            visuallyHiddenText = Some(messages("liability.checkAnswers.expectToExceededThreshold"))
+                        )
+                    )
+                ))
+            ),
+            SummaryListRow(
+                key = Key(
+                content = Text(messages("liability.checkAnswers.dateRealisedExpectToExceededThreshold"))
+            ),
+            value = Value(
+                content =
+                    if(registration.liabilityDetails.expectToExceedThresholdWeight.contains(true))
+                        Text(viewUtils.displayDate(registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight).getOrElse(""))
+                    else
+                    Empty
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                    ActionItem(
+                        href = routes.ExpectToExceedThresholdWeightController.displayPage().url + "#expect-to-exceed-threshold-weight-date.day",
+                        content = Text(messages("site.link.change")),
+                        visuallyHiddenText = Some(messages("liability.checkAnswers.dateRealisedExpectToExceededThreshold"))
+                    )
+                )
+            ))
+        ),
+        SummaryListRow(
+            key = Key(
                 content = Text(messages("liability.checkAnswers.exceededThreshold"))
             ),
             value = Value(
@@ -68,48 +110,6 @@
                         href = routes.ExceededThresholdWeightController.displayPage().url + "#exceeded-threshold-weight-date.day",
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.dateExceededThreshold"))
-                    )
-                )
-            ))
-        ),
-        SummaryListRow(
-            key = Key(
-                content = Text(messages("liability.checkAnswers.expectToExceededThreshold"))
-            ),
-            value = Value(
-                registration.liabilityDetails.expectToExceedThresholdWeight match {
-                    case Some(true) => Text(messages("general.true"))
-                    case Some(false) => Text(messages("general.false"))
-                    case None => Empty
-                }
-            ),
-            actions = Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = routes.ExpectToExceedThresholdWeightController.displayPage().url,
-                        content = Text(messages("site.link.change")),
-                        visuallyHiddenText = Some(messages("liability.checkAnswers.expectToExceededThreshold"))
-                    )
-                )
-            ))
-        ),
-        SummaryListRow(
-            key = Key(
-                content = Text(messages("liability.checkAnswers.dateRealisedExpectToExceededThreshold"))
-            ),
-            value = Value(
-                content =
-                    if(registration.liabilityDetails.expectToExceedThresholdWeight.contains(true))
-                        Text(viewUtils.displayDate(registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight).getOrElse(""))
-                    else
-                        Empty
-            ),
-            actions = Some(Actions(
-                items = Seq(
-                    ActionItem(
-                        href = routes.ExpectToExceedThresholdWeightController.displayPage().url + "#expect-to-exceed-threshold-weight-date.day",
-                        content = Text(messages("site.link.change")),
-                        visuallyHiddenText = Some(messages("liability.checkAnswers.dateRealisedExpectToExceededThreshold"))
                     )
                 )
             ))
