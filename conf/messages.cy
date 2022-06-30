@@ -424,13 +424,14 @@ unauthorised.not.admin.paragraph.2 = Gall rhywun o’ch sefydliad â hawliau gwe
 unauthorised.not.admin.paragraph.3 = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
-unauthorised.agent.title = ???
-unauthorised.agent.heading = ???
-unauthorised.agent.paragraph.1 = ???
-unauthorised.agent.paragraph.2 = ???
-unauthorised.agent.paragraph.3 = ???
-unauthorised.agent.paragraph.4 = ???
-unauthorised.agent.paragraph.4.link.text = ???
+unauthorised.agent.title = Ni allwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eich cleient – Asiantau
+unauthorised.agent.heading = Ni allwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eich cleient
+unauthorised.agent.paragraph.1 = Ni all asiantau gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eu cleientiaid.
+unauthorised.agent.paragraph.2 = Mae’n rhaid i’ch cleient gofrestru ei hun gan ddefnyddio’i Ddynodydd Porth y Llywodraeth.
+unauthorised.agent.paragraph.3 = Ar ôl i’ch cleient gofrestru a’ch awdurdodi, byddwch yn gallu rheoli ei gyfrif ar gyfer y Dreth Deunydd Pacio Plastig.
+unauthorised.agent.paragraph.4 = Ewch i’ch {0}
+unauthorised.agent.paragraph.4.link.text = cyfrif gwasanaethau asiant
+unauthorised.agent.paragraph.4.full.stop = .
 
 organisationDetails.registerAsOtherOrganisation.title  = Cofrestru fel Sefydliad Corfforedig Elusennol, ymddiriedolaeth neu gwmni tramor heb safle yn y DU
 organisationDetails.registerAsOtherOrganisation.paragraph.1  = Gwasanaeth newydd yw hwn, ac nid oes modd delio â’r math hwn o sefydliad ar hyn o bryd.
