@@ -39,6 +39,8 @@ POST       /group-cannot-register        uk.gov.hmrc.plasticpackagingtax.registr
 GET        /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.displayPage()
 POST       /liability-check-answers    uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.CheckLiabilityDetailsAnswersController.submit()
 
+GET        /liability-change           uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.LiabilityChangeController.displayPage()
+
 # Organisation Details
 GET        /grs-callback   uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.GrsController.grsCallback(journeyId)
 

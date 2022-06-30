@@ -35,6 +35,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
 import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFilterService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,9 +62,14 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      if (request.registration.isCheckAndSubmitReady) reviewRegistration()
-      else
-        Future.successful(Redirect(routes.TaskListController.displayPage()))
+      request.registration.isNewLiability match {
+        case true =>
+          if (request.registration.isCheckAndSubmitReady) reviewRegistration()
+          else {
+            Future.successful(Redirect(routes.TaskListController.displayPage()))
+          }
+        case false => Future.successful(Redirect(pptRoutes.LiabilityChangeController.displayPage()))
+      }
     }
 
   def submit(): Action[AnyContent] =
