@@ -50,15 +50,17 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   private val mockRegistrationFilterService = mock[RegistrationGroupFilterService]
 
   private val controller =
-    new ReviewRegistrationController(authenticate = mockAuthAction,
-                                     mockJourneyAction,
-                                     mcc = mcc,
-                                     registrationConnector = mockRegistrationConnector,
-                                     subscriptionsConnector = mockSubscriptionsConnector,
-                                     auditor = mockAuditor,
-                                     reviewRegistrationPage = mockReviewRegistrationPage,
-                                     metrics = metricsMock,
-                                     registrationFilterService = mockRegistrationFilterService
+    new ReviewRegistrationController(
+      appConfig = appConfig,
+      authenticate = mockAuthAction,
+      mockJourneyAction,
+      mcc = mcc,
+      registrationConnector = mockRegistrationConnector,
+      subscriptionsConnector = mockSubscriptionsConnector,
+      auditor = mockAuditor,
+      reviewRegistrationPage = mockReviewRegistrationPage,
+      metrics = metricsMock,
+      registrationFilterService = mockRegistrationFilterService
     )
 
   override protected def beforeEach(): Unit = {
@@ -67,6 +69,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     when(mockRegistrationFilterService.removeGroupDetails(any())).thenAnswer(returnsFirstArg())
+    when(appConfig.forceUsersToUseNewLiabilityJourney).thenReturn(false) //todo test for true
   }
 
   override protected def afterEach(): Unit = {
