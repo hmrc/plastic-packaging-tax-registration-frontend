@@ -33,7 +33,8 @@ case class LiabilityDetails(exceededThresholdWeight: Option[Boolean] = None,
                             // Derived fields - not directly input by user
                             startDate: Option[OldDate] = None,
                             isLiable: Option[Boolean] = None,
-                            isNewLiability: Option[NewLiability.type] = None
+                            newLiabilityFinished: Option[NewLiability.type] = None,
+                            newLiabilityStarted: Option[NewLiability.type] = None
                            ) {
 
   def isCompleted: Boolean =

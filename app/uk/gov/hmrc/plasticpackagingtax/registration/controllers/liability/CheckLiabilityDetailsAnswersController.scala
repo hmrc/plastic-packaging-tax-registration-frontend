@@ -90,7 +90,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
           Some(startDate.getYear)
         )
       ),
-      isNewLiability = Some(NewLiability)
+      newLiabilityFinished = Some(NewLiability)
     )
   }
 }

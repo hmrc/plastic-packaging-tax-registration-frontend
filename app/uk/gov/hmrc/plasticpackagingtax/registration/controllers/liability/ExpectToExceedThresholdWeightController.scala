@@ -22,7 +22,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConn
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.Date
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, NewLiability, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -73,7 +73,8 @@ class ExpectToExceedThresholdWeightController @Inject() (
       val updatedLiableDetails =
         registration.liabilityDetails.copy(
           expectToExceedThresholdWeight = Some(expectToExceedThresholdWeight.yesNo),
-          dateRealisedExpectedToExceedThresholdWeight = expectToExceedThresholdWeight.date.map(Date.apply)
+          dateRealisedExpectedToExceedThresholdWeight = expectToExceedThresholdWeight.date.map(Date.apply),
+          newLiabilityStarted = Some(NewLiability)
         )
       registration.copy(liabilityDetails = updatedLiableDetails)
     }

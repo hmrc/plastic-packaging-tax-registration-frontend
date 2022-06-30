@@ -21,17 +21,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  EisError,
-  SubscriptionCreateOrUpdateResponseFailure,
-  SubscriptionCreateOrUpdateResponseSuccess
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFilterService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReviewRegistrationController @Inject() (
+                                               appConfig: AppConfig,
                                                authenticate: NotEnrolledAuthAction,
                                                journeyAction: JourneyAction,
                                                mcc: MessagesControllerComponents,
@@ -62,7 +60,7 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      request.registration.isNewLiability match {
+      !appConfig.forceUsersToUseNewLiabilityJourney || request.registration.hasCompletedNewLiability match {
         case true =>
           if (request.registration.isCheckAndSubmitReady) reviewRegistration()
           else {

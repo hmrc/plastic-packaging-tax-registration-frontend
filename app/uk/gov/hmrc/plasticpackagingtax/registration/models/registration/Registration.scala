@@ -53,8 +53,8 @@ case class Registration(
       metaData = this.metaData
     )
 
-  def isNewLiability: Boolean = {
-    liabilityDetails.isNewLiability.isDefined
+  def hasCompletedNewLiability: Boolean = {
+    liabilityDetails.newLiabilityStarted.isDefined && liabilityDetails.newLiabilityFinished.isDefined
   }
 
   def checkAndSubmitStatus: TaskStatus =
