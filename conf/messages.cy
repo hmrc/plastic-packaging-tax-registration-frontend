@@ -174,8 +174,8 @@ liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error 
 liability.checkAnswers.title  = Gwiriwch eich atebion
 liability.checkAnswers.exceededThreshold  = 10,000kg neu fwy o ddeunydd pacio plastig ers 1 Ebrill 2022
 liability.checkAnswers.dateExceededThreshold  = Dyddiad cyrraedd y trothwy
-liability.checkAnswers.expectToExceededThreshold  = Disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig yn ystod y 30 diwrnod nesaf
-liability.checkAnswers.dateRealisedExpectToExceededThreshold  = Y dyddiad y gwnaethoch sylweddoli y byddwch yn cyrraedd y trothwy
+liability.checkAnswers.expectToExceededThreshold  = 10,000kg or more plastic packaging within 30 days
+liability.checkAnswers.dateRealisedExpectToExceededThreshold  = Date you had reasonable grounds to believe this
 liability.checkAnswers.startDate  = Eich dyddiad dechrau treth
 liability.checkAnswers.expectedWeightNext12m  = Pwysau disgwyliedig deunydd pacio plastig yn ystod y 12 mis nesaf
 liability.checkAnswers.registrationType  = Yr hyn yr hoffech ei gofrestru

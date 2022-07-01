@@ -43,7 +43,7 @@ private[mappings] class LocalDateFormatter(
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, emptyDateKey, args)))
+        Left(Seq(FormError(key, invalidKey, args)))
     }
 
   private def formatDate(
