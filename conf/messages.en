@@ -446,7 +446,7 @@ notLiable.think.feedback = {0}. Your thoughts and ideas will help us to make imp
 notLiable.think.feedback.link.description = Send us your feedback
 
 liability.exceededThresholdWeight.sectionHeader = Liability details
-liability.exceededThresholdWeight.title = Has your organisation or group manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?
+liability.exceededThresholdWeight.title = Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?
 liability.exceededThresholdWeight.hint = If you’re registering as a group, each member must have met this threshold.
 liability.exceededThresholdWeight.hint.2 = Select no if your organisation or group expects to manufacture or import 10,000kg or more finished plastic packaging within the next 30 days.
 liability.exceededThresholdWeight.question = Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?

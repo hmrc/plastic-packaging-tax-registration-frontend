@@ -449,7 +449,7 @@ notLiable.think.feedback  = {0}. Bydd eich meddyliau a’ch syniadau’n ein hel
 notLiable.think.feedback.link.description  = Anfonwch eich adborth atom
 
 liability.exceededThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
-liability.exceededThresholdWeight.title  = A yw’ch sefydliad neu’ch grŵp wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
+liability.exceededThresholdWeight.title  = A ydych chi wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
 liability.exceededThresholdWeight.hint = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
 liability.exceededThresholdWeight.hint.2 = Dewiswch ‘Na’ os yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig o fewn y 30 diwrnod nesaf.
 liability.exceededThresholdWeight.question = A ydych chi wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
@@ -473,8 +473,8 @@ liability.exceededThresholdWeightDate.hint  = Er enghraifft, 15 5 2022
 liability.exceededThresholdWeightDate.formatting.error  = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 liability.exceededThresholdWeightDate.outOfRange.error  = Mae’n rhaid i’r dyddiad fod heddiw neu yn y gorffennol
 liability.exceededThresholdWeightDate.empty.error  = Nodwch y dyddiad y gwnaethoch gyrraedd y trothwy
-liability.exceededThresholdWeightDate.two.required.fields  = Mae’n rhaid i’r dyddiad y gwnaethoch gyrraedd y trothwy gynnwys y {0}
-liability.exceededThresholdWeightDate.one.field  = Mae’n rhaid i’r dyddiad y gwnaethoch gyrraedd y trothwy gynnwys y {0}
+liability.exceededThresholdWeightDate.two.required.fields  = Mae’n rhaid i’r dyddiad gynnwys y {0}
+liability.exceededThresholdWeightDate.one.field  = Mae’n rhaid i’r dyddiad gynnwys y {0}
 liability.exceededThresholdWeightDate.before.goLiveDate.error  = Mae’n rhaid i’r dyddiad fod ar neu ar ôl {0}
 
 grs.failure.title  = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth

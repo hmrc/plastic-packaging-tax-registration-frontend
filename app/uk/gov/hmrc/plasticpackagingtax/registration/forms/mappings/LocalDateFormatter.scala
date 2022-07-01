@@ -84,7 +84,7 @@ private[mappings] class LocalDateFormatter(
         }
       case 2 =>
         Left(
-          List(FormError(messages(s"${missingFields.head}"), singleRequiredKey, missingFields),
+          List(FormError(messages(s"general.${missingFields.head}"), singleRequiredKey, missingFields),
                FormError(s"$key.${missingFields.head}", "")
           )
         )
