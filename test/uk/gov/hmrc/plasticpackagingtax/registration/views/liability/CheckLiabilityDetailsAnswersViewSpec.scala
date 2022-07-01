@@ -75,11 +75,6 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       assertSummaryRows(view,
         List(
           SummaryRowDetail(
-            "liability.checkAnswers.exceededThreshold",
-            "No",
-            Some(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
-          ),
-          SummaryRowDetail(
             "liability.checkAnswers.expectToExceededThreshold",
             "Yes",
             Some(
@@ -92,6 +87,11 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
             Some(
               liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url + "#expect-to-exceed-threshold-weight-date.day"
             )
+          ),
+          SummaryRowDetail(
+            "liability.checkAnswers.exceededThreshold",
+            "No",
+            Some(liabilityRoutes.ExceededThresholdWeightController.displayPage().url)
           ),
           SummaryRowDetail("liability.checkAnswers.startDate",
             "01 April 2022",

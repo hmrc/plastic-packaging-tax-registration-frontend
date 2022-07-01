@@ -43,7 +43,7 @@ private[mappings] class LocalDateFormatter(
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, emptyDateKey, args)))
+        Left(Seq(FormError(key, invalidKey, args)))
     }
 
   private def formatDate(
@@ -84,7 +84,7 @@ private[mappings] class LocalDateFormatter(
         }
       case 2 =>
         Left(
-          List(FormError(messages(s"${missingFields.head}"), singleRequiredKey, missingFields),
+          List(FormError(messages(s"general.${missingFields.head}"), singleRequiredKey, missingFields),
                FormError(s"$key.${missingFields.head}", "")
           )
         )
