@@ -36,7 +36,6 @@ timeoutDialog.messageSuffix = Your answers will be saved.
 timeoutDialog.keepAlive.text = Stay signed in
 timeoutDialog.signout.text = Sign out
 
-date-small-day = day
 date.day = Day
 date.day.error = Enter a valid day
 date.day.empty.error = Enter the day
@@ -45,8 +44,8 @@ date.day.decimal.error = Day must not include decimals
 date.day.outOfRange.error = Day must be a number between 1 and 31
 date.day.leadingBlankSpace.error = Day must not have leading spaces
 date.day.trailingBlankSpace.error = Day must not have trailing spaces
+
 date.month.outOfRange.error = Day must be a number between 1 and 12
-date-small-month = month
 date.month = Month
 date.month.1 = January
 date.month.2 = February
@@ -69,7 +68,6 @@ date.month.leadingBlankSpace.error = Month must not have leading spaces
 date.month.trailingBlankSpace.error = Month must not have trailing spaces
 date.decimal.error = Date must be a real date
 
-date-small-year = year
 date.year = Year
 date.year.error = Enter a valid year
 date.year.empty.error = Enter the year

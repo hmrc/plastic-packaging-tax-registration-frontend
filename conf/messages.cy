@@ -44,6 +44,7 @@ date.day.decimal.error  = Mae’n rhaid i’r diwrnod beidio â chynnwys degolio
 date.day.outOfRange.error  = Mae’n rhaid i’r diwrnod fod yn rhif rhwng 1 a 31
 date.day.leadingBlankSpace.error  = Mae’n rhaid i’r diwrnod beidio â chynnwys bylchau blaen
 date.day.trailingBlankSpace.error  = Mae’n rhaid i’r diwrnod beidio â chynnwys bylchau llusg
+
 date.month.outOfRange.error  = Mae’n rhaid i’r diwrnod fod yn rhif rhwng 1 a 12
 date.month  = Mis
 date.month.1  = Ionawr
