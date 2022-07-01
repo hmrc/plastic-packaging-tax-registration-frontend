@@ -21,6 +21,10 @@ site.button.tryAgain = Try again
 
 general.true = Yes
 general.false = No
+general.day = day
+general.month = month
+general.year = year
+general.and = {0} and {1}
 
 sessionTimout.title = For your security, you have been signed out
 sessionTimout.detail = Your answers have been saved.
