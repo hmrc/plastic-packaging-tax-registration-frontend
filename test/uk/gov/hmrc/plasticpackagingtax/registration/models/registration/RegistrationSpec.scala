@@ -30,7 +30,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 import java.time.LocalDate
 
 class RegistrationSpec
-    extends AnyWordSpec with Matchers with MockitoSugar with RegistrationBuilder with PptTestData {
+  extends AnyWordSpec with Matchers with MockitoSugar with RegistrationBuilder with PptTestData {
 
   "Registration status" should {
     "be 'Cannot Start Yet' " when {
@@ -134,70 +134,86 @@ class RegistrationSpec
     "be started" when {
       "liability weight captured" in {
         Registration(id = "123",
-                     liabilityDetails =
-                       LiabilityDetails(exceededThresholdWeight = Some(true))
+          liabilityDetails =
+            LiabilityDetails(exceededThresholdWeight = Some(true))
         ).isStarted mustBe true
       }
     }
   }
 
   "Registration liability status" should {
-
+//before new liability questions
+    val oldLiabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true),
+      dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
+      expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+    )
     val completedLiabilityDetails =
       LiabilityDetails(exceededThresholdWeight = Some(true),
-                       dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
-                       expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-                       startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+        dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
+        expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+        startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+        newLiabilityFinished = Some(NewLiability),
+        newLiabilityStarted = Some(NewLiability)
       )
     completedLiabilityDetails.isCompleted mustBe true
 
+    "be Not Started" when {
+      "new liability questions have not been answered" in {
+        Registration(id = "123",
+          liabilityDetails =
+            oldLiabilityDetails,
+          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
+      }
+    }
+
     "be complete for single organisation registration with completed liability details and selected registration type" in {
       Registration(id = "123",
-                   liabilityDetails =
-                     completedLiabilityDetails,
-                   registrationType = Some(RegType.SINGLE_ENTITY)
+        liabilityDetails =
+          completedLiabilityDetails,
+        registrationType = Some(RegType.SINGLE_ENTITY)
       ).liabilityDetailsStatus mustBe TaskStatus.Completed
     }
 
     "be incomplete for registration with completed liability details but no registration type" in {
       Registration(id = "123",
-                   liabilityDetails =
-                     completedLiabilityDetails,
-                   registrationType = None
+        liabilityDetails =
+          completedLiabilityDetails,
+        registrationType = None
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
 
     "be in progress for single organisation registration with incomplete liability details" in {
       Registration(id = "123",
-                   liabilityDetails =
-                     completedLiabilityDetails.copy(expectedWeightNext12m = None)
+        liabilityDetails =
+          completedLiabilityDetails.copy(expectedWeightNext12m = None)
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
 
     "be complete for group registration with under group control set to 'true'" in {
       Registration(id = "123",
-                   liabilityDetails =
-                     completedLiabilityDetails,
-                   registrationType = Some(GROUP),
-                   groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(true)))
+        liabilityDetails =
+          completedLiabilityDetails,
+        registrationType = Some(GROUP),
+        groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(true)))
       ).liabilityDetailsStatus mustBe TaskStatus.Completed
     }
 
     "be in progress for group registration with under group control set to 'false'" in {
       Registration(id = "123",
-                   liabilityDetails =
-                     completedLiabilityDetails,
-                   registrationType = Some(GROUP),
-                   groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(false)))
+        liabilityDetails =
+          completedLiabilityDetails,
+        registrationType = Some(GROUP),
+        groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(false)))
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
 
     "be in progress for group registration with under group control un-answered" in {
       Registration(id = "123",
-                   liabilityDetails =
-                     completedLiabilityDetails,
-                   registrationType = Some(GROUP),
-                   groupDetail = Some(GroupDetail(membersUnderGroupControl = None))
+        liabilityDetails =
+          completedLiabilityDetails,
+        registrationType = Some(GROUP),
+        groupDetail = Some(GroupDetail(membersUnderGroupControl = None))
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
   }
@@ -222,7 +238,7 @@ class RegistrationSpec
       }
       "registration does not have complete contact or organisation details" in {
         aRegistration(withPrimaryContactDetails(PrimaryContactDetails()),
-                      withOrganisationDetails(OrganisationDetails())
+          withOrganisationDetails(OrganisationDetails())
         ).numberOfCompletedSections mustBe 1
       }
       "registration not started" in {
@@ -242,31 +258,31 @@ class RegistrationSpec
         val registrationCompletedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         aRegistration(withRegistrationType(Some(GROUP)),
-                      withMetaData(registrationCompletedMetaData),
-                      withGroupDetail(Some(groupDetails))
+          withMetaData(registrationCompletedMetaData),
+          withGroupDetail(Some(groupDetails))
         ).numberOfCompletedSections mustBe 5
       }
       "registration has not been completed" in {
         aRegistration(withRegistrationType(Some(GROUP)),
-                      withGroupDetail(Some(groupDetails))
+          withGroupDetail(Some(groupDetails))
         ).numberOfCompletedSections mustBe 4
       }
       "registration does not have complete group members" in {
         aRegistration(withRegistrationType(Some(GROUP)),
-                      withGroupDetail(Some(groupDetails.copy(members = Seq.empty)))
+          withGroupDetail(Some(groupDetails.copy(members = Seq.empty)))
         ).numberOfCompletedSections mustBe 3
       }
       "registration does not have complete group members or contact details" in {
         aRegistration(withRegistrationType(Some(GROUP)),
-                      withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
-                      withPrimaryContactDetails(PrimaryContactDetails())
+          withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
+          withPrimaryContactDetails(PrimaryContactDetails())
         ).numberOfCompletedSections mustBe 2
       }
       "registration does not have complete group members, contact details or nominated organisation details" in {
         aRegistration(withRegistrationType(Some(GROUP)),
-                      withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
-                      withPrimaryContactDetails(PrimaryContactDetails()),
-                      withOrganisationDetails(OrganisationDetails())
+          withGroupDetail(Some(groupDetails.copy(members = Seq.empty))),
+          withPrimaryContactDetails(PrimaryContactDetails()),
+          withOrganisationDetails(OrganisationDetails())
         ).numberOfCompletedSections mustBe 1
       }
       "registration not started" in {

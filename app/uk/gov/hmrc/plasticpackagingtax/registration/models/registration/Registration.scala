@@ -53,10 +53,6 @@ case class Registration(
       metaData = this.metaData
     )
 
-  def hasCompletedNewLiability: Boolean = {
-    liabilityDetails.newLiabilityStarted.isDefined && liabilityDetails.newLiabilityFinished.isDefined
-  }
-
   def checkAndSubmitStatus: TaskStatus =
     if (isRegistrationComplete)
       TaskStatus.Completed
@@ -106,20 +102,24 @@ case class Registration(
       TaskStatus.CannotStartYet
     else organisationDetails.status
 
+
+  def hasCompletedNewLiability: Boolean = {
+    liabilityDetails.newLiabilityStarted.isDefined && liabilityDetails.newLiabilityFinished.isDefined
+  }
+
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
-  def liabilityDetailsStatus: TaskStatus =
+  def liabilityDetailsStatus: TaskStatus = {
+    if(!hasCompletedNewLiability) return TaskStatus.NotStarted
     if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
       if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
         TaskStatus.Completed
       else TaskStatus.InProgress
     else if (liabilityDetails.status == TaskStatus.Completed)
-      if (registrationType.nonEmpty)
-        TaskStatus.Completed
-      else
-        TaskStatus.InProgress
+      if (registrationType.nonEmpty) TaskStatus.Completed else TaskStatus.InProgress
     else
       liabilityDetails.status
+  }
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
 
