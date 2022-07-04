@@ -50,15 +50,17 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   private val mockRegistrationFilterService = mock[RegistrationGroupFilterService]
 
   private val controller =
-    new ReviewRegistrationController(authenticate = mockAuthAction,
-                                     mockJourneyAction,
-                                     mcc = mcc,
-                                     registrationConnector = mockRegistrationConnector,
-                                     subscriptionsConnector = mockSubscriptionsConnector,
-                                     auditor = mockAuditor,
-                                     reviewRegistrationPage = mockReviewRegistrationPage,
-                                     metrics = metricsMock,
-                                     registrationFilterService = mockRegistrationFilterService
+    new ReviewRegistrationController(
+      appConfig = appConfig,
+      authenticate = mockAuthAction,
+      mockJourneyAction,
+      mcc = mcc,
+      registrationConnector = mockRegistrationConnector,
+      subscriptionsConnector = mockSubscriptionsConnector,
+      auditor = mockAuditor,
+      reviewRegistrationPage = mockReviewRegistrationPage,
+      metrics = metricsMock,
+      registrationFilterService = mockRegistrationFilterService
     )
 
   override protected def beforeEach(): Unit = {

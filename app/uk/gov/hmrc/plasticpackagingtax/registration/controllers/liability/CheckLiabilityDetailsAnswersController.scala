@@ -23,7 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrol
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, LiabilityDetails, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, LiabilityDetails, NewLiability, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
@@ -49,7 +49,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
       taxStartDate.act(
         notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
         isLiableAction = (startDate, _) => {
-          Ok(page(request.registration.copy(liabilityDetails = updateLiabilityStartDate(startDate)), backLink))
+          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate)), backLink))
         }
       )
     }
@@ -78,10 +78,10 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
   private def updateRegistration(startDate: LocalDate)
                                 (implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      registration.copy(liabilityDetails = updateLiabilityStartDate(startDate))
+      registration.copy(liabilityDetails = updateLiability(startDate))
     }
 
-  private def updateLiabilityStartDate(startDate: LocalDate)
+  private def updateLiability(startDate: LocalDate)
                               (implicit request: JourneyRequest[AnyContent]): LiabilityDetails = {
     request.registration.liabilityDetails.copy(startDate =
       Some(
@@ -89,7 +89,8 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
           Some(startDate.getMonth.getValue),
           Some(startDate.getYear)
         )
-      )
+      ),
+      newLiabilityFinished = Some(NewLiability)
     )
   }
 }
