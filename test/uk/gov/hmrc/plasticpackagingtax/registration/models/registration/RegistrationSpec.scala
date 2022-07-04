@@ -142,7 +142,7 @@ class RegistrationSpec
   }
 
   "Registration liability status" should {
-//before new liability questions
+    //before new liability questions
     val oldLiabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true),
       dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
       expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -164,6 +164,12 @@ class RegistrationSpec
           liabilityDetails =
             oldLiabilityDetails,
           registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
+      }
+      "new liability started but not finished" in {
+        Registration(id = "123",
+          liabilityDetails =
+            oldLiabilityDetails.copy(newLiabilityStarted = Some(NewLiability)),
+          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
     }
 

@@ -29,17 +29,17 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 import java.time.LocalDate
 
 case class Registration(
-  id: String,
-  dateOfRegistration: Option[LocalDate] = Some(LocalDate.now()),
-  incorpJourneyId: Option[String] = None,
-  registrationType: Option[RegType] = None,
-  groupDetail: Option[GroupDetail] = None,
-  liabilityDetails: LiabilityDetails = LiabilityDetails(),
-  primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
-  organisationDetails: OrganisationDetails = OrganisationDetails(),
-  metaData: MetaData = MetaData(),
-  userHeaders: Option[Map[String, String]] = None
-) {
+                         id: String,
+                         dateOfRegistration: Option[LocalDate] = Some(LocalDate.now()),
+                         incorpJourneyId: Option[String] = None,
+                         registrationType: Option[RegType] = None,
+                         groupDetail: Option[GroupDetail] = None,
+                         liabilityDetails: LiabilityDetails = LiabilityDetails(),
+                         primaryContactDetails: PrimaryContactDetails = PrimaryContactDetails(),
+                         organisationDetails: OrganisationDetails = OrganisationDetails(),
+                         metaData: MetaData = MetaData(),
+                         userHeaders: Option[Map[String, String]] = None
+                       ) {
 
   def toRegistration: Registration =
     Registration(
@@ -84,7 +84,7 @@ case class Registration(
           organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_PARTNERSHIP)) ||
           organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.LIMITED_PARTNERSHIP)) ||
           organisationDetails.partnershipDetails.exists(_.partnershipType.contains(PartnerTypeEnum.SCOTTISH_LIMITED_PARTNERSHIP))
-      )
+        )
 
   def numberOfSections: Int = if (isGroup) 5 else 4
 
@@ -104,21 +104,26 @@ case class Registration(
 
 
   def hasCompletedNewLiability: Boolean = {
-    liabilityDetails.newLiabilityStarted.isDefined && liabilityDetails.newLiabilityFinished.isDefined
+    hasStartedNewLiabilty && hasFinishedNewLiability
   }
+
+  def hasFinishedNewLiability = liabilityDetails.newLiabilityFinished.isDefined
+
+  def hasStartedNewLiabilty = liabilityDetails.newLiabilityStarted.isDefined
 
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
   def liabilityDetailsStatus: TaskStatus = {
-    if(!hasCompletedNewLiability) return TaskStatus.NotStarted
-    if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
-      if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
-        TaskStatus.Completed
-      else TaskStatus.InProgress
-    else if (liabilityDetails.status == TaskStatus.Completed)
-      if (registrationType.nonEmpty) TaskStatus.Completed else TaskStatus.InProgress
-    else
-      liabilityDetails.status
+    if (hasCompletedNewLiability) {
+      if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
+        if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
+          TaskStatus.Completed
+        else TaskStatus.InProgress
+      else if (liabilityDetails.status == TaskStatus.Completed)
+        if (registrationType.nonEmpty) TaskStatus.Completed else TaskStatus.InProgress
+      else
+        liabilityDetails.status
+    } else TaskStatus.NotStarted
   }
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
@@ -129,9 +134,8 @@ case class Registration(
   def primaryContactDetailsStatus: TaskStatus =
     if (companyDetailsStatus != TaskStatus.Completed)
       TaskStatus.CannotStartYet
-    else
-      if (isPartnershipWithPartnerCollection) TaskStatus.Completed
-      else this.primaryContactDetails.status(metaData.emailVerified)
+    else if (isPartnershipWithPartnerCollection) TaskStatus.Completed
+    else this.primaryContactDetails.status(metaData.emailVerified)
 
   def nominatedPartnerDetailsStatus: TaskStatus =
     this.organisationDetails.nominatedPartner match {
@@ -257,7 +261,7 @@ case class Registration(
     organisationDetails.partnershipDetails.exists(_.isNominatedPartner(partnerId))
 
   def isNominatedPartnerOrFirstInflightPartner(partner: Partner) = {
-    val isTheNominatedPartner  = nominatedPartner.exists(_.id == partner.id)
+    val isTheNominatedPartner = nominatedPartner.exists(_.id == partner.id)
     val isFirstInflightPartner = organisationDetails.partnershipDetails.forall(_.partners.isEmpty)
     isTheNominatedPartner || isFirstInflightPartner
   }
