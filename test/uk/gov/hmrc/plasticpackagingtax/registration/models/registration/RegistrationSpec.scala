@@ -171,6 +171,12 @@ class RegistrationSpec
             oldLiabilityDetails.copy(newLiabilityStarted = Some(NewLiability)),
           registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
+      "new liability 'finished' but not 'started'" in {
+        Registration(id = "123",
+          liabilityDetails =
+            oldLiabilityDetails.copy(newLiabilityFinished = Some(NewLiability)),
+          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
+      }
     }
 
     "be complete for single organisation registration with completed liability details and selected registration type" in {

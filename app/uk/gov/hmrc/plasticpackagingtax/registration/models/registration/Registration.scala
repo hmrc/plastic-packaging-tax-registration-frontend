@@ -111,19 +111,26 @@ case class Registration(
 
   def hasStartedNewLiabilty = liabilityDetails.newLiabilityStarted.isDefined
 
+  def newLiabilityInProgress: Boolean = liabilityDetails.newLiabilityStarted.isDefined || liabilityDetails.newLiabilityFinished.isDefined
+
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
+  def libStatusCheck = {
+    if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
+      if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
+        TaskStatus.Completed
+      else TaskStatus.InProgress
+    else if (liabilityDetails.status == TaskStatus.Completed)
+      if (registrationType.nonEmpty) TaskStatus.Completed else TaskStatus.InProgress
+    else
+      liabilityDetails.status
+  }
+
   def liabilityDetailsStatus: TaskStatus = {
-    if (hasCompletedNewLiability) {
-      if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
-        if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
-          TaskStatus.Completed
-        else TaskStatus.InProgress
-      else if (liabilityDetails.status == TaskStatus.Completed)
-        if (registrationType.nonEmpty) TaskStatus.Completed else TaskStatus.InProgress
-      else
-        liabilityDetails.status
-    } else TaskStatus.NotStarted
+    if (!newLiabilityInProgress) TaskStatus.NotStarted
+    else if (newLiabilityInProgress) TaskStatus.InProgress else {
+      libStatusCheck
+    }
   }
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
