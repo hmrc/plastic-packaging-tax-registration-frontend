@@ -115,20 +115,23 @@ case class Registration(
 
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
-  def libStatusCheck = {
+  private def libStatusCheck: TaskStatus =
     if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
       if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
         TaskStatus.Completed
       else TaskStatus.InProgress
     else if (liabilityDetails.status == TaskStatus.Completed)
-      if (registrationType.nonEmpty) TaskStatus.Completed else TaskStatus.InProgress
+      if (registrationType.nonEmpty)
+        TaskStatus.Completed
+      else
+        TaskStatus.InProgress
     else
       liabilityDetails.status
-  }
 
   def liabilityDetailsStatus: TaskStatus = {
     if (!newLiabilityInProgress) TaskStatus.NotStarted
-    else if (newLiabilityInProgress) TaskStatus.InProgress else {
+    else if (hasStartedNewLiabilty != hasFinishedNewLiability) TaskStatus.InProgress
+     else {
       libStatusCheck
     }
   }
