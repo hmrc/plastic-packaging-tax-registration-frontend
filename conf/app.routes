@@ -184,7 +184,9 @@ GET        /registration-failed/:timestamp      uk.gov.hmrc.plasticpackagingtax.
 GET        /sign-out                uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.signOut(signOutReason: uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason)
 GET        /security-signed-out     uk.gov.hmrc.plasticpackagingtax.registration.controllers.SignOutController.sessionTimeoutSignedOut()
 
-GET        /unauthorised   uk.gov.hmrc.plasticpackagingtax.registration.controllers.UnauthorisedController.onPageLoad(nonAdminCredRole: Boolean ?= false)
+GET        /unauthorised                        uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised.UnauthorisedController.showGenericUnauthorised()
+GET        /cannot-register-as-assistant        uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised.UnauthorisedController.showAssistantUnauthorised()
+GET        /cannot-register-for-client          uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised.UnauthorisedController.showAgentUnauthorised()
 
 GET        /keep-alive              uk.gov.hmrc.plasticpackagingtax.registration.controllers.KeepAliveController.keepAlive()
 

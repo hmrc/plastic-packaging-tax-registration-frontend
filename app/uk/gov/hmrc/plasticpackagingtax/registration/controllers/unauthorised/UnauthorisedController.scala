@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised
 
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised_not_admin
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised.{unauthorised, unauthorised_agent, unauthorised_not_admin}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -28,18 +27,26 @@ import javax.inject.Inject
 class UnauthorisedController @Inject() (
   mcc: MessagesControllerComponents,
   unauthorisedPage: unauthorised,
-  unauthorisedNotAdminPage: unauthorised_not_admin
+  unauthorisedNotAdminPage: unauthorised_not_admin,
+  unauthorisedAgent: unauthorised_agent
 ) extends FrontendController(mcc) with I18nSupport {
 
   private val logger = Logger(this.getClass)
 
-  def onPageLoad(nonAdminCredRole: Boolean = false): Action[AnyContent] =
+  def showGenericUnauthorised(): Action[AnyContent] =
     Action { implicit request =>
-      if (nonAdminCredRole) {
-        logger.info(s"User without 'User' credential role - showing unauthorised page")
-        Ok(unauthorisedNotAdminPage())
-      } else
-        Ok(unauthorisedPage())
+      Ok(unauthorisedPage())
     }
 
+  def showAssistantUnauthorised(): Action[AnyContent] =
+    Action { implicit request =>
+      logger.info("User with 'Assistant' credential role - showing unauthorised page")
+      Ok(unauthorisedNotAdminPage())
+    }
+
+  def showAgentUnauthorised(): Action[AnyContent] =
+    Action { implicit request =>
+      logger.info("Agent attempting registration - showing unauthorised page")
+      Ok(unauthorisedAgent())
+    }
 }

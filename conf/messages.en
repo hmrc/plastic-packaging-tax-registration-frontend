@@ -427,6 +427,15 @@ unauthorised.not.admin.paragraph.2 = Someone from your organisation with adminis
 unauthorised.not.admin.paragraph.3 = Visit the {0} for more information.
 unauthorised.not.admin.paragraph.3.link = Plastic Packaging Tax guidance
 
+unauthorised.agent.title = You cannot register for Plastic Packaging Tax for your client - Agent
+unauthorised.agent.heading = You cannot register for Plastic Packaging Tax for your client
+unauthorised.agent.paragraph.1 = Agents are not able to complete Plastic Packaging Tax registration on behalf of clients.
+unauthorised.agent.paragraph.2 = Your client must register using their own Government Gateway ID.
+unauthorised.agent.paragraph.3 = Once registration is complete and your client has authorised you, you’ll be able to manage their Plastic Packaging Tax account.
+unauthorised.agent.paragraph.4 = Go to your {0}
+unauthorised.agent.paragraph.4.link.text = agent services account
+unauthorised.agent.paragraph.4.full.stop = .
+
 organisationDetails.registerAsOtherOrganisation.title = Register as a charitable incorporated organisation, trust or overseas company without a UK establishment
 organisationDetails.registerAsOtherOrganisation.paragraph.1 = This is a new service and this organisation type is not supported yet.
 organisationDetails.registerAsOtherOrganisation.paragraph.2 = You can still register for Plastic Packaging Tax by {0}
