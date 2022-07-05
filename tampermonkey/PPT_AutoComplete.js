@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.16
+// @version      15.17
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*
@@ -541,38 +541,24 @@ const liabilityExpectedWeight = () => {
 
 /* ####################### Post-launch Liability */
 
-const liabilityHasYourGroupExceeded = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/threshold-from-1-april-2022')) {
-
-        document.getElementById('answer').checked = true
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
 const liabilityExpectYourGroupToExceed = () => {
     if (currentPageIs('/register-for-plastic-packaging-tax/threshold-next-30-days')) {
 
-        document.getElementById('answer').checked = true
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
-const liabilityExceededThresholdWeightDate = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/date-met-threshold')) {
-        document.getElementById('exceeded-threshold-weight-date.day').value = '01'
-        document.getElementById('exceeded-threshold-weight-date.month').value = '04'
-        document.getElementById('exceeded-threshold-weight-date.year').value = '2022'
-
-        document.getElementsByClassName('govuk-button')[0].click()
-    }
-}
-
-const liabilityExpectToExceedThresholdWeightDate = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/date-realised-will-meet-threshold')) {
+        document.getElementById('value-yes').checked = true
         document.getElementById('expect-to-exceed-threshold-weight-date.day').value = '01'
         document.getElementById('expect-to-exceed-threshold-weight-date.month').value = '04'
         document.getElementById('expect-to-exceed-threshold-weight-date.year').value = '2022'
+        document.getElementsByClassName('govuk-button')[0].click()
+    }
+}
 
+const liabilityHasYourGroupExceeded = () => {
+    if (currentPageIs('/register-for-plastic-packaging-tax/threshold-from-1-april-2022')) {
+
+        document.getElementById('value-yes').checked = true
+        document.getElementById('exceeded-threshold-weight-date.day').value = '01'
+        document.getElementById('exceeded-threshold-weight-date.month').value = '04'
+        document.getElementById('exceeded-threshold-weight-date.year').value = '2022'
         document.getElementsByClassName('govuk-button')[0].click()
     }
 }
@@ -936,10 +922,8 @@ function completeJourney(manualJourney) {
     // Liability Details
     liabilityLiableDate()
     liabilityStartDate()
-    liabilityHasYourGroupExceeded()
     liabilityExpectYourGroupToExceed()
-    liabilityExceededThresholdWeightDate()
-    liabilityExpectToExceedThresholdWeightDate()
+    liabilityHasYourGroupExceeded()
     liabilityTaxStartDate()
     liabilityWeight()
     liabilityExpectedWeight()
