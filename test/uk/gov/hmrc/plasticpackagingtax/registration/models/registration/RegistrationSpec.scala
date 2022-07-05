@@ -135,7 +135,7 @@ class RegistrationSpec
       "liability weight captured" in {
         Registration(id = "123",
           liabilityDetails =
-            LiabilityDetails(exceededThresholdWeight = Some(true))
+            LiabilityDetails(exceededThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
         ).isStarted mustBe true
       }
     }
@@ -143,12 +143,18 @@ class RegistrationSpec
 
   "Registration liability status" should {
     //before new liability questions
-    val oldLiabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true),
+    val oldCompletedLiabilityDetails: LiabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true),
       dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
       expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
       startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
     )
-    val completedLiabilityDetails =
+
+    val oldInProgressLiabilityDetails: LiabilityDetails =
+      LiabilityDetails(
+        exceededThresholdWeight = Some(true),
+        dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
+    )
+    val newCompletedLiabilityDetails =
       LiabilityDetails(exceededThresholdWeight = Some(true),
         dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
         expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
@@ -156,33 +162,52 @@ class RegistrationSpec
         newLiabilityFinished = Some(NewLiability),
         newLiabilityStarted = Some(NewLiability)
       )
-    completedLiabilityDetails.isCompleted mustBe true
+    newCompletedLiabilityDetails.isCompleted mustBe true
 
     "be Not Started" when {
       "new liability questions have not been answered" in {
         Registration(id = "123",
           liabilityDetails =
-            oldLiabilityDetails,
+            oldCompletedLiabilityDetails,
           registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
       }
       "new liability started but not finished" in {
+        val newInProgressLiabilityDetails = oldCompletedLiabilityDetails.copy(newLiabilityStarted = Some(NewLiability))
+
         Registration(id = "123",
-          liabilityDetails =
-            oldLiabilityDetails.copy(newLiabilityStarted = Some(NewLiability)),
+          liabilityDetails =newInProgressLiabilityDetails,
           registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
-      "new liability 'finished' but not 'started'" in {
+      "old liability completed show 'not started'" in {
+        Registration(
+          id = "123",
+          liabilityDetails = oldCompletedLiabilityDetails,
+          registrationType = Some(RegType.SINGLE_ENTITY)
+        ).liabilityDetailsStatus mustBe TaskStatus.NotStarted
+      }
+
+      "new liability in progress" in {
+        val newInProgressLiabilityDetails = oldCompletedLiabilityDetails.copy(newLiabilityFinished = Some(NewLiability))
+
+        Registration(
+          id = "123",
+          liabilityDetails = newInProgressLiabilityDetails,
+          registrationType = Some(RegType.SINGLE_ENTITY)
+        ).liabilityDetailsStatus mustBe TaskStatus.InProgress
+      }
+
+      "old liability in progress show 'not started'" in {
         Registration(id = "123",
           liabilityDetails =
-            oldLiabilityDetails.copy(newLiabilityFinished = Some(NewLiability)),
-          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
+            oldInProgressLiabilityDetails,
+          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
       }
     }
 
     "be complete for single organisation registration with completed liability details and selected registration type" in {
       Registration(id = "123",
         liabilityDetails =
-          completedLiabilityDetails,
+          newCompletedLiabilityDetails,
         registrationType = Some(RegType.SINGLE_ENTITY)
       ).liabilityDetailsStatus mustBe TaskStatus.Completed
     }
@@ -190,7 +215,7 @@ class RegistrationSpec
     "be incomplete for registration with completed liability details but no registration type" in {
       Registration(id = "123",
         liabilityDetails =
-          completedLiabilityDetails,
+          newCompletedLiabilityDetails,
         registrationType = None
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
@@ -198,14 +223,14 @@ class RegistrationSpec
     "be in progress for single organisation registration with incomplete liability details" in {
       Registration(id = "123",
         liabilityDetails =
-          completedLiabilityDetails.copy(expectedWeightNext12m = None)
+          newCompletedLiabilityDetails.copy(expectedWeightNext12m = None)
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
 
     "be complete for group registration with under group control set to 'true'" in {
       Registration(id = "123",
         liabilityDetails =
-          completedLiabilityDetails,
+          newCompletedLiabilityDetails,
         registrationType = Some(GROUP),
         groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(true)))
       ).liabilityDetailsStatus mustBe TaskStatus.Completed
@@ -214,7 +239,7 @@ class RegistrationSpec
     "be in progress for group registration with under group control set to 'false'" in {
       Registration(id = "123",
         liabilityDetails =
-          completedLiabilityDetails,
+          newCompletedLiabilityDetails,
         registrationType = Some(GROUP),
         groupDetail = Some(GroupDetail(membersUnderGroupControl = Some(false)))
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
@@ -223,7 +248,7 @@ class RegistrationSpec
     "be in progress for group registration with under group control un-answered" in {
       Registration(id = "123",
         liabilityDetails =
-          completedLiabilityDetails,
+          newCompletedLiabilityDetails,
         registrationType = Some(GROUP),
         groupDetail = Some(GroupDetail(membersUnderGroupControl = None))
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress

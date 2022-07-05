@@ -102,20 +102,9 @@ case class Registration(
       TaskStatus.CannotStartYet
     else organisationDetails.status
 
-
-  def hasCompletedNewLiability: Boolean = {
-    hasStartedNewLiabilty && hasFinishedNewLiability
-  }
-
-  def hasFinishedNewLiability = liabilityDetails.newLiabilityFinished.isDefined
-
-  def hasStartedNewLiabilty = liabilityDetails.newLiabilityStarted.isDefined
-
-  def newLiabilityInProgress: Boolean = liabilityDetails.newLiabilityStarted.isDefined || liabilityDetails.newLiabilityFinished.isDefined
-
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
 
-  private def libStatusCheck: TaskStatus =
+  def liabilityDetailsStatus: TaskStatus =
     if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
       if (groupDetail.flatMap(_.membersUnderGroupControl).contains(true))
         TaskStatus.Completed
@@ -127,14 +116,6 @@ case class Registration(
         TaskStatus.InProgress
     else
       liabilityDetails.status
-
-  def liabilityDetailsStatus: TaskStatus = {
-    if (!newLiabilityInProgress) TaskStatus.NotStarted
-    else if (hasStartedNewLiabilty != hasFinishedNewLiability) TaskStatus.InProgress
-     else {
-      libStatusCheck
-    }
-  }
 
   def isPrimaryContactDetailsComplete: Boolean = primaryContactDetailsStatus == TaskStatus.Completed
 
