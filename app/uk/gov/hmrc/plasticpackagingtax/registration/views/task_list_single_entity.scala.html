@@ -41,6 +41,20 @@
   else
     organisationRoutes.OrganisationDetailsTypeController.displayPage()
 }
+    
+@conditionalContent = {
+    <br />
+    @paragraphBody(messages("registrationPage.task.eligibility.completeNewLiability.line1"))
+    @paragraphBody(messages("registrationPage.task.eligibility.completeNewLiability.line2"))
+}
+
+@actual = @{
+    if (false) 
+        Some(conditionalContent)
+    else
+        None
+}     
+    
 @govukLayout(title = Title("registrationPage.title")) {
 
     @pageHeading(messages("registrationPage.title"))
@@ -55,7 +69,8 @@
             TaskSection(
                 title = "registrationPage.task.eligibility",
                 link = liabilityStartLink,
-                status = registration.liabilityDetailsStatus
+                status = registration.liabilityDetailsStatus, 
+                footnote = actual
             )
         ))
         </li>
