@@ -1,7 +1,6 @@
 // ==UserScript==
 // @name         PPT Registration AutoComplete
 // @namespace    http://tampermonkey.net/
-// @version      15.17
 // @description
 // @author       pmonteiro
 // @match        http*://*/register-for-plastic-packaging-tax*

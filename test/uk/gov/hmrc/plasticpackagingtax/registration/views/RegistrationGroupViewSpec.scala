@@ -23,11 +23,9 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_group
@@ -38,11 +36,11 @@ import java.time.LocalDate
 @ViewTest
 class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
-  private val LIABILITY_DETAILS                 = 0
-  private val NOMINATED_BUSINESS_DETAILS        = 1
+  private val LIABILITY_DETAILS = 0
+  private val NOMINATED_BUSINESS_DETAILS = 1
   private val NOMINATED_PRIMARY_CONTACT_DETAILS = 2
-  private val OTHER_BUSINESS_DETAILS            = 3
-  private val CHECK_AND_SUBMIT                  = 4
+  private val OTHER_BUSINESS_DETAILS = 3
+  private val CHECK_AND_SUBMIT = 4
   private val registrationPage: task_list_group = inject[task_list_group]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
@@ -78,26 +76,31 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
     "display sections" when {
       def header(el: Element): String = el.getElementsByTag("h2").get(0).text()
+
       def sectionName(el: Element, index: Int): String =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("app-task-list__task-name").get(0).text()
+
       def sectionStatus(el: Element, index: Int): String =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("govuk-tag").get(0).text()
+
       def sectionLinks(el: Element, index: Int): Elements =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("govuk-link")
+
       def sectionLink(el: Element, index: Int): Element =
         sectionLinks(el, index).get(0)
 
       "Liability Details 'In Progress'" when {
 
         val registration = aRegistration(withRegistrationType(Some(GROUP)),
-                                         withLiabilityDetails(
-                                           LiabilityDetails(exceededThresholdWeight = Some(true))
-                                         ),
-                                         withIncorpJourneyId(None),
-                                         withNoPrimaryContactDetails()
+          withLiabilityDetails(
+            LiabilityDetails(expectToExceedThresholdWeight = Some(true),
+              newLiabilityStarted = Some(NewLiability))
+          ),
+          withIncorpJourneyId(None),
+          withNoPrimaryContactDetails()
         )
         val view: Html = createView(registration)
 
@@ -108,8 +111,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections,
-                                   5
+            registration.numberOfCompletedSections,
+            5
           )
         }
 
@@ -177,23 +180,24 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
       "Organisation information and Primary Contact details not started" when {
 
         val registration = aRegistration(withRegistrationType(Some(GROUP)),
-                                         withGroupDetail(
-                                           Some(GroupDetail(membersUnderGroupControl = Some(true)))
-                                         ),
-                                         withLiabilityDetails(
-                                           LiabilityDetails(exceededThresholdWeight = Some(true),
-                                                            dateExceededThresholdWeight = Some(
-                                                              Date(LocalDate.parse("2022-03-05"))
-                                                            ),
-                                                            expectedWeightNext12m =
-                                                              Some(LiabilityWeight(Some(12000))),
-                                                            startDate = Some(
-                                                              OldDate(Some(1), Some(4), Some(2022))
-                                                            )
-                                           )
-                                         ),
-                                         withOrganisationDetails(OrganisationDetails()),
-                                         withNoPrimaryContactDetails()
+          withGroupDetail(
+            Some(GroupDetail(membersUnderGroupControl = Some(true)))
+          ),
+          withLiabilityDetails(
+            LiabilityDetails(exceededThresholdWeight = Some(true), //todo- check if this should pass
+              dateExceededThresholdWeight = Some(
+                Date(LocalDate.parse("2022-03-05")),
+              ),
+              expectedWeightNext12m =
+                Some(LiabilityWeight(Some(12000))),
+              startDate = Some(
+                OldDate(Some(1), Some(4), Some(2022))
+              ), newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
+            )
+          ),
+          withOrganisationDetails(OrganisationDetails()),
+          withNoPrimaryContactDetails()
         )
         val view: Html = createView(registration)
 
@@ -204,8 +208,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections,
-                                   5
+            registration.numberOfCompletedSections,
+            5
           )
         }
 
@@ -278,8 +282,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         val registration =
           aRegistration(withRegistrationType(Some(GROUP)),
-                        withMetaData(MetaData()),
-                        withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
+            withMetaData(MetaData()),
+            withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
           )
 
         val view: Html =
@@ -319,8 +323,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completeRegistration =
           aRegistration(withRegistrationType(Some(GROUP)),
-                        withMetaData(registrationCompletedMetaData),
-                        withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
+            withMetaData(registrationCompletedMetaData),
+            withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true))))
           )
 
         val view: Html =
@@ -329,14 +333,14 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         "application status should reflect the completed sections" in {
 
           // TODO - fix when other groups done
-//          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
-//            0
-//          ).text() mustBe messages("registrationPage.subheading.complete")
+          //          view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
+          //            0
+          //          ).text() mustBe messages("registrationPage.subheading.complete")
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   completeRegistration.numberOfCompletedSections,
-                                   5
+            completeRegistration.numberOfCompletedSections,
+            5
           )
         }
 
@@ -395,10 +399,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
 
           // TODO - fix when other groups done
-//          sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
-//          sectionLink(reviewElement, 0) must haveHref(
-//            routes.ReviewRegistrationController.displayPage()
-//          )
+          //          sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
+          //          sectionLink(reviewElement, 0) must haveHref(
+          //            routes.ReviewRegistrationController.displayPage()
+          //          )
         }
 
       }
@@ -418,10 +422,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
 
         // TODO - fix when other groups done
-//        sectionStatus(reviewElement, 0) mustBe messages("task.status.inProgress")
-//        sectionLink(reviewElement, 0) must haveHref(
-//          routes.ReviewRegistrationController.displayPage()
-//        )
+        //        sectionStatus(reviewElement, 0) mustBe messages("task.status.inProgress")
+        //        sectionLink(reviewElement, 0) must haveHref(
+        //          routes.ReviewRegistrationController.displayPage()
+        //        )
       }
 
       "Check and Submit is 'Completed'" in {
@@ -439,10 +443,10 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         sectionName(reviewElement, 0) mustBe messages("registrationPage.task.review")
 
         // TODO - fix when other groups done
-//        sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
-//        sectionLink(reviewElement, 0) must haveHref(
-//          routes.ReviewRegistrationController.displayPage()
-//        )
+        //        sectionStatus(reviewElement, 0) mustBe messages("task.status.completed")
+        //        sectionLink(reviewElement, 0) must haveHref(
+        //          routes.ReviewRegistrationController.displayPage()
+        //        )
       }
     }
   }
