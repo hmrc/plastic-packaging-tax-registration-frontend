@@ -46,7 +46,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
   private def createView(registration: Registration = aRegistration()): Html =
-    registrationPage(registration, liabilityStartLink)
+    registrationPage(registration, liabilityStartLink, showRestartLiabilityContent = false)
 
   "Registration Group Page view" should {
 
@@ -452,8 +452,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(aRegistration(), liabilityStartLink)(journeyRequest, messages)
-    registrationPage.render(aRegistration(), liabilityStartLink, journeyRequest, messages)
+    registrationPage.f(aRegistration(), liabilityStartLink, false)(journeyRequest, messages)
+    registrationPage.render(aRegistration(), liabilityStartLink, false, journeyRequest, messages)
   }
 
 }

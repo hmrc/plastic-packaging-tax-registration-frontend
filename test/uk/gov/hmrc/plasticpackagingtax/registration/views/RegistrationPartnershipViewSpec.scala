@@ -60,7 +60,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(registration: Registration = registrationWithPartnershipDetails): Html =
-    registrationPage(registration, liabilityStartLink)
+    registrationPage(registration, liabilityStartLink, showRestartLiabilityContent = false)
 
   "Registration Single Entity Page view" should {
 
@@ -649,11 +649,12 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink)(journeyRequest,
+    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(journeyRequest,
       messages
     )
     registrationPage.render(registrationWithPartnershipDetails,
       liabilityStartLink,
+      false, 
       journeyRequest,
       messages
     )

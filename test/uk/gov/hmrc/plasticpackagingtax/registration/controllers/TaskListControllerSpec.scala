@@ -54,11 +54,11 @@ class TaskListControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(singleEntityPage.apply(any(), any())(any(), any())).thenReturn(
+    when(singleEntityPage.apply(any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Single Entity Page")
     )
-    when(groupPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Group Page"))
-    when(partnershipPage.apply(any(), any())(any(), any())).thenReturn(
+    when(groupPage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Group Page"))
+    when(partnershipPage.apply(any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Partnership Page")
     )
   }
@@ -155,7 +155,7 @@ class TaskListControllerSpec extends ControllerSpec {
       status(result) mustBe OK
 
       val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
-      verify(singleEntityPage).apply(any(), startLinkCaptor.capture())(any(), any())
+      verify(singleEntityPage).apply(any(), startLinkCaptor.capture(), any())(any(), any())
       startLinkCaptor.getValue.url mustBe startLink
     }
   }

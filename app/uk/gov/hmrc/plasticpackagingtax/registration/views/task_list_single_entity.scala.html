@@ -33,7 +33,7 @@
         govukTag: GovukTag
 )
 
-@(registration: Registration, liabilityStartLink: Call)(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(registration: Registration, liabilityStartLink: Call, showRestartLiabilityContent: Boolean)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @organisationDetailsLink = @{
   if(registration.isCompanyDetailsComplete)
@@ -42,15 +42,15 @@
     organisationRoutes.OrganisationDetailsTypeController.displayPage()
 }
     
-@conditionalContent = {
+@conditionalSectionOneContent = {
     <br />
     @paragraphBody(messages("registrationPage.task.eligibility.completeNewLiability.line1"))
     @paragraphBody(messages("registrationPage.task.eligibility.completeNewLiability.line2"))
 }
 
-@actual = @{
-    if (false) 
-        Some(conditionalContent)
+@actualSectionOneContent = @{
+    if (showRestartLiabilityContent) 
+        Some(conditionalSectionOneContent)
     else
         None
 }     
@@ -70,7 +70,7 @@
                 title = "registrationPage.task.eligibility",
                 link = liabilityStartLink,
                 status = registration.liabilityDetailsStatus, 
-                footnote = actual
+                footnote = actualSectionOneContent
             )
         ))
         </li>
