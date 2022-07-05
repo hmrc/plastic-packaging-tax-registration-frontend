@@ -37,14 +37,11 @@ class StartRegistrationController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
 
       if (request.registration.isStarted) {
-        // if is in progress or completed
-        Redirect(startLink).addingToSession("resumePPTRegistration" -> "true")
-      } else {
         Redirect(routes.TaskListController.displayPage()).addingToSession(
           "resumePPTRegistration" -> "true"
         )
-        // if not started
-
+      } else {
+        Redirect(startLink).addingToSession("resumePPTRegistration" -> "true")
       }
     }
 

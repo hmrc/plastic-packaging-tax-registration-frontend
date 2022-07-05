@@ -167,7 +167,9 @@ case class Registration(
   def asCompleted(): Registration =
     this.copy(metaData = this.metaData.copy(registrationCompleted = true))
 
-  val isStarted: Boolean = liabilityDetails.status != TaskStatus.NotStarted
+  val isStarted: Boolean =
+    if(liabilityDetails.expectToExceedThresholdWeight.isDefined) true
+    else liabilityDetails.status != TaskStatus.NotStarted
 
   val isFirstGroupMember: Boolean = groupDetail.exists(_.members.isEmpty)
 

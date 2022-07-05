@@ -135,7 +135,7 @@ class RegistrationSpec
       "liability weight captured" in {
         Registration(id = "123",
           liabilityDetails =
-            LiabilityDetails(exceededThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
+            LiabilityDetails(expectToExceedThresholdWeight = Some(true), newLiabilityStarted = Some(NewLiability))
         ).isStarted mustBe true
       }
     }
@@ -143,7 +143,7 @@ class RegistrationSpec
 
   "Registration liability status" should {
     //before new liability questions
-    val oldCompletedLiabilityDetails: LiabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true),
+    val oldCompletedLiabilityDetails: LiabilityDetails = LiabilityDetails(expectToExceedThresholdWeight = Some(true),
       dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
       expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
       startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
@@ -151,11 +151,11 @@ class RegistrationSpec
 
     val oldInProgressLiabilityDetails: LiabilityDetails =
       LiabilityDetails(
-        exceededThresholdWeight = Some(true),
+        expectToExceedThresholdWeight = Some(true),
         dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
     )
     val newCompletedLiabilityDetails =
-      LiabilityDetails(exceededThresholdWeight = Some(true),
+      LiabilityDetails(expectToExceedThresholdWeight = Some(true),
         dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
         expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
         startDate = Some(OldDate(Some(1), Some(4), Some(2022))),

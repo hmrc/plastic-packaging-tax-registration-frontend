@@ -23,18 +23,11 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  MetaData,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, MetaData, NewLiability, OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_single_entity
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -101,7 +94,10 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
       "Liability Details 'In Progress'" when {
 
         val registration = aRegistration(
-          withLiabilityDetails(LiabilityDetails(exceededThresholdWeight = Some(true))),
+          withLiabilityDetails(LiabilityDetails(
+            expectToExceedThresholdWeight = Some(true),
+            newLiabilityStarted = Some(NewLiability))
+          ),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
@@ -120,22 +116,42 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         }
 
         "Eligibility check" when {
-          "new Liability questions in progress" in {
-            val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
+          def assertResults(liabilityElement: Element, status: String): Unit = {
             header(liabilityElement) must include(
               messages("registrationPage.task.eligibility.heading")
             )
             sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
-            sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
+            sectionStatus(liabilityElement, 0) mustBe messages(status)
             sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
           }
-          "new Liability questions not started" in {???
 
+          "new Liability questions in progress" in {
+            val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
+
+            assertResults(liabilityElement, "task.status.inProgress")
           }
-          "new Liability questions completed" in {???
 
+          "new Liability questions not started" in {
 
+            val registration = aRegistration(
+              withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true))),
+              withIncorpJourneyId(None),
+              withNoPrimaryContactDetails()
+            )
+            val view: Html = createView(registration)
+
+            val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
+
+            assertResults(liabilityElement,"task.status.notStarted")
+          }
+
+          "new Liability questions completed" in {
+            val view: Html = createView(aRegistration())
+
+            val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
+
+            assertResults(liabilityElement,"task.status.completed")
           }
         }
         "Organisation details" in {
@@ -179,7 +195,9 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
               dateExceededThresholdWeight =
                 Some(Date(LocalDate.parse("2022-03-05"))),
               expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-              startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
             )
           ),
           withOrganisationDetails(OrganisationDetails()),
