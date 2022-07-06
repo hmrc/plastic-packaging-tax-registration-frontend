@@ -127,7 +127,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
-        "Nominated organisation details" in {
+        "Nominated organisation details" in {//todo: should status logic be tested here?
           val businessElement = view.getElementsByClass("app-task").get(NOMINATED_BUSINESS_DETAILS)
 
           header(businessElement) must include(
@@ -137,7 +137,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           sectionName(businessElement, 0) mustBe messages(
             "registrationPage.task.organisation.group"
           )
-          sectionStatus(businessElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(businessElement, 0) mustBe messages("task.status.completed")
         }
 
         "Nominated organisation contact details" in {
@@ -151,7 +151,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages(
             "registrationPage.task.contactDetails.group"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
         }
 
         "Other organisations in group details" in {

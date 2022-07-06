@@ -143,7 +143,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
             val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-            assertResults(liabilityElement,"task.status.notStarted")
+            assertResults(liabilityElement, "task.status.inProgress")
           }
 
           "new Liability questions completed" in {
@@ -151,10 +151,10 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
             val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
-            assertResults(liabilityElement,"task.status.completed")
+            assertResults(liabilityElement, "task.status.completed")
           }
         }
-        "Organisation details" in {
+        "Organisation details" in { //todo: should the status logic be tested here?
           val businessElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
           header(businessElement) must include(
@@ -162,7 +162,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           )
 
           sectionName(businessElement, 0) mustBe messages("registrationPage.task.organisation")
-          sectionStatus(businessElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(businessElement, 0) mustBe messages("task.status.completed")
         }
 
         "Contact details" in {
@@ -173,7 +173,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           )
 
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
         }
 
         "Review and send" in {

@@ -64,7 +64,7 @@ case class Registration(
       TaskStatus.CannotStartYet
 
   def numberOfCompletedSections: Int = {
-   val x = Array(
+   val sections = Array(
       isLiabilityDetailsComplete,
       isCompanyDetailsComplete,
       !isPartnershipWithPartnerCollection && isPrimaryContactDetailsComplete,
@@ -72,8 +72,7 @@ case class Registration(
       isPartnershipWithPartnerCollection && isNominatedPartnerDetailsComplete && isOtherPartnersDetailsComplete,
       isRegistrationComplete
     )
-    println(x.mkString)
-      x.count(isComplete => isComplete)
+      sections.count(isComplete => isComplete)
   }
 
   def isGroup: Boolean = registrationType.contains(RegType.GROUP)
@@ -108,8 +107,6 @@ case class Registration(
   }
 
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
-
-  def LiabilityDetailsNotStarted: Boolean = liabilityDetailsStatus == TaskStatus.NotStarted
 
   def liabilityDetailsStatus: TaskStatus =
     if (liabilityDetails.isCompleted && registrationType.contains(GROUP))

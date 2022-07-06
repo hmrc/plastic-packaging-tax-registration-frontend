@@ -121,7 +121,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
-        val view: Html = createView(registration)
+        val view: Html = createView(Registration("123"))
 
         "application status should reflect the completed sections" in {
           view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
@@ -132,14 +132,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           ).text() mustBe messages("registrationPage.completedSections", 0, 4)
         }
 
-        "Eligibility check" in {
+        "Eligibility check" in {//todo: should status logic be tested here?
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
           header(liabilityElement) must include(
             messages("registrationPage.task.eligibility.heading")
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
-          sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
+          sectionStatus(liabilityElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
