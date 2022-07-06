@@ -34,6 +34,21 @@ class RegistrationSpec
 
   "Registration status" should {
     "be 'Cannot Start Yet' " when {
+      "xxxx" in {
+        val registration =
+          aRegistration(withLiabilityDetails(createOldLiabilityDetails),
+            withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("job"))))
+
+        registration.isLiabilityDetailsComplete mustBe false
+        registration.liabilityDetailsStatus mustBe TaskStatus.InProgress
+
+        registration.isCompanyDetailsComplete mustBe true
+        registration.companyDetailsStatus mustBe TaskStatus.Completed
+
+
+
+
+      }
       "Primary Contact details are incomplete" in {
         val incompleteRegistration =
           aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("job"))))
@@ -59,6 +74,7 @@ class RegistrationSpec
           aRegistration(withIncorpJourneyId(None), withNoLiabilityDetails())
 
         notStartedRegistration.isRegistrationComplete mustBe false
+        println(notStartedRegistration.numberOfCompletedSections)
         notStartedRegistration.numberOfCompletedSections mustBe 0
 
         notStartedRegistration.isLiabilityDetailsComplete mustBe false
@@ -143,17 +159,7 @@ class RegistrationSpec
 
   "Registration liability status" should {
     //before new liability questions
-    val oldCompletedLiabilityDetails: LiabilityDetails = LiabilityDetails(expectToExceedThresholdWeight = Some(true),
-      dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
-      expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
-    )
 
-    val oldInProgressLiabilityDetails: LiabilityDetails =
-      LiabilityDetails(
-        expectToExceedThresholdWeight = Some(true),
-        dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
-    )
     val newCompletedLiabilityDetails =
       LiabilityDetails(expectToExceedThresholdWeight = Some(true),
         dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
@@ -165,43 +171,27 @@ class RegistrationSpec
     newCompletedLiabilityDetails.isCompleted mustBe true
 
     "be Not Started" when {
-      "new liability questions have not been answered" in {
+      "liability details are missing entirely" in {
+        Registration(id = "123",
+          liabilityDetails= LiabilityDetails(),
+          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted      }
+    }
+
+    "be In Progress " when {
+      "old liability questions have been answered" in {
         Registration(id = "123",
           liabilityDetails =
-            oldCompletedLiabilityDetails,
-          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
-      }
-      "new liability started but not finished" in {
-        val newInProgressLiabilityDetails = oldCompletedLiabilityDetails.copy(newLiabilityStarted = Some(NewLiability))
-
-        Registration(id = "123",
-          liabilityDetails =newInProgressLiabilityDetails,
+            createOldLiabilityDetails,
           registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
-      "old liability completed show 'not started'" in {
-        Registration(
-          id = "123",
-          liabilityDetails = oldCompletedLiabilityDetails,
-          registrationType = Some(RegType.SINGLE_ENTITY)
-        ).liabilityDetailsStatus mustBe TaskStatus.NotStarted
-      }
+      "new liability started but not finished" in {
+        val newInProgressLiabilityDetails = createOldLiabilityDetails.copy(newLiabilityStarted = Some(NewLiability))
 
-      "new liability in progress" in {
-        val newInProgressLiabilityDetails = oldCompletedLiabilityDetails.copy(newLiabilityFinished = Some(NewLiability))
-
-        Registration(
-          id = "123",
-          liabilityDetails = newInProgressLiabilityDetails,
-          registrationType = Some(RegType.SINGLE_ENTITY)
-        ).liabilityDetailsStatus mustBe TaskStatus.InProgress
-      }
-
-      "old liability in progress show 'not started'" in {
         Registration(id = "123",
-          liabilityDetails =
-            oldInProgressLiabilityDetails,
-          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.NotStarted
+          liabilityDetails = newInProgressLiabilityDetails,
+          registrationType = Some(RegType.SINGLE_ENTITY)).liabilityDetailsStatus mustBe TaskStatus.InProgress
       }
+
     }
 
     "be complete for single organisation registration with completed liability details and selected registration type" in {
@@ -254,6 +244,7 @@ class RegistrationSpec
       ).liabilityDetailsStatus mustBe TaskStatus.InProgress
     }
   }
+
 
   "Registration for single organisation number of completed sections" should {
     "have the correct value " when {
@@ -421,4 +412,11 @@ class RegistrationSpec
     }
   }
 
+  private def createOldLiabilityDetails = {
+    LiabilityDetails(expectToExceedThresholdWeight = Some(true),
+      dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
+      expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+    )
+  }
 }

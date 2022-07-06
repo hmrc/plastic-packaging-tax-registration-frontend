@@ -63,15 +63,18 @@ case class Registration(
     else
       TaskStatus.CannotStartYet
 
-  def numberOfCompletedSections: Int =
-    Array(
+  def numberOfCompletedSections: Int = {
+   val x = Array(
       isLiabilityDetailsComplete,
       isCompanyDetailsComplete,
       !isPartnershipWithPartnerCollection && isPrimaryContactDetailsComplete,
       isGroup && isOtherOrganisationsInGroupComplete,
       isPartnershipWithPartnerCollection && isNominatedPartnerDetailsComplete && isOtherPartnersDetailsComplete,
       isRegistrationComplete
-    ).count(isComplete => isComplete)
+    )
+    println(x.mkString)
+      x.count(isComplete => isComplete)
+  }
 
   def isGroup: Boolean = registrationType.contains(RegType.GROUP)
 
@@ -97,12 +100,16 @@ case class Registration(
 
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
 
-  def companyDetailsStatus: TaskStatus =
-    if (!isLiabilityDetailsComplete)
+  def companyDetailsStatus: TaskStatus = {
+    val x = organisationDetails.status
+    if (x == TaskStatus.NotStarted && !isLiabilityDetailsComplete)
       TaskStatus.CannotStartYet
-    else organisationDetails.status
+    else x
+  }
 
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
+
+  def LiabilityDetailsNotStarted: Boolean = liabilityDetailsStatus == TaskStatus.NotStarted
 
   def liabilityDetailsStatus: TaskStatus =
     if (liabilityDetails.isCompleted && registrationType.contains(GROUP))
@@ -168,7 +175,7 @@ case class Registration(
     this.copy(metaData = this.metaData.copy(registrationCompleted = true))
 
   val isStarted: Boolean =
-    if(liabilityDetails.expectToExceedThresholdWeight.isDefined) true
+    if (liabilityDetails.expectToExceedThresholdWeight.isDefined) true
     else liabilityDetails.status != TaskStatus.NotStarted
 
   val isFirstGroupMember: Boolean = groupDetail.exists(_.members.isEmpty)

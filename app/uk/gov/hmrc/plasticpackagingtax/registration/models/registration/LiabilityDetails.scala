@@ -40,7 +40,7 @@ case class LiabilityDetails(exceededThresholdWeight: Option[Boolean] = None,
   def isCompleted: Boolean =
     startDate.nonEmpty && expectedWeightNext12m.isDefined && newLiabilityStarted.isDefined && newLiabilityFinished.isDefined
 
-  def isInProgress: Boolean = expectToExceedThresholdWeight.isDefined && (newLiabilityStarted.isDefined || newLiabilityFinished.isDefined)
+  def isInProgress: Boolean = expectToExceedThresholdWeight.isDefined
 
   def status: TaskStatus =
     if (isCompleted) TaskStatus.Completed
