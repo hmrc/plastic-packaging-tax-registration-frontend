@@ -33,6 +33,12 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         val liabilityDetails = LiabilityDetails()
         liabilityDetails.status mustBe TaskStatus.NotStarted
       }
+      "liability details have flags (somehow) but no answers" in {
+        val liabilityDetails = LiabilityDetails(
+          newLiabilityStarted = Some(NewLiability)
+        )
+        liabilityDetails.status mustBe TaskStatus.NotStarted
+      }
     }
 
     "be IN_PROGRESS " when {
@@ -40,6 +46,20 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         val liabilityDetails = LiabilityDetails(
           expectToExceedThresholdWeight = Some(true),
           newLiabilityStarted = Some(NewLiability)
+        )
+        liabilityDetails.status mustBe TaskStatus.InProgress
+        }
+
+      "liability details are partially filled with forwards answer" in {
+        val liabilityDetails = LiabilityDetails(
+          expectToExceedThresholdWeight = Some(true),
+        )
+        liabilityDetails.status mustBe TaskStatus.InProgress
+      }
+
+      "liability details are partially filled with backwards answer" in {
+        val liabilityDetails = LiabilityDetails(
+          exceededThresholdWeight = Some(true),
         )
         liabilityDetails.status mustBe TaskStatus.InProgress
         }
