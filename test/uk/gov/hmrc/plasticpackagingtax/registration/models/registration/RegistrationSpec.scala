@@ -45,6 +45,9 @@ class RegistrationSpec
         registration.isCompanyDetailsComplete mustBe true
         registration.companyDetailsStatus mustBe TaskStatus.Completed
 
+        registration.isPrimaryContactDetailsComplete mustBe true
+        registration.primaryContactDetailsStatus mustBe TaskStatus.Completed
+
 
 
 
@@ -70,8 +73,7 @@ class RegistrationSpec
       }
 
       "did not start any sections" in {
-        val notStartedRegistration =
-          aRegistration(withIncorpJourneyId(None), withNoLiabilityDetails())
+        val notStartedRegistration = Registration("123")
 
         notStartedRegistration.isRegistrationComplete mustBe false
         println(notStartedRegistration.numberOfCompletedSections)
