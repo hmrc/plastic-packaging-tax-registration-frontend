@@ -19,35 +19,29 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  task_list_group,
-  task_list_partnership,
-  task_list_single_entity
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class TaskListController @Inject() (
-                                     authenticate: NotEnrolledAuthAction,
-                                     journeyAction: JourneyAction,
-                                     mcc: MessagesControllerComponents,
-                                     singleEntityPage: task_list_single_entity,
-                                     groupPage: task_list_group,
-                                     partnershipPage: task_list_partnership
-) extends FrontendController(mcc) with I18nSupport {
+class TaskListController @Inject()(
+                                    authenticate: NotEnrolledAuthAction,
+                                    journeyAction: JourneyAction,
+                                    mcc: MessagesControllerComponents,
+                                    singleEntityPage: task_list_single_entity,
+                                    groupPage: task_list_group,
+                                    partnershipPage: task_list_partnership
+                                  ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      
+
       val startLink = liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
-      val showRestartLiabilityContent = true // TODO put actual flag here
-      
+      val showRestartLiabilityContent: Boolean = hasCompletedOldLiability(request)
+
       if (request.registration.isGroup)
         Ok(groupPage(request.registration, startLink, showRestartLiabilityContent))
       else if (request.registration.isPartnershipWithPartnerCollection)
@@ -56,4 +50,8 @@ class TaskListController @Inject() (
         Ok(singleEntityPage(request.registration, startLink, showRestartLiabilityContent))
     }
 
+  private def hasCompletedOldLiability(request: JourneyRequest[AnyContent]) = {
+    request.registration.liabilityDetails.newLiabilityFinished.isEmpty ||
+      request.registration.liabilityDetails.newLiabilityStarted.isEmpty
+  }
 }
