@@ -27,13 +27,10 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised.{routes => unauthorisedRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
-  AuthenticatedRequest,
-  IdentityData
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, IdentityData}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -165,10 +162,12 @@ abstract class AuthActionBase @Inject() (
       case _: InsufficientEnrolments =>
         // Returns has the best not enrolled explanation page and knows how to handle agents in this state
         Results.Redirect(appConfig.pptAccountUrl)
-      case _: UnsupportedCredentialRole =>
-        Results.Redirect(routes.UnauthorisedController.onPageLoad(nonAdminCredRole = true))
-      case _: UnsupportedAffinityGroup | _: AuthorisationException =>
-        Results.Redirect(routes.UnauthorisedController.onPageLoad())
+      case _: UnsupportedCredentialRole  =>
+        Results.Redirect(unauthorisedRoutes.UnauthorisedController.showAssistantUnauthorised())
+      case _: UnsupportedAffinityGroup =>
+        Results.Redirect(unauthorisedRoutes.UnauthorisedController.showAgentUnauthorised())
+      case _: AuthorisationException =>
+        Results.Redirect(unauthorisedRoutes.UnauthorisedController.showGenericUnauthorised())
     }
   }
 

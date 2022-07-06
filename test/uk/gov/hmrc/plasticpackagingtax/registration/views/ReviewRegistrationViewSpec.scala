@@ -307,7 +307,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               getValueFor(organisationSection,
                           3,
                           ukCompanyView
-              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
+              ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr.get
               getValueFor(organisationSection,
                           4,
                           ukCompanyView

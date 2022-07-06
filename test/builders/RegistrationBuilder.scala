@@ -97,7 +97,7 @@ trait RegistrationBuilder {
               companyNumber = "12345678",
               companyName =
                 "Plastic Packaging Ltd",
-              ctutr = "1234567890",
+              ctutr = Some("1234567890"),
               companyAddress =
                 IncorporationAddressDetails(),
               registration =
