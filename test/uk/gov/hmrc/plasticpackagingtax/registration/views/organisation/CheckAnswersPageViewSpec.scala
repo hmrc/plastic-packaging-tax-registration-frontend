@@ -153,7 +153,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.companyNumber
           getValueFor(3,
                       ukCompanyView
-          ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr
+          ) mustBe ukCompanyRegistration.organisationDetails.incorporationDetails.get.ctutr.get
           getValueFor(4, ukCompanyView) mustBe "2 Scala Street Soho London W1T 2HN United Kingdom"
 
           getChangeLinkFor(0, ukCompanyView) must haveHref(

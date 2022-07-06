@@ -38,7 +38,7 @@
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationType", organisationDetails.organisationType.map(OrgType.displayName), organisationDetailsLink),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.organisationName", organisationDetails.businessName),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.businessRegistrationNumber", Some(organisationDetails.incorporationDetails.get.companyNumber)),
-            viewUtils.summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr)),
+            viewUtils.summaryListRow("reviewRegistration.organisationDetails.uniqueTaxpayerReference", Some(organisationDetails.incorporationDetails.get.ctutr.getOrElse("-"))),
             viewUtils.summaryListRow("reviewRegistration.organisationDetails.registeredBusinessAddress", organisationDetails.businessRegisteredAddress.map(viewUtils.extractAddress), addressChangeLink)
         ).filterNot(_.value.content == Empty)
     )

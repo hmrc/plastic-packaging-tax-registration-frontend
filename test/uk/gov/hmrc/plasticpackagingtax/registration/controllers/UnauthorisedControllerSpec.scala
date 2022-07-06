@@ -22,38 +22,46 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  unauthorised,
-  unauthorised_not_admin
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised.UnauthorisedController
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.unauthorised._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class UnauthorisedControllerSpec extends ControllerSpec {
 
   private val page              = mock[unauthorised]
   private val wrongCredRolePage = mock[unauthorised_not_admin]
+  private val unauthorisedAgentPage = mock[unauthorised_agent]
 
   when(page.apply()(any(), any())).thenReturn(Html("unauthorised"))
   when(wrongCredRolePage.apply()(any(), any())).thenReturn(Html("wrong cred role"))
+  when(unauthorisedAgentPage.apply()(any(), any())).thenReturn(Html("unauthorised agent"))
 
   val controller =
-    new UnauthorisedController(stubMessagesControllerComponents(), page, wrongCredRolePage)
+    new UnauthorisedController(stubMessagesControllerComponents(), page, wrongCredRolePage, unauthorisedAgentPage)
 
-  "Unauthorised controller" should {
+  ".onPageLoad" should {
 
     "return 200 (OK)" when {
 
-      "display page method is invoked when cred role is User" in {
+      "onPageLoad can be invoked" in {
 
-        val result = controller.onPageLoad()(getRequest())
+        val result = controller.showGenericUnauthorised()(getRequest())
 
         status(result) must be(OK)
         contentAsString(result) should fullyMatch regex "unauthorised"
       }
 
-      "display page method is invoked when cred role is not User" in {
+      "showAgentUnauthorised can be invoked" in {
 
-        val result = controller.onPageLoad(nonAdminCredRole = true)(getRequest())
+        val result = controller.showAgentUnauthorised()(getRequest())
+
+        status(result) must be(OK)
+        contentAsString(result) should fullyMatch regex "unauthorised agent"
+      }
+
+      "showAssistantUnauthorised can be invoked" in {
+
+        val result = controller.showAssistantUnauthorised()(getRequest())
 
         status(result) must be(OK)
         contentAsString(result) should fullyMatch regex "wrong cred role"

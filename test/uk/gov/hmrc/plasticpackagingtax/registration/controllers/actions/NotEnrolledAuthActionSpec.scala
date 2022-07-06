@@ -23,7 +23,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{Headers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised.{routes => unauthorisedRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 
@@ -134,39 +134,28 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
       redirectLocation(result) mustBe Some("/ppt-accounts-url")
     }
 
-    "redirect to unauthorised page when user not authorised" in {
-      whenAuthFailsWith(InternalError("Some general auth exception"))
-
-      val result =
-        registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                           okResponseGenerator
-        )
-
-      redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
-    }
-
-    "redirect to unauthorised page when the user's credential role is not User" in {
+    "redirect organisations with Assistant credential role to the assistant unauthorised page" in {
       whenAuthFailsWith(UnsupportedCredentialRole())
 
-      val result =
-        registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                           okResponseGenerator
-        )
+      val result = registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()), okResponseGenerator)
 
-      redirectLocation(result) mustBe Some(
-        routes.UnauthorisedController.onPageLoad(nonAdminCredRole = true).url
-      )
+      redirectLocation(result) mustBe Some(unauthorisedRoutes.UnauthorisedController.showAssistantUnauthorised().url)
     }
 
-    "redirect agents to unauthorised page if when try at access registration pages" in {
+    "redirect agents to the agent unauthorised page" in {
       val agent = PptTestData.newAgent("456")
       authorizedUser(agent)
-      val result =
-        registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                           okResponseGenerator
-        )
+      val result = registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()), okResponseGenerator)
 
-      redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(unauthorisedRoutes.UnauthorisedController.showAgentUnauthorised().url)
+    }
+
+    "redirect to the unauthorised page when the user is not authorised" in {
+      whenAuthFailsWith(InternalError("Some general auth exception"))
+
+      val result = registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()), okResponseGenerator)
+
+      redirectLocation(result) mustBe Some(unauthorisedRoutes.UnauthorisedController.showGenericUnauthorised().url)
     }
 
     "redirect the user to MFA Uplift page if the user has incorrect credential strength " in {

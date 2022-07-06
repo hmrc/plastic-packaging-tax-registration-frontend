@@ -432,6 +432,15 @@ unauthorised.not.admin.paragraph.2 = Gall rhywun o’ch sefydliad â hawliau gwe
 unauthorised.not.admin.paragraph.3 = Os hoffech roi eich adborth hefyd, gallwch {0}. Byddwn yn eich ateb cyn pen dau ddiwrnod gwaith.
 unauthorised.not.admin.paragraph.3.link = ofyn am ymuno â rhestr defnyddwyr y gwasanaeth Treth Deunydd Pacio Plastig
 
+unauthorised.agent.title = Ni allwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eich cleient – Asiantau
+unauthorised.agent.heading = Ni allwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eich cleient
+unauthorised.agent.paragraph.1 = Ni all asiantau gofrestru ar gyfer y Dreth Deunydd Pacio Plastig ar ran eu cleientiaid.
+unauthorised.agent.paragraph.2 = Mae’n rhaid i’ch cleient gofrestru ei hun gan ddefnyddio’i Ddynodydd Porth y Llywodraeth.
+unauthorised.agent.paragraph.3 = Ar ôl i’ch cleient gofrestru a’ch awdurdodi, byddwch yn gallu rheoli ei gyfrif ar gyfer y Dreth Deunydd Pacio Plastig.
+unauthorised.agent.paragraph.4 = Ewch i’ch {0}
+unauthorised.agent.paragraph.4.link.text = cyfrif gwasanaethau asiant
+unauthorised.agent.paragraph.4.full.stop = .
+
 organisationDetails.registerAsOtherOrganisation.title  = Cofrestru fel Sefydliad Corfforedig Elusennol, ymddiriedolaeth neu gwmni tramor heb safle yn y DU
 organisationDetails.registerAsOtherOrganisation.paragraph.1  = Gwasanaeth newydd yw hwn, ac nid oes modd delio â’r math hwn o sefydliad ar hyn o bryd.
 organisationDetails.registerAsOtherOrganisation.paragraph.2  = Gallwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig o hyd drwy {0}.
@@ -759,35 +768,35 @@ amend.partner.remove.title  = A ydych yn siŵr eich bod am dynnu {0} o’r bartn
 
 gform.link  =  https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
-deregistration.deregister.title = Deregister from Plastic Packaging Tax
-deregistration.deregister.eligibility = You can deregister from Plastic Packaging Tax if you:
-deregistration.deregister.eligibility.1 = registered incorrectly
-deregistration.deregister.eligibility.2 = cease trading
-deregistration.deregister.eligibility.3 = have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
-deregistration.deregister.eligibility.4 = want to register as part of a group
-deregistration.deregister.detail1 = We’ll need to approve your deregistration request.
-deregistration.deregister.detail2 = When you deregister, your tax liability will stop.
-deregistration.deregister.label = Are you sure you want to deregister from Plastic Packaging Tax?
-deregistration.deregister.empty.error = Select yes if you want to deregister from Plastic Packaging Tax
+deregistration.deregister.title = Datgofrestru rhag y Dreth Deunydd Pacio Plastig
+deregistration.deregister.eligibility = Gallwch ddatgofrestru rhag y Dreth Deunydd Pacio Plastig os yw’r canlynol yn wir:
+deregistration.deregister.eligibility.1 = rydych wedi cofrestru’n anghywir
+deregistration.deregister.eligibility.2 = rydych wedi rhoi’r gorau i fasnachu
+deregistration.deregister.eligibility.3 = nid ydych wedi cyrraedd y trothwy 10,000kg neu nid ydych yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
+deregistration.deregister.eligibility.4 = rydych eisiau cofrestru fel rhan o grŵp
+deregistration.deregister.detail1 = Bydd angen i ni gymeradwyo’ch cais i ddatgofrestru.
+deregistration.deregister.detail2 = Pan fyddwch yn datgofrestru, bydd eich rhwymedigaeth treth yn dod i ben.
+deregistration.deregister.label = A ydych yn siŵr eich bod am ddatgofrestru rhag y Dreth Deunydd Pacio Plastig?
+deregistration.deregister.empty.error = Dewiswch ‘Iawn’ os ydych am ddatgofrestru rhag y Dreth Deunydd Pacio Plastig
 
-deregistration.reason.title = Why do you want to deregister?
-deregistration.reason.type.RegisteredIncorrectly = Registered incorrectly
-deregistration.reason.type.CeasedTrading = Ceased trading
-deregistration.reason.type.BelowDe-minimus = Have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
-deregistration.reason.type.TakenintoGroupRegistration = Want to register as part of a group
+deregistration.reason.title = Pam rydych am ddatgofrestru?
+deregistration.reason.type.RegisteredIncorrectly = Wedi cofrestru’n anghywir
+deregistration.reason.type.CeasedTrading = Wedi rhoi’r gorau i fasnachu
+deregistration.reason.type.BelowDe-minimus = Heb gyrraedd y trothwy 10,000kg neu ddim yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
+deregistration.reason.type.TakenintoGroupRegistration = Eisiau cofrestru fel rhan o grŵp
 deregistration.reason.empty.error = Select your reason for deregistration
 
-deregistration.confirmation.title = Your deregistration request has been submitted
-deregistration.confirmation.subheading = What happens next
-deregistration.confirmation.detail1 = We’ll send you a letter to say if we’ve approved your request.
-deregistration.confirmation.detail2 = You can still view and update your {0} until your deregistration request is approved.
-deregistration.confirmation.detail2.link = Plastic Packaging Tax account
+deregistration.confirmation.title = Mae’ch cais i ddatgofrestru wedi’i gyflwyno
+deregistration.confirmation.subheading = Yr hyn sy’n digwydd nesaf
+deregistration.confirmation.detail1 = Byddwn yn anfon llythyr atoch i roi gwybod a ydym wedi cymeradwyo’ch cais.
+deregistration.confirmation.detail2 = Gallwch barhau i fwrw golwg dros a diweddaru’ch {0} nes bod eich cais i ddatgofrestru wedi’i gymeradwyo.
+deregistration.confirmation.detail2.link = cyfrif Treth Deunydd Pacio Plastig
 
-deregister.checkAnswers.title = Check your answers
-deregister.checkAnswers.heading = Check your answers
-deregister.checkAnswers.wantToDeregister = Want to deregister
-deregister.checkAnswers.reasonToDeregister = Why you want to deregister
-deregister.checkAnswers.confirm = Confirm and continue
+deregister.checkAnswers.title = Gwiriwch eich atebion
+deregister.checkAnswers.heading = Gwiriwch eich atebion
+deregister.checkAnswers.wantToDeregister = Eisiau datgofrestru
+deregister.checkAnswers.reasonToDeregister = Pam rydych am ddatgofrestru
+deregister.checkAnswers.confirm = Cadarnhau ac yn eich blaen
 
 
 registration-failed.title = Cofrestriad wedi methu

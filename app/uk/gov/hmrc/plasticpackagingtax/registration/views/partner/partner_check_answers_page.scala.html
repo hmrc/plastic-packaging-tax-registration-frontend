@@ -62,7 +62,7 @@
             viewUtils.summaryListRow("partner.check.orgType", Some(displayName(partner.partnerType)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
             viewUtils.summaryListRow("partner.check.companyNumber", partner.incorporationDetails.map(_.companyNumber), None),
             viewUtils.summaryListRow("partner.check.orgName", partner.incorporationDetails.map(_.companyName), None),
-            viewUtils.summaryListRow("partner.check.utr", partner.incorporationDetails.map(_.ctutr), None),
+            viewUtils.summaryListRow("partner.check.utr", partner.incorporationDetails.map(_.ctutr.getOrElse("-")), None),
         ) ++ partnerContactRows().filterNot(_.value.content == Empty)
     )
 }

@@ -57,7 +57,7 @@
             viewUtils.summaryListRow("reviewRegistration.partner.orgType", Some(displayName(partner.partnerType)), Some(partnerRoutes.PartnerTypeController.displayExistingPartner(partner.id))),
             viewUtils.summaryListRow("reviewRegistration.partner.companyNumber", partner.incorporationDetails.map(_.companyNumber), None),
             viewUtils.summaryListRow("reviewRegistration.partner.orgName", partner.incorporationDetails.map(_.companyName), None),
-            viewUtils.summaryListRow("reviewRegistration.partner.utr", partner.incorporationDetails.map(_.ctutr), None),
+            viewUtils.summaryListRow("reviewRegistration.partner.utr", partner.incorporationDetails.map(_.ctutr.getOrElse("-")), None),
         ) ++ partnerContactRows().filterNot(_.value.content == Empty)
     )
 }

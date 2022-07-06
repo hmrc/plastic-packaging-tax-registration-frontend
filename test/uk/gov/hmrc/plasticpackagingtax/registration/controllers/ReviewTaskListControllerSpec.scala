@@ -88,7 +88,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                   Some(
                                     IncorporationDetails(companyNumber = "123456",
                                                          companyName = "NewPlastics",
-                                                         ctutr = "1890894",
+                                                         ctutr = Some("1890894"),
                                                          companyAddress = testCompanyAddress,
                                                          registration =
                                                            Some(registrationDetails)
@@ -463,7 +463,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                               Some(
                                 IncorporationDetails(companyNumber = "123456",
                                                      companyName = "NewPlastics",
-                                                     ctutr = "1890894",
+                                                     ctutr = Some("1890894"),
                                                      companyAddress = testCompanyAddress,
                                                      registration =
                                                        Some(registrationDetails)

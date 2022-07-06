@@ -222,7 +222,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
             case PARTNERSHIP =>
               mockGetPartnershipBusinessDetails(partnershipBusinessDetails.copy(companyProfile = Some(companyProfile)))
             case _ =>
-              mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, testUtr, testCompanyAddress, Some(registrationDetails)))
+              mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails)))
           }
           val registration = registrationWithSelectedGroupMember(orgType)
           mockRegistrationFind(registration)
@@ -270,7 +270,7 @@ class GroupMemberGrsControllerSpec extends ControllerSpec with MatcherWords {
 
   private def simulateLimitedCompanyCallback(registration: Registration, memberId: Option[String] = None) = {
     authorizedUser()
-    mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, testUtr, testCompanyAddress, Some(registrationDetails)))
+    mockGetUkCompanyDetails(IncorporationDetails("123467890", testCompanyName, Some(testUtr), testCompanyAddress, Some(registrationDetails)))
     mockRegistrationFind(registration)
     mockRegistrationUpdate()
 

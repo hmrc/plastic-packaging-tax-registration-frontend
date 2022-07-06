@@ -133,7 +133,7 @@ abstract class GroupMemberGrsControllerBase(
     def updatedGroupMember(groupMember: GroupMember): GroupMember = {
       groupMember.copy(
         customerIdentification1 = details.companyNumber,
-        customerIdentification2 = Some(details.ctutr),
+        customerIdentification2 = details.ctutr,
         organisationDetails = Some(
           OrganisationDetails(
             organisationType = orgType.toString,
@@ -157,7 +157,7 @@ abstract class GroupMemberGrsControllerBase(
   private def createGroupMember(details: IncorporationDetails, orgType: OrgType): GroupMember =
     GroupMember(
       customerIdentification1 = details.companyNumber,
-      customerIdentification2 = Some(details.ctutr),
+      customerIdentification2 = details.ctutr,
       organisationDetails =
         Some(
           OrganisationDetails(

@@ -18,12 +18,9 @@ package uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.GroupDetail
 import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
-
-import java.util.UUID
 
 class GroupDetailSpec extends AnyWordSpec with Matchers {
 
