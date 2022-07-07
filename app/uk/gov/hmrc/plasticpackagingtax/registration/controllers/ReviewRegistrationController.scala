@@ -85,15 +85,7 @@ class ReviewRegistrationController @Inject() (
       completedRegistrationWithUserHeaders
     )
       .map {
-        case successfulSubscription@SubscriptionCreateOrUpdateResponseSuccess(
-        _,
-        _,
-        _,
-        _,
-        _,
-        _,
-        _
-        ) =>
+        case successfulSubscription: SubscriptionCreateOrUpdateResponseSuccess  =>
           handleSuccessfulSubscription(completedRegistration, successfulSubscription, internalId)
         case SubscriptionCreateOrUpdateResponseFailure(failures) =>
           handleFailedSubscription(completedRegistration, failures, internalId)
