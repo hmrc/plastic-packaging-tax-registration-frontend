@@ -82,10 +82,10 @@ class TaxStartDateService {
   }
 
   private def takeEarliestOf(backwardsDate: LocalDate, forwardsDate: LocalDate): TaxStartDate =
-    if (backwardsDate.isAfter(forwardsDate)) 
-      TaxStartDate.liableFromForwardsTest(forwardsDate) 
-    else 
+    if (forwardsDate.isAfter(backwardsDate))
       TaxStartDate.liableFromBackwardsTest(backwardsDate)
+    else
+      TaxStartDate.liableFromForwardsTest(forwardsDate)
 
   private def calculateExceedStartDate(date: Date): LocalDate =
     date.date.plusMonths(1).withDayOfMonth(1)
