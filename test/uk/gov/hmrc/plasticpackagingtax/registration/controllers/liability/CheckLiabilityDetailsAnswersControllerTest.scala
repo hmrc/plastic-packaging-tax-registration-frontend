@@ -17,44 +17,54 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status
 import play.api.http.Status.OK
-import play.api.libs.json.JsObject
-import play.api.mvc.Call
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{
-  StartRegistrationController,
-  routes => pptRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{StartRegistrationController, routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{NewLiability, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.services.{TaxStartDate, TaxStartDateService}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+
+import java.time.LocalDate
+import scala.concurrent.Future
 
 class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   private val page                            = mock[check_liability_details_answers_page]
   private val mcc                             = stubMessagesControllerComponents()
   private val mockStartRegistrationController = mock[StartRegistrationController]
+  private val mockTaxStartDateService         = mock[TaxStartDateService]
+  private val aDate                           = LocalDate.of(2022, 4, 1)
 
   private val startLiabilityLink = Call("GET", "/start-liability")
 
   private val controller =
     new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
-                                               mockJourneyAction,
-                                               mcc = mcc,
-                                               page = page
+      mockJourneyAction,
+      mcc = mcc,
+      mockRegistrationConnector,
+      mockTaxStartDateService,
+      page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
+    reset(page, mockTaxStartDateService, mockRegistrationConnector)
+    val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
     mockRegistrationFind(registration)
     given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
     when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
+    mockRegistrationUpdate()
   }
 
   override protected def afterEach(): Unit = {
@@ -63,6 +73,25 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   }
 
   "Check liability details answers Controller" should {
+
+    "displayPage" when {
+
+      "user is authorised" should {
+        "return 200" in {
+          authorizedUser()
+
+          val registration = aRegistration()
+          mockRegistrationFind(registration)
+
+          val result: Future[Result] = controller.displayPage()(getRequest())
+          status(result) shouldEqual Status.OK
+
+          verify(mockTaxStartDateService).calculateTaxStartDate(
+            ArgumentMatchers.eq(registration.liabilityDetails)
+          )
+        }
+      }
+    }
 
     "set expected page links" when {
 
@@ -76,7 +105,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       "group registration enabled and group of organisation is selected" in {
         authorizedUser()
 
-        val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)))
+        val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
         mockRegistrationFind(registration)
         given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
         when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
@@ -97,13 +126,22 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       }
     }
 
-    "redirects to registration page" when {
+    "updates liability with the correct start date and redirects to registration page" when {
       "user proceed" in {
         authorizedUser()
 
-        val result = controller.submit()(postRequest(JsObject.empty))
+        val registration = aRegistration()
+        mockRegistrationFind(registration)
+
+        val result = controller.submit()(postRequest(Json.toJson(registration)))
 
         redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
+
+        verify(mockTaxStartDateService).calculateTaxStartDate(
+          ArgumentMatchers.eq(registration.liabilityDetails)
+        )
+
+        modifiedRegistration.liabilityDetails.startDate.get.asLocalDate mustBe aDate
       }
     }
   }

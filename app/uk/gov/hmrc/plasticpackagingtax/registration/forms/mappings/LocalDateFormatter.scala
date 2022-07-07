@@ -18,6 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings
 
 import play.api.data.FormError
 import play.api.data.format.Formatter
+import play.api.i18n.Messages
 
 import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
@@ -28,7 +29,7 @@ private[mappings] class LocalDateFormatter(
   twoRequiredKey: String,
   invalidKey: String,
   args: Seq[String] = Seq.empty
-) extends Formatter[LocalDate] with Formatters {
+)(implicit messages: Messages) extends Formatter[LocalDate] with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
@@ -42,7 +43,7 @@ private[mappings] class LocalDateFormatter(
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, emptyDateKey, args)))
+        Left(Seq(FormError(key, invalidKey, args)))
     }
 
   private def formatDate(
@@ -66,7 +67,7 @@ private[mappings] class LocalDateFormatter(
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
-    val fields = fieldKeys.map {
+    val fields: Map[String, Option[String]] = fieldKeys.map {
       field =>
         field -> data.get(s"$key.$field").filter(_.nonEmpty)
     }.toMap
@@ -83,14 +84,14 @@ private[mappings] class LocalDateFormatter(
         }
       case 2 =>
         Left(
-          List(FormError(s"${missingFields.head}", singleRequiredKey, missingFields),
+          List(FormError(messages(s"general.${missingFields.head}"), singleRequiredKey, missingFields),
                FormError(s"$key.${missingFields.head}", "")
           )
         )
       case 1 =>
         Left(
           List(
-            FormError(s"${missingFields.head} and ${missingFields.last}",
+            FormError(messages("general.and", messages(s"general.${missingFields.head}"), messages(s"general.${missingFields.last}")),
                       twoRequiredKey,
                       missingFields
             ),

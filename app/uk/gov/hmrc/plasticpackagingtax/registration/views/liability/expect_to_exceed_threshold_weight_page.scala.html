@@ -15,9 +15,8 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.ExpectToExceedThresholdWeight
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 
 @this(
     formHelper: FormWithCSRF,
@@ -26,39 +25,78 @@
     govukLayout: main_template,
     govukRadios : GovukRadios,
     saveButtons: saveButtons,
-    errorSummary: errorSummary
+    errorSummary: errorSummary,
+    govukDateInput : GovukDateInput,
+    conditionalYesNo : conditionalYesNoRadio,
+    paragraphBody: paragraphBody,
 )
 
 
-@(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
+@(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@govukLayout(
-    title = Title("liability.expectToExceedThresholdWeight.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.ExceededThresholdWeightController.displayPage(), messages("site.back.hiddenText")))) {
+@dayField = @{form("expect-to-exceed-threshold-weight-date.day")}
+@monthField = @{form("expect-to-exceed-threshold-weight-date.month")}
+@yearField = @{form("expect-to-exceed-threshold-weight-date.year")}
+
+@errorMessages = @{
+val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")
+if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+}
+
+@yesContent = {
+    @pageHeading(messages("liability.expectToExceedThreshold.date.question")) 
+    @paragraphBody(messages("liability.expectToExceedThreshold.date.line1"))
+}
+    
+@ifYes={
+@govukDateInput(
+    DateInput(
+        id = "expect-to-exceed-threshold-weight-date",
+        hint = Some(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint")))),
+        errorMessage = errorMessages,
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+            content = HtmlContent(yesContent), 
+            classes = gdsFieldsetPageHeading,
+            isPageHeading = false))
+            )),
+            items = Seq(
+            InputItem(
+            id = s"${dayField.name}",
+            name = dayField.name,
+            label = Some(messages("date.day")),
+            value = dayField.value,
+            classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
+            ),
+            InputItem(
+            id = s"${monthField.name}",
+            name = monthField.name,
+            label = Some(messages("date.month")),
+            value = monthField.value,
+            classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
+            ),
+            InputItem(
+            id = s"${yearField.name}",
+            name = yearField.name,
+            label = Some(messages("date.year")),
+            value = yearField.value,
+            classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
+            )))
+        )
+}
+
+@govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
 
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.expectToExceedThresholdWeight.sectionHeader"))
-
-    @pageHeading(
-    text = messages("liability.expectToExceedThresholdWeight.question")
-    )
+    
+    @pageHeading(messages("liability.expectToExceedThresholdWeight.question"))
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
-
-        @govukRadios(Radios(
-            hint = Some(Hint(content = Text(messages("liability.expectToExceedThresholdWeight.hint")))),
-            idPrefix = Some(form("answer").name),
-            name = form("answer").name,
-            items = Seq(
-                RadioItem(content = Text(messages("general.true")), value = Some(ExpectToExceedThresholdWeight.YES), checked = form("answer").value.contains("true")),
-                RadioItem(content = Text(messages("general.false")), value = Some(ExpectToExceedThresholdWeight.NO), checked = form("answer").value.contains("false"))
-            ),
-            classes = "govuk-radios",
-            errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
-            )
-        )
-
+        @conditionalYesNo(form, None, Some(ifYes))
         @saveButtons()
     }
 }

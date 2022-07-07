@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.models
+package uk.gov.hmrc.plasticpackagingtax.registration.forms
 
-import play.api.mvc.Call
-import play.twirl.api.Html
-
-
-case class TaskSection(
-  title: String = "",
-  link: Call,
-  showLink: Boolean = true,
-  status: TaskStatus = TaskStatus.NotStarted,
-  footnote: Option[Html] = None
-)
+object YesNoValues {
+  val YES = "yes"
+  val NO  = "no"
+}

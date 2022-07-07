@@ -22,19 +22,13 @@ import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, NewLiability, OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_partnership
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -43,10 +37,10 @@ import java.time.LocalDate
 @ViewTest
 class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
-  private val LIABILITY_DETAILS                       = 0
-  private val BUSINESS_DETAILS                        = 1
-  private val PARTNER_DETAILS                         = 2
-  private val CHECK_AND_SUBMIT                        = 3
+  private val LIABILITY_DETAILS = 0
+  private val BUSINESS_DETAILS = 1
+  private val PARTNER_DETAILS = 2
+  private val CHECK_AND_SUBMIT = 3
   private val registrationPage: task_list_partnership = inject[task_list_partnership]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
@@ -57,7 +51,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         scottishPartnershipDetails.copy(partners =
           Seq(
             nominatedPartner(PartnerTypeEnum.UK_COMPANY,
-                             soleTraderDetails = Some(soleTraderDetails)
+              soleTraderDetails = Some(soleTraderDetails)
             )
           )
         )
@@ -66,7 +60,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(registration: Registration = registrationWithPartnershipDetails): Html =
-    registrationPage(registration, liabilityStartLink)
+    registrationPage(registration, liabilityStartLink, showRestartLiabilityContent = false)
 
   "Registration Single Entity Page view" should {
 
@@ -96,15 +90,19 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
     "display sections" when {
       def header(el: Element): String = el.getElementsByTag("h2").get(0).text()
+
       def sectionName(el: Element, index: Int): String =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("app-task-list__task-name").get(0).text()
+
       def sectionStatus(el: Element, index: Int): String =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("govuk-tag").get(0).text()
+
       def sectionLinks(el: Element, index: Int): Elements =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("govuk-link")
+
       def sectionLink(el: Element, index: Int): Element =
         sectionLinks(el, index).get(0)
 
@@ -112,16 +110,18 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
 
         val registration = aRegistration(
           withLiabilityDetails(
-            LiabilityDetails(exceededThresholdWeight = Some(true),
-                             dateExceededThresholdWeight =
-                               Some(Date(LocalDate.parse("2022-03-05"))),
-                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+            LiabilityDetails(expectToExceedThresholdWeight = Some(true),
+              dateExceededThresholdWeight =
+                Some(Date(LocalDate.parse("2022-03-05"))),
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
             )
           ),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
-        val view: Html = createView(registration)
+        val view: Html = createView(Registration("123"))
 
         "application status should reflect the completed sections" in {
           view.getElementsByClass("govuk-heading-s govuk-!-margin-bottom-2").get(
@@ -132,14 +132,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           ).text() mustBe messages("registrationPage.completedSections", 0, 4)
         }
 
-        "Eligibility check" in {
+        "Eligibility check" in {//todo: should status logic be tested here?
           val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
 
           header(liabilityElement) must include(
             messages("registrationPage.task.eligibility.heading")
           )
           sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
-          sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
+          sectionStatus(liabilityElement, 0) mustBe messages("task.status.notStarted")
           sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
         }
 
@@ -191,10 +191,12 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(exceededThresholdWeight = Some(true),
-                             dateExceededThresholdWeight =
-                               Some(Date(LocalDate.parse("2022-03-05"))),
-                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+              dateExceededThresholdWeight =
+                Some(Date(LocalDate.parse("2022-03-05"))),
+              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
             )
           ),
           withOrganisationDetails(OrganisationDetails()),
@@ -272,10 +274,12 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(exceededThresholdWeight = Some(true),
-                             dateExceededThresholdWeight =
-                               Some(Date(LocalDate.parse("2022-03-05"))),
-                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+              dateExceededThresholdWeight =
+                Some(Date(LocalDate.parse("2022-03-05"))),
+              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
             )
           ),
           withPartnershipDetails(Some(generalPartnershipDetails)),
@@ -356,10 +360,13 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration: Registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(exceededThresholdWeight = Some(true),
-                             dateExceededThresholdWeight =
-                               Some(Date(LocalDate.parse("2022-03-05"))),
-                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+              dateExceededThresholdWeight =
+                Some(Date(LocalDate.parse("2022-03-05"))),
+              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
+
             )
           ),
           withPartnershipDetails(
@@ -449,10 +456,12 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(exceededThresholdWeight = Some(true),
-                             dateExceededThresholdWeight =
-                               Some(Date(LocalDate.parse("2022-03-05"))),
-                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+              dateExceededThresholdWeight =
+                Some(Date(LocalDate.parse("2022-03-05"))),
+              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
             )
           ),
           withPartnershipDetails(
@@ -567,8 +576,8 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   completeRegistration.numberOfCompletedSections,
-                                   4
+            completeRegistration.numberOfCompletedSections,
+            4
           )
         }
 
@@ -640,13 +649,14 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink)(journeyRequest,
-                                                                               messages
+    registrationPage.f(registrationWithPartnershipDetails, liabilityStartLink, false)(journeyRequest,
+      messages
     )
     registrationPage.render(registrationWithPartnershipDetails,
-                            liabilityStartLink,
-                            journeyRequest,
-                            messages
+      liabilityStartLink,
+      false, 
+      journeyRequest,
+      messages
     )
   }
 

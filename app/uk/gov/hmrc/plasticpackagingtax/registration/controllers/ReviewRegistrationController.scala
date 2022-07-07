@@ -21,17 +21,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.response.FlashKeys
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
-  EisError,
-  SubscriptionCreateOrUpdateResponseFailure,
-  SubscriptionCreateOrUpdateResponseSuccess
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFilterService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.review_registration_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -41,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReviewRegistrationController @Inject() (
+                                               appConfig: AppConfig,
                                                authenticate: NotEnrolledAuthAction,
                                                journeyAction: JourneyAction,
                                                mcc: MessagesControllerComponents,
@@ -61,38 +59,41 @@ class ReviewRegistrationController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      if (request.registration.isCheckAndSubmitReady) reviewRegistration()
-      else
-        Future.successful(Redirect(routes.TaskListController.displayPage()))
+        if (request.registration.isCheckAndSubmitReady)
+          displayReviewRegistrationPage()
+        else 
+          Future.successful(Redirect(routes.TaskListController.displayPage()))
     }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      val completedRegistration = request.registration.asCompleted()
-      val internalId            = request.authenticatedRequest.user.identityData.internalId
-      val completedRegistrationWithUserHeaders =
-        completedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
-
-      subscriptionsConnector.submitSubscription(getSafeId(completedRegistration),
-                                                completedRegistrationWithUserHeaders
-      )
-        .map {
-          case successfulSubscription @ SubscriptionCreateOrUpdateResponseSuccess(_,
-                                                                                  _,
-                                                                                  _,
-                                                                                  _,
-                                                                                  _,
-                                                                                  _,
-                                                                                  _
-              ) =>
-            handleSuccessfulSubscription(completedRegistration, successfulSubscription, internalId)
-          case SubscriptionCreateOrUpdateResponseFailure(failures) =>
-            handleFailedSubscription(completedRegistration, failures, internalId)
-        }
-        .recoverWith {
-          case _ => Future.successful(handleFailedSubscription(completedRegistration, internalId))
-        }
+      // Don't let user submit with old liability answers
+      if (!request.registration.hasOldLiabilityQuestions)
+        submitRegistration(request)
+      else
+        Future.successful(Redirect(routes.TaskListController.displayPage()))
     }
+
+  private def submitRegistration(request: JourneyRequest[AnyContent]) (implicit hc: HeaderCarrier) = {
+    val completedRegistration = request.registration.asCompleted()
+    val internalId = request.authenticatedRequest.user.identityData.internalId
+    val completedRegistrationWithUserHeaders =
+      completedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
+
+    subscriptionsConnector.submitSubscription(
+      getSafeId(completedRegistration),
+      completedRegistrationWithUserHeaders
+    )
+      .map {
+        case successfulSubscription: SubscriptionCreateOrUpdateResponseSuccess  =>
+          handleSuccessfulSubscription(completedRegistration, successfulSubscription, internalId)
+        case SubscriptionCreateOrUpdateResponseFailure(failures) =>
+          handleFailedSubscription(completedRegistration, failures, internalId)
+      }
+      .recoverWith {
+        case _ => Future.successful(handleFailedSubscription(completedRegistration, internalId))
+      }
+  }
 
   private def handleSuccessfulSubscription(
     registration: Registration,
@@ -159,7 +160,7 @@ class ReviewRegistrationController @Inject() (
       throw new IllegalStateException("Safe Id is required for a Subscription create")
     )
 
-  private def reviewRegistration()(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
+  private def displayReviewRegistrationPage()(implicit request: JourneyRequest[AnyContent]): Future[Result] = {
 
     val reg2: Registration = removePartialGroupMembersIfGroup(request.registration)
 

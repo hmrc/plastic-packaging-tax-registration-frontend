@@ -136,7 +136,6 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             case _ => None
           }
 
-          // TODO This indicates that the controller code is inside out
           partnershipDetails._1 match {
             case CHARITABLE_INCORPORATED_ORGANISATION | OVERSEAS_COMPANY_NO_UK_BRANCH =>
               intercept[InternalServerException](

@@ -17,20 +17,50 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import play.api.data.Forms.mapping
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, CommonFormValues}
+import play.api.data.Forms.{default, mapping, text, tuple}
+import play.api.i18n.Messages
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{CommonFormValidators, Date, YesNoValues}
+import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-object ExceededThresholdWeight extends CommonFormValidators with CommonFormValues {
+import java.time.{Clock, LocalDate}
+import javax.inject.Inject
+
+//potential refactor: yesNo isnt actually needed here, we can just do date.isDefined, it holds the same meaning
+case class ExceededThresholdWeightAnswer(yesNo: Boolean, date: Option[LocalDate])
+
+class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with Mappings {
 
   val emptyError = "liability.exceededThresholdWeight.question.empty.error"
 
-  def form(): Form[Boolean] =
+  val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
+  val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
+  val dateEmptyError = "liability.exceededThresholdWeightDate.empty.error"
+  val twoRequiredKey = "liability.exceededThresholdWeightDate.two.required.fields"
+  val requiredKey = "liability.exceededThresholdWeightDate.one.field"
+  val isBeforeLiveDateError = "liability.exceededThresholdWeightDate.before.goLiveDate.error"
+
+
+  def form()(implicit messages: Messages): Form[ExceededThresholdWeightAnswer] =
     Form(
       mapping(
         "answer" -> nonEmptyString(emptyError)
-          .verifying(emptyError, contains(Seq(YES, NO)))
-          .transform[Boolean](_ == YES, _.toString)
-      )(identity)(Some.apply)
+          .verifying(emptyError, contains(Seq(YesNoValues.YES, YesNoValues.NO)))
+          .transform[Boolean](_ == YesNoValues.YES, bool => if (bool) YesNoValues.YES else YesNoValues.NO),
+        "exceeded-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
+          localDate(emptyDateKey =
+            dateEmptyError,
+            requiredKey,
+            twoRequiredKey,
+            dateFormattingError
+          ).verifying(
+            isInDateRange(dateOutOfRangeError, isBeforeLiveDateError)(appConfig, clock, messages)
+          )
+        )
+      )(ExceededThresholdWeightAnswer.apply)(ExceededThresholdWeightAnswer.unapply)
     )
+
+  
 
 }
