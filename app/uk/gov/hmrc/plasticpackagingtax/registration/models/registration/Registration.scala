@@ -100,10 +100,9 @@ case class Registration(
   def isCompanyDetailsComplete: Boolean = companyDetailsStatus == TaskStatus.Completed
 
   def companyDetailsStatus: TaskStatus = {
-    val x = organisationDetails.status
-    if (x == TaskStatus.NotStarted && !isLiabilityDetailsComplete)
+    if (organisationDetails.status == TaskStatus.NotStarted && !isLiabilityDetailsComplete)
       TaskStatus.CannotStartYet
-    else x
+    else organisationDetails.status
   }
 
   def isLiabilityDetailsComplete: Boolean = liabilityDetailsStatus == TaskStatus.Completed
