@@ -26,10 +26,13 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
+import play.api.mvc.Results.Redirect
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.nrs.NrsDetails
@@ -41,6 +44,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.services.RegistrationGroupFi
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{duplicate_subscription_page, review_registration_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
+import java.time.LocalDate
 import java.util.UUID
 
 class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenPropertyChecks {
@@ -75,6 +79,17 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
     reset(mockReviewRegistrationPage, mockRegistrationFilterService)
     super.afterEach()
   }
+
+  private val completedLiabilityDetails = LiabilityDetails(
+    exceededThresholdWeight = Some(true),
+    dateExceededThresholdWeight = Some(Date(LocalDate.ofEpochDay(0))),
+    expectToExceedThresholdWeight = Some(true),
+    dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.ofEpochDay(0))),
+    expectedWeightNext12m = Some(LiabilityWeight(Some(1))),
+    startDate = Some(OldDate.of(2022, 4, 1)),
+    isLiable = Some(true),
+    newLiabilityFinished = Some(NewLiability),
+    newLiabilityStarted = Some(NewLiability))
 
   "Review registration controller" should {
 
@@ -179,12 +194,12 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         val sanitisedReg = registrationRequest.copy(groupDetail =
           registrationRequest.groupDetail.map(_.copy(members = Seq.empty))
-        );
+        )
 
         when(mockRegistrationFilterService.removePartialGroupMembers(any()))
           .thenReturn(sanitisedReg)
         mockRegistrationFind(registrationRequest)
-        mockRegistrationUpdate
+        mockRegistrationUpdate()
 
         val result = controller.displayPage()(postRequest(JsObject.empty))
 
@@ -207,6 +222,17 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+      }
+      
+      "the user has not answered the new liability questions" in {
+        val oldLiability = completedLiabilityDetails.copy(
+          newLiabilityFinished = None,
+          newLiabilityStarted = None)
+        mockRegistrationFind(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
+        mockRegistrationUpdate()
+
+        val result = controller.displayPage()(postRequest(JsObject.empty))
+        await(result) mustBe Redirect(routes.TaskListController.displayPage())
       }
 
     }
@@ -244,8 +270,19 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
             "ppt.registration.success.submission.counter"
           ).getCount mustBe submissionCount
         }
-
       }
+
+      "the user has not answered the new liability questions" in {
+        val oldLiability = completedLiabilityDetails.copy(
+          newLiabilityFinished = None,
+          newLiabilityStarted = None)
+        mockRegistrationFind(aCompletedUkCompanyRegistration.copy(liabilityDetails = oldLiability))
+        mockRegistrationUpdate()
+
+        val result = controller.submit()(postRequest(JsObject.empty))
+        await(result) mustBe Redirect(routes.TaskListController.displayPage())
+      }
+
     }
 
     "throw exceptions" when {
@@ -410,34 +447,31 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
   private def aCompletedUkCompanyRegistration =
     aRegistration(withOrganisationDetails(registeredUkCompanyOrgDetails()),
-                  withLiabilityDetails(liabilityDetails),
+                  withLiabilityDetails(completedLiabilityDetails),
                   withPrimaryContactDetails(primaryContactDetails),
                   withMetaData(MetaData(registrationCompleted = true))
     )
 
   private def aCompletedSoleTraderRegistration =
     aRegistration(withOrganisationDetails(registeredSoleTraderOrgDetails()),
-                  withLiabilityDetails(liabilityDetails),
+                  withLiabilityDetails(completedLiabilityDetails),
                   withPrimaryContactDetails(primaryContactDetails),
                   withMetaData(MetaData(registrationCompleted = true))
     )
 
   private def aCompletedGeneralPartnershipRegistration =
     aRegistration(withOrganisationDetails(registeredGeneralPartnershipOrgDetails()),
-                  withLiabilityDetails(liabilityDetails),
+                  withLiabilityDetails(completedLiabilityDetails),
                   withPrimaryContactDetails(primaryContactDetails),
                   withMetaData(MetaData(registrationCompleted = true))
     )
 
   private def aCompletedScottishPartnershipRegistration =
     aRegistration(withOrganisationDetails(registeredScottishPartnershipOrgDetails()),
-                  withLiabilityDetails(liabilityDetails),
+                  withLiabilityDetails(completedLiabilityDetails),
                   withPrimaryContactDetails(primaryContactDetails),
                   withMetaData(MetaData(registrationCompleted = true))
     )
-
-  private val liabilityDetails =
-    LiabilityDetails(startDate = None)
 
   private val primaryContactDetails = PrimaryContactDetails(name = Some("Jack Gatsby"),
                                                             jobTitle = Some("Developer"),
