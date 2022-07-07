@@ -31,6 +31,10 @@ case class OldDate(day: Option[Int], month: Option[Int], year: Option[Int]) {
 }
 
 object OldDate {
+  
+  def of(year: Int, month: Int, day: Int): OldDate = 
+    OldDate(Some(day), Some(month), Some(year))
+
   implicit val format = Json.format[OldDate]
 
   val year  = "year"
