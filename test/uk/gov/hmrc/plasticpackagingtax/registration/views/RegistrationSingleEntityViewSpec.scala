@@ -23,18 +23,11 @@ import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  MetaData,
-  OrganisationDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, MetaData, NewLiability, OrganisationDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_single_entity
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -43,16 +36,16 @@ import java.time.LocalDate
 @ViewTest
 class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
-  private val LIABILITY_DETAILS                         = 0
-  private val BUSINESS_DETAILS                          = 1
-  private val PRIMARY_CONTACT_DETAILS                   = 2
-  private val CHECK_AND_SUBMIT                          = 3
+  private val LIABILITY_DETAILS = 0
+  private val BUSINESS_DETAILS = 1
+  private val PRIMARY_CONTACT_DETAILS = 2
+  private val CHECK_AND_SUBMIT = 3
   private val registrationPage: task_list_single_entity = inject[task_list_single_entity]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
 
   private def createView(registration: Registration = aRegistration()): Html =
-    registrationPage(registration, liabilityStartLink)
+    registrationPage(registration, liabilityStartLink, showRestartLiabilityContent = false)
 
   "Registration Single Entity Page view" should {
 
@@ -82,22 +75,29 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
 
     "display sections" when {
       def header(el: Element): String = el.getElementsByTag("h2").get(0).text()
+
       def sectionName(el: Element, index: Int): String =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("app-task-list__task-name").get(0).text()
+
       def sectionStatus(el: Element, index: Int): String =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("govuk-tag").get(0).text()
+
       def sectionLinks(el: Element, index: Int): Elements =
         el.getElementsByTag("li").get(index + 1)
           .getElementsByClass("govuk-link")
+
       def sectionLink(el: Element, index: Int): Element =
         sectionLinks(el, index).get(0)
 
       "Liability Details 'In Progress'" when {
 
         val registration = aRegistration(
-          withLiabilityDetails(LiabilityDetails(exceededThresholdWeight = Some(true))),
+          withLiabilityDetails(LiabilityDetails(
+            expectToExceedThresholdWeight = Some(true),
+            newLiabilityStarted = Some(NewLiability))
+          ),
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
@@ -110,23 +110,51 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections,
-                                   4
+            registration.numberOfCompletedSections,
+            4
           )
         }
 
-        "Eligibility check" in {
-          val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
+        "Eligibility check" when {
 
-          header(liabilityElement) must include(
-            messages("registrationPage.task.eligibility.heading")
-          )
-          sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
-          sectionStatus(liabilityElement, 0) mustBe messages("task.status.inProgress")
-          sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
+          def assertResults(liabilityElement: Element, status: String): Unit = {
+            header(liabilityElement) must include(
+              messages("registrationPage.task.eligibility.heading")
+            )
+            sectionName(liabilityElement, 0) mustBe messages("registrationPage.task.eligibility")
+            sectionStatus(liabilityElement, 0) mustBe messages(status)
+            sectionLink(liabilityElement, 0) must haveHref(liabilityStartLink)
+          }
+
+          "new Liability questions in progress" in {
+            val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
+
+            assertResults(liabilityElement, "task.status.inProgress")
+          }
+
+          "new Liability questions not started" in {
+
+            val registration = aRegistration(
+              withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true))),
+              withIncorpJourneyId(None),
+              withNoPrimaryContactDetails()
+            )
+            val view: Html = createView(registration)
+
+            val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
+
+            assertResults(liabilityElement, "task.status.inProgress")
+          }
+
+          "new Liability questions completed" in {
+            val view: Html = createView(aRegistration())
+
+            val liabilityElement = view.getElementsByClass("app-task").get(LIABILITY_DETAILS)
+
+            assertResults(liabilityElement, "task.status.completed")
+          }
         }
-
-        "Organisation details" in {
+        "Organisation details" in { //todo: should the status logic be tested here?
           val businessElement = view.getElementsByClass("app-task").get(BUSINESS_DETAILS)
 
           header(businessElement) must include(
@@ -134,7 +162,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           )
 
           sectionName(businessElement, 0) mustBe messages("registrationPage.task.organisation")
-          sectionStatus(businessElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(businessElement, 0) mustBe messages("task.status.completed")
         }
 
         "Contact details" in {
@@ -145,7 +173,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           )
 
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
         }
 
         "Review and send" in {
@@ -164,10 +192,12 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         val registration = aRegistration(
           withLiabilityDetails(
             LiabilityDetails(exceededThresholdWeight = Some(true),
-                             dateExceededThresholdWeight =
-                               Some(Date(LocalDate.parse("2022-03-05"))),
-                             expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
-                             startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
+              dateExceededThresholdWeight =
+                Some(Date(LocalDate.parse("2022-03-05"))),
+              expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
             )
           ),
           withOrganisationDetails(OrganisationDetails()),
@@ -182,8 +212,8 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   registration.numberOfCompletedSections,
-                                   4
+            registration.numberOfCompletedSections,
+            4
           )
         }
 
@@ -285,8 +315,8 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           view.getElementsByClass("govuk-body govuk-!-margin-bottom-7").get(
             0
           ).text() mustBe messages("registrationPage.completedSections",
-                                   completeRegistration.numberOfCompletedSections,
-                                   4
+            completeRegistration.numberOfCompletedSections,
+            4
           )
         }
 
@@ -348,7 +378,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         val inProgressMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = false)
         val inProgressRegistration = aRegistration(withMetaData(inProgressMetaData))
-        val view: Html             = createView(inProgressRegistration)
+        val view: Html = createView(inProgressRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
@@ -366,7 +396,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
         val completedMetaData =
           aRegistration().metaData.copy(registrationReviewed = true, registrationCompleted = true)
         val completedRegistration = aRegistration(withMetaData(completedMetaData))
-        val view: Html            = createView(completedRegistration)
+        val view: Html = createView(completedRegistration)
 
         val reviewElement = view.getElementsByClass("app-task").get(CHECK_AND_SUBMIT)
 
@@ -382,8 +412,8 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(aRegistration(), liabilityStartLink)(journeyRequest, messages)
-    registrationPage.render(aRegistration(), liabilityStartLink, journeyRequest, messages)
+    registrationPage.f(aRegistration(), liabilityStartLink, false)(journeyRequest, messages)
+    registrationPage.render(aRegistration(), liabilityStartLink, false, journeyRequest, messages)
   }
 
 }

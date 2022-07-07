@@ -54,7 +54,9 @@ trait RegistrationBuilder {
           Some(LiabilityWeight(Some(12000))),
         startDate =
           Some(OldDate(Some(1), Some(4), Some(2022))),
-        isLiable = Some(true)
+        isLiable = Some(true),
+        newLiabilityFinished = Some(NewLiability),
+        newLiabilityStarted = Some(NewLiability)
       ),
       primaryContactDetails = PrimaryContactDetails(
         name = Some("Jack Gatsby"),
@@ -119,6 +121,7 @@ trait RegistrationBuilder {
           Seq(EmailStatus(emailAddress = "test@test.com", verified = true, locked = false))
         )
     )
+
 
   def withId(id: String): RegistrationModifier = _.copy(id = id)
 

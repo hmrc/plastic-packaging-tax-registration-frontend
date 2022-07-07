@@ -25,6 +25,15 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 import java.time.LocalDate
 
 class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
+  
+  private val completedDetails = LiabilityDetails(
+    expectToExceedThresholdWeight = Some(true),
+    dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
+    expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+    startDate = Some(OldDate(Some(5), Some(3), Some(2022))),
+    newLiabilityStarted = Some(NewLiability),
+    newLiabilityFinished = Some(NewLiability)
+  )
 
   "Liability Details TaskStatus" should {
 
@@ -33,31 +42,58 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         val liabilityDetails = LiabilityDetails()
         liabilityDetails.status mustBe TaskStatus.NotStarted
       }
+      "liability details have flags (somehow) but no answers" in {
+        val liabilityDetails = LiabilityDetails(
+          newLiabilityStarted = Some(NewLiability)
+        )
+        liabilityDetails.status mustBe TaskStatus.NotStarted
+      }
     }
 
     "be IN_PROGRESS " when {
-      "liability details are partially filled" when {
-        "post-launch" in {
-          val liabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true))
-          liabilityDetails.status mustBe TaskStatus.InProgress
+      "liability details are partially filled" in {
+        val liabilityDetails = LiabilityDetails(
+          expectToExceedThresholdWeight = Some(true),
+          newLiabilityStarted = Some(NewLiability)
+        )
+        liabilityDetails.status mustBe TaskStatus.InProgress
         }
 
+      "liability details are partially filled with forwards answer" in {
+        val liabilityDetails = LiabilityDetails(
+          expectToExceedThresholdWeight = Some(true),
+        )
+        liabilityDetails.status mustBe TaskStatus.InProgress
       }
+
+      "liability details are partially filled with backwards answer" in {
+        val liabilityDetails = LiabilityDetails(
+          exceededThresholdWeight = Some(true),
+        )
+        liabilityDetails.status mustBe TaskStatus.InProgress
+        }
     }
 
     "be COMPLETED " when {
 
       "post-launch" in {
-        val liabilityDetails = LiabilityDetails(exceededThresholdWeight = Some(true),
-                                                dateExceededThresholdWeight =
-                                                  Some(Date(LocalDate.parse("2022-03-05"))),
-                                                expectedWeightNext12m =
-                                                  Some(LiabilityWeight(Some(12000))),
-                                                startDate =
-                                                  Some(OldDate(Some(5), Some(3), Some(2022)))
-        )
-        liabilityDetails.status mustBe TaskStatus.Completed
+        // TODO this test needs updating?
+        completedDetails.status mustBe TaskStatus.Completed
       }
+    }
+    
+    "clear some of the previous questions" in {
+      val fullyCompleteddetails = completedDetails.copy(
+        // TODO missing fields        
+      )
+      val updatedDetails = fullyCompleteddetails.clearOldLiabilityAnswers mustBe LiabilityDetails(
+        expectToExceedThresholdWeight = None,
+        dateExceededThresholdWeight = None,
+        expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
+        startDate = None,
+        newLiabilityStarted = Some(NewLiability),
+        newLiabilityFinished = Some(NewLiability)
+      )
     }
   }
 }

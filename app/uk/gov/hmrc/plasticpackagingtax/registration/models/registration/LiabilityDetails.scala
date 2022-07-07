@@ -25,27 +25,38 @@ case object NewLiability {
   implicit val format: OFormat[NewLiability.type] = Json.format[NewLiability.type]
 }
 
-case class LiabilityDetails(exceededThresholdWeight: Option[Boolean] = None,
-                            dateExceededThresholdWeight: Option[Date] = None,
-                            expectToExceedThresholdWeight: Option[Boolean] = None,
-                            dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
-                            expectedWeightNext12m: Option[LiabilityWeight] = None,
-                            // Derived fields - not directly input by user
-                            startDate: Option[OldDate] = None,
-                            isLiable: Option[Boolean] = None,
-                            newLiabilityFinished: Option[NewLiability.type] = None,
-                            newLiabilityStarted: Option[NewLiability.type] = None
-                           ) {
+case class LiabilityDetails(
+  exceededThresholdWeight: Option[Boolean] = None,
+  dateExceededThresholdWeight: Option[Date] = None,
+  expectToExceedThresholdWeight: Option[Boolean] = None,
+  dateRealisedExpectedToExceedThresholdWeight: Option[Date] = None,
+  expectedWeightNext12m: Option[LiabilityWeight] = None,
+  
+  // Derived fields - not directly input by user
+  startDate: Option[OldDate] = None,
+  isLiable: Option[Boolean] = None,
+  newLiabilityFinished: Option[NewLiability.type] = None,
+  newLiabilityStarted: Option[NewLiability.type] = None
+) {
 
   def isCompleted: Boolean =
-    startDate.nonEmpty && expectedWeightNext12m.isDefined
+    startDate.nonEmpty && expectedWeightNext12m.isDefined && newLiabilityStarted.isDefined && newLiabilityFinished.isDefined
 
-  def isInProgress: Boolean = exceededThresholdWeight.isDefined
+  def isInProgress: Boolean = exceededThresholdWeight.isDefined || expectToExceedThresholdWeight.isDefined
 
   def status: TaskStatus =
     if (isCompleted) TaskStatus.Completed
     else if (isInProgress) TaskStatus.InProgress
     else TaskStatus.NotStarted
+
+  def clearOldLiabilityAnswers: LiabilityDetails = this.copy(
+    exceededThresholdWeight = None,
+    dateExceededThresholdWeight = None,
+    expectToExceedThresholdWeight = None,
+    dateRealisedExpectedToExceedThresholdWeight = None,
+    startDate = None,
+    isLiable = None,
+  )
 
 }
 

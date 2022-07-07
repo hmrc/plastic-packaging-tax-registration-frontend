@@ -20,15 +20,10 @@ import base.unit.ControllerSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{redirectLocation, status}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  LiabilityDetails,
-  Registration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, NewLiability, Registration}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 import java.time.LocalDate
@@ -41,7 +36,7 @@ class StartRegistrationControllerSpec extends ControllerSpec {
 
   private val partialRegistration = Registration(id = "123",
                                                  liabilityDetails = LiabilityDetails(
-                                                   exceededThresholdWeight = Some(true),
+                                                   expectToExceedThresholdWeight = Some(true),
                                                    dateExceededThresholdWeight =
                                                      Some(Date(LocalDate.parse("2022-03-05"))),
                                                    expectedWeightNext12m =
@@ -74,6 +69,18 @@ class StartRegistrationControllerSpec extends ControllerSpec {
       "partial registration exists" in {
         authorizedUser()
         mockRegistrationFind(partialRegistration)
+
+        val result = controller.startRegistration()(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.TaskListController.displayPage().url)
+      }
+
+      "partial registration exists with new liability" in {
+        authorizedUser()
+        mockRegistrationFind(partialRegistration.copy(
+          liabilityDetails = partialRegistration.liabilityDetails.copy(newLiabilityStarted = Some(NewLiability)))
+        )
 
         val result = controller.startRegistration()(getRequest())
 
