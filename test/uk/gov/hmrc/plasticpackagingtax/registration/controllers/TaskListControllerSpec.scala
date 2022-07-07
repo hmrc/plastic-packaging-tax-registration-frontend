@@ -17,23 +17,18 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers.{any, same}
+import org.mockito.Mockito.{never, reset, verify, verifyNoInteractions, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.mvc.Call
-import play.api.test.Helpers.{contentAsString, status}
+import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{
-  routes => liabilityRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{
-  task_list_group,
-  task_list_partnership,
-  task_list_single_entity
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class TaskListControllerSpec extends ControllerSpec {
@@ -43,14 +38,15 @@ class TaskListControllerSpec extends ControllerSpec {
   private val groupPage        = mock[task_list_group]
   private val partnershipPage  = mock[task_list_partnership]
 
-  private val controller =
-    new TaskListController(authenticate = mockAuthAction,
-                           mockJourneyAction,
-                           mcc = mcc,
-                           singleEntityPage = singleEntityPage,
-                           groupPage = groupPage,
-                           partnershipPage = partnershipPage
-    )
+  private val controller = new TaskListController(
+    authenticate = mockAuthAction,
+    mockJourneyAction,
+    mcc = mcc,
+    singleEntityPage = singleEntityPage,
+    groupPage = groupPage,
+    partnershipPage = partnershipPage,
+    mockRegistrationConnector
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -130,6 +126,33 @@ class TaskListControllerSpec extends ControllerSpec {
           contentAsString(result) mustBe "Single Entity Page"
         }
       }
+    }
+    
+    "old liability answers should be removed" in {
+      authorizedUser()
+      val registration = mock[Registration]
+      mockRegistrationFind(registration)
+      when(registration.hasOldLiabilityQuestions).thenReturn(true)
+      when(registration.organisationDetails).thenReturn(aRegistration().organisationDetails)
+      
+      val newRegistration = mock[Registration]
+      when(registration.clearOldLiabilityAnswers).thenReturn(newRegistration)
+      
+      await(controller.displayPage()(getRequest()))
+      verify(registration).clearOldLiabilityAnswers
+      verify(mockRegistrationConnector).update(same(newRegistration))(any())
+    }
+    
+    "old liability answers should not be removed" in {
+      authorizedUser()
+      val registration = mock[Registration]
+      mockRegistrationFind(registration)
+      when(registration.hasOldLiabilityQuestions).thenReturn(false)
+      when(registration.organisationDetails).thenReturn(aRegistration().organisationDetails)
+      
+      await(controller.displayPage()(getRequest()))
+      verify(registration, never()).clearOldLiabilityAnswers
+      verify(mockRegistrationConnector, never()).update(any())(any())
     }
 
     "set liability start links" in {

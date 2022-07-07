@@ -68,6 +68,9 @@ class ReviewRegistrationController @Inject() (
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
+
+      // TOOD don't let user submit if still has old liability answers
+      
       val completedRegistration = request.registration.asCompleted()
       val internalId            = request.authenticatedRequest.user.identityData.internalId
       val completedRegistrationWithUserHeaders =

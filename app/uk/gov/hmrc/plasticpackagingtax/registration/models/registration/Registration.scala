@@ -263,6 +263,12 @@ case class Registration(
     isTheNominatedPartner || isFirstInflightPartner
   }
 
+  def hasOldLiabilityQuestions: Boolean = {
+    liabilityDetails.newLiabilityFinished.isEmpty || liabilityDetails.newLiabilityStarted.isEmpty
+  }
+
+  def clearOldLiabilityAnswers: Registration = this.copy(liabilityDetails = liabilityDetails.clearOldLiabilityAnswers)
+
 }
 
 object Registration {
