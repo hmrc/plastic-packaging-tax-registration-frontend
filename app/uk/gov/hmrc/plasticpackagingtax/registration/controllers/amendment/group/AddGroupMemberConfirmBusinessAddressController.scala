@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
+package uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.EnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, AddressCaptureService}
-import uk.gov.hmrc.plasticpackagingtax.registration.utils.URLSanitisationUtils
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -35,9 +33,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmBusinessAddressController @Inject() (
-                                                   authenticate: NotEnrolledAuthAction,
-                                                   journeyAction: JourneyAction,
+class AddGroupMemberConfirmBusinessAddressController @Inject() (
+                                                   authenticate: EnrolledAuthAction,
+                                                   journeyAction: AmendmentJourneyAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    addressCaptureService: AddressCaptureService,
                                                    mcc: MessagesControllerComponents,
@@ -45,25 +43,26 @@ class ConfirmBusinessAddressController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage(memberId: String, redirectTo: String): Action[AnyContent] =
+  def displayPage(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
+
       val member = request.registration.findMember(memberId).getOrElse(throw new IllegalStateException("Provided group memberId not found"))
 
       val orgType = member.organisationDetails
-        .fold(throw new IllegalStateException("Failed to get org type for member"))(dets => OrgType.withName(dets.organisationType))
+        .fold(throw new IllegalStateException("Failed to get org type for member"))(
+          dets => OrgType.withName(dets.organisationType)
+        )
 
-      URLSanitisationUtils.asRelativeUrl(redirectTo).fold(
-        throw new IllegalStateException(s"Redirect to url of $redirectTo was invalid")
-      ){ url =>
-        member.addressDetails match {
-          case registeredBusinessAddress if isAddressValidForOrgType(registeredBusinessAddress, Some(orgType)) =>
-            Future.successful(Ok(page(registeredBusinessAddress, member.businessName, url)))
-          case _ =>
-            orgType match {
-              case OVERSEAS_COMPANY_UK_BRANCH => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
-              case _ => initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
-            }
-        }
+      val redirectTo = routes.AddGroupMemberContactDetailsNameController.displayPage(memberId).url
+
+      member.addressDetails match {
+        case registeredBusinessAddress if isAddressValidForOrgType(registeredBusinessAddress, Some(orgType)) =>
+          Future.successful(Ok(page(registeredBusinessAddress, member.businessName, redirectTo)))
+        case _ =>
+          orgType match {
+            case OVERSEAS_COMPANY_UK_BRANCH => initialiseAddressLookup(memberId, request, forceUKAddress = false)
+            case _ => initialiseAddressLookup(memberId, request, forceUKAddress = true)
+          }
       }
     }
 
@@ -76,30 +75,12 @@ class ConfirmBusinessAddressController @Inject() (
     else
       false
 
-  def changeBusinessAddress(memberId: String, redirectTo: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      val res = for {
-        member <- request.registration.findMember(memberId)
-        orgDetails <- member.organisationDetails
-        orgType = orgDetails.organisationType
-      } yield {
-        if(orgType == OrgType.value(OVERSEAS_COMPANY_UK_BRANCH)) {
-          initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false)
-        } else {
-          initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = true)
-        }
-      }
-
-      res.getOrElse(initialiseAddressLookup(memberId, request, redirectTo, forceUKAddress = false))
-    }
-
-  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent], redirectTo: String, forceUKAddress: Boolean)(implicit
-    header: HeaderCarrier
-  ): Future[Result] =
+  private def initialiseAddressLookup(memberId: String, request: JourneyRequest[AnyContent],
+                                      forceUKAddress: Boolean): Future[Result] =
     addressCaptureService.initAddressCapture(
       AddressCaptureConfig(
-        backLink = routes.ConfirmBusinessAddressController.displayPage(memberId, redirectTo).url,
-        successLink = routes.ConfirmBusinessAddressController.addressCaptureCallback(memberId).url,
+        backLink = routes.AddGroupMemberConfirmBusinessAddressController.displayPage(memberId).url,
+        successLink = routes.AddGroupMemberConfirmBusinessAddressController.addressCaptureCallback(memberId).url,
         alfHeadingsPrefix = "addressLookup.business",
         entityName = request.registration.findMember(memberId).map(_.businessName),
         pptHeadingKey = "addressCapture.business.heading",
@@ -116,7 +97,7 @@ class ConfirmBusinessAddressController @Inject() (
             reg.withUpdatedMemberAddress(memberId, capturedAddress.getOrElse(throw new IllegalStateException("No captured address")))
           }
       }.map { _ =>
-        Redirect(routes.ContactDetailsNameController.displayPage(memberId))
+        Redirect(routes.AddGroupMemberContactDetailsNameController.displayPage(memberId))
       }
     }
 
