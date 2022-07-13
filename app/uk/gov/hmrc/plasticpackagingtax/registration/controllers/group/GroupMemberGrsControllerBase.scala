@@ -33,6 +33,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.Subscri
 import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.{routes => amendRoutes}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -66,6 +67,27 @@ abstract class GroupMemberGrsControllerBase(
                 }
               case DUPLICATE_SUBSCRIPTION =>
                 val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED, groupMemberName(registration, memberId))
+                updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.groupMemberAlreadyRegistered()))
+            }
+          case Left(groupError) =>
+            updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.organisationAlreadyInGroup()))
+        }
+    }
+
+  protected def grsCallbackAmendAddGroupMember(journeyId: String): Action[AnyContent] =
+    (authenticate andThen journeyAction).async {
+      implicit request =>
+        updateRegistrationDetails(journeyId, None).flatMap {
+          case Right(registration) =>
+            registrationStatus(registration, None).flatMap {
+              case STATUS_OK =>
+                save(registration).map { _ =>
+                  val member = findCurrentMember(None, registration)
+                  Redirect(amendRoutes.AddGroupMemberConfirmBusinessAddressController
+                    .displayPage(member).url)
+                }
+              case DUPLICATE_SUBSCRIPTION =>
+                val groupError = GroupError(GroupErrorType.MEMBER_IS_ALREADY_REGISTERED, groupMemberName(registration, None))
                 updateWithGroupError(groupError).map(_ => Redirect(routes.NotableErrorController.groupMemberAlreadyRegistered()))
             }
           case Left(groupError) =>

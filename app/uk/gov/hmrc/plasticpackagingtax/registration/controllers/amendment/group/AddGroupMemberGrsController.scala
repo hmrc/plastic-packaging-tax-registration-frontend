@@ -51,9 +51,6 @@ class AddGroupMemberGrsController @Inject() (
     ) {
 
   def grsCallbackNewMember(journeyId: String): Action[AnyContent] =
-    grsCallback(journeyId, None, nameCaptureRedirect)
-
-  private def nameCaptureRedirect(memberId: String) =
-    routes.AddGroupMemberContactDetailsNameController.displayPage(memberId)
+    grsCallbackAmendAddGroupMember(journeyId)
 
 }

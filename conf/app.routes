@@ -312,6 +312,9 @@ POST       /amend-add-group-member-type     uk.gov.hmrc.plasticpackagingtax.regi
 
 GET        /amend-add-group-member-grs-callback     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberGrsController.grsCallbackNewMember(journeyId)
 
+GET        /amend-add-group-member-confirm-address/:memberId              uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberConfirmBusinessAddressController.displayPage(memberId)
+GET        /amend-add-group-member-confirm-address-callback/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberConfirmBusinessAddressController.addressCaptureCallback(memberId)
+
 GET        /amend-add-group-member-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsNameController.displayPage(memberId)
 POST       /amend-add-group-member-contact-name/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.amendment.group.AddGroupMemberContactDetailsNameController.submit(memberId)
 

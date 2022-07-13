@@ -105,7 +105,6 @@ class TaxStartDateSpec extends PlaySpec with BeforeAndAfterEach {
 
 class TaxStartDateServiceSpec extends PlaySpec {
 
-  private val dateExceededThresholdWeight = LocalDate.of(2022, 4, 30)
   private val taxStartDateService = new TaxStartDateService
 
   private val completedLiabilityDetails = LiabilityDetails(
@@ -252,7 +251,7 @@ class TaxStartDateServiceSpec extends PlaySpec {
           dateRealisedExpectedToExceedThresholdWeight = Some(Date(LocalDate.of(2022, 5, 1))),
         )
         val firstDayOfNextMonth: LocalDate = LocalDate.of(2022, 5, 1)
-        taxStartDateService.calculateTaxStartDate(bothStartDatesAreTheSame) mustBe TaxStartDate.liableFromBackwardsTest(firstDayOfNextMonth)
+        taxStartDateService.calculateTaxStartDate(bothStartDatesAreTheSame) mustBe TaxStartDate.liableFromForwardsTest(firstDayOfNextMonth)
       }
     }
   }
