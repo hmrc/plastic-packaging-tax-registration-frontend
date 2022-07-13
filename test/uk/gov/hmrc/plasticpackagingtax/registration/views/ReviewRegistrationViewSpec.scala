@@ -551,12 +551,10 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 authenticatedRequest =
                   new AuthenticatedRequest(FakeRequest(),
                                            userWithPPTEnrolment,
-                                           appConfig,
                                            pptReference =
                                              pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
                   ),
                 registration = partnershipRegistration,
-                appConfig = appConfig,
                 pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val partnershipView =
@@ -649,11 +647,9 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
             val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
               JourneyRequest(authenticatedRequest =
                                new AuthenticatedRequest(FakeRequest(),
-                                                        userWithPPTEnrolment,
-                                                        appConfig
+                                                        userWithPPTEnrolment
                                ),
                              registration = partnershipRegistration,
-                             appConfig = appConfig,
                              pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val otherPartnersView =

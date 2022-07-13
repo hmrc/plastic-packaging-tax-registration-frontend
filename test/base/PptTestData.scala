@@ -30,7 +30,6 @@ object PptTestData {
 
   def newUser(
     internalId: String = "Int-ba17b467-90f3-42b6-9570-73be7b78eb2b",
-    featureFlags: Map[String, Boolean] = Map.empty,
     affinityGroup: Option[AffinityGroup] = None
   ): SignedInUser =
     SignedInUser(Enrolments(Set()),
@@ -59,8 +58,7 @@ object PptTestData {
                               affinityGroup,
                               Some("credentialStrength 50"),
                               Some(LoginTimes(DateTime.now, None))
-                 ),
-                 featureFlags
+                 )
     )
 
   def newAgent(externalId: String = "123") =

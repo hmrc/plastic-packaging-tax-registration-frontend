@@ -45,7 +45,7 @@ class MongoRegistrationAmendmentRepositorySpec
 
   private val sessionId        = "123"
   private val registration     = aRegistration()
-  private implicit val request = new AuthenticatedRequest(FakeRequest(), newUser(), appConfig)
+  private implicit val request = new AuthenticatedRequest(FakeRequest(), newUser())
 
   override protected def beforeEach(): Unit = {
     reset(mockUserDataRepository)

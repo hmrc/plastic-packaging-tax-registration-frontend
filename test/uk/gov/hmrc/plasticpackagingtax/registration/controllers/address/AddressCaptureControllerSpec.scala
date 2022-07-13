@@ -304,8 +304,7 @@ class AddressCaptureControllerSpec
   private def getAuthenticatedRequest() =
     new AuthenticatedRequest(
       request = FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")),
-      user = newUser(),
-      appConfig
+      user = newUser()
     )
 
   private def getRequest() =

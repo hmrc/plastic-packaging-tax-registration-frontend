@@ -21,7 +21,6 @@ import play.api.Logger
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.auth.core.{InsufficientEnrolments, SessionRecordNotFound}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AmendmentJourneyAction.SessionId
@@ -33,7 +32,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AmendmentJourneyActionImpl @Inject() (
-  appConfig: AppConfig,
   subscriptionsConnector: SubscriptionsConnector,
   registrationAmendmentRepository: RegistrationAmendmentRepository
 )(implicit val exec: ExecutionContext)
@@ -55,14 +53,14 @@ class AmendmentJourneyActionImpl @Inject() (
                 registrationAmendmentRepository.get(sessionId).flatMap {
                   case Some(registration) =>
                     Future.successful(
-                      Right(JourneyRequest[A](request, registration, appConfig, Some(pptReference)))
+                      Right(JourneyRequest[A](request, registration, Some(pptReference)))
                     )
                   case _ =>
                     subscriptionsConnector.getSubscription(pptReference).flatMap { registration =>
                       registrationAmendmentRepository.put(sessionId, registration).map {
                         registration =>
                           Right(
-                            JourneyRequest[A](request, registration, appConfig, Some(pptReference))
+                            JourneyRequest[A](request, registration, Some(pptReference))
                           )
                       }
                     }

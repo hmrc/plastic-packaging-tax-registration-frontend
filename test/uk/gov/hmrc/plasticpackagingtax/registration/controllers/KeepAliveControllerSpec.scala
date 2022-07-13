@@ -63,8 +63,7 @@ class KeepAliveControllerSpec extends ControllerSpec {
         authorizedUser()
         val result = controller.keepAlive()(
           new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")),
-                                   newUser(),
-                                   appConfig
+                                   newUser()
           )
         )
 
@@ -96,8 +95,7 @@ class KeepAliveControllerSpec extends ControllerSpec {
         val result =
           controller.keepAlive()(
             new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
-                                     newUser(),
-                                     appConfig
+                                     newUser()
             )
           )
         status(result) mustBe OK
@@ -116,8 +114,7 @@ class KeepAliveControllerSpec extends ControllerSpec {
         val result =
           controller.keepAlive()(
             new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
-                                     newUser(),
-                                     appConfig
+                                     newUser()
             )
           )
         status(result) mustBe OK
@@ -131,8 +128,7 @@ class KeepAliveControllerSpec extends ControllerSpec {
         val result =
           controller.keepAlive()(
             new AuthenticatedRequest(FakeRequest().withSession(("session", "123456")),
-                                     newUser(),
-                                     appConfig
+                                     newUser()
             )
           )
         intercept[RuntimeException](status(result))

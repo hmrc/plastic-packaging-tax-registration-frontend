@@ -36,7 +36,7 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
-  private val actionRefiner = new JourneyAction(mockRegistrationConnector, mockAuditor, appConfig)(
+  private val actionRefiner = new JourneyAction(mockRegistrationConnector, mockAuditor)(
     ExecutionContext.global
   )
 

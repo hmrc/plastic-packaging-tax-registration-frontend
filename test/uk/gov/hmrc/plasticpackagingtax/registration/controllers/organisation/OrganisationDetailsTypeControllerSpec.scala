@@ -26,30 +26,13 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.config.Features
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  CHARITABLE_INCORPORATED_ORGANISATION,
-  OVERSEAS_COMPANY_UK_BRANCH,
-  OrgType,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  TRUST,
-  UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
-  OrgType,
-  OrganisationType,
-  PartnerTypeEnum
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  NewRegistrationUpdateService,
-  OrganisationDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType, PartnerTypeEnum}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{NewRegistrationUpdateService, OrganisationDetails}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -159,14 +142,13 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
           assertRedirectForOrgType(
             PARTNERSHIP,
-            partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad().url,
-            false
+            partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad().url
           )
         }
 
         "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
+          authorizedUser()
           mockRegistrationFind(aRegistration(withRegistrationType(Some(RegType.GROUP))))
           mockRegistrationUpdate()
 
@@ -187,7 +169,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
+          authorizedUser()
           mockRegistrationFind(
             aRegistration(withRegistrationType(Some(RegType.GROUP)),
                           withPartnershipDetails(
@@ -241,7 +223,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP + " for representative member" in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser(features = Map(Features.isPartnershipEnabled -> true))
+          authorizedUser()
           mockRegistrationFind(aRegistration(withRegistrationType(Some(RegType.GROUP))))
           mockRegistrationUpdate()
 
@@ -264,10 +246,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       def assertRedirectForOrgType(
         orgType: OrgType,
-        redirectUrl: String,
-        partnershipEnabled: Boolean = true
+        redirectUrl: String
       ): Unit = {
-        authorizedUser(features = Map(Features.isPartnershipEnabled -> partnershipEnabled))
+        authorizedUser()
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 

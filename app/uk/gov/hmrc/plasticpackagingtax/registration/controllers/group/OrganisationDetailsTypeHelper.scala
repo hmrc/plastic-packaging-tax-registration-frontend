@@ -20,23 +20,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.Results.{Redirect, SeeOther}
 import play.api.mvc.{AnyContent, Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{
-  routes => organisationRoutes
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{
-  IncorpEntityGrsCreateRequest,
-  PartnershipGrsCreateRequest,
-  SoleTraderGrsCreateRequest
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.{IncorpEntityGrsCreateRequest, PartnershipGrsCreateRequest, SoleTraderGrsCreateRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.RegistrationUpdater
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 
@@ -88,9 +77,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
     request: JourneyRequest[AnyContent],
     headerCarrier: HeaderCarrier,
     executionContext: ExecutionContext
-  ): Future[Result] =
-    request.isFeatureFlagEnabled(Features.isPartnershipEnabled) match {
-      case true =>
+  ): Future[Result] = {
         if (request.registration.isGroup)
           getRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                          businessVerificationCheck,
@@ -98,9 +85,7 @@ trait OrganisationDetailsTypeHelper extends I18nSupport {
           ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
         else
           Future(Redirect(partnerRoutes.PartnershipTypeController.displayPage()))
-      case _ =>
-        Future(Redirect(partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad()))
-    }
+  }
 
   private def getSoleTraderRedirectUrl(
     memberId: Option[String]

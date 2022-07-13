@@ -23,8 +23,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
 
 case class SignedInUser(
   enrolments: Enrolments,
-  identityData: IdentityData,
-  features: Map[String, Boolean]
+  identityData: IdentityData
 ) {
 
   val credId: String = identityData.credentials.map(_.providerId).getOrElse(

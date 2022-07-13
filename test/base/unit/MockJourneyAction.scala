@@ -32,7 +32,7 @@ trait MockJourneyAction
   self: MockitoSugar with Suite =>
 
   val mockJourneyAction: JourneyAction =
-    new JourneyAction(mockRegistrationConnector, mockAuditor, appConfig = appConfig)(
+    new JourneyAction(mockRegistrationConnector, mockAuditor)(
       ExecutionContext.global
     )
 

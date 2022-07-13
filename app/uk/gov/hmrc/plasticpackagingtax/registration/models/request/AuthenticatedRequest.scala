@@ -17,20 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.models.request
 
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 
 class AuthenticatedRequest[+A](
   request: Request[A],
   val user: SignedInUser,
-  val appConfig: AppConfig,
   val pptReference: Option[String] = None
 ) extends WrappedRequest[A](request) {
-
-  val featureFlags: Map[String, Boolean] =
-    user.features
-
-  def isFeatureFlagEnabled(flag: String) =
-    featureFlags.getOrElse(flag, appConfig.isDefaultFeatureFlagEnabled(flag))
 
 }

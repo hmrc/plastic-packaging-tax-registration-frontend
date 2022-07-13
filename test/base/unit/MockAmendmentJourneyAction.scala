@@ -30,8 +30,7 @@ trait MockAmendmentJourneyAction
     with AnyWordSpecLike {
 
   protected val mockAmendmentJourneyAction: AmendmentJourneyAction =
-    new AmendmentJourneyActionImpl(appConfig,
-                                   mockSubscriptionConnector,
+    new AmendmentJourneyActionImpl(mockSubscriptionConnector,
                                    inMemoryRegistrationAmendmentRepository
     )(ExecutionContext.global)
 

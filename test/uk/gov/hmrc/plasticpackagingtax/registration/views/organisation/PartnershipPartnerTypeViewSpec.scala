@@ -44,9 +44,8 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
 
   val journeyReqForOthers = {
     val user = PptTestData.newUser()
-    JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken, user, appConfig),
+    JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken, user),
                    registrationWithOtherPartners,
-                   appConfig,
                    pptReferenceFromUsersEnrolments(user)
     )
   }

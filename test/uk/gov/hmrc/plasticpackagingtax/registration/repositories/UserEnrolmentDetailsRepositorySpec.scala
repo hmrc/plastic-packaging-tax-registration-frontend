@@ -64,8 +64,7 @@ class UserEnrolmentDetailsRepositorySpec
 
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
     new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),
-                             PptTestData.newUser("123"),
-                             appConfig
+                             PptTestData.newUser("123")
     )
 
   private val userEnrolmentDetails =
