@@ -97,7 +97,7 @@
         pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
         messages("site.back.hiddenText")))) {
 
-    @errorSummary(form.errors)
+    @errorSummary(form.errors, errorFieldName = Some("exceeded-threshold-weight-date.day"))
 
     @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
 
