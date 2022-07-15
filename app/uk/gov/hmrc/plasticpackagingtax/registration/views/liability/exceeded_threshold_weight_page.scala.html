@@ -77,10 +77,25 @@
 @yearField = @{form("exceeded-threshold-weight-date.year")}
 
 @errorMessages = @{
-        val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")
-        if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+    val errors = form.errors
+        .filter(err => !err.message.contains("liability.exceededThresholdWeight.question.empty.error"))
+        .map(er => messages(er.message, er.key)).mkString("<br>")
+
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
+@formErrors = @{
+    form.errors.map{
+        case yesNoErr if(yesNoErr.key == "answer") =>
+            yesNoErr.copy(key = "value-yes")
+        case monthYearErr if(monthYearErr.key == "month and year") =>
+            monthYearErr.copy(key = "exceeded-threshold-weight-date.month", args = "month and year")
+        case yearErr if(yearErr.key == "year") =>
+            yearErr.copy(key = "exceeded-threshold-weight-date.year", args = "year")
+        case err =>
+            err.copy(key = "exceeded-threshold-weight-date.day")
+    }
+}
 
 @hints = {
     <p class="govuk-hint">@messages("liability.exceededThresholdWeight.hint")</p>
@@ -97,7 +112,7 @@
         pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
         messages("site.back.hiddenText")))) {
 
-    @errorSummary(form.errors, errorFieldName = Some("exceeded-threshold-weight-date.day"))
+    @errorSummary(formErrors)
 
     @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
 
