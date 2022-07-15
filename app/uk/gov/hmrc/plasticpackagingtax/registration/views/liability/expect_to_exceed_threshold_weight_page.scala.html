@@ -39,8 +39,10 @@
 @yearField = @{form("expect-to-exceed-threshold-weight-date.year")}
 
 @errorMessages = @{
-val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")
-if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+    val errors = form.errors
+        .filter(err => !err.message.contains("liability.expectToExceedThresholdWeight.question.empty.error"))
+        .map(er => messages(er.message, er.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
 @yesContent = {
@@ -87,7 +89,7 @@ if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 
 @govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
 
-    @errorSummary(form.errors, Some("expect-to-exceed-threshold-weight-date.day"))
+    @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.expectToExceedThresholdWeight.sectionHeader"))
     

@@ -33,14 +33,6 @@ trait Mappings extends Formatters with Constraints {
   )(implicit messages: Messages) : FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
 
-  protected def optLocalDate(
-                           emptyDateKey: String,
-                           singleRequiredKey: String,
-                           twoRequiredKey: String,
-                           invalidKey: String,
-                           args: Seq[String] = Seq.empty
-                         )(implicit messages: Messages) : FieldMapping[LocalDate] =
-    of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
-
+  protected def toBoolean(msgKey: String) : FieldMapping[Boolean] = of(booleanFormatter(msgKey))
 
 }

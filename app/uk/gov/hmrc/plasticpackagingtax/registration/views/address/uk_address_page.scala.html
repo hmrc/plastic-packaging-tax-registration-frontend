@@ -40,6 +40,7 @@
     backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))
 ) {
 
+    @errorSummary(form.errors)
     @formHelper(action = routes.AddressCaptureController.submitAddressInUk(), 'autoComplete -> "off") {
         @govukFieldset(Fieldset(
             legend = Some(Legend(
