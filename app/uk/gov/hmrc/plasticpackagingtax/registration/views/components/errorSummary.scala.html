@@ -22,11 +22,15 @@
 
 @errorList = @{errors.map { error =>
     val errorKey = error.key.replace(".", "_").replace('[', '_').replace("]", "")
-    ErrorLink(
-        href = Some(s"#${errorFieldName.getOrElse(errorKey)}"),
-        content = Text(messages(error.message, errorKey))
-    )
-}}
+    val errorMsg = messages(error.message, errorKey)
+
+    if(errorMsg.nonEmpty){
+        ErrorLink(
+            href = Some(s"#${errorFieldName.getOrElse(errorKey)}"),
+            content = Text(errorMsg)
+        )
+    }
+}.collect{case errLink: ErrorLink => errLink}}
 
 @if(errorList.nonEmpty) {
     @govukErrorSummary(

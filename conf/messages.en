@@ -479,7 +479,7 @@ liability.expectToExceedThreshold.two.required.fields = Date must include the {0
 liability.expectToExceedThreshold.one.field = Date must include the {0}
 
 liability.exceededThresholdWeightDate.sectionHeader = Liability details
-liability.exceededThresholdWeightDate.title = When did you you meet the 10,000kg threshold?
+liability.exceededThresholdWeightDate.title = When did you meet the 10,000kg threshold?
 liability.exceededThresholdWeightDate.hint = For example, 15 5 2022.
 liability.exceededThresholdWeightDate.formatting.error = Date must be a real date
 liability.exceededThresholdWeightDate.outOfRange.error = Date must be today or in the past
