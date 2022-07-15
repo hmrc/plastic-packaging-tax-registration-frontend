@@ -46,12 +46,6 @@
     }
 }
 
-@preLaunchDetail = {
-    @paragraphBody(message = messages("confirmationPage.preLaunch.whatHappensNext.detail"))
-    @paragraphBody(message = messages("confirmationPage.preLaunch.whatHappensNext.link",
-        link(text = messages("confirmationPage.preLaunch.whatHappensNext.link.text"), call = Call("GET", appConfig.pptAccountUrl))))
-}
-
 @confirmationDetail = {
     @paragraphBody(message = messages("confirmationPage.whatHappensNext.detail",
         link(text = messages("confirmationPage.whatHappensNext.detail.link"), call = Call("GET", appConfig.pptAccountUrl))))

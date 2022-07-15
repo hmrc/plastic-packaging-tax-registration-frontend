@@ -68,7 +68,7 @@ date.month.leadingBlankSpace.error  = Mae’n rhaid i’r mis beidio â chynnwys
 date.month.trailingBlankSpace.error  = Mae’n rhaid i’r mis beidio â chynnwys bylchau llusg
 date.decimal.error  = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 
-date.year  = Flwyddyn
+date.year  = Blwyddyn
 date.year.error  = Nodwch flwyddyn ddilys
 date.year.empty.error  = Nodwch y flwyddyn
 date.year.format.error  = Mae’n rhaid i’r flwyddyn gynnwys rhifau yn unig
@@ -171,7 +171,7 @@ liability.taxStartDate.pageHeading  = Eich dyddiad dechrau treth
 liability.taxStartDate.sectionHeader  = Manylion rhwymedigaeth
 liability.taxStartDate.hint  = Eich dyddiad dechrau treth yw {0}
 liability.taxStartDate.threshHoldBreached.hint  = Dyma ddiwrnod cyntaf y mis ar ôl i chi gyrraedd y trothwy 10,000kg.
-liability.taxStartDate.realisedThresholdWouldBeExceeded.hint  = Dyma’r diwrnod yr oedd gennych sail resymol dros gredu y byddech yn cyrraedd y trothwy 10,000kg cyn pen 30 diwrnod.
+liability.taxStartDate.realisedThresholdWouldBeExceeded.hint  = Dyma’r dyddiad yr oedd gennych sail resymol dros gredu y byddech yn cyrraedd y trothwy 10,000kg cyn 30 diwrnod.
 liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error  = Mae’n rhaid i’r dyddiad fod ar neu ar ôl {0}
 
 liability.checkAnswers.title  = Gwiriwch eich atebion
@@ -211,7 +211,7 @@ primaryContactDetails.emailAddress.passcode.hint  = Er enghraifft, DNCLRK
 primaryContactDetails.emailAddress.passcode.label  = Cod cadarnhau
 primaryContactDetails.emailAddress.passcode.empty.error  = Nodwch y cod a anfonwyd drwy e-bost i gadarnhau’r cyfeiriad e-bost. Er enghraifft, PGYHNB
 primaryContactDetails.emailAddress.passcode.incorrect  = Mae’r cod cadarnhau yn anghywir. Nodwch y cod a anfonwyd drwy e-bost i gadarnhau’r cyfeiriad e-bost. Er enghraifft, PGYHNB
-primaryContactDetails.emailAddress.passcode.detail  = Rydym wedi anfon cod at {0} i gadarnhau’r cyfeiriad e-bost hwn.
+primaryContactDetails.emailAddress.passcode.detail  = Rydym wedi anfon cod {0} i gadarnhau’r cyfeiriad e-bost hwn.
 primaryContactDetails.emailAddress.passcode.summary  = Nid wyf wedi cael e-bost
 primaryContactDetails.emailAddress.passcode.summary.detail  = Gall yr e-bost gymryd ychydig o funudau i gyrraedd. Llinell pwnc yr e-bost yw: Cadarnhau’ch cyfeiriad e-bost / Confirm your email address
 primaryContactDetails.emailAddress.passcode.summary.detail.2  = Gwiriwch eich ffolder sbam neu sothach. Os nad yw wedi cyrraedd o hyd, gallwch
@@ -247,7 +247,7 @@ primaryContactDetails.address.addressLine3.format.error  = Nodwch gyfeiriad yn y
 primaryContactDetails.address.townOrCity  = Tref neu ddinas
 primaryContactDetails.address.townOrCity.empty.error  = Nodwch dref neu ddinas
 primaryContactDetails.address.townOrCity.format.error  = Nodwch dref neu ddinas yn y fformat cywir
-primaryContactDetails.address.postCode  = Cod post (required for UK addresses)
+primaryContactDetails.address.postCode  = Cod post (angenrheidiol ar gyfer cyfeiriadau yn y DU)
 primaryContactDetails.address.postCode.empty.error  = Nodwch god post
 primaryContactDetails.address.postCode.format.error  = Nodwch god post yn y fformat cywir. Er enghraifft, AB1 2CD
 primaryContactDetails.address.lookup  = Chwilio am gyfeiriad newydd
@@ -273,8 +273,8 @@ addOrganisation.empty.error  = Dewiswch ‘Iawn’ neu ‘Na’
 reviewRegistration.organisationDetails.title  = Adolygu ac anfon eich cofrestriad
 reviewRegistration.organisationDetails.check.liability  = Manylion rhwymedigaeth
 reviewRegistration.organisationDetails.check.label.singleEntity  = Manylion y sefydliad
-reviewRegistration.organisationDetails.check.label.group  = Manylion y sefydliad enwebedig
-reviewRegistration.organisationDetails.check.label.groupMembers  = Sefydliadau yn y grŵp
+reviewRegistration.organisationDetails.check.label.group  = Manylion yr aelod cynrychiadol
+reviewRegistration.organisationDetails.check.label.groupMembers  = Sefydliadau eraill yn y grŵp
 reviewRegistration.organisationDetails.organisationType  = Math o sefydliad
 reviewRegistration.organisationDetails.organisationName  = Enw’r sefydliad
 reviewRegistration.organisationDetails.businessRegistrationNumber  = Rhif cofrestru’r cwmni
@@ -325,14 +325,11 @@ confirmationPage.detail.3  = Gallwch hefyd ddod o hyd i’r rhif cofrestru hwn a
 confirmationPage.detail.3.link  = cyfrif Treth Deunydd Pacio Plastig
 
 confirmationPage.whatHappensNext.title  = Yr hyn sy’n digwydd nesaf
-confirmationPage.preLaunch.whatHappensNext.detail  = Mae’r Dreth Deunydd Pacio Plastig yn dechrau ar 1 Ebrill 2022.
-confirmationPage.preLaunch.whatHappensNext.link  = Ewch i’ch {0} i gael gwybod sut mae paratoi’ch Ffurflen Dreth.
-confirmationPage.preLaunch.whatHappensNext.link.text  = [Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol]:
 confirmationPage.whatHappensNext.detail  = Ewch i’ch {0} i wneud y canlynol:
-confirmationPage.whatHappensNext.detail.link  = Ewch i’ch cyfrif Treth Deunydd Pacio Plastig i wneud y canlynol:
+confirmationPage.whatHappensNext.detail.link  = cyfrif Treth Deunydd Pacio Plastig
 confirmationPage.whatHappensNext.detail.item1  = cyflwyno Ffurflen Dreth
 confirmationPage.whatHappensNext.detail.item2  = cael gwybod sut i baratoi Ffurflen Dreth
-confirmationPage.whatHappensNext.bta  = Gallwch hefyd ddefnyddio’ch 0 i reoli’ch cyfrif Treth Deunydd Pacio Plastig neu i ganiatáu i rywun arall ei reoli ar eich rhan.
+confirmationPage.whatHappensNext.bta  = Gallwch hefyd ddefnyddio’ch {0} i reoli’ch cyfrif Treth Deunydd Pacio Plastig neu i ganiatáu i rywun arall ei reoli ar eich rhan.
 confirmationPage.whatHappensNext.bta.link  = cyfrif treth busnes
 
 confirmationPage.exitSurvey.link  = {0}
@@ -390,11 +387,11 @@ partnership.partners.in.the.partnership = Partneriaid yn y bartneriaeth
 
 partnership.registrationAvailableSoon.header  = Partneriaeth
 partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir
-partnership.registrationAvailableSoon  = {0] a byddwn yn cysylltu â chi pan fydd y gwasanaeth ar gael.
-partnership.registrationAvailableSoon.link  = Rhowch wybod i ni eich bod yn dymuno cofrestru partneriaeth
+partnership.registrationAvailableSoon  = {0}, a byddwn yn cysylltu â chi pan fydd y gwasanaeth ar gael.
+partnership.registrationAvailableSoon.link  = Anfonwch e-bost at pptpartnerships@hmrc.gov.uk i roi gwybod i ni yr hoffech gofrestru fel partneriaeth
 partnership.registrationAvailableSoon.href  =  mailto:pptpartnerships@hmrc.gov.uk
 partnership.registrationAvailableSoon.feedback  = {0} Bydd eich meddyliau a’ch syniadau’n ein helpu i wneud gwelliannau.
-partnership.registrationAvailableSoon.feedback.link  = Anfonwch eich adborth atom
+partnership.registrationAvailableSoon.feedback.link  = Anfonwch eich adborth atom.
 
 partner.type.SoleTrader  = Unig fasnachwr
 partner.type.UkCompany  = Cwmni cyfyngedig yn y DU
@@ -445,7 +442,7 @@ unauthorised.agent.paragraph.4.full.stop = .
 
 organisationDetails.registerAsOtherOrganisation.title  = Cofrestru fel Sefydliad Corfforedig Elusennol, ymddiriedolaeth neu gwmni tramor heb safle yn y DU
 organisationDetails.registerAsOtherOrganisation.paragraph.1  = Gwasanaeth newydd yw hwn, ac nid oes modd delio â’r math hwn o sefydliad ar hyn o bryd.
-organisationDetails.registerAsOtherOrganisation.paragraph.2  = Gallwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig o hyd drwy {0}.
+organisationDetails.registerAsOtherOrganisation.paragraph.2  = Gallwch gofrestru ar gyfer y Dreth Deunydd Pacio Plastig o hyd drwy {0}
 organisationDetails.registerAsOtherOrganisation.paragraph.3  = Gofynnir rhai cwestiynau i chi ynghylch eich sefydliad a’ch Treth Deunydd Pacio Plastig eto.
 organisationDetails.registerAsOtherOrganisation.gform.link.description  = gwblhau’r ffurflen ar-lein hon
 
