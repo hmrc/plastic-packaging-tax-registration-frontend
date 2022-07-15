@@ -272,7 +272,7 @@ reviewRegistration.organisationDetails.organisationName = Organisation name
 reviewRegistration.organisationDetails.businessRegistrationNumber = Company registration number
 reviewRegistration.organisationDetails.registeredBusinessAddress = Registered address
 reviewRegistration.organisationDetails.uniqueTaxpayerReference = Unique Taxpayer Reference
-reviewRegistration.sendYourApplication.body = By submitting this registration you are confirming that, to the best of your knowledge, the details you are providing are correct.
+reviewRegistration.sendYourApplication.body = By sending this registration you are confirming that, to the best of your knowledge, these details are correct.
 
 reviewRegistration.organisationDetails.soleTrader.firstName = First name
 reviewRegistration.organisationDetails.soleTrader.lastName = Last name
