@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @import java.time.LocalDate
 
@@ -27,7 +28,8 @@
  pageHeading:       pageHeading,
  paragraphBody:     paragraphBody,
  continueButton:    continue,
- sectionHeader:     sectionHeader
+ sectionHeader:     sectionHeader,
+ viewUtils:         ViewUtils
 )
 @(startDate: LocalDate, isDateFromBackwardsTest: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
 
@@ -41,10 +43,7 @@
     @sectionHeader(messages("liability.sectionHeader"))
     @pageHeading(messages("liability.taxStartDate.pageHeading"))
 
-    @paragraphBody(messages("liability.taxStartDate.hint",
-        startDate.getDayOfMonth + " " +
-                messages(s"date.month.${startDate.getMonthValue}") + " " +
-                startDate.getYear))
+    @paragraphBody(messages("liability.taxStartDate.hint",viewUtils.displayLocalDate(startDate)))
     
     @paragraphBody(
         if(isDateFromBackwardsTest)

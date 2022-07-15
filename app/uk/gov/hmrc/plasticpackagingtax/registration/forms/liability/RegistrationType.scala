@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.{mapping, optional, text}
 import play.api.libs.json.{Format, Reads, Writes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.RegType
@@ -41,7 +41,9 @@ object RegistrationType extends CommonFormValidators {
   def form(): Form[RegistrationType] =
     Form(
       mapping(
-        "value" -> text()
+        "value" -> optional(text())
+          .verifying(emptyError,_.isDefined)
+          .transform[String](_.get,Some.apply)
           .verifying(emptyError, contains(RegType.values.toSeq.map(_.toString)))
       )(RegistrationType.apply)(RegistrationType.unapply)
     )
