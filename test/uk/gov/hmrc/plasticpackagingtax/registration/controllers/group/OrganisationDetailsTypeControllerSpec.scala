@@ -152,21 +152,6 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           )
         }
 
-        "group user submits organisation type: " + PARTNERSHIP + " journey disabled" in {
-          val registration: Registration =
-            aRegistration(withRegistrationType(Some(RegType.GROUP)))
-          authorizedUser()
-          mockRegistrationFind(registration)
-          mockRegistrationUpdate()
-
-          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
-          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          redirectLocation(result) mustBe Some(
-            partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad().url
-          )
-        }
-
         "user submits organisation type: " + CHARITABLE_INCORPORATED_ORGANISATION in {
           assertRedirectForOrgType(
             CHARITABLE_INCORPORATED_ORGANISATION,

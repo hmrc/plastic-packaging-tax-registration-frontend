@@ -138,13 +138,6 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                    partnerRoutes.PartnershipTypeController.displayPage().url
           )
         }
-        "user submits organisation type: " + PARTNERSHIP + " journey disabled" in {
-          mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          assertRedirectForOrgType(
-            PARTNERSHIP,
-            partnerRoutes.PartnerRegistrationAvailableSoonController.onPageLoad().url
-          )
-        }
 
         "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
