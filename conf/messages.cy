@@ -460,24 +460,22 @@ notLiable.think.info  = Mae hwn yn wasanaeth newydd ac rydym eisiau gwybod beth 
 notLiable.think.feedback  = {0}. Bydd eich meddyliau a’ch syniadau’n ein helpu i wneud gwelliannau.
 notLiable.think.feedback.link.description  = Anfonwch eich adborth atom
 
-liability.exceededThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
-liability.exceededThresholdWeight.title  = A ydych chi wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
-liability.exceededThresholdWeight.hint = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
-liability.exceededThresholdWeight.hint.2 = Dewiswch ‘Na’ os yw’ch sefydliad neu’ch grŵp yn disgwyl gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig o fewn y 30 diwrnod nesaf.
-liability.exceededThresholdWeight.question = A ydych chi wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
-liability.exceededThresholdWeight.line1 = Dyma gyfanswm yr holl blastig rydych wedi’i weithgynhyrchu neu ei fewnforio ers mis Ebrill. 
-liability.exceededThresholdWeight.line2 = Er enghraifft, gwnaethoch weithgynhyrchu 5,000kg ym mis Ebrill, 2,000kg ym mis Mai a 3,000kg ym mis Mehefin.
-liability.exceededThresholdWeight.line3 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
-liability.exceededThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os ydych wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022
-
 liability.expectToExceedThresholdWeight.sectionHeader = Manylion rhwymedigaeth
 liability.expectToExceedThresholdWeight.title = Ar unrhyw ddiwrnod ers 1 Ebrill 2022, a oedd gennych sail resymol dros gredu y byddech yn gweithgynhyrchu neu’n mewnforio 10,000kg neu fwy o gydrannau deunydd pacio plastig gorffenedig cyn pen 30 diwrnod?
 liability.expectToExceedThresholdWeight.hint = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod ddisgwyl cyrraedd y trothwy hwn.
 liability.expectToExceedThresholdWeight.question = Ar unrhyw ddiwrnod ers 1 Ebrill 2022, a oedd gennych sail resymol dros gredu y byddech yn gweithgynhyrchu neu’n mewnforio 10,000kg neu fwy o gydrannau deunydd pacio plastig gorffenedig cyn pen 30 diwrnod?
 liability.expectToExceedThresholdWeight.line1 = Enghraifft: Ar 16 Mai 2022, rydych yn derbyn archeb i weithgynhyrchu 20,000kg o ddeunydd pacio plastig erbyn 28 Mai 2022. Mae hyn yn cyrraedd y trothwy 10,000kg a chyn pen 30 diwrnod.
-liability.expectToExceedThresholdWeight.line2 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod allu ateb ‘Iawn’. 
-liability.expectToExceedThresholdWeight.line2 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod allu ateb ‘Iawn’. 
+liability.expectToExceedThresholdWeight.line2 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod allu ateb ‘Iawn’.
+liability.expectToExceedThresholdWeight.line2 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod allu ateb ‘Iawn’.
 liability.expectToExceedThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os oedd gennych sail resymol, ar unrhyw ddiwrnod ers 1 Ebrill 2022, dros gredu y byddech yn cyrraedd y trothwy 10,000kg cyn pen 30 diwrnod
+
+liability.exceededThresholdWeight.sectionHeader  = Manylion rhwymedigaeth
+liability.exceededThresholdWeight.title  = A ydych chi wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
+liability.exceededThresholdWeight.question = A ydych chi wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022?
+liability.exceededThresholdWeight.line1 = Dyma gyfanswm yr holl blastig rydych wedi’i weithgynhyrchu neu ei fewnforio ers mis Ebrill.
+liability.exceededThresholdWeight.line2 = Er enghraifft, gwnaethoch weithgynhyrchu 5,000kg ym mis Ebrill, 2,000kg ym mis Mai a 3,000kg ym mis Mehefin.
+liability.exceededThresholdWeight.line3 = Os ydych yn cofrestru fel grŵp, mae’n rhaid i bob aelod fod wedi cyrraedd y trothwy hwn.
+liability.exceededThresholdWeight.question.empty.error  = Dewiswch ‘Iawn’ os ydych wedi gweithgynhyrchu neu fewnforio 10,000kg neu fwy o ddeunydd pacio plastig gorffenedig ers 1 Ebrill 2022
 
 liability.exceededThresholdWeightDate.sectionHeader  = Manylion rhwymedigaeth
 liability.exceededThresholdWeightDate.title = Pryd gwnaethoch gyrraedd y trothwy 10,000kg?

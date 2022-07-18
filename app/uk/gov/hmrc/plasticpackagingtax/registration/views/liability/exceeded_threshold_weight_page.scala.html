@@ -34,41 +34,39 @@
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @ifYes = {
-@govukDateInput(
-    DateInput(
-        id = "exceeded-threshold-weight-date",
-        hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint")))),
-        errorMessage = errorMessages,
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-                content = Text(messages("liability.exceededThresholdWeightDate.title")),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = false))
+    <legend class="@gdsFieldsetPageHeading">
+        @messages("liability.exceededThresholdWeightDate.title")
+    </legend>
+    @govukDateInput(
+        DateInput(
+            id = "exceeded-threshold-weight-date",
+            hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint")))),
+            errorMessage = errorMessages,
+            items = Seq(
+                InputItem(
+                    id = s"${dayField.name}",
+                    name = dayField.name,
+                    label = Some(messages("date.day")),
+                    value = dayField.value,
+                    classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
+                ),
+                InputItem(
+                    id = s"${monthField.name}",
+                    name = monthField.name,
+                    label = Some(messages("date.month")),
+                    value = monthField.value,
+                    classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
+                ),
+                InputItem(
+                    id = s"${yearField.name}",
+                    name = yearField.name,
+                    label = Some(messages("date.year")),
+                    value = yearField.value,
+                    classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
+                )
+            )
         )
-        ),
-        items = Seq(
-            InputItem(
-                id = s"${dayField.name}",
-                name = dayField.name,
-                label = Some(messages("date.day")),
-                value = dayField.value,
-                classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
-            ),
-            InputItem(
-                id = s"${monthField.name}",
-                name = monthField.name,
-                label = Some(messages("date.month")),
-                value = monthField.value,
-                classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
-            ),
-            InputItem(
-                id = s"${yearField.name}",
-                name = yearField.name,
-                label = Some(messages("date.year")),
-                value = yearField.value,
-                classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
-            )))
-)
+    )
 }
 
 
@@ -79,14 +77,6 @@
 @errorMessages = @{
         val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")
         if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
-}
-
-
-@hints = {
-    <p class="govuk-hint">@messages("liability.exceededThresholdWeight.hint")</p>
-
-    <p class="govuk-hint">@messages("liability.exceededThresholdWeight.hint.2")</p>
-
 }
 
 
