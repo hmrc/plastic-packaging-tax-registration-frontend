@@ -77,8 +77,10 @@
 @yearField = @{form("exceeded-threshold-weight-date.year")}
 
 @errorMessages = @{
-        val errors = form.errors.map(err => messages(err.message, err.key)).mkString("<br>")
-        if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
+    val errors = form.errors
+        .filter(err => !err.message.contains("liability.exceededThresholdWeight.question.empty.error"))
+        .map(er => messages(er.message, er.key)).mkString("<br>")
+    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
 
@@ -97,7 +99,7 @@
         pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
         messages("site.back.hiddenText")))) {
 
-    @errorSummary(form.errors, errorFieldName = Some("exceeded-threshold-weight-date.day"))
+    @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
 

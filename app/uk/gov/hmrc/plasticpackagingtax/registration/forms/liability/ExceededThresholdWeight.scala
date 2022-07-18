@@ -45,9 +45,7 @@ class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) exte
   def form()(implicit messages: Messages): Form[ExceededThresholdWeightAnswer] =
     Form(
       mapping(
-        "answer" -> nonEmptyString(emptyError)
-          .verifying(emptyError, contains(Seq(YesNoValues.YES, YesNoValues.NO)))
-          .transform[Boolean](_ == YesNoValues.YES, bool => if (bool) YesNoValues.YES else YesNoValues.NO),
+        "answer" -> toBoolean(emptyError),
         "exceeded-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
           localDate(emptyDateKey =
             dateEmptyError,
@@ -60,7 +58,4 @@ class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) exte
         )
       )(ExceededThresholdWeightAnswer.apply)(ExceededThresholdWeightAnswer.unapply)
     )
-
-  
-
 }

@@ -45,7 +45,7 @@
             content = HtmlContent(hint)
         )},
             items = Seq(
-                RadioItem(id = Some("value-yes"),
+                RadioItem(id = Some("answer"),
                 value = Some(YesNoValues.YES),
                 content = Text(messages("general.true")),
                 checked = form("answer").value.contains(YesNoValues.YES),
@@ -58,5 +58,5 @@
                 conditionalHtml = ifNo
             )
         ),
-errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
 ))

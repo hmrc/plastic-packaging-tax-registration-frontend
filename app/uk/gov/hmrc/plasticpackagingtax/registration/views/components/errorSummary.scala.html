@@ -21,16 +21,11 @@
 @(errors: Seq[FormError], errorFieldName: Option[String] = None)(implicit messages: Messages)
 
 @errorList = @{errors.map { error =>
-    val errorKey = error.key.replace(".", "_").replace('[', '_').replace("]", "")
-    val errorMsg = messages(error.message, errorKey)
-
-    if(errorMsg.nonEmpty){
-        ErrorLink(
-            href = Some(s"#${errorFieldName.getOrElse(errorKey)}"),
-            content = Text(errorMsg)
-        )
-    }
-}.collect{case errLink: ErrorLink => errLink}}
+    ErrorLink(
+        href = Some(s"#${errorFieldName.getOrElse(error.key)}"),
+        content = Text(messages(error.message, error.args: _*))
+    )
+}}
 
 @if(errorList.nonEmpty) {
     @govukErrorSummary(

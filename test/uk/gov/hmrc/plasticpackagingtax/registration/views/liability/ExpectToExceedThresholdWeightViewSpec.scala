@@ -70,8 +70,8 @@ class ExpectToExceedThresholdWeightViewSpec
 
     "display radio inputs" in {
 
-      view must containElementWithID("value-yes")
-      view.getElementById("value-yes").attr("value") mustBe YesNoValues.YES
+      view must containElementWithID("answer")
+      view.getElementById("answer").attr("value") mustBe YesNoValues.YES
       view must containElementWithID("value-no")
       view.getElementById("value-no").attr("value") mustBe YesNoValues.NO
     }
@@ -91,7 +91,7 @@ class ExpectToExceedThresholdWeightViewSpec
       val form = formProvider().fill(ExpectToExceedThresholdWeightAnswer(true, Some(LocalDate.now())))
       val view = createView(form)
 
-      view.getElementById("value-yes").attr("value") mustBe "yes"
+      view.getElementById("answer").attr("value") mustBe "yes"
     }
 
     "display error" when {
@@ -122,7 +122,7 @@ class ExpectToExceedThresholdWeightViewSpec
       }
 
       "display question" in {
-        view.select("#conditional-value-yes > div > fieldset > legend").text() must include(
+        view.select("#conditional-answer > div > fieldset > legend").text() must include(
           messages("liability.expectToExceedThreshold.date.question")
         )
       }
