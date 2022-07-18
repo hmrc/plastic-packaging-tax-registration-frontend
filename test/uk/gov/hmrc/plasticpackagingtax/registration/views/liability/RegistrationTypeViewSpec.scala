@@ -102,7 +102,7 @@ class RegistrationTypeViewSpec extends UnitViewSpec with Matchers {
           .bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("value", "This field is required")
+        view must haveGovukFieldError("value", "Select what you want to register")
         view must haveGovukGlobalErrorSummary
       }
 

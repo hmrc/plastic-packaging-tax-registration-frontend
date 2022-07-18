@@ -364,7 +364,7 @@ const grsStFirstLastName = () => {
 
 const grsStDob = () => {
     if (currentPageIs('/identify-your-sole-trader-business/.*/date-of-birth')) {
-        document.getElementById('date-of-birth').value = '01'
+        document.getElementById('date-of-birth-day').value = '01'
         document.getElementById('date-of-birth-month').value = '06'
         document.getElementById('date-of-birth-year').value = '1977'
 
