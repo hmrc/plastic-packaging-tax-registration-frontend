@@ -212,7 +212,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def unauthenticatedFeedbackUrl(): String =
     s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
-  }
   lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
 
   lazy val mfaUpliftUrl: String = config.get[String]("urls.mfaUplift")
