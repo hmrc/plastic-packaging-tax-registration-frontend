@@ -103,7 +103,7 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
     "display email address passcode detail" in {
 
       view.getElementsByClass("govuk-body").get(0).text() mustBe
-        messages("primaryContactDetails.emailAddress.passcode.detail", "to test@test.com")
+        messages("primaryContactDetails.emailAddress.passcode.detail", "test@test.com")
 
     }
 
