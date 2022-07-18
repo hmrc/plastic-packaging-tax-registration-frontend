@@ -25,7 +25,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.models.TaskStatus
 import java.time.LocalDate
 
 class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
-  
+
   private val completedDetails = LiabilityDetails(
     expectToExceedThresholdWeight = Some(true),
     dateExceededThresholdWeight = Some(Date(LocalDate.parse("2022-03-05"))),
@@ -57,7 +57,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
           newLiabilityStarted = Some(NewLiability)
         )
         liabilityDetails.status mustBe TaskStatus.InProgress
-        }
+      }
 
       "liability details are partially filled with forwards answer" in {
         val liabilityDetails = LiabilityDetails(
@@ -71,7 +71,14 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
           exceededThresholdWeight = Some(true),
         )
         liabilityDetails.status mustBe TaskStatus.InProgress
-        }
+      }
+
+      "liability details are partially filled with expectedWeight answer" in {
+        val liabilityDetails = LiabilityDetails(
+          expectedWeightNext12m = Some(LiabilityWeight(Some(6969))),
+        )
+        liabilityDetails.status mustBe TaskStatus.InProgress
+      }
     }
 
     "be COMPLETED " when {
@@ -81,7 +88,7 @@ class LiabilityDetailsSpec extends AnyWordSpec with Matchers {
         completedDetails.status mustBe TaskStatus.Completed
       }
     }
-    
+
     "clear some of the previous questions" in {
       val fullyCompleteddetails = completedDetails.copy(
         // TODO missing fields        

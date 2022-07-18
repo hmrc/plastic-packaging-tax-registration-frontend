@@ -480,7 +480,7 @@ liability.exceededThresholdWeight.line3 = If you’re registering as a group, ea
 liability.exceededThresholdWeight.question.empty.error = Select yes if you have manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022
 
 liability.exceededThresholdWeightDate.sectionHeader = Liability details
-liability.exceededThresholdWeightDate.title = When did you you meet the 10,000kg threshold?
+liability.exceededThresholdWeightDate.title = When did you meet the 10,000kg threshold?
 liability.exceededThresholdWeightDate.hint = For example, 15 5 2022.
 liability.exceededThresholdWeightDate.formatting.error = Date must be a real date
 liability.exceededThresholdWeightDate.outOfRange.error = Date must be today or in the past
