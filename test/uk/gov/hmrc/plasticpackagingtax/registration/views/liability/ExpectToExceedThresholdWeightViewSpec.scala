@@ -69,7 +69,7 @@ class ExpectToExceedThresholdWeightViewSpec
     }
 
     "display radio inputs" in {
-//todo value yes or answer
+
       view must containElementWithID("value-yes")
       view.getElementById("value-yes").attr("value") mustBe YesNoValues.YES
       view must containElementWithID("value-no")
@@ -90,7 +90,7 @@ class ExpectToExceedThresholdWeightViewSpec
 
       val form = formProvider().fill(ExpectToExceedThresholdWeightAnswer(true, Some(LocalDate.now())))
       val view = createView(form)
-//todo here too
+
       view.getElementById("value-yes").attr("value") mustBe "yes"
     }
 
@@ -121,7 +121,7 @@ class ExpectToExceedThresholdWeightViewSpec
         view.select("span#section-header").text() must include(messages("liability.sectionHeader"))
       }
 
-      "display question" in {//todo here aswell
+      "display question" in {
         view.select("#conditional-value-yes > legend").text() must include(
           messages("liability.expectToExceedThreshold.date.question")
         )
