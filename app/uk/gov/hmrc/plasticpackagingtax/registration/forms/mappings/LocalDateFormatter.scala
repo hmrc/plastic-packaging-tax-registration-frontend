@@ -79,31 +79,21 @@ private[mappings] class LocalDateFormatter(
 
     fields.count(_._2.isDefined) match {
       case 3 =>
-        formatDate(key, data).left.map {
-          _.map(_.copy(key = key, args = args))
-        }
+        formatDate(key, data)
       case 2 =>
-        Left(
-          List(FormError(messages(s"general.${missingFields.head}"), singleRequiredKey, missingFields),
-               FormError(s"$key.${missingFields.head}", "")
-          )
-        )
+        Left(List(FormError(s"$key.${missingFields.head}", singleRequiredKey, Seq(messages(s"general.${missingFields.head}")))))
       case 1 =>
         Left(
           List(
-            FormError(messages("general.and", messages(s"general.${missingFields.head}"), messages(s"general.${missingFields.last}")),
-                      twoRequiredKey,
-                      missingFields
-            ),
-            FormError(s"$key.${missingFields.head}", ""),
-            FormError(s"$key.${missingFields.last}", "")
+            FormError(s"$key.${missingFields.head}",
+              twoRequiredKey,
+              Seq(messages("general.and", messages(s"general.${missingFields.head}"), messages(s"general.${missingFields.last}")))
+            )
           )
         )
       case _ =>
         Left(
-          List(FormError(s"$key.day", emptyDateKey, args),
-               FormError(s"$key.month", ""),
-               FormError(s"$key.year", "")
+          List(FormError(s"$key.day", emptyDateKey, args)
           )
         )
     }

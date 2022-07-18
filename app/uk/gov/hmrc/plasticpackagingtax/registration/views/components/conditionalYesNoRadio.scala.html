@@ -36,8 +36,7 @@
             name = form("answer").name,
             fieldset = Some(Fieldset(
             legend = Some(Legend(
-                content = maybeHeadingKey.fold(Empty: Content)(headingKey =>
-                            Text(messages(headingKey, headingMessageArgs:_*))),
+            content = maybeHeadingKey.fold(Empty: Content)(headingKey => Text(messages(headingKey, headingMessageArgs:_*))),
             isPageHeading = isPageHeading,
             classes = classes
             ))

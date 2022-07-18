@@ -23,6 +23,19 @@ import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
 
+  private[mappings] def booleanFormatter(msgKey: String): Formatter[Boolean] = new Formatter[Boolean] {
+
+    def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] = {
+      data.get(key) match {
+        case Some("yes") => Right(true)
+        case Some("no") => Right(false)
+        case _ => Left(Seq(FormError(key, msgKey)))
+      }
+    }
+
+    def unbind(key: String, value: Boolean) = Map(key -> value.toString)
+  }
+
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] =
     new Formatter[String] {
 
