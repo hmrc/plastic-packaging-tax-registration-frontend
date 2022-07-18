@@ -90,16 +90,16 @@ class ViewUtils @Inject() (countryService: CountryService) {
   def showChangeLink(call: Call)(implicit journeyRequest: JourneyRequest[_]): Option[Call] =
     Some(call)
 
-  def displayOldDate(date: Option[OldDate]): Option[String] =
+  def displayOldDate(date: Option[OldDate])(implicit messages: Messages): Option[String] =
     displayLocalDate(date.map(_.asLocalDate))
 
-  def displayDate(date: Option[Date]): Option[String] =
+  def displayDate(date: Option[Date])(implicit messages: Messages): Option[String] =
     displayLocalDate(date.map(_.date))
 
-  def displayLocalDate(date: Option[LocalDate]): Option[String] =
+  def displayLocalDate(date: Option[LocalDate])(implicit messages: Messages): Option[String] =
     date.map(displayLocalDate)
 
-  def displayLocalDate(date: LocalDate): String =
-    date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+  def displayLocalDate(date: LocalDate)(implicit messages: Messages): String =
+    date.getDayOfMonth + " " + messages(s"date.month.${date.getMonthValue}") + " " + date.getYear
 
 }
