@@ -202,7 +202,7 @@ primaryContactDetails.emailAddress.passcode.hint = For example, DNCLRK.
 primaryContactDetails.emailAddress.passcode.label = Confirmation code
 primaryContactDetails.emailAddress.passcode.empty.error = Enter the code that was sent by email to confirm the email address. For example PGYHNB
 primaryContactDetails.emailAddress.passcode.incorrect = Confirmation code is incorrect. Enter the code that was sent by email to confirm the email address. For example PGYHNB
-primaryContactDetails.emailAddress.passcode.detail = We have sent a code {0} to confirm this email address.
+primaryContactDetails.emailAddress.passcode.detail = We have sent a code to {0} to confirm this email address.
 primaryContactDetails.emailAddress.passcode.summary = I have not received an email
 primaryContactDetails.emailAddress.passcode.summary.detail = The email may take a few minutes to arrive. Its subject line is: 'Confirm your email address'.
 primaryContactDetails.emailAddress.passcode.summary.detail.2 = Check your spam or junk folder. If it has still not arrived, you can {0}.
@@ -330,8 +330,8 @@ confirmationPage.exitSurvey.link.text = What did you think of this service?
 registrationType.title = What do you want to register?
 registrationType.singleEntity = A single organisation
 registrationType.group = A group of organisations
-registrationType.group.hint = You cannot register charitable incorporated organisations (CIO) or overseas organisations without a UK establishment as part of a group.
-registrationType.type.empty.error = Value must be selected
+registrationType.group.hint = You cannot register charitable incorporated organisations (CIO) or foreign companies with no UK establishment as part of a group.
+registrationType.type.empty.error = Select what you want to register
 
 organisationDetails.sectionHeader = Organisation details
 

@@ -171,7 +171,7 @@ liability.taxStartDate.pageHeading  = Eich dyddiad dechrau treth
 liability.taxStartDate.sectionHeader  = Manylion rhwymedigaeth
 liability.taxStartDate.hint  = Eich dyddiad dechrau treth yw {0}
 liability.taxStartDate.threshHoldBreached.hint  = Dyma ddiwrnod cyntaf y mis ar ôl i chi gyrraedd y trothwy 10,000kg.
-liability.taxStartDate.realisedThresholdWouldBeExceeded.hint  = Dyma’r dyddiad yr oedd gennych sail resymol dros gredu y byddech yn cyrraedd y trothwy 10,000kg cyn 30 diwrnod.
+liability.taxStartDate.realisedThresholdWouldBeExceeded.hint  = Dyma’r diwrnod yr oedd gennych sail resymol dros gredu y byddech yn cyrraedd y trothwy 10,000kg cyn pen 30 diwrnod.
 liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error  = Mae’n rhaid i’r dyddiad fod ar neu ar ôl {0}
 
 liability.checkAnswers.title  = Gwiriwch eich atebion
@@ -211,7 +211,7 @@ primaryContactDetails.emailAddress.passcode.hint  = Er enghraifft, DNCLRK
 primaryContactDetails.emailAddress.passcode.label  = Cod cadarnhau
 primaryContactDetails.emailAddress.passcode.empty.error  = Nodwch y cod a anfonwyd drwy e-bost i gadarnhau’r cyfeiriad e-bost. Er enghraifft, PGYHNB
 primaryContactDetails.emailAddress.passcode.incorrect  = Mae’r cod cadarnhau yn anghywir. Nodwch y cod a anfonwyd drwy e-bost i gadarnhau’r cyfeiriad e-bost. Er enghraifft, PGYHNB
-primaryContactDetails.emailAddress.passcode.detail  = Rydym wedi anfon cod {0} i gadarnhau’r cyfeiriad e-bost hwn.
+primaryContactDetails.emailAddress.passcode.detail  = Rydym wedi anfon cod i {0} gadarnhau’r cyfeiriad e-bost hwn.
 primaryContactDetails.emailAddress.passcode.summary  = Nid wyf wedi cael e-bost
 primaryContactDetails.emailAddress.passcode.summary.detail  = Gall yr e-bost gymryd ychydig o funudau i gyrraedd. Llinell pwnc yr e-bost yw: Cadarnhau’ch cyfeiriad e-bost / Confirm your email address
 primaryContactDetails.emailAddress.passcode.summary.detail.2  = Gwiriwch eich ffolder sbam neu sothach. Os nad yw wedi cyrraedd o hyd, gallwch
@@ -338,8 +338,8 @@ confirmationPage.exitSurvey.link.text  = Beth oedd eich barn am y gwasanaeth hwn
 registrationType.title  = Beth hoffech ei gofrestru?
 registrationType.singleEntity  = Sefydliad unigol
 registrationType.group  = Grŵp o sefydliadau
-registrationType.group.hint  = Ni allwch gofrestru Sefydliadau Corfforedig Elusennol, na sefydliadau tramor heb safle yn y DU, fel rhan o grŵp.
-registrationType.type.empty.error  = Mae’n rhaid dewis gwerth
+registrationType.group.hint  = Ni allwch gofrestru Sefydliadau Corfforedig Elusennol, na chwmnïau tramor heb unrhyw sefydliad yn y DU, fel rhan o grŵp.
+registrationType.type.empty.error  = Dewiswch beth yr hoffech ei gofrestru
 
 organisationDetails.sectionHeader  = Manylion y sefydliad
 
