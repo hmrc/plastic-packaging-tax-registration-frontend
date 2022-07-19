@@ -45,46 +45,42 @@
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
-@yesContent = {
-    @pageHeading(messages("liability.expectToExceedThreshold.date.question")) 
-    @paragraphBody(messages("liability.expectToExceedThreshold.date.line1"))
-}
-    
+
 @ifYes={
-@govukDateInput(
-    DateInput(
-        id = "expect-to-exceed-threshold-weight-date",
-        hint = Some(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint")))),
-        errorMessage = errorMessages,
-        fieldset = Some(Fieldset(
-            legend = Some(Legend(
-            content = HtmlContent(yesContent), 
-            classes = gdsFieldsetPageHeading,
-            isPageHeading = false))
-            )),
+    <legend class="@gdsFieldsetPageHeading">
+        @messages("liability.expectToExceedThreshold.date.question")
+    </legend>
+    @paragraphBody(messages("liability.expectToExceedThreshold.date.line1"))
+    @govukDateInput(
+        DateInput(
+            id = "expect-to-exceed-threshold-weight-date",
+            hint = Some(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint")))),
+            errorMessage = errorMessages,
             items = Seq(
-            InputItem(
-            id = s"${dayField.name}",
-            name = dayField.name,
-            label = Some(messages("date.day")),
-            value = dayField.value,
-            classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
-            ),
-            InputItem(
-            id = s"${monthField.name}",
-            name = monthField.name,
-            label = Some(messages("date.month")),
-            value = monthField.value,
-            classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
-            ),
-            InputItem(
-            id = s"${yearField.name}",
-            name = yearField.name,
-            label = Some(messages("date.year")),
-            value = yearField.value,
-            classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
-            )))
+                InputItem(
+                    id = s"${dayField.name}",
+                    name = dayField.name,
+                    label = Some(messages("date.day")),
+                    value = dayField.value,
+                    classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
+                ),
+                InputItem(
+                    id = s"${monthField.name}",
+                    name = monthField.name,
+                    label = Some(messages("date.month")),
+                    value = monthField.value,
+                    classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
+                ),
+                InputItem(
+                    id = s"${yearField.name}",
+                    name = yearField.name,
+                    label = Some(messages("date.year")),
+                    value = yearField.value,
+                    classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
+                )
+            )
         )
+    )
 }
 
 @govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
@@ -92,7 +88,7 @@
     @errorSummary(form.errors)
 
     @sectionHeader(messages("liability.expectToExceedThresholdWeight.sectionHeader"))
-    
+
     @pageHeading(messages("liability.expectToExceedThresholdWeight.question"))
     @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
     @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))

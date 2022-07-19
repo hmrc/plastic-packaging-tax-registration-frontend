@@ -33,8 +33,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 import java.time.{Clock, Instant}
 import java.util.TimeZone
 
-@ViewTest
-@Ignore
 class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
   val mockMessages: Messages = mock[Messages]
@@ -63,8 +61,8 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "should not have a 'Back' button" in {
-      view.getElementById("back-link") mustBe null
+    "have a 'Back' button" in {
+      view.getElementById("back-link").text must not be null
     }
 
     "display title" in {
@@ -85,12 +83,43 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
 
     }
 
+    "display question" in {
+      view.select("#conditional-value-yes > legend").text() must include(
+        messages("liability.exceededThresholdWeightDate.title")
+      )
+    }
+
+    "display question hint" in {
+      view.getElementById("exceeded-threshold-weight-date-hint") must containMessage(
+        "liability.exceededThresholdWeightDate.hint"
+      )
+    }
+
+    "display day input box" in {
+      view.getElementsByAttributeValueMatching("for", "day").text() must include(
+        messages("date.day")
+      )
+    }
+
+    "display month input box" in {
+      view.getElementsByAttributeValueMatching("for", "month").text() must include(
+        messages("date.month")
+      )
+    }
+
+    "display year input box" in {
+      view.getElementsByAttributeValueMatching("for", "year").text() must include(
+        messages("date.year")
+      )
+    }
+
     "display 'Save and continue' button" in {
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and continue"
     }
 
     // TODO need a working way to test which radio is checked (or neither) when form is first displayed
+
 
     "display error" when {
       "when form has error" in {

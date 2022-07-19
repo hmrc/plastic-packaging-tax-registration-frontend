@@ -45,18 +45,17 @@
             content = HtmlContent(hint)
         )},
             items = Seq(
-                RadioItem(id = Some("answer"),
+                RadioItem(id = Some("value-yes"),
                 value = Some(YesNoValues.YES),
                 content = Text(messages("general.true")),
                 checked = form("answer").value.contains(YesNoValues.YES),
                 conditionalHtml = ifYes
-            ),
+                ),
                 RadioItem(id = Some("value-no"),
                 value = Some(YesNoValues.NO),
                 content = Text(messages("general.false")),
                 checked = form("answer").value.contains(YesNoValues.NO),
                 conditionalHtml = ifNo
-            )
-        ),
+                )),
         errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
 ))
