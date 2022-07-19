@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.group
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
+import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
@@ -32,12 +33,16 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
   private val singleMember = Seq(groupMember)
 
-  private def createView(members: Seq[GroupMember]): Document =
-    page(AddOrganisationForm.form(), "ACME Inc", members)(journeyRequest, messages)
+  private def createView
+  (
+    form: Form[Boolean] = AddOrganisationForm.form(),
+    members: Seq[GroupMember] = Seq(groupMember)
+  ): Document =
+    page(form, "ACME Inc", members)(journeyRequest, messages)
 
   "OrganisationList View" should {
 
-    val view = createView(singleMember)
+    val view = createView()
 
     "contain timeout dialog function" in {
 
@@ -121,7 +126,7 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
       }
 
       "group contains less only the nominate member" in {
-        val newView = createView(Seq.empty)
+        val newView = createView(members = Seq.empty)
         newView.getElementsByClass("hmrc-add-to-a-list__remove")
           .select("a")
           .size() mustBe 0
@@ -130,11 +135,20 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
     "have the remove button enabled" when {
       "group contains more than 2 members" in {
-        val newView = createView(Seq(groupMember, groupMember, groupMember))
+        val newView = createView(members = Seq(groupMember, groupMember, groupMember))
         newView.getElementsByClass("hmrc-add-to-a-list__remove")
           .select("a")
           .size() mustBe 3
       }
+    }
+
+    "display error if question not answered" in {
+      val form = AddOrganisationForm
+        .form()
+        .bind(Map(AddOrganisationForm.field -> ""))
+      val view = createView(form = form)
+
+      view must haveGovukGlobalErrorSummary
     }
 
   }

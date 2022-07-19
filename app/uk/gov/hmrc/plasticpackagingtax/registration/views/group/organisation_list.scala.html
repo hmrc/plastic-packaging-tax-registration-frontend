@@ -31,6 +31,7 @@
         listMembers: listMembers,
         govukRadios: GovukRadios,
         saveButtons: saveButtons,
+        errorSummary: errorSummary,
         govukSummaryList: GovukSummaryList
 )
 
@@ -58,6 +59,8 @@
 @govukLayout(
     title = Title("group.organisationList.title.multiple", numOrganisations.toString),
     backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+
+    @errorSummary(form.errors)
 
     @sectionHeader(messages("group.organisationList.sectionHeader"))
 

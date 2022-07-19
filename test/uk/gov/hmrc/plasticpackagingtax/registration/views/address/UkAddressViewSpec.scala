@@ -19,6 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.address
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
+import play.api.data.Form
 import play.api.mvc.Call
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.address.UkAddressForm
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.uk_address_page
@@ -33,7 +34,11 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
 
   "UK Address View" should {
 
-    val view: Document = page(UkAddressForm.form(), backLink, Some("entity"), "addressCapture.contact.heading.isUK")
+    def createView(form: Form[Boolean] ): Document = {
+      page(form, backLink, Some("entity"), "addressCapture.contact.heading.isUK")
+    }
+
+    val view: Document = createView(UkAddressForm.form())
 
     "contain timeout dialog function" in {
       containTimeoutDialogFunction(view) mustBe true
@@ -69,6 +74,15 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
     "display 'Save and continue' button" in {
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Save and continue"
+    }
+
+    "display error if question not answered" in {
+      val form = UkAddressForm
+        .form()
+        .bind(Map("ukAddress" -> ""))
+      val view = createView(form)
+
+      view must haveGovukGlobalErrorSummary
     }
 
   }
