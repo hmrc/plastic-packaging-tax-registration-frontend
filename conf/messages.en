@@ -261,7 +261,7 @@ group.organisationList.title.multiple = You have added {0} organisations
 group.organisationList.nominatedOrganisation = Nominated organisation
 
 addOrganisation.add.heading = Do you need to add another organisation?
-addOrganisation.empty.error = Please select Yes or No
+addOrganisation.empty.error = Select yes if you need to add another organisation
 reviewRegistration.organisationDetails.title = Review and send your registration
 reviewRegistration.organisationDetails.check.liability = Liability details
 reviewRegistration.organisationDetails.check.label.singleEntity = Organisation details

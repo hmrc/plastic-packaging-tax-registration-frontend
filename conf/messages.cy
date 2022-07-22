@@ -269,7 +269,7 @@ group.organisationList.title.multiple  = Rydych wedi ychwanegu {0} sefydliad
 group.organisationList.nominatedOrganisation  = Sefydliad enwebedig
 
 addOrganisation.add.heading  = A oes angen i chi ychwanegu sefydliad arall?
-addOrganisation.empty.error  = Dewiswch ‘Iawn’ neu ‘Na’
+addOrganisation.empty.error  = Dewiswch ‘Iawn’ os oes angen i chi ychwanegu sefydliad arall
 reviewRegistration.organisationDetails.title  = Adolygu ac anfon eich cofrestriad
 reviewRegistration.organisationDetails.check.liability  = Manylion rhwymedigaeth
 reviewRegistration.organisationDetails.check.label.singleEntity  = Manylion y sefydliad
