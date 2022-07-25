@@ -139,6 +139,7 @@ liabilityStartDate.outOfRange.error  = Mae’n rhaid i ddyddiad y rhwymedigaeth 
 liabilityWeightPage.sectionHeader  = Manylion rhwymedigaeth
 liabilityWeightPage.title  = Faint o ddeunydd pacio plastig gorffenedig mae’ch sefydliad neu’ch grŵp yn amcangyfrif y bydd yn ei weithgynhyrchu neu’n ei fewnforio yn ystod y 12 mis nesaf?
 liabilityWeightPage.question  = Faint o ddeunydd pacio plastig gorffenedig mae’ch sefydliad neu’ch grŵp yn amcangyfrif y bydd yn ei weithgynhyrchu neu’n ei fewnforio yn ystod y 12 mis nesaf?
+liabilityWeightPage.hint = Nodwch y pwysau, mewn cilogramau. Mae 1 dunnell yn 1,000kg.
 liabilityWeight.outOfRange.error  = Mae’n rhaid i’r pwysau fod yn 99,999,999kg neu lai
 liabilityWeight.empty.error  = Nodwch y pwysau, mewn cilogramau
 liabilityWeight.below.threshold.error  = Mae’n rhaid i’r pwysau fod yn 1kg neu fwy

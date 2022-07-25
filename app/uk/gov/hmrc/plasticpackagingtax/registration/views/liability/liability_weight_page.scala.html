@@ -57,7 +57,7 @@
                 id = s"${totalWeightField.name}",
                 name = totalWeightField.name,
                 value = totalWeightField.value,
-                hint = None,
+                hint = Some(Hint(content = Text(messages("liabilityWeightPage.hint")))),
                 label = Label(
                     isPageHeading = true,
                     classes = gdsLabelPageHeading,

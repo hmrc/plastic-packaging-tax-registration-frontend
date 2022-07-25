@@ -139,6 +139,7 @@ liabilityStartDate.outOfRange.error = Liability date must be today or in the pas
 liabilityWeightPage.sectionHeader = Liability details
 liabilityWeightPage.title = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
 liabilityWeightPage.question = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
+liabilityWeightPage.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
 liabilityWeight.outOfRange.error = Weight must be 99,999,999,999kg or less
 liabilityWeight.empty.error = Enter the weight, in kilograms
 liabilityWeight.below.threshold.error = Weight must be 1kg or more
