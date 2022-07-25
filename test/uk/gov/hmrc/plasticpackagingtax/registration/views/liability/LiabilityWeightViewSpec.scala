@@ -75,6 +75,15 @@ class LiabilityWeightViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+    "display hint" in {
+      view.getElementsByClass("govuk-hint").text() must include(
+        "Enter the weight, in kilograms. 1 tonne is 1,000kg.")
+
+      view.getElementsByClass("govuk-hint").text() must include(
+        messages("liabilityWeightPage.hint")
+      )
+    }
+
     "display total weight input box" in {
       view must containElementWithID("totalKg")
     }
