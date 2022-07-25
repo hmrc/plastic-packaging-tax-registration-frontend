@@ -56,8 +56,7 @@ class UserDataRepositorySpec
 
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
     new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),
-                             PptTestData.newUser("123"),
-                             appConfig
+                             PptTestData.newUser("123")
     )
 
   override def beforeEach(): Unit = {

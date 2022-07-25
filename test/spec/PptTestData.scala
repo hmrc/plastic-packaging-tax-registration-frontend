@@ -50,10 +50,10 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   val authenticatedRequest: AuthenticatedRequest[AnyContent] =
-    new AuthenticatedRequest(FakeRequest().withCSRFToken, newUser(), appConfig)
+    new AuthenticatedRequest(FakeRequest().withCSRFToken, newUser())
 
   implicit val journeyRequest: JourneyRequest[AnyContent] =
-    JourneyRequest(authenticatedRequest = authenticatedRequest, registration = aRegistration(), appConfig = appConfig, pptReference = None)
+    JourneyRequest(authenticatedRequest = authenticatedRequest, registration = aRegistration(), pptReference = None)
 
   def pptReferenceFromUsersEnrolments(user: SignedInUser): Option[String] =
     user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(_.identifiers.headOption.map(_.value))
@@ -61,9 +61,8 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
   val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
     JourneyRequest(
       authenticatedRequest =
-        new AuthenticatedRequest(FakeRequest().withCSRFToken, userWithPPTEnrolment, appConfig),
+        new AuthenticatedRequest(FakeRequest().withCSRFToken, userWithPPTEnrolment),
       registration = aRegistration(),
-      appConfig = appConfig,
       pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
     )
 

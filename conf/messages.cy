@@ -385,14 +385,6 @@ partnership.name.too-long = Mae’n rhaid i’r enw fod yn 160 o gymeriadau neu 
 
 partnership.partners.in.the.partnership = Partneriaid yn y bartneriaeth
 
-partnership.registrationAvailableSoon.header  = Partneriaeth
-partnership.registrationAvailableSoon.title  = Bydd hi’n bosibl cofrestru partneriaeth cyn hir
-partnership.registrationAvailableSoon  = {0}, a byddwn yn cysylltu â chi pan fydd y gwasanaeth ar gael.
-partnership.registrationAvailableSoon.link  = Anfonwch e-bost at pptpartnerships@hmrc.gov.uk i roi gwybod i ni yr hoffech gofrestru fel partneriaeth
-partnership.registrationAvailableSoon.href  =  mailto:pptpartnerships@hmrc.gov.uk
-partnership.registrationAvailableSoon.feedback  = {0} Bydd eich meddyliau a’ch syniadau’n ein helpu i wneud gwelliannau.
-partnership.registrationAvailableSoon.feedback.link  = Anfonwch eich adborth atom.
-
 partner.type.SoleTrader  = Unig fasnachwr
 partner.type.UkCompany  = Cwmni cyfyngedig yn y DU
 partner.type.RegisteredSociety  = Cymdeithas gofrestredig

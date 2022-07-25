@@ -210,8 +210,8 @@ abstract class AuthActionBase @Inject() (
     else
       block {
         val user =
-          SignedInUser(allEnrolments, identityData, appConfig.defaultFeatures)
-        new AuthenticatedRequest(request, user, appConfig, pptReference)
+          SignedInUser(allEnrolments, identityData)
+        new AuthenticatedRequest(request, user, pptReference)
       }
   }
 

@@ -212,17 +212,6 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
   def unauthenticatedFeedbackUrl(): String =
     s"$feedbackUnauthenticatedLink?service=${serviceIdentifier}"
 
-  def isDefaultFeatureFlagEnabled(flag: String): Boolean =
-    config
-      .getOptional[Boolean](s"features.$flag")
-      .getOrElse(false)
-
-  lazy val defaultFeatures: Map[String, Boolean] = {
-    config
-      .getOptional[Map[String, Boolean]](s"features")
-      .getOrElse(Map.empty)
-  }
-
   lazy val pptAccountUrl = s"$pptAccountHost/plastic-packaging-tax/account"
 
   lazy val mfaUpliftUrl: String = config.get[String]("urls.mfaUplift")

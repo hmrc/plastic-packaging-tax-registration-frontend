@@ -174,11 +174,9 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           val journeyReq = JourneyRequest(
             new AuthenticatedRequest(FakeRequest().withCSRFToken,
                                      user,
-                                     appConfig,
                                      pptReferenceFromUsersEnrolments(user)
             ),
             soleTraderRegistration,
-            appConfig,
             pptReferenceFromUsersEnrolments(user)
           )
           val soleTraderView = page()(journeyReq, messages)
@@ -232,9 +230,8 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
           )
           val user = PptTestData.newUser()
           val journeyReq =
-            JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken, user, appConfig),
+            JourneyRequest(new AuthenticatedRequest(FakeRequest().withCSRFToken, user),
                            updatedRegistation,
-                           appConfig,
                            pptReferenceFromUsersEnrolments(user)
             )
           val partnershipView = page()(journeyReq, messages)

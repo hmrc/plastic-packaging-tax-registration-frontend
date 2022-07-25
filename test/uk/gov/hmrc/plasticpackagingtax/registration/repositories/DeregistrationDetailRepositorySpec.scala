@@ -60,8 +60,7 @@ class DeregistrationDetailRepositorySpec
 
   implicit val request: AuthenticatedRequest[Any] =
     new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> "12345"),
-                             PptTestData.newUser("123"),
-                             appConfig
+                             PptTestData.newUser("123")
     )
 
   private val deregistrationDetail =

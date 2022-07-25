@@ -122,15 +122,4 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       validAppConfig.businessAccountUrl must be("http://localhost:9020/business-account")
     }
   }
-
-  "with an empty config" should {
-
-    val emptyAppConfig: AppConfig = appConfig(Configuration(emptyConfig))
-
-    "inspect feature flags" when {
-      "and check that 'isPartnershipEnabled' default value is 'true'" in {
-        emptyAppConfig.isDefaultFeatureFlagEnabled(Features.isPartnershipEnabled) mustBe false
-      }
-    }
-  }
 }

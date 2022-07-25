@@ -71,7 +71,6 @@ class AmendmentJourneyActionSpec
         val request = new AuthenticatedRequest(
           FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
           enrolledUser,
-          appConfig,
           pptReferenceFromUsersEnrolments(enrolledUser)
         )
 
@@ -89,7 +88,6 @@ class AmendmentJourneyActionSpec
         val request = new AuthenticatedRequest(
           FakeRequest().withSession((AmendmentJourneyAction.SessionId, "123")),
           enrolledUser,
-          appConfig,
           pptReferenceFromUsersEnrolments(enrolledUser)
         )
 
@@ -104,8 +102,7 @@ class AmendmentJourneyActionSpec
       "user does not have an internal id" in {
         val request = new AuthenticatedRequest(
           FakeRequest(),
-          user.copy(identityData = user.identityData.copy(internalId = None)),
-          appConfig
+          user.copy(identityData = user.identityData.copy(internalId = None))
         )
 
         intercept[InsufficientEnrolments] {
@@ -114,7 +111,7 @@ class AmendmentJourneyActionSpec
       }
 
       "user does not have a ppt enrolment" in {
-        val request = new AuthenticatedRequest(FakeRequest(), user, appConfig)
+        val request = new AuthenticatedRequest(FakeRequest(), user)
 
         intercept[InsufficientEnrolments] {
           mockAmendmentJourneyAction.invokeBlock(request, responseGenerator)
@@ -128,7 +125,6 @@ class AmendmentJourneyActionSpec
       "no active session present" in {
         val request = new AuthenticatedRequest(FakeRequest(),
                                                enrolledUser,
-                                               appConfig,
                                                pptReferenceFromUsersEnrolments(enrolledUser)
         )
 

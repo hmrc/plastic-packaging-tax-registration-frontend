@@ -377,14 +377,6 @@ partnership.name.too-long = Name must be 160 characters of fewer
 
 partnership.partners.in.the.partnership = Partners in the partnership
 
-partnership.registrationAvailableSoon.header = Partnership
-partnership.registrationAvailableSoon.title = Partnership registration will be available soon
-partnership.registrationAvailableSoon = {0} and we’ll contact you when the service becomes available.
-partnership.registrationAvailableSoon.link = Send an email to pptpartnerships@hmrc.gov.uk to tell us you would like to register as a partnership
-partnership.registrationAvailableSoon.href = mailto:pptpartnerships@hmrc.gov.uk
-partnership.registrationAvailableSoon.feedback = {0}. Your thoughts and ideas will help us to make improvements.
-partnership.registrationAvailableSoon.feedback.link = Send us your feedback
-
 partner.type.SoleTrader = Sole trader
 partner.type.UkCompany = UK limited company
 partner.type.RegisteredSociety = Registered society

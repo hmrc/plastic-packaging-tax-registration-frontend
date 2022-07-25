@@ -16,8 +16,8 @@
 
 package base
 
+import base.MockAuthAction.RichRet
 import base.PptTestData.newUser
-import MockAuthAction.RichRet
 import org.joda.time.DateTimeZone.UTC
 import org.joda.time.{DateTime, LocalDate}
 import org.mockito.ArgumentMatchers
@@ -30,12 +30,8 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.plasticpackagingtax.registration.config.{AppConfig, Features}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  NotEnrolledAuthActionImpl,
-  EnrolledAuthActionImpl,
-  PermissiveAuthActionImpl
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{EnrolledAuthActionImpl, NotEnrolledAuthActionImpl, PermissiveAuthActionImpl}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
 import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
 
@@ -105,8 +101,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
 
   def authorisedUserWithPptSubscription(): Unit = authorizedUser(user = userWithPPTEnrolment)
 
-  def authorizedUser(user: SignedInUser = exampleUser, features:Map[String, Boolean] = Map(Features.isPartnershipEnabled -> true), expectedPredicate: Option[Predicate] = None): Unit = {
-    when(appConfig.defaultFeatures).thenReturn(features)
+  def authorizedUser(user: SignedInUser = exampleUser, expectedPredicate: Option[Predicate] = None): Unit = {
     when(
       mockAuthConnector.authorise(
         expectedPredicate.map(ArgumentMatchers.eq(_)).getOrElse(any()),
