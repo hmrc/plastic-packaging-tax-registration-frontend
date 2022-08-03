@@ -56,16 +56,22 @@ class CheckAnswersController @Inject() (
         answers <- cache.get()
         result <-
           userEnrolmentConnector.enrol(answers).map {
+            
             case _ @UserEnrolmentSuccessResponse(_) =>
               cache.delete()
               Redirect(routes.ConfirmationController.displayPage())
+            
             case UserEnrolmentFailedResponse(_, failureCode) =>
               failureCode match {
-                case EnrolmentFailureCode.VerificationFailed |
-                    EnrolmentFailureCode.VerificationMissing =>
+                
+                case "GroupEnrolmentFailed"
+                  | EnrolmentFailureCode.VerificationFailed
+                  | EnrolmentFailureCode.VerificationMissing =>
                   Redirect(routes.NotableErrorController.enrolmentVerificationFailurePage())
+                
                 case EnrolmentFailureCode.GroupEnrolled =>
                   Redirect(routes.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage())
+                
                 case code => throw new Exception(s"Enrolment failed with code $code")
               }
           }
