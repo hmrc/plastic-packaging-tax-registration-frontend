@@ -36,7 +36,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
   private val realAppConfig           = inject[AppConfig]
   private val page: confirmation_page = inject[confirmation_page]
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
     page()(authenticatedRequest, messages, flash)
@@ -165,7 +165,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
   }
 
   private def verifyPanelContent(view: Html, panelTitle: String, panelContent: String) = {
-    view.getElementsByClass(gdsPanelTitle).get(0).text() must include(panelTitle)
+    view.getElementsByClass(gdsPanelTitle).get(0).text() must be(panelTitle)
     view.getElementsByClass(gdsPanelBody).get(0).text() must include(panelContent)
   }
 
