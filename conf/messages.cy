@@ -563,8 +563,15 @@ enrolment.confirmation.whatHappensNext.detail.2.link.text  = cyfrif treth busne
 enrolment.confirmation.whatHappensNext.detail.3  = {0}
 enrolment.confirmation.whatHappensNext.detail.3.link.text  = Beth oedd eich barn am y gwasanaeth hwn?
 
-enrolment.not.verified.title  = Mae’n ddrwg gennym, nid oedd modd dilysu’ch busnes
-enrolment.not.verified.detail1  = Nid yw’r wybodaeth a roddwyd gennych yn cyd-fynd â’r manylion sydd gennym ynglŷn â’ch busnes.
+enrolment.not.verified.title = Your organisation could not be verified
+enrolment.not.verified.detail.1 = The information you provided does not match the details we have about your organisation.
+enrolment.not.verified.detail.3 = Make sure you enter your correct Plastic Packaging Tax:
+enrolment.not.verified.detail.3.1 = registration number 
+enrolment.not.verified.detail.3.2 = registration date 
+enrolment.not.verified.detail.4 = You can find these in the letter we sent you about how to activate your online Plastic Packaging Tax account.
+enrolment.not.verified.detail.5 = If we still cannot verify your organisation, it could be because the registered address HMRC holds for your organisation is out of date. You may need to update this with HMRC.
+enrolment.not.verified.detail.6 = If you are still having problems, {0}.
+enrolment.not.verified.detail.6.link-text = contact us
 
 verify.organisation.title  =  Mae’n rhaid i ni ofyn ychydig o gwestiynau i ddilysu’r sefydliad
 verify.organisation.detail.1  =  Gofynnir i chi roi manylion a allai fod gennych ynglŷn â’r busnes.

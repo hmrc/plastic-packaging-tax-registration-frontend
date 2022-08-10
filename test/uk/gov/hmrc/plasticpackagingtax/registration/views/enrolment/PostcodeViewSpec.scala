@@ -20,7 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.Postcode
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.postcode_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -45,8 +44,8 @@ class PostcodeViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.IsUkAddressController.displayPage())
+    "not display 'Back' button" in {
+      view.getElementById("back-link") mustBe null 
     }
 
     "display title" in {

@@ -18,42 +18,43 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment
 
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.{
-  reference_number_already_used_failure_page,
-  verification_failure_page
-}
+import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.{reference_number_already_used_failure_page, verification_failure_page}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class NotableErrorControllerSpec extends ControllerSpec {
 
   private val mcc = stubMessagesControllerComponents()
-
+  private val frontendConfig = mock[ContactFrontendConfig]
   private val enrolmentVerificationFailurePage = mock[verification_failure_page]
+  private val enrolmentReferenceNumberAlreadyUsedFailurePage = mock[reference_number_already_used_failure_page]
 
-  private val enrolmentReferenceNumberAlreadyUsedFailurePage =
-    mock[reference_number_already_used_failure_page]
-
-  private val controller =
-    new NotableErrorController(authenticate = mockAuthAction,
-                               mcc = mcc,
-                               verificationFailurePage = enrolmentVerificationFailurePage,
-                               referenceNumberAlreadyUsedPage =
-                                 enrolmentReferenceNumberAlreadyUsedFailurePage
-    )
+  private val controller = new NotableErrorController(
+    authenticate = mockAuthAction,
+    mcc = mcc,
+    verificationFailurePage = enrolmentVerificationFailurePage,
+    referenceNumberAlreadyUsedPage = enrolmentReferenceNumberAlreadyUsedFailurePage,
+    frontendConfig,
+    mock[AppConfig]
+  )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(enrolmentVerificationFailurePage.apply()(any(), any())).thenReturn(
+    reset(frontendConfig, enrolmentVerificationFailurePage, enrolmentReferenceNumberAlreadyUsedFailurePage)
+    
+    when(enrolmentVerificationFailurePage.apply(any())(any(), any())).thenReturn(
       HtmlFormat.raw("error business not verified content")
     )
     when(enrolmentReferenceNumberAlreadyUsedFailurePage.apply()(any(), any())).thenReturn(
       HtmlFormat.raw("error ppt reference already been used content")
     )
+    when(frontendConfig.referrerUrl(any())).thenReturn(Some("/referrer"))
   }
 
   "NotableErrorController" should {

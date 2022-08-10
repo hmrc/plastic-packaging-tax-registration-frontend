@@ -51,8 +51,8 @@ class RegistrationDateViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(previousPage)
+    "not display 'Back' button" in {
+      view.getElementById("back-link") mustBe null
     }
 
     "display title" in {

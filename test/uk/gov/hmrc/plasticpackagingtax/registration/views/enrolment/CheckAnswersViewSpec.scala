@@ -46,10 +46,8 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        routes.RegistrationDateController.displayPage()
-      )
+    "not display 'Back' button" in {
+      view.getElementById("back-link") mustBe null
     }
 
     "display title" in {
