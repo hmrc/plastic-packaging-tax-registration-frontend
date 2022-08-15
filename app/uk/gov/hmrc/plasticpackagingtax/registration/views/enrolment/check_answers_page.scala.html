@@ -32,9 +32,7 @@
 )
 @(answers: UserEnrolmentDetails)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(
-    title = Title("enrolment.checkAnswers.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationDateController.displayPage(), messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("enrolment.checkAnswers.title"), backButton = None) {
 
     @pageHeading(messages("enrolment.checkAnswers.title"))
 

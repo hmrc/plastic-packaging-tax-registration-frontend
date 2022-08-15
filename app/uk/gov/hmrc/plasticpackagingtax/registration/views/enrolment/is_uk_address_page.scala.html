@@ -34,9 +34,7 @@
 
 @isUkAddressField = @{form("value")}
 
-@govukLayout(
-  title = Title("enrolment.isUkAddress.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.VerifyOrganisationController.displayPage(), messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("enrolment.isUkAddress.title"), backButton = None) {
 
     @errorSummary(form.errors)
 

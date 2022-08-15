@@ -33,9 +33,7 @@
 
 @postcodeField = @{form("value")}
 
-@govukLayout(
-  title = Title("enrolment.postcode.title"),
-  backButton = Some(BackButton(messages("site.back"), pptRoutes.IsUkAddressController.displayPage(), messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("enrolment.postcode.title"), backButton = None) {
 
     @errorSummary(form.errors)
 
@@ -45,7 +43,7 @@
             id    = postcodeField.name,
             name  = postcodeField.name,
             value = postcodeField.value,
-            classes = "govuk-input--width-5",
+            classes = "govuk-input govuk-input--width-10",
             errorMessage = postcodeField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
             label = Label(
                 isPageHeading = true,

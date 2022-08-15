@@ -27,8 +27,7 @@ class VerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[verification_failure_page]
 
-  private def createView(): Document =
-    page()(journeyRequest, messages)
+  private def createView(): Document = page("contact-us-href") (journeyRequest, messages)
 
   "Enrolment not verified page" should {
 
@@ -44,7 +43,7 @@ class VerificationFailureViewSpec extends UnitViewSpec with Matchers {
 
     "contain detail" in {
       val detail = view.select("p").text()
-      detail must include(messages("enrolment.not.verified.detail1"))
+      detail must include(messages("enrolment.not.verified.detail.1"))
     }
 
     "display 'Save and continue' button" in {
@@ -52,9 +51,9 @@ class VerificationFailureViewSpec extends UnitViewSpec with Matchers {
     }
   }
 
-  override def exerciseGeneratedRenderingMethods() = {
-    page.f()(request, messages)
-    page.render(request, messages)
+  override def exerciseGeneratedRenderingMethods(): Unit = {
+    page.f("contact-us-href") (request, messages)
+    page.render("contact-us-href", request, messages)
   }
 
 }

@@ -30,8 +30,7 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("verify.organisation.title"),
- backButton = Some(BackButton(messages("site.back"), pptRoutes.PptReferenceController.displayPage(), messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("verify.organisation.title"), backButton = None) {
 
  @formHelper(action = pptRoutes.VerifyOrganisationController.submit(), 'autoComplete -> "off") {
 

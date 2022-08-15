@@ -19,7 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.enrolment
 import base.unit.UnitViewSpec
 import org.scalatest.matchers.must.Matchers
 import play.twirl.api.Html
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.verify_organisation_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -45,7 +44,7 @@ class VerifyOrganisationViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.PptReferenceController.displayPage())
+      view.getElementById("back-link") mustBe null
     }
 
     "display title" in {

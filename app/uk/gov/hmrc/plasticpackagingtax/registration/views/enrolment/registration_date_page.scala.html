@@ -35,9 +35,8 @@
 
 @pptReferenceField = @{form("value")}
 
-@govukLayout(
-  title = Title("enrolment.registrationDate.title"),
-  backButton = Some(BackButton(messages("site.back"), previousPage, messages("site.back.hiddenText")))) {
+@govukLayout(title = Title("enrolment.registrationDate.title"), backButton = None) {
+    
     @if(form.errors.nonEmpty) {
         @errorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("date" -> "date.day")))
     }
