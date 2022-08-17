@@ -77,7 +77,7 @@ class NotableErrorController @Inject() (
   def registrationFailed(timestamp: String): Action[AnyContent] = {
     // Note - timestamp will appear as part of referrer link on "contact us" hyperlink
     authenticate { implicit request =>
-      InternalServerError(registrationFailedPage())
+      Ok(registrationFailedPage())
     }
   }
 
