@@ -247,9 +247,9 @@ primaryContactDetails.address.lookup = Search for a new address
 primaryContactDetails.address.countryCode = Country
 primaryContactDetails.address.countryCode.empty.error = Select a country
 
-primaryContactDetails.check.meta.title = Check the main contact’s details
 primaryContactDetails.check.title = Check your answers
 primaryContactDetails.check.label = Main contact details
+primaryContactDetails.check.caption = Representative member details
 primaryContactDetails.check.fullName = Contact name
 primaryContactDetails.check.jobTitle = Job title
 primaryContactDetails.check.address = Contact address
