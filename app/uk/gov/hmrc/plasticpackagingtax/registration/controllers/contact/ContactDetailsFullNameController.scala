@@ -20,13 +20,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{FormAction, NotEnrolledAuthAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, FullName}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.full_name_page
@@ -49,19 +45,9 @@ class ContactDetailsFullNameController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.primaryContactDetails.name match {
         case Some(data) =>
-          Ok(
-            page(FullName.form().fill(FullName(data)),
-                 commonRoutes.TaskListController.displayPage(),
-                 routes.ContactDetailsFullNameController.submit()
-            )
-          )
+          Ok(buildPage(FullName.form().fill(FullName(data))))
         case _ =>
-          Ok(
-            page(FullName.form(),
-                 commonRoutes.TaskListController.displayPage(),
-                 routes.ContactDetailsFullNameController.submit()
-            )
-          )
+          Ok(buildPage(FullName.form()))
       }
     }
 
@@ -72,12 +58,7 @@ class ContactDetailsFullNameController @Inject() (
         .fold(
           (formWithErrors: Form[FullName]) =>
             Future.successful(
-              BadRequest(
-                page(formWithErrors,
-                     commonRoutes.TaskListController.displayPage(),
-                     routes.ContactDetailsFullNameController.submit()
-                )
-              )
+              BadRequest(buildPage(formWithErrors))
             ),
           fullName =>
             updateRegistration(fullName).map {
@@ -91,6 +72,17 @@ class ContactDetailsFullNameController @Inject() (
             }
         )
     }
+
+  private def buildPage
+  (
+    form: Form[FullName]
+  )(implicit request: JourneyRequest[AnyContent]) =
+    page(
+      form,
+      commonRoutes.TaskListController.displayPage(),
+      routes.ContactDetailsFullNameController.submit(),
+      request.registration.isGroup
+    )
 
   private def updateRegistration(
     formData: FullName

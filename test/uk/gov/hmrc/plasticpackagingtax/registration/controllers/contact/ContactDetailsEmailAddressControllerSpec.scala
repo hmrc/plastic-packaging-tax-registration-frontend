@@ -29,20 +29,11 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  ServiceError
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{DownstreamServiceError, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, EmailAddress}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{
-  EmailStatus,
-  VerificationStatus
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  MetaData,
-  PrimaryContactDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{EmailStatus, VerificationStatus}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{MetaData, PrimaryContactDetails}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -68,7 +59,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -414,7 +405,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       def pageForm: Form[EmailAddress] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
-        verify(page).apply(captor.capture(), any(), any())(any(), any())
+        verify(page).apply(captor.capture(), any(), any(), any())(any(), any())
         captor.getValue
       }
 
@@ -430,6 +421,22 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         pageForm.get.value mustBe "test@test.com"
       }
+    }
+
+    "return page for a group" in {
+      authorizedUser()
+      mockRegistrationFind(
+        aRegistration(
+          withPrimaryContactDetails(PrimaryContactDetails(email = Some("test@test.com"))),
+          withGroupDetail(Some(groupDetailsWithMembers))
+        )
+      )
+
+      await(controller.displayPage()(getRequest()))
+
+      val captor = ArgumentCaptor.forClass(classOf[Boolean])
+      verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
+      captor.getValue mustBe true
     }
 
     "return 400 (BAD_REQUEST)" when {

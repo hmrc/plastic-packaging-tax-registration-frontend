@@ -33,7 +33,7 @@
   formHelper: FormWithCSRF,
 
 )
-@(form: Form[EmailAddress], backLink: Call, updateCall: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[EmailAddress], backLink: Call, updateCall: Call, isGroupMembership: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
 
 @emailAddressField = @{form("value")}
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
@@ -43,12 +43,18 @@
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
+@caption = @{
+    if(isGroupMembership)
+        messages("primaryContactDetails.group.sectionHeader")
+        else messages("primaryContactDetails.sectionHeader")
+}
+
 @govukLayout(
   title = Title(headingKey = "primaryContactDetails.emailAddress.title", headingArgs = Some(List(contactName))),
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
-  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+  @sectionHeader(caption)
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {
 

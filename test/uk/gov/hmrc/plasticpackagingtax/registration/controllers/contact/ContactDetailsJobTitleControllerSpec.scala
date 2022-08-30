@@ -123,6 +123,22 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       }
     }
 
+    "display page for a group organisation" in {
+      authorizedUser()
+      mockRegistrationFind(
+        aRegistration(
+          withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
+          withGroupDetail(Some(groupDetailsWithMembers))
+        )
+      )
+
+      await(controller.displayPage()(getRequest()))
+
+      val captor = ArgumentCaptor.forClass(classOf[Boolean])
+      verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
+      captor.getValue mustBe true
+    }
+
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid job title" in {
