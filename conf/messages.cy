@@ -186,6 +186,7 @@ liability.checkAnswers.registrationType  = Yr hyn yr hoffech ei gofrestru
 liability.checkAnswers.membersUnderGroupControl  = Grŵp o dan yr un rheolaeth
 
 primaryContactDetails.sectionHeader  = Manylion cyswllt
+primaryContactDetails.group.sectionHeader = Manylion yr aelod cynrychiadol
 
 primaryContactDetails.fullName.default  = y prif gyswllt
 

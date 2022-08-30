@@ -46,7 +46,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[FullName]], any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[FullName]], any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {

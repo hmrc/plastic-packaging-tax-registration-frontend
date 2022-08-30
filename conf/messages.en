@@ -177,6 +177,7 @@ liability.checkAnswers.registrationType = What you want to register
 liability.checkAnswers.membersUnderGroupControl = Group under same control
 
 primaryContactDetails.sectionHeader = Contact details
+primaryContactDetails.group.sectionHeader = Representative member details
 
 primaryContactDetails.fullName.default = the primary contact
 

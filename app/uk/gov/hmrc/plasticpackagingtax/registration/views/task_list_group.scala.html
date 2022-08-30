@@ -83,11 +83,7 @@
                 link = organisationDetailsLink,
                 showLink = registration.isLiabilityDetailsComplete,
                 status = registration.companyDetailsStatus
-            )
-        ))
-        </li>
-        <li class="app-task">
-        @task(3, "registrationPage.task.contactDetails.heading.group", Set(
+            ),
             TaskSection(
                 title = "registrationPage.task.contactDetails.group",
                 link = contactRoutes.ContactDetailsFullNameController.displayPage(),
@@ -97,7 +93,7 @@
         ))
         </li>
         <li class="app-task">
-        @task(4, "registrationPage.task.otherOrganisation.heading", Set(
+        @task(3, "registrationPage.task.otherOrganisation.heading", Set(
             TaskSection(
                 title = "registrationPage.task.otherOrganisation",
                 link = groupRoutes.OrganisationListController.displayPage(),
@@ -107,7 +103,7 @@
         ))
         </li>
         <li class="app-task">
-        @task(5, "registrationPage.task.review.heading", Set(
+        @task(4, "registrationPage.task.review.heading", Set(
             TaskSection(
                 title = "registrationPage.task.review",
                 link = pptRoutes.ReviewRegistrationController.displayPage(),

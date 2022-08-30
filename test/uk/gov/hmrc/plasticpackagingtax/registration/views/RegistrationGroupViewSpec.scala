@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.Element
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
@@ -38,9 +38,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
   private val LIABILITY_DETAILS = 0
   private val NOMINATED_BUSINESS_DETAILS = 1
-  private val NOMINATED_PRIMARY_CONTACT_DETAILS = 2
-  private val OTHER_BUSINESS_DETAILS = 3
-  private val CHECK_AND_SUBMIT = 4
+  private val OTHER_BUSINESS_DETAILS = 2
+  private val CHECK_AND_SUBMIT = 3
   private val registrationPage: task_list_group = inject[task_list_group]
 
   private val liabilityStartLink = Call("GET", "/liabilityStartLink")
@@ -128,6 +127,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
         }
 
         "Nominated organisation details" in {//todo: should status logic be tested here?
+
           val businessElement = view.getElementsByClass("app-task").get(NOMINATED_BUSINESS_DETAILS)
 
           header(businessElement) must include(
@@ -142,16 +142,16 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         "Nominated organisation contact details" in {
           val contactElement =
-            view.getElementsByClass("app-task").get(NOMINATED_PRIMARY_CONTACT_DETAILS)
+            view.getElementsByClass("app-task").get(NOMINATED_BUSINESS_DETAILS)
 
           header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.group")
+            messages("registrationPage.task.organisation.heading.group")
           )
 
-          sectionName(contactElement, 0) mustBe messages(
+          sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.group"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.notStarted")
+          sectionStatus(contactElement, 1) mustBe messages("task.status.notStarted")
         }
 
         "Other organisations in group details" in {
@@ -243,16 +243,16 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         "Nominated organisation contact details" in {
           val contactElement =
-            view.getElementsByClass("app-task").get(NOMINATED_PRIMARY_CONTACT_DETAILS)
+            view.getElementsByClass("app-task").get(NOMINATED_BUSINESS_DETAILS)
 
           header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.group")
+            messages("registrationPage.task.organisation.heading.group")
           )
 
-          sectionName(contactElement, 0) mustBe messages(
+          sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.group"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.cannotStartYet")
+          sectionStatus(contactElement, 1) mustBe messages("task.status.cannotStartYet")
         }
 
         "Other organisations in group details" in {
@@ -291,17 +291,17 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         "Nominated organisation contact details" in {
           val contactElement =
-            view.getElementsByClass("app-task").get(NOMINATED_PRIMARY_CONTACT_DETAILS)
+            view.getElementsByClass("app-task").get(NOMINATED_BUSINESS_DETAILS)
 
           header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.group")
+            messages("registrationPage.task.organisation.heading.group")
           )
 
-          sectionName(contactElement, 0) mustBe messages(
+          sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.group"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.inProgress")
-          sectionLink(contactElement, 0) must haveHref(
+          sectionStatus(contactElement, 1) mustBe messages("task.status.inProgress")
+          sectionLink(contactElement, 1) must haveHref(
             contactRoutes.ContactDetailsFullNameController.displayPage()
           )
         }
@@ -374,17 +374,17 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
         "Nominated organisation contact details" in {
           val contactElement =
-            view.getElementsByClass("app-task").get(NOMINATED_PRIMARY_CONTACT_DETAILS)
+            view.getElementsByClass("app-task").get(NOMINATED_BUSINESS_DETAILS)
 
           header(contactElement) must include(
-            messages("registrationPage.task.contactDetails.heading.group")
+            messages("registrationPage.task.organisation.heading.group")
           )
 
-          sectionName(contactElement, 0) mustBe messages(
+          sectionName(contactElement, 1) mustBe messages(
             "registrationPage.task.contactDetails.group"
           )
-          sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
-          sectionLink(contactElement, 0) must haveHref(
+          sectionStatus(contactElement, 1) mustBe messages("task.status.completed")
+          sectionLink(contactElement, 1) must haveHref(
             contactRoutes.ContactDetailsFullNameController.displayPage()
           )
         }

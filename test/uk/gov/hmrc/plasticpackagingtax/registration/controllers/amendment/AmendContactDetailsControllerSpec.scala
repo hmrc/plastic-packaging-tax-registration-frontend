@@ -48,11 +48,11 @@ class AmendContactDetailsControllerSpec
   private val amendJobTitlePage    = mock[job_title_page]
   private val amendPhoneNumberPage = mock[phone_number_page]
 
-  when(amendNamePage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(amendNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("name amendment")
   )
 
-  when(amendJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(amendJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("job title amendment")
   )
 
