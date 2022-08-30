@@ -66,13 +66,7 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display header" in {
 
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("primaryContactDetails.sectionHeader")
-      )
-    }
-    ////////////////////////////////////////////
     "display section header" when {
       "Single organisation" in {
         view.getElementsByClass("govuk-caption-l").text() must include(
@@ -91,7 +85,6 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
       }
     }
-    ////////////////////////////////////////////
 
     "display hint" in {
 

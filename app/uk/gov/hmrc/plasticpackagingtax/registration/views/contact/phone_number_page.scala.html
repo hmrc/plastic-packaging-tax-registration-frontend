@@ -32,8 +32,13 @@
   govukFieldset: GovukFieldset,
 )
 
-@(form: Form[PhoneNumber], backLink: Call, updateCall: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[PhoneNumber], backLink: Call, updateCall: Call, isGroupMembership: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
 
+@caption = @{
+    if(isGroupMembership)
+        messages("primaryContactDetails.group.sectionHeader")
+    else messages("primaryContactDetails.sectionHeader")
+}
 
 @phoneNumberField = @{form("value")}
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
@@ -60,7 +65,7 @@
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
-  @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+  @sectionHeader(caption)
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {
 

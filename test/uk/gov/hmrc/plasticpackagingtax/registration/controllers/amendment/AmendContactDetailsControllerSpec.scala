@@ -56,7 +56,7 @@ class AmendContactDetailsControllerSpec
     HtmlFormat.raw("job title amendment")
   )
 
-  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(amendPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("phone number amendment")
   )
 
