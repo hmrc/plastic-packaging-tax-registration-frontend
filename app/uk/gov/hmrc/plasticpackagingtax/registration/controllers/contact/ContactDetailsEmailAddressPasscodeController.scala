@@ -157,7 +157,10 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   ): Future[EmailVerificationJourneyStatus.Value] =
     emailVerificationService.checkVerificationCode(passcode, email, journeyId)
 
-  private def sectionName()(implicit messages: Messages): String =
-    messages("primaryContactDetails.sectionHeader")
+  private def sectionName()(implicit request: JourneyRequest[AnyContent], messages: Messages): String = {
+    if(request.registration.isGroup)
+      messages("primaryContactDetails.group.sectionHeader")
+    else messages("primaryContactDetails.sectionHeader")
+  }
 
 }
