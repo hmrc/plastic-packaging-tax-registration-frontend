@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.i18n.Messages
@@ -48,7 +48,10 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
       Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
     }
 
-  private def sectionName()(implicit messages: Messages): String =
-    messages("primaryContactDetails.sectionHeader")
+  private def sectionName()(implicit request: JourneyRequest[AnyContent], messages: Messages): String = {
+    if(request.registration.isGroup)
+      messages("primaryContactDetails.group.sectionHeader")
+    else messages("primaryContactDetails.sectionHeader")
+  }
 
 }
