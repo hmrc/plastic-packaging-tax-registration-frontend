@@ -32,10 +32,10 @@
   govukFieldset: GovukFieldset,
 )
 
-@(form: Form[PhoneNumber], backLink: Call, updateCall: Call, isGroupMembership: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[PhoneNumber], backLink: Call, updateCall: Call, isGroup: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
 
 @caption = @{
-    if(isGroupMembership)
+    if(isGroup)
         messages("primaryContactDetails.group.sectionHeader")
     else messages("primaryContactDetails.sectionHeader")
 }

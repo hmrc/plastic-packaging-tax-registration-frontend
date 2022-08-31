@@ -33,8 +33,8 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
-  private def createView(form: Form[FullName] = FullName.form(), isGroupMembership: Boolean = false): Document =
-    page(form, backLink, updateLink, isGroupMembership)(journeyRequest, messages)
+  private def createView(form: Form[FullName] = FullName.form(), isGroup: Boolean = false): Document =
+    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
 
   "Primary Contact Details Full Name View" should {
 
@@ -69,7 +69,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
       }
 
       "Group organisation" in {
-        val view = createView(isGroupMembership = true)
+        val view = createView(isGroup = true)
         view.getElementsByClass("govuk-caption-l").text() must include(
           "Representative member details"
         )
@@ -81,7 +81,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display contact name question" in {
-      val view = createView(isGroupMembership = true)
+      val view = createView(isGroup = true)
 
       view.getElementsByAttributeValueMatching("for", "value").text() must include(
         messages("primaryContactDetails.fullNamePage.title")

@@ -33,7 +33,7 @@
   formHelper: FormWithCSRF,
 
 )
-@(form: Form[EmailAddress], backLink: Call, updateCall: Call, isGroupMembership: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[EmailAddress], backLink: Call, updateCall: Call, isGroup: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
 
 @emailAddressField = @{form("value")}
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
@@ -44,7 +44,7 @@
 }
 
 @caption = @{
-    if(isGroupMembership)
+    if(isGroup)
         messages("primaryContactDetails.group.sectionHeader")
         else messages("primaryContactDetails.sectionHeader")
 }

@@ -33,8 +33,8 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
-  private def createView(form: Form[EmailAddress] = EmailAddress.form(), isGroupMembership: Boolean = false): Document =
-    page(form, backLink, updateLink, isGroupMembership)(journeyRequest, messages)
+  private def createView(form: Form[EmailAddress] = EmailAddress.form(), isGroup: Boolean = false): Document =
+    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
 
   private val mainContact = journeyRequest.registration.primaryContactDetails.name.get
 
@@ -75,7 +75,7 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
       }
 
       "Group organisation" in {
-        val view = createView(isGroupMembership = true)
+        val view = createView(isGroup = true)
         view.getElementsByClass("govuk-caption-l").text() must include(
           "Representative member details"
         )

@@ -29,12 +29,12 @@
   errorSummary: errorSummary,
   formHelper: FormWithCSRF
 )
-@(form: Form[JobTitle], backLink: Call, updateCall: Call, isGroupMembership: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[JobTitle], backLink: Call, updateCall: Call, isGroup: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
 
 @jobTitleField = @{form("value")}
 
 @caption = @{
-    if(isGroupMembership)
+    if(isGroup)
         messages("primaryContactDetails.group.sectionHeader")
         else messages("primaryContactDetails.sectionHeader")
 }
