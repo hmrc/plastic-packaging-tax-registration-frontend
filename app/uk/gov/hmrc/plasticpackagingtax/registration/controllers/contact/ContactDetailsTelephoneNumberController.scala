@@ -49,19 +49,9 @@ class ContactDetailsTelephoneNumberController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.primaryContactDetails.phoneNumber match {
         case Some(data) =>
-          Ok(
-            page(PhoneNumber.form().fill(PhoneNumber(data)),
-                 routes.ContactDetailsEmailAddressController.displayPage(),
-                 routes.ContactDetailsTelephoneNumberController.submit()
-            )
-          )
+          Ok(buildPage(PhoneNumber.form().fill(PhoneNumber(data))))
         case _ =>
-          Ok(
-            page(PhoneNumber.form(),
-                 routes.ContactDetailsEmailAddressController.displayPage(),
-                 routes.ContactDetailsTelephoneNumberController.submit()
-            )
-          )
+          Ok(buildPage(PhoneNumber.form()))
       }
     }
 
@@ -72,12 +62,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
         .fold(
           (formWithErrors: Form[PhoneNumber]) =>
             Future.successful(
-              BadRequest(
-                page(formWithErrors,
-                     routes.ContactDetailsEmailAddressController.displayPage(),
-                     routes.ContactDetailsTelephoneNumberController.submit()
-                )
-              )
+              BadRequest(buildPage(formWithErrors))
             ),
           phoneNumber =>
             updateRegistration(phoneNumber).map {
@@ -92,6 +77,17 @@ class ContactDetailsTelephoneNumberController @Inject() (
             }
         )
     }
+
+  private def buildPage
+  (
+    form: Form[PhoneNumber]
+  )(implicit request: JourneyRequest[AnyContent]) =
+    page(
+      form,
+      routes.ContactDetailsEmailAddressController.displayPage(),
+      routes.ContactDetailsTelephoneNumberController.submit(),
+      request.registration.isGroup
+    )
 
   private def updateRegistration(
     formData: PhoneNumber

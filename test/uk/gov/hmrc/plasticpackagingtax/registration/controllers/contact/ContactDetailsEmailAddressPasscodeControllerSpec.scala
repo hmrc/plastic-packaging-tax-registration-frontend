@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
 import base.unit.ControllerSpec
-import org.mockito.ArgumentMatchers
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -29,20 +29,11 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{
-  DownstreamServiceError,
-  ServiceError
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{DownstreamServiceError, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, EmailAddressPasscode}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  JOURNEY_NOT_FOUND,
-  JourneyStatus,
-  TOO_MANY_ATTEMPTS
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, EmailAddress, EmailAddressPasscode}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, JourneyStatus, TOO_MANY_ATTEMPTS}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.PrimaryContactDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.services.EmailVerificationService
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
@@ -115,6 +106,28 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
         status(result) mustBe OK
       }
+    }
+
+    "display page for group member" in {
+      authorizedUser()
+      mockRegistrationFind(aRegistration(
+        withGroupDetail(Some(groupDetailsWithMembers))
+      ))
+      await(controller.displayPage()(getRequest()))
+
+      val captor = ArgumentCaptor.forClass(classOf[Option[String]])
+      verify(page).apply(any(), any(), any(), any(), captor.capture())(any(), any())
+      captor.getValue mustBe Some("primaryContactDetails.group.sectionHeader")
+    }
+
+    "display page for single member" in {
+      authorizedUser()
+      mockRegistrationFind(aRegistration())
+      await(controller.displayPage()(getRequest()))
+
+      val captor = ArgumentCaptor.forClass(classOf[Option[String]])
+      verify(page).apply(any(), any(), any(), any(), captor.capture())(any(), any())
+      captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
     }
 
     forAll(Seq(continueFormAction, unKnownFormAction)) { formAction =>

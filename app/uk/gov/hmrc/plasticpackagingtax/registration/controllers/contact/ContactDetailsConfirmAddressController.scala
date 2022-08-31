@@ -54,7 +54,8 @@ class ContactDetailsConfirmAddressController @Inject() (
           ),
           request.registration.organisationDetails.businessRegisteredAddress.getOrElse(
             throw new IllegalStateException("Registered business address must be present")
-          )
+          ),
+          request.registration.isGroup
         )
       )
     }
@@ -70,7 +71,8 @@ class ContactDetailsConfirmAddressController @Inject() (
                 Future(
                   BadRequest(
                     page(formWithErrors,
-                         request.registration.organisationDetails.businessRegisteredAddress.get
+                         request.registration.organisationDetails.businessRegisteredAddress.get,
+                      request.registration.isGroup
                     )
                   )
                 ),

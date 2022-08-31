@@ -33,8 +33,8 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
-  private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): Document =
-    page(form, backLink, updateLink)(journeyRequest, messages)
+  private def createView(form: Form[PhoneNumber] = PhoneNumber.form(), isGroup: Boolean = false): Document =
+    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
 
   "Phone Number View" should {
 
@@ -68,11 +68,23 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display header" in {
+    "display section header" when {
+      "Single organisation" in {
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          messages("primaryContactDetails.sectionHeader")
+        )
+      }
 
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("primaryContactDetails.sectionHeader")
-      )
+      "Group organisation" in {
+        val view = createView(isGroup = true)
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          "Representative member details"
+        )
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          messages("primaryContactDetails.group.sectionHeader")
+        )
+
+      }
     }
 
     "display hint" in {
@@ -133,8 +145,8 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PhoneNumber.form(), backLink, updateLink)(journeyRequest, messages)
-    page.render(PhoneNumber.form(), backLink, updateLink, journeyRequest, messages)
+    page.f(PhoneNumber.form(), backLink, updateLink, false)(journeyRequest, messages)
+    page.render(PhoneNumber.form(), backLink, updateLink, false, journeyRequest, messages)
   }
 
 }

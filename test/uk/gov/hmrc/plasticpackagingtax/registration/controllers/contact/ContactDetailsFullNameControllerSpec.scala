@@ -17,13 +17,14 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
@@ -46,7 +47,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[FullName]], any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any[Form[FullName]], any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -173,6 +174,22 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
           intercept[RuntimeException](status(result))
         }
       }
+    }
+
+    "display page for a group organisation" in {
+      authorizedUser()
+      mockRegistrationFind(
+        aRegistration(
+          withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
+          withGroupDetail(Some(groupDetailsWithMembers))
+        )
+      )
+
+      await(controller.displayPage()(getRequest()))
+
+      val captor = ArgumentCaptor.forClass(classOf[Boolean])
+      verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
+      captor.getValue mustBe true
     }
   }
 }

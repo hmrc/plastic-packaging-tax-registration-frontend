@@ -88,9 +88,11 @@ class ContactDetailsEmailAddressController @Inject() (
   private def buildEmailPage(
     form: Form[EmailAddress]
   )(implicit request: JourneyRequest[AnyContent]) =
-    page(form,
-         routes.ContactDetailsJobTitleController.displayPage(),
-         routes.ContactDetailsEmailAddressController.submit()
+    page(
+      form,
+      routes.ContactDetailsJobTitleController.displayPage(),
+      routes.ContactDetailsEmailAddressController.submit(),
+      request.registration.isGroup
     )
 
   private def updateRegistration(formData: EmailAddress, credId: String)(implicit

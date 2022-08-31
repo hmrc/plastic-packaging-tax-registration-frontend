@@ -34,7 +34,7 @@
         viewUtils: ViewUtils
 )
 
-@(form: Form[ConfirmAddress], businessAddress: Address)(implicit request: Request[_], messages: Messages)
+@(form: Form[ConfirmAddress], businessAddress: Address, isGroup: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @fieldSetBody = {
 
@@ -52,6 +52,12 @@
 ))
 }
 
+@caption = @{
+    if(isGroup)
+        messages("primaryContactDetails.group.sectionHeader")
+    else messages("primaryContactDetails.sectionHeader")
+}
+
 @govukLayout(
     title = Title("primaryContactDetails.confirmAddress.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
@@ -59,7 +65,7 @@
 
     @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {
 
-        @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+        @sectionHeader(caption)
 
         @govukFieldset(Fieldset(
             legend = Some(Legend(

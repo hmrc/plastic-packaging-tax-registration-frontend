@@ -87,7 +87,7 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     "display meta title" in {
 
-      view.select("title").text() must include(messages("primaryContactDetails.check.meta.title"))
+      view.select("title").text() must include(messages("primaryContactDetails.check.title"))
     }
 
     "display title" in {
@@ -139,6 +139,20 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     "display 'Continue' button" in {
 
       view.getElementsByClass("govuk-button").text() must include("Save and continue")
+    }
+
+    "display a caption" when {
+      "is group organisation" in {
+        val view = createView(aRegistration(withGroupDetail(Some(groupDetailsWithMembers))))
+
+        view.getElementById("section-header").text() mustBe "Representative member details"
+        view.getElementById("section-header").text() mustBe messages("primaryContactDetails.group.sectionHeader")
+      }
+
+      "is single organisation" in {
+        view.getElementById("section-header").text() mustBe "Contact details"
+        view.getElementById("section-header").text() mustBe messages("primaryContactDetails.sectionHeader")
+      }
     }
   }
 

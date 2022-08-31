@@ -54,11 +54,19 @@
     )
 }
 
+@caption = @{
+    if(registration.isGroup) {
+        messages("primaryContactDetails.group.sectionHeader")
+    } else {
+        messages("primaryContactDetails.sectionHeader")
+    }
+}
+
 @govukLayout(
-    title = Title("primaryContactDetails.check.meta.title"),
+    title = Title("primaryContactDetails.check.title"),
     backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsConfirmAddressController.displayPage(), messages("site.back.hiddenText")))) {
 
-    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+    @sectionHeader(caption)
     @pageHeading(messages("primaryContactDetails.check.title"))
 
     @formHelper(action = pptRoutes.ContactDetailsCheckAnswersController.submit(), 'autoComplete -> "off") {

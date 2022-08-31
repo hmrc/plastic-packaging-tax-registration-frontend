@@ -50,7 +50,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -107,7 +107,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
       def pageForm: Form[JobTitle] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[JobTitle]])
-        verify(page).apply(captor.capture(), any(), any())(any(), any())
+        verify(page).apply(captor.capture(), any(), any(), any())(any(), any())
         captor.getValue
       }
 
@@ -121,6 +121,22 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
         pageForm.get.value mustBe "tester"
       }
+    }
+
+    "display page for a group organisation" in {
+      authorizedUser()
+      mockRegistrationFind(
+        aRegistration(
+          withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
+          withGroupDetail(Some(groupDetailsWithMembers))
+        )
+      )
+
+      await(controller.displayPage()(getRequest()))
+
+      val captor = ArgumentCaptor.forClass(classOf[Boolean])
+      verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
+      captor.getValue mustBe true
     }
 
     "return 400 (BAD_REQUEST)" when {

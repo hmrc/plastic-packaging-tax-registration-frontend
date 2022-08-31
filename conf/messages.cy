@@ -186,6 +186,7 @@ liability.checkAnswers.registrationType  = Yr hyn yr hoffech ei gofrestru
 liability.checkAnswers.membersUnderGroupControl  = Grŵp o dan yr un rheolaeth
 
 primaryContactDetails.sectionHeader  = Manylion cyswllt
+primaryContactDetails.group.sectionHeader = Manylion yr aelod cynrychiadol
 
 primaryContactDetails.fullName.default  = y prif gyswllt
 
@@ -255,7 +256,6 @@ primaryContactDetails.address.lookup  = Chwilio am gyfeiriad newydd
 primaryContactDetails.address.countryCode  = Gwlad
 primaryContactDetails.address.countryCode.empty.error  = Dewiswch wlad
 
-primaryContactDetails.check.meta.title  = Gwirio manylion y prif gyswllt
 primaryContactDetails.check.title  = Gwiriwch eich atebion
 primaryContactDetails.check.label  = Prif fanylion cyswllt
 primaryContactDetails.check.fullName  = Enw cyswllt

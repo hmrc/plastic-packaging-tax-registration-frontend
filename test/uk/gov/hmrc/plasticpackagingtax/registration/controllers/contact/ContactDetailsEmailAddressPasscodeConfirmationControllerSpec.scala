@@ -17,14 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{reset, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -61,6 +62,30 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
+      }
+    }
+
+    "display page with caption" when {
+      "is group member" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration(withGroupDetail(Some(groupDetailsWithMembers))))
+
+        await(controller.displayPage()(getRequest()))
+
+        val captor = ArgumentCaptor.forClass(classOf[Option[String]])
+        verify(page).apply(any(), any(), captor.capture())(any(), any())
+        captor.getValue mustBe Some("primaryContactDetails.group.sectionHeader")
+      }
+
+      "is single registration" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+
+        await(controller.displayPage()(getRequest()))
+
+        val captor = ArgumentCaptor.forClass(classOf[Option[String]])
+        verify(page).apply(any(), any(), captor.capture())(any(), any())
+        captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
       }
     }
 

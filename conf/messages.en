@@ -177,6 +177,7 @@ liability.checkAnswers.registrationType = What you want to register
 liability.checkAnswers.membersUnderGroupControl = Group under same control
 
 primaryContactDetails.sectionHeader = Contact details
+primaryContactDetails.group.sectionHeader = Representative member details
 
 primaryContactDetails.fullName.default = the primary contact
 
@@ -247,7 +248,6 @@ primaryContactDetails.address.lookup = Search for a new address
 primaryContactDetails.address.countryCode = Country
 primaryContactDetails.address.countryCode.empty.error = Select a country
 
-primaryContactDetails.check.meta.title = Check the main contact’s details
 primaryContactDetails.check.title = Check your answers
 primaryContactDetails.check.label = Main contact details
 primaryContactDetails.check.fullName = Contact name

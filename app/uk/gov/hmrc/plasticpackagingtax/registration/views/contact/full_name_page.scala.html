@@ -31,7 +31,7 @@
   errorSummary: errorSummary
 )
 
-@(form: Form[FullName], backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[FullName], backLink: Call, updateCall: Call, isGroup: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @fullNameField = @{form("value")}
 
@@ -40,7 +40,7 @@
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
-    @sectionHeader(messages("primaryContactDetails.sectionHeader"))
+    @sectionHeader(if(isGroup) messages("primaryContactDetails.group.sectionHeader") else messages("primaryContactDetails.sectionHeader"))
 
     @formHelper(action = updateCall, 'autoComplete -> "off") {
 

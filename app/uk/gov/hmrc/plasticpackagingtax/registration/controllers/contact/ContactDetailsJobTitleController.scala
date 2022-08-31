@@ -20,13 +20,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{FormAction, NotEnrolledAuthAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{FullName, JobTitle}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.job_title_page
@@ -49,19 +45,9 @@ class ContactDetailsJobTitleController @Inject() (
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.primaryContactDetails.jobTitle match {
         case Some(data) =>
-          Ok(
-            page(JobTitle.form().fill(JobTitle(data)),
-                 routes.ContactDetailsFullNameController.displayPage(),
-                 routes.ContactDetailsJobTitleController.submit()
-            )
-          )
+          Ok(buildPage(JobTitle.form().fill(JobTitle(data))))
         case _ =>
-          Ok(
-            page(JobTitle.form(),
-                 routes.ContactDetailsFullNameController.displayPage(),
-                 routes.ContactDetailsJobTitleController.submit()
-            )
-          )
+          Ok(buildPage(JobTitle.form()))
       }
     }
 
@@ -72,12 +58,7 @@ class ContactDetailsJobTitleController @Inject() (
         .fold(
           (formWithErrors: Form[JobTitle]) =>
             Future.successful(
-              BadRequest(
-                page(formWithErrors,
-                     routes.ContactDetailsFullNameController.displayPage(),
-                     routes.ContactDetailsJobTitleController.submit()
-                )
-              )
+              BadRequest(buildPage(formWithErrors))
             ),
           jobTitle =>
             updateRegistration(jobTitle).map {
@@ -92,6 +73,17 @@ class ContactDetailsJobTitleController @Inject() (
             }
         )
     }
+
+  private def buildPage
+  (
+    form: Form[JobTitle]
+  )(implicit request: JourneyRequest[AnyContent]) =
+    page(
+      form,
+      routes.ContactDetailsFullNameController.displayPage(),
+      routes.ContactDetailsJobTitleController.submit(),
+      request.registration.isGroup
+    )
 
   private def updateRegistration(
     formData: JobTitle

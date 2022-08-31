@@ -33,8 +33,8 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
   private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
-  private def createView(form: Form[FullName] = FullName.form()): Document =
-    page(form, backLink, updateLink)(journeyRequest, messages)
+  private def createView(form: Form[FullName] = FullName.form(), isGroup: Boolean = false): Document =
+    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
 
   "Primary Contact Details Full Name View" should {
 
@@ -58,18 +58,31 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display title" in {
-
       view.select("title").text() must include(messages("primaryContactDetails.fullNamePage.title"))
     }
 
-    "display section header" in {
+    "display section header" when {
+      "Single organisation" in {
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          messages("primaryContactDetails.sectionHeader")
+        )
+      }
 
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("primaryContactDetails.sectionHeader")
-      )
+      "Group organisation" in {
+        val view = createView(isGroup = true)
+        view.getElementsByClass("govuk-caption-l").text() must include(
+          "Representative member details"
+        )
+        view.getElementsByClass("govuk-caption-l").text() must include(
+         messages("primaryContactDetails.group.sectionHeader")
+        )
+
+      }
     }
 
     "display contact name question" in {
+      val view = createView(isGroup = true)
+
       view.getElementsByAttributeValueMatching("for", "value").text() must include(
         messages("primaryContactDetails.fullNamePage.title")
       )
@@ -167,8 +180,8 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(FullName.form(), backLink, updateLink)(request, messages)
-    page.render(FullName.form(), backLink, updateLink, request, messages)
+    page.f(FullName.form(), backLink, updateLink, false)(request, messages)
+    page.render(FullName.form(), backLink, updateLink, false, request, messages)
   }
 
 }

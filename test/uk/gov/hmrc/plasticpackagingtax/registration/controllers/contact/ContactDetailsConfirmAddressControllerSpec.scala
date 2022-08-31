@@ -17,30 +17,22 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact
 
 import base.unit.ControllerSpec
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.JsObject
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.DownstreamServiceError
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, ConfirmAddress}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  CHARITABLE_INCORPORATED_ORGANISATION,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  UK_COMPANY
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{
-  OrganisationDetails,
-  PrimaryContactDetails
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, PrimaryContactDetails}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.confirm_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -74,7 +66,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[Form[ConfirmAddress]], any[Address])(any(), any())).thenReturn(
+    when(page.apply(any[Form[ConfirmAddress]], any[Address], any())(any(), any())).thenReturn(
       HtmlFormat.empty
     )
   }
@@ -104,6 +96,26 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
         status(result) mustBe OK
       }
+    }
+
+    "show page for group membership" in {
+      authorizedUser()
+      mockRegistrationFind(
+        aRegistration(
+          withOrganisationDetails(
+            OrganisationDetails(organisationType = Some(UK_COMPANY),
+              incorporationDetails = Some(incorporationDetails)
+            )
+          ),
+          withGroupDetail(Some(groupDetailsWithMembers))
+        )
+      )
+      mockRegistrationUpdate()
+      await(controller.displayPage()(getRequest()))
+
+      val captor = ArgumentCaptor.forClass(classOf[Boolean])
+      verify(page).apply(any(), any(), captor.capture())(any(), any())
+      captor.getValue mustBe true
     }
 
     "update business address" when {
