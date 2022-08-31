@@ -141,9 +141,18 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-button").text() must include("Save and continue")
     }
 
-    "display a caption" in {
-      view.getElementById("section-header").text() mustBe "Representative member details"
-      view.getElementById("section-header").text() mustBe messages("primaryContactDetails.check.caption")
+    "display a caption" when {
+      "is group organisation" in {
+        val view = createView(aRegistration(withGroupDetail(Some(groupDetailsWithMembers))))
+
+        view.getElementById("section-header").text() mustBe "Representative member details"
+        view.getElementById("section-header").text() mustBe messages("primaryContactDetails.group.sectionHeader")
+      }
+
+      "is single organisation" in {
+        view.getElementById("section-header").text() mustBe "Contact details"
+        view.getElementById("section-header").text() mustBe messages("primaryContactDetails.sectionHeader")
+      }
     }
   }
 

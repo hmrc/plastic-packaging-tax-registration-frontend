@@ -258,7 +258,6 @@ primaryContactDetails.address.countryCode.empty.error  = Dewiswch wlad
 
 primaryContactDetails.check.title  = Gwiriwch eich atebion
 primaryContactDetails.check.label  = Prif fanylion cyswllt
-primaryContactDetails.check.caption = Manylion yr aelod cynrychiadol
 primaryContactDetails.check.fullName  = Enw cyswllt
 primaryContactDetails.check.jobTitle  = Teitl y swydd
 primaryContactDetails.check.address  = Cyfeiriad cyswllt
