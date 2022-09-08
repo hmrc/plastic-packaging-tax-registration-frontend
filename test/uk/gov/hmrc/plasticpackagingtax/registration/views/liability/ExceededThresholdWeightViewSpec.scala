@@ -84,7 +84,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display question" in {
-      view.select("#conditional-value-yes > legend").text() must include(
+      view.select("#conditional-value-yes > div > fieldset > legend").text() must include(
         messages("liability.exceededThresholdWeightDate.title")
       )
     }
