@@ -34,14 +34,18 @@
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @ifYes = {
-    <legend class="@gdsFieldsetPageHeading">
-        @messages("liability.exceededThresholdWeightDate.title")
-    </legend>
     @govukDateInput(
         DateInput(
             id = "exceeded-threshold-weight-date",
             hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint")))),
             errorMessage = errorMessages,
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                content = Text(messages("liability.exceededThresholdWeightDate.title")),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+                ))
+            )),
             items = Seq(
                 InputItem(
                     id = s"${dayField.name}",
