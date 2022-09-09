@@ -47,15 +47,19 @@
 
 
 @ifYes={
-    <legend class="@gdsFieldsetPageHeading">
-        @messages("liability.expectToExceedThreshold.date.question")
-    </legend>
     @paragraphBody(messages("liability.expectToExceedThreshold.date.line1"))
     @govukDateInput(
         DateInput(
             id = "expect-to-exceed-threshold-weight-date",
             hint = Some(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint")))),
             errorMessage = errorMessages,
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                content = Text(messages("liability.expectToExceedThreshold.date.question")),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+                ))
+            )),
             items = Seq(
                 InputItem(
                     id = s"${dayField.name}",
