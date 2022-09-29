@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButtonJs
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -32,7 +32,7 @@
   govukFieldset: GovukFieldset,
 )
 
-@(form: Form[PhoneNumber], contact: Option[String], backLink: Call, updateCall: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[PhoneNumber], contact: Option[String], updateCall: Call)(implicit request: JourneyRequest[_], messages: Messages)
 
 
 @phoneNumberField = @{form("value")}
@@ -57,7 +57,7 @@
 }
 @govukLayout(
   title = Title(headingKey = "contactDetails.member.phoneNumber.title", headingArg = contactName),
-  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+  backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
   @sectionHeader(messages("group.organisationList.sectionHeader"))

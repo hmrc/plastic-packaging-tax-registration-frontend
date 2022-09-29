@@ -62,13 +62,6 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
 
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsTelephoneNumberController.displayPage()
-      )
-    }
-
     "display title" in {
 
       view.select("title").text() must include(

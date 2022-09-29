@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.countryCodeAutoComplete
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 
 @this(
         formHelper: FormWithCSRF,
@@ -36,7 +36,7 @@
         countryCodeAutoComplete: countryCodeAutoComplete
 )
 
-@(form: Form[Address], countryMap: Map[String, String], backLink: Call, updateCall: Call, headingKey: String, entityName: Option[String], hintKey: Option[String] = Some("primaryContactDetails.address.hint"))(implicit request: Request[_], messages: Messages)
+@(form: Form[Address], countryMap: Map[String, String], updateCall: Call, headingKey: String, entityName: Option[String], hintKey: Option[String] = Some("primaryContactDetails.address.hint"))(implicit request: Request[_], messages: Messages)
 
 @optionalHint = @{
     if(hintKey.isDefined) paragraphBody(messages(hintKey.get))
@@ -105,7 +105,7 @@
 
 @govukLayout(
     title = Title(headingKey, headingArg = entityName.getOrElse(messages("missing.organisationName"))),
-    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("primaryContactDetails.sectionHeader"))

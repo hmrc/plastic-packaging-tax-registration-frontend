@@ -54,7 +54,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -121,7 +121,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       def pageForm: Form[MemberName] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[MemberName]])
-        verify(page).apply(captor.capture(), any(), any(), any(), any())(any(), any())
+        verify(page).apply(captor.capture(), any(), any(), any())(any(), any())
         captor.getValue
       }
 

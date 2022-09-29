@@ -49,12 +49,6 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        routes.ContactDetailsTelephoneNumberController.displayPage(groupMember.id).url
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("contactDetails.member.check.title"))
     }

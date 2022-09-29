@@ -45,7 +45,6 @@ abstract class ContactDetailsNameControllerBase(
 
   protected def doDisplayPage(
     memberId: String,
-    getBackLink: String => Call,
     getSubmitCall: String => Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
@@ -61,7 +60,6 @@ abstract class ContactDetailsNameControllerBase(
              request.registration.findMember(memberId).map(_.businessName).getOrElse(
                "your organisation"
              ),
-             getBackLink(memberId),
              getSubmitCall(memberId),
              memberId
         )
@@ -70,7 +68,6 @@ abstract class ContactDetailsNameControllerBase(
 
   protected def doSubmit(
     memberId: String,
-    getBackLink: String => Call,
     getSubmitCall: String => Call,
     getSuccessfulRedirect: String => Call
   ): Action[AnyContent] =
@@ -85,7 +82,6 @@ abstract class ContactDetailsNameControllerBase(
                      request.registration.findMember(memberId).map(_.businessName).getOrElse(
                        "your organisation"
                      ),
-                     getBackLink(memberId),
                      getSubmitCall(memberId),
                      memberId
                 )

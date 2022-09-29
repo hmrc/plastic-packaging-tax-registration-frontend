@@ -90,7 +90,6 @@ class ContactDetailsEmailAddressController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]) =
     page(
       form,
-      routes.ContactDetailsJobTitleController.displayPage(),
       routes.ContactDetailsEmailAddressController.submit(),
       request.registration.isGroup
     )

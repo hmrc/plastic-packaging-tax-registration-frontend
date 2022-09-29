@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{FormAction, NotEnrolledAuthAction, SaveAndContinue}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{EmailAddress, FullName}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.FullName
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.full_name_page
@@ -79,7 +79,6 @@ class ContactDetailsFullNameController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]) =
     page(
       form,
-      commonRoutes.TaskListController.displayPage(),
       routes.ContactDetailsFullNameController.submit(),
       request.registration.isGroup
     )

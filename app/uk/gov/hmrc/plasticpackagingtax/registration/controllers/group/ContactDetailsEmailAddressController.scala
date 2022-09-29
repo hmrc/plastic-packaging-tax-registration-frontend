@@ -44,9 +44,6 @@ class ContactDetailsEmailAddressController @Inject() (
 
   def submit(memberId: String): Action[AnyContent] = doSubmit(memberId)
 
-  override protected def getBackLink(memberId: String): Call =
-    routes.ContactDetailsNameController.displayPage(memberId)
-
   override protected def getSubmitCall(memberId: String): Call =
     routes.ContactDetailsEmailAddressController.submit(memberId)
 

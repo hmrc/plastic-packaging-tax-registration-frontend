@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 
 @this(
   govukLayout: main_template,
@@ -33,7 +33,7 @@
   formHelper: FormWithCSRF,
 
 )
-@(form: Form[EmailAddress], backLink: Call, updateCall: Call, isGroup: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[EmailAddress], updateCall: Call, isGroup: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
 
 @emailAddressField = @{form("value")}
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
@@ -51,7 +51,7 @@
 
 @govukLayout(
   title = Title(headingKey = "primaryContactDetails.emailAddress.title", headingArgs = Some(List(contactName))),
-  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+  backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
   @errorSummary(form.errors)
 
   @sectionHeader(caption)

@@ -37,10 +37,10 @@ class AddGroupMemberContactDetailsNameController @Inject() (
     extends ContactDetailsNameControllerBase(authenticate, journeyAction, mcc, page, registrationUpdater) {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    doDisplayPage(memberId, getBackLink, getSubmitCall)
+    doDisplayPage(memberId, getSubmitCall)
 
   def submit(memberId: String): Action[AnyContent] =
-    doSubmit(memberId, getBackLink, getSubmitCall, getSuccessfulRedirect)
+    doSubmit(memberId, getSubmitCall, getSuccessfulRedirect)
 
   protected def getBackLink(memberId: String): Call =
     routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()

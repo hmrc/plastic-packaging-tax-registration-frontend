@@ -80,7 +80,6 @@ class ContactDetailsJobTitleController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]) =
     page(
       form,
-      routes.ContactDetailsFullNameController.displayPage(),
       routes.ContactDetailsJobTitleController.submit(),
       request.registration.isGroup
     )

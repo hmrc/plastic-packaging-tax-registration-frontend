@@ -59,7 +59,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -405,7 +405,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       def pageForm: Form[EmailAddress] = {
         val captor = ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
-        verify(page).apply(captor.capture(), any(), any(), any())(any(), any())
+        verify(page).apply(captor.capture(), any(), any())(any(), any())
         captor.getValue
       }
 
@@ -435,7 +435,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       await(controller.displayPage()(getRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Boolean])
-      verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
+      verify(page).apply(any(), any(), captor.capture())(any(), any())
       captor.getValue mustBe true
     }
 

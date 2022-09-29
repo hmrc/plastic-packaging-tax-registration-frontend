@@ -30,11 +30,10 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[phone_number_page]
 
-  private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form(), isGroup: Boolean = false): Document =
-    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(journeyRequest, messages)
 
   "Phone Number View" should {
 
@@ -50,11 +49,6 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -145,8 +139,8 @@ class ContactDetailsPhoneNumberViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(PhoneNumber.form(), backLink, updateLink, false)(journeyRequest, messages)
-    page.render(PhoneNumber.form(), backLink, updateLink, false, journeyRequest, messages)
+    page.f(PhoneNumber.form(), updateLink, false)(journeyRequest, messages)
+    page.render(PhoneNumber.form(), updateLink, false, journeyRequest, messages)
   }
 
 }

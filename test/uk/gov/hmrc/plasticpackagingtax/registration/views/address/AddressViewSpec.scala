@@ -32,14 +32,12 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page           = inject[address_page]
   private val countryService = inject[CountryService]
-
-  private val backLink    = Call("GET", "/back-link")
   private val updateLink  = Call("PUT", "/update")
   private val headingKey  = "addressLookup.partner.lookup.heading"
   private val contactName = Some("the contact")
 
   private def createView(form: Form[Address] = Address.form()): Document =
-    page(form, countryService.getAll(), backLink, updateLink, headingKey, contactName)(journeyRequest, messages)
+    page(form, countryService.getAll(), updateLink, headingKey, contactName)(journeyRequest, messages)
 
   "Address View" should {
 
@@ -51,10 +49,6 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
     "display sign out link" in {
       displaySignOutLink(view)
-    }
-
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -160,8 +154,8 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form(), countryService.getAll(), backLink, updateLink, headingKey, contactName, None)(journeyRequest, messages)
-    page.render(Address.form(), countryService.getAll(), backLink, updateLink, headingKey, contactName, None, journeyRequest, messages)
+    page.f(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None)(journeyRequest, messages)
+    page.render(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None, journeyRequest, messages)
   }
 
 }
