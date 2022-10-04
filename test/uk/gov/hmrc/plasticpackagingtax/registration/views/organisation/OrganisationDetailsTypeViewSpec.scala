@@ -64,11 +64,6 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
-    }
-
     "display title" in {
 
       view.select("title").text() must include(messages("organisationDetails.type.title"))
@@ -120,11 +115,6 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display sign out link" in {
 
       displaySignOutLink(view)
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display title" in {

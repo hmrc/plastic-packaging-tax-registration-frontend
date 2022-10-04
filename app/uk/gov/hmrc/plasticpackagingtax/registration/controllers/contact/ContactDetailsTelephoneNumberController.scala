@@ -84,7 +84,6 @@ class ContactDetailsTelephoneNumberController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]) =
     page(
       form,
-      routes.ContactDetailsEmailAddressController.displayPage(),
       routes.ContactDetailsTelephoneNumberController.submit(),
       request.registration.isGroup
     )

@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title, BackButtonLink}
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -47,7 +47,7 @@
         stdBanner: StandardBetaBanner,
 )
 @(title: Title,
-  backButton: Option[BackButton] = None,
+  backButton: Option[BackButtonLink] = None,
   useCustomContentWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 

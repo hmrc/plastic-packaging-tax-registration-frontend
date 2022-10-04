@@ -78,13 +78,6 @@ class CheckContactDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsConfirmAddressController.displayPage()
-      )
-    }
-
     "display meta title" in {
 
       view.select("title").text() must include(messages("primaryContactDetails.check.title"))

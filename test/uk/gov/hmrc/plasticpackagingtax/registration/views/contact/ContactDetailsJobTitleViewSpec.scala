@@ -30,11 +30,10 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[job_title_page]
 
-  private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[JobTitle] = JobTitle.form(), isGroup: Boolean = false): Document =
-    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(journeyRequest, messages)
 
   val contactName = journeyRequest.registration.primaryContactDetails.name.get
 
@@ -52,11 +51,6 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title including contact name" in {
@@ -134,8 +128,8 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(JobTitle.form(), backLink, updateLink, false)(journeyRequest, messages)
-    page.render(JobTitle.form(), backLink, updateLink, false, journeyRequest, messages)
+    page.f(JobTitle.form(), updateLink, false)(journeyRequest, messages)
+    page.render(JobTitle.form(), updateLink, false, journeyRequest, messages)
   }
 
 }

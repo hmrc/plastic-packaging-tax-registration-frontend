@@ -19,8 +19,6 @@ package uk.gov.hmrc.plasticpackagingtax.registration.controllers.group
 import play.api.mvc.Call
 
 trait ContactDetailsControllerBase {
-
-  protected def getBackLink(memberId: String): Call
   protected def getSubmitCall(memberId: String): Call
   protected def getSuccessfulRedirect(memberId: String): Call
 

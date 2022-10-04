@@ -107,7 +107,6 @@ class AmendMemberContactDetailsController @Inject() (
                     request.registration.findMember(memberId).map(_.businessName).getOrElse(
                       "your organisation"
                     ),
-                    routes.ContactDetailsCheckAnswersController.displayPage(memberId),
                     routes.AmendMemberContactDetailsController.updateContactName(memberId),
                     memberId
     )
@@ -167,7 +166,6 @@ class AmendMemberContactDetailsController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]) =
     phoneNumberPage(form,
                     memberName,
-                    routes.ContactDetailsCheckAnswersController.displayPage(memberId),
                     routes.AmendMemberContactDetailsController.updatePhoneNumber(memberId)
     )
 
@@ -226,7 +224,6 @@ class AmendMemberContactDetailsController @Inject() (
   )(implicit request: JourneyRequest[AnyContent]) =
     emailAddressPage(form,
                      memberName,
-                     routes.ContactDetailsCheckAnswersController.displayPage(memberId),
                      routes.AmendMemberContactDetailsController.updateEmail(memberId)
     )
 

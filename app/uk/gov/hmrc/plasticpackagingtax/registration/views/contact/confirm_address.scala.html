@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{Address, ConfirmAddress}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
@@ -60,7 +60,7 @@
 
 @govukLayout(
     title = Title("primaryContactDetails.confirmAddress.title"),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.ContactDetailsTelephoneNumberController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
     @errorSummary(form.errors)
 
     @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {

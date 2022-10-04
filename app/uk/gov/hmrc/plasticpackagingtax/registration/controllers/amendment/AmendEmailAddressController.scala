@@ -101,7 +101,6 @@ class AmendEmailAddressController @Inject() (
     form: Form[EmailAddress]
   )(implicit request: JourneyRequest[AnyContent]) =
     emailPage(form,
-              routes.AmendRegistrationController.displayPage(),
               routes.AmendEmailAddressController.updateEmail()
     )
 

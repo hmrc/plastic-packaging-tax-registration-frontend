@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 
 @this(
         pageHeading: pageHeading,
@@ -33,11 +33,11 @@
         saveButton: saveAndContinue
 )
 
-@(form: Form[Boolean], backLink: Call, entityName: Option[String], title: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[Boolean], entityName: Option[String], title: String)(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
     title = Title(headingKey = "ukAddress.title", headingArg = entityName.getOrElse(messages("missing.organisationName"))),
-    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))
+    backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))
 ) {
 
     @errorSummary(form.errors)
