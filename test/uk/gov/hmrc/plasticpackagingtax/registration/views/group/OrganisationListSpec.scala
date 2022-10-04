@@ -76,8 +76,7 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
     }
 
     "display visually hidden labels" in {
-
-      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(
+      view.getElementsByClass("govuk-back-link-div").select("a").get(0).text() must include(
         messages("site.back.hiddenText")
       )
     }
