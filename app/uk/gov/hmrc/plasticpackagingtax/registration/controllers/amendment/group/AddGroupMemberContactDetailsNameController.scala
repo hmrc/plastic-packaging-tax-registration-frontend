@@ -42,9 +42,6 @@ class AddGroupMemberContactDetailsNameController @Inject() (
   def submit(memberId: String): Action[AnyContent] =
     doSubmit(memberId, getSubmitCall, getSuccessfulRedirect)
 
-  protected def getBackLink(memberId: String): Call =
-    routes.AddGroupMemberOrganisationDetailsTypeController.displayPage()
-
   protected def getSubmitCall(memberId: String): Call =
     routes.AddGroupMemberContactDetailsNameController.submit(memberId)
 
