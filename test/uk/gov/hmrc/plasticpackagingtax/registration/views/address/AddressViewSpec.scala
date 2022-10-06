@@ -64,7 +64,7 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
     }
 
     "display visually hidden labels" in {
-      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(messages("site.back.hiddenText"))
+      view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(messages("site.back.hiddenText"))
     }
 
     "display input boxes" in {
