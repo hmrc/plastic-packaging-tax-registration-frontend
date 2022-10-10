@@ -47,17 +47,22 @@ class ContactDetailsConfirmAddressController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      Ok(
-        page(
-          ConfirmAddress.form().fill(
-            ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
-          ),
-          request.registration.organisationDetails.businessRegisteredAddress.getOrElse(
-            throw new IllegalStateException("Registered business address must be present")
-          ),
-          request.registration.isGroup
-        )
+      val businessRegisteredAddress = request.registration.organisationDetails.businessRegisteredAddress.getOrElse(
+        throw new IllegalStateException("Registered business address must be present")
       )
+
+      if (request.registration.organisationDetails.incorporationDetails.isDefined && businessRegisteredAddress.isMissingCountryCode)
+        Redirect(commonRoutes.UpdateCompaniesHouseController.onPageLoad())
+      else
+        Ok(
+          page(
+            ConfirmAddress.form().fill(
+              ConfirmAddress(request.registration.primaryContactDetails.useRegisteredAddress)
+            ),
+            businessRegisteredAddress,
+            request.registration.isGroup
+          )
+        )
     }
 
   def submit(): Action[AnyContent] =

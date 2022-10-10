@@ -1,0 +1,54 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => pptRoutes}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
+@import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
+
+@this(
+    govukLayout: main_template,
+    pageHeading: pageHeading,
+    link: link,
+    paragraphBody: paragraphBody,
+    govukButton: GovukButton
+)
+
+@(companyNumber: String, companyName: String)(implicit request: JourneyRequest[_], messages: Messages)
+
+@govukLayout(title = Title("updateCompaniesHouse.heading")) {
+
+    @pageHeading(messages("updateCompaniesHouse.heading"), classes="govuk-heading-xl")
+
+    @paragraphBody(message = messages("updateCompaniesHouse.description.1",
+        link(messages("updateCompaniesHouse.description.1.link", companyName), Call("GET", "https://find-and-update.company-information.service.gov.uk/company/" + companyNumber), newTab = true)
+    ))
+
+    @paragraphBody(message = messages("updateCompaniesHouse.description.2",
+        link(messages("updateCompaniesHouse.description.2.link"), Call("GET", "https://www.gov.uk/file-changes-to-a-company-with-companies-house"), newTab = true, fullStop = true)
+    ))
+
+    @paragraphBody(message = messages("updateCompaniesHouse.description.3"))
+    @paragraphBody(message = messages("updateCompaniesHouse.description.4"))
+
+    <div>
+        @govukButton(
+            Button(
+                href = Some(pptRoutes.UpdateCompaniesHouseController.reset().url),
+                content = Text(messages("updateCompaniesHouse.button"))
+                )
+        )
+    </div>
+}

@@ -404,3 +404,6 @@ GET        /deregister-check-your-answers       uk.gov.hmrc.plasticpackagingtax.
 POST       /deregister-check-your-answers       uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregisterCheckYourAnswersController.continue()
 
 GET        /deregistration-submitted            uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.DeregistrationSubmittedController.displayPage()
+
+GET        /address-wrong-companies-house       uk.gov.hmrc.plasticpackagingtax.registration.controllers.UpdateCompaniesHouseController.onPageLoad()
+GET        /reset-companies-house               uk.gov.hmrc.plasticpackagingtax.registration.controllers.UpdateCompaniesHouseController.reset()

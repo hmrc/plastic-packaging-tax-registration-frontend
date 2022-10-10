@@ -801,3 +801,11 @@ registration-failed.detail1 = Ni allwn gwblhau’ch cofrestriad.
 registration-failed.detail2 = {0} fel y gallwn eich helpu gyda’ch cofrestriad.
 registration-failed.detail2-link = Cysylltwch â ni
 
+updateCompaniesHouse.heading = You must update your organisation's address at Companies House
+updateCompaniesHouse.description.1 = The {0} does not include a country. We cannot complete your Plastic Packaging Tax registration without this information.
+updateCompaniesHouse.description.1.link = address held at Companies House for {0} (opens in new tab)
+updateCompaniesHouse.description.2 = You can {0}
+updateCompaniesHouse.description.2.link = update your organisation's address online (opens in new tab)
+updateCompaniesHouse.description.3 = Log in to your Companies House account and update your address to include a country, for example: United Kingdom.
+updateCompaniesHouse.description.4 = You can then come back and continue to register for Plastic Packaging Tax.
+updateCompaniesHouse.button = I have updated my address
