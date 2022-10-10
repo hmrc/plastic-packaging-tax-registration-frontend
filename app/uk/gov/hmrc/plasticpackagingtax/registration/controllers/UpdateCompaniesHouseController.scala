@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Results}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
@@ -41,7 +42,7 @@ class UpdateCompaniesHouseController @Inject()(
   registrationConnector: RegistrationConnector,
   updateCompaniesHouse: UpdateCompaniesHouseView,
   val messagesApi: MessagesApi
-)(implicit ec: ExecutionContext) extends Results with FrontendHeaderCarrierProvider with I18nSupport {
+)(implicit ec: ExecutionContext) extends Results with FrontendHeaderCarrierProvider with I18nSupport with Logging {
 
   def onPageLoad(): Action[AnyContent] = (authenticate andThen journeyAction) {
     implicit request =>
@@ -50,7 +51,10 @@ class UpdateCompaniesHouseController @Inject()(
         cn <- request.registration.organisationDetails.incorporationDetails.map(_.companyName)
       } yield
         Ok(updateCompaniesHouse(crn, cn))
-      }.get
+      }.getOrElse{
+        logger.warn("No incorporationDetails, can not advise user.")
+        Redirect(routes.TaskListController.displayPage())
+      }
   }
 
   def reset(): Action[AnyContent] = (authenticate andThen journeyAction).async {
