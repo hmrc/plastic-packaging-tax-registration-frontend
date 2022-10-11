@@ -32,6 +32,7 @@ sealed trait Address {
   val countryCode: String
 
   def isValid: Boolean = countryCode.trim.nonEmpty
+  def isMissingCountryCode: Boolean = countryCode.trim.isEmpty
 
   def isUkAndEmptyPostcode: Boolean = countryCode == "GB" && maybePostcode.fold(true)(_.isEmpty)
 

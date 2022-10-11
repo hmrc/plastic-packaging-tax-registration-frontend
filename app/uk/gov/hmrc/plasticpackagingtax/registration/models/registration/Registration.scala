@@ -41,6 +41,9 @@ case class Registration(
                          userHeaders: Option[Map[String, String]] = None
                        ) {
 
+  def clearAddressFromGrs =
+    copy(organisationDetails = organisationDetails.clearGrsStuff)
+
   def toRegistration: Registration =
     Registration(
       id = this.id,

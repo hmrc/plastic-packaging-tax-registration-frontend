@@ -128,6 +128,9 @@ trait RegistrationBuilder {
   def withIncorpJourneyId(incorpJourneyId: Option[String]): RegistrationModifier =
     _.copy(incorpJourneyId = incorpJourneyId)
 
+  def withIncorpDetails(incorp: IncorporationDetails): RegistrationModifier =
+    r => r.copy(organisationDetails = r.organisationDetails.copy(incorporationDetails = Some(incorp)))
+
   def withRegistrationType(registrationType: Option[RegType]): RegistrationModifier =
     _.copy(registrationType = registrationType)
 

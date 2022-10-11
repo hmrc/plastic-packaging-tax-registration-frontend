@@ -78,6 +78,27 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
   "Contact Details Confirm Address Controller" should {
 
+    "redirect to update Companies House" when {
+      "Incorporation address is missing country code" in {
+        authorizedUser()
+        mockRegistrationFind(
+          aRegistration(
+            withOrganisationDetails(
+              OrganisationDetails(organisationType = Some(UK_COMPANY),
+                incorporationDetails = Some(incorporationDetails
+                  .copy(companyAddress = incorporationDetails.companyAddress.copy(country = None))
+                )
+              )
+            )
+          )
+        )
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(pptRoutes.UpdateCompaniesHouseController.onPageLoad().url)
+      }
+    }
+
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {

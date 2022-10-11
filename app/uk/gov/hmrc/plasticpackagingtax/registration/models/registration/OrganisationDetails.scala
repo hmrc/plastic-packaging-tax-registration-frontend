@@ -37,6 +37,9 @@ case class OrganisationDetails(
   isBusinessAddressFromGrs: Option[Boolean] = None
 ) {
 
+  def clearGrsStuff: OrganisationDetails = OrganisationDetails()
+    .copy(organisationType = organisationType)
+
   def status: TaskStatus =
     if (organisationType.isEmpty) TaskStatus.NotStarted
     else if (subscriptionCheckPassed && businessPartnerId.isDefined) TaskStatus.Completed
