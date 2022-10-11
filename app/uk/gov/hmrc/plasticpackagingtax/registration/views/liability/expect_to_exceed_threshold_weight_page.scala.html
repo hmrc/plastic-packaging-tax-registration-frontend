@@ -41,7 +41,7 @@
 @errorMessages = @{
     val errors = form.errors
         .filter(err => !err.message.contains("liability.expectToExceedThresholdWeight.question.empty.error"))
-        .map(er => messages(er.message, er.key)).mkString("<br>")
+        .map(er => messages(er.message, er.args.mkString)).mkString("<br>")
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 

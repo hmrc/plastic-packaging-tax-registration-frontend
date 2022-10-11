@@ -19,8 +19,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.liability
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.YesNoValues
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
@@ -28,7 +28,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_
 import java.time.LocalDate
 
 class ExpectToExceedThresholdWeightViewSpec
-  extends UnitViewSpec with Matchers {
+  extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
 
   private val page = inject[expect_to_exceed_threshold_weight_page]
   private val formProvider: ExpectToExceedThresholdWeight = inject[ExpectToExceedThresholdWeight]
@@ -168,11 +168,47 @@ class ExpectToExceedThresholdWeightViewSpec
 
       "display error" when {
         "no date entered" in {
-          val bindedForm = formProvider().withError("answerError", "general.true")
-          val view = createView(bindedForm)
+          val boundForm = formProvider().withError("answerError", "general.true")
+          val view = createView(boundForm)
           view must haveGovukFieldError("expect-to-exceed-threshold-weight-date", "Yes")
           view must haveGovukGlobalErrorSummary
         }
+
+        val day = Some("expect-to-exceed-threshold-weight-date.day" -> "5")
+        val month = Some("expect-to-exceed-threshold-weight-date.month" -> "12")
+        val year = Some("expect-to-exceed-threshold-weight-date.year" -> "2022")
+
+        val table = Table(
+          ("test", "day", "month", "year"),
+          ("day", None, month, year),
+          ("month",day, None, year),
+          ("year",day, month, None),
+          ("day and year", None, month, None),
+          ("day and month", None, None, year),
+          ("month and year", day, None, None),
+        )
+
+        forAll(table) {
+          (
+            test: String,
+           day: Option[(String, String)],
+           month: Option[(String, String)],
+           year: Option[(String, String)]
+          ) =>
+            s"$test is missing" in {
+              val boundForm = formProvider().bind(
+                Map("answer" -> "yes") ++
+                  day.fold[Map[String,String]](Map())(o => Map(o._1 -> o._2)) ++
+                  month.fold[Map[String,String]](Map())(o => Map(o._1 -> o._2)) ++
+                  year.fold[Map[String,String]](Map())(o => Map(o._1 -> o._2))
+              )
+
+              createView(boundForm)
+                .getElementsByClass("govuk-error-message")
+                .text() must include(s"Date must include the $test")
+            }
+        }
+
       }
 
     }
