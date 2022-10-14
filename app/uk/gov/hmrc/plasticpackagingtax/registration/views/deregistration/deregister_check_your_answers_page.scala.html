@@ -14,23 +14,23 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.routes
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationReason
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
 
 @this(
     formHelper: FormWithCSRF,
     govukLayout: main_template,
     paragraph: paragraph,
+    paragraphBody: paragraphBody,
     saveButtons: saveButtons,
     errorSummary: errorSummary,
     govukSummaryList: GovukSummaryList,
     pageHeading: pageHeading,
-    saveAndContinue: saveAndContinue
+    saveAndContinue: saveAndContinue,
+    subHeading: subHeading
 )
 
 
@@ -89,6 +89,9 @@
                 )
             )
         )
-        @saveAndContinue("deregister.checkAnswers.confirm")
+        
+        @subHeading(messages("deregister.checkAnswers.confirm.heading"))
+        @paragraphBody(messages("deregister.checkAnswers.confirm.para"))
+        @saveAndContinue("deregister.checkAnswers.confirm.button-text")
     }
 }

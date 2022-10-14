@@ -766,22 +766,21 @@ amend.partner.remove.title  = A ydych yn siŵr eich bod am dynnu {0} o’r bartn
 gform.link  =  https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 deregistration.deregister.title = Datgofrestru rhag y Dreth Deunydd Pacio Plastig
-deregistration.deregister.eligibility = Gallwch ddatgofrestru rhag y Dreth Deunydd Pacio Plastig os yw’r canlynol yn wir:
+deregistration.deregister.eligibility = Gallwch ofyn am gael datgofrestru rhag y Dreth Deunydd Pacio Plastig os yw’r canlynol yn wir:
 deregistration.deregister.eligibility.1 = rydych wedi cofrestru’n anghywir
 deregistration.deregister.eligibility.2 = rydych wedi rhoi’r gorau i fasnachu
-deregistration.deregister.eligibility.3 = nid ydych wedi cyrraedd y trothwy 10,000kg neu nid ydych yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
-deregistration.deregister.eligibility.4 = rydych eisiau cofrestru fel rhan o grŵp
-deregistration.deregister.detail1 = Bydd angen i ni gymeradwyo’ch cais i ddatgofrestru.
-deregistration.deregister.detail2 = Pan fyddwch yn datgofrestru, bydd eich rhwymedigaeth treth yn dod i ben.
+deregistration.deregister.eligibility.3 = nid ydych wedi cyrraedd y trothwy 10,000kg am gyfnod o 12 mis ers dyddiad dechrau’ch treth, ac nid ydych yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
+deregistration.deregister.eligibility.4 = rydych yn dymuno cofrestru fel rhan o grŵp
+deregistration.deregister.detail1 = Byddwn yn gwirio’ch cais. Ar ôl i ni ei gymeradwyo, byddwn yn ysgrifennu atoch a bydd eich rhwymedigaeth treth yn dod i ben.
 deregistration.deregister.label = A ydych yn siŵr eich bod am ddatgofrestru rhag y Dreth Deunydd Pacio Plastig?
 deregistration.deregister.empty.error = Dewiswch ‘Iawn’ os ydych am ddatgofrestru rhag y Dreth Deunydd Pacio Plastig
 
 deregistration.reason.title = Pam rydych am ddatgofrestru?
 deregistration.reason.type.RegisteredIncorrectly = Wedi cofrestru’n anghywir
 deregistration.reason.type.CeasedTrading = Wedi rhoi’r gorau i fasnachu
-deregistration.reason.type.BelowDe-minimus = Heb gyrraedd y trothwy 10,000kg neu ddim yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
+deregistration.reason.type.BelowDe-minimus = Heb gyrraedd y trothwy 10,000kg am gyfnod o 12 mis ers dyddiad dechrau fy nhreth, ac nid wyf yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
 deregistration.reason.type.TakenintoGroupRegistration = Eisiau cofrestru fel rhan o grŵp
-deregistration.reason.empty.error = Select your reason for deregistration
+deregistration.reason.empty.error = Dewiswch pam rydych am ddatgofrestru
 
 deregistration.confirmation.title = Mae’ch cais i ddatgofrestru wedi’i gyflwyno
 deregistration.confirmation.subheading = Yr hyn sy’n digwydd nesaf
@@ -793,8 +792,9 @@ deregister.checkAnswers.title = Gwiriwch eich atebion
 deregister.checkAnswers.heading = Gwiriwch eich atebion
 deregister.checkAnswers.wantToDeregister = Eisiau datgofrestru
 deregister.checkAnswers.reasonToDeregister = Pam rydych am ddatgofrestru
-deregister.checkAnswers.confirm = Cadarnhau ac yn eich blaen
-
+deregister.checkAnswers.confirm.heading = Anfonwch eich cais nawr
+deregister.checkAnswers.confirm.para = Drwy gyflwyno’r cais hwn i ddatgofrestru, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a roddir gennych yn gywir.
+deregister.checkAnswers.confirm.button-text = Cyflwyno’r cais
 
 registration-failed.title = Cofrestriad wedi methu
 registration-failed.detail1 = Ni allwn gwblhau’ch cofrestriad.

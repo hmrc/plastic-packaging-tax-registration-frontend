@@ -34,7 +34,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
   private val page = inject[deregister_check_your_answers_page]
 
   private def createView(deregistrationDetails: DeregistrationDetails): Document =
-    page(deregistrationDetails)(authenticatedRequest, messages)
+    page(deregistrationDetails)(authenticatedRequest, messages.messages)
 
   "Deregister Check Answers View with no answers" should {
 
@@ -55,7 +55,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
     }
 
     "display 'Confirm and continue' button" in {
-      view.getElementById("submit").text() mustBe "Confirm and continue"
+      view.getElementById("submit").text() mustBe "Submit request"
     }
 
     "display want to deregister row" in {
