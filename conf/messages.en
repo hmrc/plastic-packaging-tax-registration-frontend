@@ -768,22 +768,21 @@ amend.partner.remove.title = Are you sure you want to remove {0} from the partne
 gform.link = https://www.tax.service.gov.uk/submissions/new-form/register-for-plastic-packaging-tax
 
 deregistration.deregister.title = Deregister from Plastic Packaging Tax
-deregistration.deregister.eligibility = You can deregister from Plastic Packaging Tax if you:
+deregistration.deregister.eligibility = You can ask to deregister from Plastic Packaging Tax if you:
 deregistration.deregister.eligibility.1 = registered incorrectly
 deregistration.deregister.eligibility.2 = cease trading
-deregistration.deregister.eligibility.3 = have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.deregister.eligibility.3 = have not met the 10,000kg threshold for a 12-month period since your tax start date and do not expect to meet it in the next 12 months
 deregistration.deregister.eligibility.4 = want to register as part of a group
-deregistration.deregister.detail1 = We’ll need to approve your deregistration request.
-deregistration.deregister.detail2 = When you deregister, your tax liability will stop.
+deregistration.deregister.detail1 = We’ll check your request. When we’ve approved it, we’ll write to you and your tax liability will stop. 
 deregistration.deregister.label = Are you sure you want to deregister from Plastic Packaging Tax?
 deregistration.deregister.empty.error = Select yes if you want to deregister from Plastic Packaging Tax
 
 deregistration.reason.title = Why do you want to deregister?
 deregistration.reason.type.RegisteredIncorrectly = Registered incorrectly
 deregistration.reason.type.CeasedTrading = Ceased trading
-deregistration.reason.type.BelowDe-minimus = Have not met the 10,000kg threshold or do not expect to meet it within the next 12 months
+deregistration.reason.type.BelowDe-minimus = Have not met the 10,000kg threshold for a 12-month period since my tax start date and do not expect to meet it in the next 12 months
 deregistration.reason.type.TakenintoGroupRegistration = Want to register as part of a group
-deregistration.reason.empty.error = Select your reason for deregistration 
+deregistration.reason.empty.error = Select why you want to deregister
 
 deregistration.confirmation.title = Your deregistration request has been submitted
 deregistration.confirmation.subheading = What happens next
@@ -795,7 +794,9 @@ deregister.checkAnswers.title = Check your answers
 deregister.checkAnswers.heading = Check your answers
 deregister.checkAnswers.wantToDeregister = Want to deregister
 deregister.checkAnswers.reasonToDeregister = Why you want to deregister
-deregister.checkAnswers.confirm = Confirm and continue
+deregister.checkAnswers.confirm.heading = Now send your request
+deregister.checkAnswers.confirm.para = By submitting this deregistration request you are confirming that, to the best of your knowledge, the details you are providing are correct.
+deregister.checkAnswers.confirm.button-text = Submit request
 
 registration-failed.title = Registration failed
 registration-failed.detail1 = We’re unable to complete your registration.
