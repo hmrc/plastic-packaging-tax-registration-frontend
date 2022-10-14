@@ -40,7 +40,7 @@ class ExpectToExceedThresholdWeightViewA11ySpec
   private val formProvider: ExpectToExceedThresholdWeight = inject[ExpectToExceedThresholdWeight]
   private val page = inject[expect_to_exceed_threshold_weight_page]
 
-  "AmendDirectExportPlasticPackagingView" should {
+  "ExpectToExceedThresholdWeightViewA11ySpec" should {
 
     def render(form: Form[ExpectToExceedThresholdWeightAnswer]): String =
       page(form)(request, messages).toString()
