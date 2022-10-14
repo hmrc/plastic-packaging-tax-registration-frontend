@@ -80,9 +80,9 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-label").get(1).text() mustBe "Ceased trading"
 
       view.getElementById("answer-3").attr("value").text() mustBe BelowDeminimis.toString
-      view.getElementsByClass("govuk-label").get(
-        2
-      ).text() mustBe "Have not met the 10,000kg threshold or do not expect to meet it within the next 12 months"
+      view.getElementsByClass("govuk-label").get(2)
+        .text() mustBe "Have not met the 10,000kg threshold for a 12-month period since my tax start date and do not " +
+        "expect to meet it in the next 12 months"
 
       view.getElementById("answer-4").attr(
         "value"
@@ -120,7 +120,7 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
         val form = DeregisterReasonForm.form().bind(emptyFormData)
         val view = createView(form)
 
-        view must haveGovukFieldError("answer", "Select your reason for deregistration")
+        view must haveGovukFieldError("answer", "Select why you want to deregister")
         view must haveGovukGlobalErrorSummary
       }
     }
