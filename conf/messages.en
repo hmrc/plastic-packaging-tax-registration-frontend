@@ -227,7 +227,7 @@ primaryContactDetails.phoneNumber.invalidFormat.error = Enter a telephone number
 
 primaryContactDetails.confirmAddress.title = Do you want to use this registered address as the main contact address?
 primaryContactDetails.confirmAddress.heading = Do you want to use this registered address as the main contact address?
-primaryContactDetails.confirmAddress.empty.error = Choose an option
+primaryContactDetails.confirmAddress.empty.error = Select yes if you want to use this as the main contact address
 
 primaryContactDetails.address.title = What is {0}’s business address?
 primaryContactDetails.address.hint = We’ll only use this to send information about the organisation’s account and returns.
@@ -580,13 +580,13 @@ verify.organisation.detail.1 = You will be asked to give details you many hold a
 verify.organisation.detail.2 = We ask these questions to protect against malicious or fraudulent attempts to access the service.
 
 group.membersUnderGroupControl.title = Are all the organisations in the group under the same control?
-group.membersUnderGroupControl.error.empty = Please select yes or no
+group.membersUnderGroupControl.error.empty = Select yes if all the organisations in the group are under the same control
 
 group.notMembersUnderGroupControl.title = You cannot register as a group
 group.notMembersUnderGroupControl.detail = You can apply as a single organisation or partnership.
 
 group.removeMember.title = Are you sure you want to remove {0} from the group?
-group.removeMember.error.empty = Please select Yes or No
+group.removeMember.error.empty = Select yes if you want to remove an organisation from the group
 
 organisationDetails.other.organisation.sectionHeader = Other organisations in the group
 organisationDetails.other.group.title = What type of organisation do you want to add first?
