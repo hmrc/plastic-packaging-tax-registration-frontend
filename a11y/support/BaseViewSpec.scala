@@ -19,18 +19,17 @@ package support
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.{FakeRequest, Injecting}
+import play.api.test.Injecting
+import spec.PptTestData
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
-import play.api.test.CSRFTokenHelper.CSRFRequest
 
 trait BaseViewSpec
   extends PlaySpec
     with GuiceOneAppPerSuite
     with Injecting
+    with PptTestData
     with AccessibilityMatchers {
 
-  val request: Request[AnyContent]         = FakeRequest().withCSRFToken
   protected lazy val realMessagesApi: MessagesApi = inject[MessagesApi]
 
   implicit def messages: Messages = realMessagesApi.preferred(request)

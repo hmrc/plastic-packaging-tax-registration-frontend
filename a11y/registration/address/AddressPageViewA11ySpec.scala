@@ -16,6 +16,7 @@
 
 package registration.address
 
+import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.GET
 import support.BaseViewSpec
@@ -25,6 +26,7 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.address_p
 class AddressPageViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[address_page]
+  private val form = Address.form()
 
   "AddressPageViewA11ySpec" should {
 
@@ -37,9 +39,9 @@ class AddressPageViewA11ySpec extends BaseViewSpec {
       "countryCode"  -> "GB"
     )
 
-    def render: String =
+    def render(form: Form[Address]): String =
       page(
-        Address.form().bind(input),
+        form,
         Map("countryCode" -> "any"),
         Call(GET, "/foo"),
         "heading",
@@ -47,7 +49,11 @@ class AddressPageViewA11ySpec extends BaseViewSpec {
       )(request, messages).toString()
 
     "pass accessibility checks without error" in {
-      render must passAccessibilityChecks
+      render(form.bind(input)) must passAccessibilityChecks
+    }
+
+    "pass accessibility checks with error" in {
+      render(form.withError("error", "message")) must passAccessibilityChecks
     }
   }
 }

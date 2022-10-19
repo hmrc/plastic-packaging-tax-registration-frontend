@@ -188,7 +188,7 @@ trait EmailVerificationActions {
     submitCall: Call,
     sectionHeading: Option[String] = None
   )(implicit request: JourneyRequest[AnyContent], messages: Messages): HtmlFormat.Appendable =
-    emailPasscodePage(form, Some(prospectiveEmailAddress), backCall, submitCall, sectionHeading)
+    emailPasscodePage(form, Some(prospectiveEmailAddress), submitCall, sectionHeading)
 
   protected def processVerificationCodeSubmission(
     backCall: Call,
