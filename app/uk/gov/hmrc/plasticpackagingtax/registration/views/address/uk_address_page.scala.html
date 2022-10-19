@@ -37,7 +37,7 @@
 
 @govukLayout(
     title = Title(headingKey = "ukAddress.title", headingArg = entityName.getOrElse(messages("missing.organisationName"))),
-    backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))
+    backButton = Some(BackButtonJs)
 ) {
 
     @errorSummary(form.errors)

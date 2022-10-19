@@ -18,14 +18,8 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.models
 
 import play.api.mvc.Call
 
-sealed trait BackButtonLink {
-  val title: String
-  val hiddenText: String
-  val call: Call
-}
+sealed trait BackButtonLink
 
-case class BackButton(override val title: String, override val call: Call, override val hiddenText: String) extends BackButtonLink
+case class BackButton(title: String, call: Call,  hiddenText: String) extends BackButtonLink
 
-case class BackButtonJs(override val title: String, override val hiddenText: String) extends BackButtonLink {
-  override val call: Call = Call("GET", "javascript:window.history.back()")
-}
+case object BackButtonJs extends BackButtonLink

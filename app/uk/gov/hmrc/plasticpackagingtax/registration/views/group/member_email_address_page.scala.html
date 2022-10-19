@@ -45,7 +45,7 @@
 
 @govukLayout(
   title = Title(headingKey = "contactDetails.member.emailAddress.title", headingArgs = Some(List(contactName))),
-  backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButtonJs)) {
   @errorSummary(form.errors)
 
   @formHelper(action = updateCall, 'autoComplete -> "off") {

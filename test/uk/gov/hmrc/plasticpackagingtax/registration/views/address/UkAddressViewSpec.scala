@@ -54,11 +54,6 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
       view.select("h1").text() must include(messages("ukAddress.title", "entity"))
     }
 
-    "display visually hidden labels" in {
-      view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(
-        messages("site.back.hiddenText")
-      )
-    }
 
     "display radios" in {
       view must containElementWithID("ukAddress")

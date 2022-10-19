@@ -83,7 +83,7 @@
             formGroupClasses = "autocomplete-wrapper",
             attributes = Map("aria-labelledby" -> "countryCode", "data-all-countries" -> ""),
             items =
-                Seq(SelectItem(value = None)) ++
+                Seq(SelectItem(value = None, text = "Empty value")) ++
                         countryMap.map { countryEntry =>
                             SelectItem(
                                 value = Some(countryEntry._1),
@@ -105,7 +105,7 @@
 
 @govukLayout(
     title = Title(headingKey, headingArg = entityName.getOrElse(messages("missing.organisationName"))),
-    backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs)) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("primaryContactDetails.sectionHeader"))
