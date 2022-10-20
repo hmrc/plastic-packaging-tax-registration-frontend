@@ -84,7 +84,7 @@ class ViewUtils @Inject() (countryService: CountryService) {
         address.addressLine3.getOrElse(""),
         address.townOrCity,
         address.maybePostcode.getOrElse(""),
-        countryService.getName(address.countryCode)
+        countryService.tryLookupCountryName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
 
   def showChangeLink(call: Call)(implicit journeyRequest: JourneyRequest[_]): Option[Call] =

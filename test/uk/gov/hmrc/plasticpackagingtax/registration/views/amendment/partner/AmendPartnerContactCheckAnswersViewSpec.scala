@@ -64,7 +64,7 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
             address.addressLine3.getOrElse(""),
             address.townOrCity,
             address.maybePostcode.getOrElse(""),
-            countryService.getName(address.countryCode)
+            countryService.tryLookupCountryName(address.countryCode)
         ).filter(_.nonEmpty).mkString(" ")
 
       val expectedContent = Seq(
