@@ -41,10 +41,8 @@ class CountryService {
   val countries = parseCountriesResource()
   val synonyms = parseSynonymsResource()
 
-  def getName(code: String): String = {
-    Try(countries(code))
-      .getOrElse(throw new IllegalStateException(s"Could not find a country name for key of $code"))
-  }
+  def getName(code: String): String =
+    countries.getOrElse(code, code)
 
   def getAll(): Map[String, String] = countries
   def getAllSynonyms(): Map[String, List[String]] = synonyms
