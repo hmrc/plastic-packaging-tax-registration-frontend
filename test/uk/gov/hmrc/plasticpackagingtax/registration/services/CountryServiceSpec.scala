@@ -31,13 +31,13 @@ class CountryServiceSpec extends AnyWordSpecLike {
 
   ".getName" should {
     "return country names" in {
-      countryService.getName("GB") mustBe "United Kingdom"
+      countryService.tryLookupCountryName("GB") mustBe "United Kingdom"
     }
 
     "return the original country Code" when {
       "country cannot be found for code provided" in {
 
-        countryService.getName("XX") mustBe "XX"
+        countryService.tryLookupCountryName("XX") mustBe "XX"
       }
     }
   }

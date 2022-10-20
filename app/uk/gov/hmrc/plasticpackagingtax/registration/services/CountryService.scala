@@ -41,7 +41,7 @@ class CountryService {
   val countries = parseCountriesResource()
   val synonyms = parseSynonymsResource()
 
-  def getName(code: String): String =
+  def tryLookupCountryName(code: String): String =
     countries.getOrElse(code, code)
 
   def getAll(): Map[String, String] = countries
