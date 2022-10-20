@@ -115,13 +115,7 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
 
       whenAuthFailsWith(MissingBearerToken())
 
-      val request = authRequest(
-        FakeRequest()
-          .withHeaders(Headers())
-          .withTarget(RequestTarget("/anyURi", "continueUrl", Map("key" -> Seq("value")))),
-          PptTestData.newUser("123")
-        )
-      val result = registrationAuthAction.invokeBlock(request, okResponseGenerator)
+      val result = registrationAuthAction.invokeBlock(FakeRequest(GET, "continueUrl"), okResponseGenerator)
 
       redirectLocation(result) mustBe Some("login-url?continue=continueUrl")
     }
@@ -168,13 +162,7 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
 
       whenAuthFailsWith(IncorrectCredentialStrength())
 
-      val request = authRequest(
-        FakeRequest()
-          .withHeaders(Headers())
-          .withTarget(RequestTarget("/anyURi", "continueUrl", Map("key" -> Seq("value")))),
-        PptTestData.newUser("123")
-      )
-      val result = registrationAuthAction.invokeBlock(request, okResponseGenerator)
+      val result = registrationAuthAction.invokeBlock(FakeRequest("GET", "continueUrl"), okResponseGenerator)
 
       redirectLocation(result) mustBe Some(
         "mfa-uplift-url?origin=PPT&continueUrl=continueUrl"
