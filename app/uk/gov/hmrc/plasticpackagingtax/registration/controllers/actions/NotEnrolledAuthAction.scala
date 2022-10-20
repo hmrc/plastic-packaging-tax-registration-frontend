@@ -124,7 +124,9 @@ abstract class AuthActionBase @Inject() (
           }.and(acceptableCredentialStrength)
       )
 
+    val continueUrl = request.target.path
     val authorisation = authTimer.time()
+
     authorised(authPredicate)
       .retrieve(authData) {
         case credentials ~ name ~ email ~ externalId ~ internalId ~ affinityGroup ~ allEnrolments ~ agentCode ~
@@ -156,9 +158,9 @@ abstract class AuthActionBase @Inject() (
           executeRequest(request, block, identityData, allEnrolments)
       } recover {
       case _: NoActiveSession =>
-        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(appConfig.loginContinueUrl)))
+        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
       case _: IncorrectCredentialStrength =>
-        upliftCredentialStrength()
+        upliftCredentialStrength(continueUrl)
       case _: InsufficientEnrolments =>
         // Returns has the best not enrolled explanation page and knows how to handle agents in this state
         Results.Redirect(appConfig.pptAccountUrl)
@@ -171,10 +173,10 @@ abstract class AuthActionBase @Inject() (
     }
   }
 
-  private def upliftCredentialStrength[A](): Result =
+  private def upliftCredentialStrength[A](continueUrl: String): Result =
     Redirect(appConfig.mfaUpliftUrl,
              Map("origin"      -> Seq(appConfig.serviceIdentifier),
-                 "continueUrl" -> Seq(appConfig.loginContinueUrl)
+                 "continueUrl" -> Seq(continueUrl)
              )
     )
 
