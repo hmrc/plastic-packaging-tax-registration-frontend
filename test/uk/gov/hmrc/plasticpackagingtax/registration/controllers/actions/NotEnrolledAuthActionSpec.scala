@@ -20,7 +20,9 @@ import base.unit.ControllerSpec
 import base.{MetricsMocks, PptTestData}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.mvc.{Headers, Results}
+import play.api.mvc.request.RequestTarget
+import play.api.mvc.{Headers, Request, RequestHeader, Results}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.unauthorised.{routes => unauthorisedRoutes}
@@ -110,16 +112,18 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
     "redirect to sign in when user not logged in" in {
 
       when(appConfig.loginUrl).thenReturn("login-url")
-      when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
 
       whenAuthFailsWith(MissingBearerToken())
 
-      val result =
-        registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                           okResponseGenerator
+      val request = authRequest(
+        FakeRequest()
+          .withHeaders(Headers())
+          .withTarget(RequestTarget("/anyURi", "continueUrl", Map("key" -> Seq("value")))),
+          PptTestData.newUser("123")
         )
+      val result = registrationAuthAction.invokeBlock(request, okResponseGenerator)
 
-      redirectLocation(result) mustBe Some("login-url?continue=login-continue-url")
+      redirectLocation(result) mustBe Some("login-url?continue=continueUrl")
     }
 
     "redirect to returns accounts to use its not enrolled page when user is not enrolled" in {
@@ -160,17 +164,20 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
 
     "redirect the user to MFA Uplift page if the user has incorrect credential strength " in {
       when(appConfig.mfaUpliftUrl).thenReturn("mfa-uplift-url")
-      when(appConfig.loginContinueUrl).thenReturn("login-continue-url")
       when(appConfig.serviceIdentifier).thenReturn("PPT")
 
       whenAuthFailsWith(IncorrectCredentialStrength())
-      val result =
-        registrationAuthAction.invokeBlock(authRequest(Headers(), PptTestData.newUser()),
-                                           okResponseGenerator
-        )
+
+      val request = authRequest(
+        FakeRequest()
+          .withHeaders(Headers())
+          .withTarget(RequestTarget("/anyURi", "continueUrl", Map("key" -> Seq("value")))),
+        PptTestData.newUser("123")
+      )
+      val result = registrationAuthAction.invokeBlock(request, okResponseGenerator)
 
       redirectLocation(result) mustBe Some(
-        "mfa-uplift-url?origin=PPT&continueUrl=login-continue-url"
+        "mfa-uplift-url?origin=PPT&continueUrl=continueUrl"
       )
     }
 
