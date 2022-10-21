@@ -36,10 +36,10 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
   private val notNominated     = false
 
   private def createViewNom(form: Form[MemberName] = MemberName.form()): Document =
-    page(form, organisationName, nominated, backLink, updateLink)(journeyRequest, messages)
+    page(form, organisationName, nominated, updateLink)(journeyRequest, messages)
 
   private def createViewOther(form: Form[MemberName] = MemberName.form()): Document =
-    page(form, organisationName, notNominated, backLink, updateLink)(journeyRequest, messages)
+    page(form, organisationName, notNominated, updateLink)(journeyRequest, messages)
 
   "Member name viewNom" should {
 
@@ -56,11 +56,6 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(viewNom)
 
-    }
-
-    "display 'Back' button" in {
-
-      viewNom.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -238,8 +233,8 @@ class PartnerMemberNamePageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(MemberName.form(), organisationName, nominated, backLink, updateLink)(journeyRequest, messages)
-    page.render(MemberName.form(), organisationName,nominated, backLink, updateLink, journeyRequest, messages)
+    page.f(MemberName.form(), organisationName, nominated, updateLink)(journeyRequest, messages)
+    page.render(MemberName.form(), organisationName,nominated, updateLink, journeyRequest, messages)
   }
 
 }

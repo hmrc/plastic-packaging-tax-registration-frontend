@@ -139,7 +139,6 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
   ) =
     page(form,
          email,
-         routes.ContactDetailsEmailAddressController.displayPage(),
          routes.ContactDetailsEmailAddressPasscodeController.submit(),
          Some(sectionName)
     )

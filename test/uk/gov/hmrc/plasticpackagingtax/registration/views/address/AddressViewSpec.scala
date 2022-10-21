@@ -63,10 +63,6 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
       view.getElementsByClass("govuk-body").get(0).text() must include(messages("primaryContactDetails.address.hint"))
     }
 
-    "display visually hidden labels" in {
-      view.getElementsByClass("govuk-visually-hidden").get(2).text() must include(messages("site.back.hiddenText"))
-    }
-
     "display input boxes" in {
       view must containElementWithID("addressLine1")
       view must containElementWithID("addressLine2")

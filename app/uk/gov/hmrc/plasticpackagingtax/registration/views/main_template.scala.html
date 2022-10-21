@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcUserResearchBanner
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.LanguageSelect
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.Language
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title, BackButtonLink}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, BackButtonJs, Title, BackButtonLink}
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.play.language.LanguageUtils
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
@@ -89,6 +89,15 @@
     }
 }
 
+@backLink(title: String, url: String, hiddenText: Option[String] = None) = @{
+    govukBackLink(BackLink(
+        content = HtmlContent(Html(s"""${title}${hiddenText.fold("")(o => s"""<span class="govuk-visually-hidden">$o</span>""")}""")),
+        attributes = Map("id" -> "back-link"),
+        classes = "govuk-!-display-none-print",
+        href = url
+    ))
+}
+
 @beforeContentBlock = {
 
     @{
@@ -107,14 +116,10 @@
     }
 
     <div class="govuk-back-link-div">
-    @backButton.map(back =>
-        govukBackLink(BackLink(
-            content = HtmlContent(Html(s"""${back.title}<span class="govuk-visually-hidden">${back.hiddenText}</span>""")),
-            attributes = Map("id" -> "back-link"),
-            classes = "govuk-!-display-none-print",
-            href = back.call.url
-        ))
-    )
+    @backButton.map {
+        case BackButtonJs(call) => { @backLink(messages("site.back"), call.url) }
+        case BackButton(title, call, hiddenText) => { @backLink(title, call.url, Some(hiddenText)) }
+    }
     </div>
 }
 

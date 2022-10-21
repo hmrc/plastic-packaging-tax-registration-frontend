@@ -64,7 +64,7 @@ abstract class PartnerEmailAddressControllerBase(
           case _ =>
             EmailAddress.form()
         }
-        Ok(page(form, backCall, submitCall, contactName, isNominated))
+        Ok(page(form, submitCall, contactName, isNominated))
       }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
@@ -117,7 +117,7 @@ abstract class PartnerEmailAddressControllerBase(
         (formWithErrors: Form[EmailAddress]) =>
           partner.contactDetails.flatMap(_.name).map {
             contactName =>
-              Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName, isNominated)))
+              Future.successful(BadRequest(page(formWithErrors, submitCall, contactName, isNominated)))
           }.getOrElse(
             Future.successful(
               throw new IllegalStateException("Expected partner contact name missing")

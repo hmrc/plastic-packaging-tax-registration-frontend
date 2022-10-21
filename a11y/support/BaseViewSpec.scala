@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.plasticpackagingtax.registration.views.models
+package support
 
-import play.api.mvc.Call
-import uk.gov.hmrc.http.HttpVerbs.GET
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.Injecting
+import spec.PptTestData
+import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 
-sealed trait BackButtonLink
+trait BaseViewSpec
+  extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with PptTestData
+    with AccessibilityMatchers {
 
-case class BackButton(title: String, call: Call,  hiddenText: String) extends BackButtonLink
-case class BackButtonJs(call: Call = Call(GET, "javascript:window.history.back()")) extends BackButtonLink
+  protected lazy val realMessagesApi: MessagesApi = inject[MessagesApi]
+
+  implicit def messages: Messages = realMessagesApi.preferred(request)
+
+}

@@ -23,14 +23,13 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType.FormMode
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{LIMITED_LIABILITY_PARTNERSHIP, OVERSEAS_COMPANY_UK_BRANCH, PartnerTypeEnum, REGISTERED_SOCIETY, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
+import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
 
 @ViewTest
 class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
@@ -77,11 +76,6 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
-    }
-
     "display title for nominated partner" in {
 
       view.select("title").text() must include(messages("nominated.partner.type.title"))
@@ -118,11 +112,6 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers {
     "display sign out link" in {
 
       displaySignOutLink(view1)
-    }
-
-    "display 'Back' button" in {
-
-      view1.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display title for other partner" in {

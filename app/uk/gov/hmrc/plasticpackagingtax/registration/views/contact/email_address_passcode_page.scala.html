@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 
 @this(
   govukLayout: main_template,
@@ -36,7 +36,7 @@
   link : link
 )
 
-@(form: Form[EmailAddressPasscode], emailAddress: Option[String], backLink: Call, updateCall: Call, sectionHeading: Option[String])(implicit request: Request[_], messages: Messages)
+@(form: Form[EmailAddressPasscode], emailAddress: Option[String], updateCall: Call, sectionHeading: Option[String])(implicit request: Request[_], messages: Messages)
 
 @emailAddressPasscodeField = @{form("value")}
 
@@ -64,7 +64,7 @@
 }
 @govukLayout(
   title = Title("primaryContactDetails.emailAddress.passcode.title"),
-  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+  backButton = Some(BackButtonJs())) {
   @errorSummary(form.errors)
 
   @sectionHeading.map { heading =>

@@ -62,7 +62,7 @@
 
 @govukLayout(
     title = Title(title),
-    backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("organisationDetails.other.organisation.sectionHeader"))

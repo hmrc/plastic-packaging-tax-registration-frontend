@@ -60,7 +60,7 @@
 
 @govukLayout(
     title = Title("primaryContactDetails.confirmAddress.title"),
-    backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
     @errorSummary(form.errors)
 
     @formHelper(action = pptRoutes.ContactDetailsConfirmAddressController.submit(), 'autoComplete -> "off") {

@@ -69,7 +69,7 @@ class AmendEmailAddressControllerSpec
     HtmlFormat.raw("email amendment")
   )
 
-  when(amendEmailPasscodePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(
+  when(amendEmailPasscodePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email passcode")
   )
 

@@ -62,7 +62,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -116,7 +116,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       await(controller.displayPage()(getRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Option[String]])
-      verify(page).apply(any(), any(), any(), any(), captor.capture())(any(), any())
+      verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
       captor.getValue mustBe Some("primaryContactDetails.group.sectionHeader")
     }
 
@@ -126,7 +126,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       await(controller.displayPage()(getRequest()))
 
       val captor = ArgumentCaptor.forClass(classOf[Option[String]])
-      verify(page).apply(any(), any(), any(), any(), captor.capture())(any(), any())
+      verify(page).apply(any(), any(), any(), captor.capture())(any(), any())
       captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
     }
 
@@ -305,9 +305,6 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
         val form = EmailAddressPasscode.form()
         verify(page).apply(ArgumentMatchers.eq(form),
                            ArgumentMatchers.eq(Some("test@test.com")),
-                           ArgumentMatchers.eq(
-                             routes.ContactDetailsEmailAddressController.displayPage()
-                           ),
                            ArgumentMatchers.eq(
                              routes.ContactDetailsEmailAddressPasscodeController.submit()
                            ),

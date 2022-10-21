@@ -43,7 +43,7 @@
 
 @govukLayout(
   title = Title(headingKey = "primaryContactDetails.jobTitlePage.title", headingArg = contactName),
-  backButton = Some(BackButtonJs(messages("site.back"), messages("site.back.hiddenText")))) {
+  backButton = Some(BackButtonJs())) {
   @errorSummary(form.errors)
 
   @sectionHeader(caption)
