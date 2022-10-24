@@ -23,7 +23,7 @@ import support.BaseViewSpec
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
 
-class EmailAddressPasscodeViewA11ySpec extends BaseViewSpec {
+class ContactDetailsEmailAddressPasscodeViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[email_address_passcode_page]
   private val form = EmailAddressPasscode.form()

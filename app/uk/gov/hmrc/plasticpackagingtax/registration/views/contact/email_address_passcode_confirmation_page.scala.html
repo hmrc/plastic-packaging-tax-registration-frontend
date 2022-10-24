@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 
 @this(
@@ -31,13 +31,13 @@
   formHelper: FormWithCSRF,
   continueButton: continue
 )
-@(backLink: Call, updateCall: Call, sectionHeading: Option[String])(implicit request: Request[_], messages: Messages)
+@(updateCall: Call, sectionHeading: Option[String])(implicit request: Request[_], messages: Messages)
 
 @hmrcPrivacyLink = {<a href="@appConfig.hmrcPrivacyUrl">@messages("primaryContactDetails.emailAddress.passcode.confirmation.privacyNotice.link")</a>}
 
 @govukLayout(
   title = Title("primaryContactDetails.emailAddress.passcode.confirmation.title"),
-  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+  backButton = Some(BackButtonJs())) {
 
     @sectionHeading.map { heading =>
         @sectionHeader(heading)

@@ -27,12 +27,11 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
 
   private val page = inject[email_address_passcode_confirmation_page]
 
-  private val backLink   = Call("GET", "/back")
   private val updateCall = Call("GET", "/update")
 
   "Email Address Passcode Confirmation View" should {
 
-    val view = page(backLink, updateCall, Some(messages("primaryContactDetails.sectionHeader")))(
+    val view = page(updateCall, Some(messages("primaryContactDetails.sectionHeader")))(
       request = journeyRequest,
       messages = messages
     )
@@ -57,11 +56,6 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
       )
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
-    }
-
     "display 'Continue' button" in {
       view.getElementById("submit").text() mustBe "Continue"
     }
@@ -69,8 +63,8 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(backLink, updateCall, None)(request, messages)
-    page.render(backLink, updateCall, None, request, messages)
+    page.f(updateCall, None)(request, messages)
+    page.render(updateCall, None, request, messages)
   }
 
 }

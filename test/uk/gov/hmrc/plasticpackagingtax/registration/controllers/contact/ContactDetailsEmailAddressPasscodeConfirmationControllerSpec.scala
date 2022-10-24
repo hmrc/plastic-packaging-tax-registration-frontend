@@ -45,7 +45,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
     super.beforeEach()
     val registration = aRegistration()
     mockRegistrationFind(registration)
-    given(page.apply(any(), any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -73,7 +73,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
         await(controller.displayPage()(getRequest()))
 
         val captor = ArgumentCaptor.forClass(classOf[Option[String]])
-        verify(page).apply(any(), any(), captor.capture())(any(), any())
+        verify(page).apply(any(), captor.capture())(any(), any())
         captor.getValue mustBe Some("primaryContactDetails.group.sectionHeader")
       }
 
@@ -84,7 +84,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationControllerSpec extends Contr
         await(controller.displayPage()(getRequest()))
 
         val captor = ArgumentCaptor.forClass(classOf[Option[String]])
-        verify(page).apply(any(), any(), captor.capture())(any(), any())
+        verify(page).apply(any(), captor.capture())(any(), any())
         captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
       }
     }

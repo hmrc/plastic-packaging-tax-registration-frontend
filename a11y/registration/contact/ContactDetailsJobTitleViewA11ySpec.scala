@@ -1,0 +1,60 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package registration.contact
+
+import play.api.data.Form
+import play.api.mvc.Call
+import support.BaseViewSpec
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+
+@ViewTest
+class ContactDetailsJobTitleViewA11ySpec extends BaseViewSpec {
+
+  private val page = inject[job_title_page]
+  private val updateLink = Call("GET", "/update")
+
+  private def createView(form: Form[JobTitle] = JobTitle.form(), isGroup: Boolean = false): String =
+    page(form, updateLink, isGroup)(journeyRequest, messages).toString()
+
+  "Primary Contact Details Job Title View" should {
+
+    val view = createView()
+
+    "pass accessibility checks without error" when {
+      "Single organisation" in {
+        view must passAccessibilityChecks
+      }
+
+      "Group organisation" in {
+        val view = createView(isGroup = true)
+        view must passAccessibilityChecks
+      }
+    }
+
+    "pass accessibility checks with error" in {
+      val form = JobTitle
+        .form()
+        .fillAndValidate(JobTitle(""))
+      val view = createView(form)
+
+      view must passAccessibilityChecks
+    }
+  }
+
+}

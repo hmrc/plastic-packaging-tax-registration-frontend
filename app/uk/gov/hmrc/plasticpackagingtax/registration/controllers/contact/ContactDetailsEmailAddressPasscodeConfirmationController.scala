@@ -36,8 +36,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       Ok(
-        page(routes.ContactDetailsEmailAddressPasscodeController.displayPage(),
-             routes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(),
+        page(routes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(),
              Some(sectionName())
         )
       )
