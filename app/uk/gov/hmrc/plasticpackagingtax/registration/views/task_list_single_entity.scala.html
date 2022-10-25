@@ -47,6 +47,12 @@
     @paragraphBody(messages("registrationPage.task.eligibility.completeNewLiability.line1"))
     @paragraphBody(messages("registrationPage.task.eligibility.completeNewLiability.line2"))
 }
+@contactDetailsLink = @{
+  if(registration.isPrimaryContactDetailsComplete)
+    contactRoutes.ContactDetailsCheckAnswersController.displayPage()
+  else
+    contactRoutes.ContactDetailsFullNameController.displayPage()
+}
 
 @actualSectionOneContent = @{
     if (showRestartLiabilityContent) 
@@ -54,6 +60,7 @@
     else
         None
 }
+
 
 @govukLayout(title = Title("registrationPage.title")) {
 
@@ -88,7 +95,7 @@
         @task(3, "registrationPage.task.contactDetails.heading", Set(
             TaskSection(
                 title = "registrationPage.task.contactDetails",
-                link = contactRoutes.ContactDetailsFullNameController.displayPage(),
+                link = contactDetailsLink,
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.primaryContactDetailsStatus
             )

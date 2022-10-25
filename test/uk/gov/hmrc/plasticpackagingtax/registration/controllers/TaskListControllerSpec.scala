@@ -27,7 +27,7 @@ import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{LiabilityDetails, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -156,10 +156,33 @@ class TaskListControllerSpec extends ControllerSpec {
     }
 
     "set liability start links" in {
+      val partialLiabilityDetails =
+        aRegistration(withLiabilityDetails(
+          LiabilityDetails(
+            newLiabilityStarted = None,
+            newLiabilityFinished = None
+          ))
+        )
+
+      mockRegistrationFind(partialLiabilityDetails)
+      authorizedUser()
+
+      val result = controller.displayPage()(getRequest())
+
+      status(result) mustBe OK
+      verifyStartLink(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)
+    }
+
+    "liability redirect to check your answer page when task is completed" in {
+
       mockRegistrationFind(aRegistration())
       authorizedUser()
 
-      verifyStartLink(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url)
+      val result = controller.displayPage()(getRequest())
+
+      status(result) mustBe OK
+      verifyStartLink(liabilityRoutes.CheckLiabilityDetailsAnswersController.displayPage().url)
+
     }
 
     "return error" when {
@@ -174,9 +197,6 @@ class TaskListControllerSpec extends ControllerSpec {
     }
 
     def verifyStartLink(startLink: String): Unit = {
-      val result = controller.displayPage()(getRequest())
-      status(result) mustBe OK
-
       val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
       verify(singleEntityPage).apply(any(), startLinkCaptor.capture(), any())(any(), any())
       startLinkCaptor.getValue.url mustBe startLink
