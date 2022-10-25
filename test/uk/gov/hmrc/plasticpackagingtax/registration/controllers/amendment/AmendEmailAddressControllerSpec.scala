@@ -73,7 +73,7 @@ class AmendEmailAddressControllerSpec
     HtmlFormat.raw("email passcode")
   )
 
-  when(amendEmailConfirmationPage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(amendEmailConfirmationPage.apply(any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email verification confirmation")
   )
 

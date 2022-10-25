@@ -116,7 +116,7 @@ class AmendPartnerContactDetailsControllerSpec
 
     when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
     when(email_address_passcode_page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(emailCorrectPasscodePage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {

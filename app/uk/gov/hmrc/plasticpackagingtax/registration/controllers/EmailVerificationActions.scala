@@ -126,7 +126,7 @@ trait EmailVerificationActions {
   def showEmailVerifiedPage(backCall: Call, submitCall: Call, sectionHeadingKey: Option[String] = None)
     (implicit request: JourneyRequest[AnyContent], messages: Messages): Result = {
       val possibleSectionHeadingText = sectionHeadingKey.map {messages(_)}
-      Ok(emailCorrectPasscodePage(backCall, submitCall, possibleSectionHeadingText))
+      Ok(emailCorrectPasscodePage(submitCall, possibleSectionHeadingText))
   }
 
   def showTooManyAttemptsPage()(implicit
