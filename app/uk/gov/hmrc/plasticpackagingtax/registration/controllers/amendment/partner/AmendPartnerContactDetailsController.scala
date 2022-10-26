@@ -324,10 +324,6 @@ class AmendPartnerContactDetailsController @Inject() (
     jobTitlePage(
       form = form,
       contactName = partner.name,
-      backLink =
-        if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
-        else
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
       updateCall =
         routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
     )

@@ -17,12 +17,12 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.RegistrationConnector
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Cacheable
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -44,18 +44,25 @@ class TaskListController @Inject()(
   def displayPage(): Action[AnyContent] = {
     (authenticate andThen journeyAction) { implicit request =>
 
-      val startLink = liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
       val hasOldLiabilityQuestions: Boolean = request.registration.hasOldLiabilityQuestions
       if (hasOldLiabilityQuestions)
         update { _ => request.registration.clearOldLiabilityAnswers }
 
       if (request.registration.isGroup)
-        Ok(groupPage(request.registration, startLink, hasOldLiabilityQuestions))
+        Ok(groupPage(request.registration, liabilityStartLink, hasOldLiabilityQuestions))
       else if (request.registration.isPartnershipWithPartnerCollection)
-        Ok(partnershipPage(request.registration, startLink, hasOldLiabilityQuestions))
+        Ok(partnershipPage(request.registration, liabilityStartLink, hasOldLiabilityQuestions))
       else
-        Ok(singleEntityPage(request.registration, startLink, hasOldLiabilityQuestions))
+        Ok(singleEntityPage(request.registration, liabilityStartLink, hasOldLiabilityQuestions))
     }
+  }
+
+  private def liabilityStartLink(implicit request: JourneyRequest[AnyContent]): Call = {
+
+    if(request.registration.isLiabilityDetailsComplete)
+      liabilityRoutes.CheckLiabilityDetailsAnswersController.displayPage()
+    else
+      liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
   }
 
 }

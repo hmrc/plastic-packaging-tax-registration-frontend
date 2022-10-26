@@ -114,7 +114,7 @@ class AmendPartnerContactDetailsControllerSpec
     when(mockContactEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Email Address"))
     when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Phone Number"))
 
-    when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
+    when(mockJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
     when(email_address_passcode_page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
     when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
@@ -227,7 +227,6 @@ class AmendPartnerContactDetailsControllerSpec
             verify(mockJobTitlePage).apply(
               formCaptor.capture(),
               ArgumentMatchers.eq(nominatedPartner.name),
-              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateJobTitle(nominatedPartner.id))
             )(any(), any())
             formCaptor.getValue.value mustBe Some(JobTitle(nominatedPartnerJobTitle))
