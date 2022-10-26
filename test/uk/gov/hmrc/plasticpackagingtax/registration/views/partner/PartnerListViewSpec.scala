@@ -55,12 +55,6 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        commonRoutes.TaskListController.displayPage().url
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(
         messages("partnership.partnerList.title", partnerCount(partnershipRegistration))
