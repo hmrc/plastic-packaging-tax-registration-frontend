@@ -17,14 +17,15 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.views
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.Element
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
 import play.twirl.api.Html
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => organisationRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_group
@@ -76,14 +77,19 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
       def header(el: Element): String = el.getElementsByTag("h2").get(0).text()
 
       def sectionName(el: Element, index: Int): String =
-        el.getElementsByClass("app-task-list__task-name").get(index).text()
+        el.getElementsByTag("li").get(index + 1)
+          .getElementsByClass("app-task-list__task-name").get(0).text()
 
       def sectionStatus(el: Element, index: Int): String =
-        el.getElementsByClass("govuk-tag").get(index).text()
+        el.getElementsByTag("li").get(index + 1)
+          .getElementsByClass("govuk-tag").get(0).text()
 
+      def sectionLinks(el: Element, index: Int): Elements =
+        el.getElementsByTag("li").get(index + 1)
+          .getElementsByClass("govuk-link")
 
       def sectionLink(el: Element, index: Int): Element =
-        el.getElementsByClass("govuk-link").get(index)
+        sectionLinks(el, index).get(0)
 
       "Liability Details 'In Progress'" when {
 
@@ -379,7 +385,7 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
           )
           sectionStatus(contactElement, 1) mustBe messages("task.status.completed")
           sectionLink(contactElement, 1) must haveHref(
-            contactRoutes.ContactDetailsCheckAnswersController.displayPage()
+            contactRoutes.ContactDetailsFullNameController.displayPage()
           )
         }
 

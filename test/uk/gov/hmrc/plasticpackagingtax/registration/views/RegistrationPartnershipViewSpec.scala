@@ -92,15 +92,35 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
       def header(el: Element): String = el.getElementsByTag("h2").get(0).text()
 
       def sectionName(el: Element, index: Int): String =
-        el.getElementsByClass("app-task-list__task-name").get(index).text()
+        el.getElementsByTag("li").get(index + 1)
+          .getElementsByClass("app-task-list__task-name").get(0).text()
 
       def sectionStatus(el: Element, index: Int): String =
-        el.getElementsByClass("govuk-tag").get(index).text()
+        el.getElementsByTag("li").get(index + 1)
+          .getElementsByClass("govuk-tag").get(0).text()
+
+      def sectionLinks(el: Element, index: Int): Elements =
+        el.getElementsByTag("li").get(index + 1)
+          .getElementsByClass("govuk-link")
 
       def sectionLink(el: Element, index: Int): Element =
-        el.getElementsByClass("govuk-link").get(index)
+        sectionLinks(el, index).get(0)
 
       "Liability Details 'In Progress'" when {
+
+        val registration = aRegistration(
+          withLiabilityDetails(
+            LiabilityDetails(expectToExceedThresholdWeight = Some(true),
+              dateExceededThresholdWeight =
+                Some(Date(LocalDate.parse("2022-03-05"))),
+              startDate = Some(OldDate(Some(1), Some(4), Some(2022))),
+              newLiabilityStarted = Some(NewLiability),
+              newLiabilityFinished = Some(NewLiability)
+            )
+          ),
+          withIncorpJourneyId(None),
+          withNoPrimaryContactDetails()
+        )
 
         val view: Html = createView(Registration("123"))
 

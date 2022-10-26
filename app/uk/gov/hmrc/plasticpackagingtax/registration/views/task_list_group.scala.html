@@ -57,14 +57,6 @@
         None
 }
 
-@contactDetailLink = @{
-    if(registration.isPrimaryContactDetailsComplete) {
-        contactRoutes.ContactDetailsCheckAnswersController.displayPage()
-    } else {
-        contactRoutes.ContactDetailsFullNameController.displayPage()
-    }
-}
-
 @govukLayout(title = Title("registrationPage.title")) {
 
     @pageHeading(messages("registrationPage.title"))
@@ -94,7 +86,7 @@
             ),
             TaskSection(
                 title = "registrationPage.task.contactDetails.group",
-                link = contactDetailLink,
+                link = contactRoutes.ContactDetailsFullNameController.displayPage(),
                 showLink = registration.isCompanyDetailsComplete && registration.isLiabilityDetailsComplete,
                 status = registration.primaryContactDetailsStatus
             )
