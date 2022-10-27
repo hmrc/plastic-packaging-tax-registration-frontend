@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package registration.partner
+package registration.group
 
 import play.api.data.Form
 import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.member_phone_number_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
+class ContactDetailsPhoneNumberViewA11ySpec extends BaseViewSpec {
 
-  private val page = inject[partner_job_title_page]
+  private val page = inject[member_phone_number_page]
 
   private val updateLink = Call("GET", "/update")
 
-  private val contactName = "A Contact"
+  private val contactName = Some("Test")
 
-  private def createView(form: Form[JobTitle] = JobTitle.form()): String =
+  private def createView(form: Form[PhoneNumber] = PhoneNumber.form()): String =
     page(form, contactName, updateLink)(journeyRequest, messages).toString()
 
-  "Job title View" should {
+  "Phone Number View" should {
 
     val view = createView()
 
@@ -44,9 +44,9 @@ class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
     }
 
     "pass accessibility checks with error" in {
-      val form = JobTitle
+      val form = PhoneNumber
         .form()
-        .fillAndValidate(JobTitle(""))
+        .fillAndValidate(PhoneNumber(""))
       val view = createView(form)
 
       view must passAccessibilityChecks

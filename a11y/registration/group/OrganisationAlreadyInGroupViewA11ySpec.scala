@@ -14,41 +14,30 @@
  * limitations under the License.
  */
 
-package registration.partner
+package registration.group
 
-import play.api.data.Form
-import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IN_GROUP
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_already_in_group_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
+class OrganisationAlreadyInGroupViewA11ySpec extends BaseViewSpec {
 
-  private val page = inject[partner_job_title_page]
+  private val page: organisation_already_in_group_page =
+    inject[organisation_already_in_group_page]
 
-  private val updateLink = Call("GET", "/update")
+  private val groupError = GroupError(MEMBER_IN_GROUP, "Member Name")
 
-  private val contactName = "A Contact"
+  private def createView(groupError: GroupError = groupError): String =
+    page(groupError)(journeyRequest, messages).toString()
 
-  private def createView(form: Form[JobTitle] = JobTitle.form()): String =
-    page(form, contactName, updateLink)(journeyRequest, messages).toString()
-
-  "Job title View" should {
+  "Organisation Already In Group Page" should {
 
     val view = createView()
 
     "pass accessibility checks without error" in {
-      view must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      val form = JobTitle
-        .form()
-        .fillAndValidate(JobTitle(""))
-      val view = createView(form)
-
       view must passAccessibilityChecks
     }
   }

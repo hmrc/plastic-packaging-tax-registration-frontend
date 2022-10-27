@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package registration.partner
+package registration.group
 
 import play.api.data.Form
-import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_job_title_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
 
-@ViewTest
-class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
+class OrganisationListViewA11ySpec extends BaseViewSpec {
 
-  private val page = inject[partner_job_title_page]
+  private val page = inject[organisation_list]
 
-  private val updateLink = Call("GET", "/update")
+  private def createView
+  (
+    form: Form[Boolean] = AddOrganisationForm.form(),
+    members: Seq[GroupMember] = Seq(groupMember, groupMember, groupMember)
+  ): String =
+    page(form, "ACME Inc", members)(journeyRequest, messages).toString()
 
-  private val contactName = "A Contact"
-
-  private def createView(form: Form[JobTitle] = JobTitle.form()): String =
-    page(form, contactName, updateLink)(journeyRequest, messages).toString()
-
-  "Job title View" should {
+  "OrganisationList View" should {
 
     val view = createView()
 
@@ -44,10 +42,10 @@ class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
     }
 
     "pass accessibility checks with error" in {
-      val form = JobTitle
+      val form = AddOrganisationForm
         .form()
-        .fillAndValidate(JobTitle(""))
-      val view = createView(form)
+        .bind(Map(AddOrganisationForm.field -> ""))
+      val view = createView(form = form)
 
       view must passAccessibilityChecks
     }
