@@ -52,11 +52,6 @@ class PartnerNamePageViewSpec extends UnitViewSpec with Matchers {
 
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
-    }
-
     "display title" in {
 
       view.select("title").text() must include(messages("partnership.name.title"))

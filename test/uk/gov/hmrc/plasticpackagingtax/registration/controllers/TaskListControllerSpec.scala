@@ -17,9 +17,9 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers
 
 import base.unit.ControllerSpec
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, same}
-import org.mockito.Mockito.{never, reset, verify, verifyNoInteractions, when}
+import org.mockito.Mockito._
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.mvc.Call

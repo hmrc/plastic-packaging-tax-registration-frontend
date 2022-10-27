@@ -57,5 +57,4 @@ class TaskListController @Inject()(
         Ok(singleEntityPage(request.registration, startLink, hasOldLiabilityQuestions))
     }
   }
-
 }

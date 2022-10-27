@@ -51,10 +51,6 @@ class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.PartnerListController.displayPage())
-    }
-
     "display title" in {
       view.select("title").text() must include(
         messages("partnership.removePartner.title", partnerName)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package registration
+package registration.liability
 
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

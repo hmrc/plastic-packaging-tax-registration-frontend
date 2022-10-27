@@ -36,7 +36,7 @@ class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
   private val contactName = "A Contact"
 
   private def createView(form: Form[JobTitle] = JobTitle.form()): Document =
-    page(form, contactName, backLink, updateLink)(journeyRequest, messages)
+    page(form, contactName, updateLink)(journeyRequest, messages)
 
   "Job title View" should {
 
@@ -52,11 +52,6 @@ class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -93,8 +88,8 @@ class PartnerJobTitlePageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(JobTitle.form(), contactName, backLink, updateLink)(journeyRequest, messages)
-    page.render(JobTitle.form(), contactName, backLink, updateLink, journeyRequest, messages)
+    page.f(JobTitle.form(), contactName, updateLink)(journeyRequest, messages)
+    page.render(JobTitle.form(), contactName, updateLink, journeyRequest, messages)
   }
 
 }

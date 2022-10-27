@@ -121,6 +121,7 @@ class RegistrationPartnershipViewSpec extends UnitViewSpec with Matchers {
           withIncorpJourneyId(None),
           withNoPrimaryContactDetails()
         )
+
         val view: Html = createView(Registration("123"))
 
         "application status should reflect the completed sections" in {
