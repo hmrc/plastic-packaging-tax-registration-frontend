@@ -29,7 +29,7 @@ class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
   private val page = inject[partner_job_title_page]
 
   private val updateLink = Call("GET", "/update")
-
+  
   private val contactName = "A Contact"
 
   private def createView(form: Form[JobTitle] = JobTitle.form()): String =
