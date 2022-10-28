@@ -14,39 +14,42 @@
  * limitations under the License.
  */
 
-package registration.partner
+package registration.group
 
 import play.api.data.Form
-import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{ActionEnum, OrganisationType}
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
+class OrganisationDetailsTypeViewA11ySpec extends BaseViewSpec {
 
-  private val page = inject[partner_job_title_page]
+  private val page = inject[organisation_type]
 
-  private val updateLink = Call("GET", "/update")
-  
-  private val contactName = "A Contact"
+  private def createView(
+    form: Form[OrganisationType] = OrganisationType.form(ActionEnum.Group),
+    isFirstMember: Boolean = true
+  ): String =
+    page(form = form,
+         isFirstMember = isFirstMember,
+         memberId = Some(groupMember.id),
+         routes.OrganisationDetailsTypeController.submitNewMember()
+    )(journeyRequest, messages).toString()
 
-  private def createView(form: Form[JobTitle] = JobTitle.form()): String =
-    page(form, contactName, updateLink)(journeyRequest, messages).toString()
+  "Confirm Organisation Type View" should {
 
-  "Job title View" should {
-
-    val view = createView()
+    implicit val view = createView()
 
     "pass accessibility checks without error" in {
       view must passAccessibilityChecks
     }
 
     "pass accessibility checks with error" in {
-      val form = JobTitle
-        .form()
-        .fillAndValidate(JobTitle(""))
+      val form = OrganisationType
+        .form(ActionEnum.Group)
+        .fillAndValidate(OrganisationType(""))
       val view = createView(form)
 
       view must passAccessibilityChecks

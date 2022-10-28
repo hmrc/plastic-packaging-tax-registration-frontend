@@ -51,12 +51,6 @@ class RemoveGroupMemberViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        routes.OrganisationListController.displayPage()
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("group.removeMember.title", memberName))
     }

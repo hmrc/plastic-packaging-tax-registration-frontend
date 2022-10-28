@@ -14,41 +14,25 @@
  * limitations under the License.
  */
 
-package registration.partner
+package registration.group
 
-import play.api.data.Form
-import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_job_title_page
+import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.nominated_organisation_already_registered_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
 @ViewTest
-class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
+class NominatedOrganisationAlreadyRegisteredViewA11ySpec extends BaseViewSpec {
 
-  private val page = inject[partner_job_title_page]
+  private val page: nominated_organisation_already_registered_page =
+    inject[nominated_organisation_already_registered_page]
 
-  private val updateLink = Call("GET", "/update")
-  
-  private val contactName = "A Contact"
+  private def createView(): String = page()(journeyRequest, messages).toString()
 
-  private def createView(form: Form[JobTitle] = JobTitle.form()): String =
-    page(form, contactName, updateLink)(journeyRequest, messages).toString()
-
-  "Job title View" should {
+  "Nominated Organisation Already Registered Page" should {
 
     val view = createView()
 
     "pass accessibility checks without error" in {
-      view must passAccessibilityChecks
-    }
-
-    "pass accessibility checks with error" in {
-      val form = JobTitle
-        .form()
-        .fillAndValidate(JobTitle(""))
-      val view = createView(form)
-
       view must passAccessibilityChecks
     }
   }

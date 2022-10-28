@@ -56,11 +56,6 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
-    }
-
     "display title" in {
 
       view.select("title").text() must include(
@@ -72,12 +67,6 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
       view.getElementsByClass("govuk-caption-l").text() must include(
         messages("group.organisationList.sectionHeader")
-      )
-    }
-
-    "display visually hidden labels" in {
-      view.getElementsByClass("govuk-back-link-div").select("a").get(0).text() must include(
-        messages("site.back.hiddenText")
       )
     }
 
