@@ -40,12 +40,6 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
 
     val view = createView(DeregistrationDetails(None, None))
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        routes.DeregisterReasonController.displayPage()
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("deregister.checkAnswers.title"))
     }
