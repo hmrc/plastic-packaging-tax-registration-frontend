@@ -57,10 +57,6 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
       )
     }
 
-    "display back link to manage partners" in {
-      view.getElementById("back-link") must haveHref(routes.ManagePartnersController.displayPage())
-    }
-
     "display page heading" in {
       view.select("h1").text() must include(
         messages("amend.partner.listPartners.title", 1 + partnershipRegistration.otherPartners.size)

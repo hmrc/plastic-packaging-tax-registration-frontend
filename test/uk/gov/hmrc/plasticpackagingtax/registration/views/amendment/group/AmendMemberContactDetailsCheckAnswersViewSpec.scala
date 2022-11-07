@@ -52,12 +52,6 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id).url
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("contactDetails.member.check.title"))
     }

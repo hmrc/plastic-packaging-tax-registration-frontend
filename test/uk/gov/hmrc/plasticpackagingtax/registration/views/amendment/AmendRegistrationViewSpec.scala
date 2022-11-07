@@ -91,10 +91,6 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             }))
           }
 
-          "display back link to ppt home" in {
-            view.getElementById("back-link") must haveHref(realAppConfig.pptAccountUrl)
-          }
-
           "display page heading" in {
             view.select("h1").text() must include(messages(organisationType match {
               case Organisation => "amend.organisation.title"

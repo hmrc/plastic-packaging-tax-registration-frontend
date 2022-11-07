@@ -55,12 +55,6 @@ class AmendAddPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Match
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        partnerRoutes.AddPartnerContactDetailsConfirmAddressController.displayPage().url
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("partner.check.title"))
     }

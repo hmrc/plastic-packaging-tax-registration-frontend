@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner.YES
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.AddPartner.NO
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
@@ -41,7 +41,7 @@
 
 @govukLayout(
     title = Title(headingKey = "partnership.removePartner.title", partner.name),
-    backButton = Some(BackButton(messages("site.back"), routes.PartnersListController.displayPage(), messages("site.back.hiddenText")))
+    backButton = Some(BackButtonJs())
 ) {
 
     @sectionHeader(messages("partnership.removePartner.caption"))

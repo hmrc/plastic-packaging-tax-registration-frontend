@@ -49,10 +49,6 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
   val sut: HtmlFormat.Appendable = view(registration)(journeyRequest, messages)
 
   "manage_group_members_page" must {
-    "have the back button" in {
-      sut.getElementById("back-link") must haveHref(realAppConfig.pptAccountUrl)
-    }
-
     "contain title" in {
       sut.select("title").text() must include(messages("amend.group.manage.title"))
     }
