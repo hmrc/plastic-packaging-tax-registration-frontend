@@ -17,7 +17,7 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 
 import play.api.data.Form
-import play.api.data.Forms.{default, mapping, text, tuple}
+import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.mappings.Mappings

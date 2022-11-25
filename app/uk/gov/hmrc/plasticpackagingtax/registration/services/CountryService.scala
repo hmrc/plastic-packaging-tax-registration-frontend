@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory
 import play.api.libs.json.{Json, OFormat}
 
 import scala.collection.immutable.ListMap
-import scala.util.Try
 
 case class FcoCountry(name: String)
 case class Synonyms(synonyms: List[String])

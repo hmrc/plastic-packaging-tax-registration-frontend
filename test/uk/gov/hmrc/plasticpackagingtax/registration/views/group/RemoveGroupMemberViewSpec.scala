@@ -20,7 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.IsUkAddress.{NO, YES}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.remove_group_member_page

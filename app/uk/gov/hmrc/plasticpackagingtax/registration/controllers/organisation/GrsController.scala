@@ -17,20 +17,18 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation
 
 import org.joda.time.DateTime
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.RegistrationStatus.{BUSINESS_VERIFICATION_FAILED, DUPLICATE_SUBSCRIPTION, GRS_FAILED, RegistrationStatus, SOLE_TRADER_VERIFICATION_FAILED, STATUS_OK, UNSUPPORTED_ORGANISATION}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.SOLE_TRADER
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
