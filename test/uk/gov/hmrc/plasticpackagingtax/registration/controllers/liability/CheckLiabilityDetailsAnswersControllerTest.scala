@@ -17,20 +17,20 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import base.unit.ControllerSpec
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.http.Status.OK
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{StartRegistrationController, routes => pptRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{NewLiability, Registration}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.NewLiability
 import uk.gov.hmrc.plasticpackagingtax.registration.services.{TaxStartDate, TaxStartDateService}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.check_liability_details_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -61,7 +61,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     reset(page, mockTaxStartDateService, mockRegistrationConnector)
     val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
     given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
     when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
     mockRegistrationUpdate()
@@ -95,24 +95,18 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
     "set expected page links" when {
 
-      "group registration enabled" in {
-        authorizedUser()
-        verifyExpectedLinks(backLink = routes.RegistrationTypeController.displayPage().url,
-                            changeLiabilityLink = startLiabilityLink.url
-        )
-      }
-
       "group registration enabled and group of organisation is selected" in {
         authorizedUser()
 
         val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
         mockRegistrationFind(registration)
-        given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+        given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
         when(mockStartRegistrationController.startLink(any())).thenReturn(startLiabilityLink)
 
-        verifyExpectedLinks(backLink = routes.MembersUnderGroupControlController.displayPage().url,
-                            changeLiabilityLink = startLiabilityLink.url
-        )
+        val result = controller.displayPage()(getRequest())
+
+        status(result) mustBe OK
+        verify(page).apply(any())(any(), any())
       }
     }
 
@@ -145,17 +139,4 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       }
     }
   }
-
-  private def verifyExpectedLinks(backLink: String, changeLiabilityLink: String): Unit = {
-    val result = controller.displayPage()(getRequest())
-
-    status(result) mustBe OK
-
-    val backLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
-
-    verify(page).apply(any(), backLinkCaptor.capture())(any(), any())
-
-    backLinkCaptor.getValue.url mustBe backLink
-  }
-
 }

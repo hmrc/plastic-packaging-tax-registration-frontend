@@ -29,8 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[email_address_passcode_page]
-
-  private val backLink   = Call("GET", "/back")
   private val updateCall = Call("GET", "/update")
 
   private def createView(
