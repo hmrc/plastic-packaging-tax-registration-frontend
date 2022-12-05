@@ -19,7 +19,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.views.liability
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.{AnyContent, Call}
+import play.api.mvc.AnyContent
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability.{routes => liabilityRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
@@ -31,17 +31,11 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 @ViewTest
 class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
-  private val backLink = Call("GET", "backLink")
-
   private val page = inject[check_liability_details_answers_page]
-
   private val registration = aRegistration()
 
   "Check liability details answers View" should {
-    val view = createView(reg = registration,
-      backLink =
-        liabilityRoutes.RegistrationTypeController.displayPage()
-    )(journeyRequest)
+    val view = createView(reg = registration)(journeyRequest)
 
     "have the correct title" in {
       view.select("title").first must containMessage("liability.checkAnswers.title")
@@ -55,13 +49,6 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" when {
-      "post-launch" in {
-        view.getElementById("back-link") must haveHref(
-          liabilityRoutes.RegistrationTypeController.displayPage()
-        )
-      }
-    }
 
     "display title" in {
       view.getElementsByClass(Styles.gdsPageHeading).first() must containMessage(
@@ -119,14 +106,14 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(registration, backLink)(journeyRequest, messages)
-    page.render(registration, backLink, journeyRequest, messages)
+    page.f(registration)(journeyRequest, messages)
+    page.render(registration, journeyRequest, messages)
   }
 
-  private def createView(reg: Registration, backLink: Call)(implicit
+  private def createView(reg: Registration)(implicit
                                                             request: JourneyRequest[AnyContent]
   ): Document =
-    page(reg, backLink)(request, messages(request))
+    page(reg)(request, messages(request))
 
   private def assertSummaryRows(view: Document, expectedRows: List[SummaryRowDetail]) = {
     val actualRows = view.getElementsByClass("govuk-summary-list__row")

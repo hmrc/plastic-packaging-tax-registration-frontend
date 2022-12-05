@@ -29,8 +29,6 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[email_address_passcode_page]
-
-  private val backLink   = Call("GET", "/back")
   private val updateCall = Call("GET", "/update")
 
   private def createView(
@@ -39,7 +37,6 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
   ): Document =
     page(form,
          Some(emailAddress),
-         backLink,
          updateCall,
          Some("primaryContactDetails.sectionHeader")
     )(journeyRequest, messages)
@@ -58,11 +55,6 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -179,12 +171,11 @@ class ContactDetailsEmailAddressPasscodeViewSpec extends UnitViewSpec with Match
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddressPasscode.form(), Some("test@test.com"), backLink, updateCall, None)(request,
+    page.f(EmailAddressPasscode.form(), Some("test@test.com"), updateCall, None)(request,
                                                                                            messages
     )
     page.render(EmailAddressPasscode.form(),
                 Some("test@test.com"),
-                backLink,
                 updateCall,
                 Some("primaryContactDetails.sectionHeader"),
                 request,

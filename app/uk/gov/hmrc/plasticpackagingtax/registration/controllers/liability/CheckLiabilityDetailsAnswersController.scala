@@ -17,12 +17,11 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.controllers.liability
 
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.plasticpackagingtax.registration.connectors.{RegistrationConnector, ServiceError}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.NotEnrolledAuthAction
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.OldDate
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{Cacheable, LiabilityDetails, NewLiability, Registration}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{JourneyAction, JourneyRequest}
 import uk.gov.hmrc.plasticpackagingtax.registration.services.TaxStartDateService
@@ -49,7 +48,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
       taxStartDate.act(
         notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
         isLiableAction = (startDate, _) => {
-          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate)), backLink))
+          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate))))
         }
       )
     }
@@ -66,13 +65,6 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
           }
         }
       )
-    }
-
-  private def backLink()(implicit request: JourneyRequest[AnyContent]): Call =
-    request.registration.registrationType match {
-      case Some(regType) if regType == RegType.GROUP =>
-        routes.MembersUnderGroupControlController.displayPage()
-      case _ => routes.RegistrationTypeController.displayPage()
     }
 
   private def updateRegistration(startDate: LocalDate)

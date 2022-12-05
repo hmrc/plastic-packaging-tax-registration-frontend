@@ -30,12 +30,10 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[uk_address_page]
 
-  private val backLink = Call("GET", "/back-link")
-
   "UK Address View" should {
 
     def createView(form: Form[Boolean] ): Document = {
-      page(form, backLink, Some("entity"), "addressCapture.contact.heading.isUK")
+      page(form, Some("entity"), "addressCapture.contact.heading.isUK")
     }
 
     val view: Document = createView(UkAddressForm.form())
@@ -48,10 +46,6 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(backLink.url)
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("ukAddress.title", "entity"))
     }
@@ -60,11 +54,6 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
       view.select("h1").text() must include(messages("ukAddress.title", "entity"))
     }
 
-    "display visually hidden labels" in {
-      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(
-        messages("site.back.hiddenText")
-      )
-    }
 
     "display radios" in {
       view must containElementWithID("ukAddress")
@@ -88,8 +77,8 @@ class UkAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(UkAddressForm.form(), backLink, Some("entity"), "addressCapture.business.heading.isUK")(journeyRequest, messages)
-    page.render(UkAddressForm.form(), backLink, Some("entity"), "addressCapture.business.heading.isUK", journeyRequest, messages)
+    page.f(UkAddressForm.form(), Some("entity"), "addressCapture.business.heading.isUK")(journeyRequest, messages)
+    page.render(UkAddressForm.form(), Some("entity"), "addressCapture.business.heading.isUK", journeyRequest, messages)
   }
 
 }

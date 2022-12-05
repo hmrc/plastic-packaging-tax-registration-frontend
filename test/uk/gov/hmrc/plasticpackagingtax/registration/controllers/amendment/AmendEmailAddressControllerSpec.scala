@@ -65,15 +65,15 @@ class AmendEmailAddressControllerSpec
   private val amendEmailConfirmationPage    = mock[email_address_passcode_confirmation_page]
   private val amendEmailTooManyAttemptsPage = mock[too_many_attempts_passcode_page]
 
-  when(amendEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+  when(amendEmailPage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email amendment")
   )
 
-  when(amendEmailPasscodePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(
+  when(amendEmailPasscodePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email passcode")
   )
 
-  when(amendEmailConfirmationPage.apply(any(), any(), any())(any(), any())).thenReturn(
+  when(amendEmailConfirmationPage.apply(any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email verification confirmation")
   )
 

@@ -355,7 +355,7 @@ class RegistrationSingleEntityViewSpec extends UnitViewSpec with Matchers {
           sectionName(contactElement, 0) mustBe messages("registrationPage.task.contactDetails")
           sectionStatus(contactElement, 0) mustBe messages("task.status.completed")
           sectionLink(contactElement, 0) must haveHref(
-            contactRoutes.ContactDetailsFullNameController.displayPage()
+            contactRoutes.ContactDetailsCheckAnswersController.displayPage()
           )
         }
 

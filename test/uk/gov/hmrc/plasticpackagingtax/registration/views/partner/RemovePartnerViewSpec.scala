@@ -20,7 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.IsUkAddress.{NO, YES}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.remove_partner_page
@@ -49,10 +48,6 @@ class RemovePartnerViewSpec extends UnitViewSpec with Matchers {
 
     "display sign out link" in {
       displaySignOutLink(view)
-    }
-
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(routes.PartnerListController.displayPage())
     }
 
     "display title" in {

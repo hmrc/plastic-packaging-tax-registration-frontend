@@ -81,7 +81,7 @@ class PartnerJobTitleController @Inject() (
           case None =>
             JobTitle.form()
         }
-        Ok(page(form, contactName, backCall, submitCall))
+        Ok(page(form, contactName, submitCall))
       }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
@@ -134,7 +134,7 @@ class PartnerJobTitleController @Inject() (
         (formWithErrors: Form[JobTitle]) =>
           partner.contactDetails.flatMap(_.name).map {
             contactName =>
-              Future.successful(BadRequest(page(formWithErrors, contactName, backCall, submitCall)))
+              Future.successful(BadRequest(page(formWithErrors, contactName, submitCall)))
           }.getOrElse(
             Future.successful(
               throw new IllegalStateException("Expected partner contact name missing")

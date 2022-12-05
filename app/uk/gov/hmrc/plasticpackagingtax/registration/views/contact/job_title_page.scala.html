@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButtonJs
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.JobTitle
@@ -29,7 +29,7 @@
   errorSummary: errorSummary,
   formHelper: FormWithCSRF
 )
-@(form: Form[JobTitle], backLink: Call, updateCall: Call, isGroup: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
+@(form: Form[JobTitle], updateCall: Call, isGroup: Boolean = false)(implicit request: JourneyRequest[_], messages: Messages)
 
 @jobTitleField = @{form("value")}
 
@@ -43,7 +43,7 @@
 
 @govukLayout(
   title = Title(headingKey = "primaryContactDetails.jobTitlePage.title", headingArg = contactName),
-  backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+  backButton = Some(BackButtonJs())) {
   @errorSummary(form.errors)
 
   @sectionHeader(caption)

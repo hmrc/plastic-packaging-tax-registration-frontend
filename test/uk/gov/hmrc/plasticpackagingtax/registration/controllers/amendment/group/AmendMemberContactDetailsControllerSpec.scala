@@ -54,15 +54,15 @@ class AmendMemberContactDetailsControllerSpec
   private val amendPhoneNumberPage  = mock[member_phone_number_page]
   private val amendEmailAddressPage = mock[member_email_address_page]
 
-  when(amendNamePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(
+  when(amendNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("name amendment")
   )
 
-  when(amendEmailAddressPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+  when(amendEmailAddressPage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("email address amendment")
   )
 
-  when(amendPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(
+  when(amendPhoneNumberPage.apply(any(), any(), any())(any(), any())).thenReturn(
     HtmlFormat.raw("phone number amendment")
   )
 

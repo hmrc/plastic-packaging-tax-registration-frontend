@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.routes
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationDetails
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
-@import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationReason
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 
 @this(
     formHelper: FormWithCSRF,
@@ -31,7 +29,7 @@
     govukSummaryList: GovukSummaryList,
     pageHeading: pageHeading,
     saveAndContinue: saveAndContinue,
-    subHeading: subHeading,
+    subHeading: subHeading
 )
 
 
@@ -39,7 +37,7 @@
 
 @govukLayout(
     title = Title("deregister.checkAnswers.title"),
-    backButton = Some(BackButton(messages("site.back"), routes.DeregisterReasonController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
 
     @pageHeading(messages("deregister.checkAnswers.heading"))
 

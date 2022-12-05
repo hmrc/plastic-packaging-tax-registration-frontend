@@ -20,7 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.{routes => commonRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
@@ -53,12 +52,6 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        commonRoutes.TaskListController.displayPage().url
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("partner.check.title"))
     }
@@ -69,7 +62,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
           address.addressLine3.getOrElse(""),
           address.townOrCity,
           address.maybePostcode.getOrElse(""),
-          countryService.getName(address.countryCode)
+          countryService.tryLookupCountryName(address.countryCode)
       ).filter(_.nonEmpty).mkString(" ")
 
     val testData = Seq(

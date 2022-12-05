@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType._
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrganisationType
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{Title, BackButtonJs}
 
 @this(
         formHelper: FormWithCSRF,
@@ -62,7 +62,7 @@
 
 @govukLayout(
     title = Title(title),
-    backButton = Some(BackButton(messages("site.back"), pptRoutes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
     @errorSummary(form.errors)
 
     @sectionHeader(messages("organisationDetails.other.organisation.sectionHeader"))

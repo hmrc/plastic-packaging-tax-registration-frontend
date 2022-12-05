@@ -20,22 +20,8 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{
-  CHARITABLE_INCORPORATED_ORGANISATION,
-  OVERSEAS_COMPANY_NO_UK_BRANCH,
-  OVERSEAS_COMPANY_UK_BRANCH,
-  OrgType,
-  PARTNERSHIP,
-  REGISTERED_SOCIETY,
-  SOLE_TRADER,
-  TRUST,
-  UK_COMPANY
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{
-  ActionEnum,
-  OrganisationType
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{CHARITABLE_INCORPORATED_ORGANISATION, OVERSEAS_COMPANY_NO_UK_BRANCH, OVERSEAS_COMPANY_UK_BRANCH, OrgType, PARTNERSHIP, REGISTERED_SOCIETY, SOLE_TRADER, TRUST, UK_COMPANY}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{ActionEnum, OrganisationType}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.organisation_type
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
@@ -62,11 +48,6 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display sign out link" in {
 
       displaySignOutLink(view)
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display title" in {
@@ -120,11 +101,6 @@ class OrganisationDetailsTypeViewSpec extends UnitViewSpec with Matchers {
     "display sign out link" in {
 
       displaySignOutLink(view)
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
     }
 
     "display title" in {

@@ -46,10 +46,6 @@ class DeregisterViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(appConfig.pptAccountUrl)
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("deregistration.deregister.title"))
     }
@@ -66,7 +62,6 @@ class DeregisterViewSpec extends UnitViewSpec with Matchers {
       mainContent must include(messages("deregistration.deregister.eligibility.3"))
       mainContent must include(messages("deregistration.deregister.eligibility.4"))
       mainContent must include(messages("deregistration.deregister.detail1"))
-      mainContent must include(messages("deregistration.deregister.detail2"))
     }
 
     "display deregister question" in {

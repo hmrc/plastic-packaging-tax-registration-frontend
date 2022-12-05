@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButton
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.BackButtonJs
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.Title
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.models.ListMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
@@ -58,7 +58,7 @@
 
 @govukLayout(
     title = Title("group.organisationList.title.multiple", numOrganisations.toString),
-    backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)
 

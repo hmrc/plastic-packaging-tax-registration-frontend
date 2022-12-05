@@ -32,14 +32,12 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page           = inject[address_page]
   private val countryService = inject[CountryService]
-
-  private val backLink    = Call("GET", "/back-link")
   private val updateLink  = Call("PUT", "/update")
   private val headingKey  = "addressLookup.partner.lookup.heading"
   private val contactName = Some("the contact")
 
   private def createView(form: Form[Address] = Address.form()): Document =
-    page(form, countryService.getAll(), backLink, updateLink, headingKey, contactName)(journeyRequest, messages)
+    page(form, countryService.getAll(), updateLink, headingKey, contactName)(journeyRequest, messages)
 
   "Address View" should {
 
@@ -53,10 +51,6 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(backLink.url)
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("addressLookup.partner.lookup.heading", contactName.get))
     }
@@ -67,10 +61,6 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
 
     "display hint" in {
       view.getElementsByClass("govuk-body").get(0).text() must include(messages("primaryContactDetails.address.hint"))
-    }
-
-    "display visually hidden labels" in {
-      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(messages("site.back.hiddenText"))
     }
 
     "display input boxes" in {
@@ -160,8 +150,8 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form(), countryService.getAll(), backLink, updateLink, headingKey, contactName, None)(journeyRequest, messages)
-    page.render(Address.form(), countryService.getAll(), backLink, updateLink, headingKey, contactName, None, journeyRequest, messages)
+    page.f(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None)(journeyRequest, messages)
+    page.render(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None, journeyRequest, messages)
   }
 
 }

@@ -18,7 +18,7 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.contact
 
 import play.api.data.Forms.{optional, text}
 import play.api.data.{Form, Forms, Mapping}
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.CommonFormValidators
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
@@ -32,6 +32,7 @@ sealed trait Address {
   val countryCode: String
 
   def isValid: Boolean = countryCode.trim.nonEmpty
+  def isMissingCountryCode: Boolean = countryCode.trim.isEmpty
 
   def isUkAndEmptyPostcode: Boolean = countryCode == "GB" && maybePostcode.fold(true)(_.isEmpty)
 

@@ -91,10 +91,6 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             }))
           }
 
-          "display back link to ppt home" in {
-            view.getElementById("back-link") must haveHref(realAppConfig.pptAccountUrl)
-          }
-
           "display page heading" in {
             view.select("h1").text() must include(messages(organisationType match {
               case Organisation => "amend.organisation.title"
@@ -105,7 +101,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
           }
 
           "display organisation details" in {
-            view.select("h2").get(0).text() must include(messages(organisationType match {
+            view.select("h2").get(1).text() must include(messages(organisationType match {
               case Organisation => "amend.organisation.subheading"
               case SoleTrader   => "amend.individual.subheading"
               case Group        => "amend.group.subheading"
@@ -131,7 +127,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                   registration.organisationDetails.businessRegisteredAddress.map(
                     bra => bra.maybePostcode.getOrElse("")
                   ).get,
-                  countryService.getName(
+                  countryService.tryLookupCountryName(
                     registration.organisationDetails.businessRegisteredAddress.map(
                       bra => bra.countryCode
                     ).get
@@ -143,7 +139,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
           }
 
           "display main contact details subheading" in {
-            view.select("h2").get(1).text() must include(messages(organisationType match {
+            view.select("h2").get(2).text() must include(messages(organisationType match {
               case Organisation => "amend.contactDetails.organisation.subheading"
               case SoleTrader   => "amend.contactDetails.individual.subheading"
               case Group        => "amend.contactDetails.group.subheading"
@@ -165,7 +161,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                       nominatedPartner.contactDetails.get.address.get.addressLine3.getOrElse(""),
                       nominatedPartner.contactDetails.get.address.get.townOrCity,
                       nominatedPartner.contactDetails.get.address.get.maybePostcode.getOrElse(""),
-                      countryService.getName(
+                      countryService.tryLookupCountryName(
                         registration.primaryContactDetails.address.get.countryCode
                       )
                   ).filter(_.nonEmpty)
@@ -179,7 +175,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
                       registration.primaryContactDetails.address.get.addressLine3.getOrElse(""),
                       registration.primaryContactDetails.address.get.townOrCity,
                       registration.primaryContactDetails.address.get.maybePostcode.getOrElse(""),
-                      countryService.getName(
+                      countryService.tryLookupCountryName(
                         registration.primaryContactDetails.address.get.countryCode
                       )
                   ).filter(_.nonEmpty)

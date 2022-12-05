@@ -21,19 +21,13 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{
-  ActionItem,
-  Actions,
-  Key,
-  SummaryListRow
-}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, Key, SummaryListRow}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Singleton
 class ViewUtils @Inject() (countryService: CountryService) {
@@ -84,7 +78,7 @@ class ViewUtils @Inject() (countryService: CountryService) {
         address.addressLine3.getOrElse(""),
         address.townOrCity,
         address.maybePostcode.getOrElse(""),
-        countryService.getName(address.countryCode)
+        countryService.tryLookupCountryName(address.countryCode)
     ).filter(_.nonEmpty).mkString("<br>")
 
   def showChangeLink(call: Call)(implicit journeyRequest: JourneyRequest[_]): Option[Call] =

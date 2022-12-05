@@ -20,14 +20,8 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.deregistration.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterReasonForm
-import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationReason.{
-  BelowDeminimis,
-  CeasedTrading,
-  RegisteredIncorrectly,
-  TakenIntoGroupRegistration
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationReason.{BelowDeminimis, CeasedTrading, RegisteredIncorrectly, TakenIntoGroupRegistration}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles.gdsFieldsetPageHeading
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_reason_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
@@ -52,11 +46,6 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
     "display sign out link" in {
 
       displaySignOutLink(view)
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.DeregisterController.displayPage())
     }
 
     "display title" in {

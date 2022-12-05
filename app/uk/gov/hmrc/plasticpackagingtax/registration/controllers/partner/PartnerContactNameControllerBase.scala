@@ -65,7 +65,7 @@ abstract class PartnerContactNameControllerBase(
         MemberName.form()
     }
 
-    Ok(page(form, partner.name, isNominated, backCall, submitCall))
+    Ok(page(form, partner.name, isNominated, submitCall))
   }
 
   protected def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call, dropoutCall: Call): Action[AnyContent] =
@@ -101,7 +101,7 @@ abstract class PartnerContactNameControllerBase(
     MemberName.form()
       .bindFromRequest()
       .fold(
-        (formWithErrors: Form[MemberName]) => Future.successful(BadRequest(page(formWithErrors, partner.name, isNominated, backCall, submitCall))),
+        (formWithErrors: Form[MemberName]) => Future.successful(BadRequest(page(formWithErrors, partner.name, isNominated, submitCall))),
         fullName =>
           updateAction(fullName).map { _ =>
             FormAction.bindFromRequest match {

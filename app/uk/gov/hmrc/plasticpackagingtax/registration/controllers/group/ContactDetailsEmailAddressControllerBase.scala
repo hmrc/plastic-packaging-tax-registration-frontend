@@ -53,7 +53,7 @@ abstract class ContactDetailsEmailAddressControllerBase(
         case _                  => EmailAddress.form()
       }
 
-      Ok(page(form, memberName, getBackLink(memberId), getSubmitCall(memberId)))
+      Ok(page(form, memberName, getSubmitCall(memberId)))
     }
 
   protected def doSubmit(memberId: String): Action[AnyContent] =
@@ -68,7 +68,6 @@ abstract class ContactDetailsEmailAddressControllerBase(
                      request.registration.findMember(memberId).flatMap(
                        _.contactDetails.map(_.groupMemberName)
                      ),
-                     getBackLink(memberId),
                      getSubmitCall(memberId)
                 )
               )

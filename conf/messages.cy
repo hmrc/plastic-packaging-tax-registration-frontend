@@ -235,7 +235,7 @@ primaryContactDetails.phoneNumber.invalidFormat.error  = Nodwch rif ffôn yn y f
 
 primaryContactDetails.confirmAddress.title  = A ydych am ddefnyddio’r cyfeiriad cofrestredig hwn fel y prif gyfeiriad cyswllt?
 primaryContactDetails.confirmAddress.heading  = A ydych am ddefnyddio’r cyfeiriad cofrestredig hwn fel y prif gyfeiriad cyswllt?
-primaryContactDetails.confirmAddress.empty.error  = Dewiswch opsiwn
+primaryContactDetails.confirmAddress.empty.error  = Dewiswch ‘Iawn’ os ydych am ddefnyddio hwn fel y prif gyfeiriad cyswllt
 
 primaryContactDetails.address.title  = Beth yw cyfeiriad busnes {0}?
 primaryContactDetails.address.hint  = Dim ond i anfon hysbysiadau am gyfrif a Ffurflenni Treth y sefydliad y byddwn yn ei ddefnyddio.
@@ -578,13 +578,13 @@ verify.organisation.detail.1  =  Gofynnir i chi roi manylion a allai fod gennych
 verify.organisation.detail.2  =  Rydym yn gofyn y cwestiynau hyn er mwyn eich diogelu rhag ymdrechion maleisus neu dwyllodrus i gael mynediad at y gwasanaeth.
 
 group.membersUnderGroupControl.title  = A yw’r holl sefydliadau yn y grŵp o dan yr un rheolaeth?
-group.membersUnderGroupControl.error.empty  = Dewiswch ‘Iawn’ neu ‘Na’
+group.membersUnderGroupControl.error.empty  = Dewiswch ‘Iawn’ os yw’r holl sefydliadau yn y grŵp o dan yr un rheolaeth
 
 group.notMembersUnderGroupControl.title  = Ni allwch gofrestru fel grŵp
 group.notMembersUnderGroupControl.detail  =  Gallwch wneud cais fel sefydliad unigol neu fel partneriaeth.
 
 group.removeMember.title  = A ydych yn siŵr eich bod am dynnu {0} o’r grŵp?
-group.removeMember.error.empty  = Dewiswch ‘Iawn’ neu ‘Na’
+group.removeMember.error.empty  = Dewiswch ‘Iawn’ os ydych am dynnu sefydliad o’r grŵp
 
 organisationDetails.other.organisation.sectionHeader  = Sefydliadau eraill yn y grŵp
 organisationDetails.other.group.title  = Pa fath o sefydliad yr hoffech ei ychwanegu gyntaf?
@@ -804,3 +804,11 @@ registration-failed.detail1 = Ni allwn gwblhau’ch cofrestriad.
 registration-failed.detail2 = {0} fel y gallwn eich helpu gyda’ch cofrestriad.
 registration-failed.detail2-link = Cysylltwch â ni
 
+updateCompaniesHouse.heading = Mae’n rhaid i chi ddiweddaru cyfeiriad eich sefydliad yn Nhŷ’r Cwmnïau
+updateCompaniesHouse.description.1 = Nid yw’r {0} yn cynnwys gwlad. Ni allwn gwblhau’ch cofrestriad ar gyfer y Dreth Deunydd Pacio Plastig heb yr wybodaeth hon.
+updateCompaniesHouse.description.1.link = cyfeiriad a gedwir yn Nhŷ’r Cwmnïau ar gyfer {0} (yn agor tab newydd)
+updateCompaniesHouse.description.2 = Gallwch {0}
+updateCompaniesHouse.description.2.link = ddiweddaru cyfeiriad eich sefydliad ar-lein (yn agor tab newydd)
+updateCompaniesHouse.description.3 = Mewngofnodwch i’ch cyfrif Tŷ’r Cwmnïau a diweddarwch eich cyfeiriad i gynnwys gwlad, er enghraifft: Y Deyrnas Unedig.
+updateCompaniesHouse.description.4 = Yna, gallwch ddod yn ôl a pharhau i gofrestru ar gyfer y Dreth Deunydd Pacio Plastig.
+updateCompaniesHouse.button = Rwyf wedi diweddaru fy nghyfeiriad

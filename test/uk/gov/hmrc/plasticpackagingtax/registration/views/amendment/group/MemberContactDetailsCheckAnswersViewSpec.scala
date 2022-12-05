@@ -47,12 +47,6 @@ class MemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matcher
       displaySignOutLink(view)
     }
 
-    "display 'Back' button" in {
-      view.getElementById("back-link") must haveHref(
-        routes.GroupMembersListController.displayPage().url
-      )
-    }
-
     "display title" in {
       view.select("title").text() must include(messages("contactDetails.member.check.title"))
     }
@@ -66,7 +60,7 @@ class MemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matcher
             address.addressLine3.getOrElse(""),
             address.townOrCity,
             address.maybePostcode.getOrElse(""),
-            countryService.getName(address.countryCode)
+            countryService.tryLookupCountryName(address.countryCode)
         ).filter(_.nonEmpty).mkString(" ")
 
       val expectedContent = Seq(

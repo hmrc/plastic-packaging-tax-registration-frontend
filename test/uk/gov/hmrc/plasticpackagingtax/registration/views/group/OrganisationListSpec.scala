@@ -22,7 +22,6 @@ import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.{routes => groupRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.controllers.organisation.{routes => orgRoutes}
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
@@ -56,11 +55,6 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
     }
 
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(routes.TaskListController.displayPage())
-    }
-
     "display title" in {
 
       view.select("title").text() must include(
@@ -72,13 +66,6 @@ class OrganisationListSpec extends UnitViewSpec with Matchers {
 
       view.getElementsByClass("govuk-caption-l").text() must include(
         messages("group.organisationList.sectionHeader")
-      )
-    }
-
-    "display visually hidden labels" in {
-
-      view.getElementsByClass("govuk-visually-hidden").get(1).text() must include(
-        messages("site.back.hiddenText")
       )
     }
 

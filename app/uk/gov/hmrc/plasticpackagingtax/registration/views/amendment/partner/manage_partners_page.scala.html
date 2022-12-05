@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
@@ -36,7 +36,7 @@
 
 @govukLayout(
     title = Title("amend.partner.manage.title"),
-    backButton = Some(BackButton(messages("site.back"), Call("GET", appConfig.pptAccountUrl), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
 
     @pageHeading(text = messages("amend.partner.manage.title"))
 

@@ -41,13 +41,10 @@ class ContactDetailsNameController @Inject() (
     ) {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    doDisplayPage(memberId, getBackLink, getSubmitCall)
+    doDisplayPage(memberId, getSubmitCall)
 
   def submit(memberId: String): Action[AnyContent] =
-    doSubmit(memberId, getBackLink, getSubmitCall, getSuccessfulRedirect)
-
-  override protected def getBackLink(memberId: String): Call =
-    routes.OrganisationDetailsTypeController.displayPageAmendMember(memberId)
+    doSubmit(memberId, getSubmitCall, getSuccessfulRedirect)
 
   override protected def getSubmitCall(memberId: String): Call =
     routes.ContactDetailsNameController.submit(memberId)

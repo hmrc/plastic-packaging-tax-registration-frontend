@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{errorSummary, sectionHeader}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 
 @this(
         formHelper: FormWithCSRF,
@@ -31,7 +31,7 @@
 )
 
 
-@(form: Form[MemberName], organisationName: String, backLink: Call, updateCall: Call, memberId: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[MemberName], organisationName: String, updateCall: Call, memberId: String)(implicit request: Request[_], messages: Messages)
 
 @firstNameField = @{form("firstName")}
 @lastNameField = @{form("lastName")}
@@ -63,7 +63,7 @@
 
 @govukLayout(
     title = Title("contactDetails.member.name.title"),
-    backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
     @errorSummary(form.errors)
     @sectionHeader(messages("contactDetails.member.sectionHeader"))
 

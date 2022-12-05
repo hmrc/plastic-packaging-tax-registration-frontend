@@ -20,7 +20,6 @@ import base.unit.UnitViewSpec
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.contact.{routes => contactRoutes}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.ConfirmAddress
 import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.confirm_address
@@ -60,13 +59,6 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(
-        contactRoutes.ContactDetailsTelephoneNumberController.displayPage()
-      )
     }
 
     "display title" in {

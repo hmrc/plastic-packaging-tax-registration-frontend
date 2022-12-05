@@ -29,12 +29,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[email_address_page]
-
-  private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form(), isGroup: Boolean = false): Document =
-    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(journeyRequest, messages)
 
   private val mainContact = journeyRequest.registration.primaryContactDetails.name.get
 
@@ -52,11 +50,6 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -153,8 +146,8 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddress.form(), backLink, updateLink, false)(journeyRequest, messages)
-    page.render(EmailAddress.form(), backLink, updateLink, false, journeyRequest, messages)
+    page.f(EmailAddress.form(), updateLink, false)(journeyRequest, messages)
+    page.render(EmailAddress.form(), updateLink, false, journeyRequest, messages)
   }
 
 }

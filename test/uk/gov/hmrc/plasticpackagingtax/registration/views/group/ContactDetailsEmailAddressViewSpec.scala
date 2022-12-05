@@ -30,13 +30,12 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[member_email_address_page]
 
-  private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
   private val contactName = Some("Test")
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form()): Document =
-    page(form, contactName, backLink, updateLink)(journeyRequest, messages)
+    page(form, contactName, updateLink)(journeyRequest, messages)
 
   "Email Address View" should {
 
@@ -52,11 +51,6 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -116,8 +110,8 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddress.form(), contactName, backLink, updateLink)(journeyRequest, messages)
-    page.render(EmailAddress.form(), contactName, backLink, updateLink, journeyRequest, messages)
+    page.f(EmailAddress.form(), contactName, updateLink)(journeyRequest, messages)
+    page.render(EmailAddress.form(), contactName, updateLink, journeyRequest, messages)
   }
 
 }

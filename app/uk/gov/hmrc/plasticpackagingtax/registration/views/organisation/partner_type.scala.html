@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.{controllers => pptControllers}
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.partner.{routes => partnerRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum._
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
@@ -56,7 +56,7 @@
 
     @govukLayout(
         title = Title(titleMessage),
-        backButton = Some(BackButton(messages("site.back"), pptControllers.routes.TaskListController.displayPage(), messages("site.back.hiddenText")))) {
+        backButton = Some(BackButtonJs())) {
 
         @errorSummary(form.errors)
 

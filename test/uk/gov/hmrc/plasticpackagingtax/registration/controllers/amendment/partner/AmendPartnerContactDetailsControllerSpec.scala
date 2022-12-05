@@ -109,14 +109,14 @@ class AmendPartnerContactDetailsControllerSpec
     simulateGetSubscriptionSuccess(partnershipRegistration)
     simulateUpdateSubscriptionSuccess()
 
-    when(mockContactNamePage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Name"))
+    when(mockContactNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Name"))
 
-    when(mockContactEmailPage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Email Address"))
-    when(mockContactPhoneNumberPage.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Phone Number"))
+    when(mockContactEmailPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Email Address"))
+    when(mockContactPhoneNumberPage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Phone Number"))
 
-    when(mockJobTitlePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
-    when(email_address_passcode_page.apply(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
-    when(emailCorrectPasscodePage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(mockJobTitlePage.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Job Title"))
+    when(email_address_passcode_page.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(emailCorrectPasscodePage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
   override protected def afterEach(): Unit = {
@@ -140,7 +140,6 @@ class AmendPartnerContactDetailsControllerSpec
               formCaptor.capture(),
               ArgumentMatchers.eq(nominatedPartner.name),
               ArgumentMatchers.eq(true),
-              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateContactName(nominatedPartner.id))
             )(any(), any())
             formCaptor.getValue.value mustBe Some(MemberName(nominatedPartnerFirstName, nominatedPartnerLastName))
@@ -156,7 +155,6 @@ class AmendPartnerContactDetailsControllerSpec
               formCaptor.capture(),
               ArgumentMatchers.eq(otherPartner.name),
               ArgumentMatchers.eq(other),
-              ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateContactName(otherPartner.id))
             )(any(), any())
             formCaptor.getValue.value mustBe Some(MemberName(otherPartnerFirstName, otherPartnerLastName))
@@ -170,7 +168,6 @@ class AmendPartnerContactDetailsControllerSpec
               ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
             verify(mockContactEmailPage).apply(
               formCaptor.capture(),
-              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(nominatedPartner.id)),
               ArgumentMatchers.eq(nominatedPartner.name),
               ArgumentMatchers.eq(isNominated)
@@ -186,7 +183,6 @@ class AmendPartnerContactDetailsControllerSpec
               ArgumentCaptor.forClass(classOf[Form[EmailAddress]])
             verify(mockContactEmailPage).apply(
               formCaptor.capture(),
-              ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateEmailAddress(otherPartner.id)),
               ArgumentMatchers.eq(otherPartner.name),
               ArgumentMatchers.eq(other)
@@ -202,7 +198,6 @@ class AmendPartnerContactDetailsControllerSpec
               ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
             verify(mockContactPhoneNumberPage).apply(
               formCaptor.capture(),
-              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updatePhoneNumber(nominatedPartner.id)),
               ArgumentMatchers.eq(nominatedPartner.name), any()
             )(any(), any())
@@ -217,7 +212,6 @@ class AmendPartnerContactDetailsControllerSpec
               ArgumentCaptor.forClass(classOf[Form[PhoneNumber]])
             verify(mockContactPhoneNumberPage).apply(
               formCaptor.capture(),
-              ArgumentMatchers.eq(routes.PartnerContactDetailsCheckAnswersController.displayPage(otherPartner.id)),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updatePhoneNumber(otherPartner.id)),
               ArgumentMatchers.eq(otherPartner.name), any()
             )(any(), any())
@@ -233,7 +227,6 @@ class AmendPartnerContactDetailsControllerSpec
             verify(mockJobTitlePage).apply(
               formCaptor.capture(),
               ArgumentMatchers.eq(nominatedPartner.name),
-              ArgumentMatchers.eq(amendmentRoutes.AmendRegistrationController.displayPage()),
               ArgumentMatchers.eq(routes.AmendPartnerContactDetailsController.updateJobTitle(nominatedPartner.id))
             )(any(), any())
             formCaptor.getValue.value mustBe Some(JobTitle(nominatedPartnerJobTitle))

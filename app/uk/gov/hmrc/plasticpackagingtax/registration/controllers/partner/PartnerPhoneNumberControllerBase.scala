@@ -72,7 +72,7 @@ abstract class PartnerPhoneNumberControllerBase(
             case _ =>
               PhoneNumber.form()
           }
-          Ok(page(form, backCall, submitCall, contactName, sectionHeading))
+          Ok(page(form, submitCall, contactName, sectionHeading))
         }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
     }.getOrElse(throw new IllegalStateException("Expected partner contact name missing"))
 
@@ -111,7 +111,7 @@ abstract class PartnerPhoneNumberControllerBase(
         .bindFromRequest()
         .fold(
           (formWithErrors: Form[PhoneNumber]) =>
-            Future.successful(BadRequest(page(formWithErrors, backCall, submitCall, contactName,sectionHeading))),
+            Future.successful(BadRequest(page(formWithErrors, submitCall, contactName,sectionHeading))),
           phoneNumber =>
             updateAction(phoneNumber).map { _ =>
               FormAction.bindFromRequest match {

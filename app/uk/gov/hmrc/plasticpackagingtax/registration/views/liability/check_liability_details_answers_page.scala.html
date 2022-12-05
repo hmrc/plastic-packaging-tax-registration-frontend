@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.liabilityCheckAnswers
 
@@ -33,11 +33,11 @@
         sectionHeader: sectionHeader,
         liabilityCheckAnswers: liabilityCheckAnswers
 )
-@(registration: Registration, backLink: Call)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
 
     @govukLayout(
         title = Title("liability.checkAnswers.title"),
-        backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
+        backButton = Some(BackButtonJs())) {
 
         @sectionHeader(messages("liability.sectionHeader"))
         @pageHeading(messages("liability.checkAnswers.title"))

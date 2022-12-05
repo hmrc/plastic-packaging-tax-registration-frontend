@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.main_template
-@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButton, Title}
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{BackButtonJs, Title}
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 @import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType
 
@@ -36,7 +36,7 @@
 
 @govukLayout(
     title = Title("contactDetails.member.check.title"),
-    backButton = Some(BackButton(messages("site.back"), amendGroupRoutes.GroupMembersListController.displayPage(), messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
 
     @pageHeading(messages("contactDetails.member.check.title"))
 

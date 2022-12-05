@@ -29,12 +29,10 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
   private val page = inject[full_name_page]
-
-  private val backLink   = Call("GET", "/back-link")
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[FullName] = FullName.form(), isGroup: Boolean = false): Document =
-    page(form, backLink, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(journeyRequest, messages)
 
   "Primary Contact Details Full Name View" should {
 
@@ -50,11 +48,6 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
 
       displaySignOutLink(view)
 
-    }
-
-    "display 'Back' button" in {
-
-      view.getElementById("back-link") must haveHref(backLink.url)
     }
 
     "display title" in {
@@ -180,8 +173,8 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(FullName.form(), backLink, updateLink, false)(request, messages)
-    page.render(FullName.form(), backLink, updateLink, false, request, messages)
+    page.f(FullName.form(), updateLink, false)(request, messages)
+    page.render(FullName.form(), updateLink, false, request, messages)
   }
 
 }

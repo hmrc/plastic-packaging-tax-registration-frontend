@@ -98,10 +98,6 @@ class AmendPartnerContactDetailsController @Inject() (
       form = form,
       partnershipName = partner.name,
       isNominated,
-      backLink =
-        if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
-        else
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
       updateCall =
         routes.AmendPartnerContactDetailsController.updateContactName(partner.id)
     )
@@ -204,11 +200,6 @@ class AmendPartnerContactDetailsController @Inject() (
   private def buildContactEmailPage(form: Form[EmailAddress], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
     contactEmailPage(
       form = form,
-      backLink =
-        if (isNominated)
-          amendmentRoutes.AmendRegistrationController.displayPage()
-        else
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
       updateCall =
         routes.AmendPartnerContactDetailsController.updateEmailAddress(partner.id),
       contactName = partner.name,
@@ -251,11 +242,6 @@ class AmendPartnerContactDetailsController @Inject() (
   private def buildContactPhoneNumberPage(form: Form[PhoneNumber], partner: Partner, isNominated: Boolean)(implicit request: JourneyRequest[_]) =
     contactPhoneNumberPage(
       form = form,
-      backLink =
-        if (isNominated)
-          amendmentRoutes.AmendRegistrationController.displayPage()
-        else
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
       updateCall =
         routes.AmendPartnerContactDetailsController.updatePhoneNumber(partner.id),
       contactName = partner.name,
@@ -338,10 +324,6 @@ class AmendPartnerContactDetailsController @Inject() (
     jobTitlePage(
       form = form,
       contactName = partner.name,
-      backLink =
-        if (isNominated) amendmentRoutes.AmendRegistrationController.displayPage()
-        else
-          routes.PartnerContactDetailsCheckAnswersController.displayPage(partner.id),
       updateCall =
         routes.AmendPartnerContactDetailsController.updateJobTitle(partner.id)
     )

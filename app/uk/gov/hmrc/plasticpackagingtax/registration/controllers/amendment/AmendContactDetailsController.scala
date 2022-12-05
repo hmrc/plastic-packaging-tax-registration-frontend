@@ -80,7 +80,6 @@ class AmendContactDetailsController @Inject() (
     form: Form[FullName]
   )(implicit request: JourneyRequest[AnyContent]) =
     contactNamePage(form,
-                    routes.AmendRegistrationController.displayPage(),
                     routes.AmendContactDetailsController.updateContactName()
     )
 
@@ -118,7 +117,6 @@ class AmendContactDetailsController @Inject() (
     form: Form[JobTitle]
   )(implicit request: JourneyRequest[AnyContent]) =
     jobTitlePage(form,
-                 routes.AmendRegistrationController.displayPage(),
                  routes.AmendContactDetailsController.updateJobTitle()
     )
 
@@ -156,7 +154,6 @@ class AmendContactDetailsController @Inject() (
     form: Form[PhoneNumber]
   )(implicit request: JourneyRequest[AnyContent]) =
     phoneNumberPage(form,
-                    routes.AmendRegistrationController.displayPage(),
                     routes.AmendContactDetailsController.updatePhoneNumber()
     )
 

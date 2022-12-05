@@ -81,7 +81,6 @@ abstract class OrganisationDetailsTypeControllerBase(
 
   protected def doSubmit(memberId: Option[String], submitCall: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      val isFirstMember: Boolean = request.registration.isFirstGroupMember
       OrganisationType.form(ActionEnum.Group)
         .bindFromRequest()
         .fold(
