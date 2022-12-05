@@ -54,6 +54,7 @@ class DeregistrationSubmittedViewSpec extends UnitViewSpec with Matchers {
 
     "display page detail" in {
       val mainContent = view.select("main").text()
+      mainContent must include(messages("deregistration.confirmation.detail"))
       mainContent must include(messages("deregistration.confirmation.detail1"))
       mainContent must include(
         messages("deregistration.confirmation.detail2",
