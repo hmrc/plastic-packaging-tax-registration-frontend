@@ -48,7 +48,16 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
       view.getElementsByTag("h1").text() must include(messages("deregister.checkAnswers.title"))
     }
 
-    "display 'Confirm and continue' button" in {
+    "display subheading" in {
+      view.getElementsByTag("h2").text() must include(messages("deregister.checkAnswers.subheading"))
+    }
+
+    "display paragraph" in {
+      val mainContent = view.select("main").text()
+      mainContent must include(messages("deregister.checkAnswers.paragraph"))
+    }
+
+    "display 'Submit request' button" in {
       view.getElementById("submit").text() mustBe "Submit request"
     }
 

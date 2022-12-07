@@ -23,7 +23,6 @@
 @this(
     formHelper: FormWithCSRF,
     govukLayout: main_template,
-    paragraph: paragraph,
     paragraphBody: paragraphBody,
     saveButtons: saveButtons,
     errorSummary: errorSummary,
@@ -89,9 +88,10 @@
                 )
             )
         )
-        
-        @subHeading(messages("deregister.checkAnswers.confirm.heading"))
-        @paragraphBody(messages("deregister.checkAnswers.confirm.para"))
-        @saveAndContinue("deregister.checkAnswers.confirm.button-text")
+        <br />
+        @subHeading(text = messages("deregister.checkAnswers.subheading"))
+        @paragraphBody(message = messages("deregister.checkAnswers.paragraph"))
+
+        @saveAndContinue("deregister.checkAnswers.confirm")
     }
 }

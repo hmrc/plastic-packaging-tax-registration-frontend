@@ -37,10 +37,10 @@
 
 @deregisterRadios = @{
     Seq(
-        RadioItem(content = Text(messages(s"deregistration.reason.type.RegisteredIncorrectly")), value = Some(RegisteredIncorrectly), checked = form("answer").value.contains(RegisteredIncorrectly.toString)),
         RadioItem(content = Text(messages(s"deregistration.reason.type.CeasedTrading")), value = Some(CeasedTrading), checked = form("answer").value.contains(CeasedTrading.toString)),
         RadioItem(content = Text(messages(s"deregistration.reason.type.BelowDe-minimus")), value = Some(BelowDeminimis), checked = form("answer").value.contains(BelowDeminimis.toString)),
-        RadioItem(content = Text(messages(s"deregistration.reason.type.TakenintoGroupRegistration")), value = Some(TakenIntoGroupRegistration), checked = form("answer").value.contains(TakenIntoGroupRegistration.toString))
+        RadioItem(content = Text(messages(s"deregistration.reason.type.TakenintoGroupRegistration")), value = Some(TakenIntoGroupRegistration), checked = form("answer").value.contains(TakenIntoGroupRegistration.toString)),
+        RadioItem(content = Text(messages(s"deregistration.reason.type.RegisteredIncorrectly")), value = Some(RegisteredIncorrectly), checked = form("answer").value.contains(RegisteredIncorrectly.toString))
     )
 }
 

@@ -62,23 +62,18 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
 
     "display radio inputs" in {
 
-      view.getElementById("answer").attr("value").text() mustBe RegisteredIncorrectly.toString
-      view.getElementsByClass("govuk-label").get(0).text() mustBe "Registered incorrectly"
+      view.getElementById("answer").attr("value").text() mustBe CeasedTrading.toString
+      view.getElementsByClass("govuk-label").get(0).text() mustBe "Ceased trading"
 
-      view.getElementById("answer-2").attr("value").text() mustBe CeasedTrading.toString
-      view.getElementsByClass("govuk-label").get(1).text() mustBe "Ceased trading"
+      view.getElementById("answer-2").attr("value").text() mustBe BelowDeminimis.toString
+      view.getElementsByClass("govuk-label").get(1).text(
+      )mustBe "Have not met the 10,000kg threshold for a 12-month period since my tax start date and do not expect to meet it in the next 12 months"
 
-      view.getElementById("answer-3").attr("value").text() mustBe BelowDeminimis.toString
-      view.getElementsByClass("govuk-label").get(2)
-        .text() mustBe "Have not met the 10,000kg threshold for a 12-month period since my tax start date and do not " +
-        "expect to meet it in the next 12 months"
+      view.getElementById("answer-3").attr("value").text() mustBe TakenIntoGroupRegistration.toString
+      view.getElementsByClass("govuk-label").get(2).text() mustBe "Want to register as part of a group"
 
-      view.getElementById("answer-4").attr(
-        "value"
-      ).text() mustBe TakenIntoGroupRegistration.toString
-      view.getElementsByClass("govuk-label").get(
-        3
-      ).text() mustBe "Want to register as part of a group"
+      view.getElementById("answer-4").attr("value").text() mustBe RegisteredIncorrectly.toString
+      view.getElementsByClass("govuk-label").get(3).text() mustBe "Registered incorrectly"
 
     }
 
@@ -96,10 +91,10 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
 
       val form = DeregisterReasonForm
         .form()
-        .fill(DeregisterReasonForm.toForm(CeasedTrading))
+        .fill(DeregisterReasonForm.toForm(BelowDeminimis))
       val view = createView(form)
 
-      view.getElementById("answer-2").attr("value") mustBe CeasedTrading.toString
+      view.getElementById("answer-2").attr("value") mustBe BelowDeminimis.toString
     }
 
     "display error" when {

@@ -767,11 +767,12 @@ gform.link  =  https://www.tax.service.gov.uk/submissions/new-form/register-for-
 
 deregistration.deregister.title = Datgofrestru rhag y Dreth Deunydd Pacio Plastig
 deregistration.deregister.eligibility = Gallwch ofyn am gael datgofrestru rhag y Dreth Deunydd Pacio Plastig os yw’r canlynol yn wir:
-deregistration.deregister.eligibility.1 = rydych wedi cofrestru’n anghywir
-deregistration.deregister.eligibility.2 = rydych wedi rhoi’r gorau i fasnachu
-deregistration.deregister.eligibility.3 = nid ydych wedi cyrraedd y trothwy 10,000kg am gyfnod o 12 mis ers dyddiad dechrau’ch treth, ac nid ydych yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
-deregistration.deregister.eligibility.4 = rydych yn dymuno cofrestru fel rhan o grŵp
-deregistration.deregister.detail1 = Byddwn yn gwirio’ch cais. Ar ôl i ni ei gymeradwyo, byddwn yn ysgrifennu atoch a bydd eich rhwymedigaeth treth yn dod i ben.
+deregistration.deregister.eligibility.1 = rydych wedi rhoi’r gorau i fasnachu
+deregistration.deregister.eligibility.2 = nid ydych wedi cyrraedd y trothwy 10,000kg am gyfnod o 12 mis ers dyddiad dechrau’ch treth, ac nid ydych yn disgwyl ei gyrraedd cyn pen y 12 mis nesaf
+deregistration.deregister.eligibility.3 = rydych yn dymuno cofrestru fel rhan o grŵp
+deregistration.deregister.eligibility.4 = rydych wedi cofrestru’n anghywir
+deregistration.deregister.detail1 = Byddwn yn gwirio’ch cais ac yn cysylltu â chi os bydd arnom angen rhagor o wybodaeth gennych.
+deregistration.deregister.detail2 = Os byddwn yn cymeradwyo’ch cais, byddwn yn ysgrifennu atoch a bydd eich rhwymedigaeth treth yn dod i ben.
 deregistration.deregister.label = A ydych yn siŵr eich bod am ddatgofrestru rhag y Dreth Deunydd Pacio Plastig?
 deregistration.deregister.empty.error = Dewiswch ‘Iawn’ os ydych am ddatgofrestru rhag y Dreth Deunydd Pacio Plastig
 
@@ -784,7 +785,8 @@ deregistration.reason.empty.error = Dewiswch pam rydych am ddatgofrestru
 
 deregistration.confirmation.title = Mae’ch cais i ddatgofrestru wedi’i gyflwyno
 deregistration.confirmation.subheading = Yr hyn sy’n digwydd nesaf
-deregistration.confirmation.detail1 = Byddwn yn anfon llythyr atoch i roi gwybod a ydym wedi cymeradwyo’ch cais.
+deregistration.confirmation.detail = Fel arfer, mae’n cymryd 28 diwrnod gwaith i ni wirio’ch cais. Byddwn yn cysylltu â chi os bydd arnom angen rhagor o wybodaeth gennych.
+deregistration.confirmation.detail1 = Os byddwn yn cymeradwyo’ch cais, byddwn yn ysgrifennu atoch gyda’ch dyddiad datgofrestru a bydd eich rhwymedigaeth treth yn dod i ben.
 deregistration.confirmation.detail2 = Gallwch barhau i fwrw golwg dros a diweddaru’ch {0} nes bod eich cais i ddatgofrestru wedi’i gymeradwyo.
 deregistration.confirmation.detail2.link = cyfrif Treth Deunydd Pacio Plastig
 
@@ -792,9 +794,10 @@ deregister.checkAnswers.title = Gwiriwch eich atebion
 deregister.checkAnswers.heading = Gwiriwch eich atebion
 deregister.checkAnswers.wantToDeregister = Eisiau datgofrestru
 deregister.checkAnswers.reasonToDeregister = Pam rydych am ddatgofrestru
-deregister.checkAnswers.confirm.heading = Anfonwch eich cais nawr
-deregister.checkAnswers.confirm.para = Drwy gyflwyno’r cais hwn i ddatgofrestru, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a roddir gennych yn gywir.
-deregister.checkAnswers.confirm.button-text = Cyflwyno’r cais
+deregister.checkAnswers.subheading = Anfonwch eich cais nawr
+deregister.checkAnswers.paragraph = Drwy gyflwyno’r cais hwn i ddatgofrestru, rydych yn cadarnhau, hyd eithaf eich gwybodaeth, fod y manylion a roddir gennych yn gywir.
+deregister.checkAnswers.confirm = Cyflwyno’r cais
+
 
 registration-failed.title = Cofrestriad wedi methu
 registration-failed.detail1 = Ni allwn gwblhau’ch cofrestriad.
