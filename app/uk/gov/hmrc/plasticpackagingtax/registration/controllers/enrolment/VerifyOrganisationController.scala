@@ -35,9 +35,6 @@ class VerifyOrganisationController @Inject() (
       Ok(page())
     }
 
-  def submit(): Action[AnyContent] =
-    authenticate {
-      Redirect(routes.IsUkAddressController.displayPage())
-    }
+  def submit(): Action[AnyContent] = Action(Redirect(routes.IsUkAddressController.displayPage()))
 
 }

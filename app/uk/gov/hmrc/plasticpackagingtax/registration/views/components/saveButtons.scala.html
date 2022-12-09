@@ -17,10 +17,11 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
 @import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{saveAndComeBackLater, saveAndContinue}
 
-@this(saveAndContinue: saveAndContinue, saveAndComeBackLater: saveAndComeBackLater, appConfig: AppConfig)
+@this(
+ saveAndContinue: saveAndContinue
+)
 
-@(saveAndContinueKey: String = "site.button.saveAndContinue",
-        saveAndComeBackLaterKey: String = "site.button.saveAndComeBackLater")(implicit messages: Messages)
+@(saveAndContinueKey: String = "site.button.saveAndContinue")(implicit messages: Messages)
 
 <div class="govuk-button-group">
     @saveAndContinue(saveAndContinueKey)

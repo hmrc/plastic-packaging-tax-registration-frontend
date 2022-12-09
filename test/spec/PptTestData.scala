@@ -21,10 +21,9 @@ import base.PptTestData.newUser
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{IsUkAddress, Postcode, PptReference, RegistrationDate}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{DateData, IsUkAddress, Postcode, PptReference, RegistrationDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{SOLE_TRADER, UK_COMPANY, _}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{PartnerTypeEnum, _}
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}

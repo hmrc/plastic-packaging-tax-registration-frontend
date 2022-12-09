@@ -19,11 +19,14 @@ package uk.gov.hmrc.plasticpackagingtax.registration.forms.liability
 import base.unit.MessagesSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.data.FormError
+import play.api.test.FakeRequest
 import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.RegistrationDate
 
 import java.time.LocalDate
 
 class RegistrationDateSpec extends MessagesSpec with Matchers {
+
+  implicit val request = FakeRequest()
 
   private val year  = "date.year"
   private val month = "date.month"
@@ -49,25 +52,18 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
 
         val input = Map(year -> "", month -> "", day -> "")
         val expectedErrors =
-          Seq(FormError(year, "date.year.error"),
-              FormError(month, "date.month.error"),
-              FormError(day, "date.day.error")
+          Seq(FormError(day, "enrolment.registrationDate.value.error.empty")
           )
 
         testFailedValidationErrors(input, expectedErrors)
       }
     }
 
-    "provided with year" which {
+    "provided with year contains alphanumerical or special character" in {
+      val input          = Map(year -> "20A#", month -> "7", day -> "13")
+      val expectedErrors = Seq(FormError(year, "enrolment.registrationDate.value.error.format"))
 
-      "contains alphanumerical or special character" in {
-
-        val input          = Map(year -> "20A#", month -> "7", day -> "13")
-        val expectedErrors = Seq(FormError(year, "date.year.error"))
-
-        testFailedValidationErrors(input, expectedErrors)
-      }
-
+      testFailedValidationErrors(input, expectedErrors)
     }
 
     "provided with month" which {
@@ -75,7 +71,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map(year -> "2020", month -> "0", day -> "13")
-        val expectedErrors = Seq(FormError(month, "date.month.error"))
+        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -83,7 +79,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is more than 12" in {
 
         val input          = Map(year -> "2020", month -> "13", day -> "13")
-        val expectedErrors = Seq(FormError(month, "date.month.error"))
+        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -91,7 +87,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map(year -> "2020", month -> "C#", day -> "13")
-        val expectedErrors = Seq(FormError(month, "date.month.error"))
+        val expectedErrors = Seq(FormError(month, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -102,7 +98,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map(year -> "2020", month -> "7", day -> "0")
-        val expectedErrors = Seq(FormError(day, "date.day.error"))
+        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -110,7 +106,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is more than 31" in {
 
         val input          = Map(year -> "2020", month -> "7", day -> "32")
-        val expectedErrors = Seq(FormError(day, "date.day.error"))
+        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -118,7 +114,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "contains alphanumerical or special character" in {
 
         val input          = Map(year -> "2020", month -> "7", day -> "C#")
-        val expectedErrors = Seq(FormError(day, "date.day.error"))
+        val expectedErrors = Seq(FormError(day, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }

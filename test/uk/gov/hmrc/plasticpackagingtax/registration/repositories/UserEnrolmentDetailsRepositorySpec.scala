@@ -29,13 +29,7 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{
-  IsUkAddress,
-  Postcode,
-  PptReference,
-  RegistrationDate
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{DateData, IsUkAddress, Postcode, PptReference, RegistrationDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
 

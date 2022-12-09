@@ -21,8 +21,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.data.Form
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.RegistrationDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{DateData, RegistrationDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.registration_date_page
 import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
 
