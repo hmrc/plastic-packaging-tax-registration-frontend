@@ -51,16 +51,17 @@ class VerifyOrganisationViewSpec extends UnitViewSpec with Matchers {
       view.select("title").text() must include(messages("verify.organisation.title"))
     }
 
-    "display 'Confirm and continue' button" in {
-      view.getElementById("submit").text() mustBe "Save and continue"
-    }
-
     "display paragraph " in {
 
       val paragraphBodyText = view.getElementsByClass(gdsPageBodyText)
       paragraphBodyText.get(0) must containMessage("verify.organisation.detail.1")
-      paragraphBodyText.get(1) must containMessage("verify.organisation.detail.2")
     }
+
+    "display 'Continue' button" in {
+      view.getElementById("submit").text() mustBe "Continue"
+    }
+
+
 
   }
 

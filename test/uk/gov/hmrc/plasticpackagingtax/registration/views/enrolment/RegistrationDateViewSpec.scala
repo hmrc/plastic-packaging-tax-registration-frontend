@@ -92,23 +92,12 @@ class RegistrationDateViewSpec extends UnitViewSpec with Matchers {
       "a registration date was not supplied" in {
         val form = RegistrationDate
           .form()
-          .fillAndValidate(RegistrationDate(DateData("", "", "")))
+          .withError("date", "enrolment.registrationDate.value.error.empty")
         val view = createView(form)
 
         view must haveGovukGlobalErrorSummary
-        view must haveGovukFieldError("date", messages("date.day.error"))
+        view must haveGovukFieldError("date", messages("enrolment.registrationDate.value.error.empty"))
       }
-
-      "an invalid registration date was supplied" in {
-        val form = RegistrationDate
-          .form()
-          .fillAndValidate(RegistrationDate(DateData("31", "13", "2000")))
-        val view = createView(form)
-
-        view must haveGovukGlobalErrorSummary
-        view must haveGovukFieldError("date", messages("date.month.error"))
-      }
-
     }
   }
 

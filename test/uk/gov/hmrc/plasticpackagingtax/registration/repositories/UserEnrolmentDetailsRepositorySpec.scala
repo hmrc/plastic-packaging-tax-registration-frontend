@@ -17,49 +17,27 @@
 package uk.gov.hmrc.plasticpackagingtax.registration.repositories
 
 import base.PptTestData
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
-import play.api.test.Helpers.await
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
-import uk.gov.hmrc.mongo.CurrentTimestampSupport
-import uk.gov.hmrc.mongo.test.MongoSupport
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{DateData, IsUkAddress, Postcode, PptReference, RegistrationDate}
+import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatestplus.play.PlaySpec
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment._
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserEnrolmentDetailsRepository.repositoryKey
 
-import java.util.concurrent.TimeUnit
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.Future
 
-class UserEnrolmentDetailsRepositorySpec
-    extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
-    with DefaultAwaitTimeout with MongoSupport {
+class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val appConfig: AppConfig = mock[AppConfig]
-  private val mockConfig           = mock[Configuration]
-  when(mockConfig.get[FiniteDuration]("mongodb.userDataCache.expiry")).thenReturn(
-    FiniteDuration(1, TimeUnit.MINUTES)
-  )
+  val mockUserDataRepository: UserDataRepository = mock[UserDataRepository]
 
-  val mockTimeStampSupport = new CurrentTimestampSupport()
+  val sut = new UserEnrolmentDetailsRepository(mockUserDataRepository)
 
-  val userDataRepository =
-    new MongoUserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
-
-  val userEnrolmentDetailsRepository = new UserEnrolmentDetailsRepository(userDataRepository)
-
-  implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
-
-  def authRequest(sessionId: String): AuthenticatedRequest[Any] =
-    new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),
-                             PptTestData.newUser("123")
-    )
+  implicit val request: AuthenticatedRequest[Any] = new AuthenticatedRequest(FakeRequest(), PptTestData.newUser("123"))
 
   private val userEnrolmentDetails =
     UserEnrolmentDetails(pptReference = Some(PptReference("ppt-ref")),
@@ -70,60 +48,55 @@ class UserEnrolmentDetailsRepositorySpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    dropDatabase()
+    reset(mockUserDataRepository)
   }
 
-  "User Enrolment Details Repository" should {
+  "User Enrolment Details Repository" must {
 
-    "add data to cache and return it" in {
+    "get" when {
+      "there is one" in {
+        when(mockUserDataRepository.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(userEnrolmentDetails)))
+        val result = await(sut.get()(request))
 
-      await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
-
-      await(userEnrolmentDetailsRepository.get()) mustBe userEnrolmentDetails
-    }
-
-    "update data in the cache" when {
-
-      "a registration exists" in {
-
-        await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
-
-        await(
-          userEnrolmentDetailsRepository.update(
-            reg => reg.copy(pptReference = Some(PptReference("update-reference")))
-          )
-        )
-
-        await(userEnrolmentDetailsRepository.get()) mustBe
-          userEnrolmentDetails.copy(pptReference = Some(PptReference("update-reference")))
-
+        verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, request)
+        result mustBe userEnrolmentDetails
       }
+      "there is NOT one" in {
+        when(mockUserDataRepository.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
+        val result = await(sut.get()(request))
 
-      "a registration does not exists" in {
-
-        await(
-          userEnrolmentDetailsRepository.update(
-            reg => reg.copy(pptReference = Some(PptReference("new-reference")))
-          )
-        )
-
-        await(userEnrolmentDetailsRepository.get()) mustBe
-          UserEnrolmentDetails(Some(PptReference("new-reference")), None, None)
+        verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, request)
+        result mustBe UserEnrolmentDetails()
       }
+    }
+    "put" in {
+      when(mockUserDataRepository.putData[Any](any(), any())(any(), any())).thenReturn(Future.successful(userEnrolmentDetails))
+      val result = await(sut.put(userEnrolmentDetails)(request))
 
+      verify(mockUserDataRepository)
+        .putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, request)
+      result mustBe userEnrolmentDetails
     }
 
-    "add data to cache and delete it" in {
+    "update" in {
+      val updateFunc = mock[UserEnrolmentDetails => UserEnrolmentDetails]
+      when(updateFunc.apply(any())).thenReturn(userEnrolmentDetails)
+      when(mockUserDataRepository.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(userEnrolmentDetails)))
+      when(mockUserDataRepository.putData[Any](any(), any())(any(), any())).thenReturn(Future.successful(userEnrolmentDetails))
 
-      await(userEnrolmentDetailsRepository.put(userEnrolmentDetails))
+      val result = await(sut.update(updateFunc))
 
-      await(userEnrolmentDetailsRepository.delete()).mustBe(())
+      verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, request)
+      verify(updateFunc).apply(userEnrolmentDetails)
+      verify(mockUserDataRepository).putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, request)
+      result mustBe userEnrolmentDetails
     }
 
-    "return new details when no data found" in {
+    "delete" in {
+      when(mockUserDataRepository.deleteData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.unit)
+      await(sut.delete()(request))
 
-      await(userEnrolmentDetailsRepository.get()) mustBe UserEnrolmentDetails()
+      verify(mockUserDataRepository).deleteData(repositoryKey)(UserEnrolmentDetails.format, request)
     }
-
   }
 }

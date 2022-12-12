@@ -562,15 +562,15 @@ enrolment.confirmation.whatHappensNext.detail.2.link.text = cyfrif treth busnes
 enrolment.confirmation.whatHappensNext.detail.3 = {0}
 enrolment.confirmation.whatHappensNext.detail.3.link.text = Beth oedd eich barn am y gwasanaeth hwn?
 
-enrolment.not.verified.title = Your organisation could not be verified
-enrolment.not.verified.detail.1 = The information you provided does not match the details we have about your organisation.
-enrolment.not.verified.detail.3 = Make sure you enter your correct Plastic Packaging Tax:
-enrolment.not.verified.detail.3.1 = registration number 
-enrolment.not.verified.detail.3.2 = registration date 
-enrolment.not.verified.detail.4 = You can find these in the letter we sent you about how to activate your online Plastic Packaging Tax account.
-enrolment.not.verified.detail.5 = If we still cannot verify your organisation, it could be because the registered address HMRC holds for your organisation is out of date. You may need to update this with HMRC.
-enrolment.not.verified.detail.6 = If you are still having problems, {0}.
-enrolment.not.verified.detail.6.link-text = contact us
+enrolment.not.verified.title = Nid oedd modd dilysu’ch sefydliad
+enrolment.not.verified.detail.1 = Dydy’r wybodaeth a roesoch ddim yn cyd-fynd â’r manylion sydd gennym am eich sefydliad.
+enrolment.not.verified.detail.3 = Gwnewch yn siŵr eich bod yn nodi’r manylion canlynol yn gywir ar gyfer eich Treth Deunydd Pacio Plastig:
+enrolment.not.verified.detail.3.1 = rhif cofrestru
+enrolment.not.verified.detail.3.2 = rdyddiad cofrestru
+enrolment.not.verified.detail.4 = Gallwch ddod o hyd i’r rhain yn y llythyr a anfonwyd atoch ynglŷn â sut i actifadu eich cyfrif Treth Deunydd Pacio Plastig ar-lein.
+enrolment.not.verified.detail.5 = Os na allwn ddilysu eich sefydliad ar ôl hynny, gallai hyn fod oherwydd bod y cyfeiriad sydd gan CThEM ar gyfer eich sefydliad wedi dyddio. Efallai y bydd angen i chi ddiweddaru’ch cyfeiriad gyda CThEM.
+enrolment.not.verified.detail.6 = Os ydych yn dal i gael problemau, {0}.
+enrolment.not.verified.detail.6.link-text = cysylltwch â ni
 
 verify.organisation.title = Mae’n rhaid i ni ddilysu’ch sefydliad
 verify.organisation.detail.1 = Byddwn yn gofyn rhai cwestiynau i chi am y sefydliad i wirio eu bod yn cyd-fynd â’r manylion sydd gennym.
