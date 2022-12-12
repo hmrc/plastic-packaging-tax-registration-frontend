@@ -30,11 +30,14 @@ case class DateData(day: String, month: String, year: String) {
   def asLocalDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
 }
 
+object DateData {
+  implicit val dateFormat: OFormat[DateData] = Json.format[DateData]
+}
+
 case class RegistrationDate(value: DateData)
 
 object RegistrationDate extends Mappings {
   implicit val regFormat: OFormat[RegistrationDate] = Json.format[RegistrationDate]
-  implicit val dateFormat: OFormat[DateData] = Json.format[DateData]
 
   val minRegistrationDate: LocalDate = LocalDate.parse("2021-01-01")
 
