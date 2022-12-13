@@ -228,29 +228,30 @@ GET        /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.re
 POST       /organisation-remove/:memberId     uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.RemoveMemberController.submit(memberId)
 
 # Manual User Enrolment
-GET        /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
-POST       /enrolment-ppt-reference     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.submit()
+GET        /enrolment-ppt-reference                             controllers.Default.redirect(to = uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.routes.PptReferenceController.displayPage().url)
+GET        /enter-plastic-packaging-tax-registration-number     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.displayPage()
+POST       /enter-plastic-packaging-tax-registration-number     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PptReferenceController.submit()
 
-GET        /enrolment-uk-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.displayPage()
-POST       /enrolment-uk-address     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.submit()
+GET        /verify-organisation                                 uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.displayPage()
+POST       /verify-organisation                                 uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.submit()
 
-GET        /enrolment-postcode     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.displayPage()
-POST       /enrolment-postcode     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.submit()
+GET        /registered-address-in-uk                            uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.displayPage()
+POST       /registered-address-in-uk                            uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.IsUkAddressController.submit()
 
-GET        /enrolment-registration-date     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.displayPage()
-POST       /enrolment-registration-date     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.submit()
+GET        /enter-organisation-postcode                         uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.displayPage()
+POST       /enter-organisation-postcode                         uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.PostcodeController.submit()
 
-GET        /enrolment-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.displayPage()
-POST       /enrolment-check-answers     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.submit()
+GET        /registration-date                                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.displayPage()
+POST       /registration-date                                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.RegistrationDateController.submit()
 
-GET        /enrolment-confirmation     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.ConfirmationController.displayPage()
+GET        /activate-account-check-answers                      uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.displayPage()
+POST       /activate-account-check-answers                      uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.CheckAnswersController.submit()
 
-GET        /enrolment-not-verified     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentVerificationFailurePage()
+GET        /account-activated                                   uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.ConfirmationController.displayPage()
 
-GET        /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.displayPage()
-POST       /enrolment-security        uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.VerifyOrganisationController.submit()
+GET        /enrolment-not-verified                              uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentVerificationFailurePage()
 
-GET        /enrolment-reference-number-already-used     uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage()
+GET        /enrolment-reference-number-already-used             uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.NotableErrorController.enrolmentReferenceNumberAlreadyUsedPage()
 
 # Post Registration Amendment
 

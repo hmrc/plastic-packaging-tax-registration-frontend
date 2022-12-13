@@ -26,13 +26,9 @@ import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.DateData
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.RegistrationDate
+import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{DateData, RegistrationDate}
 import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
-  UserDataRepository,
-  UserEnrolmentDetailsRepository
-}
+import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{UserDataRepository, UserEnrolmentDetailsRepository}
 import uk.gov.hmrc.plasticpackagingtax.registration.views.html.enrolment.registration_date_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 

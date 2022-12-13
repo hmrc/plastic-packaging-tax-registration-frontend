@@ -28,11 +28,9 @@ import uk.gov.hmrc.plasticpackagingtax.registration.views.html.components.{
 class SaveButtonsSpec extends UnitViewSpec with Matchers {
 
   private val saveAndContinueButton      = inject[saveAndContinue]
-  private val saveAndComeBackLaterButton = inject[saveAndComeBackLater]
-  private val mockConfig                 = mock[AppConfig]
 
   protected val component: saveButtons =
-    new saveButtons(saveAndContinueButton, saveAndComeBackLaterButton, mockConfig)
+    new saveButtons(saveAndContinueButton)
 
   "Save Buttons Component" should {
     "render only the save button" in {
@@ -45,8 +43,8 @@ class SaveButtonsSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    component.f("site.button.saveAndContinue", "site.button.saveAndComeBackLater")
-    component.render("site.button.saveAndContinue", "site.button.saveAndComeBackLater", messages)
+    component.f("site.button.saveAndContinue")
+    component.render("site.button.saveAndContinue", messages)
   }
 
 }

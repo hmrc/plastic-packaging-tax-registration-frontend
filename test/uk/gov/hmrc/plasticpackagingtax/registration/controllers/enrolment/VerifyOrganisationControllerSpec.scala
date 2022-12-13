@@ -71,8 +71,6 @@ class VerifyOrganisationControllerSpec extends ControllerSpec {
     "redirect to IsUkAddress page " when {
 
       "user is authorised and submit " in {
-        authorizedUser()
-
         val result = controller.submit()(getRequest())
 
         status(result) mustBe SEE_OTHER

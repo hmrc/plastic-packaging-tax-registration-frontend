@@ -40,6 +40,7 @@
     @if(form.errors.nonEmpty) {
         @errorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("date" -> "date.day")))
     }
+
     @formHelper(action = pptRoutes.RegistrationDateController.submit(), 'autoComplete -> "off") {
 
         @govukDateInput(DateInput(

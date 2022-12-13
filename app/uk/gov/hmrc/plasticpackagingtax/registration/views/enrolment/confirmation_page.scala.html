@@ -23,6 +23,7 @@
     govukPanel: GovukPanel,
     paragraphBody: paragraphBody,
     link: link,
+    bulletList: bulletList,
     subHeading: subHeading,
     appConfig: AppConfig
 )
@@ -40,6 +41,12 @@
   @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.1",
       link(text = messages("enrolment.confirmation.whatHappensNext.detail.1.link.text"),
           call = Call("GET", appConfig.pptAccountUrl))))
+
+  @bulletList(Seq(
+      Html(messages("enrolment.confirmation.whatHappensNext.detail.1.bullet.1")),
+      Html(messages("enrolment.confirmation.whatHappensNext.detail.1.bullet.2"))
+    )
+  )
 
   @paragraphBody(message = messages("enrolment.confirmation.whatHappensNext.detail.2",
       link(text = messages("enrolment.confirmation.whatHappensNext.detail.2.link.text"),
