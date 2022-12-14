@@ -59,8 +59,18 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
     withPartnershipDetails(Some(generalPartnershipDetailsWithPartners))
   )
 
+
+
   private def createView(registration: Registration): Html =
     page(registration)(journeyRequestWithEnrolledUser, messages)
+
+  "Should display tax start date" in {
+    createView(registration).select("dt").text() must include ("Tax start date")
+
+  }
+  "Should display value of the date" in {
+    createView(registration).select("dd").text() must include ("1 April 2022")
+  }
 
   Seq((Organisation, singleOrganisationRegistration),
       (SoleTrader, soleTraderRegistration),
