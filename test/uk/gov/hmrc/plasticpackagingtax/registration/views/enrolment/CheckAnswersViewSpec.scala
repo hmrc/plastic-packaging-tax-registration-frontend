@@ -126,7 +126,7 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
     "display 'registration date' row" in {
       val row = getSummaryRow(view, 3)
       row must haveSummaryKey(messages("enrolment.checkAnswers.registrationDate"))
-      row must haveSummaryValue("01/02/2021")
+      row must haveSummaryValue("1 February 2021")
       row must haveSummaryActionsTexts("site.link.change",
                                        "enrolment.checkAnswers.registrationDate"
       )
@@ -157,7 +157,7 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
     "display 'registration date' row" in {
       val row = getSummaryRow(view, 2)
       row must haveSummaryKey(messages("enrolment.checkAnswers.registrationDate"))
-      row must haveSummaryValue("01/02/2021")
+      row must haveSummaryValue("1 February 2021")
       row must haveSummaryActionsTexts("site.link.change",
                                        "enrolment.checkAnswers.registrationDate"
       )
