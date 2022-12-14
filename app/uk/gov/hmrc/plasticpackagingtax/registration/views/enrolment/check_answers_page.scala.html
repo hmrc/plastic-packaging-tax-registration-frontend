@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.plasticpackagingtax.registration.controllers.enrolment.{routes => pptRoutes}
 @import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.UserEnrolmentDetails
 @import java.time.format.DateTimeFormatter
+@import uk.gov.hmrc.plasticpackagingtax.registration.views.utils.ViewUtils
 
 @this(
         formHelper: FormWithCSRF,
@@ -28,7 +29,8 @@
         govukButton: GovukButton,
         govukSummaryList: GovukSummaryList,
         pageHeading: pageHeading,
-        saveAndContinue: saveAndContinue
+        saveAndContinue: saveAndContinue,
+        viewUtils: ViewUtils
 )
 @(answers: UserEnrolmentDetails)(implicit request: Request[_], messages: Messages)
 
@@ -104,7 +106,7 @@
                         ),
                         value = Value(
                             content =  answers.registrationDate.map(_.value.asLocalDate) match {
-                                case Some(date) => Text(date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                                case Some(date) => Text(viewUtils.displayLocalDate(date))
                                 case None => Text("")
                             }
                         ),
