@@ -18,12 +18,10 @@ package registration.contact
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.ConfirmAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.IncorporationAddressDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.confirm_address
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.contact.ConfirmAddress
+import models.genericregistration.IncorporationAddressDetails
+import views.html.contact.confirm_address
 
-@ViewTest
 class ContactDetailsConfirmAddressViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[confirm_address]

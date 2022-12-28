@@ -1,0 +1,81 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.viewmodels.Title
+@import views.html.main_template
+@import controllers.deregistration.routes
+@import views.viewmodels.BackButtonJs
+@import config.AppConfig
+@import forms.partner.AddPartner.YES
+@import forms.partner.AddPartner.NO
+
+@this(
+    formHelper: FormWithCSRF,
+    govukLayout: main_template,
+    govukFieldset: GovukFieldset,
+    govukRadios: GovukRadios,
+    pageHeading: pageHeading,
+    govukInput: GovukInput,
+    paragraphBody: paragraphBody,
+    bulletList: bulletList,
+    saveButtons: saveButtons,
+    errorSummary: errorSummary,
+    appConfig: AppConfig
+)
+
+@(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
+
+@govukLayout(
+    title = Title("deregistration.deregister.title"),
+    backButton = Some(BackButtonJs())) {
+
+    @errorSummary(form.errors)
+    @pageHeading(text = messages("deregistration.deregister.title"))
+
+    @paragraphBody(message = messages("deregistration.deregister.eligibility"))
+    @bulletList(elements = Seq(
+        Html(messages("deregistration.deregister.eligibility.1")),
+        Html(messages("deregistration.deregister.eligibility.2")),
+        Html(messages("deregistration.deregister.eligibility.3")),
+        Html(messages("deregistration.deregister.eligibility.4"))
+    ))
+
+    @paragraphBody(message = messages("deregistration.deregister.detail1"))
+    @paragraphBody(message = messages("deregistration.deregister.detail2"))
+
+    @formHelper(action = routes.DeregisterController.submit(), 'autoComplete -> "off") {
+
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("deregistration.deregister.label")),
+                classes = gdsFieldsetPageSubheading,
+                isPageHeading = false
+            )),
+            html = govukRadios(Radios(
+                hint = None,
+                name = "deregister",
+                items = Seq(
+                    RadioItem(content = Text(messages("general.true")), value = Some(YES), checked = form.value.contains(true)),
+                    RadioItem(content = Text(messages("general.false")), value = Some(NO), checked = form.value.contains(false))
+                ),
+                classes = "govuk-radios--inline",
+                errorMessage = form("deregister").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            ))
+        ))
+
+        @saveButtons()
+    }
+}

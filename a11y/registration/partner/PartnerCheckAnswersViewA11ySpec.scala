@@ -17,8 +17,8 @@
 package registration.partner
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration.Partner
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_check_answers_page
+import models.genericregistration.Partner
+import views.html.partner.partner_check_answers_page
 
 class PartnerCheckAnswersViewA11ySpec extends BaseViewSpec {
 

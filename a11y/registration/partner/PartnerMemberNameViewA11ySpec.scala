@@ -19,11 +19,9 @@ package registration.partner
 import play.api.data.Form
 import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.MemberName
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_member_name_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.group.MemberName
+import views.html.partner.partner_member_name_page
 
-@ViewTest
 class PartnerMemberNameViewA11ySpec extends BaseViewSpec {
 
   private val page             = inject[partner_member_name_page]

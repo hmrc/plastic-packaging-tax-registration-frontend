@@ -18,7 +18,7 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.DeregistrationDetailRepositoryImpl
+import repositories.DeregistrationDetailRepositoryImpl
 
 import scala.concurrent.ExecutionContext
 
@@ -27,6 +27,6 @@ trait MockDeregistrationDetailRepository extends RegistrationBuilder with Mockit
   protected val inMemoryDeregistrationDetailRepository =
     new DeregistrationDetailRepositoryImpl(
       new InMemoryUserDetailsRepository()(ExecutionContext.global)
-    )
+    )(ExecutionContext.global)
 
 }

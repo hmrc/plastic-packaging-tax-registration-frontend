@@ -18,11 +18,9 @@ package registration.amendment.partner
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.confirm_remove_partner_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.partner.RemovePartner
+import views.html.amendment.partner.confirm_remove_partner_page
 
-@ViewTest
 class ConfirmRemovePartnerPageSpec extends BaseViewSpec {
 
   private val page = inject[confirm_remove_partner_page]

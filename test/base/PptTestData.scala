@@ -20,8 +20,8 @@ import org.joda.time.{DateTime, LocalDate}
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolments}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.IdentityData
+import models.SignedInUser
+import models.request.IdentityData
 
 object PptTestData {
 

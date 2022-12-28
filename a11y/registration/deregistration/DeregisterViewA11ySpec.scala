@@ -18,12 +18,10 @@ package registration.deregistration
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterForm
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import config.AppConfig
+import forms.deregistration.DeregisterForm
+import views.html.deregistration.deregister_page
 
-@ViewTest
 class DeregisterViewA11ySpec extends BaseViewSpec {
 
   override val appConfig: AppConfig = inject[AppConfig]

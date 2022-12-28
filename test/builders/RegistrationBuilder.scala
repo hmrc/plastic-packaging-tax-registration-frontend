@@ -16,17 +16,17 @@
 
 package builders
 
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.RegType.{GROUP, RegType}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{LiabilityWeight, RegType}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.{Date, OldDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.EmailStatus
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
-import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
-import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
+import forms.contact.Address
+import forms.liability.RegType.{GROUP, RegType}
+import forms.liability.{LiabilityWeight, RegType}
+import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
+import forms.{Date, OldDate}
+import models.emailverification.EmailStatus
+import models.genericregistration._
+import models.registration._
+import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
+import services.CountryService
+import utils.AddressConversionUtils
 
 import java.time.LocalDate
 

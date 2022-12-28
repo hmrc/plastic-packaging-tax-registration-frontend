@@ -18,13 +18,11 @@ package registration.group
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.RemoveMember
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.remove_group_member_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-
+import forms.group.RemoveMember
+import views.html.group.remove_group_member_page
 import java.util.UUID
 
-@ViewTest
+
 class RemoveGroupMemberViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[remove_group_member_page]

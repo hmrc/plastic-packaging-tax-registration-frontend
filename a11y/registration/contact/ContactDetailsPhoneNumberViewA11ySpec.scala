@@ -19,11 +19,9 @@ package registration.contact
 import play.api.data.Form
 import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.{JobTitle, PhoneNumber}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.{job_title_page, phone_number_page}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.contact.{JobTitle, PhoneNumber}
+import views.html.contact.{job_title_page, phone_number_page}
 
-@ViewTest
 class ContactDetailsPhoneNumberViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[phone_number_page]

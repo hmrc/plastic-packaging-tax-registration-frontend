@@ -30,10 +30,10 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{EnrolledAuthActionImpl, NotEnrolledAuthActionImpl, PermissiveAuthActionImpl}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
+import config.AppConfig
+import controllers.actions.{EnrolledAuthActionImpl, NotEnrolledAuthActionImpl, PermissiveAuthActionImpl}
+import models.SignedInUser
+import models.enrolment.PptEnrolment
 
 import scala.concurrent.Future
 

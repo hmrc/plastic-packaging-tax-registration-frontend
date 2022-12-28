@@ -28,11 +28,11 @@ import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, Injecting}
 import play.twirl.api.Html
 import spec.PptTestData
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.actions.{Continue, SaveAndComeBackLater, SaveAndContinue, Unknown}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AmendmentJourneyAction, AuthenticatedRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
+import config.AppConfig
+import controllers.actions.{Continue, SaveAndComeBackLater, SaveAndContinue, Unknown}
+import models.SignedInUser
+import models.request.{AmendmentJourneyAction, AuthenticatedRequest}
+import utils.FakeRequestCSRFSupport._
 
 import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}

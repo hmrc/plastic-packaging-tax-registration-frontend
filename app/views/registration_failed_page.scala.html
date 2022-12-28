@@ -1,0 +1,53 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.main_template
+@import views.viewmodels.Title
+@import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
+@import config.AppConfig
+@import uk.gov.hmrc.supportfrontend.views.UtilsSupport
+
+@this(
+        govukLayout: main_template,
+        pageHeading: pageHeading,
+        sectionHeader: sectionHeader,
+        paragraphBody: paragraphBody,
+        link: link,
+        contactFrontendConfig: ContactFrontendConfig,
+        appConfig: AppConfig,
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@linkHref = @{
+    class ConcreteUtilsSupport extends UtilsSupport
+    val referrer = (new ConcreteUtilsSupport()).urlEncode(contactFrontendConfig.referrerUrl.get)
+    appConfig.reportTechincalProblemUrl + "&referrerUrl=" + referrer
+}
+
+@cookedLink = @{
+    link(
+        text = messages("registration-failed.detail2-link"),
+        call = Call(method = "GET", url = linkHref),
+        newTab = true
+    )
+}
+
+@govukLayout(title = Title("registration-failed.title")) {
+    @pageHeading(text = messages("registration-failed.title"))
+    @paragraphBody(message = messages("registration-failed.detail1"))
+    @paragraphBody(message = messages("registration-failed.detail2", cookedLink))
+}

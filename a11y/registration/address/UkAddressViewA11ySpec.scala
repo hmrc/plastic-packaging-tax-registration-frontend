@@ -18,8 +18,8 @@ package registration.address
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.address.UkAddressForm
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.uk_address_page
+import forms.address.UkAddressForm
+import views.html.address.uk_address_page
 
 class UkAddressViewA11ySpec extends BaseViewSpec {
 

@@ -17,18 +17,16 @@
 package registration.amendment
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.views.amendment.RegistrationType.{Group, Organisation, Partnership, SoleTrader}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.amend_registration_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-
+import models.registration.Registration
+import views.amendment.RegistrationType.{Group, Organisation, Partnership, SoleTrader}
+import views.html.amendment.amend_registration_page
 object RegistrationType extends Enumeration {
   type RegistrationType = Value
 
   val Organisation, SoleTrader, Group, Partnership = Value
 }
 
-@ViewTest
+
 class AmendRegistrationViewA11ySpec extends BaseViewSpec {
 
   private val page: amend_registration_page = inject[amend_registration_page]

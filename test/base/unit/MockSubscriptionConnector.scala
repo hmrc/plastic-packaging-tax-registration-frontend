@@ -22,9 +22,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.SubscriptionsConnector
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+import connectors.SubscriptionsConnector
+import models.registration.Registration
+import models.subscriptions.{
   EisError,
   SubscriptionCreateOrUpdateResponse,
   SubscriptionCreateOrUpdateResponseFailure,

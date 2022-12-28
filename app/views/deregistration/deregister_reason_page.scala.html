@@ -1,0 +1,74 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.viewmodels.Title
+@import views.viewmodels.BackButtonJs
+@import views.html.main_template
+@import models.deregistration.DeregistrationReason._
+@import forms.deregistration.DeregisterReasonForm
+@import controllers.deregistration.routes
+
+@this(
+    formHelper: FormWithCSRF,
+    govukLayout: main_template,
+    govukInput: GovukInput,
+    govukRadios : GovukRadios,
+    paragraph: paragraph,
+    saveButtons: saveButtons,
+    errorSummary: errorSummary
+)
+
+@(form: Form[DeregisterReasonForm])(implicit request: Request[_], messages: Messages)
+
+@title = @{ "deregistration.reason.title" }
+
+@deregisterRadios = @{
+    Seq(
+        RadioItem(content = Text(messages(s"deregistration.reason.type.CeasedTrading")), value = Some(CeasedTrading), checked = form("answer").value.contains(CeasedTrading.toString)),
+        RadioItem(content = Text(messages(s"deregistration.reason.type.BelowDe-minimus")), value = Some(BelowDeminimis), checked = form("answer").value.contains(BelowDeminimis.toString)),
+        RadioItem(content = Text(messages(s"deregistration.reason.type.TakenintoGroupRegistration")), value = Some(TakenIntoGroupRegistration), checked = form("answer").value.contains(TakenIntoGroupRegistration.toString)),
+        RadioItem(content = Text(messages(s"deregistration.reason.type.RegisteredIncorrectly")), value = Some(RegisteredIncorrectly), checked = form("answer").value.contains(RegisteredIncorrectly.toString))
+    )
+}
+
+@govukLayout(
+    title = Title(title),
+    backButton = Some(BackButtonJs())) {
+
+    @errorSummary(form.errors)
+    
+    @formHelper(action = routes.DeregisterReasonController.submit(), 'autoComplete -> "off") {
+
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages(title)),
+                classes = gdsFieldsetPageHeading,
+                isPageHeading = true
+            ))
+        )),
+        hint = None,
+        idPrefix = Some(form("answer").name),
+        name = form("answer").name,
+        items = deregisterRadios,
+        classes = "govuk-radios",
+        errorMessage = form("answer").error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+    ))
+    
+    
+    @saveButtons()
+    }
+}

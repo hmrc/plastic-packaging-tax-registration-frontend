@@ -21,8 +21,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyAction
+import models.registration.Registration
+import models.request.JourneyAction
 
 import scala.concurrent.{ExecutionContext, Future}
 

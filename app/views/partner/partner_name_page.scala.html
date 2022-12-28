@@ -1,0 +1,62 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.organisation.{routes => pptRoutes}
+@import controllers.partner.{routes => partnerRoutes}
+@import forms.partner.PartnerName
+@import views.html.main_template
+@import views.viewmodels.{BackButtonJs, Title}
+
+@this(
+    formHelper: FormWithCSRF,
+    pageHeading: pageHeading,
+    govukLayout: main_template,
+    govukInput: GovukInput,
+    sectionHeader: sectionHeader,
+    saveButtons: saveButtons,
+    errorSummary: errorSummary
+)
+
+@(form: Form[PartnerName], backLink: Call, updateCall: Call)(implicit request: Request[_], messages: Messages)
+
+@partnerNameField = @{form("value")}
+
+@govukLayout(
+    title = Title("partnership.name.title"),
+    backButton = Some(BackButtonJs())) {
+
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("partnership.partners.in.the.partnership"))
+
+    @formHelper(action = updateCall, 'autoComplete -> "off") {
+
+        @govukInput(
+            Input(
+                id = partnerNameField.name,
+                name = partnerNameField.name,
+                value = partnerNameField.value,
+                label = Label(
+                    isPageHeading = true,
+                    classes = gdsLabelPageHeading,
+                    content = Text(messages("partnership.name.title"))),
+                errorMessage = partnerNameField.error.map(err => ErrorMessage(content = Text(messages(err.message))))
+            )
+        )
+
+        @saveButtons()
+    }
+}

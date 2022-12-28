@@ -17,10 +17,8 @@
 package registration.contact
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.too_many_attempts_passcode_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import views.html.contact.too_many_attempts_passcode_page
 
-@ViewTest
 class TooManyAttemptsPasscodeViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[too_many_attempts_passcode_page]

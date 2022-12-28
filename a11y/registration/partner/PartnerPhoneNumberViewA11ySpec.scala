@@ -20,8 +20,8 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.POST
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.PhoneNumber
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_phone_number_page
+import forms.contact.PhoneNumber
+import views.html.partner.partner_phone_number_page
 
 class PartnerPhoneNumberViewA11ySpec extends BaseViewSpec {
 

@@ -40,7 +40,7 @@ import play.api.i18n.{Langs, MessagesApi}
 import play.api.mvc._
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.html.components.{Footer => _}
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
+import config.AppConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext

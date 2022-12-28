@@ -1,0 +1,83 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import forms.group.MemberName
+@import views.html.components.{errorSummary, sectionHeader}
+@import views.html.main_template
+@import views.viewmodels.{BackButtonJs, Title}
+
+@this(
+        formHelper: FormWithCSRF,
+        govukLayout: main_template,
+        saveButtons: saveButtons,
+        govukInput: GovukInput,
+        govukFieldset: GovukFieldset,
+        paragraph: paragraph,
+        sectionHeader: sectionHeader,
+        errorSummary: errorSummary
+)
+
+
+@(form: Form[MemberName], organisationName: String, updateCall: Call, memberId: String)(implicit request: Request[_], messages: Messages)
+
+@firstNameField = @{form("firstName")}
+@lastNameField = @{form("lastName")}
+
+@fieldSetBody = {
+
+@paragraph(content = Html(messages("contactDetails.member.name.hint")))
+
+@govukInput(Input(
+    id    = firstNameField.name,
+    name  = firstNameField.name,
+    value = firstNameField.value,
+    errorMessage = firstNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+    label = Label(
+        content = Text(messages("contactDetails.member.firstName")),
+        classes = s"govuk-label--s"),
+))
+
+@govukInput(Input(
+    id    = lastNameField.name,
+    name  = lastNameField.name,
+    value = lastNameField.value,
+    errorMessage = lastNameField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+    label = Label(
+        content = Text(messages("contactDetails.member.lastName")),
+        classes = s"govuk-label--s"),
+))
+}
+
+@govukLayout(
+    title = Title("contactDetails.member.name.title"),
+    backButton = Some(BackButtonJs())) {
+    @errorSummary(form.errors)
+    @sectionHeader(messages("contactDetails.member.sectionHeader"))
+
+    @formHelper(action = updateCall, 'autoComplete -> "off") {
+
+        @govukFieldset(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("contactDetails.member.name.heading", organisationName)),
+                classes = "govuk-fieldset__legend--l",
+                isPageHeading = true
+            )),
+            html = fieldSetBody
+        ))
+
+        @saveButtons()
+    }
+}

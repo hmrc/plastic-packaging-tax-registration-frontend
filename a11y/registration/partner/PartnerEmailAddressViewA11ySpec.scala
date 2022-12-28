@@ -21,8 +21,8 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.POST
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.partner_email_address_page
+import forms.contact.EmailAddress
+import views.html.partner.partner_email_address_page
 
 class PartnerEmailAddressViewA11ySpec extends BaseViewSpec {
 

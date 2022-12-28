@@ -17,11 +17,9 @@
 package registration.deregistration
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.models.deregistration.DeregistrationDetails
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_check_your_answers_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import models.deregistration.DeregistrationDetails
+import views.html.deregistration.deregister_check_your_answers_page
 
-@ViewTest
 class DeregisterCheckYourAnswersViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[deregister_check_your_answers_page]

@@ -1,0 +1,63 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.viewmodels.Title
+@import config.AppConfig
+@import views.html.main_template
+@import models.request.AuthenticatedRequest
+
+@this(
+    govukLayout: main_template,
+    pageHeading: pageHeading,
+    paragraphBody: paragraphBody,
+    paragraph: paragraph,
+    govUkLink: govUkLink,
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
+    link: link
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@gformLink = @{
+    link(
+        id = Some("gform-link"),
+        newTab = false,
+        text = messages("organisationDetails.registerAsOtherOrganisation.gform.link.description"),
+        call = Call(
+            method = "GET",
+            url = messages("gform.link")
+        )
+    )
+}
+
+@gformParagraph = {
+    @paragraph(
+        content = Html(messages("organisationDetails.registerAsOtherOrganisation.paragraph.2", gformLink) + "."),
+        id = Some("gform-text")
+    )
+}
+
+@govukLayout(title = Title("organisationDetails.registerAsOtherOrganisation.title")) {
+
+    @sectionHeader(messages("organisationDetails.sectionHeader"))
+
+    @pageHeading(messages("organisationDetails.registerAsOtherOrganisation.title"))
+
+    @paragraphBody(messages("organisationDetails.registerAsOtherOrganisation.paragraph.1"))
+    @gformParagraph
+    @paragraphBody(messages("organisationDetails.registerAsOtherOrganisation.paragraph.3"))
+}
