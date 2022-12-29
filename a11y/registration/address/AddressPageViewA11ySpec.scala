@@ -20,8 +20,8 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.GET
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.address.address_page
+import forms.contact.Address
+import views.html.address.address_page
 
 class AddressPageViewA11ySpec extends BaseViewSpec {
 

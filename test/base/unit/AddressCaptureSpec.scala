@@ -20,8 +20,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.services.{AddressCaptureConfig, AddressCaptureService}
+import forms.contact.Address
+import services.{AddressCaptureConfig, AddressCaptureService}
 
 import scala.concurrent.Future
 

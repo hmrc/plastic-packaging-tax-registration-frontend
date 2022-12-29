@@ -19,8 +19,8 @@ package base.unit
 import org.jsoup.nodes.Element
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import spec.ViewMatchers
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.views.models.SignOutReason
+import controllers.routes
+import views.viewmodels.SignOutReason
 
 trait ViewAssertions extends ViewMatchers {
 

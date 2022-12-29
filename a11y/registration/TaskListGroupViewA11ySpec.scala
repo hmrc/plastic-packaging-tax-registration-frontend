@@ -19,7 +19,7 @@ package registration
 import play.api.mvc.Call
 import play.api.test.Helpers.GET
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.task_list_group
+import views.html.task_list_group
 
 class TaskListGroupViewA11ySpec extends BaseViewSpec {
 

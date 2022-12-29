@@ -18,10 +18,8 @@ package registration.contact
 
 import play.api.mvc.Call
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_confirmation_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import views.html.contact.email_address_passcode_confirmation_page
 
-@ViewTest
 class ContactDetailsEmailAddressPasscodeConfirmationViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[email_address_passcode_confirmation_page]

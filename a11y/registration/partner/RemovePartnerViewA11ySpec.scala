@@ -18,13 +18,11 @@ package registration.partner
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.partner.RemovePartner
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partner.remove_partner_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
-
+import forms.partner.RemovePartner
+import views.html.partner.remove_partner_page
 import java.util.UUID
 
-@ViewTest
+
 class RemovePartnerViewA11ySpec extends BaseViewSpec{
 
   private val page = inject[remove_partner_page]

@@ -19,10 +19,10 @@ package registration.amendment.group
 import play.api.data.Form
 import play.api.i18n.Messages
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.list_group_members_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.models.{ListGroupMembersViewModel, ListMember}
+import config.AppConfig
+import forms.group.AddOrganisationForm
+import views.html.amendment.group.list_group_members_page
+import views.viewmodels.{ListGroupMembersViewModel, ListMember}
 
 class ListGroupMembersPageA11ySpec extends BaseViewSpec {
 

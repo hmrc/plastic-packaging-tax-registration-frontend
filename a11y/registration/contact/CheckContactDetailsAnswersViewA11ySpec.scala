@@ -17,12 +17,10 @@
 package registration.contact
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{PrimaryContactDetails, Registration}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.check_primary_contact_details_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.contact.Address
+import models.registration.{PrimaryContactDetails, Registration}
+import views.html.contact.check_primary_contact_details_page
 
-@ViewTest
 class CheckContactDetailsAnswersViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[check_primary_contact_details_page]

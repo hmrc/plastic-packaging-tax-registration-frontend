@@ -17,10 +17,10 @@
 package registration.amendment.group
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.UK_COMPANY
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{OrganisationDetails, Registration}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.group.manage_group_members_page
+import config.AppConfig
+import forms.organisation.OrgType.UK_COMPANY
+import models.registration.{OrganisationDetails, Registration}
+import views.html.amendment.group.manage_group_members_page
 
 class ManageGroupMembersPageA11ySpec extends BaseViewSpec {
 

@@ -17,11 +17,9 @@
 package registration.deregistration
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.config.AppConfig
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregistration_submitted_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import config.AppConfig
+import views.html.deregistration.deregistration_submitted_page
 
-@ViewTest
 class DeregistrationSubmittedViewA11ySpec extends BaseViewSpec {
 
   override val appConfig: AppConfig = inject[AppConfig]

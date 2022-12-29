@@ -20,11 +20,11 @@ import play.api.data.Form
 import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers.POST
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerType.FormMode.PartnershipType
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.UK_COMPANY
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.JourneyRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.organisation.partner_type
+import forms.organisation.PartnerType
+import forms.organisation.PartnerType.FormMode.PartnershipType
+import forms.organisation.PartnerTypeEnum.UK_COMPANY
+import models.request.JourneyRequest
+import views.html.organisation.partner_type
 
 class PartnerTypeA11ySpec extends BaseViewSpec {
 

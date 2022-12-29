@@ -1,0 +1,62 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.organisation.{routes => pptRoutes}
+@import controllers.partner.{routes => partnerRoutes}
+@import forms.organisation.PartnershipName
+@import views.html.main_template
+@import views.viewmodels.{BackButton, Title}
+
+@this(
+    formHelper: FormWithCSRF,
+    pageHeading: pageHeading,
+    govukLayout: main_template,
+    govukInput: GovukInput,
+    sectionHeader: sectionHeader,
+    saveButtons: saveButtons,
+    errorSummary: errorSummary
+)
+
+@(form: Form[PartnershipName])(implicit request: Request[_], messages: Messages)
+
+@partnershipNameField = @{form("value")}
+
+@govukLayout(
+    title = Title("partnership.name.title"),
+    backButton = Some(BackButton(messages("site.back"), partnerRoutes.PartnershipTypeController.displayPage(), messages("site.back.hiddenText")))) {
+
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("partnership.name.section-header"))
+
+    @formHelper(action = partnerRoutes.PartnershipNameController.submit(), 'autoComplete -> "off") {
+
+        @govukInput(
+            Input(
+                id = partnershipNameField.name,
+                name = partnershipNameField.name,
+                value = partnershipNameField.value,
+                label = Label(
+                    isPageHeading = true,
+                    classes = gdsLabelPageHeading,
+                    content = Text(messages("partnership.name.title"))),
+                errorMessage = partnershipNameField.error.map(err => ErrorMessage(content = Text(messages(err.message))))
+            )
+        )
+
+        @saveButtons()
+    }
+}

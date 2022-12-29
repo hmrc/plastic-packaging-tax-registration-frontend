@@ -18,7 +18,7 @@ package base.unit
 
 import base.MockAuthAction
 import org.scalatest.wordspec.AnyWordSpecLike
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{
+import models.request.{
   AmendmentJourneyAction,
   AmendmentJourneyActionImpl
 }

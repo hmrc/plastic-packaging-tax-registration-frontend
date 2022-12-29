@@ -21,23 +21,23 @@ import base.PptTestData.newUser
 import builders.RegistrationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.Address.UKAddress
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.enrolment.{DateData, IsUkAddress, Postcode, PptReference, RegistrationDate}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.OrgType.{SOLE_TRADER, UK_COMPANY, _}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.PartnerTypeEnum.{PartnerTypeEnum, _}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{OrgType, PartnerTypeEnum}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.SignedInUser
-import uk.gov.hmrc.plasticpackagingtax.registration.models.emailverification.{EmailStatus, VerificationStatus}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.enrolment.PptEnrolment
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupOrgDetails}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.{GroupDetail, OrganisationDetails, UserEnrolmentDetails}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.{AuthenticatedRequest, JourneyRequest}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{SubscriptionCreateOrUpdateResponseSuccess, SubscriptionStatus, SubscriptionStatusResponse}
-import uk.gov.hmrc.plasticpackagingtax.registration.services.CountryService
-import uk.gov.hmrc.plasticpackagingtax.registration.utils.AddressConversionUtils
-import uk.gov.hmrc.plasticpackagingtax.registration.utils.FakeRequestCSRFSupport._
+import forms.contact.Address
+import forms.contact.Address.UKAddress
+import forms.enrolment.{DateData, IsUkAddress, Postcode, PptReference, RegistrationDate}
+import forms.organisation.OrgType.{SOLE_TRADER, UK_COMPANY, _}
+import forms.organisation.PartnerTypeEnum.{PartnerTypeEnum, _}
+import forms.organisation.{OrgType, PartnerTypeEnum}
+import models.SignedInUser
+import models.emailverification.{EmailStatus, VerificationStatus}
+import models.enrolment.PptEnrolment
+import models.genericregistration._
+import models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupOrgDetails}
+import models.registration.{GroupDetail, OrganisationDetails, UserEnrolmentDetails}
+import models.request.{AuthenticatedRequest, JourneyRequest}
+import models.subscriptions.{SubscriptionCreateOrUpdateResponseSuccess, SubscriptionStatus, SubscriptionStatusResponse}
+import services.CountryService
+import utils.AddressConversionUtils
+import utils.FakeRequestCSRFSupport._
 
 import java.time.{ZoneOffset, ZonedDateTime}
 import scala.language.implicitConversions

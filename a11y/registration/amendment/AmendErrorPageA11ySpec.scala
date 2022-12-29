@@ -17,10 +17,8 @@
 package registration.amendment
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.partials.amendment.amend_error_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import views.html.partials.amendment.amend_error_page
 
-@ViewTest
 class AmendErrorPageA11ySpec extends BaseViewSpec {
 
   private val page = inject[amend_error_page]

@@ -18,11 +18,9 @@ package registration.deregistration
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.deregistration.DeregisterReasonForm
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.deregistration.deregister_reason_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.deregistration.DeregisterReasonForm
+import views.html.deregistration.deregister_reason_page
 
-@ViewTest
 class DeregisterReasonViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[deregister_reason_page]

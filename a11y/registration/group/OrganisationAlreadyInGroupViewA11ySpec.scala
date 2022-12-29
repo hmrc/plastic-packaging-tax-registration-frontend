@@ -17,12 +17,10 @@
 package registration.group
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupError
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupErrorType.MEMBER_IN_GROUP
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_already_in_group_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import models.registration.group.GroupError
+import models.registration.group.GroupErrorType.MEMBER_IN_GROUP
+import views.html.group.organisation_already_in_group_page
 
-@ViewTest
 class OrganisationAlreadyInGroupViewA11ySpec extends BaseViewSpec {
 
   private val page: organisation_already_in_group_page =

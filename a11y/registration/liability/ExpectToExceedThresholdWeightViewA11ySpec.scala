@@ -23,8 +23,8 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.expect_to_exceed_threshold_weight_page
+import forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
+import views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 
 class ExpectToExceedThresholdWeightViewA11ySpec

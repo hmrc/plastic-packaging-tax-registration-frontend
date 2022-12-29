@@ -18,11 +18,9 @@ package registration.liability
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.liability.LiabilityWeight
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.liability.liability_weight_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.liability.LiabilityWeight
+import views.html.liability.liability_weight_page
 
-@ViewTest
 class LiabilityWeightViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[liability_weight_page]

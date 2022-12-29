@@ -18,12 +18,12 @@ package registration.group
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.controllers.group.routes
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.organisation.{ActionEnum, OrganisationType}
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_type
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import controllers.group.routes
+import forms.organisation.{ActionEnum, OrganisationType}
+import views.html.group.organisation_type
 
-@ViewTest
+
+
 class OrganisationDetailsTypeViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[organisation_type]

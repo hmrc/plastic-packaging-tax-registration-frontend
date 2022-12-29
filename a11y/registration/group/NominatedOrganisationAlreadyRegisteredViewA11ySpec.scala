@@ -17,10 +17,8 @@
 package registration.group
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.nominated_organisation_already_registered_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import views.html.group.nominated_organisation_already_registered_page
 
-@ViewTest
 class NominatedOrganisationAlreadyRegisteredViewA11ySpec extends BaseViewSpec {
 
   private val page: nominated_organisation_already_registered_page =

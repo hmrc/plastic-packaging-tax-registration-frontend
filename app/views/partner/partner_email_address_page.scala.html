@@ -1,0 +1,63 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.JourneyRequest
+@import views.viewmodels.Title
+@import views.viewmodels.BackButtonJs
+@import views.html.main_template
+@import forms.contact.EmailAddress
+
+@this(
+  govukLayout: main_template,
+  saveButtons: saveButtons,
+  govukInput: GovukInput,
+  sectionHeader: sectionHeader,
+  errorSummary: errorSummary,
+  formHelper: FormWithCSRF,
+  paragraph: paragraph
+)
+@(form: Form[EmailAddress], updateCall: Call, contactName: String, isNominated: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
+
+@emailAddressField = @{form("value")}
+
+@caption = @{ if(isNominated) { sectionHeader(messages("contactDetails.member.nominated.caption")) } else { sectionHeader(messages("contactDetails.member.other.caption")) } }
+
+@govukLayout(
+  title = Title(headingKey = "partnership.otherPartners.contactEmailAddressPage.title", contactName),
+
+  backButton = Some(BackButtonJs())) {
+
+  @caption
+
+  @errorSummary(form.errors)
+
+  @formHelper(action = updateCall, 'autoComplete -> "off") {
+
+    @govukInput(
+        Input(
+            id = s"${emailAddressField.name}",
+            name = emailAddressField.name,
+            value = emailAddressField.value,
+            hint = Some(Hint(content = Text(messages("contactDetails.member.emailAddress.hint")))),
+            errorMessage = emailAddressField.error.map(err => ErrorMessage(content = Text(messages(err.message)))),
+            label = Label(
+                isPageHeading = true,
+                classes = gdsLabelPageHeading,
+                content = Text(messages("partnership.otherPartners.contactEmailAddressPage.title", contactName))))
+            )
+        @saveButtons()
+    }
+ }

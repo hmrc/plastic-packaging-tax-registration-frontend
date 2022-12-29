@@ -18,9 +18,9 @@ package registration.group
 
 import play.api.data.Form
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.group.GroupMember
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.group.organisation_list
+import forms.group.AddOrganisationForm
+import models.registration.group.GroupMember
+import views.html.group.organisation_list
 
 class OrganisationListViewA11ySpec extends BaseViewSpec {
 

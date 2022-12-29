@@ -18,7 +18,7 @@ package base.unit
 
 import builders.RegistrationBuilder
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.{
+import repositories.{
   RegistrationAmendmentRepository,
   RegistrationAmendmentRepositoryImpl
 }

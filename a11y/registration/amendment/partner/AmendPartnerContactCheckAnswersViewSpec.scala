@@ -17,10 +17,8 @@
 package registration.amendment.partner
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.amend_partner_contact_check_answers_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import views.html.amendment.partner.amend_partner_contact_check_answers_page
 
-@ViewTest
 class AmendPartnerContactCheckAnswersViewSpec extends BaseViewSpec {
 
   private val page = inject[amend_partner_contact_check_answers_page]

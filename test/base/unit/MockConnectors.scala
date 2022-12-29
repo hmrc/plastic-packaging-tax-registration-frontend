@@ -23,10 +23,10 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors._
-import uk.gov.hmrc.plasticpackagingtax.registration.connectors.grs._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.genericregistration._
-import uk.gov.hmrc.plasticpackagingtax.registration.models.subscriptions.{
+import connectors._
+import connectors.grs._
+import models.genericregistration._
+import models.subscriptions.{
   SubscriptionCreateOrUpdateResponse,
   SubscriptionCreateOrUpdateResponseFailure,
   SubscriptionCreateOrUpdateResponseSuccess,

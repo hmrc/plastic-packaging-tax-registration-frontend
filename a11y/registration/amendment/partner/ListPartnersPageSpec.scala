@@ -17,13 +17,11 @@
 package registration.amendment.partner
 
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.group.AddOrganisationForm.form
-import uk.gov.hmrc.plasticpackagingtax.registration.models.registration.Registration
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.amendment.partner.list_partners_page
-import uk.gov.hmrc.plasticpackagingtax.registration.views.tags.ViewTest
+import forms.group.AddOrganisationForm
+import forms.group.AddOrganisationForm.form
+import models.registration.Registration
+import views.html.amendment.partner.list_partners_page
 
-@ViewTest
 class ListPartnersPageSpec extends BaseViewSpec {
 
   private val page: list_partners_page = inject[list_partners_page]

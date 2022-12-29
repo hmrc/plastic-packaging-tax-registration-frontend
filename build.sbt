@@ -17,8 +17,8 @@ lazy val microservice = Project(appName, file("."))
     TwirlKeys.templateImports        ++= Seq(
       "uk.gov.hmrc.hmrcfrontend.views.html.components._",
       "uk.gov.hmrc.govukfrontend.views.html.components._",
-      "uk.gov.hmrc.plasticpackagingtax.registration.views.html.components._",
-      "uk.gov.hmrc.plasticpackagingtax.registration.views.components.Styles._"),
+      "views.html.components._",
+      "views.components.Styles._"),
     // ***************
     // Use the silencer plugin to suppress warnings
     // You may turn it on for `views` too to suppress warnings from unused imports in compiled twirl templates, but this will hide other warnings.

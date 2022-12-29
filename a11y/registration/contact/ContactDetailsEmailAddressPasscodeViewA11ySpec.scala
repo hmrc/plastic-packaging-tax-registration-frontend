@@ -20,8 +20,8 @@ import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers.POST
 import support.BaseViewSpec
-import uk.gov.hmrc.plasticpackagingtax.registration.forms.contact.EmailAddressPasscode
-import uk.gov.hmrc.plasticpackagingtax.registration.views.html.contact.email_address_passcode_page
+import forms.contact.EmailAddressPasscode
+import views.html.contact.email_address_passcode_page
 
 class ContactDetailsEmailAddressPasscodeViewA11ySpec extends BaseViewSpec {
 

@@ -19,7 +19,7 @@ package base.unit
 import builders.RegistrationBuilder
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.plasticpackagingtax.registration.audit.Auditor
+import audit.Auditor
 
 trait MockAuditorConnector extends MockitoSugar with RegistrationBuilder with BeforeAndAfterEach {
   self: Suite =>

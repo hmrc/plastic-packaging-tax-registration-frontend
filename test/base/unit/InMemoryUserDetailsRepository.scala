@@ -17,8 +17,8 @@
 package base.unit
 
 import play.api.libs.json.{Reads, Writes}
-import uk.gov.hmrc.plasticpackagingtax.registration.models.request.AuthenticatedRequest
-import uk.gov.hmrc.plasticpackagingtax.registration.repositories.UserDataRepository
+import models.request.AuthenticatedRequest
+import repositories.UserDataRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
