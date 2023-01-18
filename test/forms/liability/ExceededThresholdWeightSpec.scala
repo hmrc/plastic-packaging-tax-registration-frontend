@@ -69,18 +69,42 @@ class ExceededThresholdWeightSpec extends PlaySpec {
     }
 
     "error correctly" when {
-      "answer empty" in {
-        val boundForm = sut.bind(Map.empty[String, String])
+      "answer empty" when {
+        "backLookChangeEnabled is true" in {
+          when(mockAppConfig.backLookChangeEnabled).thenReturn(true)
+          val newSut = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
 
-        boundForm.value mustBe None
-        boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.question.empty.error")
+          val boundForm = newSut.bind(Map.empty[String, String])
+
+          boundForm.value mustBe None
+          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.question.empty.error")
+        }
+        "backLookChangeEnabled is false" in {
+          val boundForm = sut.bind(Map.empty[String, String])
+
+          boundForm.value mustBe None
+          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.before.april.2023.question.empty.error")
+        }
       }
 
-      "answer is trash" in {
-        val boundForm = sut.bind(Map("answer" -> "trash"))
+      "answer is trash" when{
 
-        boundForm.value mustBe None
-        boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.question.empty.error")
+        "backLookChangeEnabled is true" in {
+          when(mockAppConfig.backLookChangeEnabled).thenReturn(true)
+          val newSut = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
+
+          val boundForm = newSut.bind(Map("answer" -> "trash"))
+
+          boundForm.value mustBe None
+          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.question.empty.error")
+        }
+
+        "backLookChangeEnabled is false" in {
+          val boundForm = sut.bind(Map("answer" -> "trash"))
+
+          boundForm.value mustBe None
+          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.before.april.2023.question.empty.error")
+        }
       }
 
       "date is empty" in {

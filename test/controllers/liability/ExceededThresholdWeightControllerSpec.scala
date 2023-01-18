@@ -17,10 +17,11 @@
 package controllers.liability
 
 import base.unit.ControllerSpec
+import config.AppConfig
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{RETURNS_DEEP_STUBS, clearInvocations, verify, when}
-import org.scalatest.Ignore
+import org.mockito.Mockito.{RETURNS_DEEP_STUBS, clearInvocations, reset, verify, when}
+import org.scalatest.{BeforeAndAfterEach, Ignore}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.{Form, Forms}
 import play.api.http.Status
@@ -41,10 +42,10 @@ import forms.Date
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ExceededThresholdWeightControllerSpec extends ControllerSpec {
+class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAndAfterEach{
 
   val mockPage: exceeded_threshold_weight_page = mock[exceeded_threshold_weight_page]
-  when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
+
 
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
@@ -53,11 +54,21 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
   val controller = new ExceededThresholdWeightController(
     authenticate = mockAuthAction,
     mockJourneyAction,
+    appConfig,
     mockRegistrationConnector,
     mcc = mcc,
     form,
     page = mockPage
   )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+
+    reset(mockPage, appConfig)
+
+    when(appConfig.backLookChangeEnabled).thenReturn(true)
+    when(mockPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+  }
 
   "displayPage" when {
 
@@ -72,8 +83,6 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
     "continuing an existing registration" should {
 
       "populate the form with the previous answer" in {
-        clearInvocations(mockPage) // todo oh dear move to before hook
-
         authorizedUser()
         val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
         when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
@@ -88,10 +97,23 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
         verify(existingRegistration.liabilityDetails).exceededThresholdWeight
 
         val captor = ArgumentCaptor.forClass(classOf[Form[Boolean]])
-        verify(mockPage).apply(captor.capture())(any(), any())
+        verify(mockPage).apply(captor.capture(), any())(any(), any())
         val form: Form[Boolean] = captor.getValue
         form.value shouldBe Some(ExceededThresholdWeightAnswer(false, None))
       }
+    }
+
+    //todo: remove after april 2023
+    "should pass feature flag to view" in {
+      authorizedUser()
+
+      val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
+      when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
+      when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
+
+      await(controller.displayPage()(getRequest()))
+
+      verify(appConfig).backLookChangeEnabled
     }
 
   }
@@ -131,6 +153,12 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
       }
     }
 
+    //todo: remove after april 2023
+    "should pass feature flag to view on error" in {
+      await(controller.submit()(postRequestEncoded(JsObject.empty)))
+
+      verify(appConfig).backLookChangeEnabled
+    }
     "return an error" when {
       "the form fails to bind" in {
         val result = controller.submit()(postRequestEncoded(JsObject.empty))
@@ -191,5 +219,4 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec {
 
     }
   }
-
 }

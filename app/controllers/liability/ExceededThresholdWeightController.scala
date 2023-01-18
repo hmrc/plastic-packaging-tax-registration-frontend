@@ -16,6 +16,7 @@
 
 package controllers.liability
 
+import config.AppConfig
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ExceededThresholdWeightController @Inject() (
                                                     authenticate: NotEnrolledAuthAction,
                                                     journeyAction: JourneyAction,
+                                                    appConfig: AppConfig,
                                                     override val registrationConnector: RegistrationConnector,
                                                     mcc: MessagesControllerComponents,
                                                     exceededThresholdWeight: ExceededThresholdWeight,
@@ -43,9 +45,12 @@ class ExceededThresholdWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
+
+      val backLookChangeEnabled = appConfig.backLookChangeEnabled
       (request.registration.liabilityDetails.exceededThresholdWeight, request.registration.liabilityDetails.dateExceededThresholdWeight)  match {
-        case (Some(yesNo), date) => Ok(page(exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date)))))
-        case _          => Ok(page(exceededThresholdWeight.form()))
+        case (Some(yesNo), date) => Ok(page(
+          exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date))), backLookChangeEnabled))
+        case _          => Ok(page(exceededThresholdWeight.form(), backLookChangeEnabled))
       }
     }
 
@@ -55,7 +60,7 @@ class ExceededThresholdWeightController @Inject() (
     }
 
   private def hasErrors(form: Form[_])(implicit request: Request[_]): Future[Result] =
-    Future.successful(BadRequest(page(form)))
+    Future.successful(BadRequest(page(form, appConfig.backLookChangeEnabled)))
 
   private def updateRegistration(
     alreadyExceeded: ExceededThresholdWeightAnswer

@@ -31,7 +31,7 @@
     paragraphBody: paragraphBody,    
 )
 
-@(form: Form[_])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], backLookChangeEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
 @ifYes = {
     @govukDateInput(
@@ -78,16 +78,36 @@
 @monthField = @{form("exceeded-threshold-weight-date.month")}
 @yearField = @{form("exceeded-threshold-weight-date.year")}
 
+@keys = @{
+
+    if(backLookChangeEnabled) {
+        Map(
+            "title" -> "liability.exceededThresholdWeight.title",
+            "question" -> "liability.exceededThresholdWeight.question",
+            "hint" -> "liability.exceededThresholdWeight.line1",
+            "empty.error" -> "liability.exceededThresholdWeight.question.empty.error"
+        )
+    } else {
+        Map(
+            "title" -> "liability.exceededThresholdWeight.before.april.2023.title",
+            "question" -> "liability.exceededThresholdWeight.before.april.2023.question",
+            "hint" -> "liability.exceededThresholdWeight.before.april.2023.line1",
+            "empty.error" -> "liability.exceededThresholdWeight.before.april.2023.question.empty.error"
+        )
+    }
+}
+
 @errorMessages = @{
     val errors = form.errors
-        .filter(err => !err.message.contains("liability.exceededThresholdWeight.question.empty.error"))
+        .filter(err => !err.message.contains(keys("empty.error")))
         .map(er => messages(er.message, er.args.mkString)).mkString("<br>")
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
 
+
 @govukLayout(
-    title = Title("liability.exceededThresholdWeight.title"), 
+    title = Title(keys("title")),
     backButton = Some(BackButton(
         messages("site.back"), 
         pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
@@ -97,8 +117,8 @@
 
     @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
 
-    @pageHeading(messages("liability.exceededThresholdWeight.question"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
+    @pageHeading(messages(keys("question")))
+    @paragraphBody(messages(keys("hint")))
     @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
     @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
 
