@@ -100,6 +100,17 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             }))
           }
 
+          "display the change-group-lead-link correctly" in {
+            val maybeLink = Option(view.select("#change-group-lead-link").get(0))
+            organisationType match {
+              case Organisation =>
+                maybeLink mustBe defined
+                maybeLink.get.text() mustBe messages("amend.partnership.changeGroupLead.link")
+                maybeLink.get.attr("href") mustBe realAppConfig.changeGroupLeadUrl
+              case _ => maybeLink mustBe None
+            }
+          }
+
           "display page heading" in {
             view.select("h1").text() must include(messages(organisationType match {
               case Organisation => "amend.organisation.title"
