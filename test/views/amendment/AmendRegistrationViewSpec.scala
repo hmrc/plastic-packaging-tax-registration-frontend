@@ -105,7 +105,7 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
             organisationType match {
               case Organisation =>
                 maybeLink mustBe defined
-                maybeLink.get.text() mustBe messages("amend.partnership.changeGroupLead.link")
+                maybeLink.get.text() mustBe messages("amend.group.changeGroupLead.link")
                 maybeLink.get.attr("href") mustBe realAppConfig.changeGroupLeadUrl
               case _ => maybeLink mustBe None
             }
