@@ -729,6 +729,7 @@ partnership.removePartner.caption = Partners in the partnership
 amend.organisation.title = Your organisation’s details
 amend.individual.title = Your details
 amend.group.title = Representative member’s details
+amend.partnership.changeGroupLead.link = Change the representative member of the group
 amend.partnership.title = Partnership and nominated partner’s details
 amend.organisation.subheading = Organisation details
 amend.individual.subheading = Your details

@@ -56,6 +56,8 @@
 
     @pageHeading(messages(titleMessageKey()))
 
+    <a href="${appConfig.changeGroupLeadUrl}">@messages("amend.partnership.changeGroupLead.link")</a>
+
     @organisationDetails(request.pptReference, registration, Some(amendRoutes.AmendOrganisationDetailsController.changeBusinessAddress()))
     @primaryContactDetails(registration)
     @returnToAccountButton("amend.backButton.text", appConfig.pptAccountUrl, "return-to-account-page")
