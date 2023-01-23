@@ -197,7 +197,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
       "no answer is selected" when {
         "backLookChangeEnabled is true" in {
 
-          when(appConfig.isBackLookChangeEnabled).thenReturn(true)
+          when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
           val form =  formProvider.form()(mockMessages)
 
           val errorText = createView(form.bind(Map("answer" -> "")), true)
@@ -208,7 +208,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
         }
 
         "backLookChangeEnabled is false" in {
-          when(appConfig.isBackLookChangeEnabled).thenReturn(false)
+          when(appConfig.isBackwardLookChangeEnabled).thenReturn(false)
           val form =  formProvider.form()(mockMessages)
 
           val errorText = createView(form = form.bind(Map("answer" -> "")))

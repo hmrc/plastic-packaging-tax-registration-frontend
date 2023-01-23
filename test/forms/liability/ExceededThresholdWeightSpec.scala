@@ -70,7 +70,7 @@ class ExceededThresholdWeightSpec extends PlaySpec {
     "error correctly" when {
       "answer empty" when {
         "backLookChangeEnabled is true" in {
-          when(mockAppConfig.isBackLookChangeEnabled).thenReturn(true)
+          when(mockAppConfig.isBackwardLookChangeEnabled).thenReturn(true)
           val newSut = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
 
           val boundForm = newSut.bind(Map.empty[String, String])
@@ -89,7 +89,7 @@ class ExceededThresholdWeightSpec extends PlaySpec {
       "answer is trash" when{
 
         "backLookChangeEnabled is true" in {
-          when(mockAppConfig.isBackLookChangeEnabled).thenReturn(true)
+          when(mockAppConfig.isBackwardLookChangeEnabled).thenReturn(true)
           val newSut = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
 
           val boundForm = newSut.bind(Map("answer" -> "trash"))

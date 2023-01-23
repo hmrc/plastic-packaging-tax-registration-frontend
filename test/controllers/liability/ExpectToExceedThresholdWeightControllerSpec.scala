@@ -101,7 +101,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
-        when(appConfig.isBackLookChangeEnabled).thenReturn(false)
+        when(appConfig.isBackwardLookChangeEnabled).thenReturn(false)
 
         val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
 
@@ -115,7 +115,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         authorizedUser()
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
-        when(appConfig.isBackLookChangeEnabled).thenReturn(true)
+        when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
 
         val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
 

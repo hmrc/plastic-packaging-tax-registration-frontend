@@ -60,7 +60,7 @@ class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) exte
     )
 
   private def emptyError = {
-    if(appConfig.isBackLookChangeEnabled)
+    if(appConfig.isBackwardLookChangeEnabled)
       "liability.exceededThresholdWeight.question.empty.error"
     else "liability.exceededThresholdWeight.beforeApril2023.question.empty.error"
   }

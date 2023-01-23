@@ -171,7 +171,7 @@ class ReviewRegistrationController @Inject() (
         Redirect(routes.TaskListController.displayPage())
       }
     else
-      markRegistrationAsReviewed(reg).map(_ => Ok(reviewRegistrationPage(reg, appConfig.isBackLookChangeEnabled)))
+      markRegistrationAsReviewed(reg).map(_ => Ok(reviewRegistrationPage(reg, appConfig.isBackwardLookChangeEnabled)))
   }
 
   private def markRegistrationAsReviewed(

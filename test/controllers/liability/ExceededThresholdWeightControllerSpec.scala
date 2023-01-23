@@ -106,11 +106,11 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
       when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
       when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
-      when(appConfig.isBackLookChangeEnabled).thenReturn(true)
+      when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
 
       await(controller.displayPage()(getRequest()))
 
-      verify(appConfig).isBackLookChangeEnabled
+      verify(appConfig).isBackwardLookChangeEnabled
       verify(mockPage).apply(any(), ArgumentMatchers.eq(true))(any(),any())
     }
   }
@@ -152,10 +152,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
     //todo: remove after april 2023
     "should pass feature flag to view on error" in {
-      when(appConfig.isBackLookChangeEnabled).thenReturn(true)
+      when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
       await(controller.submit()(postRequestEncoded(JsObject.empty)))
 
-      verify(appConfig).isBackLookChangeEnabled
+      verify(appConfig).isBackwardLookChangeEnabled
       verify(mockPage).apply(any(), ArgumentMatchers.eq(true))(any(),any())
     }
     "return an error" when {

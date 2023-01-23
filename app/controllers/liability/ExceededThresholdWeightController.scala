@@ -46,7 +46,7 @@ class ExceededThresholdWeightController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
 
-      val backLookChangeEnabled = appConfig.isBackLookChangeEnabled
+      val backLookChangeEnabled = appConfig.isBackwardLookChangeEnabled
       (request.registration.liabilityDetails.exceededThresholdWeight, request.registration.liabilityDetails.dateExceededThresholdWeight)  match {
         case (Some(yesNo), date) => Ok(page(
           exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date))), backLookChangeEnabled))
@@ -66,7 +66,7 @@ class ExceededThresholdWeightController @Inject() (
     submit()
 
   private def hasErrors(form: Form[_])(implicit request: Request[_]): Future[Result] = {
-    Future.successful(BadRequest(page(form, appConfig.isBackLookChangeEnabled)))
+    Future.successful(BadRequest(page(form, appConfig.isBackwardLookChangeEnabled)))
   }
 
   private def updateRegistration(

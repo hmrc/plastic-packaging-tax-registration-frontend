@@ -97,11 +97,11 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         authorizedUser()
         given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
-        given(appConfig.isBackLookChangeEnabled).willReturn(true)
+        given(appConfig.isBackwardLookChangeEnabled).willReturn(true)
 
         await(controller.displayPage()(getRequest()))
 
-        verify(appConfig).isBackLookChangeEnabled
+        verify(appConfig).isBackwardLookChangeEnabled
         verify(page).apply(
           any(),
           ArgumentMatchers.eq(true)

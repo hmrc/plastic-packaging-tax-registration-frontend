@@ -135,8 +135,8 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     page.render(registration, false, journeyRequest, messages)
   }
 
-  private def createView(reg: Registration, isBackLookPostApril2023: Boolean = true)(implicit request: JourneyRequest[AnyContent]): Document =
-    page(reg, isBackLookPostApril2023)(request, messages(request))
+  private def createView(reg: Registration, isBackwardLookPostApril2023: Boolean = true)(implicit request: JourneyRequest[AnyContent]): Document =
+    page(reg, isBackwardLookPostApril2023)(request, messages(request))
 
   private def assertSummaryRows(view: Document, expectedRows: List[SummaryRowDetail]) = {
     val actualRows = view.getElementsByClass("govuk-summary-list__row")

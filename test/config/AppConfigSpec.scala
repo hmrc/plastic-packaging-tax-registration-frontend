@@ -127,7 +127,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
     "isBackLookChangeEnabled" should {
       "return true when today date is equal to the back look test date" in {
-        validAppConfig.isBackLookChangeEnabled mustBe true
+        validAppConfig.isBackwardLookChangeEnabled mustBe true
       }
 
       "return true when today date is greater than the back look test date" in {
@@ -138,7 +138,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
              |""".stripMargin)
 
         val config = appConfig(Configuration(newConfig))
-        config.isBackLookChangeEnabled mustBe true
+        config.isBackwardLookChangeEnabled mustBe true
       }
 
       "return true when today date is less than the back look test date" in {
@@ -149,11 +149,11 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
              |""".stripMargin)
 
         val config = appConfig(Configuration(newConfig))
-        config.isBackLookChangeEnabled mustBe false
+        config.isBackwardLookChangeEnabled mustBe false
       }
 
       "return false if feature flag is missing" in {
-        appConfig(Configuration(emptyConfig)).isBackLookChangeEnabled mustBe false
+        appConfig(Configuration(emptyConfig)).isBackwardLookChangeEnabled mustBe false
       }
     }
   }

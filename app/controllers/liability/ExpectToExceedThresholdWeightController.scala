@@ -80,7 +80,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
     }
 
   private def exceededThresholdLink: Call = {
-    if(appConfig.isBackLookChangeEnabled)
+    if(appConfig.isBackwardLookChangeEnabled)
       controllers.liability.routes.ExceededThresholdWeightController.displayPage()
     else controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023()
   }
