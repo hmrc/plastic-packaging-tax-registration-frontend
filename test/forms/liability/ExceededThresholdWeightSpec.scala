@@ -16,6 +16,8 @@
 
 package forms.liability
 
+import config.AppConfig
+import forms.YesNoValues
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{atLeastOnce, verify, when}
@@ -23,9 +25,6 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.i18n.Messages
-import config.AppConfig
-import forms.OldDate.day
-import forms.YesNoValues
 
 import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
@@ -71,7 +70,7 @@ class ExceededThresholdWeightSpec extends PlaySpec {
     "error correctly" when {
       "answer empty" when {
         "backLookChangeEnabled is true" in {
-          when(mockAppConfig.backLookChangeEnabled).thenReturn(true)
+          when(mockAppConfig.isBackLookChangeEnabled).thenReturn(true)
           val newSut = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
 
           val boundForm = newSut.bind(Map.empty[String, String])
@@ -83,14 +82,14 @@ class ExceededThresholdWeightSpec extends PlaySpec {
           val boundForm = sut.bind(Map.empty[String, String])
 
           boundForm.value mustBe None
-          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.before.april.2023.question.empty.error")
+          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.beforeApril2023.question.empty.error")
         }
       }
 
       "answer is trash" when{
 
         "backLookChangeEnabled is true" in {
-          when(mockAppConfig.backLookChangeEnabled).thenReturn(true)
+          when(mockAppConfig.isBackLookChangeEnabled).thenReturn(true)
           val newSut = new ExceededThresholdWeight(mockAppConfig, fakeClock).form()(mockMessages)
 
           val boundForm = newSut.bind(Map("answer" -> "trash"))
@@ -103,7 +102,7 @@ class ExceededThresholdWeightSpec extends PlaySpec {
           val boundForm = sut.bind(Map("answer" -> "trash"))
 
           boundForm.value mustBe None
-          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.before.april.2023.question.empty.error")
+          boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.beforeApril2023.question.empty.error")
         }
       }
 

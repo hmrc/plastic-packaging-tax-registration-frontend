@@ -36,11 +36,6 @@ class TaxStartDateViewSpec extends UnitViewSpec {
       view.select("title").first must containMessage("liability.taxStartDate.title")
     }
 
-    "have a back button" in {
-      view.getElementById("back-link") must not be null
-      view.getElementById("back-link").text() must include(messages("site.back.hiddenText"))
-    }
-
     "have a section header" in {
       view.getElementById("section-header").text() mustBe messages("liability.sectionHeader")
     }

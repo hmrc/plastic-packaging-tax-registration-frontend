@@ -17,27 +17,24 @@
 package controllers.liability
 
 import base.unit.ControllerSpec
-import config.AppConfig
-import org.mockito.ArgumentCaptor
+import connectors.DownstreamServiceError
+import forms.Date
+import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
+import models.registration.Registration
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{RETURNS_DEEP_STUBS, clearInvocations, reset, verify, when}
-import org.scalatest.{BeforeAndAfterEach, Ignore}
+import org.mockito.Mockito.{RETURNS_DEEP_STUBS, reset, verify, when}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.{Form, Forms}
+import play.api.data.Form
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
-import play.api.i18n.Messages
 import play.api.libs.json.JsObject
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
-import models.registration.Registration
-import views.html.liability.exceeded_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import play.api.data.Forms.{ignored, localDate}
-import forms.Date
+import views.html.liability.exceeded_threshold_weight_page
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -66,7 +63,6 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
     reset(mockPage, appConfig)
 
-    when(appConfig.backLookChangeEnabled).thenReturn(true)
     when(mockPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
   }
 
@@ -110,12 +106,13 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
       when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
       when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
+      when(appConfig.isBackLookChangeEnabled).thenReturn(true)
 
       await(controller.displayPage()(getRequest()))
 
-      verify(appConfig).backLookChangeEnabled
+      verify(appConfig).isBackLookChangeEnabled
+      verify(mockPage).apply(any(), ArgumentMatchers.eq(true))(any(),any())
     }
-
   }
 
   "submit" should {
@@ -155,9 +152,11 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
     //todo: remove after april 2023
     "should pass feature flag to view on error" in {
+      when(appConfig.isBackLookChangeEnabled).thenReturn(true)
       await(controller.submit()(postRequestEncoded(JsObject.empty)))
 
-      verify(appConfig).backLookChangeEnabled
+      verify(appConfig).isBackLookChangeEnabled
+      verify(mockPage).apply(any(), ArgumentMatchers.eq(true))(any(),any())
     }
     "return an error" when {
       "the form fails to bind" in {

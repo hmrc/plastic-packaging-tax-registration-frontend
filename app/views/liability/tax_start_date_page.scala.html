@@ -17,7 +17,7 @@
 @import controllers.liability.{routes => pptRoutes}
 @import models.request.JourneyRequest
 @import views.html.main_template
-@import views.viewmodels.{BackButton, Title}
+@import views.viewmodels.{BackButtonJs, Title}
 @import views.utils.ViewUtils
 
 @import java.time.LocalDate
@@ -35,10 +35,7 @@
 
 @govukLayout(
     title = Title("liability.taxStartDate.title"),
-    backButton = Some(BackButton(
-        messages("site.back"), 
-        pptRoutes.ExceededThresholdWeightController.displayPage(),
-        messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
 
     @sectionHeader(messages("liability.sectionHeader"))
     @pageHeading(messages("liability.taxStartDate.pageHeading"))

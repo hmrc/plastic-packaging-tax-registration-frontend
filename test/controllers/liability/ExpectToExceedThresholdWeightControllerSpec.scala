@@ -48,7 +48,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
       mockRegistrationConnector,
       mcc = mcc,
       page = mockPage,
-      form = mockFormProvider
+      form = mockFormProvider,
+      appConfig
     )
 
   when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
@@ -94,6 +95,36 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
   }
 
   "submit" should {
+
+    "redirect to the right exceededThreshold url" when {
+      "before april 2023" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+        when(appConfig.isBackLookChangeEnabled).thenReturn(false)
+
+        val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url
+        )
+      }
+
+      "post 1 April 2023" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
+        when(appConfig.isBackLookChangeEnabled).thenReturn(true)
+
+        val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(
+          routes.ExceededThresholdWeightController.displayPage().url
+        )
+      }
+    }
     "return 303 (REDIRECT)" when {
       "user submits 'Yes' answer" in {
         authorizedUser()
@@ -106,10 +137,6 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
         modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe
           Some(Date(LocalDate.of(2022, 5, 15)))
-
-        redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightController.displayPage().url
-        )
       }
 
       "user submits 'No' answer" in {
@@ -124,8 +151,6 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
         modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
-
-        redirectLocation(result) mustBe Some(routes.ExceededThresholdWeightController.displayPage().url)
       }
 
       "return 400 (BAD_REQUEST)" when {

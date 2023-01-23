@@ -17,12 +17,6 @@
 package views
 
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.{Document, Element}
-import org.scalatest.Ignore
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
-import play.api.mvc.{AnyContent, Call}
-import play.api.test.FakeRequest
 import controllers.contact.{routes => contactRoutes}
 import controllers.group.{routes => groupRoutes}
 import controllers.liability.{routes => liabilityRoutes}
@@ -37,13 +31,18 @@ import forms.{Date, OldDate}
 import models.registration.group.{GroupMember, GroupMemberContactDetails, OrganisationDetails => GroupMemberOrganisationDetails}
 import models.registration.{GroupDetail, LiabilityDetails, OrganisationDetails, Registration}
 import models.request.{AuthenticatedRequest, JourneyRequest}
+import org.jsoup.nodes.{Document, Element}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
+import play.api.mvc.{AnyContent, Call}
+import play.api.test.FakeRequest
 import views.components.Styles.gdsPageHeading
 import views.html.review_registration_page
 
 import java.time.LocalDate
 
 
-@Ignore
+
 class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
 
   private val page = inject[review_registration_page]
@@ -54,7 +53,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
   private val nominatedPartnerSection = 2
 
   private def createView(reg: Registration): Document =
-    page(reg)(journeyRequest, messages)
+    page(reg, true)(journeyRequest, messages)
 
   "Review registration View" should {
 
@@ -202,7 +201,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                                      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
                     )
-                  )
+                  ),
+                  true
                 )(journeyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
@@ -216,14 +216,14 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
 
               getValueFor(liabilitySection, 0, liabilityView) mustBe "Yes"
-              getValueFor(liabilitySection, 1, liabilityView) mustBe "05 March 2022"
-              getValueFor(liabilitySection, 2, liabilityView) mustBe "01 April 2022"
+              getValueFor(liabilitySection, 1, liabilityView) mustBe "5 March 2022"
+              getValueFor(liabilitySection, 2, liabilityView) mustBe "1 April 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
-                liabilityRoutes.ExceededThresholdWeightController.displayPage().url
+                controllers.liability.routes.ExceededThresholdWeightController.displayPage().url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                liabilityRoutes.ExceededThresholdWeightController.displayPage()
+                liabilityRoutes.ExceededThresholdWeightController.displayPage() + "#exceeded-threshold-weight-date.day"
               )
             }
 
@@ -238,35 +238,36 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                                      startDate = Some(OldDate(Some(6), Some(3), Some(2022)))
                     )
-                  )
+                  ),
+                  true
                 )(journeyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
-                "liability.checkAnswers.exceededThreshold"
-              )
-              getKeyFor(liabilitySection, 1, liabilityView) must containMessage(
                 "liability.checkAnswers.expectToExceededThreshold"
               )
-              getKeyFor(liabilitySection, 2, liabilityView) must containMessage(
+              getKeyFor(liabilitySection, 1, liabilityView) must containMessage(
                 "liability.checkAnswers.dateRealisedExpectToExceededThreshold"
+              )
+              getKeyFor(liabilitySection, 2, liabilityView) must containMessage(
+                "liability.checkAnswers.exceededThreshold"
               )
               getKeyFor(liabilitySection, 3, liabilityView) must containMessage(
                 "liability.checkAnswers.startDate"
               )
 
-              getValueFor(liabilitySection, 0, liabilityView) mustBe "No"
-              getValueFor(liabilitySection, 1, liabilityView) mustBe "Yes"
-              getValueFor(liabilitySection, 2, liabilityView) mustBe "06 March 2022"
-              getValueFor(liabilitySection, 3, liabilityView) mustBe "06 March 2022"
+              getValueFor(liabilitySection, 0, liabilityView) mustBe "Yes"
+              getValueFor(liabilitySection, 1, liabilityView) mustBe "6 March 2022"
+              getValueFor(liabilitySection, 2, liabilityView) mustBe "No"
+              getValueFor(liabilitySection, 3, liabilityView) mustBe "6 March 2022"
 
               getChangeLinkFor(liabilitySection, 0, liabilityView) must haveHref(
-                liabilityRoutes.ExceededThresholdWeightController.displayPage().url
+                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
+                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage() +  "#expect-to-exceed-threshold-weight-date.day"
               )
               getChangeLinkFor(liabilitySection, 2, liabilityView) must haveHref(
-                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
+                liabilityRoutes.ExceededThresholdWeightController.displayPage()
               )
             }
 
@@ -557,7 +558,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val partnershipView =
-              page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
+              page(partnershipRegistration, false)(journeyRequestWithEnrolledUser, messages)
 
             getKeyFor(nominatedPartnerSection, 0, partnershipView) must containMessage(
               "reviewRegistration.partner.orgType"
@@ -652,7 +653,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                              pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val otherPartnersView =
-              page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
+              page(partnershipRegistration, false)(journeyRequestWithEnrolledUser, messages)
 
             partnershipRegistration.otherPartners.zipWithIndex.foreach {
               case (partner, idx) =>
@@ -741,8 +742,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
   override def exerciseGeneratedRenderingMethods() = {
     val registration = aRegistration()
-    page.f(registration)(journeyRequest, messages)
-    page.render(registration, journeyRequest, messages)
+    page.f(registration, false)(journeyRequest, messages)
+    page.render(registration, false, journeyRequest, messages)
   }
 
 }

@@ -16,14 +16,15 @@
 
 package controllers.liability
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
 import controllers.{routes => commonRoutes}
 import forms.OldDate
 import models.registration.{Cacheable, LiabilityDetails, NewLiability, Registration}
 import models.request.{JourneyAction, JourneyRequest}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.TaxStartDateService
 import views.html.liability.check_liability_details_answers_page
 
@@ -37,6 +38,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
                                                         mcc: MessagesControllerComponents,
                                                         override val registrationConnector: RegistrationConnector,
                                                         taxStarDateService: TaxStartDateService,
+                                                        appConfig: AppConfig,
                                                         page: check_liability_details_answers_page)
                                                        (implicit ec: ExecutionContext) extends LiabilityController(mcc)
   with Cacheable with I18nSupport {
@@ -48,7 +50,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
       taxStartDate.act(
         notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
         isLiableAction = (startDate, _) => {
-          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate))))
+          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate)), appConfig.isBackLookChangeEnabled))
         }
       )
     }

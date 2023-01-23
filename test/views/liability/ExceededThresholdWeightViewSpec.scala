@@ -17,6 +17,8 @@
 package views.liability
 
 import base.unit.UnitViewSpec
+import forms.YesNoValues
+import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
@@ -24,8 +26,6 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.data.Form
 import play.api.i18n.Messages
-import forms.YesNoValues
-import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
 import views.html.liability.exceeded_threshold_weight_page
 
 import java.time.{Clock, Instant}
@@ -74,7 +74,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
       "backLookChangeEnabled is false" in {
         val title = createView().select("title").text()
         title mustBe "Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022? - Register for Plastic Packaging Tax - GOV.UK"
-        title must include(messages("liability.exceededThresholdWeight.before.april.2023.title"))
+        title must include(messages("liability.exceededThresholdWeight.beforeApril2023.title"))
       }
     }
 
@@ -103,7 +103,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
       "backLookChangeEnabled is false" in {
         val question = createView().getElementsByClass("govuk-heading-l").text()
         question mustBe "Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?"
-        question mustBe messages("liability.exceededThresholdWeight.before.april.2023.question")
+        question mustBe messages("liability.exceededThresholdWeight.beforeApril2023.question")
       }
     }
 
@@ -126,7 +126,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
         val hint = createView().getElementsByClass("govuk-body").text()
 
         hint must include("This is the total of all the plastic you’ve manufactured or imported since April.")
-        hint must include(messages("liability.exceededThresholdWeight.before.april.2023.line1"))
+        hint must include(messages("liability.exceededThresholdWeight.beforeApril2023.line1"))
       }
 
     }
@@ -168,6 +168,27 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
       view.getElementById("submit").text() mustBe "Save and continue"
     }
 
+    //todo: this may be remove after post 1 April 2023
+    "form action should redirect to ExceededThreshold before April 2023" in {
+      val form =  formProvider.form()(mockMessages)
+
+      val view = createView(form.bind(Map("answer" -> "")))
+
+      view.select("form").attr("method") mustBe "POST"
+      view.select("form").attr("action") mustBe
+        controllers.liability.routes.ExceededThresholdWeightController.submitBeforeApril2023().url
+    }
+
+    "form action should redirect to ExceededThreshold for post April 2023" in {
+      val form =  formProvider.form()(mockMessages)
+
+      val view = createView(form.bind(Map("answer" -> "")), true)
+
+      view.select("form").attr("method") mustBe "POST"
+      view.select("form").attr("action") mustBe
+        controllers.liability.routes.ExceededThresholdWeightController.submit().url
+    }
+
     // TODO need a working way to test which radio is checked (or neither) when form is first displayed
 
 
@@ -176,7 +197,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
       "no answer is selected" when {
         "backLookChangeEnabled is true" in {
 
-          when(appConfig.backLookChangeEnabled).thenReturn(true)
+          when(appConfig.isBackLookChangeEnabled).thenReturn(true)
           val form =  formProvider.form()(mockMessages)
 
           val errorText = createView(form.bind(Map("answer" -> "")), true)
@@ -187,7 +208,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
         }
 
         "backLookChangeEnabled is false" in {
-          when(appConfig.backLookChangeEnabled).thenReturn(false)
+          when(appConfig.isBackLookChangeEnabled).thenReturn(false)
           val form =  formProvider.form()(mockMessages)
 
           val errorText = createView(form = form.bind(Map("answer" -> "")))
@@ -195,7 +216,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
             .text()
 
           errorText must include("Select yes if you have manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022")
-          errorText must include(messages("liability.exceededThresholdWeight.before.april.2023.question.empty.error"))
+          errorText must include(messages("liability.exceededThresholdWeight.beforeApril2023.question.empty.error"))
         }
       }
       "form has error" in {

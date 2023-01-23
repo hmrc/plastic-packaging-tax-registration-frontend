@@ -171,7 +171,7 @@ class ReviewRegistrationController @Inject() (
         Redirect(routes.TaskListController.displayPage())
       }
     else
-      markRegistrationAsReviewed(reg).map(_ => Ok(reviewRegistrationPage(registration = reg)))
+      markRegistrationAsReviewed(reg).map(_ => Ok(reviewRegistrationPage(reg, appConfig.isBackLookChangeEnabled)))
   }
 
   private def markRegistrationAsReviewed(
@@ -201,5 +201,4 @@ class ReviewRegistrationController @Inject() (
     if (!registration.isGroup)
       registrationFilterService.removeGroupDetails(registration)
     else registration
-
 }
