@@ -22,18 +22,13 @@ import play.twirl.api.Html
 import config.AppConfig
 import models.registration.Registration
 import controllers.amendment.{routes => amendRoutes}
-import controllers.amendment.partner.{
-  routes => partnerAmendRoutes
-}
+import controllers.amendment.partner.{routes => partnerAmendRoutes}
 import services.CountryService
-import views.amendment.RegistrationType.{
-  Group,
-  Organisation,
-  Partnership,
-  SoleTrader
-}
+import views.amendment.RegistrationType.{Group, Organisation, Partnership, SoleTrader}
 import views.html.amendment.amend_registration_page
 import views.utils.ViewUtils
+
+import scala.util.Try
 
 object RegistrationType extends Enumeration {
   type RegistrationType = Value
@@ -101,9 +96,9 @@ class AmendRegistrationViewSpec extends UnitViewSpec with Matchers {
           }
 
           "display the change-group-lead-link correctly" in {
-            val maybeLink = Option(view.select("#change-group-lead-link").get(0))
+            val maybeLink = Try(view.select("#change-group-lead-link").get(0)).toOption
             organisationType match {
-              case Organisation =>
+              case Group =>
                 maybeLink mustBe defined
                 maybeLink.get.text() mustBe messages("amend.group.changeGroupLead.link")
                 maybeLink.get.attr("href") mustBe realAppConfig.changeGroupLeadUrl
