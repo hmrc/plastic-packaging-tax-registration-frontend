@@ -62,7 +62,7 @@
     @{registration.registrationType match {
         case Some(GROUP) =>
             paragraph(link(
-                messages("amend.partnership.changeGroupLead.link"),
+                messages("amend.group.changeGroupLead.link"),
                 Call("GET", appConfig.changeGroupLeadUrl),
                 id = Some("change-group-lead-link")
             ))
