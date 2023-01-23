@@ -36,6 +36,13 @@
     }
 }
 
+@getMessage(key: String) = @{
+    if(isBackLookPostApril2023) {
+        messages(key)
+    } else {
+        messages(s"$key.beforeApril2023")
+    }
+}
 @summary = @{
     Seq(
         SummaryListRow(
@@ -82,7 +89,7 @@
         ),
         SummaryListRow(
             key = Key(
-                content = Text(messages("liability.checkAnswers.exceededThreshold"))
+                content = Text(getMessage("liability.checkAnswers.exceededThreshold"))
             ),
             value = Value(
                 registration.liabilityDetails.exceededThresholdWeight match {

@@ -96,8 +96,9 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+
     // todo: remove post april 2023
-    "back look link is before april 2023" in {
+    "display expected content for back look test before April 2023" when {
 
       val liability = registration.liabilityDetails.copy(exceededThresholdWeight = Some(true))
       val reg = registration.copy(liabilityDetails = liability)
@@ -105,14 +106,22 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
 
       val rows = view.getElementsByClass("govuk-summary-list__row")
 
-      rows.get(2).select("a").first() must
-        haveHref(controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url)
-      rows.get(3).select("a").first() must
-        haveHref(
-          controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url +
-            "#exceeded-threshold-weight-date.day"
-        )
+      "for content" in {
+        rows.get(2).text() must include("10,000kg or more plastic packaging since 1 April 2022")
+        rows.get(2).text() must include(messages("liability.checkAnswers.exceededThreshold.beforeApril2023"))
+      }
+
+      "for link" in {
+        rows.get(2).select("a").first() must
+          haveHref(controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url)
+        rows.get(3).select("a").first() must
+          haveHref(
+            controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url +
+              "#exceeded-threshold-weight-date.day"
+          )
+      }
     }
+
 
     "display 'Continue' button" in {
       view must containElementWithID("submit")

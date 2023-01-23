@@ -173,7 +173,8 @@ liability.taxStartDate.realisedThresholdWouldBeExceeded.hint  = Dyma’r diwrnod
 liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error  = Mae’n rhaid i’r dyddiad fod ar neu ar ôl {0}
 
 liability.checkAnswers.title  = Gwiriwch eich atebion
-liability.checkAnswers.exceededThreshold  = 10,000kg neu fwy o ddeunydd pacio plastig ers 1 Ebrill 2022
+liability.checkAnswers.exceededThreshold = 10,000kg neu fwy o ddeunydd pacio plastig yn y 12 mis diwethaf
+liability.checkAnswers.exceededThreshold.beforeApril2023  = 10,000kg neu fwy o ddeunydd pacio plastig ers 1 Ebrill 2022
 liability.checkAnswers.dateExceededThreshold  = Dyddiad cyrraedd y trothwy
 liability.checkAnswers.expectToExceededThreshold  = 10,000kg neu fwy o ddeunydd pacio plastig cyn pen 30 diwrnod
 liability.checkAnswers.dateRealisedExpectToExceededThreshold  = Y dyddiad yr oedd gennych sail resymol dros gredu hyn
