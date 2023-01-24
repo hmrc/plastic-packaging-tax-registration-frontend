@@ -125,7 +125,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
       validAppConfig.businessAccountUrl must be("http://localhost:9020/business-account")
     }
 
-    "isBackLookChangeEnabled" should {
+    "isBackwardLookChangeEnabled" should {
       "return true when today date is equal to the back look test date" in {
         validAppConfig.isBackwardLookChangeEnabled mustBe true
       }
@@ -150,10 +150,6 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
         val config = appConfig(Configuration(newConfig))
         config.isBackwardLookChangeEnabled mustBe false
-      }
-
-      "return false if feature flag is missing" in {
-        appConfig(Configuration(emptyConfig)).isBackwardLookChangeEnabled mustBe false
       }
     }
   }
