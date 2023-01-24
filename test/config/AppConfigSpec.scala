@@ -46,7 +46,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
         |urls.feedback.unauthenticatedLink="http://localhost:9250/contact/beta-feedback-unauthenticated"
         |urls.mfaUplift="http://localhost:9553/bas-gateway/uplift-mfa"
         |urls.businessAccount="http://localhost:9020/business-account"
-        |features.back-look-date=${LocalDate.now()}
+        |features.backward-look-date=${LocalDate.now()}
       """.stripMargin
     )
 
@@ -134,7 +134,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
         val newConfig = ConfigFactory.parseString(
           s"""
-             |features.back-look-date=${LocalDate.now().minusDays(1)}
+             |features.backward-look-date=${LocalDate.now().minusDays(1)}
              |""".stripMargin)
 
         val config = appConfig(Configuration(newConfig))
@@ -145,7 +145,7 @@ class AppConfigSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
         val newConfig = ConfigFactory.parseString(
           s"""
-             |features.back-look-date=${LocalDate.now().plusDays(1)}
+             |features.backward-look-date=${LocalDate.now().plusDays(1)}
              |""".stripMargin)
 
         val config = appConfig(Configuration(newConfig))

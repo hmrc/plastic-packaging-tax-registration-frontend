@@ -93,7 +93,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
     "set expected page links" when {
 
-      "check the back look feature flags" in {
+      "check the backward look feature flags" in {
 
         authorizedUser()
         given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)

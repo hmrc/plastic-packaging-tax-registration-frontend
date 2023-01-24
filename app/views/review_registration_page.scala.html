@@ -41,7 +41,7 @@
         liabilityCheckAnswers: liabilityCheckAnswers
 )
 
-@(registration: Registration, isBackwardLookPostApril2023: Boolean)(implicit request: JourneyRequest[AnyContent], messages: Messages)
+@(registration: Registration, isBackwardLookChangeEnabled: Boolean)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @addressChangeLink = @{
     request.registration.organisationDetails.isBusinessAddressFromGrs match {
@@ -59,7 +59,7 @@
     @formHelper(action = pptRoutes.ReviewRegistrationController.submit(), 'autoComplete -> "off") {
 
         @subHeading(messages("reviewRegistration.organisationDetails.check.liability"))
-        @liabilityCheckAnswers(registration, isBackwardLookPostApril2023)
+        @liabilityCheckAnswers(registration, isBackwardLookChangeEnabled)
 
         @organisationDetails(registration.organisationDetails, registration.registrationType, Some(orgRoutes.OrganisationDetailsTypeController.displayPage()), addressChangeLink)
         @if(registration.isPartnershipWithPartnerCollection) {

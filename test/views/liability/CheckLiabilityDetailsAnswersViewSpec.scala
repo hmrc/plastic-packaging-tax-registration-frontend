@@ -97,7 +97,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
     }
 
 
-    // todo: remove post april 2023
+    //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
     "display expected content for back look test before April 2023" when {
 
       val liability = registration.liabilityDetails.copy(exceededThresholdWeight = Some(true))

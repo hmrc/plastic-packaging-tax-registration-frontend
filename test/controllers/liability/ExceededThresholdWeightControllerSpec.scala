@@ -99,7 +99,6 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       }
     }
 
-    //todo: remove after april 2023
     "should pass feature flag to view" in {
       authorizedUser()
 
@@ -150,7 +149,6 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       }
     }
 
-    //todo: remove after april 2023
     "should pass feature flag to view on error" in {
       when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
       await(controller.submit()(postRequestEncoded(JsObject.empty)))

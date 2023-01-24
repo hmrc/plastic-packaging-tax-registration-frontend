@@ -16,7 +16,7 @@ GET        /threshold-last-12-months   controllers.liability.ExceededThresholdWe
 POST       /threshold-last-12-months    controllers.liability.ExceededThresholdWeightController.submit()
 
 # Liability : before-april-2023
-#todo: pre-april 2023 url. remove after april-2023
+#todo: pre-april 2023 url. remove after 1 April 2023
 GET        /threshold-from-1-april-2022   controllers.liability.ExceededThresholdWeightController.displayPageBeforeApril2023()
 POST       /threshold-from-1-april-2022    controllers.liability.ExceededThresholdWeightController.submitBeforeApril2023()
 

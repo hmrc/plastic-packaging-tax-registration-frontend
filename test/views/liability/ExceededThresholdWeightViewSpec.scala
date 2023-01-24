@@ -70,7 +70,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
         title must include(messages("liability.exceededThresholdWeight.title"))
       }
 
-      //todo: remove post april
+      //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
       "backLookChangeEnabled is false" in {
         val title = createView().select("title").text()
         title mustBe "Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022? - Register for Plastic Packaging Tax - GOV.UK"
@@ -99,7 +99,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
         question mustBe messages("liability.exceededThresholdWeight.question")
       }
 
-      //todo: remove post april
+      //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
       "backLookChangeEnabled is false" in {
         val question = createView().getElementsByClass("govuk-heading-l").text()
         question mustBe "Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?"
@@ -121,7 +121,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
         hint must include(messages("liability.exceededThresholdWeight.line1"))
       }
 
-      //todo: remove post april
+      //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
       "backLookChangeEnabled is false" in {
         val hint = createView().getElementsByClass("govuk-body").text()
 
@@ -168,7 +168,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
       view.getElementById("submit").text() mustBe "Save and continue"
     }
 
-    //todo: this may be remove after post 1 April 2023
+    //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
     "form action should redirect to ExceededThreshold before April 2023" in {
       val form =  formProvider.form()(mockMessages)
 
