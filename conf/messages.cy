@@ -725,6 +725,7 @@ partnership.removePartner.caption = Partneriaid yn y bartneriaeth
 amend.organisation.title  = Manylion eich sefydliad
 amend.individual.title  = Eich manylion
 amend.group.title  = Manylion yr aelod cynrychiadol
+amend.group.changeGroupLead.link = Change the representative member of the group [WELSH]
 amend.partnership.title  = Manylion y bartneriaeth a’r partner enwebedig
 amend.organisation.subheading  = Manylion y sefydliad
 amend.individual.subheading  = Eich manylion

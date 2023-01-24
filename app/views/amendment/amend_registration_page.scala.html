@@ -32,7 +32,9 @@
         appConfig: AppConfig,
         organisationDetails: organisationDetails,
         primaryContactDetails: primaryContactDetails,
-        returnToAccountButton: linkButton
+        returnToAccountButton: linkButton,
+        link: link,
+        paragraph: paragraph
 )
 @(registration: Registration)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
@@ -55,6 +57,18 @@
     backButton = Some(BackButtonJs())) {
 
     @pageHeading(messages(titleMessageKey()))
+
+
+    @{registration.registrationType match {
+        case Some(GROUP) =>
+            paragraph(link(
+                messages("amend.group.changeGroupLead.link"),
+                Call("GET", appConfig.changeGroupLeadUrl),
+                id = Some("change-group-lead-link")
+            ))
+        case _ => ()
+    }}
+
 
     @organisationDetails(request.pptReference, registration, Some(amendRoutes.AmendOrganisationDetailsController.changeBusinessAddress()))
     @primaryContactDetails(registration)
