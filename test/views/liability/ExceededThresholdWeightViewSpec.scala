@@ -204,7 +204,7 @@ class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with Ta
             .getElementsByClass("govuk-error-message")
             .text()
 
-          errorText must include("Select yes if you have manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months.")
+          errorText must include("Select yes if you have manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months")
         }
 
         "backLookChangeEnabled is false" in {
