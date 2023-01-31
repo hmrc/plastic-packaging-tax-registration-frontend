@@ -99,7 +99,7 @@ abstract class PartnerTypeControllerBase(
                     case SaveAndContinue =>
                       partnershipPartnerType.answer match {
                         case SOLE_TRADER =>
-                          getSoleTraderRedirectUrl(appConfig.soleTraderJourneyUrl,
+                          getSoleTraderRedirectUrl(appConfig.soleTraderJourneyInitUrl,
                                                    grsCallbackUrl(partnerId)
                           )
                             .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
