@@ -32,8 +32,6 @@ case class ExceededThresholdWeightAnswer(yesNo: Boolean, date: Option[LocalDate]
 
 class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with Mappings {
 
-  val emptyError = "liability.exceededThresholdWeight.question.empty.error"
-
   val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
   val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
   val dateEmptyError = "liability.exceededThresholdWeightDate.empty.error"
@@ -45,7 +43,7 @@ class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) exte
   def form()(implicit messages: Messages): Form[ExceededThresholdWeightAnswer] =
     Form(
       mapping(
-        "answer" -> toBoolean(emptyError),
+        "answer" -> toBoolean(getEmptyError),
         "exceeded-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
           localDate(emptyDateKey =
             dateEmptyError,
@@ -58,4 +56,10 @@ class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) exte
         )
       )(ExceededThresholdWeightAnswer.apply)(ExceededThresholdWeightAnswer.unapply)
     )
+
+  private def getEmptyError = {
+    if(appConfig.isBackwardLookChangeEnabled)
+      "liability.exceededThresholdWeight.question.empty.error"
+    else "liability.exceededThresholdWeight.beforeApril2023.question.empty.error"
+  }
 }

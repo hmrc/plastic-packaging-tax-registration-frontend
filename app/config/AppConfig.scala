@@ -227,4 +227,12 @@ class AppConfig @Inject() (config: Configuration, val servicesConfig: ServicesCo
 
   lazy val goLiveDate: LocalDate = LocalDate.parse(config.get[String]("go-live-date"))
 
+  lazy val backwardLookChangeDate: LocalDate = {
+    LocalDate.parse(config.get[String]("features.backward-look-date"))
+
+  }
+
+  lazy val isBackwardLookChangeEnabled =
+    LocalDate.now().compareTo(backwardLookChangeDate) >= 0
+
 }

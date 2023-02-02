@@ -553,7 +553,8 @@ const liabilityExpectYourGroupToExceed = () => {
 }
 
 const liabilityHasYourGroupExceeded = () => {
-    if (currentPageIs('/register-for-plastic-packaging-tax/threshold-from-1-april-2022')) {
+    if (currentPageIs('/register-for-plastic-packaging-tax/threshold-from-1-april-2022') ||
+    currentPageIs('/register-for-plastic-packaging-tax/threshold-last-12-months')) {
 
         document.getElementById('value-yes').checked = true
         document.getElementById('exceeded-threshold-weight-date.day').value = '01'

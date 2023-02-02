@@ -17,13 +17,13 @@
 package views.liability
 
 import base.unit.UnitViewSpec
+import controllers.liability.{routes => liabilityRoutes}
+import models.registration.Registration
+import models.request.JourneyRequest
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers
 import play.api.mvc.AnyContent
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import controllers.liability.{routes => liabilityRoutes}
-import models.registration.Registration
-import models.request.JourneyRequest
 import views.components.Styles
 import views.html.liability.check_liability_details_answers_page
 
@@ -96,6 +96,33 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
       )
     }
 
+
+    //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
+    "display expected content for back look test before April 2023" when {
+
+      val liability = registration.liabilityDetails.copy(exceededThresholdWeight = Some(true))
+      val reg = registration.copy(liabilityDetails = liability)
+      val view = createView(reg, false)(journeyRequest)
+
+      val rows = view.getElementsByClass("govuk-summary-list__row")
+
+      "for content" in {
+        rows.get(2).text() must include("10,000kg or more plastic packaging since 1 April 2022")
+        rows.get(2).text() must include(messages("liability.checkAnswers.exceededThreshold.beforeApril2023"))
+      }
+
+      "for link" in {
+        rows.get(2).select("a").first() must
+          haveHref(controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url)
+        rows.get(3).select("a").first() must
+          haveHref(
+            controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url +
+              "#exceeded-threshold-weight-date.day"
+          )
+      }
+    }
+
+
     "display 'Continue' button" in {
       view must containElementWithID("submit")
       view.getElementById("submit").text() mustBe "Continue"
@@ -104,14 +131,12 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(registration)(journeyRequest, messages)
-    page.render(registration, journeyRequest, messages)
+    page.f(registration, false)(journeyRequest, messages)
+    page.render(registration, false, journeyRequest, messages)
   }
 
-  private def createView(reg: Registration)(implicit
-                                                            request: JourneyRequest[AnyContent]
-  ): Document =
-    page(reg)(request, messages(request))
+  private def createView(reg: Registration, isBackwardLookPostApril2023: Boolean = true)(implicit request: JourneyRequest[AnyContent]): Document =
+    page(reg, isBackwardLookPostApril2023)(request, messages(request))
 
   private def assertSummaryRows(view: Document, expectedRows: List[SummaryRowDetail]) = {
     val actualRows = view.getElementsByClass("govuk-summary-list__row")

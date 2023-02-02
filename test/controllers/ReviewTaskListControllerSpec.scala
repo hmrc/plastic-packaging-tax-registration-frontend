@@ -17,6 +17,16 @@
 package controllers
 
 import base.unit.ControllerSpec
+import forms.contact.Address
+import forms.liability.LiabilityWeight
+import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
+import forms.{Date, OldDate}
+import models.genericregistration.IncorporationDetails
+import models.nrs.NrsDetails
+import models.registration._
+import models.registration.group.GroupMember
+import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
+import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure}
 import org.mockito.AdditionalAnswers.returnsFirstArg
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -29,20 +39,10 @@ import play.api.libs.json.JsObject
 import play.api.mvc.Results.Redirect
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.HeaderCarrier
-import forms.{Date, OldDate}
-import forms.contact.Address
-import forms.liability.LiabilityWeight
-import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
-import models.genericregistration.IncorporationDetails
-import models.nrs.NrsDetails
-import models.registration._
-import models.registration.group.GroupMember
-import models.subscriptions.SubscriptionStatus.NOT_SUBSCRIBED
-import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure}
 import services.RegistrationGroupFilterService
-import views.html.{duplicate_subscription_page, review_registration_page}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.{duplicate_subscription_page, review_registration_page}
 
 import java.time.LocalDate
 import java.util.UUID
@@ -70,7 +70,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     authorizedUser()
-    given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockReviewRegistrationPage.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     when(mockRegistrationFilterService.removeGroupDetails(any())).thenAnswer(returnsFirstArg())
   }
@@ -119,7 +119,9 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        verify(mockReviewRegistrationPage).apply(registration = ArgumentMatchers.eq(registration))(
+        verify(mockReviewRegistrationPage).apply(
+          ArgumentMatchers.eq(registration),
+          any())(
           any(),
           any()
         )

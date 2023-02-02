@@ -31,7 +31,7 @@
     paragraphBody: paragraphBody,    
 )
 
-@(form: Form[_])(implicit request: Request[_], messages: Messages)
+@(form: Form[_], backLookChangeEnabled: Boolean)(implicit request: Request[_], messages: Messages)
 
 @ifYes = {
     @govukDateInput(
@@ -78,16 +78,34 @@
 @monthField = @{form("exceeded-threshold-weight-date.month")}
 @yearField = @{form("exceeded-threshold-weight-date.year")}
 
+@buildKey(partKey: String) = @{
+
+    if(backLookChangeEnabled) {
+        s"liability.exceededThresholdWeight.$partKey"
+    } else {
+        s"liability.exceededThresholdWeight.beforeApril2023.$partKey"
+    }
+
+}
+
+@link = @{
+    if(backLookChangeEnabled) {
+        pptRoutes.ExceededThresholdWeightController.submit()
+    } else {
+        pptRoutes.ExceededThresholdWeightController.submitBeforeApril2023()
+    }
+}
 @errorMessages = @{
     val errors = form.errors
-        .filter(err => !err.message.contains("liability.exceededThresholdWeight.question.empty.error"))
+        .filter(err => !err.message.contains(buildKey("question.empty.error")))
         .map(er => messages(er.message, er.args.mkString)).mkString("<br>")
     if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
 }
 
 
+
 @govukLayout(
-    title = Title("liability.exceededThresholdWeight.title"), 
+    title = Title(buildKey("title")),
     backButton = Some(BackButton(
         messages("site.back"), 
         pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
@@ -97,12 +115,12 @@
 
     @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
 
-    @pageHeading(messages("liability.exceededThresholdWeight.question"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
+    @pageHeading(messages(buildKey("question")))
+    @paragraphBody(messages(buildKey("line1")))
     @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
     @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
 
-    @formHelper(action = pptRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
+    @formHelper(action = link, 'autoComplete -> "off") {
         @conditionalYesNo(form, None, Some(ifYes))
         @saveButtons()
     }

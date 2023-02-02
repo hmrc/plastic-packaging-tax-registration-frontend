@@ -16,16 +16,17 @@
 
 package controllers.liability
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc._
+import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import forms.Date
 import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
 import models.registration.{Cacheable, Registration}
 import models.request.{JourneyAction, JourneyRequest}
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import views.html.liability.exceeded_threshold_weight_page
-import forms.Date
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ExceededThresholdWeightController @Inject() (
                                                     authenticate: NotEnrolledAuthAction,
                                                     journeyAction: JourneyAction,
+                                                    appConfig: AppConfig,
                                                     override val registrationConnector: RegistrationConnector,
                                                     mcc: MessagesControllerComponents,
                                                     exceededThresholdWeight: ExceededThresholdWeight,
@@ -43,19 +45,29 @@ class ExceededThresholdWeightController @Inject() (
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
+
+      val backLookChangeEnabled = appConfig.isBackwardLookChangeEnabled
       (request.registration.liabilityDetails.exceededThresholdWeight, request.registration.liabilityDetails.dateExceededThresholdWeight)  match {
-        case (Some(yesNo), date) => Ok(page(exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date)))))
-        case _          => Ok(page(exceededThresholdWeight.form()))
+        case (Some(yesNo), date) => Ok(page(
+          exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date))), backLookChangeEnabled))
+        case _          => Ok(page(exceededThresholdWeight.form(), backLookChangeEnabled))
       }
     }
+
+  def displayPageBeforeApril2023(): Action[AnyContent] =
+    displayPage()
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       exceededThresholdWeight.form().bindFromRequest().fold(hasErrors, onSuccess)
     }
 
-  private def hasErrors(form: Form[_])(implicit request: Request[_]): Future[Result] =
-    Future.successful(BadRequest(page(form)))
+  def submitBeforeApril2023(): Action[AnyContent] =
+    submit()
+
+  private def hasErrors(form: Form[_])(implicit request: Request[_]): Future[Result] = {
+    Future.successful(BadRequest(page(form, appConfig.isBackwardLookChangeEnabled)))
+  }
 
   private def updateRegistration(
     alreadyExceeded: ExceededThresholdWeightAnswer

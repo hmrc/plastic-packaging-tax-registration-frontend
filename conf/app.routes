@@ -11,9 +11,15 @@ GET        /lang/cyGb             controllers.LanguageController.cyGb()
 GET        /start                controllers.Default.redirect(to = "/register-for-plastic-packaging-tax/start-registration")
 GET        /start-registration   controllers.StartRegistrationController.startRegistration()
 
-# Liability : post-launch
-GET        /threshold-from-1-april-2022    controllers.liability.ExceededThresholdWeightController.displayPage()
-POST       /threshold-from-1-april-2022    controllers.liability.ExceededThresholdWeightController.submit()
+# Liability : post-april-2023
+GET        /threshold-last-12-months   controllers.liability.ExceededThresholdWeightController.displayPage()
+POST       /threshold-last-12-months    controllers.liability.ExceededThresholdWeightController.submit()
+
+# Liability : before-april-2023
+#todo: pre-april 2023 url. remove after 1 April 2023
+GET        /threshold-from-1-april-2022   controllers.liability.ExceededThresholdWeightController.displayPageBeforeApril2023()
+POST       /threshold-from-1-april-2022    controllers.liability.ExceededThresholdWeightController.submitBeforeApril2023()
+
 
 GET        /threshold-next-30-days       controllers.liability.ExpectToExceedThresholdWeightController.displayPage()
 POST       /threshold-next-30-days       controllers.liability.ExpectToExceedThresholdWeightController.submit()

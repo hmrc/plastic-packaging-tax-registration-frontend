@@ -16,16 +16,17 @@
 
 package controllers.liability
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
 import forms.Date
 import forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
 import models.registration.{Cacheable, NewLiability, Registration}
 import models.request.{JourneyAction, JourneyRequest}
-import views.html.liability.expect_to_exceed_threshold_weight_page
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.liability.expect_to_exceed_threshold_weight_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,9 +38,8 @@ class ExpectToExceedThresholdWeightController @Inject() (
                                                           override val registrationConnector: RegistrationConnector,
                                                           mcc: MessagesControllerComponents,
                                                           page: expect_to_exceed_threshold_weight_page,
-                                                          form: ExpectToExceedThresholdWeight
-
-
+                                                          form: ExpectToExceedThresholdWeight,
+                                                          appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
@@ -59,7 +59,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
           Future.successful(BadRequest(page(formWithErrors))),
               expectToExceed =>
                 updateRegistration(expectToExceed).map {
-                  case Right(_) => Redirect(routes.ExceededThresholdWeightController.displayPage())
+                  case Right(_) => Redirect(exceededThresholdLink)
                   case Left(error) => throw error
                 }
         )
@@ -78,5 +78,11 @@ class ExpectToExceedThresholdWeightController @Inject() (
         )
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
+
+  private def exceededThresholdLink: Call = {
+    if(appConfig.isBackwardLookChangeEnabled)
+      controllers.liability.routes.ExceededThresholdWeightController.displayPage()
+    else controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023()
+  }
 
 }

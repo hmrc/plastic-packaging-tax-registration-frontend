@@ -33,7 +33,7 @@
         sectionHeader: sectionHeader,
         liabilityCheckAnswers: liabilityCheckAnswers
 )
-@(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration, isBackwardLookPostApril2023: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
 
     @govukLayout(
         title = Title("liability.checkAnswers.title"),
@@ -43,7 +43,7 @@
         @pageHeading(messages("liability.checkAnswers.title"))
 
         @formHelper(action = pptRoutes.CheckLiabilityDetailsAnswersController.submit(), 'autoComplete -> "off") {
-            @liabilityCheckAnswers(registration)
+            @liabilityCheckAnswers(registration, isBackwardLookPostApril2023)
             @continue()
         }
     }
