@@ -23,7 +23,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
-import forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
+import forms.liability.ExpectToExceedThresholdWeight
 import views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 
@@ -42,7 +42,7 @@ class ExpectToExceedThresholdWeightViewA11ySpec
 
   "ExpectToExceedThresholdWeightViewA11ySpec" should {
 
-    def render(form: Form[ExpectToExceedThresholdWeightAnswer]): String =
+    def render(form: Form[Boolean]): String =
       page(form)(request, messages).toString()
 
     "pass accessibility checks without error" in {
@@ -51,19 +51,9 @@ class ExpectToExceedThresholdWeightViewA11ySpec
 
     "pass accessibility checks with error" when {
       "no answer "in {
-        render(formProvider().bind(Map("answer" -> ""))) must passAccessibilityChecks
+        render(formProvider().bind(Map("value" -> ""))) must passAccessibilityChecks
       }
 
-      "when date is missing" in {
-        render(formProvider().bind(Map("answer" -> "true"))) must passAccessibilityChecks
-      }
-
-      "when part of date is missing" in {
-        render(formProvider().bind(Map(
-          "answer" -> "true",
-          "expect-to-exceed-threshold-weight-date.month" -> "12")
-        )) must passAccessibilityChecks
-      }
     }
   }
 }

@@ -24,6 +24,9 @@ POST       /threshold-from-1-april-2022    controllers.liability.ExceededThresho
 GET        /threshold-next-30-days       controllers.liability.ExpectToExceedThresholdWeightController.displayPage()
 POST       /threshold-next-30-days       controllers.liability.ExpectToExceedThresholdWeightController.submit()
 
+GET         /expect-to-exceed-threshold-weight-date controllers.liability.ExpectToExceedThresholdWeightDateController.displayPage
+POST         /expect-to-exceed-threshold-weight-date controllers.liability.ExpectToExceedThresholdWeightDateController.submit
+
 GET        /tax-start-date     controllers.liability.TaxStartDateController.displayPage()
 POST       /tax-start-date     controllers.liability.TaxStartDateController.submit()
 

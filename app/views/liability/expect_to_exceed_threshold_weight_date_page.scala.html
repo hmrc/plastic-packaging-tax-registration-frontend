@@ -14,48 +14,41 @@
  * limitations under the License.
  *@
 
-@import controllers.liability.{routes => pptRoutes}
 @import views.html.main_template
-@import views.viewmodels.Title
+@import views.viewmodels._
+@import views.viewmodels.govuk.date._
 @import views.viewmodels.govuk.fieldset._
-@import views.viewmodels.govuk.radios._
 @import views.viewmodels.govuk.errorsummary._
+@import controllers.liability.{routes => pptRoutes}
+
 
 @this(
+    govukLayout: main_template,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    sectionHeader: sectionHeader,
-    pageHeading: pageHeading,
-    govukLayout: main_template,
-    govukRadios : GovukRadios,
+    govukDateInput: GovukDateInput,
     saveButtons: saveButtons,
-    paragraphBody: paragraphBody,
+    errorSummary: errorSummary
 )
-
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
+@govukLayout(title = Title("liability.expectToExceedThreshold.date.question")) {
 
-@govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
+    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, 'autoComplete -> "off") {
 
-
-
-
-    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
-        @sectionHeader(messages("liability.expectToExceedThresholdWeight.sectionHeader"))
-
-        @pageHeading(messages("liability.expectToExceedThresholdWeight.question"))
-        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
-        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
-
-        @govukRadios(
-            RadiosViewModel.yesNo(field = form("value"))
+        @govukDateInput(
+            DateViewModel(
+                field  = form("expect-to-exceed-threshold-weight-date"),
+                legend = LegendViewModel(messages("liability.expectToExceedThreshold.date.question")).asPageHeading()
+            )
+            .withHint(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint"))))
         )
 
         @saveButtons()
     }
 }
+

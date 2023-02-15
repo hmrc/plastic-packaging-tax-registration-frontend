@@ -16,45 +16,29 @@
 
 package forms.liability
 
-import play.api.data.Form
-import play.api.data.Forms.mapping
-import play.api.i18n.Messages
-import config.AppConfig
 import forms.mappings.Mappings
-import forms.{CommonFormValidators, CommonFormValues, YesNoValues}
-import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
+import forms.partner.AddPartner.YES
+import play.api.data.Form
+import forms.{CommonFormValidators, CommonFormValues}
+import play.api.data.Forms.mapping
 
-import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 
-case class ExpectToExceedThresholdWeightAnswer(yesNo: Boolean, date: Option[LocalDate])
-
-class ExpectToExceedThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with CommonFormValues with Mappings {
+class ExpectToExceedThresholdWeight @Inject() extends Mappings {
 
   val emptyError = "liability.expectToExceedThresholdWeight.question.empty.error"
 
-  val dateFormattingError = "liability.expectToExceedThreshold.date.invalid"
-  val dateOutOfRangeError = "liability.expectToExceedThreshold.date.future"
-  val dateEmptyError = "liability.expectToExceedThreshold.date.none"
-  val twoRequiredKey = "liability.expectToExceedThreshold.two.required.fields"
-  val requiredKey = "liability.expectToExceedThreshold.one.field"
-
-  val beforeLiveDateError =
-    "liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error"
-
-  def apply()(implicit messages: Messages): Form[ExpectToExceedThresholdWeightAnswer] =
+//  def apply(): Form[Boolean] =
+//    Form("value" -> toBoolean(emptyError)
+//      .verifying(emptyError, _.nonEmpty)
+//      .transform[String](_.get, Some.apply)
+//      .transform[Boolean](_ == YES, _.toString)
+//    )
+  def apply(): Form[Boolean] =
     Form(
       mapping(
-        "answer" -> toBoolean(emptyError),
-        "expect-to-exceed-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
-          localDate(emptyDateKey =
-            dateEmptyError,
-            requiredKey,
-            twoRequiredKey,
-            dateFormattingError
-          ).verifying(
-            isInDateRange(dateOutOfRangeError, beforeLiveDateError)(appConfig, clock, messages)
-          ))
-      )(ExpectToExceedThresholdWeightAnswer.apply)(ExpectToExceedThresholdWeightAnswer.unapply))
+        "value" -> toBoolean(emptyError)
+      )(identity)(Some.apply)
+    )
 
 }
