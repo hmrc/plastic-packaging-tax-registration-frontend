@@ -119,30 +119,9 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       val result = sut.submit(FakeRequest())
 
       status(result) mustBe SEE_OTHER
-    }
-
-    "redirect to the right exceededThreshold url" when {
-      "before april 2023" in {
-        setUpMockForSubmit()
-        when(appConfig.isBackwardLookChangeEnabled).thenReturn(false)
-
-        val result = sut.submit(FakeRequest())
-
-        redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url
-        )
-      }
-
-      "post 1 April 2023" in {
-        setUpMockForSubmit()
-        when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
-
-        val result = sut.submit(FakeRequest())
-
-        redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightController.displayPage().url
-        )
-      }
+      redirectLocation(result) mustBe Some(
+        routes.ExceededThresholdWeightController.displayPage().url
+      )
     }
 
     "save the date to cache" in {

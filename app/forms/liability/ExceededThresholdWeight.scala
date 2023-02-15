@@ -16,24 +16,19 @@
 
 package forms.liability
 
+import forms.CommonFormValidators
+import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import play.api.i18n.Messages
-import config.AppConfig
-import forms.mappings.Mappings
-import forms.CommonFormValidators
 
-import java.time.Clock
-import javax.inject.Inject
+class ExceededThresholdWeight extends CommonFormValidators with Mappings {
 
-class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with Mappings {
-
-  def apply()(implicit messages: Messages): Form[Boolean] =
+  def apply(): Form[Boolean] =
     Form(
       mapping(
         "answer" -> toBoolean("liability.exceededThresholdWeight.question.empty.error")
       )(identity)(Some.apply)
     )
 
-
 }
+

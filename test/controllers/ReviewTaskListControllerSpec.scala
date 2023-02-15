@@ -70,7 +70,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     authorizedUser()
-    given(mockReviewRegistrationPage.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(mockReviewRegistrationPage.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
     given(mockDuplicateSubscriptionPage.apply()(any(), any())).willReturn(HtmlFormat.empty)
     when(mockRegistrationFilterService.removeGroupDetails(any())).thenAnswer(returnsFirstArg())
   }
@@ -120,8 +120,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
 
         status(result) mustBe OK
         verify(mockReviewRegistrationPage).apply(
-          ArgumentMatchers.eq(registration),
-          any())(
+          ArgumentMatchers.eq(registration))(
           any(),
           any()
         )

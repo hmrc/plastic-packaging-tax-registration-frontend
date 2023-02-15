@@ -25,18 +25,11 @@
         viewUtils: ViewUtils,
 )
 
-@(registration: Registration, isBackwardLookPostApril2023: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
 
 
 @exceededThresholdLink = @{controllers.liability.routes.ExceededThresholdWeightController.displayPage()}
 
-@getMessage(key: String) = @{
-    if(isBackwardLookPostApril2023) {
-        messages(key)
-    } else {
-        messages(s"$key.beforeApril2023")
-    }
-}
 @summary = @{
     Seq(
         SummaryListRow(
@@ -83,7 +76,7 @@
         ),
         SummaryListRow(
             key = Key(
-                content = Text(getMessage("liability.checkAnswers.exceededThreshold"))
+                content = Text(messages("liability.checkAnswers.exceededThreshold"))
             ),
             value = Value(
                 registration.liabilityDetails.exceededThresholdWeight match {

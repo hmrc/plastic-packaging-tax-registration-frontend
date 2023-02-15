@@ -53,7 +53,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
   private val nominatedPartnerSection = 2
 
   private def createView(reg: Registration): Document =
-    page(reg, true)(journeyRequest, messages)
+    page(reg)(journeyRequest, messages)
 
   "Review registration View" should {
 
@@ -201,8 +201,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                                      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
                     )
-                  ),
-                  true
+                  )
                 )(journeyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
@@ -238,8 +237,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      expectedWeightNext12m = Some(LiabilityWeight(Some(12000))),
                                      startDate = Some(OldDate(Some(6), Some(3), Some(2022)))
                     )
-                  ),
-                  true
+                  )
                 )(journeyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
@@ -558,7 +556,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val partnershipView =
-              page(partnershipRegistration, false)(journeyRequestWithEnrolledUser, messages)
+              page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
 
             getKeyFor(nominatedPartnerSection, 0, partnershipView) must containMessage(
               "reviewRegistration.partner.orgType"
@@ -653,7 +651,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                              pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
               )
             val otherPartnersView =
-              page(partnershipRegistration, false)(journeyRequestWithEnrolledUser, messages)
+              page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
 
             partnershipRegistration.otherPartners.zipWithIndex.foreach {
               case (partner, idx) =>
@@ -742,8 +740,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
   override def exerciseGeneratedRenderingMethods() = {
     val registration = aRegistration()
-    page.f(registration, false)(journeyRequest, messages)
-    page.render(registration, false, journeyRequest, messages)
+    page.f(registration)(journeyRequest, messages)
+    page.render(registration, journeyRequest, messages)
   }
 
 }
