@@ -78,10 +78,6 @@ class ExpectToExceedThresholdWeightDateController@Inject() (
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 
-  private def exceededThresholdLink: Call = {
-    if(appConfig.isBackwardLookChangeEnabled)
-      controllers.liability.routes.ExceededThresholdWeightController.displayPage()
-    else controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023()
-  }
+  private def exceededThresholdLink: Call = controllers.liability.routes.ExceededThresholdWeightController.displayPage()
 
 }

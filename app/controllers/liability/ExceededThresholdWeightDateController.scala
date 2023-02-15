@@ -20,35 +20,35 @@ import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
 import forms.Date
-import forms.liability.ExceededThresholdWeight
+import forms.liability.ExceededThresholdWeightDate
 import models.registration.{Cacheable, Registration}
 import models.request.{JourneyAction, JourneyRequest}
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import views.html.liability.exceeded_threshold_weight_page
+import views.html.liability.exceeded_threshold_weight_date_page
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ExceededThresholdWeightController @Inject() (
+class ExceededThresholdWeightDateController @Inject()(
                                                     authenticate: NotEnrolledAuthAction,
                                                     journeyAction: JourneyAction,
                                                     appConfig: AppConfig,
                                                     override val registrationConnector: RegistrationConnector,
                                                     mcc: MessagesControllerComponents,
-                                                    form: ExceededThresholdWeight,
-                                                    page: exceeded_threshold_weight_page
+                                                    form: ExceededThresholdWeightDate,
+                                                    page: exceeded_threshold_weight_date_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
 
-      val filledForm = request.registration.liabilityDetails.exceededThresholdWeight  match {
-        case Some(yesNo) => form().fill(yesNo)
-        case _           => form()
+      val filledForm = request.registration.liabilityDetails.dateExceededThresholdWeight match {
+        case Some(date) => form().fill(date.date)
+        case _          => form()
       }
 
       Ok(page(filledForm))
@@ -59,24 +59,23 @@ class ExceededThresholdWeightController @Inject() (
       form().bindFromRequest().fold(
         errorForm =>
           Future.successful(BadRequest(page(errorForm)))
-      , alreadyExceeded =>
+        , alreadyExceeded =>
           updateRegistration(alreadyExceeded)
             .map {
-              case Right(_) => Redirect(routes.ExceededThresholdWeightDateController.displayPage())
+              case Right(_) => Redirect(routes.TaxStartDateController.displayPage())
               case Left(error) => throw error
             }
       )
     }
 
   private def updateRegistration(
-    alreadyExceeded: Boolean
-  )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
+                                  exceededDate: LocalDate
+                                )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
       registration.copy(liabilityDetails =
         registration.liabilityDetails.copy(
-        exceededThresholdWeight = Some(alreadyExceeded)
-        )
-      )
+          dateExceededThresholdWeight = Some(Date(exceededDate))
+      ))
     }
 
 }

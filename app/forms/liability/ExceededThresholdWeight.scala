@@ -21,45 +21,19 @@ import play.api.data.Forms.mapping
 import play.api.i18n.Messages
 import config.AppConfig
 import forms.mappings.Mappings
-import forms.{CommonFormValidators, YesNoValues}
-import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
+import forms.CommonFormValidators
 
-import java.time.{Clock, LocalDate}
+import java.time.Clock
 import javax.inject.Inject
-
-//potential refactor: yesNo isnt actually needed here, we can just do date.isDefined, it holds the same meaning
-case class ExceededThresholdWeightAnswer(yesNo: Boolean, date: Option[LocalDate])
 
 class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with Mappings {
 
-  val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
-  val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
-  val dateEmptyError = "liability.exceededThresholdWeightDate.empty.error"
-  val twoRequiredKey = "liability.exceededThresholdWeightDate.two.required.fields"
-  val requiredKey = "liability.exceededThresholdWeightDate.one.field"
-  val isBeforeLiveDateError = "liability.exceededThresholdWeightDate.before.goLiveDate.error"
-
-
-  def form()(implicit messages: Messages): Form[ExceededThresholdWeightAnswer] =
+  def apply()(implicit messages: Messages): Form[Boolean] =
     Form(
       mapping(
-        "answer" -> toBoolean(getEmptyError),
-        "exceeded-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
-          localDate(emptyDateKey =
-            dateEmptyError,
-            requiredKey,
-            twoRequiredKey,
-            dateFormattingError
-          ).verifying(
-            isInDateRange(dateOutOfRangeError, isBeforeLiveDateError)(appConfig, clock, messages)
-          )
-        )
-      )(ExceededThresholdWeightAnswer.apply)(ExceededThresholdWeightAnswer.unapply)
+        "answer" -> toBoolean("liability.exceededThresholdWeight.question.empty.error")
+      )(identity)(Some.apply)
     )
 
-  private def getEmptyError = {
-    if(appConfig.isBackwardLookChangeEnabled)
-      "liability.exceededThresholdWeight.question.empty.error"
-    else "liability.exceededThresholdWeight.beforeApril2023.question.empty.error"
-  }
+
 }
