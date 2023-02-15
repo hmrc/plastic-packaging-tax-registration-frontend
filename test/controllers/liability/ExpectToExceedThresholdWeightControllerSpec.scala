@@ -113,6 +113,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
+        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
         redirectLocation(result).get mustBe controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
       }
 

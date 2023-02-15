@@ -18,6 +18,7 @@ package controllers.liability
 
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import forms.Date
 import forms.liability.ExpectToExceedThresholdWeight
 import models.registration.{Cacheable, NewLiability, Registration}
 import models.request.{JourneyAction, JourneyRequest}
@@ -74,13 +75,23 @@ class ExpectToExceedThresholdWeightController @Inject() (
     expectToExceedThresholdWeight: Boolean
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
+
       val updatedLiableDetails =
         registration.liabilityDetails.copy(
           expectToExceedThresholdWeight = Some(expectToExceedThresholdWeight),
+          dateRealisedExpectedToExceedThresholdWeight = resetDateRealised(expectToExceedThresholdWeight, registration),
           newLiabilityStarted = Some(NewLiability)
         )
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 
 
+  private def resetDateRealised(
+    expectToExceedThresholdWeight: Boolean,
+    registration: Registration
+  ): Option[Date] = {
+    if (expectToExceedThresholdWeight)
+      registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight
+    else None
+  }
 }
