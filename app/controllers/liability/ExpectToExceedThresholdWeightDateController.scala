@@ -26,7 +26,7 @@ import models.request.{JourneyAction, JourneyRequest}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.liability.expect_to_exceed_threshold_date_page
+import views.html.liability.expect_to_exceed_threshold_weight_date_page
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -37,7 +37,7 @@ class ExpectToExceedThresholdWeightDateController@Inject() (
                                                              journeyAction: JourneyAction,
                                                              override val registrationConnector: RegistrationConnector,
                                                              mcc: MessagesControllerComponents,
-                                                             page: expect_to_exceed_threshold_date_page,
+                                                             page: expect_to_exceed_threshold_weight_date_page,
                                                              form: ExpectToExceedThresholdWeightDate,
                                                              appConfig: AppConfig
                                                            )(implicit ec: ExecutionContext)

@@ -17,7 +17,6 @@
 package controllers.liability
 
 import base.unit.ControllerSpec
-import config.AppConfig
 import connectors.DownstreamServiceError
 import forms.Date
 import forms.liability.ExpectToExceedThresholdWeightDate
@@ -27,23 +26,22 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.data.{Form, FormError}
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER, UNAUTHORIZED}
+import play.api.data.Form
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import views.html.liability.expect_to_exceed_threshold_date_page
+import views.html.liability.expect_to_exceed_threshold_weight_date_page
 
 import java.time.{Clock, Instant, LocalDate}
-import java.time.temporal.TemporalQueries.localDate
 import java.util.TimeZone
 
 class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
-  private val page: expect_to_exceed_threshold_date_page = mock[expect_to_exceed_threshold_date_page]
+  private val page: expect_to_exceed_threshold_weight_date_page = mock[expect_to_exceed_threshold_weight_date_page]
   private val mockFormProvider = mock[ExpectToExceedThresholdWeightDate]
   private val form = mock[Form[LocalDate]]
   private val mcc: MessagesControllerComponents = stubMessagesControllerComponents()

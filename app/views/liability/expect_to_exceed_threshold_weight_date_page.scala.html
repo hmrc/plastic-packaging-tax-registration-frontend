@@ -33,7 +33,10 @@
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("liability.expectToExceedThreshold.date.question")) {
+@govukLayout(
+    title = Title("liability.expectToExceedThreshold.date.question"),
+    backButton = Some(BackButtonJs())
+) {
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, 'autoComplete -> "off") {
 
