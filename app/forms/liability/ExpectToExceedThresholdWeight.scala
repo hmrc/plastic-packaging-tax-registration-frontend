@@ -28,17 +28,8 @@ class ExpectToExceedThresholdWeight @Inject() extends Mappings {
 
   val emptyError = "liability.expectToExceedThresholdWeight.question.empty.error"
 
-//  def apply(): Form[Boolean] =
-//    Form("value" -> toBoolean(emptyError)
-//      .verifying(emptyError, _.nonEmpty)
-//      .transform[String](_.get, Some.apply)
-//      .transform[Boolean](_ == YES, _.toString)
-//    )
+
   def apply(): Form[Boolean] =
-    Form(
-      mapping(
-        "value" -> toBoolean(emptyError)
-      )(identity)(Some.apply)
-    )
+    Form("value" -> toBoolean(emptyError))
 
 }
