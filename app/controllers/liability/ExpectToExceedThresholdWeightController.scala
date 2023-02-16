@@ -44,7 +44,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.liabilityDetails.expectToExceedThresholdWeight match {
-        case Some(yesNo) => Ok(page(form().fill(true)))
+        case Some(yesNo) => Ok(page(form().fill(yesNo)))
         case _ => Ok(page(form()))
       }
     }

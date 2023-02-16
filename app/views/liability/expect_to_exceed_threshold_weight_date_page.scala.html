@@ -43,10 +43,12 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
         @govukDateInput(
             DateViewModel(
                 field  = form("expect-to-exceed-threshold-weight-date"),
-                legend = LegendViewModel(messages("liability.expectToExceedThreshold.date.question")).asPageHeading()
+                legend = LegendViewModel(messages("liability.expectToExceedThreshold.date.question")).asPageHeading(),
+                errors = form.errors
             )
             .withHint(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint"))))
         )

@@ -33,6 +33,6 @@ trait Mappings extends Formatters with Constraints {
   )(implicit messages: Messages) : FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
 
-  protected def toBoolean(msgKey: String) : FieldMapping[Boolean] = of(booleanFormatter(msgKey))
+  protected def yesNo(emptyErrorKey: String) : FieldMapping[Boolean] = of(yesNoFormatter(emptyErrorKey))
 
 }

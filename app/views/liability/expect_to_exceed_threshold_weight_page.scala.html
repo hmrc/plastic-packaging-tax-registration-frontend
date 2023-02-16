@@ -38,9 +38,6 @@
 
 @govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
 
-
-
-
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -52,9 +49,7 @@
         @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
         @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
 
-        @govukRadios(
-            RadiosViewModel.yesNo(field = form("value"))
-        )
+        @govukRadios(RadiosViewModel.yesNo(field = form("value")))
 
         @saveButtons()
     }

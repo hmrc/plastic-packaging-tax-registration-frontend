@@ -43,7 +43,7 @@ class ExpectToExceedThresholdWeightDateController@Inject() (
                                                            )(implicit ec: ExecutionContext)
   extends FrontendController(mcc) with Cacheable with I18nSupport {
 
-  def displayPage: Action[AnyContent] =
+  def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
       request.registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight match {
         case Some(date) => Ok(page(form().fill(date.date)))
@@ -51,7 +51,7 @@ class ExpectToExceedThresholdWeightDateController@Inject() (
       }
     }
 
-  def submit: Action[AnyContent] =
+  def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       form()
         .bindFromRequest()

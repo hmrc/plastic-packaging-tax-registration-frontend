@@ -30,6 +30,6 @@ class ExpectToExceedThresholdWeight @Inject() extends Mappings {
 
 
   def apply(): Form[Boolean] =
-    Form("value" -> toBoolean(emptyError))
+    Form("value" -> yesNo(emptyError))
 
 }

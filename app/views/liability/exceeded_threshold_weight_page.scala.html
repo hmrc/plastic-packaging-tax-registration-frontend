@@ -16,7 +16,10 @@
 
 @import controllers.liability.{routes => pptRoutes}
 @import views.html.main_template
-@import views.viewmodels.{BackButton, Title}
+@import views.viewmodels._
+@import views.viewmodels.govuk.fieldset._
+@import views.viewmodels.govuk.radios._
+@import views.viewmodels.govuk.errorsummary._
 
 @this(
     formHelper: FormWithCSRF,
@@ -25,45 +28,29 @@
     govukLayout: main_template,
     saveButtons: saveButtons,
     errorSummary: errorSummary,
-    saveAndContinue: saveAndContinue,
-    govukDateInput : GovukDateInput,
-    conditionalYesNo : conditionalYesNoRadio,
+    govukRadios : GovukRadios,
     paragraphBody: paragraphBody,    
 )
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@link = @{pptRoutes.ExceededThresholdWeightController.submit()}
-
-
-@errorMessages = @{
-    val errors = form.errors
-        .filter(err => !err.message.contains("liability.exceededThresholdWeight.question.empty.error"))
-        .map(er => messages(er.message, er.args.mkString)).mkString("<br>")
-    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
-}
-
-
-
 @govukLayout(
     title = Title("liability.exceededThresholdWeight.title"),
-    backButton = Some(BackButton(
-        messages("site.back"), 
-        pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
-        messages("site.back.hiddenText")))) {
+    backButton = Some(BackButtonJs())) {
 
-    @errorSummary(form.errors)
+    @formHelper(action = pptRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
 
-    @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
+        @errorSummary(form.errors)
 
-    @pageHeading(messages("liability.exceededThresholdWeight.question"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
+        @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
 
-    @formHelper(action = link, 'autoComplete -> "off") {
-        <!--    //todo make normal yes no    -->
-        @conditionalYesNo(form, None, None)
+        @pageHeading(messages("liability.exceededThresholdWeight.question"))
+        @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
+        @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
+        @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
+
+        @govukRadios(RadiosViewModel.yesNo(field = form("value")))
+
         @saveButtons()
     }
 }

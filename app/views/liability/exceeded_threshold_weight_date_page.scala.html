@@ -14,89 +14,42 @@
  * limitations under the License.
  *@
 
-@import controllers.liability.{routes => pptRoutes}
 @import views.html.main_template
-@import views.viewmodels.{BackButton, Title}
+@import views.viewmodels._
+@import views.viewmodels.govuk.date._
+@import views.viewmodels.govuk.fieldset._
+@import views.viewmodels.govuk.errorsummary._
+@import controllers.liability.{routes => pptRoutes}
+
 
 @this(
-    formHelper: FormWithCSRF,
-    sectionHeader: sectionHeader,
-    pageHeading: pageHeading,
     govukLayout: main_template,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukDateInput: GovukDateInput,
     saveButtons: saveButtons,
-    errorSummary: errorSummary,
-    saveAndContinue: saveAndContinue,
-    govukDateInput : GovukDateInput,
-    paragraphBody: paragraphBody
+    errorSummary: errorSummary
 )
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@dayField = @{form("exceeded-threshold-weight-date.day")}
-@monthField = @{form("exceeded-threshold-weight-date.month")}
-@yearField = @{form("exceeded-threshold-weight-date.year")}
-
-@errorMessages = @{
-    val errors = form.errors
-        .filter(err => !err.message.contains("liability.exceededThresholdWeight.question.empty.error"))
-        .map(er => messages(er.message, er.args.mkString)).mkString("<br>")
-    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
-}
-
 @govukLayout(
     title = Title("liability.exceededThresholdWeight.title"),
-    backButton = Some(BackButton(
-        messages("site.back"), 
-        pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
-        messages("site.back.hiddenText")))) {
-
-    @errorSummary(form.errors)
-
-    @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
-
-    @pageHeading(messages("liability.exceededThresholdWeight.question"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
+    backButton = Some(BackButtonJs())) {
 
     @formHelper(action = pptRoutes.ExceededThresholdWeightDateController.submit(), 'autoComplete -> "off") {
-            @govukDateInput(
-                DateInput(
-                    id = "exceeded-threshold-weight-date",
-                    hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint")))),
-                    errorMessage = errorMessages,
-                    fieldset = Some(Fieldset(
-                        legend = Some(Legend(
-                        content = Text(messages("liability.exceededThresholdWeightDate.title")),
-                        classes = gdsFieldsetPageHeading,
-                        isPageHeading = true
-                        ))
-                    )),
-                    items = Seq(
-                        InputItem(
-                            id = s"${dayField.name}",
-                            name = dayField.name,
-                            label = Some(messages("date.day")),
-                            value = dayField.value,
-                            classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
-                        ),
-                        InputItem(
-                            id = s"${monthField.name}",
-                            name = monthField.name,
-                            label = Some(messages("date.month")),
-                            value = monthField.value,
-                            classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
-                        ),
-                        InputItem(
-                            id = s"${yearField.name}",
-                            name = yearField.name,
-                            label = Some(messages("date.year")),
-                            value = yearField.value,
-                            classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
-                        )
-                    )
-                )
+
+        @errorSummary(form.errors)
+
+        @govukDateInput(
+            DateViewModel(
+                field  = form("exceeded-threshold-weight-date"),
+                legend = LegendViewModel(messages("liability.exceededThresholdWeight.question")).asPageHeading(),
+                errors = form.errors
             )
+            .withHint(Hint(content = Text(messages("liability.exceededThresholdWeight.date.hint"))))
+        )
+
         @saveButtons()
     }
 }

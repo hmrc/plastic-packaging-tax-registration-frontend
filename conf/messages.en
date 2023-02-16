@@ -461,14 +461,10 @@ liability.expectToExceedThreshold.one.field = Date must include the {0}
 
 liability.exceededThresholdWeight.sectionHeader = Liability details
 liability.exceededThresholdWeight.title = Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months?
-liability.exceededThresholdWeight.beforeApril2023.title = Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?
 liability.exceededThresholdWeight.question = Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months?
-liability.exceededThresholdWeight.beforeApril2023.question = Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?
 liability.exceededThresholdWeight.line1 = This is the total of all the plastic packaging you’ve manufactured or imported in the last 12 months.
-liability.exceededThresholdWeight.beforeApril2023.line1 = This is the total of all the plastic you’ve manufactured or imported since April.
 liability.exceededThresholdWeight.line2 = For example, you manufactured 5,000kg in April, 2,000kg in May and 3,000kg in June.
 liability.exceededThresholdWeight.line3 = If you’re registering as a group, each member must have met this threshold.
-liability.exceededThresholdWeight.beforeApril2023.question.empty.error = Select yes if you have manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022
 liability.exceededThresholdWeight.question.empty.error = Select yes if you have manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months
 
 liability.exceededThresholdWeightDate.sectionHeader = Liability details

@@ -27,9 +27,6 @@
 
 @(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
 
-
-@exceededThresholdLink = @{controllers.liability.routes.ExceededThresholdWeightController.displayPage()}
-
 @summary = @{
     Seq(
         SummaryListRow(
@@ -67,7 +64,7 @@
                 actions = Some(Actions(
                     items = Seq(
                     ActionItem(
-                        href = routes.ExpectToExceedThresholdWeightController.displayPage().url + "#expect-to-exceed-threshold-weight-date.day",
+                        href = routes.ExpectToExceedThresholdWeightDateController.displayPage().url,
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.dateRealisedExpectToExceededThreshold"))
                     )
@@ -88,7 +85,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = exceededThresholdLink.url,
+                        href = routes.ExceededThresholdWeightController.displayPage().url,
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.exceededThreshold"))
                     )
@@ -109,7 +106,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = exceededThresholdLink.url + "#exceeded-threshold-weight-date.day",
+                        href = routes.ExceededThresholdWeightDateController.displayPage().url,
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.dateExceededThreshold"))
                     )
