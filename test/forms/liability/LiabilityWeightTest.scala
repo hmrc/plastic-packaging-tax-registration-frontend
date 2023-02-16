@@ -60,6 +60,27 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
         val form = LiabilityWeight.form().bind(input)
         form.errors.size mustBe 0
       }
+
+      "amount contain a ," in {
+        val input = Map(totalKg -> "10,000")
+
+        val form = LiabilityWeight.form().bind(input)
+        form.errors.size mustBe 0
+      }
+
+      "amount contain a space" in {
+        val input = Map(totalKg -> "10 000")
+
+        val form = LiabilityWeight.form().bind(input)
+        form.errors.size mustBe 0
+      }
+
+      "amount contain a words" in {
+        val input = Map(totalKg -> "ghkghkj10125hjghjk")
+
+        val form = LiabilityWeight.form().bind(input)
+        form.errors.size mustBe 0
+      }
     }
 
     "return errors" when {
@@ -72,9 +93,9 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
         testFailedValidationErrors(input, expectedErrors)
       }
 
-      "contains alphanumerical or special character" in {
+      "contains words between digit" in {
 
-        val input          = Map(totalKg -> "20A#")
+        val input          = Map(totalKg -> "100ab12")
         val expectedErrors = Seq(FormError(totalKg, weightFormatError))
 
         testFailedValidationErrors(input, expectedErrors)

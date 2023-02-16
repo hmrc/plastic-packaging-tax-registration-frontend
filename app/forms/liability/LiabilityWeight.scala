@@ -55,7 +55,7 @@ object LiabilityWeight {
         totalKg -> mandatory(
           text()
             .verifying(weightEmptyError, _.nonEmpty)
-            .transform[String](weight => weight.trim, weight => weight)
+            .transform[String](weight => stripSpacesAndLetters(weight), weight => weight)
             .verifying(weightFormatError, weightIsValidNumber)
             .verifying(weightDecimalError, weightIsWholeNumber)
             .verifying(weightBelowThresholdError, weightAboveThreshold)
@@ -70,4 +70,15 @@ object LiabilityWeight {
   def toForm(liabilityWeight: LiabilityWeight): Option[Option[String]] =
     Some(liabilityWeight.totalKg.map(_.toString))
 
+  def stripSpacesAndLetters(weight: String) = {
+    val extractNumberRegex = """^[^\d-]*(-?\d+\.?\d*)\D*$""".r
+
+    weight.trim
+      .replace(",", "")
+      .replace(" ", "")
+    match {
+      case extractNumberRegex(number) => number
+      case _ => weight
+    }
+  }
 }
