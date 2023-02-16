@@ -62,7 +62,9 @@ class ExceededThresholdWeightController @Inject() (
       , alreadyExceeded =>
           updateRegistration(alreadyExceeded)
             .map {
-              case Right(_) => Redirect(routes.ExceededThresholdWeightDateController.displayPage())
+              case Right(_) =>
+                if (alreadyExceeded) Redirect(routes.ExceededThresholdWeightDateController.displayPage())
+                else Redirect(routes.TaxStartDateController.displayPage())
               case Left(error) => throw error
             }
       )
@@ -74,7 +76,8 @@ class ExceededThresholdWeightController @Inject() (
     update { registration =>
       registration.copy(liabilityDetails =
         registration.liabilityDetails.copy(
-        exceededThresholdWeight = Some(alreadyExceeded)
+          exceededThresholdWeight = Some(alreadyExceeded),
+          dateExceededThresholdWeight = if (alreadyExceeded) registration.liabilityDetails.dateExceededThresholdWeight else None
         )
       )
     }
