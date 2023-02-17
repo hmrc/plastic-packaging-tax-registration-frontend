@@ -66,6 +66,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
         val form = LiabilityWeight.form().bind(input)
         form.errors.size mustBe 0
+        form.value.get.totalKg mustBe Some(10000L)
       }
 
       "amount contain a space" in {
@@ -73,6 +74,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
         val form = LiabilityWeight.form().bind(input)
         form.errors.size mustBe 0
+        form.value.get.totalKg mustBe Some(10000L)
       }
 
       "amount contain a words" in {
@@ -80,6 +82,7 @@ class LiabilityWeightTest extends AnyWordSpec with Matchers {
 
         val form = LiabilityWeight.form().bind(input)
         form.errors.size mustBe 0
+        form.value.get.totalKg mustBe Some(10125L)
       }
     }
 
