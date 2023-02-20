@@ -15,34 +15,34 @@ GET        /start-registration   controllers.StartRegistrationController.startRe
 GET        /threshold-last-12-months            controllers.liability.ExceededThresholdWeightController.displayPage()
 POST       /threshold-last-12-months            controllers.liability.ExceededThresholdWeightController.submit()
 
-GET        /threshold-last-12-months-date     controllers.liability.ExceededThresholdWeightDateController.displayPage()
-POST       /threshold-last-12-months-date     controllers.liability.ExceededThresholdWeightDateController.submit()
+GET        /date-met-threshold                  controllers.liability.ExceededThresholdWeightDateController.displayPage()
+POST       /date-met-threshold                  controllers.liability.ExceededThresholdWeightDateController.submit()
 
-GET        /threshold-next-30-days       controllers.liability.ExpectToExceedThresholdWeightController.displayPage()
-POST       /threshold-next-30-days       controllers.liability.ExpectToExceedThresholdWeightController.submit()
+GET        /threshold-next-30-days              controllers.liability.ExpectToExceedThresholdWeightController.displayPage()
+POST       /threshold-next-30-days              controllers.liability.ExpectToExceedThresholdWeightController.submit()
 
-GET         /expect-to-exceed-threshold-weight-date controllers.liability.ExpectToExceedThresholdWeightDateController.displayPage()
-POST         /expect-to-exceed-threshold-weight-date controllers.liability.ExpectToExceedThresholdWeightDateController.submit()
+GET         /date-expected-to-meet-threshold    controllers.liability.ExpectToExceedThresholdWeightDateController.displayPage()
+POST        /date-expected-to-meet-threshold    controllers.liability.ExpectToExceedThresholdWeightDateController.submit()
 
-GET        /tax-start-date     controllers.liability.TaxStartDateController.displayPage()
-POST       /tax-start-date     controllers.liability.TaxStartDateController.submit()
+GET        /tax-start-date                      controllers.liability.TaxStartDateController.displayPage()
+POST       /tax-start-date                      controllers.liability.TaxStartDateController.submit()
 
-GET        /weight-next-12-months        controllers.liability.LiabilityWeightController.displayPage()
-POST       /weight-next-12-months        controllers.liability.LiabilityWeightController.submit()
+GET        /weight-next-12-months               controllers.liability.LiabilityWeightController.displayPage()
+POST       /weight-next-12-months               controllers.liability.LiabilityWeightController.submit()
 
-GET        /not-liable  controllers.liability.NotLiableController.displayPage()
+GET        /not-liable                          controllers.liability.NotLiableController.displayPage()
 
-GET        /single-or-group    controllers.liability.RegistrationTypeController.displayPage()
-POST       /single-or-group   controllers.liability.RegistrationTypeController.submit()
+GET        /single-or-group                     controllers.liability.RegistrationTypeController.displayPage()
+POST       /single-or-group                     controllers.liability.RegistrationTypeController.submit()
 
-GET        /group-same-control        controllers.liability.MembersUnderGroupControlController.displayPage()
-POST       /group-same-control        controllers.liability.MembersUnderGroupControlController.submit()
+GET        /group-same-control                  controllers.liability.MembersUnderGroupControlController.displayPage()
+POST       /group-same-control                  controllers.liability.MembersUnderGroupControlController.submit()
 
-GET        /group-cannot-register        controllers.liability.NotMembersUnderGroupControlController.displayPage()
-POST       /group-cannot-register        controllers.liability.NotMembersUnderGroupControlController.submit()
+GET        /group-cannot-register               controllers.liability.NotMembersUnderGroupControlController.displayPage()
+POST       /group-cannot-register               controllers.liability.NotMembersUnderGroupControlController.submit()
 
-GET        /liability-check-answers    controllers.liability.CheckLiabilityDetailsAnswersController.displayPage()
-POST       /liability-check-answers    controllers.liability.CheckLiabilityDetailsAnswersController.submit()
+GET        /liability-check-answers             controllers.liability.CheckLiabilityDetailsAnswersController.displayPage()
+POST       /liability-check-answers             controllers.liability.CheckLiabilityDetailsAnswersController.submit()
 
 # Organisation Details
 GET        /grs-callback   controllers.organisation.GrsController.grsCallback(journeyId)

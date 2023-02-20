@@ -25,6 +25,7 @@
 @this(
     govukLayout: main_template,
     formHelper: FormWithCSRF,
+    sectionHeader: sectionHeader,
     govukErrorSummary: GovukErrorSummary,
     headingLabel: headingLabel,
     govukDateInput: GovukDateInput,
@@ -36,23 +37,22 @@
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("liability.exceededThresholdWeight.title"),
+    title = Title("liability.exceededThresholdWeightDate.title"),
     backButton = Some(BackButtonJs())) {
 
     @formHelper(action = pptRoutes.ExceededThresholdWeightDateController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(form.errors)
 
-        @headingLabel(messages("liability.exceededThresholdWeight.question"), forID="exceeded-threshold-weight-date")
-
-        @paragraphBody("para sh-- stuff here")
+        @sectionHeader(messages("liability.sectionHeader"))
+        @headingLabel(messages("liability.exceededThresholdWeightDate.title"), forID="exceeded-threshold-weight-date")
 
         @govukDateInput(
             DateViewModel(
                 field  = form("exceeded-threshold-weight-date"),
                 errors = form.errors
             )
-            .withHint(Hint(content = Text(messages("liability.exceededThresholdWeight.date.hint"))))
+            .withHint(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint"))))
         )
 
         @saveButtons()

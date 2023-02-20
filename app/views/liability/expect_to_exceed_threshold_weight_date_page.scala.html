@@ -26,8 +26,10 @@
     govukLayout: main_template,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
+    sectionHeader: sectionHeader,
     headingLabel: headingLabel,
     govukDateInput: GovukDateInput,
+    bulletList: bulletList,
     saveButtons: saveButtons,
     paragraphBody: paragraphBody,
     errorSummary: errorSummary
@@ -36,7 +38,7 @@
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("liability.expectToExceedThreshold.date.question"),
+    title = Title("liability.expectToExceedThresholdDate.title"),
     backButton = Some(BackButtonJs())
 ) {
 
@@ -44,17 +46,25 @@
 
         @errorSummary(form.errors)
 
-        @headingLabel(messages("liability.expectToExceedThreshold.date.question"), forID = "expect-to-exceed-threshold-weight-date")
+        @sectionHeader(messages("liability.sectionHeader"))
 
-        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
-        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
+        @headingLabel(messages("liability.expectToExceedThresholdDate.title"), forID = "expect-to-exceed-threshold-weight-date")
+
+        @paragraphBody(messages("liability.expectToExceedThresholdDate.line1"))
+        @paragraphBody(messages("liability.expectToExceedThresholdDate.line2"))
+        @bulletList(elements = Seq(
+            Html(messages("liability.expectToExceedThresholdDate.line2.bullet1")),
+            Html(messages("liability.expectToExceedThresholdDate.line2.bullet2"))
+            )
+        )
+        @paragraphBody(messages("liability.expectToExceedThresholdDate.line3"))
 
         @govukDateInput(
             DateViewModel(
                 field  = form("expect-to-exceed-threshold-weight-date"),
                 errors = form.errors
             )
-            .withHint(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint"))))
+            .withHint(Hint(content = Text(messages("liability.expectToExceedThresholdDate.hint"))))
         )
 
         @saveButtons()

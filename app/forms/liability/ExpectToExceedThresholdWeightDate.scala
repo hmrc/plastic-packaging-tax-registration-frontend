@@ -26,11 +26,11 @@ import javax.inject.Inject
 
 class ExpectToExceedThresholdWeightDate @Inject()(appConfig: AppConfig, clock: Clock) extends Mappings {
 
-  val dateFormattingError = "liability.expectToExceedThreshold.date.invalid"
-  val dateOutOfRangeError = "liability.expectToExceedThreshold.date.future"
-  val dateEmptyError = "liability.expectToExceedThreshold.date.none"
-  val twoRequiredKey = "liability.expectToExceedThreshold.two.required.fields"
-  val requiredKey = "liability.expectToExceedThreshold.one.field"
+  val dateFormattingError = "liability.expectToExceedThresholdDate.invalid"
+  val dateOutOfRangeError = "liability.expectToExceedThresholdDate.future"
+  val dateEmptyError = "liability.expectToExceedThresholdDate.none"
+  val twoRequiredKey = "liability.expectToExceedThresholdDate.two.required.fields"
+  val requiredKey = "liability.expectToExceedThresholdDate.one.field"
 
   val beforeLiveDateError =
     "liability.taxStartDate.realisedThresholdWouldBeExceeded.before.goLiveDate.error"

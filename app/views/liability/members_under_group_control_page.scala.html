@@ -24,6 +24,7 @@
   formHelper: FormWithCSRF,
   govukLayout: main_template,
   govukFieldset: GovukFieldset,
+  sectionHeader: sectionHeader,
   govukRadios : GovukRadios,
   saveButtons: saveButtons,
   errorSummary: errorSummary
@@ -37,6 +38,7 @@
   backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationTypeController.displayPage(), messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
+    @sectionHeader(messages("liability.sectionHeader"))
 
     @formHelper(action = pptRoutes.MembersUnderGroupControlController.submit(), 'autoComplete -> "off") {
 

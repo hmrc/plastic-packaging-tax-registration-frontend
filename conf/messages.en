@@ -133,7 +133,6 @@ task.status.cannotStartYet = Cannot Start Yet
 liabilityStartDate.formatting.error = Liability start date - wrong format
 liabilityStartDate.outOfRange.error = Liability date must be today or in the past
 
-liabilityWeightPage.sectionHeader = Liability details
 liabilityWeightPage.title = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
 liabilityWeightPage.question = How much finished plastic packaging does your organisation or group estimate it will manufacture or import in the next 12 months?
 liabilityWeightPage.hint = Enter the weight, in kilograms. 1 tonne is 1,000kg.
@@ -157,7 +156,6 @@ liabilityExpectedWeight.trailingBlankSpace.error = Expected weight must not have
 liability.sectionHeader = Liability details
 liability.taxStartDate.title = Your tax start date
 liability.taxStartDate.pageHeading = Your tax start date
-liability.taxStartDate.sectionHeader = Liability details
 liability.taxStartDate.hint = Your tax start date is {0}.
 liability.taxStartDate.threshHoldBreached.hint = This is the first day of the month after you met the 10,000kg threshold.
 liability.taxStartDate.realisedThresholdWouldBeExceeded.hint = This is the date you had reasonable grounds to believe you would meet the 10,000kg threshold within 30 days.
@@ -442,24 +440,25 @@ notLiable.think.info = This is a new service and we want to know what you think 
 notLiable.think.feedback = {0}. Your thoughts and ideas will help us to make improvements.
 notLiable.think.feedback.link.description = Send us your feedback
 
-liability.expectToExceedThresholdWeight.sectionHeader = Liability details
-liability.expectToExceedThresholdWeight.title = On any day since 1 April 2022, did you have reasonable grounds to believe you would manufacture or import 10,000kg or more finished plastic packaging components within 30 days?
-liability.expectToExceedThresholdWeight.hint = If you’re registering as a group, each member must expect to meet this threshold.
-liability.expectToExceedThresholdWeight.question = On any day since 1 April 2022, did you have reasonable grounds to believe you would manufacture or import 10,000kg or more finished plastic packaging components within 30 days?
-liability.expectToExceedThresholdWeight.line1 = Example: On 16 May 2022, you receive an order to manufacture 20,000kg of plastic packaging which you must complete by 28 May 2022. This meets the 10,000kg threshold and is within 30 days.
+liability.expectToExceedThresholdWeight.title = Since 1 April 2022, have you expected to manufacture or import 10,000kg or more of finished plastic packaging components in the next 30 days?
+liability.expectToExceedThresholdWeight.line1 = Example: On 12 June 2022, you received an order to manufacture 11,000kg of plastic packaging that you had to complete by 25 June 2022. This means that on 12 June 2022 you expected to manufacture 10,000kg or more of plastic packaging in the next 30 days.
 liability.expectToExceedThresholdWeight.line2 = If you’re registering as a group, each member must be able to answer yes.
-liability.expectToExceedThresholdWeight.question.empty.error = Select yes, if on any day since 1 April 2022, you had reasonable grounds to believe you would reach the 10,000kg threshold within 30 days
+liability.expectToExceedThresholdWeight.question.empty.error = Select yes, if since 1 April 2022, you have expected to manufacture or import 10,000kg or more of finished plastic packaging components in the next 30 days
 
-liability.expectToExceedThreshold.date.question = What date did you have reasonable grounds to believe this?
-liability.expectToExceedThreshold.date.line1 = Example: On 12 June, you receive an order to manufacture 11,000kg of plastic packaging by 25 June. You should enter 12 June, as this is the date you had reasonable grounds to believe you would meet the threshold.
-liability.expectToExceedThreshold.date.hint = For example, 15 6 2022.
-liability.expectToExceedThreshold.date.none = Enter the date you had reasonable grounds to believe you would meet the 10,000kg threshold within 30 days
-liability.expectToExceedThreshold.date.invalid = Date must be a real date
-liability.expectToExceedThreshold.date.future = Date must be today or in the past
-liability.expectToExceedThreshold.two.required.fields = Date must include the {0}
-liability.expectToExceedThreshold.one.field = Date must include the {0}
 
-liability.exceededThresholdWeight.sectionHeader = Liability details
+liability.expectToExceedThresholdDate.title = When did you first expect you would have 10,000kg or more of finished plastic packaging components in the next 30 days?
+liability.expectToExceedThresholdDate.line1 = You could manufacture, import or a mixture of both.
+liability.expectToExceedThresholdDate.line2 = Use the date you had reasonable grounds to believe you would have 10,000kg or more of plastic packaging in the next 30 days. This could be the date you received:
+liability.expectToExceedThresholdDate.line2.bullet1 = an order to manufacture 10,000kg of plastic packaging components
+liability.expectToExceedThresholdDate.line2.bullet2 = confirmation that 10,000kg of plastic packaging components would be imported in the next 30 days.
+liability.expectToExceedThresholdDate.line3 = Example: On 12 June 2022, you received an order to manufacture 11,000kg of plastic packaging and you had to complete this order by 25 June 2022. You should enter 12 June 2022, as this is the date you expected you would have 11,000kg of plastic packaging in the next 30 days.
+liability.expectToExceedThresholdDate.hint = For example, 15 6 2022.
+liability.expectToExceedThresholdDate.none = Enter the date you first expected you would have 10,000kg or more of finished plastic packaging components in the next 30 days
+liability.expectToExceedThresholdDate.invalid = Date must be a real date
+liability.expectToExceedThresholdDate.future = Date must be today or in the past
+liability.expectToExceedThresholdDate.two.required.fields = Date must include the {0}
+liability.expectToExceedThresholdDate.one.field = Date must include the {0}
+
 liability.exceededThresholdWeight.title = Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months?
 liability.exceededThresholdWeight.question = Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months?
 liability.exceededThresholdWeight.line1 = This is the total of all the plastic packaging you’ve manufactured or imported in the last 12 months.
@@ -467,7 +466,6 @@ liability.exceededThresholdWeight.line2 = For example, you manufactured 5,000kg 
 liability.exceededThresholdWeight.line3 = If you’re registering as a group, each member must have met this threshold.
 liability.exceededThresholdWeight.question.empty.error = Select yes if you have manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months
 
-liability.exceededThresholdWeightDate.sectionHeader = Liability details
 liability.exceededThresholdWeightDate.title = When did you meet the 10,000kg threshold?
 liability.exceededThresholdWeightDate.hint = For example, 15 5 2022.
 liability.exceededThresholdWeightDate.formatting.error = Date must be a real date
