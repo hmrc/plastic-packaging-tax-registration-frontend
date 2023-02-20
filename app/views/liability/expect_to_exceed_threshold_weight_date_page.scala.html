@@ -26,8 +26,10 @@
     govukLayout: main_template,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
+    headingLabel: headingLabel,
     govukDateInput: GovukDateInput,
     saveButtons: saveButtons,
+    paragraphBody: paragraphBody,
     errorSummary: errorSummary
 )
 
@@ -40,14 +42,16 @@
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, 'autoComplete -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
+        @errorSummary(form.errors)
+
+        @headingLabel(messages("liability.expectToExceedThreshold.date.question"), forID = "expect-to-exceed-threshold-weight-date")
+
+        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
+        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
 
         @govukDateInput(
             DateViewModel(
                 field  = form("expect-to-exceed-threshold-weight-date"),
-                legend = LegendViewModel(messages("liability.expectToExceedThreshold.date.question")).asPageHeading(),
                 errors = form.errors
             )
             .withHint(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint"))))

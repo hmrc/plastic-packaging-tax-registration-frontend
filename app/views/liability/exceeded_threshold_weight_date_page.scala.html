@@ -26,8 +26,10 @@
     govukLayout: main_template,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
+    headingLabel: headingLabel,
     govukDateInput: GovukDateInput,
     saveButtons: saveButtons,
+    paragraphBody: paragraphBody,
     errorSummary: errorSummary
 )
 
@@ -41,10 +43,13 @@
 
         @errorSummary(form.errors)
 
+        @headingLabel(messages("liability.exceededThresholdWeight.question"), forID="exceeded-threshold-weight-date")
+
+        @paragraphBody("para sh-- stuff here")
+
         @govukDateInput(
             DateViewModel(
                 field  = form("exceeded-threshold-weight-date"),
-                legend = LegendViewModel(messages("liability.exceededThresholdWeight.question")).asPageHeading(),
                 errors = form.errors
             )
             .withHint(Hint(content = Text(messages("liability.exceededThresholdWeight.date.hint"))))

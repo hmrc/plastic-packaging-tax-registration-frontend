@@ -28,6 +28,9 @@ trait DateFluency {
 
   object DateViewModel extends ErrorMessageAwareness {
 
+    def apply(field: Field, errors: Seq[FormError])(implicit messages: Messages): DateInput =
+      apply(field = field, fieldset = Fieldset(legend = None), errors)
+
     def apply(field: Field, legend: Legend, errors: Seq[FormError])(implicit messages: Messages): DateInput =
       apply(field = field, fieldset = Fieldset(legend = Some(legend)), errors)
 

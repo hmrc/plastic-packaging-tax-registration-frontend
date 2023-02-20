@@ -25,11 +25,12 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     sectionHeader: sectionHeader,
-    pageHeading: pageHeading,
+    headingLabel: headingLabel,
     govukLayout: main_template,
     govukRadios : GovukRadios,
     saveButtons: saveButtons,
     paragraphBody: paragraphBody,
+    errorSummary: errorSummary
 )
 
 
@@ -39,13 +40,13 @@
 @govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
+
+        @errorSummary(form.errors)
 
         @sectionHeader(messages("liability.expectToExceedThresholdWeight.sectionHeader"))
 
-        @pageHeading(messages("liability.expectToExceedThresholdWeight.question"))
+        @headingLabel(messages("liability.expectToExceedThresholdWeight.question"))
+
         @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
         @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
 
