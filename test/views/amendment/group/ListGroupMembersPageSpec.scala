@@ -78,7 +78,7 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
         val errorForm = form.withError("foo", "site.button.tryAgain")
         val sut       = view(errorForm, fakeViewModel)(journeyRequest, messages)
 
-        sut.select("#error-summary-title").size() mustBe 1
+        sut.select(".govuk-error-summary__title").size() mustBe 1
       }
     }
   }
