@@ -71,7 +71,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map(year -> "2020", month -> "0", day -> "13")
-        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
+        val expectedErrors = Seq(FormError(day, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -79,7 +79,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is more than 12" in {
 
         val input          = Map(year -> "2020", month -> "13", day -> "13")
-        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
+        val expectedErrors = Seq(FormError(day, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -98,7 +98,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is less than 1" in {
 
         val input          = Map(year -> "2020", month -> "7", day -> "0")
-        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
+        val expectedErrors = Seq(FormError(day, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -106,7 +106,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is more than 31" in {
 
         val input          = Map(year -> "2020", month -> "7", day -> "32")
-        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
+        val expectedErrors = Seq(FormError(day, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }
@@ -143,7 +143,7 @@ class RegistrationDateSpec extends MessagesSpec with Matchers {
       "is an invalid date e.g. (30-02-2020)" in {
 
         val input          = Map(year -> "2020", month -> "2", day -> "30")
-        val expectedErrors = Seq(FormError(date, "enrolment.registrationDate.value.error.format"))
+        val expectedErrors = Seq(FormError(day, "enrolment.registrationDate.value.error.format"))
 
         testFailedValidationErrors(input, expectedErrors)
       }

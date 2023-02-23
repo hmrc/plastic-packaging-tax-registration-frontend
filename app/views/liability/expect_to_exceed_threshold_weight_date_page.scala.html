@@ -27,7 +27,7 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     sectionHeader: sectionHeader,
-    headingLabel: headingLabel,
+    pageHeading: pageHeading,
     govukDateInput: GovukDateInput,
     bulletList: bulletList,
     saveButtons: saveButtons,
@@ -48,7 +48,7 @@
 
         @sectionHeader(messages("liability.sectionHeader"))
 
-        @headingLabel(messages("liability.expectToExceedThresholdDate.title"), forID = "expect-to-exceed-threshold-weight-date")
+        @pageHeading(messages("liability.expectToExceedThresholdDate.title"))
 
         @paragraphBody(messages("liability.expectToExceedThresholdDate.line1"))
         @paragraphBody(messages("liability.expectToExceedThresholdDate.line2"))

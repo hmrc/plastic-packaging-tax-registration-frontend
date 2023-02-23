@@ -57,14 +57,14 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
         val boundForm = sut.bind(Map.empty[String, String])
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThreshold.date.none")
+        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThresholdDate.none")
       }
 
       "date is empty" in {
         val boundForm = sut.bind(toMap("", "", ""))
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) must contain("liability.expectToExceedThreshold.date.none")
+        boundForm.errors.map(_.message) must contain("liability.expectToExceedThresholdDate.none")
       }
 
       "only one date field is present" in {
@@ -73,7 +73,7 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
         )
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) must contain("liability.expectToExceedThreshold.two.required.fields")
+        boundForm.errors.map(_.message) must contain("liability.expectToExceedThresholdDate.two.required.fields")
       }
 
       "only two date fields is present" in {
@@ -83,28 +83,28 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
         ))
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) must contain("liability.expectToExceedThreshold.one.field")
+        boundForm.errors.map(_.message) must contain("liability.expectToExceedThresholdDate.one.field")
       }
 
       "date contain letters" in {
         val boundForm = sut.bind(toMap("av", "5", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThreshold.date.invalid")
+        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThresholdDate.invalid")
       }
 
       "date contain decimal" in {
         val boundForm = sut.bind(toMap("15", "5.6", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThreshold.date.invalid")
+        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThresholdDate.invalid")
       }
 
       "date is out of Range" in {
         val boundForm = sut.bind(toMap("15", "6", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThreshold.date.future")
+        boundForm.errors.map(_.message) mustBe Seq("liability.expectToExceedThresholdDate.future")
       }
 
       "date is before go live date" in {

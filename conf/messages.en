@@ -459,7 +459,7 @@ liability.expectToExceedThresholdDate.future = Date must be today or in the past
 liability.expectToExceedThresholdDate.two.required.fields = Date must include the {0}
 liability.expectToExceedThresholdDate.one.field = Date must include the {0}
 
-liability.exceededThresholdWeight.title = Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months?
+liability.exceededThresholdWeight.title = What you love about Pan
 liability.exceededThresholdWeight.question = Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months?
 liability.exceededThresholdWeight.line1 = This is the total of all the plastic packaging you’ve manufactured or imported in the last 12 months.
 liability.exceededThresholdWeight.line2 = For example, you manufactured 5,000kg in April, 2,000kg in May and 3,000kg in June.

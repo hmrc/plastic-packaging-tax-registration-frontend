@@ -71,7 +71,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
         mockRegistrationFind(aRegistration())
         when(mockFormProvider.apply()(any())).thenReturn(form)
 
-        val result = sut.displayPage(getRequest())
+        val result = sut.displayPage()()(getRequest())
 
         status(result) mustBe OK
     }
@@ -84,7 +84,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       mockRegistrationFind(registration)
       when(mockFormProvider.apply()(any())).thenReturn(form)
 
-      await(sut.displayPage(getRequest()))
+      await(sut.displayPage()(getRequest()))
 
       verify(page).apply(ArgumentMatchers.eq(form))(any(),any())
       verifyNoInteractions(form)
@@ -96,7 +96,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       when(mockFormProvider.apply()(any())).thenReturn(form)
       when(form.fill(any())).thenReturn(form)
 
-      await(sut.displayPage(getRequest()))
+      await(sut.displayPage()(getRequest()))
 
       verify(form).fill(LocalDate.of(2022,3,5))
       verify(page).apply(ArgumentMatchers.eq(form))(any(),any())
@@ -105,7 +105,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
     "return Unauthorised" in {
       unAuthorizedUser()
 
-      val result = sut.displayPage(getRequest())
+      val result = sut.displayPage()(getRequest())
 
       intercept[RuntimeException](status(result))
     }
@@ -116,7 +116,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
     "redirect" in {
       setUpMockForSubmit()
 
-      val result = sut.submit(FakeRequest())
+      val result = sut.submit()(FakeRequest())
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
@@ -130,7 +130,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       mockRegistrationFind(reg)
       when(appConfig.isBackwardLookChangeEnabled).thenReturn(false)
 
-      await(sut.submit(FakeRequest()))
+      await(sut.submit()(FakeRequest()))
 
       verify(mockRegistrationConnector).update(ArgumentMatchers.eq(createExpectedRegistration(reg)))(any())
     }
@@ -140,7 +140,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
         val bindForm = createForm.withError("error", "error message")
         setUpMockForSubmit(bindForm)
 
-        val result = sut.submit(FakeRequest())
+        val result = sut.submit()(FakeRequest())
 
         status(result) mustBe BAD_REQUEST
         verify(page).apply(ArgumentMatchers.eq(bindForm))(any(),any())
@@ -150,7 +150,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
         setUpMockForSubmit()
         mockRegistrationUpdateFailure()
 
-        val result = sut.submit(FakeRequest())
+        val result = sut.submit()(FakeRequest())
 
         intercept[DownstreamServiceError](status(result))
       }

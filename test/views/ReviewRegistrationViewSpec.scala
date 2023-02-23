@@ -222,7 +222,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 controllers.liability.routes.ExceededThresholdWeightController.displayPage().url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                liabilityRoutes.ExceededThresholdWeightController.displayPage() + "#exceeded-threshold-weight-date.day"
+                liabilityRoutes.ExceededThresholdWeightDateController.displayPage()
               )
             }
 
@@ -262,7 +262,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                 liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage().url
               )
               getChangeLinkFor(liabilitySection, 1, liabilityView) must haveHref(
-                liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage() +  "#expect-to-exceed-threshold-weight-date.day"
+                liabilityRoutes.ExpectToExceedThresholdWeightDateController.displayPage()
               )
               getChangeLinkFor(liabilitySection, 2, liabilityView) must haveHref(
                 liabilityRoutes.ExceededThresholdWeightController.displayPage()

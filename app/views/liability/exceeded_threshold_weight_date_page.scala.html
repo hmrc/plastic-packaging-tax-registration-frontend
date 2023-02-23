@@ -26,8 +26,7 @@
     govukLayout: main_template,
     formHelper: FormWithCSRF,
     sectionHeader: sectionHeader,
-    govukErrorSummary: GovukErrorSummary,
-    headingLabel: headingLabel,
+    pageHeading: pageHeading,
     govukDateInput: GovukDateInput,
     saveButtons: saveButtons,
     paragraphBody: paragraphBody,
@@ -45,7 +44,7 @@
         @errorSummary(form.errors)
 
         @sectionHeader(messages("liability.sectionHeader"))
-        @headingLabel(messages("liability.exceededThresholdWeightDate.title"), forID="exceeded-threshold-weight-date")
+        @pageHeading(messages("liability.exceededThresholdWeightDate.title"))
 
         @govukDateInput(
             DateViewModel(

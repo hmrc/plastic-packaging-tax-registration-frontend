@@ -28,14 +28,14 @@ class ExceededThresholdWeightSpec extends PlaySpec {
 
     "bind correctly" when {
       "yes is provided" in {
-        val boundForm = sut.bind(Map("answer" -> YesNoValues.YES))
+        val boundForm = sut.bind(Map("value" -> YesNoValues.YES))
 
         boundForm.value mustBe Some(true)
         boundForm.errors mustBe Nil
       }
 
       "no is provided" in {
-        val boundForm = sut.bind(Map("answer" -> YesNoValues.NO))
+        val boundForm = sut.bind(Map("value" -> YesNoValues.NO))
 
         boundForm.value mustBe Some(false)
         boundForm.errors mustBe Nil
@@ -57,9 +57,6 @@ class ExceededThresholdWeightSpec extends PlaySpec {
         boundForm.errors.map(_.message) mustBe Seq("liability.exceededThresholdWeight.question.empty.error")
       }
 
-      "error messages keys can be presented" in {
-
-      }
     }
   }
 

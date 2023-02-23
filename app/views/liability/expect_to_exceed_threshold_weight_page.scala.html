@@ -25,12 +25,12 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     sectionHeader: sectionHeader,
-    headingLabel: headingLabel,
+    pageHeading: pageHeading,
     govukLayout: main_template,
     govukRadios : GovukRadios,
     saveButtons: saveButtons,
     paragraphBody: paragraphBody,
-    errorSummary: errorSummary
+    errorSummary: errorSummary,
 )
 
 
@@ -45,7 +45,7 @@
 
         @sectionHeader(messages("liability.sectionHeader"))
 
-        @headingLabel(messages("liability.expectToExceedThresholdWeight.title"))
+        @pageHeading(messages("liability.expectToExceedThresholdWeight.title"))
 
         @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
         @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
