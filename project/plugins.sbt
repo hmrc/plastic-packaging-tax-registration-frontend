@@ -11,7 +11,7 @@ addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.5.1")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "2.2.0")
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.8")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.18")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 
