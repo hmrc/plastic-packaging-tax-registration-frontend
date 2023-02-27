@@ -28,7 +28,11 @@ import play.api.data.Forms.ignored
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
 import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukDateInput, GovukRadios}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
+import views.viewmodels.govuk.date.{DateViewModel, FluentDate}
 import views.html.components.{bulletList, _}
 import views.html.liability.expect_to_exceed_threshold_weight_date_page
 import views.html.main_template
@@ -153,7 +157,21 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
       instantiateView()
 
       insideGovUkWrapper must include("GOV UK DATE INPUT")
-      verify(govukDateInput).apply(any())
+      verify(govukDateInput).apply(
+        DateViewModel(
+          field  = form("expect-to-exceed-threshold-weight-date"),
+          legend = Legend(
+            content = Text("some message"),
+            classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+            isPageHeading = false
+          ),
+          errors = form.errors
+        )(mockMessages)
+          .withHint(Hint(content = Text("some message")))
+      )
+
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.question")
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.hint")
     }
 
     "have the continue button" in {
