@@ -440,19 +440,25 @@ notLiable.think.info = This is a new service and we want to know what you think 
 notLiable.think.feedback = {0}. Your thoughts and ideas will help us to make improvements.
 notLiable.think.feedback.link.description = Send us your feedback
 
-liability.expectToExceedThresholdWeight.title = Since 1 April 2022, have you expected to manufacture or import 10,000kg or more of finished plastic packaging components in the next 30 days?
-liability.expectToExceedThresholdWeight.line1 = Example: On 12 June 2022, you received an order to manufacture 11,000kg of plastic packaging that you had to complete by 25 June 2022. This means that on 12 June 2022 you expected to manufacture 10,000kg or more of plastic packaging in the next 30 days.
-liability.expectToExceedThresholdWeight.line2 = If you’re registering as a group, each member must be able to answer yes.
+liability.expectToExceedThresholdWeight.title = Meeting the threshold in the next 30 days
+liability.expectToExceedThresholdWeight.p1 = The threshold is 10,000kg or more of finished plastic packaging components. You could manufacture, import or a mixture of both.
+liability.expectToExceedThresholdWeight.inset.p1 = You need to register if:
+liability.expectToExceedThresholdWeight.inset.bullet.1 = you expect to import or manufacture 10,000kg or more of finished plastic packaging components in the next 30 days
+liability.expectToExceedThresholdWeight.inset.bullet.2 = on any day since 1 April 2022, you expected you would import or manufacture 10,000kg or more of finished plastic packaging components in the next 30 days
+liability.expectToExceedThresholdWeight.inset.p2 = Example: On 12 June 2022, you received an order to manufacture 11,000kg of plastic packaging that you had to complete by 25 June 2022. This means that on 12 June 2022 you expected to meet the threshold in the next 30 days.
+liability.expectToExceedThresholdWeight.p3 = If you’re unsure, find out more about {0}.
+liability.expectToExceedThresholdWeight.p3.link = the forward and backward look tests
+liability.expectToExceedThresholdWeight.question = On any day since 1 April 2022, did you expect you would meet the threshold in the next 30 days?
 liability.expectToExceedThresholdWeight.question.empty.error = Select yes, if since 1 April 2022, you have expected to manufacture or import 10,000kg or more of finished plastic packaging components in the next 30 days
 
 
-liability.expectToExceedThresholdDate.title = When did you first expect you would have 10,000kg or more of finished plastic packaging components in the next 30 days?
-liability.expectToExceedThresholdDate.line1 = You could manufacture, import or a mixture of both.
-liability.expectToExceedThresholdDate.line2 = Use the date you had reasonable grounds to believe you would have 10,000kg or more of plastic packaging in the next 30 days. This could be the date you received:
-liability.expectToExceedThresholdDate.line2.bullet1 = an order to manufacture 10,000kg of plastic packaging components
-liability.expectToExceedThresholdDate.line2.bullet2 = confirmation that 10,000kg of plastic packaging components would be imported in the next 30 days.
-liability.expectToExceedThresholdDate.line3 = Example: On 12 June 2022, you received an order to manufacture 11,000kg of plastic packaging and you had to complete this order by 25 June 2022. You should enter 12 June 2022, as this is the date you expected you would have 11,000kg of plastic packaging in the next 30 days.
-liability.expectToExceedThresholdDate.hint = For example, 15 6 2022.
+liability.expectToExceedThresholdDate.title = When you expected you would meet the threshold
+liability.expectToExceedThresholdDate.p1 = To work out your tax start date, you need to tell us when you had reasonable grounds to believe you would have 10,000kg or more of finished plastic packaging in the next 30 days. This could be the date you received:
+liability.expectToExceedThresholdDate.p1.bullet.1 = an order to manufacture 10,000kg or more of plastic packaging components in the next 30 days
+liability.expectToExceedThresholdDate.p1.bullet.2 = confirmation that 10,000kg or more of plastic packaging components would be imported in the next 30 days
+liability.expectToExceedThresholdDate.p2 = Example: On 12 June 2022, you received an order to manufacture 11,000kg of plastic packaging and you had to complete this order by 25 June 2022. You should use 12 June 2022, as this is the date you expected to meet the threshold in the next 30 days.
+liability.expectToExceedThresholdDate.question = When did you first expect you would meet the threshold in the next 30 days?
+liability.expectToExceedThresholdDate.hint = For example, 12 6 2022.
 liability.expectToExceedThresholdDate.none = Enter the date you first expected you would have 10,000kg or more of finished plastic packaging components in the next 30 days
 liability.expectToExceedThresholdDate.invalid = Date must be a real date
 liability.expectToExceedThresholdDate.future = Date must be today or in the past

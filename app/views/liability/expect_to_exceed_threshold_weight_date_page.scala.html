@@ -42,22 +42,21 @@
     backButton = Some(BackButtonJs())
 ) {
 
-    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, 'autoComplete -> "off") {
+    @errorSummary(form.errors)
 
-        @errorSummary(form.errors)
+    @sectionHeader(messages("liability.sectionHeader"))
 
-        @sectionHeader(messages("liability.sectionHeader"))
+    @pageHeading(messages("liability.expectToExceedThresholdDate.title"))
 
-        @pageHeading(messages("liability.expectToExceedThresholdDate.title"))
-
-        @paragraphBody(messages("liability.expectToExceedThresholdDate.line1"))
-        @paragraphBody(messages("liability.expectToExceedThresholdDate.line2"))
-        @bulletList(elements = Seq(
-            Html(messages("liability.expectToExceedThresholdDate.line2.bullet1")),
-            Html(messages("liability.expectToExceedThresholdDate.line2.bullet2"))
-            )
+    @paragraphBody(messages("liability.expectToExceedThresholdDate.p1"))
+    @bulletList(elements = Seq(
+        Html(messages("liability.expectToExceedThresholdDate.p1.bullet.1")),
+        Html(messages("liability.expectToExceedThresholdDate.p1.bullet.2"))
         )
-        @paragraphBody(messages("liability.expectToExceedThresholdDate.line3"))
+    )
+    @paragraphBody(messages("liability.expectToExceedThresholdDate.p2"))
+
+    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, 'autoComplete -> "off") {
 
         @govukDateInput(
             DateViewModel(
@@ -66,7 +65,7 @@
                     content = Text(messages("liability.expectToExceedThresholdDate.question")),
                     classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
                     isPageHeading = false
-                )
+                ),
                 errors = form.errors
             )
             .withHint(Hint(content = Text(messages("liability.expectToExceedThresholdDate.hint"))))

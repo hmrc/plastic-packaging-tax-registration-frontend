@@ -20,26 +20,26 @@
 @import views.viewmodels.govuk.fieldset._
 @import views.viewmodels.govuk.radios._
 @import views.viewmodels.govuk.errorsummary._
+@import play.twirl.api.HtmlFormat
 
 @this(
+    govukLayout: main_template,
     formHelper: FormWithCSRF,
-    govukErrorSummary: GovukErrorSummary,
+    errorSummary: errorSummary,
     sectionHeader: sectionHeader,
     pageHeading: pageHeading,
-    govukLayout: main_template,
     govukRadios : GovukRadios,
     saveButtons: saveButtons,
     paragraphBody: paragraphBody,
-    govukInsetText: GovukInsetText,
-    errorSummary: errorSummary,
+    inset: inset,
+    bulletList: bulletList,
+    link: link
 )
 
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-
 @govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
-
 
     @errorSummary(form.errors)
 
@@ -47,19 +47,32 @@
 
     @pageHeading(messages("liability.expectToExceedThresholdWeight.title"))
 
-    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
-    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.p1"))
+
+    @inset(
+        paragraphBody(messages("liability.expectToExceedThresholdWeight.inset.p1")),
+        bulletList(Seq(
+            paragraphBody(messages("liability.expectToExceedThresholdWeight.inset.bullet.1")),
+            paragraphBody(messages("liability.expectToExceedThresholdWeight.inset.bullet.2"))
+        ))
+    )
+
+    @paragraphBody(message = messages("liability.expectToExceedThresholdWeight.p3",
+        link(messages("liability.expectToExceedThresholdWeight.p3.link"), Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register"))
+    ))
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
 
-        @govukRadios(RadiosViewModel.yesNo(
-            field = form("value"),
-            legend = Legend(
-                content = Text(messages("liability.expectToExceedThresholdWeight.question")),
-                classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
-                isPageHeading = false
-            )
-        ))
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = Legend(
+                    content = Text(messages("liability.expectToExceedThresholdWeight.question")),
+                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                    isPageHeading = false
+                )
+            ).inline()
+        )
 
         @saveButtons()
     }
