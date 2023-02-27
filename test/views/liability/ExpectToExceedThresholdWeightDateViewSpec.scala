@@ -16,86 +16,161 @@
 
 package views.liability
 
-import base.unit.UnitViewSpec
-import forms.liability.ExpectToExceedThresholdWeightDate
-import org.jsoup.nodes.Document
-import org.scalatest.matchers.must.Matchers
-import controllers.liability.{routes => pptRoutes}
+import org.jsoup.Jsoup
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
+import org.mockito.Mockito.{atLeastOnce, reset, times, verify, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
+import play.api.data.Forms.ignored
+import play.api.i18n.Messages
+import play.api.test.FakeRequest
+import play.twirl.api.{Html, HtmlFormat}
+import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukDateInput, GovukRadios}
+import views.html.components.{bulletList, _}
 import views.html.liability.expect_to_exceed_threshold_weight_date_page
+import views.html.main_template
+import views.viewmodels.{BackButtonJs, Title}
 
-class ExpectToExceedThresholdWeightDateViewSpec extends UnitViewSpec with Matchers {
+class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEach {
 
-  private val page = inject[expect_to_exceed_threshold_weight_date_page]
-  private val formProvider: ExpectToExceedThresholdWeightDate = inject[ExpectToExceedThresholdWeightDate]
-  private val form = formProvider()
+  val request = FakeRequest()
+  val mockMessages: Messages = mock[Messages]
 
-  private def createView(form: Form[_] = form): Document = {
-    page(form)(journeyRequest, messages)
+  val form: Form[Boolean] = Form[Boolean]("value" -> ignored[Boolean](true))
+  val sectionHeader: sectionHeader = mock[sectionHeader]
+  val pageHeading: pageHeading = mock[pageHeading]
+  val govUkLayout: main_template = mock[main_template]
+  val contentCaptor = ArgumentCaptor.forClass(classOf[Html])
+  val saveButtons = mock[saveButtons]
+  val errorSummary = mock[errorSummary]
+  val govukDateInput = mock[GovukDateInput]
+  val paragraphBody = mock[paragraphBody]
+  val bulletList = mock[bulletList]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukDateInput, paragraphBody, bulletList)
+
+    when(mockMessages.apply(anyString(), any())).thenReturn("some message") //todo?
+    when(sectionHeader.apply(any())).thenReturn(HtmlFormat.raw("SECTION HEADER"))
+    when(pageHeading.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PAGE HEADING"))
+    when(govUkLayout.apply(any(), any(), any())(contentCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("GOVUK"))
+    when(saveButtons.apply(any())(any())).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
+    when(errorSummary.apply(any(), any())(any())).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
+    when(govukDateInput.apply(any())).thenReturn(HtmlFormat.raw("GOV UK DATE INPUT"))
+    when(bulletList.apply(any())).thenReturn(HtmlFormat.raw("BULLET LIST"))
+    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")):_*)
   }
 
-  "view" should {
+  private val page = new expect_to_exceed_threshold_weight_date_page(
+    formHelper = new FormWithCSRF,
+    sectionHeader = sectionHeader,
+    pageHeading = pageHeading,
+    govukLayout = govUkLayout,
+    saveButtons = saveButtons,
+    errorSummary = errorSummary,
+    paragraphBody = paragraphBody,
+    govukDateInput = govukDateInput,
+    bulletList = bulletList
+  )
 
-    "contain a title" in {
-      val title = createView().select("title").text()
+  "view" must {
+    "use govUk layout" in {
+      instantiateView()
 
-      title mustBe "What date did you have reasonable grounds to believe this? - Register for Plastic Packaging Tax - GOV.UK"
-      title must include(messages("liability.expectToExceedThreshold.date.question"))
+      verify(govUkLayout).apply(
+        meq(Title("liability.expectToExceedThresholdDate.title")),
+        meq(Some(BackButtonJs())),
+        any())(any())(meq(request), meq(mockMessages))
     }
 
-    "contain a header" in {
-      val headerText = createView().select("h1").text()
+    "have the form" in {
+      instantiateView()
 
-      headerText mustBe "What date did you have reasonable grounds to believe this?"
-      headerText mustBe messages("liability.expectToExceedThreshold.date.question")
+      val form = Jsoup.parse(insideGovUkWrapper).getElementsByTag("form").first()
+
+      form.attr("method") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit().method
+      form.attr("action") mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.submit().url
+      form.attr("autoComplete") mustBe "off"
+      assert(form.hasAttr("novalidate"))
     }
 
-    "contain a hint" in {
-      val hintText = createView().getElementsByClass("govuk-hint").text()
+    "have the error summary" in {
+      instantiateView()
 
-      hintText mustBe "For example, 15 6 2022."
-      hintText mustBe messages("liability.expectToExceedThreshold.date.hint")
+      insideGovUkWrapper must include("ERROR SUMMARY")
+      verify(errorSummary).apply(form.errors)(mockMessages)
     }
 
-    "contain 'Save and continue' button" in {
-      val buttonText = createView().getElementById("submit").text()
+    "have the section header" in {
+      instantiateView()
 
-      buttonText mustBe "Save and continue"
-      buttonText mustBe messages("site.button.saveAndContinue")
+      insideGovUkWrapper must include("SECTION HEADER")
+      verify(sectionHeader).apply("some message")
+      verify(mockMessages).apply("liability.sectionHeader")
     }
 
-    "have a submit action" in {
-      createView().select("form").attr("action") mustBe
-        pptRoutes.ExpectToExceedThresholdWeightDateController.submit.url
+    "have the h1" in {
+      instantiateView()
+
+      insideGovUkWrapper must include("PAGE HEADING")
+      verify(pageHeading).apply("some message")
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.question")
     }
 
-    "display error message" when {
-      "date not entered" in {
-        val message = "Enter the date you had reasonable grounds to believe you would meet the 10,000kg threshold within 30 days"
-        val view = createView(form.withError("expect-to-exceed-threshold-weight-date", "liability.expectToExceedThreshold.date.none"))
+    "have the first paragraph " in {
+      instantiateView()
 
-        assertSummaryError(view, "expect-to-exceed-threshold-weight-date", message)
-        assertErrorMessage(view, message)
-      }
+      insideGovUkWrapper must include("PARAGRAPH 0")
+      verify(paragraphBody, atLeastOnce()).apply("some message")
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1")
+    }
+
+    "have the bullet list" in {
+      instantiateView()
+
+      insideGovUkWrapper must include("BULLET LIST")
+      verify(bulletList).apply(Seq(
+        Html("some message"),
+        Html("some message")
+      ))
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1.bullet.1")
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1.bullet.2")
+    }
+
+    "have the second paragraph " in {
+      instantiateView()
+
+      insideGovUkWrapper must include("PARAGRAPH 1")
+      verify(paragraphBody, atLeastOnce()).apply("some message")
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p2")
+    }
+
+    "have the date input" in {
+      instantiateView()
+
+      insideGovUkWrapper must include("GOV UK DATE INPUT")
+      verify(govukDateInput).apply(any())
+    }
+
+    "have the continue button" in {
+      instantiateView()
+
+      insideGovUkWrapper must include("SAVE BUTTONS")
+      verify(saveButtons).apply()(mockMessages)
     }
   }
 
-  private def assertSummaryError(view: Document, key: String, message: String): Unit = {
-    val element = view.getElementsByClass("govuk-error-summary")
-    val text = element.text()
-    text must include("There is a problem")
-    text must include(message)
-
-    element.select("a").first() must haveHref(s"#$key")
+  //todo this is $h!t
+  "Exercise generated rendering methods" in {
+    page.f(form)(request, mockMessages)
+    page.render(form, request, mockMessages)
   }
 
-  private def assertErrorMessage(view: Document,  message: String): Unit = {
-    view.getElementById("expect-to-exceed-threshold-weight-date-error").text() must include(message)
-  }
-
-  override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(formProvider())(request, messages)
-    page.render(formProvider(), request, messages)
-  }
+  def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
+  def insideGovUkWrapper = contentCaptor.getValue.toString
 
 }
