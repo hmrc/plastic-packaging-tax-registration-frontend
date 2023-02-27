@@ -62,6 +62,11 @@
         @govukDateInput(
             DateViewModel(
                 field  = form("expect-to-exceed-threshold-weight-date"),
+                legend = Legend(
+                    content = Text(messages("liability.expectToExceedThresholdDate.question")),
+                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                    isPageHeading = false
+                )
                 errors = form.errors
             )
             .withHint(Hint(content = Text(messages("liability.expectToExceedThresholdDate.hint"))))

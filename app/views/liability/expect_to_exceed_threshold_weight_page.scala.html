@@ -30,6 +30,7 @@
     govukRadios : GovukRadios,
     saveButtons: saveButtons,
     paragraphBody: paragraphBody,
+    govukInsetText: GovukInsetText,
     errorSummary: errorSummary,
 )
 
@@ -39,18 +40,26 @@
 
 @govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
 
+
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("liability.sectionHeader"))
+
+    @pageHeading(messages("liability.expectToExceedThresholdWeight.title"))
+
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
+
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
 
-        @errorSummary(form.errors)
-
-        @sectionHeader(messages("liability.sectionHeader"))
-
-        @pageHeading(messages("liability.expectToExceedThresholdWeight.title"))
-
-        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
-        @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
-
-        @govukRadios(RadiosViewModel.yesNo(field = form("value")))
+        @govukRadios(RadiosViewModel.yesNo(
+            field = form("value"),
+            legend = Legend(
+                content = Text(messages("liability.expectToExceedThresholdWeight.question")),
+                classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                isPageHeading = false
+            )
+        ))
 
         @saveButtons()
     }
