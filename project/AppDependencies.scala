@@ -15,6 +15,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.16.0"                % Test,
     "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-27"    % "0.56.0"                % Test,
     "org.scalatest"           %% "scalatest"                  % "3.2.5"                 % Test,
+    "org.mockito"             %% "mockito-scala"              % "1.17.12"               % Test,
     "org.jsoup"               %  "jsoup"                      % "1.13.1"                % Test,
     "com.typesafe.play"       %% "play-test"                  % current                 % Test,
     "org.mockito"             %  "mockito-core"               % "3.9.0"                 % Test,
