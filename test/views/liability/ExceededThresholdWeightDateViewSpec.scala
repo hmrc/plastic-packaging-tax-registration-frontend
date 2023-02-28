@@ -17,22 +17,20 @@
 package views.liability
 
 import org.jsoup.Jsoup
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, anyString, eq => meq}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.captor.ArgCaptor
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.data.Forms.ignored
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukDateInput, GovukRadios}
+import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukDateInput}
 import views.html.components._
-import views.html.liability.{exceeded_threshold_weight_date_page, exceeded_threshold_weight_page}
+import views.html.liability.exceeded_threshold_weight_date_page
 import views.html.main_template
-import views.viewmodels.govuk.radios._
 import views.viewmodels.{BackButtonJs, Title}
 
 class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEach {
@@ -44,7 +42,7 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
   private val sectionHeader = mock[sectionHeader]
   private val pageHeading = mock[pageHeading]
   private val govUkLayout = mock[main_template]
-  private val contentCaptor = ArgumentCaptor.forClass(classOf[Html])
+  private val contentCaptor = ArgCaptor[Html]
   private val saveButtons = mock[saveButtons]
   private val errorSummary = mock[errorSummary]
   private val govukDateInput = mock[GovukDateInput]
@@ -54,14 +52,14 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
     super.beforeEach()
     reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukDateInput, paragraphBody)
 
-    when(mockMessages.apply(anyString(), any())).thenReturn("some message") //todo?
-    when(sectionHeader.apply(any())).thenReturn(HtmlFormat.raw("SECTION HEADER"))
-    when(pageHeading.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PAGE HEADING"))
-    when(govUkLayout.apply(any(), any(), any())(contentCaptor.capture())(any(), any())).thenReturn(HtmlFormat.raw("GOVUK"))
-    when(saveButtons.apply(any())(any())).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
-    when(errorSummary.apply(any(), any())(any())).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
-    when(govukDateInput.apply(any())).thenReturn(HtmlFormat.raw("GOV UK DATE INPUT"))
-    when(paragraphBody.apply(any(), any(), any())).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")):_*)
+    when(mockMessages.apply(any[String], any)).thenReturn("some message") //todo?
+    when(sectionHeader.apply(any)).thenReturn(HtmlFormat.raw("SECTION HEADER"))
+    when(pageHeading.apply(any, any, any)).thenReturn(HtmlFormat.raw("PAGE HEADING"))
+    when(govUkLayout.apply(any, any, any)(contentCaptor)(any, any)).thenReturn(HtmlFormat.raw("GOVUK"))
+    when(saveButtons.apply(any)(any)).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
+    when(errorSummary.apply(any, any)(any)).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
+    when(govukDateInput.apply(any)).thenReturn(HtmlFormat.raw("GOV UK DATE INPUT"))
+    when(paragraphBody.apply(any, any, any)).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")):_*)
   }
 
   private val page = new exceeded_threshold_weight_date_page(
@@ -80,9 +78,9 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
       instantiateView()
 
       verify(govUkLayout).apply(
-        meq(Title("liability.exceededThresholdWeight.title")),
-        meq(Some(BackButtonJs())),
-        any())(any())(meq(request), meq(mockMessages))
+        eqTo(Title("liability.exceededThresholdWeight.title")),
+        eqTo(Some(BackButtonJs())),
+        any)(any)(eqTo(request), eqTo(mockMessages))
     }
 
     "have the form" in {
@@ -123,7 +121,7 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
       instantiateView()
 
       insideGovUkWrapper must include("GOV UK DATE INPUT")
-      verify(govukDateInput).apply(any())
+      verify(govukDateInput).apply(any)
     }
 
     "have the continue button" in {
@@ -141,6 +139,6 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
   }
 
   private def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
-  private def insideGovUkWrapper = contentCaptor.getValue.toString
+  private def insideGovUkWrapper = contentCaptor.value.toString
 
 }
