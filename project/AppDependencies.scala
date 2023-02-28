@@ -8,12 +8,12 @@ object AppDependencies {
     ws,
     "uk.gov.hmrc"             %% "bootstrap-frontend-play-28" % "5.16.0",
     "uk.gov.hmrc"             %% "play-frontend-hmrc"         % "6.6.0-play-28",
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.68.0",
-    "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.10.0-play-28"
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-play-28"         % "0.74.0",
+    "uk.gov.hmrc"             %% "play-conditional-form-mapping" % "1.12.0-play-28"
   )
   val test = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-28"     % "5.16.0"                % Test,
-    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-27"    % "0.56.0"                % Test,
+    "uk.gov.hmrc.mongo"       %% "hmrc-mongo-test-play-28"    % "0.74.0"                % Test,
     "org.scalatest"           %% "scalatest"                  % "3.2.5"                 % Test,
     "org.jsoup"               %  "jsoup"                      % "1.13.1"                % Test,
     "com.typesafe.play"       %% "play-test"                  % current                 % Test,
