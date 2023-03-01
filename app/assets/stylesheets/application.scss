@@ -19,3 +19,10 @@ $hmrc-assets-path: "/register-for-plastic-packaging-tax/assets/lib/hmrc-frontend
   line-height: 1.25;
   color: #0b0c0c;
 }
+
+.js-visible {
+  display: none !important;
+}
+.js-enabled .js-visible {
+  display: inline-block !important;
+}
