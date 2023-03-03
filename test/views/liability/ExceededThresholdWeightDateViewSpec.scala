@@ -18,6 +18,8 @@ package views.liability
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.IdiomaticMockito
+import org.mockito.IdiomaticMockito.twice
 import org.mockito.MockitoSugar.{mock, reset, verify, when}
 import org.mockito.captor.ArgCaptor
 import org.scalatest.BeforeAndAfterEach
@@ -74,11 +76,12 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
   )
 
   "view" must {
-    "use govUk layout" ignore { // todo fix
+    
+    "use govUk layout" in {
       instantiateView()
 
       verify(govUkLayout).apply(
-        eqTo(Title("liability.exceededThresholdWeight.title")),
+        eqTo(Title("liability.exceededThresholdWeightDate.title")),
         eqTo(Some(BackButtonJs())),
         any)(any)(eqTo(request), eqTo(mockMessages))
     }
@@ -109,12 +112,21 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
       verify(mockMessages).apply("liability.sectionHeader")
     }
 
-    "have the h1" ignore { // todo fix
+    "have the h1" in {
       instantiateView()
 
       insideGovUkWrapper must include("PAGE HEADING")
       verify(pageHeading).apply("some message")
-      verify(mockMessages).apply("liability.exceededThresholdWeight.question")
+      verify(mockMessages).apply("liability.exceededThresholdWeightDate.title")
+    }
+
+    "have paragraphs" in {
+      instantiateView()
+      insideGovUkWrapper must include("PARAGRAPH 0")
+      insideGovUkWrapper must include("PARAGRAPH 1")
+      verify(paragraphBody, twice.verificationMode).apply("some message")
+      verify(mockMessages).apply("liability.exceededThresholdWeightDate.line1")
+      verify(mockMessages).apply("liability.exceededThresholdWeightDate.line2")
     }
 
     "have the radio buttons" in {
