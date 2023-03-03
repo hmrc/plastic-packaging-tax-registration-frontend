@@ -152,7 +152,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
       verify(mockMessages).apply("liability.exceededThresholdWeight.inset")
     }
 
-    "have the radio buttons" ignore {
+    "have the radio buttons" in {
       instantiateView()
 
       insideGovUkWrapper must include("GOV UK RADIOS")
@@ -167,8 +167,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
         ) (mockMessages).inline()
       )
 
-      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.question")
-      
+      verify(mockMessages).apply("liability.exceededThresholdWeight.question")
     }
 
     "have the continue button" in {
