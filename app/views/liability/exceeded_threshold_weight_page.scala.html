@@ -29,7 +29,9 @@
     saveButtons: saveButtons,
     errorSummary: errorSummary,
     govukRadios : GovukRadios,
-    paragraphBody: paragraphBody,    
+    inset: inset,
+    paragraphBody: paragraphBody,
+    link: link
 )
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
@@ -41,14 +43,20 @@
     @formHelper(action = pptRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
 
         @errorSummary(form.errors)
-
         @sectionHeader(messages("liability.sectionHeader"))
-
         @pageHeading(messages("liability.exceededThresholdWeight.title"))
 
         @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
+        @inset(
+            paragraphBody(messages("liability.exceededThresholdWeight.inset")),
+        )
         @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
         @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
+        @paragraphBody(messages("liability.exceededThresholdWeight.line4",
+            link(messages("liability.exceededThresholdWeight.line4.link-text"), 
+                Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register")
+            )
+        ))
 
         @govukRadios(RadiosViewModel.yesNo(
             field = form("value"),
@@ -56,8 +64,8 @@
                 content = Text(messages("liability.exceededThresholdWeight.question")),
                 classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
                 isPageHeading = false
-            )
-        ))
+            )).inline()
+        )
 
         @saveButtons()
     }

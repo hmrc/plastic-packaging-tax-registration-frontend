@@ -46,9 +46,17 @@
         @sectionHeader(messages("liability.sectionHeader"))
         @pageHeading(messages("liability.exceededThresholdWeightDate.title"))
 
+        @paragraphBody(messages("liability.exceededThresholdWeightDate.line1"))
+        @paragraphBody(messages("liability.exceededThresholdWeightDate.line2"))
+
         @govukDateInput(
             DateViewModel(
                 field  = form("exceeded-threshold-weight-date"),
+                legend = Legend(
+                    content = Text(messages("liability.exceededThresholdWeightDate.question")),
+                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                    isPageHeading = false
+                ), 
                 errors = form.errors
             )
             .withHint(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint"))))

@@ -26,13 +26,14 @@ import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios}
-import views.html.components.{errorSummary, pageHeading, paragraphBody, saveButtons, sectionHeader}
+import views.html.components.{errorSummary, inset, link, pageHeading, paragraphBody, saveButtons, sectionHeader}
 import views.html.liability.exceeded_threshold_weight_page
 import views.html.main_template
 import views.viewmodels.govuk.radios._
 import views.viewmodels.{BackButtonJs, Title}
 import org.mockito.MockitoSugar.{mock, reset, times, verify, when}
 import org.mockito.captor.ArgCaptor
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 
 class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
 
@@ -47,7 +48,9 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
   private val saveButtons = mock[saveButtons]
   private val errorSummary = mock[errorSummary]
   private val govukRadios = mock[GovukRadios]
+  private val insetText = mock[inset]
   private val paragraphBody = mock[paragraphBody]
+  private val link = mock[link]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -71,7 +74,9 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
     saveButtons,
     errorSummary,
     govukRadios,
-    paragraphBody
+    insetText,
+    paragraphBody,
+    link
   )
 
   "view" must {
@@ -129,11 +134,23 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
       verify(mockMessages).apply("liability.exceededThresholdWeight.line3")
     }
 
-    "have the radio buttons" ignore { // TODO fix
+    "have the radio buttons" in {
       instantiateView()
 
       insideGovUkWrapper must include("GOV UK RADIOS")
-      verify(govukRadios).apply(RadiosViewModel.yesNo(field = form("value"))(mockMessages))
+      verify(govukRadios).apply(
+        RadiosViewModel.yesNo(
+          field = form("value"),
+          legend = Legend(
+            content = Text("some message"),
+            classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+            isPageHeading = false
+          )
+        ) (mockMessages).inline()
+      )
+
+      verify(mockMessages).apply("liability.expectToExceedThresholdWeight.question")
+      
     }
 
     "have the continue button" in {
