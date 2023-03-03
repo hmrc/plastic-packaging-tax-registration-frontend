@@ -18,9 +18,7 @@ package views.liability
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
-import org.mockito.IdiomaticMockito
-import org.mockito.IdiomaticMockito.twice
-import org.mockito.MockitoSugar.{mock, reset, verify, when}
+import org.mockito.MockitoSugar.{mock, reset, times, verify, when}
 import org.mockito.captor.ArgCaptor
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
@@ -124,7 +122,7 @@ class ExceededThresholdWeightDateViewSpec extends PlaySpec with BeforeAndAfterEa
       instantiateView()
       insideGovUkWrapper must include("PARAGRAPH 0")
       insideGovUkWrapper must include("PARAGRAPH 1")
-      verify(paragraphBody, twice.verificationMode).apply("some message")
+      verify(paragraphBody, times(2)).apply("some message")
       verify(mockMessages).apply("liability.exceededThresholdWeightDate.line1")
       verify(mockMessages).apply("liability.exceededThresholdWeightDate.line2")
     }
