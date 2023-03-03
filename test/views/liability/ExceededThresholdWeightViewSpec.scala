@@ -18,24 +18,26 @@ package views.liability
 
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.MockitoSugar
+import org.mockito.captor.ArgCaptor
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
 import play.api.data.Forms.ignored
 import play.api.i18n.Messages
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios}
-import views.html.components.{errorSummary, inset, link, pageHeading, paragraphBody, saveButtons, sectionHeader}
+import views.html.components._
 import views.html.liability.exceeded_threshold_weight_page
 import views.html.main_template
 import views.viewmodels.govuk.radios._
 import views.viewmodels.{BackButtonJs, Title}
-import org.mockito.MockitoSugar.{mock, reset, times, verify, when}
-import org.mockito.captor.ArgCaptor
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
 
-class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
+class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
   private val request = FakeRequest()
   private val mockMessages = mock[Messages]
@@ -124,7 +126,6 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
 
     "have the paragraphs" in {
       instantiateView()
-
       insideGovUkWrapper must include("PARAGRAPH 0")
       insideGovUkWrapper must include("PARAGRAPH 1")
       insideGovUkWrapper must include("PARAGRAPH 2")
@@ -132,9 +133,18 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach {
       verify(mockMessages).apply("liability.exceededThresholdWeight.inset")
       verify(mockMessages).apply("liability.exceededThresholdWeight.line2")
       verify(mockMessages).apply("liability.exceededThresholdWeight.line3")
+      verify(paragraphBody, times(5)).apply("some message") // including paragraph with link
+    }
+    
+    "have link to guidance" in {
+      val linkToGuidance = mock[Html]
+      when(link.apply(any, any, any, any, any, any)) thenReturn linkToGuidance
+      instantiateView()
+      
+      verify(link).apply("some message", Call("GET", 
+        "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register"))
+      verify(mockMessages).apply("liability.exceededThresholdWeight.line4", linkToGuidance)
       verify(mockMessages).apply("liability.exceededThresholdWeight.line4.link-text")
-//      verify(mockMessages).apply("liability.exceededThresholdWeight.line4", any[link])
-      verify(paragraphBody, times(5)).apply("some message")
     }
 
     "have the radio buttons" ignore {
