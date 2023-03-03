@@ -50,14 +50,12 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
   private val saveButtons = mock[saveButtons]
   private val errorSummary = mock[errorSummary]
   private val govukRadios = mock[GovukRadios]
-  private val insetText = mock[inset]
+  private val inset = mock[inset]
   private val paragraphBody = mock[paragraphBody]
   private val link = mock[link]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockMessages, sectionHeader, pageHeading, govUkLayout, saveButtons, errorSummary, govukRadios, paragraphBody)
-
     when(mockMessages.apply(any[String], any)).thenReturn("some message") //todo?
     when(sectionHeader.apply(any)).thenReturn(HtmlFormat.raw("SECTION HEADER"))
     when(pageHeading.apply(any, any, any)).thenReturn(HtmlFormat.raw("PAGE HEADING"))
@@ -76,7 +74,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
     saveButtons,
     errorSummary,
     govukRadios,
-    insetText,
+    inset,
     paragraphBody,
     link
   )
@@ -133,18 +131,25 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
       verify(mockMessages).apply("liability.exceededThresholdWeight.inset")
       verify(mockMessages).apply("liability.exceededThresholdWeight.line2")
       verify(mockMessages).apply("liability.exceededThresholdWeight.line3")
-      verify(paragraphBody, times(5)).apply("some message") // including paragraph with link
+      verify(paragraphBody, times(5)).apply("some message") // including inset and link-to-guidance
     }
     
     "have link to guidance" in {
       val linkToGuidance = mock[Html]
       when(link.apply(any, any, any, any, any, any)) thenReturn linkToGuidance
       instantiateView()
-      
       verify(link).apply("some message", Call("GET", 
         "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register"))
       verify(mockMessages).apply("liability.exceededThresholdWeight.line4", linkToGuidance)
       verify(mockMessages).apply("liability.exceededThresholdWeight.line4.link-text")
+    }
+    
+    "have the inset" in {
+      val paragraph = mock[Html]
+      when(paragraphBody.apply(any, any, any)) thenReturn paragraph
+      instantiateView()
+      verify(inset).apply(paragraph)
+      verify(mockMessages).apply("liability.exceededThresholdWeight.inset")
     }
 
     "have the radio buttons" ignore {
