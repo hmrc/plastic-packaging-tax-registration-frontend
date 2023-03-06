@@ -473,7 +473,7 @@ liability.exceededThresholdWeight.line3 = If you’re registering as a group, ea
 liability.exceededThresholdWeight.line4 = If you’re unsure, find out more about {0}.
 liability.exceededThresholdWeight.line4.link-text = the forward and backward look tests
 liability.exceededThresholdWeight.question = Have you met the threshold in the last 12 months?
-liability.exceededThresholdWeight.question.empty.error = TODO 
+liability.exceededThresholdWeight.question.empty.error = Select yes if you have manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months
 
 liability.exceededThresholdWeightDate.title = When you met the threshold
 liability.exceededThresholdWeightDate.line1 = To work out your tax start date, you need to tell us when you had 10,000kg or more of finished plastic packaging components.
