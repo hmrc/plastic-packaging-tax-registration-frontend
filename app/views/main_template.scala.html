@@ -89,11 +89,11 @@
     }
 }
 
-@backLink(title: String, url: String, hiddenText: Option[String] = None) = @{
+@backLink(title: String, url: String, hiddenText: Option[String] = None, jsDisabledHide: Boolean = false) = @{
     govukBackLink(BackLink(
         content = HtmlContent(Html(s"""${title}${hiddenText.fold("")(o => s"""<span class="govuk-visually-hidden">$o</span>""")}""")),
         attributes = Map("id" -> "back-link"),
-        classes = "govuk-!-display-none-print",
+        classes = s"govuk-!-display-none-print ${if(jsDisabledHide)"js-visible" else ""}",
         href = url
     ))
 }
@@ -117,7 +117,7 @@
 
     <div class="govuk-back-link-div">
     @backButton.map {
-        case BackButtonJs(call) => { @backLink(messages("site.back"), call.url) }
+        case BackButtonJs(call) => { @backLink(messages("site.back"), call.url, jsDisabledHide = true) }
         case BackButton(title, call, hiddenText) => { @backLink(title, call.url, Some(hiddenText)) }
     }
     </div>

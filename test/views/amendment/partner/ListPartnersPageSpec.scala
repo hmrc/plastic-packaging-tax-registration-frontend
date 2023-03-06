@@ -103,7 +103,7 @@ class ListPartnersPageSpec extends UnitViewSpec with Matchers {
         val view =
           page(errorForm, partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
 
-        view.select("#error-summary-title").size() mustBe 1
+        view.select(".govuk-error-summary__title").size() mustBe 1
       }
     }
 
