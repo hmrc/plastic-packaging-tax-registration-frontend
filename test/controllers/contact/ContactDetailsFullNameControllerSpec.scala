@@ -79,100 +79,95 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
-        "user submits or saves the contact full name" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
-          mockRegistrationUpdate()
+    "return 303 (OK) " when {
+      "user submits or saves the contact full name" in {
+        authorizedUser()
+        mockRegistrationFind(aRegistration())
+        mockRegistrationUpdate()
 
-          val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName -'. LastName"), formAction))
+        val result =
+          controller.submit()(postRequestEncoded(FullName("FirstName -'. LastName")))
 
-          status(result) mustBe SEE_OTHER
+        status(result) mustBe SEE_OTHER
 
-          modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName -'. LastName")
+        modifiedRegistration.primaryContactDetails.name mustBe Some("FirstName -'. LastName")
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsJobTitleController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
+
+        redirectLocation(result) mustBe Some(
+          routes.ContactDetailsJobTitleController.displayPage().url
+        )
+
+      }
+    }
+
+    "return 400 (BAD_REQUEST)" when {
+      "user does not enter name" in {
+
+        authorizedUser()
+        val result = controller.submit()(postRequestEncoded(FullName("")))
+
+        status(result) mustBe BAD_REQUEST
       }
 
-      "return 400 (BAD_REQUEST) for " + formAction._1 when {
-        "user does not enter name" in {
+      "user enters a long name" in {
+        authorizedUser()
+        val result = controller.submit()(postRequestEncoded(FullName("abced" * 40)))
 
-          authorizedUser()
-          val result = controller.submit()(postRequestEncoded(FullName(""), formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters a long name" in {
-          authorizedUser()
-          val result = controller.submit()(postRequestEncoded(FullName("abced" * 40), formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters non-alphabetic characters" in {
-          authorizedUser()
-          val result =
-            controller.submit()(
-              postRequestEncoded(FullName("FirstNam807980234£$ LastName"), formAction)
-            )
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters non-alphabetic no digits" in {
-          authorizedUser()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("()/,& LastName"), formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
-
-        "user enters accented characters" in {
-          authorizedUser()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("Chlöe Anne-Marie"), formAction))
-
-          status(result) mustBe BAD_REQUEST
-        }
+        status(result) mustBe BAD_REQUEST
       }
 
-      "return an error for " + formAction._1 when {
+      "user enters non-alphabetic characters" in {
+        authorizedUser()
+        val result =
+          controller.submit()(
+            postRequestEncoded(FullName("FirstNam807980234£$ LastName"))
+          )
 
-        "user is not authorised" in {
-          unAuthorizedUser()
-          val result = controller.displayPage()(getRequest())
+        status(result) mustBe BAD_REQUEST
+      }
 
-          intercept[RuntimeException](status(result))
-        }
+      "user enters non-alphabetic no digits" in {
+        authorizedUser()
+        val result =
+          controller.submit()(postRequestEncoded(FullName("()/,& LastName")))
 
-        "user submits form and the registration update fails" in {
-          authorizedUser()
-          mockRegistrationUpdateFailure()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
+        status(result) mustBe BAD_REQUEST
+      }
 
-          intercept[DownstreamServiceError](status(result))
-        }
+      "user enters accented characters" in {
+        authorizedUser()
+        val result =
+          controller.submit()(postRequestEncoded(FullName("Chlöe Anne-Marie")))
 
-        "user submits form and a registration update runtime exception occurs" in {
-          authorizedUser()
-          mockRegistrationException()
-          val result =
-            controller.submit()(postRequestEncoded(FullName("FirstName LastName"), formAction))
+        status(result) mustBe BAD_REQUEST
+      }
+    }
 
-          intercept[RuntimeException](status(result))
-        }
+    "return an error" when {
+
+      "user is not authorised" in {
+        unAuthorizedUser()
+        val result = controller.displayPage()(getRequest())
+
+        intercept[RuntimeException](status(result))
+      }
+
+      "user submits form and the registration update fails" in {
+        authorizedUser()
+        mockRegistrationUpdateFailure()
+        val result =
+          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
+
+        intercept[DownstreamServiceError](status(result))
+      }
+
+      "user submits form and a registration update runtime exception occurs" in {
+        authorizedUser()
+        mockRegistrationException()
+        val result =
+          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
+
+        intercept[RuntimeException](status(result))
       }
     }
 

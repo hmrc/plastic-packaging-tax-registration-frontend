@@ -183,7 +183,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         ).thenReturn(Future.successful("an-email-verification-journey-id"))
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(EmailAddress("proposed-email@localhost"), saveAndContinueFormAction)
+          postRequestEncoded(EmailAddress("proposed-email@localhost"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -242,7 +242,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         ).thenReturn(Future.successful(EmailVerificationJourneyStatus.COMPLETE))
 
         val result = controller.checkNewPartnerEmailVerificationCode()(
-          postRequestEncoded(EmailAddressPasscode("ACODE"), saveAndContinueFormAction)
+          postRequestEncoded(EmailAddressPasscode("ACODE"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -266,7 +266,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         // Email verification will not be called in this case
         val result = controller.checkNewPartnerEmailVerificationCode()(
-          postRequestEncoded(EmailAddressPasscode(""), saveAndContinueFormAction)
+          postRequestEncoded(EmailAddressPasscode(""))
         )
 
         status(result) mustBe BAD_REQUEST
@@ -303,9 +303,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(EmailAddress("new-partners-email@localhost"),
-                             saveAndContinueFormAction
-          )
+          postRequestEncoded(EmailAddress("new-partners-email@localhost"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -421,7 +419,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
 
         val result = controller.checkExistingPartnerEmailVerificationCode(
           existingNominatedPartner.id
-        )(postRequestEncoded(EmailAddressPasscode("ACODE"), saveAndContinueFormAction))
+        )(postRequestEncoded(EmailAddressPasscode("ACODE")))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -519,7 +517,7 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(EmailAddress("test@localhost"), saveAndContinueFormAction)
+          postRequestEncoded(EmailAddress("test@localhost"))
         )
 
         intercept[RuntimeException](status(result))

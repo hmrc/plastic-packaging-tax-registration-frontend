@@ -118,8 +118,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
     }
 
-    forAll(Seq(saveAndContinueFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK)" when {
 
         "user submits organisation type: " + UK_COMPANY in {
           mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
@@ -132,7 +131,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString)
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
           redirectLocation(result) mustBe Some("http://test/redirect/partnership")
@@ -145,7 +144,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("answer" -> PARTNERSHIP.toString, formAction)
+          val correctForm = Seq("answer" -> PARTNERSHIP.toString)
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
           redirectLocation(result) mustBe Some(
             partnerRoutes.PartnershipTypeController.displayPage().url
@@ -191,7 +190,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
         mockRegistrationUpdate()
 
-        val correctForm = Seq("answer" -> orgType.toString, formAction)
+        val correctForm = Seq("answer" -> orgType.toString)
         val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
@@ -200,12 +199,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         redirectLocation(result) mustBe Some(redirectUrl)
       }
 
-      "return 400 (BAD_REQUEST) for " + formAction._1 when {
+      "return 400 (BAD_REQUEST) " when {
         "user does not enter mandatory fields" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           val result =
-            controller.submitNewMember()(postRequestEncoded(JsObject.empty, formAction))
+            controller.submitNewMember()(postRequestEncoded(JsObject.empty))
 
           status(result) mustBe BAD_REQUEST
         }
@@ -213,14 +212,14 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "user enters invalid data" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
-          val incorrectForm = Seq("answer" -> "maybe", formAction)
+          val incorrectForm = Seq("answer" -> "maybe")
           val result        = controller.submitNewMember()(postJsonRequestEncoded(incorrectForm: _*))
 
           status(result) mustBe BAD_REQUEST
         }
       }
 
-      "return an error for " + formAction._1 when {
+      "return an error" when {
 
         "user is not authorised" in {
           unAuthorizedUser()
@@ -234,7 +233,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationFind(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
           mockRegistrationUpdateFailure()
 
-          val correctForm = Seq("answer" -> UK_COMPANY.toString, formAction)
+          val correctForm = Seq("answer" -> UK_COMPANY.toString)
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[DownstreamServiceError](status(result))
@@ -245,12 +244,12 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationFind(aRegistration())
           mockRegistrationException()
 
-          val correctForm = Seq("answer" -> UK_COMPANY.toString, formAction)
+          val correctForm = Seq("answer" -> UK_COMPANY.toString)
           val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[RuntimeException](status(result))
         }
       }
     }
-  }
+
 }

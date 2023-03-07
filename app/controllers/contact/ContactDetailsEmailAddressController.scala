@@ -21,11 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.NotEnrolledAuthAction
 import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddress
 import models.emailverification.EmailVerificationStatus.{
@@ -74,12 +70,7 @@ class ContactDetailsEmailAddressController @Inject() (
           emailAddress =>
             updateRegistration(formData = emailAddress, credId = request.user.credId).flatMap {
               case Right(registration) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    saveAndContinue(registration, request.user.credId)
-                  case _ =>
-                    Future(Redirect(commonRoutes.TaskListController.displayPage()))
-                }
+                saveAndContinue(registration, request.user.credId)
               case Left(error) => throw error
             }
         )

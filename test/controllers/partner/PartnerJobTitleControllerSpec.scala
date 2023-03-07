@@ -101,7 +101,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(JobTitle("Director"), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("Director"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -137,7 +137,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
-          controller.submitNewPartner()(postRequestEncoded(JobTitle(""), saveAndContinueFormAction))
+          controller.submitNewPartner()(postRequestEncoded(JobTitle("")))
 
         status(result) mustBe BAD_REQUEST
       }
@@ -147,7 +147,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(JobTitle("abced" * 40), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("abced" * 40))
         )
 
         status(result) mustBe BAD_REQUEST
@@ -159,7 +159,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(JobTitle("Director 123"), saveAndContinueFormAction)
+            postRequestEncoded(JobTitle("Director 123"))
           )
 
         status(result) mustBe BAD_REQUEST
@@ -191,7 +191,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(JobTitle("Director"), saveAndContinueFormAction)
+          postRequestEncoded(JobTitle("Director"))
         )
 
         intercept[RuntimeException](status(result))

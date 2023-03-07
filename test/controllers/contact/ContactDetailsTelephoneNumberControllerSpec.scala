@@ -17,10 +17,12 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.PhoneNumber
+import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -28,12 +30,8 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import controllers.{routes => pptRoutes}
-import forms.contact.PhoneNumber
-import models.registration.PrimaryContactDetails
-import views.html.contact.phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.phone_number_page
 
 class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -89,30 +87,26 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
       captor.getValue mustBe true
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK)" when {
         "user submits the phone number" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(postRequestEncoded(PhoneNumber("077123"), formAction))
+            controller.submit()(postRequestEncoded(PhoneNumber("077123")))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.primaryContactDetails.phoneNumber mustBe Some("077123")
-          formAction._1 match {
-            case "SaveAndContinue" =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsConfirmAddressController.displayPage().url
-              )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsConfirmAddressController.displayPage().url
+          )
+
           reset(mockRegistrationConnector)
         }
       }
-    }
+
 
     "return prepopulated form" when {
 

@@ -81,7 +81,7 @@ class DeregisterControllerSpec
       "user suggests they would like to deregister" in {
         authorizedUser()
 
-        val correctForm = Seq("deregister" -> "yes", saveAndContinueFormAction)
+        val correctForm = Seq("deregister" -> "yes")
         val resp        = await(deregisterController.submit()(postJsonRequestEncoded(correctForm: _*)))
 
         redirectLocation(Future.successful(resp)) mustBe Some(
@@ -98,7 +98,7 @@ class DeregisterControllerSpec
       "user suggests they do not want to deregister" in {
         authorizedUser()
 
-        val correctForm = Seq("deregister" -> "no", saveAndContinueFormAction)
+        val correctForm = Seq("deregister" -> "no")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
 
         redirectLocation(resp) mustBe Some("/account")
@@ -109,7 +109,7 @@ class DeregisterControllerSpec
       "user does not select an answer" in {
         authorizedUser()
 
-        val correctForm = Seq("deregister" -> "", saveAndContinueFormAction)
+        val correctForm = Seq("deregister" -> "")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(resp) mustBe BAD_REQUEST
@@ -129,7 +129,7 @@ class DeregisterControllerSpec
         unAuthorizedUser()
 
         intercept[RuntimeException] {
-          val correctForm = Seq("deregister" -> "yes", saveAndContinueFormAction)
+          val correctForm = Seq("deregister" -> "yes")
           await(deregisterController.submit()(postJsonRequestEncoded(correctForm: _*)))
         }
       }

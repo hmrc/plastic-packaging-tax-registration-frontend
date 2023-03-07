@@ -29,7 +29,6 @@ import play.api.test.{DefaultAwaitTimeout, FakeRequest, Injecting}
 import play.twirl.api.Html
 import spec.PptTestData
 import config.AppConfig
-import controllers.actions.{Continue, SaveAndComeBackLater, SaveAndContinue, Unknown}
 import models.SignedInUser
 import models.request.{AmendmentJourneyAction, AuthenticatedRequest}
 import utils.FakeRequestCSRFSupport._
@@ -45,15 +44,6 @@ trait ControllerSpec
   implicit val ec: ExecutionContext = ExecutionContext.global
 
   implicit val config: AppConfig = mock[AppConfig]
-
-  protected val saveAndContinueFormAction: (String, String) = (SaveAndContinue.toString, "")
-
-  protected val saveAndComeBackLaterFormAction: (String, String) =
-    (SaveAndComeBackLater.toString, "")
-
-  protected val continueFormAction: (String, String) = (Continue.toString, "")
-
-  protected val unKnownFormAction: (String, String) = (Unknown.toString, "")
 
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session).withCSRFToken
@@ -81,19 +71,17 @@ trait ControllerSpec
 
   protected def postRequestEncoded(
     form: AnyRef,
-    formAction: (String, String) = saveAndContinueFormAction,
     sessionId: String = "123"
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequestTuplesEncoded(getTuples(form), formAction, sessionId)
+    postRequestTuplesEncoded(getTuples(form), sessionId)
 
   // This function exists because getTuples used in the above may not always encode values correctly
   protected def postRequestTuplesEncoded(
     formTuples: Seq[(String, String)],
-    formAction: (String, String) = saveAndContinueFormAction,
     sessionId: String = "123"
   ): Request[AnyContentAsFormUrlEncoded] =
     postRequest(sessionId)
-      .withFormUrlEncodedBody(formTuples :+ formAction: _*)
+      .withFormUrlEncodedBody(formTuples: _*)
       .withCSRFToken
 
   protected def getTuples(cc: AnyRef): Seq[(String, String)] =
@@ -125,9 +113,8 @@ trait ControllerSpec
 
   protected def postJsonRequestEncodedFormAction(
     body: Seq[(String, String)],
-    formAction: (String, String) = saveAndContinueFormAction,
     sessionId: String = "123"
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequestTuplesEncoded(body, formAction, sessionId)
+    postRequestTuplesEncoded(body, sessionId)
 
 }

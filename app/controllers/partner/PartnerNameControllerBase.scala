@@ -26,11 +26,7 @@ import connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import controllers.actions.{
-  AuthActioning,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.AuthActioning
 import controllers.organisation.{
   routes => organisationRoutes
 }
@@ -131,27 +127,22 @@ abstract class PartnerNameControllerBase(
             Future.successful(BadRequest(page(formWithErrors, backCall, submitCall))),
           partnerName =>
             updateAction(partnerName).flatMap { _ =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  // Select GRS journey type based on selected partner type
-                  partner.partnerType match {
-                    case SCOTTISH_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
-                                                grsCallbackUrl(existingPartnerId)
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case GENERAL_PARTNERSHIP =>
-                      getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
-                                                grsCallbackUrl(existingPartnerId)
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                    case _ =>
-                      Future(
-                        Redirect(
-                          organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
-                        )
-                      )
-                  }
+              // Select GRS journey type based on selected partner type
+              partner.partnerType match {
+                case SCOTTISH_PARTNERSHIP =>
+                  getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
+                    grsCallbackUrl(existingPartnerId)
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                case GENERAL_PARTNERSHIP =>
+                  getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
+                    grsCallbackUrl(existingPartnerId)
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
                 case _ =>
-                  Future.successful(Redirect(dropoutCall))
+                  Future(
+                    Redirect(
+                      organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
+                    )
+                  )
               }
             }
         )

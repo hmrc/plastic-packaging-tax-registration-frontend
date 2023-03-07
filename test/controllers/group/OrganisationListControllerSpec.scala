@@ -123,7 +123,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
       "user does not make a selection" in {
         authorizedUser()
 
-        val correctForm = Seq("addOrganisation" -> "", saveAndContinueFormAction)
+        val correctForm = Seq("addOrganisation" -> "")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe BAD_REQUEST
@@ -136,19 +136,8 @@ class OrganisationListControllerSpec extends ControllerSpec {
       "user does not want to add another" in {
         authorizedUser()
 
-        val correctForm = Seq("addOrganisation" -> "no", saveAndContinueFormAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          controllers.routes.TaskListController.displayPage().url
-        )
-      }
-      "user selects save and come back later" in {
-        authorizedUser()
-
-        val correctForm = Seq("addOrganisation" -> "yes", saveAndComeBackLaterFormAction)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val correctForm = Seq("addOrganisation" -> "no")
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
@@ -161,7 +150,7 @@ class OrganisationListControllerSpec extends ControllerSpec {
       "user does want to add another" in {
         authorizedUser()
 
-        val correctForm = Seq("addOrganisation" -> "yes", saveAndContinueFormAction)
+        val correctForm = Seq("addOrganisation" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER

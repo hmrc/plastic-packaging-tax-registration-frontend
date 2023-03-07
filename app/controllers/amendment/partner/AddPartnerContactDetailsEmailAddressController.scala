@@ -66,7 +66,6 @@ class AddPartnerContactDetailsEmailAddressController @Inject() (
              routes.AddPartnerContactDetailsNameController.displayPage(),
              routes.AddPartnerContactDetailsEmailAddressController.submit(),
              routes.AddPartnerContactDetailsTelephoneNumberController.displayPage(),
-             routes.PartnersListController.displayPage(),
              routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
              routes.AddPartnerContactDetailsEmailAddressController.confirmEmailCode()
     )

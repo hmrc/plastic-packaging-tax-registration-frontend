@@ -82,7 +82,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 
-        val correctForm = Seq("value" -> "yes", saveAndContinueFormAction)
+        val correctForm = Seq("value" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
@@ -99,7 +99,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 
-        val correctForm = Seq("value" -> "no", saveAndContinueFormAction)
+        val correctForm = Seq("value" -> "no")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
@@ -131,7 +131,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
       "user submits form and the registration update fails" in {
         authorizedUser()
         mockRegistrationUpdateFailure()
-        val correctForm = Seq("value" -> "no", saveAndContinueFormAction)
+        val correctForm = Seq("value" -> "no")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[DownstreamServiceError](status(result))

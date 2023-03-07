@@ -21,11 +21,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  Continue => ContinueAction
-}
+import controllers.actions.NotEnrolledAuthAction
 import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddressPasscode
 import models.emailverification.EmailVerificationJourneyStatus.{
@@ -73,15 +69,9 @@ class ContactDetailsEmailAddressPasscodeController @Inject() (
           (formWithErrors: Form[EmailAddressPasscode]) =>
             Future.successful(BadRequest(buildEmailPasscodePage(formWithErrors, None))),
           emailAddressPasscode =>
-            FormAction.bindFromRequest match {
-              case ContinueAction =>
-                request.registration.primaryContactDetails.email match {
-                  case Some(email) => continue(emailAddressPasscode.value, email)
-                  case None        => throw RegistrationException("Failed to get email from the cache")
-                }
-
-              case _ =>
-                Future(Redirect(commonRoutes.TaskListController.displayPage()))
+            request.registration.primaryContactDetails.email match {
+              case Some(email) => continue(emailAddressPasscode.value, email)
+              case None        => throw RegistrationException("Failed to get email from the cache")
             }
         )
     }

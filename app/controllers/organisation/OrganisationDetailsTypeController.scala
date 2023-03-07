@@ -100,16 +100,12 @@ class OrganisationDetailsTypeController @Inject() (
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    auditor.orgTypeSelected(request.user.identityData.internalId.getOrElse(
-                                              throw InsufficientEnrolments()
-                                            ),
-                                            organisationType.answer
-                    )
-                    handleOrganisationType(organisationType, true, None)
-                  case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
-                }
+                auditor.orgTypeSelected(request.user.identityData.internalId.getOrElse(
+                                          throw InsufficientEnrolments()
+                                        ),
+                                        organisationType.answer
+                )
+                handleOrganisationType(organisationType, true, None)
               case Left(error) => throw error
             }
         )

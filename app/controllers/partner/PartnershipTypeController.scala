@@ -27,11 +27,7 @@ import connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.NotEnrolledAuthAction
 import controllers.organisation.{
   routes => organisationRoutes
 }
@@ -88,36 +84,32 @@ class PartnershipTypeController @Inject() (
               partnerType =>
                 updateRegistration(partnerType).flatMap {
                   case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        partnerType.answer match {
-                          case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
-                            Future(Redirect(routes.PartnershipNameController.displayPage().url))
-                          case LIMITED_PARTNERSHIP =>
-                            getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
-                                                      appConfig.grsCallbackUrl
-                            )
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case SCOTTISH_LIMITED_PARTNERSHIP =>
-                            getPartnershipRedirectUrl(
-                              appConfig.scottishLimitedPartnershipJourneyUrl,
-                              appConfig.grsCallbackUrl
-                            )
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case LIMITED_LIABILITY_PARTNERSHIP =>
-                            getPartnershipRedirectUrl(
-                              appConfig.limitedLiabilityPartnershipJourneyUrl,
-                              appConfig.grsCallbackUrl
-                            )
-                              .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
-                          case _ =>
-                            Future(
-                              Redirect(
-                                organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
-                              )
-                            )
-                        }
-                      case _ => Future(Redirect(commonRoutes.TaskListController.displayPage()))
+                    partnerType.answer match {
+                      case GENERAL_PARTNERSHIP | SCOTTISH_PARTNERSHIP =>
+                        Future(Redirect(routes.PartnershipNameController.displayPage().url))
+                      case LIMITED_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
+                                                  appConfig.grsCallbackUrl
+                        )
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case SCOTTISH_LIMITED_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(
+                          appConfig.scottishLimitedPartnershipJourneyUrl,
+                          appConfig.grsCallbackUrl
+                        )
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case LIMITED_LIABILITY_PARTNERSHIP =>
+                        getPartnershipRedirectUrl(
+                          appConfig.limitedLiabilityPartnershipJourneyUrl,
+                          appConfig.grsCallbackUrl
+                        )
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      case _ =>
+                        Future(
+                          Redirect(
+                            organisationRoutes.RegisterAsOtherOrganisationController.onPageLoad()
+                          )
+                        )
                     }
                   case Left(error) => throw error
                 }

@@ -106,7 +106,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(MemberName("John", "Smith"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -128,7 +128,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("John", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(MemberName("John", "Smith"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -162,7 +162,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(MemberName("John", ""), saveAndContinueFormAction)
+            postRequestEncoded(MemberName("John", ""))
           )
 
         status(result) mustBe BAD_REQUEST
@@ -173,7 +173,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(MemberName("abced" * 40, "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(MemberName("abced" * 40, "Smith"))
         )
 
         status(result) mustBe BAD_REQUEST
@@ -185,9 +185,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"),
-                               saveAndContinueFormAction
-            )
+            postRequestEncoded(MemberName("FirstNam807980234£$", "LastName"))
           )
 
         status(result) mustBe BAD_REQUEST
@@ -219,7 +217,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(MemberName("Jane", "Smith"), saveAndContinueFormAction)
+          postRequestEncoded(MemberName("Jane", "Smith"))
         )
 
         intercept[RuntimeException](status(result))

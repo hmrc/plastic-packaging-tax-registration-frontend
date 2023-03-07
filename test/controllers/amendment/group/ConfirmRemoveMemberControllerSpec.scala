@@ -88,7 +88,7 @@ class ConfirmRemoveMemberControllerSpec
           // postRequestEncoded will not encode a yes form correctly so we have to manually construct this
           val correctlyEncodedForm = Seq("value" -> "yes")
           val resp = controller.submit(groupMember.id)(
-            postRequestTuplesEncoded(correctlyEncodedForm, continueFormAction, sessionId)
+            postRequestTuplesEncoded(correctlyEncodedForm, sessionId)
           )
 
           status(resp) mustBe SEE_OTHER

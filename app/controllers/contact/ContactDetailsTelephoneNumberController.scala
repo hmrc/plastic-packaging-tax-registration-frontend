@@ -20,11 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.NotEnrolledAuthAction
 import controllers.{routes => commonRoutes}
 import forms.contact.PhoneNumber
 import models.registration.{Cacheable, Registration}
@@ -66,13 +62,7 @@ class ContactDetailsTelephoneNumberController @Inject() (
             ),
           phoneNumber =>
             updateRegistration(phoneNumber).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
-                  case _ =>
-                    Redirect(commonRoutes.TaskListController.displayPage())
-                }
+              case Right(_) => Redirect(routes.ContactDetailsConfirmAddressController.displayPage())
               case Left(error) => throw error
             }
         )

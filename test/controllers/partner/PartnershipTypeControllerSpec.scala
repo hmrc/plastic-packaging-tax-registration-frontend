@@ -106,7 +106,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
           val correctForm =
-            Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+            Seq("answer" -> partnershipDetails._1.toString)
           val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           redirectLocation(result) mustBe Some("http://test/redirect/partnership")
@@ -128,7 +128,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdate()
 
           val correctForm =
-            Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+            Seq("answer" -> partnershipDetails._1.toString)
           val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           redirectLocation(result) mustBe Some(routes.PartnershipNameController.displayPage().url)
@@ -136,23 +136,6 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       }
     }
 
-    "redirect to registration main page" when {
-      "save and come back later button is used" in {
-        val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
-
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-
-        val correctForm =
-          Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndComeBackLaterFormAction)
-        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
-
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-      }
-    }
-
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
       forAll(
         Seq(GENERAL_PARTNERSHIP,
             SCOTTISH_PARTNERSHIP,
@@ -161,14 +144,14 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
             LIMITED_LIABILITY_PARTNERSHIP
         )
       ) { partnershipType =>
-        s"update registration with $partnershipType type for " + formAction._1 in {
+        s"update registration with $partnershipType type" in {
           val registration = aRegistration(withPartnershipDetails(None))
 
           authorizedUser()
           mockRegistrationFind(registration)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("answer" -> partnershipType.toString, formAction)
+          val correctForm = Seq("answer" -> partnershipType.toString)
           await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
 
           val expectedRegistration = registration.copy(organisationDetails =
@@ -178,7 +161,6 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
           )
           verify(mockRegistrationConnector).update(eqTo(expectedRegistration))(any())
         }
-      }
     }
 
     "throw errors resulting from failed registration updates for General Partnership" in {
@@ -188,7 +170,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       mockRegistrationFind(registration)
       mockRegistrationUpdateFailure()
 
-      val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString, saveAndContinueFormAction)
+      val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString)
 
       intercept[DownstreamServiceError] {
         await(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
@@ -202,9 +184,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       mockRegistrationFind(registration)
       mockRegistrationUpdateFailure()
 
-      val incompleteForm = Seq(saveAndContinueFormAction)
-
-      val result = controller.submit()(postJsonRequestEncoded(incompleteForm: _*))
+      val result = controller.submit()(postJsonRequestEncoded())
 
       status(result) mustBe BAD_REQUEST
     }

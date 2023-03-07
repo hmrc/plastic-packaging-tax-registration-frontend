@@ -57,15 +57,13 @@ class PartnerContactNameController @Inject() (
   def submitNewPartner(): Action[AnyContent] =
     doSubmit(None,
              partnerRoutes.PartnerTypeController.displayNewPartner(),
-             partnerRoutes.PartnerContactNameController.submitNewPartner(),
-             commonRoutes.TaskListController.displayPage()
+             partnerRoutes.PartnerContactNameController.submitNewPartner()
     )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     doSubmit(Some(partnerId),
              partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
-             partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId),
-             partnerRoutes.PartnerContactNameController.displayExistingPartner(partnerId)
+             partnerRoutes.PartnerContactNameController.submitExistingPartner(partnerId)
     )
 
   override def onwardCallNewPartner()(implicit request: JourneyRequest[AnyContent]): Call =

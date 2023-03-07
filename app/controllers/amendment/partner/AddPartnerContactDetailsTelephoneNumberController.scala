@@ -51,8 +51,7 @@ class AddPartnerContactDetailsTelephoneNumberController @Inject() (
     doSubmit(None,
              routes.AddPartnerContactDetailsEmailAddressController.displayPage(),
              routes.AddPartnerContactDetailsTelephoneNumberController.submit(),
-             routes.AddPartnerContactDetailsConfirmAddressController.displayPage(),
-             routes.PartnersListController.displayPage()
+             routes.AddPartnerContactDetailsConfirmAddressController.displayPage()
     )
 
 }

@@ -74,7 +74,6 @@ class PartnerEmailAddressController @Inject() (
              partnerRoutes.PartnerContactNameController.displayNewPartner(),
              partnerRoutes.PartnerEmailAddressController.submitNewPartner(),
              partnerRoutes.PartnerPhoneNumberController.displayNewPartner(),
-             commonRoutes.TaskListController.displayPage(),
              partnerRoutes.PartnerContactNameController.displayNewPartner(),
              partnerRoutes.PartnerEmailAddressController.confirmNewPartnerEmailCode()
     )
@@ -84,7 +83,6 @@ class PartnerEmailAddressController @Inject() (
              partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
              partnerRoutes.PartnerEmailAddressController.submitExistingPartner(partnerId),
              routes.PartnerPhoneNumberController.displayExistingPartner(partnerId),
-             partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId),
              partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId),
              partnerRoutes.PartnerEmailAddressController.confirmExistingPartnerEmailCode(partnerId)
     )

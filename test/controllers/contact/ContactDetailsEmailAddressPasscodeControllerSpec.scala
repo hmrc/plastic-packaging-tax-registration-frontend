@@ -130,8 +130,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       captor.getValue mustBe Some("primaryContactDetails.sectionHeader")
     }
 
-    forAll(Seq(continueFormAction, unKnownFormAction)) { formAction =>
-      "return 200 (OK) for " + formAction._1 when {
+      "return 200 (OK)" when {
         "user submits passcode returns complete" in {
           val email = "test2352356523332453@test.com"
           val reg =
@@ -143,38 +142,29 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(COMPLETE)
           val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
           status(result) mustBe SEE_OTHER
-          formAction._1 match {
-            case "Continue" =>
-              redirectLocation(result) mustBe Some(
-                contactRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url
-              )
-              modifiedRegistration.metaData.emailVerified(email) mustBe true
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+          redirectLocation(result) mustBe Some(
+            contactRoutes.ContactDetailsEmailAddressPasscodeConfirmationController.displayPage().url
+          )
+          modifiedRegistration.metaData.emailVerified(email) mustBe true
 
           reset(mockRegistrationConnector)
         }
       }
 
-      "return 400 bad request " + formAction._1 when {
+      "return 400 bad request" when {
         "user submits passcode returns incorrect passcode" in {
           val reg = aRegistration()
           authorizedUser()
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(INCORRECT_PASSCODE)
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+          val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-          formAction._1 match {
-            case "Continue" =>
-              status(result) mustBe BAD_REQUEST
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+          status(result) mustBe BAD_REQUEST
+
           reset(mockRegistrationConnector)
         }
 
@@ -185,15 +175,10 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(TOO_MANY_ATTEMPTS)
 
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+          val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-          formAction._1 match {
-            case "Continue" =>
-              status(result) mustBe SEE_OTHER
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+          status(result) mustBe SEE_OTHER
+
           reset(mockRegistrationConnector)
         }
 
@@ -204,19 +189,15 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockRegistrationUpdate()
           mockEmailVerificationVerifyPasscode(JOURNEY_NOT_FOUND)
           val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
-          formAction._1 match {
-            case "Continue" =>
-              status(result) mustBe BAD_REQUEST
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
+
+          status(result) mustBe BAD_REQUEST
 
           reset(mockRegistrationConnector)
         }
       }
 
-      "throw Exception when cache fails to return email " + formAction._1 when {
+      "throw Exception when cache fails to return email " when {
         "user submits passcode" in {
           val reg = aRegistration(
             withPrimaryContactDetails(primaryContactDetails =
@@ -241,20 +222,17 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockRegistrationFind(reg)
           mockRegistrationUpdate()
           val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-          formAction._1 match {
-            case "Continue" =>
-              intercept[RegistrationException](status(result))
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+          intercept[RegistrationException](status(result))
+
 
           reset(mockRegistrationConnector)
         }
       }
 
-      "return error when verifyPasscode throws error " + formAction._1 when {
+      "return error when verifyPasscode throws error " when {
         "user submits passcode" in {
           val reg = aRegistration()
           authorizedUser()
@@ -263,16 +241,9 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockEmailVerificationVerifyPasscodeWithException(
             DownstreamServiceError("Error", RegistrationException("Error"))
           )
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK"), formAction))
+          val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-          formAction._1 match {
-            case "Continue" =>
-              intercept[DownstreamServiceError](status(result))
-            case "Unknown" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-
+          intercept[DownstreamServiceError](status(result))
           reset(mockRegistrationConnector)
         }
       }
@@ -325,6 +296,6 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
         pageForm.get.value mustBe "DNCLRK"
       }
-    }
+
   }
 }

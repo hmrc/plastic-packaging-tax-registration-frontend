@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import controllers.EmailVerificationActions
-import controllers.actions.{AuthActioning, FormAction, SaveAndContinue}
+import controllers.actions.AuthActioning
 import forms.contact.EmailAddress
 import models.genericregistration.Partner
 import models.registration.{Registration, RegistrationUpdater}
@@ -73,7 +73,6 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardsCall: Call,
-    dropoutCall: Call,
     emailVerificationContinueUrl: Call,
     confirmEmailAddressCall: Call
   ): Action[AnyContent] =
@@ -90,7 +89,6 @@ abstract class PartnerEmailAddressControllerBase(
           backCall,
           submitCall,
           onwardsCall,
-          dropoutCall,
           updateAction,
           emailVerificationContinueUrl,
           confirmEmailAddressCall
@@ -106,7 +104,6 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardCall: Call,
-    dropoutCall: Call,
     updateAction: EmailAddress => Future[Registration],
     emailVerificationContinueUrl: Call,
     confirmEmailAddressCall: Call
@@ -127,14 +124,7 @@ abstract class PartnerEmailAddressControllerBase(
           doesPartnerEmailRequireVerification(partner, emailAddress).flatMap {
             isEmailVerificationRequired =>
               if (!isEmailVerificationRequired)
-                updateAction(emailAddress).map { _ =>
-                  FormAction.bindFromRequest match {
-                    case SaveAndContinue =>
-                      Redirect(onwardCall)
-                    case _ =>
-                      Redirect(dropoutCall)
-                  }
-                }
+                updateAction(emailAddress).map ( _ => Redirect(onwardCall))
               else
                 promptForEmailVerificationCode(request,
                                                emailAddress,

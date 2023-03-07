@@ -246,14 +246,13 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.businessRegisteredAddress.get.countryCode mustBe "GB"
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK) for " when {
         "user accepts the registered address" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
+          val correctForm = Seq("useRegisteredAddress" -> "yes")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
@@ -261,14 +260,10 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           primaryContactAddressPopulatedSameAs(testCompanyAddress)
           businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
+
               redirectLocation(result) mustBe Some(
                 routes.ContactDetailsCheckAnswersController.displayPage().url
               )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
         }
 
         "user does not accept the registered address" in {
@@ -276,7 +271,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdate()
 
-          val correctForm = Seq("useRegisteredAddress" -> "no", formAction)
+          val correctForm = Seq("useRegisteredAddress" -> "no")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           status(result) mustBe SEE_OTHER
@@ -286,29 +281,25 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           businessRegisteredAddressPopulatedSameAs(testCompanyAddress)
 
-          formAction._1 match {
-            case "SaveAndContinue" =>
+
               redirectLocation(result) mustBe Some(
                 routes.ContactDetailsAddressController.displayPage().url
               )
-            case "SaveAndComeBackLater" =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
-        }
+
       }
 
-      "return 400 (BAD_REQUEST) for " + formAction._1 when {
+      "return 400 (BAD_REQUEST)"  when {
         "user does not enter mandatory fields" in {
           authorizedUser()
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           val result =
-            controller.submit()(postRequestEncoded(JsObject.empty, formAction))
+            controller.submit()(postRequestEncoded(JsObject.empty))
 
           status(result) mustBe BAD_REQUEST
         }
       }
 
-      "return an error for " + formAction._1 when {
+      "return an error"  when {
 
         "user is not authorised" in {
           unAuthorizedUser()
@@ -334,7 +325,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdateFailure()
 
-          val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
+          val correctForm = Seq("useRegisteredAddress" -> "yes")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[DownstreamServiceError](status(result))
@@ -345,7 +336,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           mockRegistrationFind(registrationWithoutPrimaryContactAddress)
           mockRegistrationException()
 
-          val correctForm = Seq("useRegisteredAddress" -> "yes", formAction)
+          val correctForm = Seq("useRegisteredAddress" -> "yes")
           val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
           intercept[RuntimeException](status(result))

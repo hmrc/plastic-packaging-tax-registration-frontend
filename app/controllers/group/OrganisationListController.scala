@@ -21,11 +21,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.RegistrationConnector
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.NotEnrolledAuthAction
 import forms.group.AddOrganisationForm.form
 import models.registration.Cacheable
 import models.request.JourneyAction
@@ -73,13 +69,10 @@ class OrganisationListController @Inject() (
             )
           ),
         addOrganisation =>
-          FormAction.bindFromRequest match {
-            case SaveAndContinue if addOrganisation =>
-              Redirect(
-                controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember()
-              )
-            case _ => Redirect(controllers.routes.TaskListController.displayPage())
-          }
+          if (addOrganisation)
+            Redirect(controllers.group.routes.OrganisationDetailsTypeController.displayPageNewMember())
+          else
+            Redirect(controllers.routes.TaskListController.displayPage())
       )
 
     }

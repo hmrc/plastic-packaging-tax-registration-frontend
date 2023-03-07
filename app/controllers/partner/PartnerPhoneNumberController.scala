@@ -58,17 +58,14 @@ class PartnerPhoneNumberController @Inject() (
     doSubmit(None,
              partnerRoutes.PartnerContactNameController.displayNewPartner(),
              partnerRoutes.PartnerPhoneNumberController.submitNewPartner(),
-             partnerRoutes.PartnerContactAddressController.captureNewPartner(),
-             commonRoutes.TaskListController.displayPage(),
-
+             partnerRoutes.PartnerContactAddressController.captureNewPartner()
     )
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
     doSubmit(Some(partnerId),
              routes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
              routes.PartnerPhoneNumberController.submitExistingPartner(partnerId),
-             routes.PartnerContactAddressController.captureExistingPartner(partnerId),
-             partnerRoutes.PartnerEmailAddressController.displayExistingPartner(partnerId),
+             routes.PartnerContactAddressController.captureExistingPartner(partnerId)
     )
 
 }

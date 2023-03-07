@@ -132,7 +132,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(PhoneNumber("abcdef"), saveAndContinueFormAction)
+            postRequestEncoded(PhoneNumber("abcdef"))
           )
 
         status(result) mustBe BAD_REQUEST
@@ -148,7 +148,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(PhoneNumber("12345678"), saveAndContinueFormAction)
+          postRequestEncoded(PhoneNumber("12345678"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -164,7 +164,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequestEncoded(PhoneNumber("987654321"), saveAndContinueFormAction)
+          postRequestEncoded(PhoneNumber("987654321"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -208,7 +208,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(PhoneNumber("987654321"), saveAndContinueFormAction)
+          postRequestEncoded(PhoneNumber("987654321"))
         )
 
         intercept[RuntimeException](status(result))

@@ -20,11 +20,8 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.NotEnrolledAuthAction
+
 import controllers.{routes => commonRoutes}
 import forms.contact.{Address, ConfirmAddress}
 import models.registration.{Cacheable, Registration}
@@ -87,13 +84,9 @@ class ContactDetailsConfirmAddressController @Inject() (
                   request.registration.organisationDetails.businessRegisteredAddress
                 ).map {
                   case Right(_) =>
-                    FormAction.bindFromRequest match {
-                      case SaveAndContinue =>
-                        if (confirmAddress.useRegisteredAddress.getOrElse(false))
-                          Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
-                        else Redirect(routes.ContactDetailsAddressController.displayPage())
-                      case _ => Redirect(commonRoutes.TaskListController.displayPage())
-                    }
+                    if (confirmAddress.useRegisteredAddress.getOrElse(false))
+                      Redirect(routes.ContactDetailsCheckAnswersController.displayPage())
+                    else Redirect(routes.ContactDetailsAddressController.displayPage())
                   case Left(error) => throw error
                 }
             )

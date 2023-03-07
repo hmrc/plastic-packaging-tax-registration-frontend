@@ -87,8 +87,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK)" when {
         "user submits the email" in {
           authorizedUser()
           mockRegistrationFind(
@@ -98,7 +97,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
           val result =
             controller.submit(groupMember.id)(
-              postRequestEncoded(EmailAddress("test@test.com"), formAction)
+              postRequestEncoded(EmailAddress("test@test.com"))
             )
 
           status(result) mustBe SEE_OTHER
@@ -170,7 +169,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         intercept[RuntimeException](status(result))
       }
-    }
+
   }
 
 }

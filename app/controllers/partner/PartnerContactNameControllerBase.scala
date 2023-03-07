@@ -19,7 +19,7 @@ package controllers.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import controllers.actions.{AuthActioning, FormAction, SaveAndContinue}
+import controllers.actions.AuthActioning
 import forms.group.MemberName
 import models.genericregistration.{Partner, PartnerContactDetails}
 import models.registration.{Registration, RegistrationUpdater}
@@ -68,7 +68,7 @@ abstract class PartnerContactNameControllerBase(
     Ok(page(form, partner.name, isNominated, submitCall))
   }
 
-  protected def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call, dropoutCall: Call): Action[AnyContent] =
+  protected def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       def updateAction(memberName: MemberName): Future[Registration] =
         partnerId match {
@@ -84,7 +84,7 @@ abstract class PartnerContactNameControllerBase(
 
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
 
-        handleSubmission(partner, isNominated, backCall, submitCall, nextPage, dropoutCall, updateAction)
+        handleSubmission(partner, isNominated, backCall, submitCall, nextPage, updateAction)
 
       }.getOrElse(Future.successful(throw new IllegalStateException("Expected existing partner missing")))
     }
@@ -95,7 +95,6 @@ abstract class PartnerContactNameControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardsCall: Call,
-    dropoutCall: Call,
     updateAction: MemberName => Future[Registration]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
     MemberName.form()
@@ -104,12 +103,7 @@ abstract class PartnerContactNameControllerBase(
         (formWithErrors: Form[MemberName]) => Future.successful(BadRequest(page(formWithErrors, partner.name, isNominated, submitCall))),
         fullName =>
           updateAction(fullName).map { _ =>
-            FormAction.bindFromRequest match {
-              case SaveAndContinue =>
-                Redirect(onwardsCall)
-              case _ =>
-                Redirect(dropoutCall)
-            }
+            Redirect(onwardsCall)
           }
       )
 

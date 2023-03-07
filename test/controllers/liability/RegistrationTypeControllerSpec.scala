@@ -101,7 +101,7 @@ class RegistrationTypeControllerSpec extends ControllerSpec {
         mockRegistrationFind(initialRegistration)
         mockRegistrationUpdate()
 
-        val groupSelection = Seq("value" -> GROUP.toString, saveAndContinueFormAction)
+        val groupSelection = Seq("value" -> GROUP.toString)
         val result         = registrationTypeController.submit()(postJsonRequestEncoded(groupSelection: _*))
 
         redirectLocation(result) mustBe Some(

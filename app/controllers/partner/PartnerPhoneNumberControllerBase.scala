@@ -19,11 +19,7 @@ package controllers.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import controllers.actions.{
-  AuthActioning,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.AuthActioning
 import forms.contact.PhoneNumber
 import models.genericregistration.Partner
 import models.registration.{
@@ -80,8 +76,7 @@ abstract class PartnerPhoneNumberControllerBase(
     partnerId: Option[String],
     backCall: Call,
     submitCall: Call,
-    onwardsCall: Call,
-    dropoutCall: Call
+    onwardsCall: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
       def updateAction(phoneNumber: PhoneNumber): Future[Registration] =
@@ -91,7 +86,7 @@ abstract class PartnerPhoneNumberControllerBase(
         }
       getPartner(partnerId).map { partner =>
         val sectionHeading = request.registration.isNominatedPartner(partnerId)
-        handleSubmission(partner, backCall, submitCall, onwardsCall, dropoutCall, sectionHeading,updateAction)
+        handleSubmission(partner, backCall, submitCall, onwardsCall, sectionHeading,updateAction)
       }.getOrElse(
         Future.failed(throw new IllegalStateException("Expected existing partner missing"))
       )
@@ -102,7 +97,6 @@ abstract class PartnerPhoneNumberControllerBase(
     backCall: Call,
     submitCall: Call,
     onwardsCall: Call,
-    dropoutCall: Call,
     sectionHeading: Boolean,
     updateAction: PhoneNumber => Future[Registration]
   )(implicit request: JourneyRequest[AnyContent]): Future[Result] =
@@ -113,14 +107,7 @@ abstract class PartnerPhoneNumberControllerBase(
           (formWithErrors: Form[PhoneNumber]) =>
             Future.successful(BadRequest(page(formWithErrors, submitCall, contactName,sectionHeading))),
           phoneNumber =>
-            updateAction(phoneNumber).map { _ =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  Redirect(onwardsCall)
-                case _ =>
-                  Redirect(dropoutCall)
-              }
-            }
+            updateAction(phoneNumber).map( _ => Redirect(onwardsCall))
         )
     }.getOrElse(Future.successful(throw new IllegalStateException("Expected partner name missing")))
 

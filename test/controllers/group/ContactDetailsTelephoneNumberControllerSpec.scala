@@ -90,8 +90,7 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+    "return 303 (OK)" when {
         "user submits the phone number" in {
           authorizedUser()
           mockRegistrationFind(
@@ -100,7 +99,7 @@ class ContactDetailsTelephoneNumberControllerSpec
           mockRegistrationUpdate()
 
           val result =
-            controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123"), formAction))
+            controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.groupDetail.get.members.lastOption.get.contactDetails.get.phoneNumber mustBe Some(
@@ -111,7 +110,6 @@ class ContactDetailsTelephoneNumberControllerSpec
           )
           reset(mockRegistrationConnector)
         }
-      }
     }
 
     "return pre populated form" when {

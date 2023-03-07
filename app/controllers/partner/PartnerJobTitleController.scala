@@ -20,11 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{
-  NotEnrolledAuthAction,
-  FormAction,
-  SaveAndContinue
-}
+import controllers.actions.NotEnrolledAuthAction
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => commonRoutes}
 import forms.contact.JobTitle
@@ -142,13 +138,7 @@ class PartnerJobTitleController @Inject() (
           ),
         jobTitle =>
           updateAction(jobTitle).map {
-            case Right(_) =>
-              FormAction.bindFromRequest match {
-                case SaveAndContinue =>
-                  Redirect(onwardsCall)
-                case _ =>
-                  Redirect(dropoutCall)
-              }
+            case Right(_) => Redirect(onwardsCall)
             case Left(error) => throw error
           }
       )

@@ -172,7 +172,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
             val correctForm =
-              Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+              Seq("answer" -> partnershipDetails._1.toString)
             val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
             partnershipDetails._1 match {
               case SOLE_TRADER =>
@@ -243,7 +243,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
             mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
             val correctForm =
-              Seq("answer" -> partnershipDetails._1.toString, saveAndContinueFormAction)
+              Seq("answer" -> partnershipDetails._1.toString)
 
             val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
 
@@ -266,7 +266,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
 
         val correctForm =
-          Seq("answer" -> SOLE_TRADER.toString, saveAndContinueFormAction)
+          Seq("answer" -> SOLE_TRADER.toString)
 
         val result =
           controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
@@ -285,7 +285,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         mockRegistrationUpdate()
 
         val correctForm =
-          Seq("answer" -> SCOTTISH_PARTNERSHIP.toString, saveAndContinueFormAction)
+          Seq("answer" -> SCOTTISH_PARTNERSHIP.toString)
 
         val result =
           controller.submitExistingPartner("123")(postJsonRequestEncoded(correctForm: _*))
@@ -293,26 +293,6 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         redirectLocation(result) mustBe Some(
           partnerRoutes.PartnerNameController.displayExistingPartner("123").url
         )
-      }
-    }
-
-    "redirect to registration main page" when {
-      "save and come back later button is used" in {
-        val registration = aRegistration(
-          withPartnershipDetails(
-            Some(llpPartnershipDetails.copy(partners = Seq(nominatedPartner(UK_COMPANY))))
-          )
-        )
-
-        authorizedUser()
-        mockRegistrationFind(registration)
-        mockRegistrationUpdate()
-
-        val correctForm =
-          Seq("answer" -> LIMITED_LIABILITY_PARTNERSHIP.toString, saveAndComeBackLaterFormAction)
-        val result = controller.submitNewPartner()(postJsonRequestEncoded(correctForm: _*))
-
-        redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
       }
     }
 
@@ -327,9 +307,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
       mockRegistrationFind(registration)
       mockRegistrationUpdateFailure()
 
-      val incompleteForm = Seq(saveAndContinueFormAction)
-
-      val result = controller.submitNewPartner()(postJsonRequestEncoded(incompleteForm: _*))
+      val result = controller.submitNewPartner()(postJsonRequestEncoded())
 
       status(result) mustBe BAD_REQUEST
     }

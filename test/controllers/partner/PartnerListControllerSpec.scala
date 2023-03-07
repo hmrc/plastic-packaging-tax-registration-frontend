@@ -79,7 +79,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
     }
     "redirect to other partner type selection page" when {
       "user suggests they would like to add another partner" in {
-        val form = Seq("addPartner" -> "yes", saveAndContinueFormAction)
+        val form = Seq("addPartner" -> "yes")
         val resp = controller.submit()(postJsonRequestEncoded(form: _*))
 
         status(resp) mustBe SEE_OTHER
@@ -88,7 +88,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
     }
     "redirect to task list page" when {
       "user suggests they need not add any further partner" in {
-        val form = Seq("addPartner" -> "no", saveAndContinueFormAction)
+        val form = Seq("addPartner" -> "no")
         val resp = controller.submit()(postJsonRequestEncoded(form: _*))
 
         status(resp) mustBe SEE_OTHER

@@ -78,26 +78,23 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction, saveAndComeBackLaterFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK)" when {
         "user submits the job title" in {
           authorizedUser()
           mockRegistrationFind(aRegistration())
           mockRegistrationUpdate()
 
           val result =
-            controller.submit()(postRequestEncoded(JobTitle("tester"), formAction))
+            controller.submit()(postRequestEncoded(JobTitle("tester")))
 
           status(result) mustBe SEE_OTHER
           modifiedRegistration.primaryContactDetails.jobTitle mustBe Some("tester")
-          formAction match {
-            case ("SaveAndContinue", "") =>
-              redirectLocation(result) mustBe Some(
-                routes.ContactDetailsEmailAddressController.displayPage().url
-              )
-            case _ =>
-              redirectLocation(result) mustBe Some(pptRoutes.TaskListController.displayPage().url)
-          }
+
+
+          redirectLocation(result) mustBe Some(
+            routes.ContactDetailsEmailAddressController.displayPage().url
+          )
+
           reset(mockRegistrationConnector)
         }
       }
@@ -176,6 +173,6 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
         intercept[RuntimeException](status(result))
       }
-    }
+    
   }
 }

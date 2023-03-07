@@ -88,8 +88,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
     }
 
-    forAll(Seq(saveAndContinueFormAction)) { formAction =>
-      "return 303 (OK) for " + formAction._1 when {
+      "return 303 (OK)" when {
         "user submits the member name" in {
           authorizedUser()
           mockRegistrationFind(
@@ -99,9 +98,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
           val result =
             controller.submit(groupMember.id)(
-              postRequestEncoded(MemberName(firstName = "Test -'.", lastName = "User -'."),
-                                 formAction
-              )
+              postRequestEncoded(MemberName(firstName = "Test -'.", lastName = "User -'."))
             )
 
           status(result) mustBe SEE_OTHER
@@ -202,7 +199,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
         intercept[RuntimeException](status(result))
       }
-    }
+
   }
 
 }

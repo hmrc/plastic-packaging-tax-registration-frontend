@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.{FormAction, NotEnrolledAuthAction, SaveAndContinue}
+import controllers.actions.NotEnrolledAuthAction
 import controllers.{routes => commonRoutes}
 import forms.contact.FullName
 import models.registration.{Cacheable, Registration}
@@ -62,12 +62,7 @@ class ContactDetailsFullNameController @Inject() (
             ),
           fullName =>
             updateRegistration(fullName).map {
-              case Right(_) =>
-                FormAction.bindFromRequest match {
-                  case SaveAndContinue =>
-                    Redirect(routes.ContactDetailsJobTitleController.displayPage())
-                  case _ => Redirect(commonRoutes.TaskListController.displayPage())
-                }
+              case Right(_) => Redirect(routes.ContactDetailsJobTitleController.displayPage())
               case Left(error) => throw error
             }
         )

@@ -112,7 +112,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         mockCreatePartnershipGrsJourneyCreation("https://test/redirect/grs/identify-partnership")
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(PartnerName("Test Partner"), saveAndContinueFormAction)
+          postRequestEncoded(PartnerName("Test Partner"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -129,7 +129,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         mockCreatePartnershipGrsJourneyCreation("https://test/redirect/grs/identify-partnership")
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequestEncoded(PartnerName("Test Partner"), saveAndContinueFormAction)
+          postRequestEncoded(PartnerName("Test Partner"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -147,7 +147,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         val result =
           controller.submitNewPartner()(
-            postRequestEncoded(PartnerName(""), saveAndContinueFormAction)
+            postRequestEncoded(PartnerName(""))
           )
 
         status(result) mustBe BAD_REQUEST
@@ -158,7 +158,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
-          postRequestEncoded(PartnerName("abced" * 40), saveAndContinueFormAction)
+          postRequestEncoded(PartnerName("abced" * 40))
         )
 
         status(result) mustBe BAD_REQUEST
@@ -190,7 +190,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(PartnerName("Amended name"), saveAndContinueFormAction)
+          postRequestEncoded(PartnerName("Amended name"))
         )
 
         intercept[RuntimeException](status(result))

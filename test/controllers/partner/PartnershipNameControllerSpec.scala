@@ -23,7 +23,6 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.BAD_REQUEST
 import play.api.test.Helpers.{await, contentAsString, status}
 import play.twirl.api.HtmlFormat
-import controllers.actions.SaveAndContinue
 import forms.organisation.PartnershipName
 import views.html.organisation.partnership_name
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
@@ -92,7 +91,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       await(
         controller.submit()(
-          postRequestEncoded(PartnershipName("Partners in Plastic"), (SaveAndContinue.toString, ""))
+          postRequestEncoded(PartnershipName("Partners in Plastic"))
         )
       )
 
@@ -106,7 +105,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       await(
         controller.submit()(
-          postRequestEncoded(PartnershipName("Partners in Plastic"), (SaveAndContinue.toString, ""))
+          postRequestEncoded(PartnershipName("Partners in Plastic"))
         )
       )
 
@@ -121,7 +120,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       await(
         controller.submit()(
-          postRequestEncoded(PartnershipName("Partners in Plastic"), (SaveAndContinue.toString, ""))
+          postRequestEncoded(PartnershipName("Partners in Plastic"))
         )
       )
 
@@ -132,7 +131,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
     "reject invalid partnership names" in {
       val resp = controller.submit()(
-        postRequestEncoded(PartnershipName("~~~"), (SaveAndContinue.toString, ""))
+        postRequestEncoded(PartnershipName("~~~"))
       )
 
       status(resp) mustBe BAD_REQUEST
@@ -167,8 +166,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           intercept[RuntimeException] {
             await(
               controller.submit()(
-                postRequestEncoded(PartnershipName("Partners in Plastic"),
-                                   (SaveAndContinue.toString, "")
+                postRequestEncoded(PartnershipName("Partners in Plastic")
                 )
               )
             )
@@ -180,8 +178,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           intercept[IllegalStateException] {
             await(
               controller.submit()(
-                postRequestEncoded(PartnershipName("Partners in Plastic"),
-                                   (SaveAndContinue.toString, "")
+                postRequestEncoded(PartnershipName("Partners in Plastic")
                 )
               )
             )
