@@ -17,6 +17,7 @@
 package controllers.amendment.partner
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -26,7 +27,6 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.Html
-import models.request.AmendmentJourneyAction
 import views.html.amendment.partner.manage_partners_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport._

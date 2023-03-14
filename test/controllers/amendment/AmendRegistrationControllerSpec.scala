@@ -17,6 +17,7 @@
 package controllers.amendment
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -26,7 +27,6 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
-import models.request.AmendmentJourneyAction
 import views.html.amendment.amend_registration_page
 import views.html.partials.amendment.amend_error_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents

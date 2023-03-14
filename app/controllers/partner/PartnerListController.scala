@@ -22,17 +22,18 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.RegistrationConnector
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.partner.AddPartner
 import models.registration.Cacheable
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.partner.partner_list_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class PartnerListController @Inject() (
                                         authenticate: NotEnrolledAuthAction,
-                                        journeyAction: JourneyAction,
+                                        journeyAction: GetRegistrationAction,
                                         override val registrationConnector: RegistrationConnector,
                                         mcc: MessagesControllerComponents,
                                         page: partner_list_page

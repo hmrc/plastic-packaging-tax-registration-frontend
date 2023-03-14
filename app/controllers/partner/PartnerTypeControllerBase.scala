@@ -51,8 +51,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerTypeControllerBase(
-  authenticate: AuthActioning,
-  journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: partner_type,
   registrationUpdater: RegistrationUpdater
@@ -66,7 +65,7 @@ abstract class PartnerTypeControllerBase(
     partnerId: Option[String] = None,
     submitCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       val partner: Option[Partner] =
         partnerId.fold(request.registration.inflightPartner)(request.registration.findPartner)
       val nominated = request.registration.isNominatedPartner(partnerId)
@@ -79,7 +78,7 @@ abstract class PartnerTypeControllerBase(
     }
 
   protected def doSubmit(partnerId: Option[String] = None, submitCall: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction).async {
+    journeyAction.async {
       implicit request =>
         val nominated = request.registration.isNominatedPartner(partnerId)
         form(nominated)
@@ -95,27 +94,27 @@ abstract class PartnerTypeControllerBase(
                       getSoleTraderRedirectUrl(appConfig.soleTraderJourneyInitUrl,
                                                grsCallbackUrl(partnerId)
                       )
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case UK_COMPANY | OVERSEAS_COMPANY_UK_BRANCH =>
                       getUkCompanyRedirectUrl(appConfig.incorpLimitedCompanyJourneyUrl,
                                               grsCallbackUrl(partnerId)
                       )
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case REGISTERED_SOCIETY =>
                       getRegisteredSocietyRedirectUrl(appConfig.incorpRegistedSocietyJourneyUrl,
                                                       grsCallbackUrl(partnerId)
                       )
-                        .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                        .map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case LIMITED_LIABILITY_PARTNERSHIP =>
                       getPartnershipRedirectUrl(appConfig.limitedLiabilityPartnershipJourneyUrl,
                                                 grsCallbackUrl(partnerId),
                                                 businessVerification = false
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      ).map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case SCOTTISH_LIMITED_PARTNERSHIP =>
                       getPartnershipRedirectUrl(appConfig.scottishLimitedPartnershipJourneyUrl,
                                                 grsCallbackUrl(partnerId),
                                                 businessVerification = false
-                      ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                      ).map(journeyStartUrl => SeeOther(journeyStartUrl))
                     case SCOTTISH_PARTNERSHIP | GENERAL_PARTNERSHIP =>
                       redirectToPartnerNamePrompt(partnerId)
                     case _ =>

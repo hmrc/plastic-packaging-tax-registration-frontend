@@ -25,6 +25,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import connectors._
 import connectors.grs._
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.group.{routes => groupRoutes}
 import controllers.organisation.{routes => orgRoutes}
 import controllers.{routes => commonRoutes}
@@ -33,7 +34,7 @@ import forms.organisation.OrgType.SOLE_TRADER
 import forms.organisation.PartnerTypeEnum.PartnerTypeEnum
 import models.genericregistration._
 import models.registration.{Cacheable, OrganisationDetails, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import models.subscriptions.SubscriptionStatus
 import models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import utils.AddressConversionUtils
@@ -56,7 +57,7 @@ object RegistrationStatus extends Enumeration {
 @Singleton
 class GrsController @Inject() (
                                 authenticate: NotEnrolledAuthAction,
-                                journeyAction: JourneyAction,
+                                journeyAction: GetRegistrationAction,
                                 override val registrationConnector: RegistrationConnector,
                                 ukCompanyGrsConnector: UkCompanyGrsConnector,
                                 soleTraderGrsConnector: SoleTraderGrsConnector,

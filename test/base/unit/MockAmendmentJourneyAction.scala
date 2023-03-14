@@ -17,11 +17,8 @@
 package base.unit
 
 import base.MockAuthAction
+import controllers.actions.getRegistration.{AmendmentJourneyAction, GetRegistrationForAmendmentActionImpl}
 import org.scalatest.wordspec.AnyWordSpecLike
-import models.request.{
-  AmendmentJourneyAction,
-  AmendmentJourneyActionImpl
-}
 
 import scala.concurrent.ExecutionContext
 
@@ -30,7 +27,7 @@ trait MockAmendmentJourneyAction
     with AnyWordSpecLike {
 
   protected val mockAmendmentJourneyAction: AmendmentJourneyAction =
-    new AmendmentJourneyActionImpl(mockSubscriptionConnector,
+    new GetRegistrationForAmendmentActionImpl(mockSubscriptionConnector,
                                    inMemoryRegistrationAmendmentRepository
     )(ExecutionContext.global)
 

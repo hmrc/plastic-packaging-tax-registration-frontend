@@ -17,10 +17,9 @@
 package controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import controllers.partner.PartnerPhoneNumberControllerBase
 import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 import views.html.partner.partner_phone_number_page
 
 import javax.inject.{Inject, Singleton}
@@ -28,14 +27,13 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsTelephoneNumberController @Inject() (
-                                                                    authenticate: EnrolledAuthAction,
-                                                                    journeyAction: AmendmentJourneyAction,
+                                                                    journeyAction: JourneyAction,
                                                                     mcc: MessagesControllerComponents,
                                                                     page: partner_phone_number_page,
                                                                     registrationUpdateService: AmendRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerPhoneNumberControllerBase(authenticate = authenticate,
-                                             journeyAction = journeyAction,
+    extends PartnerPhoneNumberControllerBase(
+                                             journeyAction = journeyAction.amend,
                                              mcc = mcc,
                                              page = page,
                                              registrationUpdater = registrationUpdateService

@@ -17,6 +17,7 @@
 package controllers.amendment.partner
 
 import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.Mockito.reset
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{AnyContentAsEmpty, Request}
@@ -24,7 +25,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation}
 import spec.PptTestData
 import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 import services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport._

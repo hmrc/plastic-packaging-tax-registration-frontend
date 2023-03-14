@@ -20,13 +20,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import forms.contact.Address
 import models.registration.{
   Cacheable,
   PrimaryContactDetails,
   Registration
 }
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import services.{
   AddressCaptureConfig,
   AddressCaptureService
@@ -39,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ContactDetailsAddressController @Inject() (
                                                   authenticate: NotEnrolledAuthAction,
-                                                  journeyAction: JourneyAction,
+                                                  journeyAction: GetRegistrationAction,
                                                   override val registrationConnector: RegistrationConnector,
                                                   addressCaptureService: AddressCaptureService,
                                                   mcc: MessagesControllerComponents
@@ -58,13 +59,13 @@ class ContactDetailsAddressController @Inject() (
           pptHintKey = None,
           forceUkAddress = false
         )
-      ).map(redirect => Redirect(redirect))
+      )(request.authenticatedRequest).map(redirect => Redirect(redirect))
 
     }
 
   def update(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           updateRegistration(capturedAddress).map {
             case Right(_) =>

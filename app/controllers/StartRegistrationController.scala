@@ -18,10 +18,11 @@ package controllers
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.liability.{
   routes => liabilityRoutes
 }
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -29,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class StartRegistrationController @Inject() (
                                               authenticate: NotEnrolledAuthAction,
-                                              journeyAction: JourneyAction,
+                                              journeyAction: GetRegistrationAction,
                                               mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) {
 
@@ -41,7 +42,8 @@ class StartRegistrationController @Inject() (
           "resumePPTRegistration" -> "true"
         )
       } else {
-        Redirect(startLink).addingToSession("resumePPTRegistration" -> "true")
+        Redirect(startLink).addingToSession("resumePPTRegistration" -> "true") //todo whats this????????????
+        //gaaaaaahhhhhhhhhhhhhhhhhhhhh
       }
     }
 

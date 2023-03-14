@@ -28,6 +28,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.await
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException, RequestId}
 import connectors.DownstreamServiceError
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.Registration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +37,7 @@ class JourneyActionSpec extends ControllerSpec with MockAuthAction {
 
   private val responseGenerator = mock[JourneyRequest[_] => Future[Result]]
 
-  private val actionRefiner = new JourneyAction(mockRegistrationConnector, mockAuditor)(
+  private val actionRefiner = new GetRegistrationAction(mockRegistrationConnector, mockAuditor)(
     ExecutionContext.global
   )
 

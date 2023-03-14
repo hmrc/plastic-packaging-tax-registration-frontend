@@ -19,8 +19,8 @@ package controllers.partner
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
-import models.request.JourneyAction
 import services.AddressCaptureService
 
 import scala.concurrent.ExecutionContext
@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class PartnerContactAddressController @Inject() (
                                                   authenticate: NotEnrolledAuthAction,
-                                                  journeyAction: JourneyAction,
+                                                  journeyAction: GetRegistrationAction,
                                                   addressCaptureService: AddressCaptureService,
                                                   mcc: MessagesControllerComponents,
                                                   registrationUpdater: NewRegistrationUpdateService

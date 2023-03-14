@@ -18,45 +18,32 @@ package controllers.amendment.group
 
 import play.api.data.Form
 import play.api.mvc._
-import controllers.actions.EnrolledAuthAction
-import controllers.amendment.{
-  AmendmentController,
-  routes => amendRoutes
-}
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.amendment.{AmendmentController, routes => amendRoutes}
 import forms.contact._
 import forms.group.MemberName
 import models.registration.Registration
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
-import services.{
-  AddressCaptureConfig,
-  AddressCaptureService
-}
-import views.html.group.{
-  member_email_address_page,
-  member_name_page,
-  member_phone_number_page
-}
+import models.request.JourneyRequest
+import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService}
+import views.html.group.{member_email_address_page, member_name_page, member_phone_number_page}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendMemberContactDetailsController @Inject() (
-                                                      authenticate: EnrolledAuthAction,
+                                                      journeyAction: JourneyAction,
                                                       mcc: MessagesControllerComponents,
-                                                      amendmentJourneyAction: AmendmentJourneyAction,
+                                                      amendRegistrationService: AmendRegistrationService,
                                                       addressCaptureService: AddressCaptureService,
                                                       contactNamePage: member_name_page,
                                                       phoneNumberPage: member_phone_number_page,
                                                       emailAddressPage: member_email_address_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def contactName(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       request.registration.findMember(memberId).flatMap(_.contactDetails) match {
         case Some(contactDetails) =>
           Ok(
@@ -85,7 +72,7 @@ class AmendMemberContactDetailsController @Inject() (
         )
     }
 
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       MemberName.form()
         .bindFromRequest()
         .fold(
@@ -112,7 +99,7 @@ class AmendMemberContactDetailsController @Inject() (
     )
 
   def phoneNumber(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val contactDetails = request.registration.findMember(memberId).flatMap(_.contactDetails)
       val memberName     = contactDetails.map(_.groupMemberName)
       contactDetails.flatMap(_.phoneNumber) match {
@@ -143,7 +130,7 @@ class AmendMemberContactDetailsController @Inject() (
         )
     }
 
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       val memberName =
         request.registration.findMember(memberId).flatMap(_.contactDetails).map(_.groupMemberName)
       PhoneNumber.form()
@@ -170,7 +157,7 @@ class AmendMemberContactDetailsController @Inject() (
     )
 
   def email(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       val contactDetails = request.registration.findMember(memberId).flatMap(_.contactDetails)
       val memberName     = contactDetails.map(_.groupMemberName)
       contactDetails.flatMap(_.email) match {
@@ -201,7 +188,7 @@ class AmendMemberContactDetailsController @Inject() (
         )
     }
 
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       val memberName =
         request.registration.findMember(memberId).flatMap(_.contactDetails).map(_.groupMemberName)
       EmailAddress.form()
@@ -228,7 +215,7 @@ class AmendMemberContactDetailsController @Inject() (
     )
 
   def address(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(backLink = amendRoutes.AmendRegistrationController.displayPage().url,
                              successLink = routes.AmendMemberContactDetailsController.updateAddress(
@@ -241,7 +228,7 @@ class AmendMemberContactDetailsController @Inject() (
                              pptHintKey = None,
                              forceUkAddress = false
         )
-      ).map(redirect => Redirect(redirect))
+      )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
 
   def updateAddress(memberId: String): Action[AnyContent] = {
@@ -259,8 +246,8 @@ class AmendMemberContactDetailsController @Inject() (
         )
     }
 
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+    journeyAction.amend.async { implicit request =>
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress => updateGroupMemberRegistration(updateAddress(capturedAddress), memberId)
       }
     }

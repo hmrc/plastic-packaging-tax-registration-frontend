@@ -16,29 +16,18 @@
 
 package models.request
 
-import org.joda.time.LocalDate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, LoginTimes, Name, _}
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
+import connectors.DownstreamServiceError
+import controllers.contact.RegistrationException
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
-case class IdentityData(
+final case class IdentityData(
   internalId: Option[String] = None,
-  externalId: Option[String] = None,
-  agentCode: Option[String] = None,
-  credentials: Option[Credentials] = None,
-  confidenceLevel: Option[ConfidenceLevel] = None,
-  nino: Option[String] = None,
-  saUtr: Option[String] = None,
-  name: Option[Name] = None,
-  dateOfBirth: Option[LocalDate] = None,
-  email: Option[String] = None,
-  agentInformation: Option[AgentInformation] = None,
-  groupIdentifier: Option[String] = None,
-  credentialRole: Option[String] = None,
-  mdtpInformation: Option[MdtpInformation] = None,
-  itmpName: Option[ItmpName] = None,
-  itmpDateOfBirth: Option[LocalDate] = None,
-  itmpAddress: Option[ItmpAddress] = None,
-  affinityGroup: Option[AffinityGroup] = None,
-  credentialStrength: Option[String] = None,
-  loginTimes: Option[LoginTimes] = None
-)
+  credentials: Option[Credentials] = None
+) {
+
+  def credId: String = credentials.map(_.providerId).getOrElse(
+    throw DownstreamServiceError("Cannot find user credentials id",
+      RegistrationException("Cannot find user credentials id")
+    )
+  )
+}

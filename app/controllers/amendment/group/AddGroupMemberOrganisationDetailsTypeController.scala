@@ -19,16 +19,10 @@ package controllers.amendment.group
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import config.AppConfig
 import connectors._
-import connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import controllers.actions.EnrolledAuthAction
+import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import controllers.group.OrganisationDetailsTypeControllerBase
 import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 import views.html.group.organisation_type
 
 import javax.inject.{Inject, Singleton}
@@ -36,8 +30,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberOrganisationDetailsTypeController @Inject() (
-                                                                  authenticate: EnrolledAuthAction,
-                                                                  journeyAction: AmendmentJourneyAction,
+                                                                  journeyAction: JourneyAction,
                                                                   mcc: MessagesControllerComponents,
                                                                   appConfig: AppConfig,
                                                                   page: organisation_type,
@@ -48,7 +41,7 @@ class AddGroupMemberOrganisationDetailsTypeController @Inject() (
                                                                   val registeredSocietyGrsConnector: RegisteredSocietyGrsConnector,
                                                                   val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)
-    extends OrganisationDetailsTypeControllerBase(authenticate, journeyAction, appConfig, page, registrationUpdater, mcc) {
+    extends OrganisationDetailsTypeControllerBase(journeyAction.amend, appConfig, page, registrationUpdater, mcc) {
 
   def displayPage(): Action[AnyContent] =
     doDisplayPage(None, routes.AddGroupMemberOrganisationDetailsTypeController.submit())

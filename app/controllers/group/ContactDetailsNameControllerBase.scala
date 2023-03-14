@@ -35,8 +35,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class ContactDetailsNameControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: member_name_page,
   registrationUpdater: RegistrationUpdater
@@ -47,7 +46,7 @@ abstract class ContactDetailsNameControllerBase(
     memberId: String,
     getSubmitCall: String => Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       val contactDetails = request.registration.findMember(memberId).flatMap(_.contactDetails)
       val form = contactDetails match {
         case Some(contactDetails) =>
@@ -71,7 +70,7 @@ abstract class ContactDetailsNameControllerBase(
     getSubmitCall: String => Call,
     getSuccessfulRedirect: String => Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       MemberName.form()
         .bindFromRequest()
         .fold(

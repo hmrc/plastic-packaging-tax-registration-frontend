@@ -22,6 +22,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddressPasscode
 import models.emailverification.EmailVerificationJourneyStatus.{
@@ -34,7 +35,7 @@ import models.emailverification.{
   EmailVerificationJourneyStatus
 }
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import services.EmailVerificationService
 import views.html.contact.email_address_passcode_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -44,7 +45,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsEmailAddressPasscodeController @Inject() (
                                                                authenticate: NotEnrolledAuthAction,
-                                                               journeyAction: JourneyAction,
+                                                               journeyAction: GetRegistrationAction,
                                                                mcc: MessagesControllerComponents,
                                                                emailVerificationService: EmailVerificationService,
                                                                override val registrationConnector: RegistrationConnector,

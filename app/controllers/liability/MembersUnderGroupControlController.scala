@@ -21,13 +21,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import forms.liability.MembersUnderGroupControl
 import models.registration.{
   Cacheable,
   GroupDetail,
   Registration
 }
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.liability.members_under_group_control_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class MembersUnderGroupControlController @Inject() (
                                                      authenticate: NotEnrolledAuthAction,
                                                      mcc: MessagesControllerComponents,
-                                                     journeyAction: JourneyAction,
+                                                     journeyAction: GetRegistrationAction,
                                                      page: members_under_group_control_page,
                                                      override val registrationConnector: RegistrationConnector
 )(implicit ec: ExecutionContext)

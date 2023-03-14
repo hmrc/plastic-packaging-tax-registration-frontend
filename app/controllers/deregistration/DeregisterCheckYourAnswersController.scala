@@ -20,6 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.DeregistrationConnector
 import controllers.actions.EnrolledAuthAction
+import controllers.actions.auth.AmendAuthAction
 import repositories.DeregistrationDetailRepository
 import views.html.deregistration.deregister_check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -29,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeregisterCheckYourAnswersController @Inject() (
-                                                       authenticate: EnrolledAuthAction,
+                                                       authenticate: AmendAuthAction,
                                                        mcc: MessagesControllerComponents,
                                                        deregistrationDetailRepository: DeregistrationDetailRepository,
                                                        deregistrationConnector: DeregistrationConnector,
@@ -46,15 +47,14 @@ class DeregisterCheckYourAnswersController @Inject() (
 
   def continue(): Action[AnyContent] =
     authenticate.async { implicit request =>
-      val pptReference = request.pptReference.getOrElse(
-        throw new IllegalStateException("Ppt reference number not found")
-      )
+      val pptReference = request.pptReference
+
       deregistrationDetailRepository.get().flatMap {
         deregistrationDetails =>
-          deregistrationConnector.deregister(pptReference, deregistrationDetails).flatMap {
+          deregistrationConnector.deregister(pptReference, deregistrationDetails).map {
             case Right(_) =>
               deregistrationDetailRepository.delete()
-              Future.successful(Redirect(routes.DeregistrationSubmittedController.displayPage()))
+              Redirect(routes.DeregistrationSubmittedController.displayPage())
             case Left(ex) => throw ex
           }
       }

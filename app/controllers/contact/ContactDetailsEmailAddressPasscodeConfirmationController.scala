@@ -19,7 +19,8 @@ package controllers.contact
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import controllers.actions.NotEnrolledAuthAction
-import models.request.{JourneyAction, JourneyRequest}
+import controllers.actions.getRegistration.GetRegistrationAction
+import models.request.JourneyRequest
 import views.html.contact.email_address_passcode_confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.i18n.Messages
@@ -28,7 +29,7 @@ import javax.inject.Inject
 
 class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
                                                                            authenticate: NotEnrolledAuthAction,
-                                                                           journeyAction: JourneyAction,
+                                                                           journeyAction: GetRegistrationAction,
                                                                            mcc: MessagesControllerComponents,
                                                                            page: email_address_passcode_confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {

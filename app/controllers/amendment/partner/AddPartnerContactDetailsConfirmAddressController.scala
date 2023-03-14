@@ -18,17 +18,10 @@ package controllers.amendment.partner
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import forms.contact.Address
-import models.registration.{
-  AmendRegistrationUpdateService,
-  Registration
-}
-import models.request.AmendmentJourneyAction
-import services.{
-  AddressCaptureConfig,
-  AddressCaptureService
-}
+import models.registration.{AmendRegistrationUpdateService, Registration}
+import services.{AddressCaptureConfig, AddressCaptureService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -36,8 +29,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerContactDetailsConfirmAddressController @Inject() (
-                                                                   authenticate: EnrolledAuthAction,
-                                                                   journeyAction: AmendmentJourneyAction,
+                                                                   journeyAction: JourneyAction,
                                                                    addressCaptureService: AddressCaptureService,
                                                                    mcc: MessagesControllerComponents,
                                                                    registrationUpdater: AmendRegistrationUpdateService
@@ -45,7 +37,7 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
     extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(
           backLink = routes.AddPartnerContactDetailsTelephoneNumberController.displayPage().url,
@@ -57,12 +49,12 @@ class AddPartnerContactDetailsConfirmAddressController @Inject() (
           pptHintKey = None,
           forceUkAddress = false
         )
-      ).map(redirect => Redirect(redirect))
+      )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
 
   def addressCaptureCallback(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+    journeyAction.amend.async { implicit request =>
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           registrationUpdater.updateRegistration { registration =>
             update(capturedAddress)(registration)

@@ -31,8 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerEmailAddressControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: partner_email_address_page,
   val registrationUpdater: RegistrationUpdater
@@ -44,7 +43,7 @@ abstract class PartnerEmailAddressControllerBase(
     backCall: Call,
     submitCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
 
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
@@ -76,7 +75,7 @@ abstract class PartnerEmailAddressControllerBase(
     emailVerificationContinueUrl: Call,
     confirmEmailAddressCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       def updateAction(emailAddress: EmailAddress): Future[Registration] =
         updateEmailAddress(partnerId, emailAddress)
 

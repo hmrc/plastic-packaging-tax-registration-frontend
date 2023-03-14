@@ -17,6 +17,7 @@
 package controllers.amendment.group
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -28,7 +29,6 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import controllers.amendment.group
 import models.registration.Registration
-import models.request.AmendmentJourneyAction
 import views.html.amendment.group.list_group_members_page
 import views.viewmodels.ListGroupMembersViewModel
 

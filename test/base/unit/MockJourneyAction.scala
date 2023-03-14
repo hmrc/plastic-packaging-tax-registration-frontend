@@ -17,12 +17,12 @@
 package base.unit
 
 import base.MockAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import models.registration.Registration
-import models.request.JourneyAction
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,8 +31,8 @@ trait MockJourneyAction
     with MockAuthAction with MockitoSugar {
   self: MockitoSugar with Suite =>
 
-  val mockJourneyAction: JourneyAction =
-    new JourneyAction(mockRegistrationConnector, mockAuditor)(
+  val mockJourneyAction: GetRegistrationAction =
+    new GetRegistrationAction(mockRegistrationConnector, mockAuditor)(
       ExecutionContext.global
     )
 

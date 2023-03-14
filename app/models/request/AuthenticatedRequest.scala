@@ -16,13 +16,37 @@
 
 package models.request
 
+import connectors.DownstreamServiceError
+import controllers.contact.RegistrationException
 import play.api.mvc.{Request, WrappedRequest}
-import models.SignedInUser
 
-class AuthenticatedRequest[+A](
-  request: Request[A],
-  val user: SignedInUser,
-  val pptReference: Option[String] = None
-) extends WrappedRequest[A](request) {
+sealed abstract class AuthenticatedRequest[+A](request: Request[A]) extends WrappedRequest[A](request) {
+  val identityData: IdentityData
+  val internalID: String = identityData.internalId.getOrElse(throw new RuntimeException("Internal ID not found."))
+  def cacheId: String
+  val credId: String = identityData.credentials.map(_.providerId).getOrElse(
+    throw DownstreamServiceError("Cannot find user credentials id",
+      RegistrationException("Cannot find user credentials id")
+    )
+  )
+}
+
+object AuthenticatedRequest {
+
+  final case class RegistrationRequest[+A](
+                                      request: Request[A],
+                                      identityData: IdentityData
+                                    ) extends AuthenticatedRequest[A](request) {
+    override def cacheId: String = internalID //todo make use of.
+  }
+
+  final case class PPTEnrolledRequest[+A](
+                                     request: Request[A],
+                                     identityData: IdentityData,
+                                     pptReference: String
+                                   ) extends AuthenticatedRequest[A](request) {
+    override def cacheId: String = s"$internalID-$pptReference"
+  }
 
 }
+

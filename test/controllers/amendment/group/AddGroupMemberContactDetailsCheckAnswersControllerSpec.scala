@@ -17,6 +17,7 @@
 package controllers.amendment.group
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -29,7 +30,6 @@ import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import controllers.amendment.{routes => amendRoutes}
 import models.registration.Registration
-import models.request.AmendmentJourneyAction
 import views.html.amendment.group.amend_member_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport._

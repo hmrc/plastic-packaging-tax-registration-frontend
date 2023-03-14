@@ -61,7 +61,7 @@ abstract class PartnerContactAddressControllerBase(
                              pptHintKey = None,
                              forceUkAddress = false
         )
-      ).map(redirect => Redirect(redirect))
+      )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
 
   protected def onAddressCaptureCallback(
@@ -69,7 +69,7 @@ abstract class PartnerContactAddressControllerBase(
     successfulRedirect: Call
   ): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           registrationUpdater.updateRegistration { registration =>
             update(partnerId, capturedAddress)(registration)

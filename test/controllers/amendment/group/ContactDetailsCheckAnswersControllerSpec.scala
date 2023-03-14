@@ -17,6 +17,7 @@
 package controllers.amendment.group
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -26,7 +27,6 @@ import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
-import models.request.AmendmentJourneyAction
 import views.html.amendment.group.member_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport._

@@ -24,9 +24,10 @@ import audit.Auditor
 import config.AppConfig
 import connectors._
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.nrs.NrsDetails
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import models.response.FlashKeys
 import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
 import services.RegistrationGroupFilterService
@@ -40,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReviewRegistrationController @Inject() (
                                                appConfig: AppConfig,
                                                authenticate: NotEnrolledAuthAction,
-                                               journeyAction: JourneyAction,
+                                               journeyAction: GetRegistrationAction,
                                                mcc: MessagesControllerComponents,
                                                subscriptionsConnector: SubscriptionsConnector,
                                                metrics: Metrics,
@@ -76,7 +77,7 @@ class ReviewRegistrationController @Inject() (
 
   private def submitRegistration(request: JourneyRequest[AnyContent]) (implicit hc: HeaderCarrier) = {
     val completedRegistration = request.registration.asCompleted()
-    val internalId = request.authenticatedRequest.user.identityData.internalId
+    val internalId = request.authenticatedRequest.identityData.internalId
     val completedRegistrationWithUserHeaders =
       completedRegistration.copy(userHeaders = Some(request.headers.toSimpleMap))
 

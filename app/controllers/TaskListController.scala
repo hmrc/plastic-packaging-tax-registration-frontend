@@ -20,9 +20,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import connectors.RegistrationConnector
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.liability.{routes => liabilityRoutes}
 import models.registration.Cacheable
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -31,13 +32,13 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class TaskListController @Inject()(
-  authenticate: NotEnrolledAuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  singleEntityPage: task_list_single_entity,
-  groupPage: task_list_group,
-  partnershipPage: task_list_partnership,
-  override val registrationConnector: RegistrationConnector
+                                    authenticate: NotEnrolledAuthAction,
+                                    journeyAction: GetRegistrationAction,
+                                    mcc: MessagesControllerComponents,
+                                    singleEntityPage: task_list_single_entity,
+                                    groupPage: task_list_group,
+                                    partnershipPage: task_list_partnership,
+                                    override val registrationConnector: RegistrationConnector
 )
   (implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with Cacheable {
 

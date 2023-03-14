@@ -18,15 +18,13 @@ package services
 
 import base.PptTestData.newUser
 import base.unit.MockAddressCaptureDetailRepository
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.test.FakeRequest
 import spec.PptTestData
 import controllers.address.routes
-import models.request.{
-  AmendmentJourneyAction,
-  AuthenticatedRequest
-}
+import models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext
 

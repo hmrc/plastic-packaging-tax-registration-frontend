@@ -28,8 +28,9 @@ import play.api.test.{FakeRequest, Injecting}
 import play.twirl.api.HtmlFormat
 import config.AppConfig
 import connectors.addresslookup.AddressLookupFrontendConnector
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import models.addresslookup._
-import models.request.{AmendmentJourneyAction, AuthenticatedRequest}
+import models.request.AuthenticatedRequest
 import services.{AddressCaptureConfig, AddressCaptureService, CountryService}
 import utils.AddressConversionUtils
 import views.html.address.{address_page, uk_address_page}

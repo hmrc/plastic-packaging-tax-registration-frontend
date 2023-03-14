@@ -17,14 +17,11 @@
 package controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import controllers.amendment.AmendmentController
 import controllers.amendment.{routes => amendRoutes}
-import models.request.AmendmentJourneyAction
-import models.subscriptions.{
-  SubscriptionCreateOrUpdateResponseFailure,
-  SubscriptionCreateOrUpdateResponseSuccess
-}
+import models.subscriptions.{SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
+import services.AmendRegistrationService
 import views.html.amendment.group.amend_member_contact_check_answers_page
 
 import javax.inject.{Inject, Singleton}
@@ -32,15 +29,15 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddGroupMemberContactDetailsCheckAnswersController @Inject() (
-                                                                     authenticate: EnrolledAuthAction,
-                                                                     journeyAction: AmendmentJourneyAction,
+                                                                     journeyAction: JourneyAction,
+                                                                     amendRegistrationService: AmendRegistrationService,
                                                                      mcc: MessagesControllerComponents,
                                                                      page: amend_member_contact_check_answers_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, journeyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def displayPage(memberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(
         page(
           request.registration.groupDetail.flatMap(_.findGroupMember(Some(memberId), None))
@@ -52,8 +49,8 @@ class AddGroupMemberContactDetailsCheckAnswersController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
-      journeyAction.updateRegistration().map {
+    journeyAction.amend.async { implicit request =>
+      amendRegistrationService.updateRegistration().map {
         case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManageGroupMembersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>

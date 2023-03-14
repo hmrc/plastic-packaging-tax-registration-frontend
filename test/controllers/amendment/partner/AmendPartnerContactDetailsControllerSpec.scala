@@ -17,6 +17,7 @@
 package controllers.amendment.partner
 
 import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
@@ -34,7 +35,6 @@ import forms.contact._
 import forms.group.MemberName
 import models.emailverification.EmailVerificationJourneyStatus
 import models.registration.{AmendRegistrationUpdateService, Registration}
-import models.request.AmendmentJourneyAction
 import services.{AddressCaptureConfig, EmailVerificationService}
 import utils.FakeRequestCSRFSupport._
 import views.html.contact.{

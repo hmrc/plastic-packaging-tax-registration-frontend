@@ -54,8 +54,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerNameControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   val ukCompanyGrsConnector: UkCompanyGrsConnector,
   val soleTraderGrsConnector: SoleTraderGrsConnector,
   val partnershipGrsConnector: PartnershipGrsConnector,
@@ -72,7 +71,7 @@ abstract class PartnerNameControllerBase(
     backCall: Call,
     submitCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
         renderPageFor(partner, backCall, submitCall)
       }.getOrElse(throw new IllegalStateException("Expected partner missing"))
@@ -84,7 +83,7 @@ abstract class PartnerNameControllerBase(
     submitCall: Call,
     dropoutCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       getPartner(partnerId).map { partner =>
         def updateAction(partnerName: PartnerName): Future[Registration] =
           partnerId match {
@@ -132,11 +131,11 @@ abstract class PartnerNameControllerBase(
                 case SCOTTISH_PARTNERSHIP =>
                   getPartnershipRedirectUrl(appConfig.scottishPartnershipJourneyUrl,
                     grsCallbackUrl(existingPartnerId)
-                  ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl))
                 case GENERAL_PARTNERSHIP =>
                   getPartnershipRedirectUrl(appConfig.generalPartnershipJourneyUrl,
                     grsCallbackUrl(existingPartnerId)
-                  ).map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                  ).map(journeyStartUrl => SeeOther(journeyStartUrl))
                 case _ =>
                   Future(
                     Redirect(

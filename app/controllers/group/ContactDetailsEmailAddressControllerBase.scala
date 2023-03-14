@@ -35,8 +35,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class ContactDetailsEmailAddressControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: member_email_address_page,
   registrationUpdater: RegistrationUpdater
@@ -44,7 +43,7 @@ abstract class ContactDetailsEmailAddressControllerBase(
     extends FrontendController(mcc) with ContactDetailsControllerBase with I18nSupport {
 
   protected def doDisplayPage(memberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       val contactDetails = request.registration.findMember(memberId).flatMap(_.contactDetails)
       val emailAddress   = contactDetails.flatMap(_.email)
       val memberName     = contactDetails.map(_.groupMemberName)
@@ -57,7 +56,7 @@ abstract class ContactDetailsEmailAddressControllerBase(
     }
 
   protected def doSubmit(memberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       EmailAddress.form()
         .bindFromRequest()
         .fold(

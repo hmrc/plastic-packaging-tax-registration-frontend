@@ -17,9 +17,9 @@
 package controllers.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.{JourneyAction, NotEnrolledAuthAction}
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
-import models.request.JourneyAction
 import services.AddressCaptureService
 
 import javax.inject.{Inject, Singleton}
@@ -27,14 +27,13 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
-                                                         authenticate: NotEnrolledAuthAction,
                                                          journeyAction: JourneyAction,
                                                          addressCaptureService: AddressCaptureService,
                                                          mcc: MessagesControllerComponents,
                                                          registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsConfirmAddressControllerBase(authenticate,
-                                                       journeyAction,
+    extends ContactDetailsConfirmAddressControllerBase(
+                                                       journeyAction.register,
                                                        addressCaptureService,
                                                        mcc,
                                                        registrationUpdater

@@ -19,10 +19,11 @@ package controllers.liability
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import forms.Date
 import forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
 import models.registration.{Cacheable, NewLiability, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -34,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ExpectToExceedThresholdWeightController @Inject() (
                                                           authenticate: NotEnrolledAuthAction,
-                                                          journeyAction: JourneyAction,
+                                                          journeyAction: GetRegistrationAction,
                                                           override val registrationConnector: RegistrationConnector,
                                                           mcc: MessagesControllerComponents,
                                                           page: expect_to_exceed_threshold_weight_page,

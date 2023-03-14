@@ -21,11 +21,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 
 import controllers.{routes => commonRoutes}
 import forms.contact.{Address, ConfirmAddress}
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.contact.confirm_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -35,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
                                                          authenticate: NotEnrolledAuthAction,
-                                                         journeyAction: JourneyAction,
+                                                         journeyAction: GetRegistrationAction,
                                                          override val registrationConnector: RegistrationConnector,
                                                          mcc: MessagesControllerComponents,
                                                          page: confirm_address

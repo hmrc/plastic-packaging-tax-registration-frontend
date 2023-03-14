@@ -20,8 +20,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.RegistrationConnector
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.Cacheable
-import models.request.JourneyAction
 import views.html.group.member_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -30,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
                                                        authenticate: NotEnrolledAuthAction,
-                                                       journeyAction: JourneyAction,
+                                                       journeyAction: GetRegistrationAction,
                                                        override val registrationConnector: RegistrationConnector,
                                                        mcc: MessagesControllerComponents,
                                                        page: member_contact_check_answers_page

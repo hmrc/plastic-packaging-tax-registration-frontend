@@ -28,6 +28,7 @@ import connectors.grs.{
   UkCompanyGrsConnector
 }
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.organisation.{
   routes => organisationRoutes
 }
@@ -42,7 +43,7 @@ import forms.organisation.PartnerTypeEnum.{
 }
 import models.genericregistration.PartnershipDetails
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import services.GRSRedirections
 import views.html.organisation.partnership_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -53,7 +54,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PartnershipTypeController @Inject() (
                                             authenticate: NotEnrolledAuthAction,
-                                            journeyAction: JourneyAction,
+                                            journeyAction: GetRegistrationAction,
                                             val appConfig: AppConfig,
                                             val soleTraderGrsConnector: SoleTraderGrsConnector,
                                             val ukCompanyGrsConnector: UkCompanyGrsConnector,
@@ -91,19 +92,19 @@ class PartnershipTypeController @Inject() (
                         getPartnershipRedirectUrl(appConfig.limitedPartnershipJourneyUrl,
                                                   appConfig.grsCallbackUrl
                         )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
                       case SCOTTISH_LIMITED_PARTNERSHIP =>
                         getPartnershipRedirectUrl(
                           appConfig.scottishLimitedPartnershipJourneyUrl,
                           appConfig.grsCallbackUrl
                         )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
                       case LIMITED_LIABILITY_PARTNERSHIP =>
                         getPartnershipRedirectUrl(
                           appConfig.limitedLiabilityPartnershipJourneyUrl,
                           appConfig.grsCallbackUrl
                         )
-                          .map(journeyStartUrl => SeeOther(journeyStartUrl).addingToSession())
+                          .map(journeyStartUrl => SeeOther(journeyStartUrl))
                       case _ =>
                         Future(
                           Redirect(

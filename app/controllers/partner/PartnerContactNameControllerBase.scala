@@ -30,8 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerContactNameControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: partner_member_name_page,
   registrationUpdater: RegistrationUpdater
@@ -39,7 +38,7 @@ abstract class PartnerContactNameControllerBase(
     extends FrontendController(mcc) with I18nSupport {
 
   protected def doDisplay(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
 
         val isNominated: Boolean = request.registration.isNominatedPartner(partnerId)
@@ -69,7 +68,7 @@ abstract class PartnerContactNameControllerBase(
   }
 
   protected def doSubmit(partnerId: Option[String], backCall: Call, submitCall: Call): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       def updateAction(memberName: MemberName): Future[Registration] =
         partnerId match {
           case Some(partnerId) => updateExistingPartner(memberName, partnerId)

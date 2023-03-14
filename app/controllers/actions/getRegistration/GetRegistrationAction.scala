@@ -14,38 +14,37 @@
  * limitations under the License.
  */
 
-package models.request
+package controllers.actions.getRegistration
 
-import play.api.Logger
-import play.api.mvc.{ActionRefiner, Result}
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import uk.gov.hmrc.http.HeaderCarrier
 import audit.Auditor
 import connectors.RegistrationConnector
 import models.registration.Registration
+import models.request.{AuthenticatedRequest, JourneyRequest}
+import play.api.Logging
+import play.api.mvc.{ActionRefiner, Result}
+import uk.gov.hmrc.auth.core.InsufficientEnrolments
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-//todo why does this live here??
-class JourneyAction @Inject() (
+//does there need to be an amend one or could this just handle it?
+class GetRegistrationAction @Inject()(
   registrationConnector: RegistrationConnector,
   auditor: Auditor,
 )(implicit val exec: ExecutionContext)
-    extends ActionRefiner[AuthenticatedRequest, JourneyRequest] {
-
-  private val logger = Logger(this.getClass)
+    extends ActionRefiner[AuthenticatedRequest, JourneyRequest] with Logging {
 
   override protected def refine[A](
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, JourneyRequest[A]]] = {
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    request.user.identityData.internalId.filter(_.trim.nonEmpty) match {
+    request.identityData.internalId.filter(_.trim.nonEmpty) match {
       case Some(id) =>
         loadOrCreateRegistration(id)(hc, request).map {
-          case Right(reg)  => Right(JourneyRequest[A](request, reg, request.pptReference))
+          case Right(reg)  => Right(JourneyRequest[A](request, reg))
           case Left(error) => throw error
         }
       case None =>

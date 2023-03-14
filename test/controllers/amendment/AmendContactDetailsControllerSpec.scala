@@ -17,6 +17,7 @@
 package controllers.amendment
 
 import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -30,7 +31,6 @@ import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import forms.contact._
 import models.registration.Registration
-import models.request.AmendmentJourneyAction
 import services.AddressCaptureConfig
 import views.html.contact._
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents

@@ -21,11 +21,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.RegistrationConnector
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.Address
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import models.registration.Cacheable
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import services.{AddressCaptureConfig, AddressCaptureService}
 import views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
                                                    authenticate: NotEnrolledAuthAction,
-                                                   journeyAction: JourneyAction,
+                                                   journeyAction: GetRegistrationAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    addressCaptureService: AddressCaptureService,
                                                    mcc: MessagesControllerComponents,
@@ -87,7 +88,7 @@ class ConfirmBusinessAddressController @Inject() (
         pptHintKey = None,
         forceUkAddress = forceUKAddress
       )
-    )(request).map(redirect => Redirect(redirect))
+    )(request.authenticatedRequest).map(redirect => Redirect(redirect))
 
   private def isAddressValidForOrgType(address: Address, orgType: Option[OrgType]): Boolean =
     if (Address.validateAsInput(address).errors.isEmpty)
@@ -100,7 +101,7 @@ class ConfirmBusinessAddressController @Inject() (
 
   def addressCaptureCallback(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           update { reg =>
             reg.copy(organisationDetails =

@@ -18,6 +18,7 @@ package models.request
 
 import base.PptTestData.newUser
 import base.unit.MockAmendmentJourneyAction
+import models.SignedInUser
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
@@ -43,7 +44,7 @@ class AmendmentJourneyActionSpec
 
   when(responseGenerator.apply(requestCaptor.capture())).thenReturn(Future.successful(Results.Ok))
 
-  private val user = newUser()
+  private val user: SignedInUser = newUser()
 
   private val enrolledUser = user.copy(enrolments =
     Enrolments(

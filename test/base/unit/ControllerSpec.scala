@@ -16,6 +16,7 @@
 
 package base.unit
 
+import base.PptTestData.nrsCredentials
 import base.{MockAuthAction, PptTestData}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
@@ -30,7 +31,8 @@ import play.twirl.api.Html
 import spec.PptTestData
 import config.AppConfig
 import models.SignedInUser
-import models.request.{AmendmentJourneyAction, AuthenticatedRequest}
+import models.request.{AuthenticatedRequest, IdentityData}
+import models.request.AuthenticatedRequest.RegistrationRequest
 import utils.FakeRequestCSRFSupport._
 
 import java.lang.reflect.Field
@@ -52,10 +54,10 @@ trait ControllerSpec
     headers: Headers = Headers(),
     user: SignedInUser = PptTestData.newUser("123")
   ): AuthenticatedRequest[AnyContentAsEmpty.type] =
-    new AuthenticatedRequest(FakeRequest().withHeaders(headers), user)
+    authRequest(FakeRequest().withHeaders(headers))
 
-  def authRequest[A](fakeRequest: FakeRequest[A], user: SignedInUser) =
-    new AuthenticatedRequest(fakeRequest, user )
+  def authRequest[A](fakeRequest: FakeRequest[A]) =
+    RegistrationRequest(fakeRequest, IdentityData(Some("internalId"), Some(nrsCredentials)))
 
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
@@ -67,7 +69,6 @@ trait ControllerSpec
 
   protected def postRequest(sessionId: String = "123"): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "")
-      .withSession((AmendmentJourneyAction.SessionId, sessionId))
 
   protected def postRequestEncoded(
     form: AnyRef,

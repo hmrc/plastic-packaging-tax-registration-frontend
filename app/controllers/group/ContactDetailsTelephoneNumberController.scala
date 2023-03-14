@@ -17,9 +17,9 @@
 package controllers.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.{JourneyAction, NotEnrolledAuthAction}
+import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
-import models.request.JourneyAction
 import views.html.group.member_phone_number_page
 
 import javax.inject.{Inject, Singleton}
@@ -27,14 +27,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContactDetailsTelephoneNumberController @Inject() (
-                                                          authenticate: NotEnrolledAuthAction,
                                                           journeyAction: JourneyAction,
                                                           mcc: MessagesControllerComponents,
                                                           page: member_phone_number_page,
                                                           registrationUpdater: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends ContactDetailsTelephoneNumberControllerBase(authenticate,
-                                                        journeyAction,
+    extends ContactDetailsTelephoneNumberControllerBase(journeyAction.register,
                                                         mcc,
                                                         page,
                                                         registrationUpdater

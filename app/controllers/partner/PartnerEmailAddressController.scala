@@ -17,19 +17,15 @@
 package controllers.partner
 
 import play.api.mvc._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.{JourneyAction, NotEnrolledAuthAction}
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddressPasscode
 import models.genericregistration.Partner
 import models.registration.{NewRegistrationUpdateService, Registration}
-import models.request.JourneyAction
 import services.EmailVerificationService
-import views.html.contact.{
-  email_address_passcode_confirmation_page,
-  email_address_passcode_page,
-  too_many_attempts_passcode_page
-}
+import views.html.contact.{email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
 import views.html.partner.partner_email_address_page
 
 import javax.inject.{Inject, Singleton}
@@ -37,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerEmailAddressController @Inject() (
-                                                authenticate: NotEnrolledAuthAction,
                                                 journeyAction: JourneyAction,
                                                 mcc: MessagesControllerComponents,
                                                 page: partner_email_address_page,
@@ -47,8 +42,8 @@ class PartnerEmailAddressController @Inject() (
                                                 val registrationUpdateService: NewRegistrationUpdateService,
                                                 val emailVerificationService: EmailVerificationService
 )(implicit ec: ExecutionContext)
-    extends PartnerEmailAddressControllerBase(authenticate = authenticate,
-                                              journeyAction = journeyAction,
+    extends PartnerEmailAddressControllerBase(
+                                              journeyAction = journeyAction.register,
                                               mcc = mcc,
                                               page = page,
                                               registrationUpdater = registrationUpdateService
@@ -88,7 +83,7 @@ class PartnerEmailAddressController @Inject() (
     )
 
   def confirmNewPartnerEmailCode(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.inflightPartner.map { _ =>
         Ok(
           renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
@@ -103,7 +98,7 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def checkNewPartnerEmailVerificationCode(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.inflightPartner.map { _ =>
         processVerificationCodeSubmission(routes.PartnerEmailAddressController.displayNewPartner(),
                                           routes.PartnerEmailAddressController.checkNewPartnerEmailVerificationCode(),
@@ -114,7 +109,7 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def emailVerifiedNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.inflightPartner.map { _ =>
         showEmailVerifiedPage(
           routes.PartnerEmailAddressController.confirmNewPartnerEmailCode(),
@@ -125,7 +120,7 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def confirmEmailUpdateNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.inflightPartner.map { _ =>
         val prospectiveEmail = getProspectiveEmail()
         isEmailVerified(prospectiveEmail).flatMap { isVerified =>
@@ -142,12 +137,12 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def emailVerificationTooManyAttempts(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       showTooManyAttemptsPage
     }
 
   def confirmExistingPartnerEmailCode(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       getPartner(Some(partnerId)).map { _ =>
         Ok(
           renderEnterEmailVerificationCodePage(EmailAddressPasscode.form(),
@@ -164,7 +159,7 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def checkExistingPartnerEmailVerificationCode(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       getPartner(Some(partnerId)).map { _ =>
         processVerificationCodeSubmission(
           routes.PartnerEmailAddressController.displayExistingPartner(partnerId),
@@ -176,7 +171,7 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def confirmEmailUpdateExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       getPartner(Some(partnerId)).map { _ =>
         showEmailVerifiedPage(
           routes.PartnerEmailAddressController.confirmExistingPartnerEmailCode(partnerId),
@@ -186,7 +181,7 @@ class PartnerEmailAddressController @Inject() (
     }
 
   def emailVerifiedExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       getPartner(Some(partnerId)).map { partner =>
         registrationUpdater.updateRegistration(
           updatePartnersEmail(Some(partner), getProspectiveEmail())

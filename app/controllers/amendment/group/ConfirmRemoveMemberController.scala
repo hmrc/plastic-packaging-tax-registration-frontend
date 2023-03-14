@@ -19,15 +19,13 @@ package controllers.amendment.group
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import controllers.amendment.AmendmentController
 import controllers.group.RemoveMemberAction
 import forms.group.RemoveMember
 import models.registration.Registration
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
+import models.request.JourneyRequest
+import services.AmendRegistrationService
 import views.html.amendment.group.confirm_remove_member_page
 
 import javax.inject.{Inject, Singleton}
@@ -35,18 +33,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmRemoveMemberController @Inject() (
-                                                authenticate: EnrolledAuthAction,
-                                                amendmentJourneyAction: AmendmentJourneyAction,
+                                                journeyAction: JourneyAction,
+                                                amendRegistrationService: AmendRegistrationService,
                                                 mcc: MessagesControllerComponents,
                                                 page: confirm_remove_member_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with I18nSupport
+    extends AmendmentController(mcc, amendRegistrationService) with I18nSupport
     with RemoveMemberAction {
 
   private def onwardCall = routes.GroupMembersListController.displayPage()
 
   def displayPage(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       request.registration.findMember(memberId).map { member =>
         Ok(page(RemoveMember.form(), member))
       }.getOrElse {
@@ -55,7 +53,7 @@ class ConfirmRemoveMemberController @Inject() (
     }
 
   def submit(memberId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       request.registration.findMember(memberId).map { member =>
         RemoveMember.form().bindFromRequest().fold(
           { formWithErrors: Form[RemoveMember] =>

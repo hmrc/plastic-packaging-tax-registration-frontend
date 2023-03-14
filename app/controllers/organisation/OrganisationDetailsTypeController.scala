@@ -25,22 +25,13 @@ import config.AppConfig
 import connectors._
 import connectors.grs._
 import controllers.actions._
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.group.OrganisationDetailsTypeHelper
 import controllers.{routes => commonRoutes}
-import forms.organisation.{
-  ActionEnum,
-  OrgType,
-  OrganisationType,
-  PartnerTypeEnum
-}
+import forms.organisation.{ActionEnum, OrgType, OrganisationType, PartnerTypeEnum}
 import models.genericregistration.PartnershipDetails
-import models.registration.{
-  Cacheable,
-  NewRegistrationUpdateService,
-  OrganisationDetails,
-  Registration
-}
-import models.request.{JourneyAction, JourneyRequest}
+import models.registration.{Cacheable, NewRegistrationUpdateService, OrganisationDetails, Registration}
+import models.request.JourneyRequest
 import views.html.organisation.organisation_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -51,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class OrganisationDetailsTypeController @Inject() (
                                                     auditor: Auditor,
                                                     authenticate: NotEnrolledAuthAction,
-                                                    journeyAction: JourneyAction,
+                                                    journeyAction: GetRegistrationAction,
                                                     override val appConfig: AppConfig,
                                                     override val soleTraderGrsConnector: SoleTraderGrsConnector,
                                                     override val ukCompanyGrsConnector: UkCompanyGrsConnector,
@@ -100,9 +91,7 @@ class OrganisationDetailsTypeController @Inject() (
           organisationType =>
             updateRegistration(organisationType).flatMap {
               case Right(_) =>
-                auditor.orgTypeSelected(request.user.identityData.internalId.getOrElse(
-                                          throw InsufficientEnrolments()
-                                        ),
+                auditor.orgTypeSelected(request.authenticatedRequest.internalID,
                                         organisationType.answer
                 )
                 handleOrganisationType(organisationType, true, None)

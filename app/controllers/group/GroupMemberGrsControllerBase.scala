@@ -21,25 +21,24 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.SubscriptionsConnector
 import connectors.grs.{PartnershipGrsConnector, UkCompanyGrsConnector}
-import controllers.actions.AuthActioning
 import controllers.organisation.RegistrationStatus.{DUPLICATE_SUBSCRIPTION, RegistrationStatus, STATUS_OK}
 import forms.organisation.OrgType
 import forms.organisation.OrgType.OrgType
 import models.genericregistration.{CompanyProfile, IncorporationDetails, PartnershipBusinessDetails}
 import models.registration.group.{GroupError, GroupErrorType, GroupMember, OrganisationDetails}
 import models.registration.{GroupDetail, Registration, RegistrationUpdater}
-import models.request.{AuthenticatedRequest, JourneyRequest}
+import models.request.JourneyRequest
 import models.subscriptions.SubscriptionStatus
 import models.subscriptions.SubscriptionStatus.SUBSCRIBED
 import utils.AddressConversionUtils
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import controllers.amendment.group.{routes => amendRoutes}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class GroupMemberGrsControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   ukCompanyGrsConnector: UkCompanyGrsConnector,
   subscriptionsConnector: SubscriptionsConnector,
   partnershipGrsConnector: PartnershipGrsConnector,
@@ -49,13 +48,17 @@ abstract class GroupMemberGrsControllerBase(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
+  //todo better place
+  implicit def hc(request: Request[_]): HeaderCarrier =
+    HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
   def findCurrentMember(memberId: Option[String], registration: Registration): String =
     memberId.fold(registration.lastMember)(registration.findMember).getOrElse(
       throw new IllegalStateException("GRS member callback with no group members found")
     ).id
 
   protected def grsCallback(journeyId: String, memberId: Option[String], getRedirect: String => Call): Action[AnyContent] =
-    (authenticate andThen journeyAction).async {
+    journeyAction.async {
       implicit request =>
         updateRegistrationDetails(journeyId, memberId).flatMap {
           case Right(registration) =>
@@ -75,7 +78,7 @@ abstract class GroupMemberGrsControllerBase(
     }
 
   protected def grsCallbackAmendAddGroupMember(journeyId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async {
+    journeyAction.async {
       implicit request =>
         updateRegistrationDetails(journeyId, None).flatMap {
           case Right(registration) =>

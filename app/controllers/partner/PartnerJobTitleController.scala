@@ -21,6 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => commonRoutes}
 import forms.contact.JobTitle
@@ -29,7 +30,7 @@ import models.genericregistration.{
   PartnerContactDetails
 }
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.partner.partner_job_title_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -39,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PartnerJobTitleController @Inject() (
                                             authenticate: NotEnrolledAuthAction,
-                                            journeyAction: JourneyAction,
+                                            journeyAction: GetRegistrationAction,
                                             override val registrationConnector: RegistrationConnector,
                                             mcc: MessagesControllerComponents,
                                             page: partner_job_title_page

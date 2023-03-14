@@ -19,20 +19,20 @@ package controllers.group
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import controllers.actions.PermissiveAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.group.{routes => groupRoutes}
-import models.request.JourneyAction
 import views.html.group.{group_member_already_registered_page, nominated_organisation_already_registered_page, organisation_already_in_group_page}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
-  authenticate: PermissiveAuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
-  organisationAlreadyInGroupPage: organisation_already_in_group_page,
-  groupMemberAlreadyRegisteredPage: group_member_already_registered_page
+                                         authenticate: PermissiveAuthAction,
+                                         journeyAction: GetRegistrationAction,
+                                         mcc: MessagesControllerComponents,
+                                         nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
+                                         organisationAlreadyInGroupPage: organisation_already_in_group_page,
+                                         groupMemberAlreadyRegisteredPage: group_member_already_registered_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =

@@ -40,7 +40,7 @@ class AmendRegistrationUpdateService @Inject() (
   override def updateRegistration(
     registrationUpdater: Registration => Registration
   )(implicit request: JourneyRequest[_], hc: HeaderCarrier): Future[Registration] =
-    registrationAmendmentRepository.update(registrationUpdater(_))
+    registrationAmendmentRepository.update(registrationUpdater(_))(request.authenticatedRequest)
 
 }
 

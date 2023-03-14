@@ -19,14 +19,12 @@ package controllers.amendment.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import controllers.amendment.AmendmentController
 import forms.partner.RemovePartner
 import models.registration.Registration
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
+import models.request.JourneyRequest
+import services.AmendRegistrationService
 import views.html.amendment.partner.confirm_remove_partner_page
 
 import javax.inject.{Inject, Singleton}
@@ -34,15 +32,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmRemovePartnerController @Inject() (
-                                                 authenticate: EnrolledAuthAction,
-                                                 amendmentJourneyAction: AmendmentJourneyAction,
+                                                 journeyAction: JourneyAction,
+                                                 amendRegistrationService: AmendRegistrationService,
                                                  mcc: MessagesControllerComponents,
                                                  page: confirm_remove_partner_page
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) with I18nSupport {
+    extends AmendmentController(mcc, amendRegistrationService) with I18nSupport {
 
   def displayPage(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(page(RemovePartner.form(), getPartner(partnerId, request.registration)))
     }
 
@@ -52,7 +50,7 @@ class ConfirmRemovePartnerController @Inject() (
     )
 
   def submit(partnerId: String): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
         RemovePartner.form().bindFromRequest().fold(
           { formWithErrors: Form[RemovePartner] =>

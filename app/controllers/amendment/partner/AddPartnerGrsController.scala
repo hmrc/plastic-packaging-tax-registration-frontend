@@ -18,24 +18,17 @@ package controllers.amendment.partner
 
 import play.api.mvc.MessagesControllerComponents
 import connectors.SubscriptionsConnector
-import connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import controllers.actions.EnrolledAuthAction
+import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import controllers.partner.PartnerGrsControllerBase
 import models.registration.AmendRegistrationUpdateService
-import models.request.AmendmentJourneyAction
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class AddPartnerGrsController @Inject() (
-                                          authenticate: EnrolledAuthAction,
-                                          journeyAction: AmendmentJourneyAction,
+                                          journeyAction: JourneyAction,
                                           ukCompanyGrsConnector: UkCompanyGrsConnector,
                                           soleTraderGrsConnector: SoleTraderGrsConnector,
                                           partnershipGrsConnector: PartnershipGrsConnector,
@@ -44,8 +37,7 @@ class AddPartnerGrsController @Inject() (
                                           subscriptionsConnector: SubscriptionsConnector,
                                           mcc: MessagesControllerComponents
 )(implicit val executionContext: ExecutionContext)
-    extends PartnerGrsControllerBase(authenticate = authenticate,
-                                     journeyAction = journeyAction,
+    extends PartnerGrsControllerBase(journeyAction = journeyAction.amend,
                                      ukCompanyGrsConnector = ukCompanyGrsConnector,
                                      soleTraderGrsConnector = soleTraderGrsConnector,
                                      partnershipGrsConnector = partnershipGrsConnector,

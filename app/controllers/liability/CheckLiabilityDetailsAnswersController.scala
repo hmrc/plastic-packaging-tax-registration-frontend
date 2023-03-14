@@ -19,10 +19,11 @@ package controllers.liability
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.OldDate
 import models.registration.{Cacheable, LiabilityDetails, NewLiability, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.TaxStartDateService
@@ -34,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolledAuthAction,
-                                                        journeyAction: JourneyAction,
+                                                        journeyAction: GetRegistrationAction,
                                                         mcc: MessagesControllerComponents,
                                                         override val registrationConnector: RegistrationConnector,
                                                         taxStarDateService: TaxStartDateService,

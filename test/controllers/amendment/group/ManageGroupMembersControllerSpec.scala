@@ -17,6 +17,7 @@
 package controllers.amendment.group
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import play.api.http.Status.OK
@@ -25,7 +26,6 @@ import play.api.test.Helpers.{contentAsString, status}
 import play.api.test.{FakeRequest, Helpers}
 import play.twirl.api.Html
 import models.registration.Registration
-import models.request.AmendmentJourneyAction
 import views.html.amendment.group.manage_group_members_page
 
 import scala.concurrent.Future

@@ -30,12 +30,13 @@ import config.AppConfig
 import controllers.unauthorised.{routes => unauthorisedRoutes}
 import models.SignedInUser
 import models.enrolment.PptEnrolment
+import models.request.AuthenticatedRequest.{PPTEnrolledRequest, RegistrationRequest}
 import models.request.{AuthenticatedRequest, IdentityData}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NotEnrolledAuthActionImpl @Inject()(
+class NotEnrolledAuthActionImpl @Inject()( //the normal reg auth action
   override val authConnector: AuthConnector,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
@@ -46,7 +47,7 @@ class NotEnrolledAuthActionImpl @Inject()(
   override val agentsAllowed: Boolean                  = false
 }
 
-class EnrolledAuthActionImpl @Inject()(
+class EnrolledAuthActionImpl @Inject()( //stuff that should be in returns ms action?
   override val authConnector: AuthConnector,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
@@ -57,7 +58,7 @@ class EnrolledAuthActionImpl @Inject()(
   override val agentsAllowed: Boolean                  = true
 }
 
-class PermissiveAuthActionImpl @Inject()(
+class PermissiveAuthActionImpl @Inject()( //notable errors action? wut....
   override val authConnector: AuthConnector,
   metrics: Metrics,
   mcc: MessagesControllerComponents,
@@ -133,29 +134,9 @@ abstract class AuthActionBase @Inject() (
             confidenceLevel ~ authNino ~ saUtr ~ dateOfBirth ~ agentInformation ~ groupIdentifier ~
             credentialRole ~ mdtpInformation ~ itmpName ~ itmpDateOfBirth ~ itmpAddress ~ credentialStrength ~ loginTimes =>
           authorisation.stop()
-          val identityData = IdentityData(internalId,
-                                          externalId,
-                                          agentCode,
-                                          credentials,
-                                          Some(confidenceLevel),
-                                          authNino,
-                                          saUtr,
-                                          name,
-                                          dateOfBirth,
-                                          email,
-                                          Some(agentInformation),
-                                          groupIdentifier,
-                                          credentialRole.map(res => res.toJson.toString()),
-                                          mdtpInformation,
-                                          itmpName,
-                                          itmpDateOfBirth,
-                                          itmpAddress,
-                                          affinityGroup,
-                                          credentialStrength,
-                                          Some(loginTimes)
-          )
+          val identityData = IdentityData(internalId, credentials)
 
-          executeRequest(request, block, identityData, allEnrolments)
+          executeRequest(request, block, identityData, affinityGroup, allEnrolments)
       } recover {
       case _: NoActiveSession =>
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
@@ -184,6 +165,7 @@ abstract class AuthActionBase @Inject() (
     request: Request[A],
     block: AuthenticatedRequest[A] => Future[Result],
     identityData: IdentityData,
+    affinityGroup: Option[AffinityGroup],
     allEnrolments: Enrolments
   ) = {
 
@@ -191,7 +173,7 @@ abstract class AuthActionBase @Inject() (
 
     val pptReference = {
       // The source of the ppt reference will be different if this is an agent request
-      identityData.affinityGroup match {
+      affinityGroup match {
         case Some(AffinityGroup.Agent) =>
           getSelectedClientIdentifier()
         case _ =>
@@ -202,19 +184,22 @@ abstract class AuthActionBase @Inject() (
       }
     }
 
-    if (identityData.affinityGroup.contains(AffinityGroup.Agent) && !agentsAllowed)
+    if (affinityGroup.contains(AffinityGroup.Agent) && !agentsAllowed)
       throw UnsupportedAffinityGroup()
 
     if (pptReference.isDefined && redirectEnrolledUsersToReturns)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
-    else if (identityData.affinityGroup.contains(AffinityGroup.Agent) && pptReference.isEmpty)
+    else if (affinityGroup.contains(AffinityGroup.Agent) && pptReference.isEmpty)
       Future.successful(Results.Redirect(appConfig.pptAccountUrl))
     else
       block {
-        val user =
-          SignedInUser(allEnrolments, identityData)
-        new AuthenticatedRequest(request, user, pptReference)
-      }
+
+          if (pptReference.isDefined)
+            PPTEnrolledRequest(request, identityData, pptReference.get)
+          else
+            RegistrationRequest(request, identityData)
+        }
+
   }
 
 }

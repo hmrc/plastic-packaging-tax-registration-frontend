@@ -16,12 +16,11 @@
 
 package controllers.partner
 
-import play.api.mvc._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.JourneyAction
 import controllers.partner.{routes => partnerRoutes}
-import controllers.{routes => commonRoutes}
 import models.registration.NewRegistrationUpdateService
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
+import play.api.mvc._
 import views.html.partner.partner_member_name_page
 
 import javax.inject.{Inject, Singleton}
@@ -29,14 +28,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PartnerContactNameController @Inject() (
-                                               authenticate: NotEnrolledAuthAction,
                                                journeyAction: JourneyAction,
                                                mcc: MessagesControllerComponents,
                                                page: partner_member_name_page,
                                                registrationUpdateService: NewRegistrationUpdateService
 )(implicit ec: ExecutionContext)
-    extends PartnerContactNameControllerBase(authenticate = authenticate,
-                                             journeyAction = journeyAction,
+    extends PartnerContactNameControllerBase(journeyAction = journeyAction.register,
                                              mcc = mcc,
                                              page = page,
                                              registrationUpdater = registrationUpdateService

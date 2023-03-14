@@ -19,7 +19,7 @@ package controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import controllers.actions.NotEnrolledAuthAction
-import models.request.JourneyAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import views.html.enrolment.enrolment_failure_page
 import views.html.liability.grs_failure_page
 import views.html.organisation.business_verification_failure_page
@@ -31,16 +31,16 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
-  authenticate: NotEnrolledAuthAction,
-  journeyAction: JourneyAction,
-  mcc: MessagesControllerComponents,
-  errorPage: error_page,
-  errorNoSavePage: enrolment_failure_page,
-  grsFailurePage: grs_failure_page,
-  businessVerificationFailurePage: business_verification_failure_page,
-  soleTraderVerificationFailurePage: sole_trader_verification_failure_page,
-  duplicateSubscriptionPage: duplicate_subscription_page,
-  registrationFailedPage: registration_failed_page
+                                         authenticate: NotEnrolledAuthAction,
+                                         journeyAction: GetRegistrationAction,
+                                         mcc: MessagesControllerComponents,
+                                         errorPage: error_page,
+                                         errorNoSavePage: enrolment_failure_page,
+                                         grsFailurePage: grs_failure_page,
+                                         businessVerificationFailurePage: business_verification_failure_page,
+                                         soleTraderVerificationFailurePage: sole_trader_verification_failure_page,
+                                         duplicateSubscriptionPage: duplicate_subscription_page,
+                                         registrationFailedPage: registration_failed_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def subscriptionFailure(): Action[AnyContent] =

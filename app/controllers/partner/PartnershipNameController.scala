@@ -24,6 +24,7 @@ import config.AppConfig
 import connectors._
 import connectors.grs.PartnershipGrsConnector
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
   SCOTTISH_PARTNERSHIP
@@ -31,7 +32,7 @@ import forms.organisation.PartnerTypeEnum.{
 import forms.organisation.PartnershipName
 import models.genericregistration.PartnershipGrsCreateRequest
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.organisation.partnership_name
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -41,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PartnershipNameController @Inject() (
                                             authenticate: NotEnrolledAuthAction,
-                                            journeyAction: JourneyAction,
+                                            journeyAction: GetRegistrationAction,
                                             appConfig: AppConfig,
                                             partnershipGrsConnector: PartnershipGrsConnector,
                                             override val registrationConnector: RegistrationConnector,

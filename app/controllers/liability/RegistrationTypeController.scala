@@ -21,9 +21,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import connectors.RegistrationConnector
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import forms.liability.{RegType, RegistrationType}
 import models.registration.Cacheable
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import views.html.liability.registration_type_page
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RegistrationTypeController @Inject() (
                                              authenticate: NotEnrolledAuthAction,
-                                             journeyAction: JourneyAction,
+                                             journeyAction: GetRegistrationAction,
                                              override val registrationConnector: RegistrationConnector,
                                              mcc: MessagesControllerComponents,
                                              page: registration_type_page

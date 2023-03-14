@@ -18,17 +18,11 @@ package controllers.amendment
 
 import play.api.data.Form
 import play.api.mvc._
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.{EnrolledAuthAction, JourneyAction}
 import forms.contact._
 import models.registration.Registration
-import models.request.{
-  AmendmentJourneyAction,
-  JourneyRequest
-}
-import services.{
-  AddressCaptureConfig,
-  AddressCaptureService
-}
+import models.request.JourneyRequest
+import services.{AddressCaptureConfig, AddressCaptureService, AmendRegistrationService}
 import views.html.contact._
 
 import javax.inject.{Inject, Singleton}
@@ -36,18 +30,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AmendContactDetailsController @Inject() (
-                                                authenticate: EnrolledAuthAction,
+                                                journeyAction: JourneyAction,
+                                                amendRegistrationService: AmendRegistrationService,
                                                 mcc: MessagesControllerComponents,
-                                                amendmentJourneyAction: AmendmentJourneyAction,
                                                 contactNamePage: full_name_page,
                                                 jobTitlePage: job_title_page,
                                                 phoneNumberPage: phone_number_page,
                                                 addressCaptureService: AddressCaptureService
 )(implicit ec: ExecutionContext)
-    extends AmendmentController(mcc, amendmentJourneyAction) {
+    extends AmendmentController(mcc, amendRegistrationService) {
 
   def contactName(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       request.registration.primaryContactDetails.name match {
         case Some(name) =>
           Ok(buildContactNamePage(FullName.form().fill(FullName(name))))
@@ -65,7 +59,7 @@ class AmendContactDetailsController @Inject() (
         )
     }
 
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       FullName.form()
         .bindFromRequest()
         .fold(
@@ -84,7 +78,7 @@ class AmendContactDetailsController @Inject() (
     )
 
   def jobTitle(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       request.registration.primaryContactDetails.jobTitle match {
         case Some(jobTitle) =>
           Ok(buildJobTitlePage(JobTitle.form().fill(JobTitle(jobTitle))))
@@ -102,7 +96,7 @@ class AmendContactDetailsController @Inject() (
         )
     }
 
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       JobTitle.form()
         .bindFromRequest()
         .fold(
@@ -121,7 +115,7 @@ class AmendContactDetailsController @Inject() (
     )
 
   def phoneNumber(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       request.registration.primaryContactDetails.phoneNumber match {
         case Some(phoneNumber) =>
           Ok(buildPhoneNumberPage(PhoneNumber.form().fill(PhoneNumber(phoneNumber))))
@@ -139,7 +133,7 @@ class AmendContactDetailsController @Inject() (
         )
     }
 
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       PhoneNumber.form()
         .bindFromRequest()
         .fold(
@@ -158,7 +152,7 @@ class AmendContactDetailsController @Inject() (
     )
 
   def address(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
+    journeyAction.amend.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(backLink = routes.AmendRegistrationController.displayPage().url,
                              successLink = routes.AmendContactDetailsController.updateAddress().url,
@@ -168,12 +162,12 @@ class AmendContactDetailsController @Inject() (
                              pptHintKey = None,
                              forceUkAddress = false
         )
-      ).map(redirect => Redirect(redirect))
+      )(request.authenticatedRequest).map(redirect => Redirect(redirect))
     }
 
   def updateAddress(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+    journeyAction.amend.async { implicit request =>
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           updateRegistration { registration =>
             registration.copy(primaryContactDetails =

@@ -21,11 +21,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.RegistrationConnector
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import forms.contact.Address
 import forms.organisation.OrgType
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import models.registration.Cacheable
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import services.{AddressCaptureConfig, AddressCaptureService}
 import utils.URLSanitisationUtils
 import views.html.organisation.confirm_business_address
@@ -37,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
                                                    authenticate: NotEnrolledAuthAction,
-                                                   journeyAction: JourneyAction,
+                                                   journeyAction: GetRegistrationAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    addressCaptureService: AddressCaptureService,
                                                    mcc: MessagesControllerComponents,
@@ -106,11 +107,11 @@ class ConfirmBusinessAddressController @Inject() (
         pptHintKey = None,
         forceUkAddress = false
       )
-    )(request).map(redirect => Redirect(redirect))
+    )(request.authenticatedRequest).map(redirect => Redirect(redirect))
 
   def addressCaptureCallback(memberId: String): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      addressCaptureService.getCapturedAddress().flatMap {
+      addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           update { reg =>
             reg.withUpdatedMemberAddress(memberId, capturedAddress.getOrElse(throw new IllegalStateException("No captured address")))

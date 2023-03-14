@@ -36,8 +36,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class PartnerPhoneNumberControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   mcc: MessagesControllerComponents,
   page: partner_phone_number_page,
   registrationUpdater: RegistrationUpdater
@@ -49,7 +48,7 @@ abstract class PartnerPhoneNumberControllerBase(
     backCall: Call,
     submitCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction { implicit request =>
       getPartner(partnerId).map { partner =>
         val sectionHeading = request.registration.isNominatedPartner(partnerId)
         renderPageFor(partner, backCall, submitCall, sectionHeading)
@@ -78,7 +77,7 @@ abstract class PartnerPhoneNumberControllerBase(
     submitCall: Call,
     onwardsCall: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       def updateAction(phoneNumber: PhoneNumber): Future[Registration] =
         partnerId match {
           case Some(partnerId) => updateExistingPartner(phoneNumber, partnerId)

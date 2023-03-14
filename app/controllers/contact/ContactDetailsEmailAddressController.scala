@@ -22,6 +22,7 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddress
 import models.emailverification.EmailVerificationStatus.{
@@ -31,7 +32,7 @@ import models.emailverification.EmailVerificationStatus.{
 }
 import models.emailverification._
 import models.registration.{Cacheable, Registration}
-import models.request.{JourneyAction, JourneyRequest}
+import models.request.JourneyRequest
 import services.EmailVerificationService
 import views.html.contact.email_address_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ContactDetailsEmailAddressController @Inject() (
                                                        authenticate: NotEnrolledAuthAction,
-                                                       journeyAction: JourneyAction,
+                                                       journeyAction: GetRegistrationAction,
                                                        override val registrationConnector: RegistrationConnector,
                                                        emailVerificationService: EmailVerificationService,
                                                        mcc: MessagesControllerComponents,
@@ -68,9 +69,9 @@ class ContactDetailsEmailAddressController @Inject() (
           (formWithErrors: Form[EmailAddress]) =>
             Future.successful(BadRequest(buildEmailPage(formWithErrors))),
           emailAddress =>
-            updateRegistration(formData = emailAddress, credId = request.user.credId).flatMap {
+            updateRegistration(formData = emailAddress, credId = request.authenticatedRequest.credId).flatMap {
               case Right(registration) =>
-                saveAndContinue(registration, request.user.credId)
+                saveAndContinue(registration, request.authenticatedRequest.credId)
               case Left(error) => throw error
             }
         )

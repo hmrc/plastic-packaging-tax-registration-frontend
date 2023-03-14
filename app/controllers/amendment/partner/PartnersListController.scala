@@ -18,9 +18,8 @@ package controllers.amendment.partner
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.JourneyAction
 import forms.group.AddOrganisationForm
-import models.request.AmendmentJourneyAction
 import views.html.amendment.partner.list_partners_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -28,19 +27,18 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class PartnersListController @Inject() (
-                                         authenticate: EnrolledAuthAction,
-                                         amendmentJourneyAction: AmendmentJourneyAction,
+                                         journeyAction: JourneyAction,
                                          mcc: MessagesControllerComponents,
                                          page: list_partners_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       Ok(page(AddOrganisationForm.form(), request.registration))
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen amendmentJourneyAction) { implicit request =>
+    journeyAction.amend { implicit request =>
       AddOrganisationForm
         .form()
         .bindFromRequest()

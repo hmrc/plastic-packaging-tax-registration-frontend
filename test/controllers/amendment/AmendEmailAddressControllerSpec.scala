@@ -17,6 +17,7 @@
 package controllers.amendment
 
 import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import controllers.actions.getRegistration.AmendmentJourneyAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
@@ -43,7 +44,6 @@ import models.registration.{
   AmendRegistrationUpdateService,
   Registration
 }
-import models.request.AmendmentJourneyAction
 import services.EmailVerificationService
 import views.html.contact.{
   email_address_page,
