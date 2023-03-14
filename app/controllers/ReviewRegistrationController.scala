@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import audit.Auditor
 import config.AppConfig
 import connectors._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import models.nrs.NrsDetails
 import models.registration.{Cacheable, Registration}
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ReviewRegistrationController @Inject() (
                                                appConfig: AppConfig,
-                                               authenticate: NotEnrolledAuthAction,
+                                               authenticate: RegistrationAuthAction,
                                                journeyAction: GetRegistrationAction,
                                                mcc: MessagesControllerComponents,
                                                subscriptionsConnector: SubscriptionsConnector,

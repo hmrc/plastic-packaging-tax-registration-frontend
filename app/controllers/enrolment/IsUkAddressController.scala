@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import forms.enrolment.IsUkAddress
 import repositories.UserEnrolmentDetailsRepository
 import views.html.enrolment.is_uk_address_page
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IsUkAddressController @Inject() (
-                                        authenticate: NotEnrolledAuthAction,
+                                        authenticate: RegistrationAuthAction,
                                         mcc: MessagesControllerComponents,
                                         cache: UserEnrolmentDetailsRepository,
                                         page: is_uk_address_page

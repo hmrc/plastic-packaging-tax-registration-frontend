@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import connectors._
 import connectors.grs._
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.group.{routes => groupRoutes}
 import controllers.organisation.{routes => orgRoutes}
@@ -56,7 +56,7 @@ object RegistrationStatus extends Enumeration {
 
 @Singleton
 class GrsController @Inject() (
-                                authenticate: NotEnrolledAuthAction,
+                                authenticate: RegistrationAuthAction,
                                 journeyAction: GetRegistrationAction,
                                 override val registrationConnector: RegistrationConnector,
                                 ukCompanyGrsConnector: UkCompanyGrsConnector,

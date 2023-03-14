@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import forms.liability.MembersUnderGroupControl
 import models.registration.{
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MembersUnderGroupControlController @Inject() (
-                                                     authenticate: NotEnrolledAuthAction,
+                                                     authenticate: RegistrationAuthAction,
                                                      mcc: MessagesControllerComponents,
                                                      journeyAction: GetRegistrationAction,
                                                      page: members_under_group_control_page,

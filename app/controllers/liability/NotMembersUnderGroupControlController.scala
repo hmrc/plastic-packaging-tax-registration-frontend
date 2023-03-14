@@ -18,7 +18,7 @@ package controllers.liability
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import views.html.liability.not_members_under_group_control_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotMembersUnderGroupControlController @Inject() (
-                                                        authenticate: NotEnrolledAuthAction,
+                                                        authenticate: RegistrationAuthAction,
                                                         mcc: MessagesControllerComponents,
                                                         journeyAction: GetRegistrationAction,
                                                         page: not_members_under_group_control_page

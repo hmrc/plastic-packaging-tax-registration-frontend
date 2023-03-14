@@ -19,7 +19,7 @@ package controllers.amendment.group
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import connectors.RegistrationConnector
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import forms.contact.Address
 import forms.organisation.OrgType
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}

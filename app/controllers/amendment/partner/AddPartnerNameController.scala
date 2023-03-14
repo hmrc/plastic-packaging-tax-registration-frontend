@@ -19,7 +19,7 @@ package controllers.amendment.partner
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import config.AppConfig
 import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.partner.PartnerNameControllerBase
 import models.registration.AmendRegistrationUpdateService
 import views.html.partner.partner_name_page

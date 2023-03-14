@@ -19,7 +19,7 @@ package controllers.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import controllers.actions.AuthActioning
+
 import forms.group.MemberName
 import models.genericregistration.{Partner, PartnerContactDetails}
 import models.registration.{Registration, RegistrationUpdater}

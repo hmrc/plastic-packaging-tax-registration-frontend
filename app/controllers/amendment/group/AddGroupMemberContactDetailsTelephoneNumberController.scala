@@ -17,7 +17,7 @@
 package controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.group.ContactDetailsTelephoneNumberControllerBase
 import models.registration.AmendRegistrationUpdateService
 import views.html.group.member_phone_number_page

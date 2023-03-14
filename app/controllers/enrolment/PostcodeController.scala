@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import forms.enrolment.Postcode
 import repositories.UserEnrolmentDetailsRepository
 import views.html.enrolment.postcode_page
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PostcodeController @Inject() (
-                                     authenticate: NotEnrolledAuthAction,
+                                     authenticate: RegistrationAuthAction,
                                      mcc: MessagesControllerComponents,
                                      cache: UserEnrolmentDetailsRepository,
                                      page: postcode_page

@@ -18,7 +18,7 @@ package controllers.amendment
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import forms.contact.Address
 import models.registration.Registration
 import models.request.JourneyRequest

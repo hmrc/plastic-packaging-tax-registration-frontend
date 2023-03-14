@@ -18,7 +18,7 @@ package controllers.partner
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import controllers.actions.AuthActioning
+
 import forms.contact.Address
 import models.genericregistration.Partner
 import models.registration.{
@@ -38,8 +38,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext
 
 abstract class PartnerContactAddressControllerBase(
-  val authenticate: AuthActioning,
-  val journeyAction: ActionRefiner[AuthenticatedRequest, JourneyRequest],
+  val journeyAction: ActionBuilder[JourneyRequest, AnyContent],
   addressCaptureService: AddressCaptureService,
   mcc: MessagesControllerComponents,
   registrationUpdater: RegistrationUpdater
@@ -51,7 +50,7 @@ abstract class PartnerContactAddressControllerBase(
     backLink: Call,
     captureAddressCallback: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(backLink = backLink.url,
                              successLink = captureAddressCallback.url,
@@ -68,7 +67,7 @@ abstract class PartnerContactAddressControllerBase(
     partnerId: Option[String],
     successfulRedirect: Call
   ): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.async { implicit request =>
       addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           registrationUpdater.updateRegistration { registration =>

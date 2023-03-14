@@ -18,14 +18,14 @@ package controllers.enrolment
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import views.html.enrolment.verify_organisation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
 class VerifyOrganisationController @Inject() (
-                                               authenticate: NotEnrolledAuthAction,
+                                               authenticate: RegistrationAuthAction,
                                                mcc: MessagesControllerComponents,
                                                page: verify_organisation_page
 ) extends FrontendController(mcc) with I18nSupport {

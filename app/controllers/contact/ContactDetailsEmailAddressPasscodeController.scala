@@ -21,7 +21,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddressPasscode
@@ -44,7 +44,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsEmailAddressPasscodeController @Inject() (
-                                                               authenticate: NotEnrolledAuthAction,
+                                                               authenticate: RegistrationAuthAction,
                                                                journeyAction: GetRegistrationAction,
                                                                mcc: MessagesControllerComponents,
                                                                emailVerificationService: EmailVerificationService,

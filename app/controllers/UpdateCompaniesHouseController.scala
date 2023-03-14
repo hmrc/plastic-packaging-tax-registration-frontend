@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Results}
 import connectors.RegistrationConnector
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import views.html.UpdateCompaniesHouseView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
@@ -37,7 +37,7 @@ import scala.concurrent.ExecutionContext
  */
 
 class UpdateCompaniesHouseController @Inject()(
-                                                authenticate: NotEnrolledAuthAction,
+                                                authenticate: RegistrationAuthAction,
                                                 journeyAction: GetRegistrationAction,
                                                 registrationConnector: RegistrationConnector,
                                                 updateCompaniesHouse: UpdateCompaniesHouseView,

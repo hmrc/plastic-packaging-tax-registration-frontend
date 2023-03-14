@@ -27,7 +27,7 @@ import connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.organisation.{
   routes => organisationRoutes
@@ -53,7 +53,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipTypeController @Inject() (
-                                            authenticate: NotEnrolledAuthAction,
+                                            authenticate: RegistrationAuthAction,
                                             journeyAction: GetRegistrationAction,
                                             val appConfig: AppConfig,
                                             val soleTraderGrsConnector: SoleTraderGrsConnector,

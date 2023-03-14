@@ -19,7 +19,7 @@ package controllers.amendment.group
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors._
 import connectors.grs._
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.group.GroupMemberGrsControllerBase
 import models.registration.AmendRegistrationUpdateService
 import utils.AddressConversionUtils

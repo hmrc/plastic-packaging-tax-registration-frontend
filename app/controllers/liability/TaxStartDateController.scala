@@ -18,7 +18,7 @@ package controllers.liability
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import services.TaxStartDateService
 import views.html.liability.tax_start_date_page
@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class TaxStartDateController @Inject() (
-                                         authenticate: NotEnrolledAuthAction,
+                                         authenticate: RegistrationAuthAction,
                                          journeyAction: GetRegistrationAction,
                                          taxStarDateService: TaxStartDateService,
                                          mcc: MessagesControllerComponents,

@@ -17,7 +17,7 @@
 package controllers.amendment.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.amendment.AmendmentController
 import controllers.amendment.{routes => amendRoutes}
 import models.subscriptions.{SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}

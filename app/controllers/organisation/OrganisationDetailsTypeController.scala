@@ -16,24 +16,22 @@
 
 package controllers.organisation
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import audit.Auditor
 import config.AppConfig
 import connectors._
 import connectors.grs._
-import controllers.actions._
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.group.OrganisationDetailsTypeHelper
-import controllers.{routes => commonRoutes}
 import forms.organisation.{ActionEnum, OrgType, OrganisationType, PartnerTypeEnum}
 import models.genericregistration.PartnershipDetails
 import models.registration.{Cacheable, NewRegistrationUpdateService, OrganisationDetails, Registration}
 import models.request.JourneyRequest
-import views.html.organisation.organisation_type
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.organisation_type
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
                                                     auditor: Auditor,
-                                                    authenticate: NotEnrolledAuthAction,
+                                                    authenticate: RegistrationAuthAction,
                                                     journeyAction: GetRegistrationAction,
                                                     override val appConfig: AppConfig,
                                                     override val soleTraderGrsConnector: SoleTraderGrsConnector,

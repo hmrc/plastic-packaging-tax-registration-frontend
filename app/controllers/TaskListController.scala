@@ -19,7 +19,7 @@ package controllers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import connectors.RegistrationConnector
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.liability.{routes => liabilityRoutes}
 import models.registration.Cacheable
@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class TaskListController @Inject()(
-                                    authenticate: NotEnrolledAuthAction,
+                                    authenticate: RegistrationAuthAction,
                                     journeyAction: GetRegistrationAction,
                                     mcc: MessagesControllerComponents,
                                     singleEntityPage: task_list_single_entity,

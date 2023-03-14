@@ -21,7 +21,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.EmailAddress
@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsEmailAddressController @Inject() (
-                                                       authenticate: NotEnrolledAuthAction,
+                                                       authenticate: RegistrationAuthAction,
                                                        journeyAction: GetRegistrationAction,
                                                        override val registrationConnector: RegistrationConnector,
                                                        emailVerificationService: EmailVerificationService,

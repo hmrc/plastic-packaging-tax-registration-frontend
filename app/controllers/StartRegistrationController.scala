@@ -17,11 +17,10 @@
 package controllers
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
-import controllers.liability.{
-  routes => liabilityRoutes
-}
+import controllers.liability.{routes => liabilityRoutes}
 import models.request.JourneyRequest
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -29,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class StartRegistrationController @Inject() (
-                                              authenticate: NotEnrolledAuthAction,
+                                              authenticate: RegistrationAuthAction,
                                               journeyAction: GetRegistrationAction,
                                               mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) {

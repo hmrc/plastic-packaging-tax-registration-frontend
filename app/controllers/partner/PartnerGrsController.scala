@@ -19,7 +19,7 @@ package controllers.partner
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors._
 import connectors.grs._
-import controllers.actions.{JourneyAction, NotEnrolledAuthAction}
+import controllers.actions.JourneyAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
 

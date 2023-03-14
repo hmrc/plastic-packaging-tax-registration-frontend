@@ -19,7 +19,7 @@ package controllers.group
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.RegistrationConnector
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.Cacheable
 import views.html.group.member_contact_check_answers_page
@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-                                                       authenticate: NotEnrolledAuthAction,
+                                                       authenticate: RegistrationAuthAction,
                                                        journeyAction: GetRegistrationAction,
                                                        override val registrationConnector: RegistrationConnector,
                                                        mcc: MessagesControllerComponents,

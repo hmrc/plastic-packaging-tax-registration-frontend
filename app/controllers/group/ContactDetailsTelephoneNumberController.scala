@@ -17,7 +17,7 @@
 package controllers.group
 
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.{JourneyAction, NotEnrolledAuthAction}
+import controllers.actions.JourneyAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import models.registration.NewRegistrationUpdateService
 import views.html.group.member_phone_number_page

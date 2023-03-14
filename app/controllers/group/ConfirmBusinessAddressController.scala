@@ -20,7 +20,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.RegistrationConnector
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import forms.contact.Address
 import forms.organisation.OrgType
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
-                                                   authenticate: NotEnrolledAuthAction,
+                                                   authenticate: RegistrationAuthAction,
                                                    journeyAction: GetRegistrationAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    addressCaptureService: AddressCaptureService,

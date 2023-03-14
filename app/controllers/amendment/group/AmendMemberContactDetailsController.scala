@@ -18,7 +18,7 @@ package controllers.amendment.group
 
 import play.api.data.Form
 import play.api.mvc._
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.amendment.{AmendmentController, routes => amendRoutes}
 import forms.contact._
 import forms.group.MemberName

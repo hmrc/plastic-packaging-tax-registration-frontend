@@ -18,7 +18,7 @@ package controllers.liability
 
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import forms.Date
 import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ExceededThresholdWeightController @Inject() (
-                                                    authenticate: NotEnrolledAuthAction,
+                                                    authenticate: RegistrationAuthAction,
                                                     journeyAction: GetRegistrationAction,
                                                     appConfig: AppConfig,
                                                     override val registrationConnector: RegistrationConnector,

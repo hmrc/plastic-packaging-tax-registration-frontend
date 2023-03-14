@@ -18,7 +18,7 @@ package controllers.amendment.partner
 
 import play.api.data.Form
 import play.api.mvc._
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.amendment.{AmendmentController, routes => amendmentRoutes}
 import controllers.{AddressLookupIntegration, EmailVerificationActions}
 import forms.contact.{EmailAddress, EmailAddressPasscode, JobTitle, PhoneNumber}

@@ -18,7 +18,7 @@ package controllers.liability
 
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.OldDate
@@ -34,7 +34,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolledAuthAction,
+class CheckLiabilityDetailsAnswersController @Inject() (authenticate: RegistrationAuthAction,
                                                         journeyAction: GetRegistrationAction,
                                                         mcc: MessagesControllerComponents,
                                                         override val registrationConnector: RegistrationConnector,

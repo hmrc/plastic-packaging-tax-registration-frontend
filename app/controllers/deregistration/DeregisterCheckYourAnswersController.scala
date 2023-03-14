@@ -19,7 +19,6 @@ package controllers.deregistration
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.DeregistrationConnector
-import controllers.actions.EnrolledAuthAction
 import controllers.actions.auth.AmendAuthAction
 import repositories.DeregistrationDetailRepository
 import views.html.deregistration.deregister_check_your_answers_page

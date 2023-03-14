@@ -19,7 +19,7 @@ package controllers.amendment
 import play.api.data.Form
 import play.api.mvc._
 import controllers.EmailVerificationActions
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import forms.contact._
 import models.registration.{AmendRegistrationUpdateService, Registration}
 import models.request.JourneyRequest

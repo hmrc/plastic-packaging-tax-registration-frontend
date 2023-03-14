@@ -18,7 +18,7 @@ package controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import views.html.enrolment.enrolment_failure_page
 import views.html.liability.grs_failure_page
@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotableErrorController @Inject() (
-                                         authenticate: NotEnrolledAuthAction,
+                                         authenticate: RegistrationAuthAction,
                                          journeyAction: GetRegistrationAction,
                                          mcc: MessagesControllerComponents,
                                          errorPage: error_page,

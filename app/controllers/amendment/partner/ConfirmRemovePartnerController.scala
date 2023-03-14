@@ -19,7 +19,7 @@ package controllers.amendment.partner
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.amendment.AmendmentController
 import forms.partner.RemovePartner
 import models.registration.Registration

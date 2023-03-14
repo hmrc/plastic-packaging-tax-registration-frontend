@@ -21,7 +21,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.RegistrationConnector
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import forms.group.AddOrganisationForm.form
 import models.registration.Cacheable
@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class OrganisationListController @Inject() (
-                                             authenticate: NotEnrolledAuthAction,
+                                             authenticate: RegistrationAuthAction,
                                              journeyAction: GetRegistrationAction,
                                              override val registrationConnector: RegistrationConnector,
                                              mcc: MessagesControllerComponents,

@@ -20,7 +20,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import config.AppConfig
 import connectors._
 import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.group.OrganisationDetailsTypeControllerBase
 import models.registration.AmendRegistrationUpdateService
 import views.html.group.organisation_type

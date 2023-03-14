@@ -33,6 +33,8 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
+
+//todo should this be called enrolledAuthAction or something? While its mostly use for amend there is exceptions
 class AmendAuthAction @Inject()(
                                          override val authConnector: AuthConnector,
                                          controllerComponents: ControllerComponents,

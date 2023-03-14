@@ -18,7 +18,7 @@ package controllers.organisation
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import views.html.organisation.register_as_other_organisation
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class RegisterAsOtherOrganisationController @Inject() (
   mcc: MessagesControllerComponents,
   page: register_as_other_organisation,
-  authenticate: NotEnrolledAuthAction
+  authenticate: RegistrationAuthAction
 ) extends FrontendController(mcc) with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =

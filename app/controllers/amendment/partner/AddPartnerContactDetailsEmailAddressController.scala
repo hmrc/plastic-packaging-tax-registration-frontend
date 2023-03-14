@@ -17,7 +17,7 @@
 package controllers.amendment.partner
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.{EnrolledAuthAction, JourneyAction}
+import controllers.actions.JourneyAction
 import controllers.partner.PartnerEmailAddressControllerBase
 import forms.contact.EmailAddressPasscode
 import models.registration.{AmendRegistrationUpdateService, Registration}

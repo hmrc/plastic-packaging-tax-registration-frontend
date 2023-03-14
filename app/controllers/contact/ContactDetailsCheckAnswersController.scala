@@ -18,7 +18,7 @@ package controllers.contact
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import views.html.contact.check_primary_contact_details_page
@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ContactDetailsCheckAnswersController @Inject() (
-                                                       authenticate: NotEnrolledAuthAction,
+                                                       authenticate: RegistrationAuthAction,
                                                        journeyAction: GetRegistrationAction,
                                                        mcc: MessagesControllerComponents,
                                                        page: check_primary_contact_details_page

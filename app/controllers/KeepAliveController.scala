@@ -22,7 +22,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.SessionRecordNotFound
 import uk.gov.hmrc.mongo.cache.{DataKey, MongoCacheRepository}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.auth.BasicAuthAction
 import repositories.MongoUserDataRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,7 +34,7 @@ import scala.util.{Failure, Success}
 class KeepAliveController @Inject() (
   mcc: MessagesControllerComponents,
   userDataRepository: MongoUserDataRepository,
-  authenticate: EnrolledAuthAction
+  authenticate: BasicAuthAction
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 

@@ -18,7 +18,7 @@ package controllers.liability
 
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import views.html.liability.not_liable
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -26,7 +26,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotLiableController @Inject() (
-                                      authenticate: NotEnrolledAuthAction,
+                                      authenticate: RegistrationAuthAction,
                                       mcc: MessagesControllerComponents,
                                       page: not_liable
 ) extends FrontendController(mcc) with I18nSupport {

@@ -18,7 +18,7 @@ package controllers.group
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import controllers.actions.AuthActioning
+
 import models.registration.RegistrationUpdater
 import models.request.{
   AuthenticatedRequest,

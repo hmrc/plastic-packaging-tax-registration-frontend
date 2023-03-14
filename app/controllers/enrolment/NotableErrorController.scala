@@ -21,14 +21,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.hmrcfrontend.config.ContactFrontendConfig
 import uk.gov.hmrc.hmrcfrontend.views.Utils
 import config.AppConfig
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import views.html.enrolment.{reference_number_already_used_failure_page, verification_failure_page}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
 
 class NotableErrorController @Inject() (
-  authenticate: NotEnrolledAuthAction,
+  authenticate: RegistrationAuthAction,
   mcc: MessagesControllerComponents,
   verificationFailurePage: verification_failure_page,
   referenceNumberAlreadyUsedPage: reference_number_already_used_failure_page,

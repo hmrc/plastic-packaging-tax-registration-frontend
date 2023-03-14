@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
 import forms.contact.FullName
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsFullNameController @Inject() (
-                                                   authenticate: NotEnrolledAuthAction,
+                                                   authenticate: RegistrationAuthAction,
                                                    journeyAction: GetRegistrationAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    mcc: MessagesControllerComponents,

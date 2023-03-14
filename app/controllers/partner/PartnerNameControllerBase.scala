@@ -26,7 +26,7 @@ import connectors.grs.{
   SoleTraderGrsConnector,
   UkCompanyGrsConnector
 }
-import controllers.actions.AuthActioning
+
 import controllers.organisation.{
   routes => organisationRoutes
 }

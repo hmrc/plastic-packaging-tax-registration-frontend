@@ -61,7 +61,7 @@ class GetRegistrationAction @Inject()(
         reg
           .map { r =>
             val hasPptRegistrationResumed =
-              request.session.get("resumePPTRegistration").getOrElse("false")
+              request.session.get("resumePPTRegistration").getOrElse("false") //todo what is this???
             if (hasPptRegistrationResumed.equals("false"))
               auditor.resumePPTRegistration(id, r.organisationDetails.organisationType)
             Future.successful(Right(r))

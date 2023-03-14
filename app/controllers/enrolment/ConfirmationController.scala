@@ -19,13 +19,13 @@ package controllers.enrolment
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.EnrolledAuthAction
+import controllers.actions.auth.AmendAuthAction
 import views.html.enrolment.confirmation_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class ConfirmationController @Inject() (
-                                         authenticate: EnrolledAuthAction,
+                                         authenticate: AmendAuthAction,
                                          mcc: MessagesControllerComponents,
                                          page: confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {

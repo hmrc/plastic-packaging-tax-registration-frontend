@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import connectors._
 import connectors.grs.PartnershipGrsConnector
-import controllers.actions.NotEnrolledAuthAction
+import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import forms.organisation.PartnerTypeEnum.{
   GENERAL_PARTNERSHIP,
@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipNameController @Inject() (
-                                            authenticate: NotEnrolledAuthAction,
+                                            authenticate: RegistrationAuthAction,
                                             journeyAction: GetRegistrationAction,
                                             appConfig: AppConfig,
                                             partnershipGrsConnector: PartnershipGrsConnector,

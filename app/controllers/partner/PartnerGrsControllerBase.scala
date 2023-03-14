@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import connectors._
 import connectors.grs._
-import controllers.actions.AuthActioning
+
 import controllers.organisation.RegistrationStatus._
 import controllers.organisation.{routes => orgRoutes}
 import controllers.{routes => commonRoutes}

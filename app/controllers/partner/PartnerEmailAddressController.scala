@@ -17,7 +17,7 @@
 package controllers.partner
 
 import play.api.mvc._
-import controllers.actions.{JourneyAction, NotEnrolledAuthAction}
+import controllers.actions.JourneyAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => commonRoutes}
