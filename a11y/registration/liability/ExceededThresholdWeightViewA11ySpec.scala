@@ -17,33 +17,43 @@
 package registration.liability
 
 import forms.liability.ExceededThresholdWeight
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.data.Form
-import support.BaseViewSpec
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.{FakeRequest, Injecting}
+import uk.gov.hmrc.scalatestaccessibilitylinter.AccessibilityMatchers
 import views.html.liability.exceeded_threshold_weight_page
 
-import java.time.{Clock, Instant}
-import java.util.TimeZone
+class ExceededThresholdWeightViewA11ySpec
+  extends PlaySpec
+    with GuiceOneAppPerSuite
+    with Injecting
+    with AccessibilityMatchers {
 
-class ExceededThresholdWeightViewA11ySpec extends BaseViewSpec {
+  val request: Request[AnyContent]         = FakeRequest().withCSRFToken
+  protected lazy val realMessagesApi: MessagesApi = inject[MessagesApi]
 
+  implicit def messages: Messages = realMessagesApi.preferred(request)
+  private val formProvider: ExceededThresholdWeight = inject[ExceededThresholdWeight]
   private val page = inject[exceeded_threshold_weight_page]
 
-  private val fakeClock =
-    Clock.fixed(Instant.parse("2022-06-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
+  "ExpectToExceedThresholdWeightViewA11ySpec" should {
 
-//  private val form = new ExceededThresholdWeight(appConfig, fakeClock).form()
+    def render(form: Form[Boolean]): String =
+      page(form)(request, messages).toString()
 
-//  private def render(form: Form[ExceededThresholdWeightAnswer] = form): String =
-//    page(form, true)(journeyRequest, messages).toString()
+    "pass accessibility checks without error" in {
+      render(formProvider()) must passAccessibilityChecks
+    }
 
-  "ExceededThresholdWeight View" should {
+    "pass accessibility checks with error" when {
+      "no answer "in {
+        render(formProvider().bind(Map("value" -> ""))) must passAccessibilityChecks
+      }
 
-//    "pass accessibility checks without error" in {
-//      render() must passAccessibilityChecks
-//    }
-//
-//    "pass accessibility checks with error" in {
-//      render(form.bind(Map("answer" -> ""))) must passAccessibilityChecks
-//    }
+    }
   }
 }
