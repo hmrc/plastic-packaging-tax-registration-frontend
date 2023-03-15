@@ -18,63 +18,58 @@ package controllers.actions.auth
 
 import com.google.inject.Inject
 import config.AppConfig
-import models.enrolment.PptEnrolment
 import models.request.AuthenticatedRequest.RegistrationRequest
 import models.request.IdentityData
 import play.api.Logging
-import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, BodyParser, ControllerComponents, Request, Result, Results}
 import play.api.mvc.Results.Redirect
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, AuthorisationException, AuthorisedFunctions, CredentialStrength, IncorrectCredentialStrength, InsufficientEnrolments, NoActiveSession, UnsupportedAffinityGroup, UnsupportedCredentialRole}
+import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{credentials, internalId}
 import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class BasicAuthAction @Inject()(
-                                          override val authConnector: AuthConnector,
-                                          controllerComponents: ControllerComponents,
-                                          appConfig: AppConfig
-                                        )(implicit val executionContext: ExecutionContext) extends ActionBuilder[RegistrationRequest, AnyContent]
-    with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
+ override val authConnector: AuthConnector,
+ override val parser: BodyParsers.Default,
+ appConfig: AppConfig
+)(implicit val executionContext: ExecutionContext) extends ActionBuilder[RegistrationRequest, AnyContent]
+  with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
 
-    private val retrievals = internalId and credentials
+  private val retrievals = internalId and credentials
 
-    override def invokeBlock[A](
-                                 request: Request[A],
-                                 block: RegistrationRequest[A] => Future[Result]
-                               ): Future[Result] = {
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+  override def invokeBlock[A](
+                               request: Request[A],
+                               block: RegistrationRequest[A] => Future[Result]
+                             ): Future[Result] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      val continueUrl = request.target.path
+    val continueUrl = request.target.path
 
-      authorised(
-        CredentialStrength(CredentialStrength.strong).or(AffinityGroup.Agent))
-        .retrieve(retrievals){
-          case internalId ~ credentials => block(RegistrationRequest(request, identityData = IdentityData(internalId, credentials )))
-        } recover {
-        case _: NoActiveSession =>
-          Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
-        case _: IncorrectCredentialStrength =>
-          upliftCredentialStrength(continueUrl)
-        case _: UnsupportedCredentialRole =>
-          Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAssistantUnauthorised())
-        case _: UnsupportedAffinityGroup =>
-          Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAgentUnauthorised())
-        case _: AuthorisationException =>
-          Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showGenericUnauthorised())
-      }
+    authorised(
+      CredentialStrength(CredentialStrength.strong).or(AffinityGroup.Agent))
+      .retrieve(retrievals){
+        case internalId ~ credentials => block(RegistrationRequest(request, identityData = IdentityData(internalId, credentials )))
+      } recover {
+      case _: NoActiveSession =>
+        Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
+      case _: IncorrectCredentialStrength => upliftCredentialStrength(continueUrl)
+      case _: UnsupportedCredentialRole =>
+        Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAssistantUnauthorised())
+      case _: UnsupportedAffinityGroup =>
+        Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAgentUnauthorised())
+      case _: AuthorisationException =>
+        Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showGenericUnauthorised())
     }
+  }
 
-    private def upliftCredentialStrength(continueUrl: String): Result =
-      Redirect(appConfig.mfaUpliftUrl,
-        Map("origin" -> Seq(appConfig.serviceIdentifier),
-          "continueUrl" -> Seq(continueUrl)
-        )
+  private def upliftCredentialStrength(continueUrl: String): Result =
+    Redirect(appConfig.mfaUpliftUrl,
+      Map("origin" -> Seq(appConfig.serviceIdentifier),
+        "continueUrl" -> Seq(continueUrl)
       )
-
-    //todo better way to get this?
-    override def parser: BodyParser[AnyContent] = controllerComponents.parsers.default
+    )
 
 }

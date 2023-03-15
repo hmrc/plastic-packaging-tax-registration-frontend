@@ -96,7 +96,7 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
         PptTestData.newUser("123").copy(enrolments =
           Enrolments(
             Set(
-              Enrolment(PptEnrolment.Identifier).withIdentifier(PptEnrolment.Key, "XMPPT0000000001")
+              Enrolment(PptEnrolment.IdentifierName).withIdentifier(PptEnrolment.Key, "XMPPT0000000001")
             )
           )
         )
@@ -175,7 +175,7 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
         user,
         expectedPredicate =
           Some(
-            User.and(Enrolment(PptEnrolment.Identifier).and(expectedAcceptableCredentialsPredicate))
+            User.and(Enrolment(PptEnrolment.IdentifierName).and(expectedAcceptableCredentialsPredicate))
           )
       )
 
@@ -193,7 +193,7 @@ class NotEnrolledAuthActionSpec extends ControllerSpec with MetricsMocks {
         agent,
         expectedPredicate =
           Some(
-            User.and(Enrolment(PptEnrolment.Identifier).and(expectedAcceptableCredentialsPredicate))
+            User.and(Enrolment(PptEnrolment.IdentifierName).and(expectedAcceptableCredentialsPredicate))
           )
       )
 

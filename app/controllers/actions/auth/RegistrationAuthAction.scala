@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationAuthAction @Inject()(
    override val authConnector: AuthConnector,
-   controllerComponents: ControllerComponents,
+   override val parser: BodyParsers.Default,
    appConfig: AppConfig
  )(implicit val executionContext: ExecutionContext) extends ActionBuilder[RegistrationRequest, AnyContent]
   with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
@@ -50,9 +50,9 @@ class RegistrationAuthAction @Inject()(
     val continueUrl = request.target.path
 
     authorised(
-      CredentialStrength(CredentialStrength.strong).and(AffinityGroup.Organisation.or(AffinityGroup.Individual))) //existing behaviour individual? hmm...
+      CredentialStrength(CredentialStrength.strong).and(AffinityGroup.Organisation.or(AffinityGroup.Individual)))
       .retrieve(retrievals) {
-        case _ ~ _ ~ allEnrolments if allEnrolments.getEnrolment(PptEnrolment.Identifier).isDefined =>
+        case _ ~ _ ~ allEnrolments if allEnrolments.getEnrolment(PptEnrolment.Key).isDefined =>
           Future.successful(Redirect(appConfig.pptAccountUrl))
         case credentials ~ internalId  ~ _ =>
           val identityData = IdentityData(internalId, credentials)
@@ -63,10 +63,7 @@ class RegistrationAuthAction @Inject()(
         Results.Redirect(appConfig.loginUrl, Map("continue" -> Seq(continueUrl)))
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength(continueUrl)
-      case _: InsufficientEnrolments =>
-        // Returns has the best not enrolled explanation page and knows how to handle agents in this state
-        //todo wtf
-        Results.Redirect(appConfig.pptAccountUrl)
+      case _: InsufficientEnrolments => Results.Redirect(appConfig.pptNotEnrolledUrl)
       case _: UnsupportedCredentialRole =>
         Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAssistantUnauthorised())
       case _: UnsupportedAffinityGroup =>
@@ -83,6 +80,4 @@ class RegistrationAuthAction @Inject()(
       )
     )
 
-  //todo better way to get this?
-  override def parser: BodyParser[AnyContent] = controllerComponents.parsers.default
 }

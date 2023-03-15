@@ -49,7 +49,7 @@ class AmendmentJourneyActionSpec
   private val enrolledUser = user.copy(enrolments =
     Enrolments(
       Set(
-        new Enrolment(PptEnrolment.Identifier,
+        new Enrolment(PptEnrolment.IdentifierName,
                       Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
                       "activated"
         )

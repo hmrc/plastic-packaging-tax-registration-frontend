@@ -65,10 +65,7 @@ class MongoUserDataRepository @Inject() (
       cacheIdType = CacheIdType.SimpleCacheId
     ) with UserDataRepository {
 
-  private def id(implicit request: AuthenticatedRequest[Any]): String =
-    request.session
-      .get("sessionId")
-      .getOrElse(throw NoSessionException)
+  private def id(implicit request: AuthenticatedRequest[Any]): String = request.cacheId
 
   override def putData[T: Writes](key: String, data: T)(implicit
     request: AuthenticatedRequest[Any]

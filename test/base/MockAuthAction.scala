@@ -91,7 +91,7 @@ trait MockAuthAction extends MockitoSugar with MetricsMocks {
   val userWithPPTEnrolment = newUser().copy(enrolments =
     Enrolments(
       Set(
-        new Enrolment(PptEnrolment.Identifier,
+        new Enrolment(PptEnrolment.IdentifierName,
           Seq(EnrolmentIdentifier(PptEnrolment.Key, "XMPPT0000000123")),
           "activated"
         )

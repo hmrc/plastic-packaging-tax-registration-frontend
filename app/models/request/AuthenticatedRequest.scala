@@ -37,7 +37,7 @@ object AuthenticatedRequest {
                                       request: Request[A],
                                       identityData: IdentityData
                                     ) extends AuthenticatedRequest[A](request) {
-    override def cacheId: String = internalID //todo make use of.
+    override def cacheId: String = internalID
   }
 
   final case class PPTEnrolledRequest[+A](

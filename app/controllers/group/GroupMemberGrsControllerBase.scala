@@ -48,7 +48,6 @@ abstract class GroupMemberGrsControllerBase(
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
-  //todo better place
   implicit def hc(request: Request[_]): HeaderCarrier =
     HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 

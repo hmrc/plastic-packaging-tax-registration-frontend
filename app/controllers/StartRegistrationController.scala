@@ -35,18 +35,10 @@ class StartRegistrationController @Inject() (
 
   def startRegistration(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-
-      if (request.registration.isStarted) {
-        Redirect(routes.TaskListController.displayPage()).addingToSession(
-          "resumePPTRegistration" -> "true"
-        )
-      } else {
-        Redirect(startLink).addingToSession("resumePPTRegistration" -> "true") //todo whats this????????????
-        //gaaaaaahhhhhhhhhhhhhhhhhhhhh
-      }
+      if (request.registration.isStarted)
+        Redirect(routes.TaskListController.displayPage())
+      else
+        Redirect(liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage())
     }
-
-  def startLink(implicit request: JourneyRequest[AnyContent]): Call =
-    liabilityRoutes.ExpectToExceedThresholdWeightController.displayPage()
 
 }

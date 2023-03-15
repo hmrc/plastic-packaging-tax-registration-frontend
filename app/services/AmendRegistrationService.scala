@@ -31,11 +31,6 @@ class AmendRegistrationService @Inject()(
                                           registrationAmendmentRepository: RegistrationAmendmentRepository
                                         )(implicit val executionContext: ExecutionContext) {
 
-  def updateLocalRegistration(
-                               updateFunction: Registration => Registration
-                             )(implicit request: JourneyRequest[_]): Future[Registration] =
-    registrationAmendmentRepository.update(updateFunction)(request.authenticatedRequest)
-
   def updateRegistration(
                           updateFunction: Registration => Registration = identity
                         )(implicit request: JourneyRequest[_], headerCarrier: HeaderCarrier): Future[SubscriptionCreateOrUpdateResponse] =

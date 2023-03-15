@@ -17,7 +17,7 @@
 package controllers.actions.getRegistration
 
 import audit.Auditor
-import connectors.RegistrationConnector
+import connectors.{RegistrationConnector, ServiceError}
 import models.registration.Registration
 import models.request.{AuthenticatedRequest, JourneyRequest}
 import play.api.Logging
@@ -29,49 +29,32 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-//does there need to be an amend one or could this just handle it?
 class GetRegistrationAction @Inject()(
   registrationConnector: RegistrationConnector,
   auditor: Auditor,
-)(implicit val exec: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends ActionRefiner[AuthenticatedRequest, JourneyRequest] with Logging {
 
   override protected def refine[A](
     request: AuthenticatedRequest[A]
   ): Future[Either[Result, JourneyRequest[A]]] = {
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    request.identityData.internalId.filter(_.trim.nonEmpty) match {
-      case Some(id) =>
-        loadOrCreateRegistration(id)(hc, request).map {
-          case Right(reg)  => Right(JourneyRequest[A](request, reg))
-          case Left(error) => throw error
-        }
-      case None =>
-        logger.warn(s"Denied attempt to access ${request.uri} since user internal id not present")
-        throw InsufficientEnrolments()
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    loadOrCreateRegistration(request.cacheId)(hc, request).map {
+      case Right(reg)  => Right(JourneyRequest(request, reg))
+      case Left(error) => throw error
     }
   }
 
   private def loadOrCreateRegistration[A](
     id: String
-  )(implicit headerCarrier: HeaderCarrier, request: AuthenticatedRequest[A]) =
+  )(implicit headerCarrier: HeaderCarrier, request: AuthenticatedRequest[A]): Future[Either[ServiceError, Registration]] =
     registrationConnector.find(id).flatMap {
-      case Right(reg) =>
-        reg
-          .map { r =>
-            val hasPptRegistrationResumed =
-              request.session.get("resumePPTRegistration").getOrElse("false") //todo what is this???
-            if (hasPptRegistrationResumed.equals("false"))
-              auditor.resumePPTRegistration(id, r.organisationDetails.organisationType)
-            Future.successful(Right(r))
-          }
-          .getOrElse {
-            auditor.newRegistrationStarted(id)
-            registrationConnector.create(Registration(id))
-          }
+      case Right(Some(reg)) => Future.successful(Right(reg))
+      case Right(None) =>
+        auditor.newRegistrationStarted(id)
+        registrationConnector.create(Registration(id))
       case Left(error) => Future.successful(Left(error))
     }
 
-  override protected def executionContext: ExecutionContext = exec
 }

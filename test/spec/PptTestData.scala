@@ -55,7 +55,7 @@ trait PptTestData extends RegistrationBuilder with MockAuthAction {
     JourneyRequest(authenticatedRequest = authenticatedRequest, registration = aRegistration(), pptReference = None)
 
   def pptReferenceFromUsersEnrolments(user: SignedInUser): Option[String] =
-    user.enrolments.getEnrolment(PptEnrolment.Identifier).flatMap(_.identifiers.headOption.map(_.value))
+    user.enrolments.getEnrolment(PptEnrolment.IdentifierName).flatMap(_.identifiers.headOption.map(_.value))
 
   val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
     JourneyRequest(

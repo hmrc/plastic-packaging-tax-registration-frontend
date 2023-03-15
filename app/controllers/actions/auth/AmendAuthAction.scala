@@ -36,11 +36,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 //todo should this be called enrolledAuthAction or something? While its mostly use for amend there is exceptions
 class AmendAuthAction @Inject()(
-                                         override val authConnector: AuthConnector,
-                                         controllerComponents: ControllerComponents,
-                                         returnsSessionRepository: ReturnsSessionRepository,
-                                         appConfig: AppConfig
-                                       )(implicit val executionContext: ExecutionContext) extends ActionBuilder[PPTEnrolledRequest, AnyContent]
+ override val authConnector: AuthConnector,
+ override val parser: BodyParsers.Default,
+ returnsSessionRepository: ReturnsSessionRepository,
+ appConfig: AppConfig
+)(implicit val executionContext: ExecutionContext) extends ActionBuilder[PPTEnrolledRequest, AnyContent]
   with ActionFunction[Request, PPTEnrolledRequest] with AuthorisedFunctions with Logging {
 
   private val retrievals = credentials and internalId and allEnrolments and affinityGroup
@@ -64,9 +64,10 @@ class AmendAuthAction @Inject()(
             }
 
         case credentials ~ internalId ~ allEnrolments ~ _ =>
+
           val pptIdentifier = allEnrolments
             .getEnrolment(PptEnrolment.Key).getOrElse(throw new IllegalStateException("No PPT Enrolment found"))
-            .getIdentifier(PptEnrolment.Identifier).getOrElse(throw new IllegalStateException("PPT enrolment has no identifier"))
+            .getIdentifier(PptEnrolment.IdentifierName).getOrElse(throw new IllegalStateException("PPT enrolment has no identifier"))
             .value
 
           block(PPTEnrolledRequest(request, IdentityData(internalId, credentials), pptIdentifier))
@@ -76,9 +77,8 @@ class AmendAuthAction @Inject()(
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength(continueUrl)
       case _: InsufficientEnrolments =>
-        // Returns has the best not enrolled explanation page and knows how to handle agents in this state
-        //todo wtf
-        Results.Redirect(appConfig.pptAccountUrl)
+        println(Console.RED + " HERE " + Console.RESET)
+        Results.Redirect(appConfig.pptNotEnrolledUrl)
       case _: UnsupportedCredentialRole =>
         Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAssistantUnauthorised())
       case _: UnsupportedAffinityGroup =>
@@ -95,6 +95,4 @@ class AmendAuthAction @Inject()(
       )
     )
 
-  //todo better way to get this?
-  override def parser: BodyParser[AnyContent] = controllerComponents.parsers.default
 }

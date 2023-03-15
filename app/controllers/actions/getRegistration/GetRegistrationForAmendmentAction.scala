@@ -19,7 +19,7 @@ package controllers.actions.getRegistration
 import connectors.SubscriptionsConnector
 import models.request.AuthenticatedRequest.PPTEnrolledRequest
 import models.request.JourneyRequest
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.ActionTransformer
 import repositories.RegistrationAmendmentRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -27,31 +27,22 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
-//todo this is a transformer not a refiner
 class GetRegistrationForAmendmentAction @Inject()(
   subscriptionsConnector: SubscriptionsConnector,
   registrationAmendmentRepository: RegistrationAmendmentRepository
-)(implicit val executionContext: ExecutionContext) extends ActionRefiner[PPTEnrolledRequest, JourneyRequest] {
+)(implicit val executionContext: ExecutionContext) extends ActionTransformer[PPTEnrolledRequest, JourneyRequest] {
 
-  override protected def refine[A](
-    request: PPTEnrolledRequest[A]
-  ): Future[Either[Result, JourneyRequest[A]]] = {
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      registrationAmendmentRepository.get(request.cacheId).flatMap {
-        case Some(registration) =>
-          Future.successful(
-            Right(JourneyRequest(request, registration))
-          )
-        case _ =>
-          subscriptionsConnector.getSubscription(request.pptReference).flatMap { registration =>
-            registrationAmendmentRepository.put(request.cacheId, registration).map {
-              registration =>
-                Right(JourneyRequest(request, registration))
-            }
-          }
-      }
+  override protected def transform[A](request: PPTEnrolledRequest[A]): Future[JourneyRequest[A]] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    registrationAmendmentRepository.get(request.cacheId).flatMap {
+      case Some(registration) =>
+        Future.successful(JourneyRequest(request, registration))
+      case None =>
+        for {
+          registration <- subscriptionsConnector.getSubscription(request.pptReference)
+          _ <- registrationAmendmentRepository.put(request.cacheId, registration)
+        } yield  JourneyRequest(request, registration)
+    }
   }
-
 }
