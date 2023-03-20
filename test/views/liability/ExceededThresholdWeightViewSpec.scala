@@ -29,8 +29,10 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
 import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import views.html.components._
 import views.html.liability.exceeded_threshold_weight_page
 import views.html.main_template
@@ -165,6 +167,7 @@ class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach w
             isPageHeading = false
           )
         ) (mockMessages).inline()
+          .withHint(Hint(content = Text("some message")))
       )
 
       verify(mockMessages).apply("liability.exceededThresholdWeight.question")
