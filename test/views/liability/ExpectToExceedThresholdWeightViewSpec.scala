@@ -29,8 +29,10 @@ import play.api.i18n.Messages
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Legend, Text}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
 import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import views.html.components._
 import views.html.liability.expect_to_exceed_threshold_weight_page
 import views.html.main_template
@@ -173,7 +175,8 @@ class ExpectToExceedThresholdWeightViewSpec extends PlaySpec with BeforeAndAfter
             classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
             isPageHeading = false
           )
-        )(mockMessages).inline())
+        )(mockMessages).inline().withHint(Hint(content = Text("some message")))
+      )
 
       verify(mockMessages).apply("liability.expectToExceedThresholdWeight.question")
     }

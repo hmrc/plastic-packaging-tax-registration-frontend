@@ -144,12 +144,20 @@ class ExpectToExceedThresholdWeightDateViewSpec extends PlaySpec with BeforeAndA
       verify(mockMessages).apply("liability.expectToExceedThresholdDate.p1.bullet.2")
     }
 
-    "have the second paragraph " in {
+    "have the example heading " in {
       instantiateView()
 
       insideGovUkWrapper must include("PARAGRAPH 1")
       verify(paragraphBody, atLeastOnce()).apply("some message")
-      verify(mockMessages).apply("liability.expectToExceedThresholdDate.p2")
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.example.1")
+    }
+
+    "have the example heading message " in {
+      instantiateView()
+
+      insideGovUkWrapper must include("PARAGRAPH 1")
+      verify(paragraphBody, atLeastOnce()).apply("some message")
+      verify(mockMessages).apply("liability.expectToExceedThresholdDate.example.2")
     }
 
     "have the date input" in {

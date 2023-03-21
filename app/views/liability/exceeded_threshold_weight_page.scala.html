@@ -65,6 +65,7 @@
                 classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
                 isPageHeading = false
             )).inline()
+            .withHint(Hint(content = Text(messages("liability.exceededThresholdWeight.hint"))))
         )
 
         @saveButtons()
