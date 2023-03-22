@@ -5,6 +5,8 @@ service.name = Cofrestru ar gyfer y Dreth Deunydd Pacio Plastig
 
 title.format = {0} - {1} - GOV.UK
 
+error.browser.title.prefix = Gwall:
+
 site.back  = Yn ôl
 site.back.hiddenText  = i’r dudalen flaenorol
 site.backToGovUk  = Yn ôl i GOV.UK

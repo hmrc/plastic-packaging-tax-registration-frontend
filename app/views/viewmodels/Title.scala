@@ -16,18 +16,32 @@
 
 package views.viewmodels
 
+import play.api.data.Form
 import play.api.i18n.Messages
 
-case class Title(
+class Title(
   headingKey: String,
   headingArg: String = "",
-  headingArgs: Option[Seq[String]] = None
+  headingArgs: Option[Seq[String]] = None,
+  hasErrors: Boolean = false
 ) {
-
+  
   def toString(implicit messages: Messages): String = {
     def args = headingArgs.getOrElse(Seq(headingArg))
-
-    messages("title.format", messages(headingKey, args: _*), messages("service.name"))
+    val prefix = if (hasErrors) messages("error.browser.title.prefix") + " " else ""
+    prefix + messages("title.format", messages(headingKey, args: _*), messages("service.name"))
   }
 
+}
+
+object Title {
+
+  def apply(form: Form[_], headingKey: String) = 
+    new Title (headingKey, "", None, form.hasErrors || form.hasGlobalErrors)
+
+  def apply(form: Form[_], headingKey: String, headingArg: String) =
+    new Title (headingKey, headingArg, None, form.hasErrors || form.hasGlobalErrors)
+
+  def apply(headingKey: String, headingArg: String = "", headingArgs: Option[Seq[String]] = None) = 
+    new Title (headingKey, headingArg, headingArgs, false)
 }

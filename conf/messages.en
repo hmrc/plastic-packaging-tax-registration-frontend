@@ -5,6 +5,8 @@ service.name=Register for Plastic Packaging Tax
 
 title.format={0} - {1} - GOV.UK
 
+error.browser.title.prefix = Error: 
+
 site.back = Back
 site.back.hiddenText = to previous page
 site.backToGovUk = Back to GOV.UK
