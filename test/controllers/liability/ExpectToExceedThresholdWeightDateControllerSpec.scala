@@ -36,8 +36,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.liability.expect_to_exceed_threshold_weight_date_page
 
-import java.time.{Clock, Instant, LocalDate}
-import java.util.TimeZone
+import java.time.LocalDate
 
 class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec with BeforeAndAfterEach {
 
@@ -175,9 +174,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
   }
 
   private def createForm: Form[LocalDate] =  {
-    val fakeClock =
-      Clock.fixed(Instant.parse("2022-06-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
-    new ExpectToExceedThresholdWeightDate(appConfig, fakeClock).apply()(mock[Messages])
+    new ExpectToExceedThresholdWeightDate(appConfig).apply()(mock[Messages])
       .fill(LocalDate.of(2022,4,1))
   }
 

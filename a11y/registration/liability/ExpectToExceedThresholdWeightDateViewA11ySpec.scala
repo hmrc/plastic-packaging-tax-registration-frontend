@@ -32,7 +32,7 @@ class ExpectToExceedThresholdWeightDateViewA11ySpec extends BaseViewSpec {
   }
 
   private val page = inject[expect_to_exceed_threshold_weight_date_page]
-  private val formProvider = new ExpectToExceedThresholdWeightDate(appConfig, fakeClock)
+  private val formProvider = new ExpectToExceedThresholdWeightDate(appConfig)
   private val form = formProvider()(messages)
 
   private def render(form: Form[LocalDate] = form) : String =

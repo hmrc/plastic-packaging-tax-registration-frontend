@@ -17,9 +17,11 @@
 package forms.liability
 
 import config.AppConfig
-import forms.liability.ExpectToExceedThresholdWeightDate.{beforeLiveDateError, dateEmptyError, dateFormattingError, dateOutOfRangeError, requiredKey}
-import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.when
+import forms.liability.ExceededThresholdWeightDate.{dateEmptyError, dateFormattingError, dateOutOfRangeError, isBeforeLiveDateError, requiredKey, twoRequiredKey}
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
 import play.api.data.FormError
@@ -27,63 +29,51 @@ import play.api.i18n.Messages
 
 import java.time.LocalDate
 
-class ExpectToExceedThresholdDateSpec extends PlaySpec {
+class ExceededThresholdWeightDateSpec extends PlaySpec {
 
   val message: Messages = mock[Messages]
-  when(message.apply(anyString(), any())).thenReturn("some message")
+  when(message.apply(anyString(), any)).thenReturn("some message")
 
   private val appConfig = mock[AppConfig]
   when(appConfig.goLiveDate).thenReturn(LocalDate.parse("2022-04-01"))
 
+  private val sut = new ExceededThresholdWeightDate(appConfig)()(message)
 
-  private  val sut = new ExpectToExceedThresholdWeightDate(appConfig)()(message)
+  "ExceededThresholdWeightDate" should {
+    "bind correctly" in {
+      val boundForm = sut.bind(toMap("15", "5", "2022"))
 
-  "ExpectToExceedThresholdWeight" must {
-    "bind correctly" when {
-      "date is provided" in {
-        val boundForm = sut.bind(toMap("15", "5", "2022"))
-
-        boundForm.value mustBe Some(LocalDate.of(2022, 5, 15))
-        boundForm.errors mustBe Nil
-      }
+      boundForm.value mustBe Some(LocalDate.of(2022, 5, 15))
+      boundForm.errors mustBe Nil
     }
 
     "error correctly" when {
-      "answer empty" in {
+      "date is empty" in {
         val boundForm = sut.bind(Map.empty[String, String])
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) mustBe Seq(dateEmptyError)
       }
 
-      "date is empty" in {
-        val boundForm = sut.bind(toMap("", "", ""))
-
-        boundForm.value mustBe None
-        boundForm.errors.map(_.message) must contain("liability.expectToExceedThresholdDate.none")
-      }
-
       "only one date field is present" in {
-        val boundForm = sut.bind(Map(
-          "expect-to-exceed-threshold-weight-date.day" -> "15")
-        )
+        val boundForm = sut.bind(Map("exceeded-threshold-weight-date.day" -> "15"))
 
         boundForm.value mustBe None
-        boundForm.errors.map(_.message) must contain("liability.expectToExceedThresholdDate.two.required.fields")
+        boundForm.errors.map(_.message) must contain(twoRequiredKey)
       }
 
       "only two date fields is present" in {
         val boundForm = sut.bind(Map(
-          "expect-to-exceed-threshold-weight-date.day" -> "15",
-          "expect-to-exceed-threshold-weight-date.month" -> "5"
+          "exceeded-threshold-weight-date.day" -> "15",
+          "exceeded-threshold-weight-date.month" -> "5"
         ))
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) must contain(requiredKey)
       }
 
-      "date contain letters" in {
-        val boundForm = sut.bind(toMap("av", "5", "2022"))
+      "date contain letter" in {
+        val boundForm = sut.bind(toMap("qq", "5", "2022"))
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) mustBe Seq(dateFormattingError)
@@ -97,13 +87,8 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
       }
 
       "date is out of Range" in {
-        val dateInFuture = LocalDate.now().plusDays(10)
-        val boundForm = sut.bind(
-          toMap(
-            dateInFuture.getDayOfMonth.toString,
-            dateInFuture.getMonthValue.toString,
-            dateInFuture.getYear.toString)
-        )
+        val dateInFuture = LocalDate.now.plusDays(10)
+        val boundForm = sut.bind(toMap(dateInFuture.getDayOfMonth.toString, dateInFuture.getMonthValue.toString, dateInFuture.getYear.toString))
 
         boundForm.value mustBe None
         boundForm.errors.map(_.message) mustBe Seq(dateOutOfRangeError)
@@ -113,15 +98,19 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
         val boundForm = sut.bind(toMap("15", "3", "2022"))
 
         boundForm.value mustBe None
-        boundForm.errors mustBe Seq(FormError("expect-to-exceed-threshold-weight-date.day", beforeLiveDateError, Seq("some message")))
+        boundForm.errors mustBe Seq(
+          FormError("exceeded-threshold-weight-date.day", Seq(isBeforeLiveDateError), Seq("some message"))
+        )
       }
+
     }
   }
 
   private def toMap(day: String, month: String, year: String): Map[String, String] =
     Map(
-      "expect-to-exceed-threshold-weight-date.day" -> day,
-      "expect-to-exceed-threshold-weight-date.month" -> month,
-      "expect-to-exceed-threshold-weight-date.year" -> year
+      "exceeded-threshold-weight-date.day" -> day,
+      "exceeded-threshold-weight-date.month" -> month,
+      "exceeded-threshold-weight-date.year" -> year
     )
+
 }
