@@ -26,12 +26,8 @@ import java.util.TimeZone
 
 class ExceededThresholdWeightDateViewA11ySpec extends BaseViewSpec {
 
-  private val fakeClock = {
-    Clock.fixed(Instant.parse("2022-06-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
-  }
-
   private val page = inject[exceeded_threshold_weight_date_page]
-  private val formProvider = new ExceededThresholdWeightDate(appConfig, fakeClock)
+  private val formProvider = new ExceededThresholdWeightDate(appConfig)
   private val form = formProvider()(messages)
 
   private def render(form: Form[LocalDate] = form) : String =
