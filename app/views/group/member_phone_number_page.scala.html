@@ -56,7 +56,7 @@
     )
 }
 @govukLayout(
-  title = Title(headingKey = "contactDetails.member.phoneNumber.title", headingArg = contactName),
+  title = Title(form, headingKey = "contactDetails.member.phoneNumber.title", headingArg = contactName),
   backButton = Some(BackButtonJs())) {
   @errorSummary(form.errors)
 

@@ -40,7 +40,7 @@
 @(form: Form[RemovePartner], partner: Partner)(implicit request: JourneyRequest[AnyContent], messages: Messages)
 
 @govukLayout(
-    title = Title(headingKey = "partnership.removePartner.title", partner.name),
+    title = Title(form, headingKey = "partnership.removePartner.title", partner.name),
     backButton = Some(BackButtonJs())
 ) {
 

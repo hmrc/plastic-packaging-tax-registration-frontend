@@ -16,15 +16,14 @@
 
 package controllers.liability
 
-import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
 import forms.Date
-import forms.liability.{ExpectToExceedThresholdWeight, ExpectToExceedThresholdWeightAnswer}
+import forms.liability.ExpectToExceedThresholdWeight
 import models.registration.{Cacheable, NewLiability, Registration}
 import models.request.{JourneyAction, JourneyRequest}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.liability.expect_to_exceed_threshold_weight_page
 
@@ -39,14 +38,13 @@ class ExpectToExceedThresholdWeightController @Inject() (
                                                           mcc: MessagesControllerComponents,
                                                           page: expect_to_exceed_threshold_weight_page,
                                                           form: ExpectToExceedThresholdWeight,
-                                                          appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
-      (request.registration.liabilityDetails.expectToExceedThresholdWeight, request.registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight) match {
-        case (Some(yesNo), date) => Ok(page(form().fill(ExpectToExceedThresholdWeightAnswer(yesNo,date.map(_.date)))))
+      request.registration.liabilityDetails.expectToExceedThresholdWeight match {
+        case Some(yesNo) => Ok(page(form().fill(yesNo)))
         case _ => Ok(page(form()))
       }
     }
@@ -59,30 +57,41 @@ class ExpectToExceedThresholdWeightController @Inject() (
           Future.successful(BadRequest(page(formWithErrors))),
               expectToExceed =>
                 updateRegistration(expectToExceed).map {
-                  case Right(_) => Redirect(exceededThresholdLink)
+                  case Right(_) => redirect(expectToExceed)
                   case Left(error) => throw error
                 }
         )
 
     }
 
+  private def redirect(isYes: Boolean): Result = {
+    if(isYes)
+      Redirect(controllers.liability.routes.ExpectToExceedThresholdWeightDateController.displayPage)
+    else
+      Redirect(controllers.liability.routes.ExceededThresholdWeightController.displayPage)
+  }
+
   private def updateRegistration(
-    expectToExceedThresholdWeight: ExpectToExceedThresholdWeightAnswer
+    expectToExceedThresholdWeight: Boolean
   )(implicit req: JourneyRequest[AnyContent]): Future[Either[ServiceError, Registration]] =
     update { registration =>
+
       val updatedLiableDetails =
         registration.liabilityDetails.copy(
-          expectToExceedThresholdWeight = Some(expectToExceedThresholdWeight.yesNo),
-          dateRealisedExpectedToExceedThresholdWeight = expectToExceedThresholdWeight.date.map(Date.apply),
+          expectToExceedThresholdWeight = Some(expectToExceedThresholdWeight),
+          dateRealisedExpectedToExceedThresholdWeight = resetDateRealised(expectToExceedThresholdWeight, registration),
           newLiabilityStarted = Some(NewLiability)
         )
       registration.copy(liabilityDetails = updatedLiableDetails)
     }
 
-  private def exceededThresholdLink: Call = {
-    if(appConfig.isBackwardLookChangeEnabled)
-      controllers.liability.routes.ExceededThresholdWeightController.displayPage()
-    else controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023()
-  }
 
+  private def resetDateRealised(
+    expectToExceedThresholdWeight: Boolean,
+    registration: Registration
+  ): Option[Date] = {
+    if (expectToExceedThresholdWeight)
+      registration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight
+    else None
+  }
 }

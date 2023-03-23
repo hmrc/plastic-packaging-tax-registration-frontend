@@ -25,24 +25,8 @@
         viewUtils: ViewUtils,
 )
 
-@(registration: Registration, isBackwardLookPostApril2023: Boolean)(implicit request: JourneyRequest[_], messages: Messages)
+@(registration: Registration)(implicit request: JourneyRequest[_], messages: Messages)
 
-
-@exceededThresholdLink = @{
-    if(isBackwardLookPostApril2023) {
-        controllers.liability.routes.ExceededThresholdWeightController.displayPage()
-    } else {
-        controllers.liability.routes.ExceededThresholdWeightController.displayPageBeforeApril2023()
-    }
-}
-
-@getMessage(key: String) = @{
-    if(isBackwardLookPostApril2023) {
-        messages(key)
-    } else {
-        messages(s"$key.beforeApril2023")
-    }
-}
 @summary = @{
     Seq(
         SummaryListRow(
@@ -80,7 +64,7 @@
                 actions = Some(Actions(
                     items = Seq(
                     ActionItem(
-                        href = routes.ExpectToExceedThresholdWeightController.displayPage().url + "#expect-to-exceed-threshold-weight-date.day",
+                        href = routes.ExpectToExceedThresholdWeightDateController.displayPage().url,
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.dateRealisedExpectToExceededThreshold"))
                     )
@@ -89,7 +73,7 @@
         ),
         SummaryListRow(
             key = Key(
-                content = Text(getMessage("liability.checkAnswers.exceededThreshold"))
+                content = Text(messages("liability.checkAnswers.exceededThreshold"))
             ),
             value = Value(
                 registration.liabilityDetails.exceededThresholdWeight match {
@@ -101,7 +85,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = exceededThresholdLink.url,
+                        href = routes.ExceededThresholdWeightController.displayPage().url,
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.exceededThreshold"))
                     )
@@ -122,7 +106,7 @@
             actions = Some(Actions(
                 items = Seq(
                     ActionItem(
-                        href = exceededThresholdLink.url + "#exceeded-threshold-weight-date.day",
+                        href = routes.ExceededThresholdWeightDateController.displayPage().url,
                         content = Text(messages("site.link.change")),
                         visuallyHiddenText = Some(messages("liability.checkAnswers.dateExceededThreshold"))
                     )

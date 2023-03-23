@@ -20,7 +20,7 @@ import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
 import controllers.actions.NotEnrolledAuthAction
 import forms.Date
-import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
+import forms.liability.ExceededThresholdWeight
 import models.registration.{Cacheable, Registration}
 import models.request.{JourneyAction, JourneyRequest}
 import play.api.data.Form
@@ -38,7 +38,7 @@ class ExceededThresholdWeightController @Inject() (
                                                     appConfig: AppConfig,
                                                     override val registrationConnector: RegistrationConnector,
                                                     mcc: MessagesControllerComponents,
-                                                    exceededThresholdWeight: ExceededThresholdWeight,
+                                                    form: ExceededThresholdWeight,
                                                     page: exceeded_threshold_weight_page
 )(implicit ec: ExecutionContext)
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
@@ -46,51 +46,40 @@ class ExceededThresholdWeightController @Inject() (
   def displayPage(): Action[AnyContent] =
     (authenticate andThen journeyAction) { implicit request =>
 
-      val backLookChangeEnabled = appConfig.isBackwardLookChangeEnabled
-      (request.registration.liabilityDetails.exceededThresholdWeight, request.registration.liabilityDetails.dateExceededThresholdWeight)  match {
-        case (Some(yesNo), date) => Ok(page(
-          exceededThresholdWeight.form().fill(ExceededThresholdWeightAnswer(yesNo, date.map(_.date))), backLookChangeEnabled))
-        case _          => Ok(page(exceededThresholdWeight.form(), backLookChangeEnabled))
+      val filledForm = request.registration.liabilityDetails.exceededThresholdWeight  match {
+        case Some(yesNo) => form().fill(yesNo)
+        case _           => form()
       }
-    }
 
-  def displayPageBeforeApril2023(): Action[AnyContent] =
-    displayPage()
+      Ok(page(filledForm))
+    }
 
   def submit(): Action[AnyContent] =
     (authenticate andThen journeyAction).async { implicit request =>
-      exceededThresholdWeight.form().bindFromRequest().fold(hasErrors, onSuccess)
+      form().bindFromRequest().fold(
+        errorForm =>
+          Future.successful(BadRequest(page(errorForm)))
+      , alreadyExceeded =>
+          updateRegistration(alreadyExceeded)
+            .map {
+              case Right(_) =>
+                if (alreadyExceeded) Redirect(routes.ExceededThresholdWeightDateController.displayPage())
+                else Redirect(routes.TaxStartDateController.displayPage())
+              case Left(error) => throw error
+            }
+      )
     }
-
-  def submitBeforeApril2023(): Action[AnyContent] =
-    submit()
-
-  private def hasErrors(form: Form[_])(implicit request: Request[_]): Future[Result] = {
-    Future.successful(BadRequest(page(form, appConfig.isBackwardLookChangeEnabled)))
-  }
 
   private def updateRegistration(
-    alreadyExceeded: ExceededThresholdWeightAnswer
+    alreadyExceeded: Boolean
   )(implicit request: JourneyRequest[_]): Future[Either[ServiceError, Registration]] =
     update { registration =>
-      val updatedLiabilityDetails = {
+      registration.copy(liabilityDetails =
         registration.liabilityDetails.copy(
-          exceededThresholdWeight = Some(alreadyExceeded.yesNo),
-          dateExceededThresholdWeight = alreadyExceeded.date.map(Date.apply)
+          exceededThresholdWeight = Some(alreadyExceeded),
+          dateExceededThresholdWeight = if (alreadyExceeded) registration.liabilityDetails.dateExceededThresholdWeight else None
         )
-      }
-      registration.copy(liabilityDetails = updatedLiabilityDetails)
+      )
     }
-
-  private def onSuccess(
-    alreadyExceeded: ExceededThresholdWeightAnswer
-  )(implicit request: JourneyRequest[_]): Future[Result] = {
-    val future = updateRegistration(alreadyExceeded)
-    future
-      .map({
-        case Left(error) => throw error
-        case _           => Redirect(routes.TaxStartDateController.displayPage())
-      })
-  }
 
 }

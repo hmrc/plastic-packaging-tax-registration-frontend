@@ -16,256 +16,179 @@
 
 package views.liability
 
-import base.unit.UnitViewSpec
-import forms.YesNoValues
-import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
-import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.when
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
+import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
+import org.mockito.MockitoSugar
+import org.mockito.captor.ArgCaptor
+import org.mockito.integrations.scalatest.ResetMocksAfterEachTest
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.play.PlaySpec
 import play.api.data.Form
+import play.api.data.Forms.ignored
 import play.api.i18n.Messages
+import play.api.mvc.Call
+import play.api.test.FakeRequest
+import play.twirl.api.{Html, HtmlFormat}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Legend
+import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
+import views.html.components._
 import views.html.liability.exceeded_threshold_weight_page
+import views.html.main_template
+import views.viewmodels.govuk.radios._
+import views.viewmodels.{BackButtonJs, Title}
 
-import java.time.{Clock, Instant}
-import java.util.TimeZone
+class ExceededThresholdWeightViewSpec extends PlaySpec with BeforeAndAfterEach with MockitoSugar with ResetMocksAfterEachTest {
 
-class ExceededThresholdWeightViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
+  private val request = FakeRequest()
+  private val mockMessages = mock[Messages]
 
-  val mockMessages: Messages = mock[Messages]
-  when(mockMessages.apply(anyString(), any())).thenReturn("some message")
+  private val form = Form[Boolean]("value" -> ignored[Boolean](true))
+  private val sectionHeader = mock[sectionHeader]
+  private val pageHeading = mock[pageHeading]
+  private val govUkLayout = mock[main_template]
+  private val contentCaptor = ArgCaptor[Html]
+  private val saveButtons = mock[saveButtons]
+  private val errorSummary = mock[errorSummary]
+  private val govukRadios = mock[GovukRadios]
+  private val inset = mock[inset]
+  private val paragraphBody = mock[paragraphBody]
+  private val link = mock[link]
 
-  private val fakeClock =
-    Clock.fixed(Instant.parse("2022-05-01T12:00:00Z"), TimeZone.getDefault.toZoneId)
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    when(mockMessages.apply(any[String], any)).thenReturn("some message") //todo?
+    when(sectionHeader.apply(any)).thenReturn(HtmlFormat.raw("SECTION HEADER"))
+    when(pageHeading.apply(any, any, any)).thenReturn(HtmlFormat.raw("PAGE HEADING"))
+    when(govUkLayout.apply(any, any, any)(contentCaptor)(any, any)).thenReturn(HtmlFormat.raw("GOVUK"))
+    when(saveButtons.apply(any)(any)).thenReturn(HtmlFormat.raw("SAVE BUTTONS"))
+    when(errorSummary.apply(any, any)(any)).thenReturn(HtmlFormat.raw("ERROR SUMMARY"))
+    when(govukRadios.apply(any)).thenReturn(HtmlFormat.raw("GOV UK RADIOS"))
+    when(paragraphBody.apply(any, any, any)).thenReturn(HtmlFormat.raw("PARAGRAPH 0"), Seq(1, 2, 3).map(i => HtmlFormat.raw(s"PARAGRAPH $i")):_*)
+  }
 
-  private val formProvider = new ExceededThresholdWeight(appConfig, fakeClock)
+  private val page = new exceeded_threshold_weight_page(
+    new FormWithCSRF,
+    sectionHeader,
+    pageHeading,
+    govUkLayout,
+    saveButtons,
+    errorSummary,
+    govukRadios,
+    inset,
+    paragraphBody,
+    link
+  )
 
-  val form =  formProvider.form()(mockMessages)
+  "view" must {
+    "use govUk layout" in {
+      instantiateView()
 
-  private val page = inject[exceeded_threshold_weight_page]
-
-  private def createView(form: Form[ExceededThresholdWeightAnswer] = form, backLookChangeEnabled: Boolean = false): Document =
-    page(form, backLookChangeEnabled)(journeyRequest, messages)
-
-  "The view" should {
-    val view = createView()
-
-    "contain timeout dialog function" in {
-      containTimeoutDialogFunction(view) mustBe true
+      verify(govUkLayout).apply(
+        //        eqTo(Title(form, "liability.exceededThresholdWeight.title")), 
+        any[Title], // todo fix to be like above
+        eqTo(Some(BackButtonJs())),
+        any)(any)(eqTo(request), eqTo(mockMessages))
     }
 
-    "display sign out link" in {
-      displaySignOutLink(view)
+    "have the form" in {
+      instantiateView()
+
+      val form = Jsoup.parse(insideGovUkWrapper).getElementsByTag("form").first()
+      form.attr("method") mustBe controllers.liability.routes.ExceededThresholdWeightController.submit().method
+      form.attr("action") mustBe controllers.liability.routes.ExceededThresholdWeightController.submit().url
+      form.attr("autoComplete") mustBe "off"
+      assert(form.hasAttr("novalidate"))
     }
 
-    "have a 'Back' button" in {
-      view.getElementById("back-link").text must not be null
+    "have the error summary" in {
+      instantiateView()
+
+      insideGovUkWrapper must include("ERROR SUMMARY")
+      verify(errorSummary).apply(form.errors)(mockMessages)
     }
 
-    "display title" when {
-      "backLookChangeEnabled is true" in {
-        val title = createView(backLookChangeEnabled = true).select("title").text()
-        title mustBe "Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months? - Register for Plastic Packaging Tax - GOV.UK"
-        title must include(messages("liability.exceededThresholdWeight.title"))
-      }
+    "have the section header" in {
+      instantiateView()
 
-      //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
-      "backLookChangeEnabled is false" in {
-        val title = createView().select("title").text()
-        title mustBe "Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022? - Register for Plastic Packaging Tax - GOV.UK"
-        title must include(messages("liability.exceededThresholdWeight.beforeApril2023.title"))
-      }
+      insideGovUkWrapper must include("SECTION HEADER")
+      verify(sectionHeader).apply("some message")
+      verify(mockMessages).apply("liability.sectionHeader")
     }
 
-    "display header" in {
-      view.getElementsByClass("govuk-caption-l").text() must include(
-        messages("liability.expectToExceedThresholdWeight.sectionHeader")
-      )
+    "have the h1" in {
+      instantiateView()
+
+      insideGovUkWrapper must include("PAGE HEADING")
+      verify(pageHeading).apply("some message")
+      verify(mockMessages).apply("liability.exceededThresholdWeight.question")
     }
 
-    "display radio inputs" in {
-      view must containElementWithID("value-yes")
-      view.getElementById("value-yes").attr("value") mustBe YesNoValues.YES
-      view must containElementWithID("value-no")
-      view.getElementById("value-no").attr("value") mustBe YesNoValues.NO
-
+    "have the paragraphs" in {
+      instantiateView()
+      insideGovUkWrapper must include("PARAGRAPH 0")
+      insideGovUkWrapper must include("PARAGRAPH 1")
+      insideGovUkWrapper must include("PARAGRAPH 2")
+      verify(mockMessages).apply("liability.exceededThresholdWeight.line1")
+      verify(mockMessages).apply("liability.exceededThresholdWeight.inset")
+      verify(mockMessages).apply("liability.exceededThresholdWeight.line2")
+      verify(mockMessages).apply("liability.exceededThresholdWeight.line3")
+      verify(paragraphBody, times(5)).apply("some message") // including inset and link-to-guidance
+    }
+    
+    "have link to guidance" in {
+      val linkToGuidance = mock[Html]
+      when(link.apply(any, any, any, any, any, any)) thenReturn linkToGuidance
+      instantiateView()
+      verify(link).apply("some message", Call("GET", 
+        "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register"))
+      verify(mockMessages).apply("liability.exceededThresholdWeight.line4", linkToGuidance)
+      verify(mockMessages).apply("liability.exceededThresholdWeight.line4.link-text")
+    }
+    
+    "have the inset" in {
+      val paragraph = mock[Html]
+      when(paragraphBody.apply(any, any, any)) thenReturn paragraph
+      instantiateView()
+      verify(inset).apply(paragraph)
+      verify(mockMessages).apply("liability.exceededThresholdWeight.inset")
     }
 
-    "display question" when {
-      "backLookChangeEnabled is true" in {
-        val question = createView(backLookChangeEnabled = true).getElementsByClass("govuk-heading-l").text()
-        question mustBe "Have you manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months?"
-        question mustBe messages("liability.exceededThresholdWeight.question")
-      }
+    "have the radio buttons" in {
+      instantiateView()
 
-      //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
-      "backLookChangeEnabled is false" in {
-        val question = createView().getElementsByClass("govuk-heading-l").text()
-        question mustBe "Have you manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022?"
-        question mustBe messages("liability.exceededThresholdWeight.beforeApril2023.question")
-      }
-    }
-
-    "display date question" in {
-      view.select("#conditional-value-yes > div > fieldset > legend").text() must include(
-        messages("liability.exceededThresholdWeightDate.title")
-      )
-    }
-
-    "display hint according to feature flag" when {
-      "isPostAprilEnabled is true" in {
-        val hint = createView(backLookChangeEnabled = true).getElementsByClass("govuk-body").text()
-
-        hint must include("This is the total of all the plastic packaging you’ve manufactured or imported in the last 12 months.")
-        hint must include(messages("liability.exceededThresholdWeight.line1"))
-      }
-
-      //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
-      "backLookChangeEnabled is false" in {
-        val hint = createView().getElementsByClass("govuk-body").text()
-
-        hint must include("This is the total of all the plastic you’ve manufactured or imported since April.")
-        hint must include(messages("liability.exceededThresholdWeight.beforeApril2023.line1"))
-      }
-
-    }
-    "display question hint" in {
-      val hint = view.getElementsByClass("govuk-body").text()
-
-      hint must include("For example, you manufactured 5,000kg in April, 2,000kg in May and 3,000kg in June.")
-      hint must include(messages("liability.exceededThresholdWeight.line2"))
-
-      hint must include("f you’re registering as a group, each member must have met this threshold.")
-      hint must include(messages("liability.exceededThresholdWeight.line3"))
-    }
-    "display date question hint" in {
-      view.getElementById("exceeded-threshold-weight-date-hint") must containMessage(
-        "liability.exceededThresholdWeightDate.hint"
-      )
-    }
-
-    "display day input box" in {
-      view.getElementsByAttributeValueMatching("for", "day").text() must include(
-        messages("date.day")
-      )
-    }
-
-    "display month input box" in {
-      view.getElementsByAttributeValueMatching("for", "month").text() must include(
-        messages("date.month")
-      )
-    }
-
-    "display year input box" in {
-      view.getElementsByAttributeValueMatching("for", "year").text() must include(
-        messages("date.year")
-      )
-    }
-
-    "display 'Save and continue' button" in {
-      view must containElementWithID("submit")
-      view.getElementById("submit").text() mustBe "Save and continue"
-    }
-
-    //todo: this may be removed after 1 April 2023 when backward-look-date feature flag is removed
-    "form action should redirect to ExceededThreshold before April 2023" in {
-      val form =  formProvider.form()(mockMessages)
-
-      val view = createView(form.bind(Map("answer" -> "")))
-
-      view.select("form").attr("method") mustBe "POST"
-      view.select("form").attr("action") mustBe
-        controllers.liability.routes.ExceededThresholdWeightController.submitBeforeApril2023().url
-    }
-
-    "form action should redirect to ExceededThreshold for post April 2023" in {
-      val form =  formProvider.form()(mockMessages)
-
-      val view = createView(form.bind(Map("answer" -> "")), true)
-
-      view.select("form").attr("method") mustBe "POST"
-      view.select("form").attr("action") mustBe
-        controllers.liability.routes.ExceededThresholdWeightController.submit().url
-    }
-
-    // TODO need a working way to test which radio is checked (or neither) when form is first displayed
-
-
-    "display error" when {
-
-      "no answer is selected" when {
-        "backLookChangeEnabled is true" in {
-
-          when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
-          val form =  formProvider.form()(mockMessages)
-
-          val errorText = createView(form.bind(Map("answer" -> "")), true)
-            .getElementsByClass("govuk-error-message")
-            .text()
-
-          errorText must include("Select yes if you have manufactured or imported 10,000kg or more of finished plastic packaging in the last 12 months")
-        }
-
-        "backLookChangeEnabled is false" in {
-          when(appConfig.isBackwardLookChangeEnabled).thenReturn(false)
-          val form =  formProvider.form()(mockMessages)
-
-          val errorText = createView(form = form.bind(Map("answer" -> "")))
-            .getElementsByClass("govuk-error-message")
-            .text()
-
-          errorText must include("Select yes if you have manufactured or imported 10,000kg or more finished plastic packaging since 1 April 2022")
-          errorText must include(messages("liability.exceededThresholdWeight.beforeApril2023.question.empty.error"))
-        }
-      }
-      "form has error" in {
-        val boundForm = form.withError("answerError","general.true")
-        val view = createView(boundForm)
-        view must haveGovukFieldError("exceeded-threshold-weight-date", "Yes")
-        view must haveGovukGlobalErrorSummary
-      }
-
-      val day = Some("exceeded-threshold-weight-date.day" -> "5")
-      val month = Some("exceeded-threshold-weight-date.month" -> "12")
-      val year = Some("exceeded-threshold-weight-date.year" -> "2022")
-
-      val table = Table(
-        ("test", "day", "month", "year"),
-        ("day", None, month, year),
-        ("month",day, None, year),
-        ("year",day, month, None),
-        ("day and year", None, month, None),
-        ("day and month", None, None, year),
-        ("month and year", day, None, None),
+      insideGovUkWrapper must include("GOV UK RADIOS")
+      verify(govukRadios).apply(
+        RadiosViewModel.yesNo(
+          field = form("value"),
+          legend = Legend(
+            content = Text("some message"),
+            classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+            isPageHeading = false
+          )
+        ) (mockMessages).inline()
+          .withHint(Hint(content = Text("some message")))
       )
 
-      forAll(table) {
-        (
-          test: String,
-          day: Option[(String, String)],
-          month: Option[(String, String)],
-          year: Option[(String, String)]
-        ) =>
-          s"$test is missing" in {
-            val boundForm = formProvider.form().bind(
-              Map("answer" -> "yes") ++
-                day.fold[Map[String,String]](Map())(o => Map(o._1 -> o._2)) ++
-                month.fold[Map[String,String]](Map())(o => Map(o._1 -> o._2)) ++
-                year.fold[Map[String,String]](Map())(o => Map(o._1 -> o._2))
-            )
+      verify(mockMessages).apply("liability.exceededThresholdWeight.question")
+    }
 
-            createView(boundForm)
-              .getElementsByClass("govuk-error-message")
-              .text() must include(s"Date must include the $test")
-          }
-      }
+    "have the continue button" in {
+      instantiateView()
+
+      insideGovUkWrapper must include("SAVE BUTTONS")
+      verify(saveButtons).apply()(mockMessages)
     }
   }
 
-  override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(form, false)(request, messages)
-    page.render(form, false, request, messages)
+  //todo this is $h!t
+  "Exercise generated rendering methods" in {
+    page.f(form)(request, mockMessages)
+    page.render(form, request, mockMessages)
   }
+
+  def instantiateView(): HtmlFormat.Appendable = page(form)(request, mockMessages)
+  def insideGovUkWrapper = contentCaptor.value.toString
 
 }

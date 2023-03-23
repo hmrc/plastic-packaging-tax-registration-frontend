@@ -42,7 +42,7 @@
 @contactName = @{request.registration.primaryContactDetails.name.getOrElse(messages("primaryContactDetails.fullName.default"))}
 
 @govukLayout(
-  title = Title(headingKey = "primaryContactDetails.jobTitlePage.title", headingArg = contactName),
+  title = Title(form, headingKey = "primaryContactDetails.jobTitlePage.title", headingArg = contactName),
   backButton = Some(BackButtonJs())) {
   @errorSummary(form.errors)
 

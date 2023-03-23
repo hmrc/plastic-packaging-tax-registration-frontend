@@ -50,7 +50,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: NotEnrolle
       taxStartDate.act(
         notLiableAction = throw new IllegalStateException("User is not liable according to their answers, why are we on this page?"),
         isLiableAction = (startDate, _) => {
-          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate)), appConfig.isBackwardLookChangeEnabled))
+          Ok(page(request.registration.copy(liabilityDetails = updateLiability(startDate))))
         }
       )
     }

@@ -44,12 +44,12 @@
 }
 
 @govukLayout(
-    title = Title("liabilityWeightPage.title"),
+    title = Title(form, "liabilityWeightPage.title"),
     backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)
 
-    @sectionHeader(messages("liabilityWeightPage.sectionHeader"))
+    @sectionHeader(messages("liability.sectionHeader"))
 
     @formHelper(action = pptRoutes.LiabilityWeightController.submit(), 'autoComplete -> "off") {
         @govukInput(

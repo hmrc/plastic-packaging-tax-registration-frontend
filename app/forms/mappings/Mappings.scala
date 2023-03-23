@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import config.AppConfig
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 import play.api.i18n.Messages
@@ -33,6 +34,29 @@ trait Mappings extends Formatters with Constraints {
   )(implicit messages: Messages) : FieldMapping[LocalDate] =
     of(new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args))
 
-  protected def toBoolean(msgKey: String) : FieldMapping[Boolean] = of(booleanFormatter(msgKey))
+  protected def yesNo(emptyErrorKey: String) : FieldMapping[Boolean] = of(yesNoFormatter(emptyErrorKey))
+
+
+  protected def liabilityLocalDate
+  (
+    emptyDateKey: String,
+    singleRequiredKey: String,
+    twoRequiredKey: String,
+    invalidKey: String,
+    dateOutOfRangeError: String,
+    beforeLiveDateErrorKey: String,
+    appConfig: AppConfig,
+    args: Seq[String] = Seq.empty
+  )(implicit messages: Messages) : FieldMapping[LocalDate] =
+    of(new LiabilityLocalDateFormatter(
+      emptyDateKey,
+      singleRequiredKey,
+      twoRequiredKey,
+      invalidKey,
+      dateOutOfRangeError,
+      beforeLiveDateErrorKey,
+      appConfig,
+      args)
+    )
 
 }

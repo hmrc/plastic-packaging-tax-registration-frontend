@@ -36,7 +36,7 @@
 @fullNameField = @{form("value")}
 
 @govukLayout(
-  title = Title("primaryContactDetails.fullNamePage.title"),
+  title = Title(form, "primaryContactDetails.fullNamePage.title"),
   backButton = Some(BackButtonJs())) {
     @errorSummary(form.errors)
 

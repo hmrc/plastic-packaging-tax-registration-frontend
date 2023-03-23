@@ -33,7 +33,7 @@
 @jobTitleField = @{form("value")}
 
 @govukLayout(
-    title = Title(headingKey = "partnership.job-title-page.title", contactName),
+    title = Title(form, headingKey = "partnership.job-title-page.title", contactName),
     backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)

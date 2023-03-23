@@ -17,6 +17,10 @@
 package controllers.liability
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.YesNoValues
+import forms.liability.ExpectToExceedThresholdWeight
+import models.registration.LiabilityDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -25,20 +29,12 @@ import play.api.libs.json.JsObject
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.liability.ExpectToExceedThresholdWeight
-import forms.{Date, YesNoValues}
-import models.registration.LiabilityDetails
-import views.html.liability.expect_to_exceed_threshold_weight_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-
-import java.time.LocalDate
+import views.html.liability.expect_to_exceed_threshold_weight_page
 
 class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
-  val mockPage: expect_to_exceed_threshold_weight_page = {
-    mock[expect_to_exceed_threshold_weight_page]
-  }
+  val mockPage: expect_to_exceed_threshold_weight_page = mock[expect_to_exceed_threshold_weight_page]
   val mockFormProvider = inject[ExpectToExceedThresholdWeight]
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
@@ -48,8 +44,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
       mockRegistrationConnector,
       mcc = mcc,
       page = mockPage,
-      form = mockFormProvider,
-      appConfig
+      form = mockFormProvider
     )
 
   when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.empty)
@@ -95,36 +90,6 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
   }
 
   "submit" should {
-
-    "redirect to the right exceededThreshold url" when {
-      "before april 2023" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate()
-        when(appConfig.isBackwardLookChangeEnabled).thenReturn(false)
-
-        val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightController.displayPageBeforeApril2023().url
-        )
-      }
-
-      "post 1 April 2023" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
-        mockRegistrationUpdate()
-        when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
-
-        val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(
-          routes.ExceededThresholdWeightController.displayPage().url
-        )
-      }
-    }
     "return 303 (REDIRECT)" when {
       "user submits 'Yes' answer" in {
         authorizedUser()
@@ -135,8 +100,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(true)
-        modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe
-          Some(Date(LocalDate.of(2022, 5, 15)))
+        redirectLocation(result).get mustBe controllers.liability.routes.ExpectToExceedThresholdWeightDateController.displayPage.url
       }
 
       "user submits 'No' answer" in {
@@ -144,13 +108,13 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
 
-        val correctForm = Seq("answer" -> "no")
+        val correctForm = Seq("value" -> "no")
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         status(result) mustBe SEE_OTHER
-
         modifiedRegistration.liabilityDetails.expectToExceedThresholdWeight mustBe Some(false)
         modifiedRegistration.liabilityDetails.dateRealisedExpectedToExceedThresholdWeight mustBe None
+        redirectLocation(result).get mustBe controllers.liability.routes.ExceededThresholdWeightController.displayPage.url
       }
 
       "return 400 (BAD_REQUEST)" when {
@@ -197,9 +161,6 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
   }
 
   private def createRequestBody: Seq[(String, String)] = {
-    Seq("answer" -> YesNoValues.YES,
-      "expect-to-exceed-threshold-weight-date.day" -> "15",
-      "expect-to-exceed-threshold-weight-date.month" -> "5",
-      "expect-to-exceed-threshold-weight-date.year" -> "2022")
+    Seq("value" -> YesNoValues.YES)
   }
 }

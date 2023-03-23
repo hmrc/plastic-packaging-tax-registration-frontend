@@ -58,7 +58,7 @@
 }
 
 @govukLayout(
-    title = Title("partnership.partnerList.title", numPartners.toString),
+    title = Title(form, "partnership.partnerList.title", numPartners.toString),
     backButton = Some(BackButtonJs())) {
 
     @pageHeading(messages("partnership.partnerList.title", numPartners.toString))

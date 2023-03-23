@@ -60,7 +60,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
     val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
     mockRegistrationFind(registration)
-    given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+    given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
     given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
     mockRegistrationUpdate()
   }
@@ -96,17 +96,11 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       "check the backward look feature flags" in {
 
         authorizedUser()
-        given(page.apply(any(), any())(any(), any())).willReturn(HtmlFormat.empty)
-        given(appConfig.isBackwardLookChangeEnabled).willReturn(true)
+        given(page.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
 
         await(controller.displayPage()(getRequest()))
 
-        verify(appConfig).isBackwardLookChangeEnabled
-        verify(page).apply(
-          any(),
-          ArgumentMatchers.eq(true)
-        )(any(), any())
-
+        verify(page).apply(any())(any(), any())
       }
 
       "group registration enabled and group of organisation is selected" in {
@@ -114,12 +108,12 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
         val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
         mockRegistrationFind(registration)
-        given(page.apply(refEq(registration), any())(any(), any())).willReturn(HtmlFormat.empty)
+        given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
 
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
-        verify(page).apply(any(), any())(any(), any())
+        verify(page).apply(any())(any(), any())
       }
     }
 

@@ -123,11 +123,4 @@ trait ControllerSpec
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
 
-  protected def postJsonRequestEncodedFormAction(
-    body: Seq[(String, String)],
-    formAction: (String, String) = saveAndContinueFormAction,
-    sessionId: String = "123"
-  ): Request[AnyContentAsFormUrlEncoded] =
-    postRequestTuplesEncoded(body, formAction, sessionId)
-
 }

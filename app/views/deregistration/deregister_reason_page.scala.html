@@ -45,7 +45,7 @@
 }
 
 @govukLayout(
-    title = Title(title),
+    title = Title(form, title),
     backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)

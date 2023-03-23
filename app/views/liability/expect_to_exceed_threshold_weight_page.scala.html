@@ -17,88 +17,67 @@
 @import controllers.liability.{routes => pptRoutes}
 @import views.html.main_template
 @import views.viewmodels.Title
+@import views.viewmodels.govuk.fieldset._
+@import views.viewmodels.govuk.radios._
+@import views.viewmodels.govuk.errorsummary._
+@import play.twirl.api.HtmlFormat
 
 @this(
+    govukLayout: main_template,
     formHelper: FormWithCSRF,
+    errorSummary: errorSummary,
     sectionHeader: sectionHeader,
     pageHeading: pageHeading,
-    govukLayout: main_template,
     govukRadios : GovukRadios,
     saveButtons: saveButtons,
-    errorSummary: errorSummary,
-    govukDateInput : GovukDateInput,
-    conditionalYesNo : conditionalYesNoRadio,
     paragraphBody: paragraphBody,
+    inset: inset,
+    bulletList: bulletList,
+    link: link
 )
 
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@dayField = @{form("expect-to-exceed-threshold-weight-date.day")}
-@monthField = @{form("expect-to-exceed-threshold-weight-date.month")}
-@yearField = @{form("expect-to-exceed-threshold-weight-date.year")}
-
-@errorMessages = @{
-    val errors = form.errors
-        .filter(err => !err.message.contains("liability.expectToExceedThresholdWeight.question.empty.error"))
-        .map(er => messages(er.message, er.args.mkString)).mkString("<br>")
-    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
-}
-
-
-@ifYes={
-    @paragraphBody(messages("liability.expectToExceedThreshold.date.line1"))
-    @govukDateInput(
-        DateInput(
-            id = "expect-to-exceed-threshold-weight-date",
-            hint = Some(Hint(content = Text(messages("liability.expectToExceedThreshold.date.hint")))),
-            errorMessage = errorMessages,
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                content = Text(messages("liability.expectToExceedThreshold.date.question")),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = true
-                ))
-            )),
-            items = Seq(
-                InputItem(
-                    id = s"${dayField.name}",
-                    name = dayField.name,
-                    label = Some(messages("date.day")),
-                    value = dayField.value,
-                    classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
-                ),
-                InputItem(
-                    id = s"${monthField.name}",
-                    name = monthField.name,
-                    label = Some(messages("date.month")),
-                    value = monthField.value,
-                    classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
-                ),
-                InputItem(
-                    id = s"${yearField.name}",
-                    name = yearField.name,
-                    label = Some(messages("date.year")),
-                    value = yearField.value,
-                    classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
-                )
-            )
-        )
-    )
-}
-
-@govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
+@govukLayout(title = Title(form, "liability.expectToExceedThresholdWeight.title")) {
 
     @errorSummary(form.errors)
 
-    @sectionHeader(messages("liability.expectToExceedThresholdWeight.sectionHeader"))
+    @sectionHeader(messages("liability.sectionHeader"))
 
-    @pageHeading(messages("liability.expectToExceedThresholdWeight.question"))
-    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line1"))
-    @paragraphBody(messages("liability.expectToExceedThresholdWeight.line2"))
+    @pageHeading(messages("liability.expectToExceedThresholdWeight.title"))
+
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.p1"))
+
+    @inset(
+        paragraphBody(messages("liability.expectToExceedThresholdWeight.inset.p1")),
+        bulletList(Seq(
+            paragraphBody(messages("liability.expectToExceedThresholdWeight.inset.bullet.1")),
+            paragraphBody(messages("liability.expectToExceedThresholdWeight.inset.bullet.2"))
+        ))
+    )
+
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.example.1"))
+    @paragraphBody(messages("liability.expectToExceedThresholdWeight.example.2"))
+
+    @paragraphBody(message = messages("liability.expectToExceedThresholdWeight.p3",
+        link(messages("liability.expectToExceedThresholdWeight.p3.link"), Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register"))
+    ))
 
     @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightController.submit(), 'autoComplete -> "off") {
-        @conditionalYesNo(form, None, Some(ifYes))
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = Legend(
+                    content = Text(messages("liability.expectToExceedThresholdWeight.question")),
+                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                    isPageHeading = false
+                )
+            ).inline()
+            .withHint(Hint(content = Text(messages("liability.expectToExceedThresholdWeight.hint"))))
+        )
+
         @saveButtons()
     }
 }

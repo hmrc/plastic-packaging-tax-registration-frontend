@@ -1,0 +1,77 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.main_template
+@import views.viewmodels._
+@import views.viewmodels.govuk.date._
+@import views.viewmodels.govuk.fieldset._
+@import views.viewmodels.govuk.errorsummary._
+@import controllers.liability.{routes => pptRoutes}
+
+
+@this(
+    govukLayout: main_template,
+    formHelper: FormWithCSRF,
+    sectionHeader: sectionHeader,
+    pageHeading: pageHeading,
+    govukDateInput: GovukDateInput,
+    bulletList: bulletList,
+    saveButtons: saveButtons,
+    paragraphBody: paragraphBody,
+    errorSummary: errorSummary
+)
+
+@(form: Form[_])(implicit request: Request[_], messages: Messages)
+
+@govukLayout(
+    title = Title(form, "liability.expectToExceedThresholdDate.title"),
+    backButton = Some(BackButtonJs())
+) {
+
+    @errorSummary(form.errors)
+
+    @sectionHeader(messages("liability.sectionHeader"))
+
+    @pageHeading(messages("liability.expectToExceedThresholdDate.title"))
+
+    @paragraphBody(messages("liability.expectToExceedThresholdDate.p1"))
+    @bulletList(elements = Seq(
+        Html(messages("liability.expectToExceedThresholdDate.p1.bullet.1")),
+        Html(messages("liability.expectToExceedThresholdDate.p1.bullet.2"))
+        )
+    )
+    @paragraphBody(messages("liability.expectToExceedThresholdDate.example.1"))
+    @paragraphBody(messages("liability.expectToExceedThresholdDate.example.2"))
+
+    @formHelper(action = pptRoutes.ExpectToExceedThresholdWeightDateController.submit, 'autoComplete -> "off") {
+
+        @govukDateInput(
+            DateViewModel(
+                field  = form("expect-to-exceed-threshold-weight-date"),
+                legend = Legend(
+                    content = Text(messages("liability.expectToExceedThresholdDate.question")),
+                    classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                    isPageHeading = false
+                ),
+                errors = form.errors
+            )
+            .withHint(Hint(content = Text(messages("liability.expectToExceedThresholdDate.hint"))))
+        )
+
+        @saveButtons()
+    }
+}
+
