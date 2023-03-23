@@ -16,39 +16,40 @@
 
 package forms.liability
 
+import config.AppConfig
+import forms.liability.ExceededThresholdWeightDate._
+import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages
-import config.AppConfig
-import forms.mappings.Mappings
-import forms.{CommonFormValidators, YesNoValues}
-import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
 
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 import javax.inject.Inject
 
-class ExceededThresholdWeightDate @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with Mappings {
+class ExceededThresholdWeightDate @Inject()(appConfig: AppConfig) extends Mappings {
 
+  def apply()(implicit messages: Messages): Form[LocalDate] =
+    Form(
+      mapping(
+        "exceeded-threshold-weight-date" -> liabilityLocalDate(
+          dateEmptyError,
+          requiredKey,
+          twoRequiredKey,
+          dateFormattingError,
+          dateOutOfRangeError,
+          isBeforeLiveDateError,
+          appConfig
+        )
+      )(identity)(Some.apply)
+    )
+
+}
+
+object ExceededThresholdWeightDate {
   val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
   val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
   val dateEmptyError = "liability.exceededThresholdWeightDate.empty.error"
   val twoRequiredKey = "liability.exceededThresholdWeightDate.two.required.fields"
   val requiredKey = "liability.exceededThresholdWeightDate.one.field"
   val isBeforeLiveDateError = "liability.exceededThresholdWeightDate.before.goLiveDate.error"
-
-
-  def apply()(implicit messages: Messages): Form[LocalDate] =
-    Form(
-      mapping(
-        "exceeded-threshold-weight-date" -> localDate(emptyDateKey =
-            dateEmptyError,
-            requiredKey,
-            twoRequiredKey,
-            dateFormattingError
-          ).verifying(
-            isInDateRange(dateOutOfRangeError, isBeforeLiveDateError)(appConfig, clock, messages)
-          )
-      )(identity)(Some.apply)
-    )
-
 }
