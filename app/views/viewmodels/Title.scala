@@ -42,6 +42,9 @@ object Title {
   def apply(form: Form[_], headingKey: String, headingArg: String) =
     new Title (headingKey, headingArg, None, form.hasErrors || form.hasGlobalErrors)
 
+  def apply(form: Form[_], headingKey: String, headingArgs: Option[Seq[String]]) =
+    new Title (headingKey, "", headingArgs, form.hasErrors || form.hasGlobalErrors)
+
   def apply(headingKey: String, headingArg: String = "", headingArgs: Option[Seq[String]] = None) = 
     new Title (headingKey, headingArg, headingArgs, false)
 }

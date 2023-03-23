@@ -39,7 +39,7 @@
 @(form: Form[Boolean])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("deregistration.deregister.title"),
+    title = Title(form, "deregistration.deregister.title"),
     backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)

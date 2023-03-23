@@ -34,7 +34,7 @@
 @(form: Form[MembersUnderGroupControl])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-  title = Title("group.membersUnderGroupControl.title"),
+  title = Title(form, "group.membersUnderGroupControl.title"),
   backButton = Some(BackButton(messages("site.back"), pptRoutes.RegistrationTypeController.displayPage(), messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)

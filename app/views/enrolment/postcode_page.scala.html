@@ -33,7 +33,7 @@
 
 @postcodeField = @{form("value")}
 
-@govukLayout(title = Title("enrolment.postcode.title"), backButton = None) {
+@govukLayout(title = Title(form, "enrolment.postcode.title"), backButton = None) {
 
     @errorSummary(form.errors)
 

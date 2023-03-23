@@ -44,7 +44,7 @@
 }
 
 @govukLayout(
-    title = Title("liabilityWeightPage.title"),
+    title = Title(form, "liabilityWeightPage.title"),
     backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)

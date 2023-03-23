@@ -36,7 +36,7 @@
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("liability.exceededThresholdWeightDate.title"),
+    title = Title(form, "liability.exceededThresholdWeightDate.title"),
     backButton = Some(BackButtonJs())) {
 
     @formHelper(action = pptRoutes.ExceededThresholdWeightDateController.submit(), 'autoComplete -> "off") {

@@ -39,7 +39,7 @@
 
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
-@govukLayout(title = Title("liability.expectToExceedThresholdWeight.title")) {
+@govukLayout(title = Title(form, "liability.expectToExceedThresholdWeight.title")) {
 
     @errorSummary(form.errors)
 

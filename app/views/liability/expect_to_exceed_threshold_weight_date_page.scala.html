@@ -37,7 +37,7 @@
 @(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title("liability.expectToExceedThresholdDate.title"),
+    title = Title(form, "liability.expectToExceedThresholdDate.title"),
     backButton = Some(BackButtonJs())
 ) {
 

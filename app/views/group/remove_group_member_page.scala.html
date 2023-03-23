@@ -37,7 +37,7 @@
 @removeMember = @{form("value")}
 
 @govukLayout(
-  title = Title("group.removeMember.title", memberName),
+  title = Title(form, "group.removeMember.title", memberName),
   backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)

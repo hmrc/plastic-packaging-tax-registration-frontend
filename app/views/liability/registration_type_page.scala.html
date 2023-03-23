@@ -37,7 +37,7 @@
 @registrationType = @{form("value")}
 
 @govukLayout(
-  title = Title("registrationType.title"),
+  title = Title(form, "registrationType.title"),
   backButton = Some(BackButton(messages("site.back"), backLink, messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
