@@ -21,6 +21,10 @@ import play.api.mvc._
 import connectors.testOnly.EmailTestOnlyPasscodeConnector
 import controllers.actions.PermissiveAuthActionImpl
 import models.request.JourneyAction
+import models.testOnly.EmailPasscode
+import play.api.libs.json.{JsArray, Json, OWrites}
+import repositories.testOnly.{JourneyMongoRepository, PasscodeMongoRepository}
+import uk.gov.hmrc.http.SessionId
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
@@ -30,6 +34,8 @@ class EmailPasscodeController @Inject() (
                                           authenticate: PermissiveAuthActionImpl,
                                           mcc: MessagesControllerComponents,
                                           journeyAction: JourneyAction,
+                                          journeyRepo: JourneyMongoRepository,
+                                          passCodeRep: PasscodeMongoRepository,
                                           emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -42,4 +48,32 @@ class EmailPasscodeController @Inject() (
       }
     }
 
+  def testOnlyGetAllPasscodes(): Action[AnyContent] =
+    (authenticate andThen journeyAction).async { implicit request =>
+
+      hc.sessionId match {
+        case Some(SessionId(id)) =>
+          for {
+            passcodeDocs <- passCodeRep.findPasscodesBySessionId(id)
+            journeyDocs <- journeyRepo.findAll
+            emailPasscodes = passcodeDocs.map(d => EmailPasscode(d.email, d.passcode)) ++
+              journeyDocs.filter(_.emailAddress.isDefined).map(d => EmailPasscode(d.emailAddress.get, d.passcode))
+          } yield if (emailPasscodes.isEmpty) NotFound(Json.toJson(ErrorResponse("PASSCODE_NOT_FOUND", "No passcode found for sessionId")))
+          else Ok(Json.obj {
+            "passcodes" -> JsArray(emailPasscodes.map {
+              Json.toJson(_)
+            })
+          })
+        case None =>
+          Future.successful(Unauthorized(Json.toJson(ErrorResponse("NO_SESSION_ID", "No session id provided"))))
+      }
+
+    }
+
+}
+
+case class ErrorResponse(code: String, message: String, details: Option[Map[String, String]] = None)
+
+object ErrorResponse {
+  implicit val writes: OWrites[ErrorResponse] = Json.writes[ErrorResponse]
 }
