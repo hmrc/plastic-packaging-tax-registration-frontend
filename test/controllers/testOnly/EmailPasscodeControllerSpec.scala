@@ -24,24 +24,27 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.{status, stubMessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.testOnly.EmailTestOnlyPasscodeConnector
-import connectors.{
-  DownstreamServiceError,
-  FailedToFetchTestOnlyPasscode
-}
+import connectors.{DownstreamServiceError, FailedToFetchTestOnlyPasscode}
+import repositories.testOnly.{JourneyMongoRepository, PasscodeMongoRepository}
 
 import scala.concurrent.Future
 
 class EmailPasscodeControllerSpec extends ControllerSpec {
   private val mcc = stubMessagesControllerComponents()
+  private val journeyRepo = mock[JourneyMongoRepository]
+  private val passcodeRepo = mock[PasscodeMongoRepository]
 
   val mockEmailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector =
     mock[EmailTestOnlyPasscodeConnector]
 
   private val controller =
-    new EmailPasscodeController(authenticate = mockPermissiveAuthAction,
-                                mcc = mcc,
-                                mockJourneyAction,
-                                emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector
+    new EmailPasscodeController(
+      authenticate = mockPermissiveAuthAction,
+      mcc = mcc,
+      mockJourneyAction,
+      journeyRepo,
+      passcodeRepo,
+      emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector
     )
 
   "EmailPasscode controller" should {
