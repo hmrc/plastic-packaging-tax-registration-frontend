@@ -22,6 +22,7 @@ import connectors.testOnly.EmailTestOnlyPasscodeConnector
 import controllers.actions.PermissiveAuthActionImpl
 import models.request.JourneyAction
 import models.testOnly.EmailPasscode
+import play.api.{Environment, Mode}
 import play.api.libs.json.{JsArray, Json, OWrites}
 import repositories.testOnly.{JourneyMongoRepository, PasscodeMongoRepository}
 import uk.gov.hmrc.http.SessionId
@@ -36,6 +37,7 @@ class EmailPasscodeController @Inject() (
                                           journeyAction: JourneyAction,
                                           journeyRepo: JourneyMongoRepository,
                                           passCodeRep: PasscodeMongoRepository,
+                                          environment: Environment,
                                           emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
@@ -49,26 +51,30 @@ class EmailPasscodeController @Inject() (
     }
 
   def testOnlyGetAllPasscodes(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    authenticate.async { implicit request =>
 
-      hc.sessionId match {
-        case Some(SessionId(id)) =>
-          for {
-            passcodeDocs <- passCodeRep.findPasscodesBySessionId(id)
-            journeyDocs <- journeyRepo.findAll
-            emailPasscodes = passcodeDocs.map(d => EmailPasscode(d.email, d.passcode)) ++
-              journeyDocs.filter(_.emailAddress.isDefined).map(d => EmailPasscode(d.emailAddress.get, d.passcode))
-          } yield if (emailPasscodes.isEmpty) NotFound(Json.toJson(ErrorResponse("PASSCODE_NOT_FOUND", "No passcode found for sessionId")))
-          else Ok(Json.obj {
-            "passcodes" -> JsArray(emailPasscodes.map {
-              Json.toJson(_)
+      if (isInProductionMode) throw new RuntimeException("Wrong environment")
+      else {
+
+        hc.sessionId match {
+          case Some(SessionId(id)) =>
+            for {
+              passcodeDocs <- passCodeRep.findPasscodesBySessionId(id)
+              journeyDocs <- journeyRepo.findAll
+              emailPasscodes = passcodeDocs.map(d => EmailPasscode(d.email, d.passcode)) ++
+                journeyDocs.filter(_.emailAddress.isDefined).map(d => EmailPasscode(d.emailAddress.get, d.passcode))
+            } yield Ok(Json.obj {
+              "passcodes" -> JsArray(emailPasscodes.map {
+                Json.toJson(_)
+              })
             })
-          })
-        case None =>
-          Future.successful(Unauthorized(Json.toJson(ErrorResponse("NO_SESSION_ID", "No session id provided"))))
+          case None =>
+            Future.successful(Unauthorized(Json.toJson(ErrorResponse("NO_SESSION_ID", "No session id provided"))))
+        }
       }
-
     }
+
+  private def isInProductionMode = environment.mode == Mode.Prod
 
 }
 

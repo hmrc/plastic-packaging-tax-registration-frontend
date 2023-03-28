@@ -25,6 +25,7 @@ import play.api.test.Helpers.{status, stubMessagesControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import connectors.testOnly.EmailTestOnlyPasscodeConnector
 import connectors.{DownstreamServiceError, FailedToFetchTestOnlyPasscode}
+import play.api.Environment
 import repositories.testOnly.{JourneyMongoRepository, PasscodeMongoRepository}
 
 import scala.concurrent.Future
@@ -33,6 +34,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
   private val mcc = stubMessagesControllerComponents()
   private val journeyRepo = mock[JourneyMongoRepository]
   private val passcodeRepo = mock[PasscodeMongoRepository]
+  private val environment = mock[Environment]
 
   val mockEmailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector =
     mock[EmailTestOnlyPasscodeConnector]
@@ -44,6 +46,7 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
       mockJourneyAction,
       journeyRepo,
       passcodeRepo,
+      environment,
       emailTestOnlyPasscodeConnector = mockEmailTestOnlyPasscodeConnector
     )
 
