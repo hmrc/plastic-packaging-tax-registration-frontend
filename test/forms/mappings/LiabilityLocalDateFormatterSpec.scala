@@ -61,6 +61,28 @@ class LiabilityLocalDateFormatterSpec extends PlaySpec with BeforeAndAfterEach {
 
       result mustBe Right(LocalDate.of(2022, 5, 4))
     }
+    "strip spaces from date" in {
+      when(appConfig.goLiveDate).thenReturn(LocalDate.parse("2022-04-05"))
+
+      val result = formatter.bind("input", Map(
+        "input.day" -> "4",
+        "input.month" -> "5",
+        "input.year" -> "202 2")
+      )
+
+      result mustBe Right(LocalDate.of(2022, 5, 4))
+    }
+    "trim spaces from date" in {
+      when(appConfig.goLiveDate).thenReturn(LocalDate.parse("2022-04-05"))
+
+      val result = formatter.bind("input", Map(
+        "input.day" -> "4 ",
+        "input.month" -> " 5",
+        "input.year" -> " 2022 ")
+      )
+
+      result mustBe Right(LocalDate.of(2022, 5, 4))
+    }
 
     "error" when {
       "date in the future" in {

@@ -37,11 +37,14 @@ private[mappings] class LiabilityLocalDateFormatter
 
   private val dateFormatter  = new LocalDateFormatter(emptyDateKey, singleRequiredKey, twoRequiredKey, invalidKey, args)
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-
-   dateFormatter.bind(key, data).fold(
+    dateFormatter.bind(key, stripWhiteSpaces(data)).fold(
       error => Left(error),
       date => validateDate(key, date)
     )
+  }
+
+  private def stripWhiteSpaces(data: Map[String, String]) = {
+    data.map(o => o._1 -> o._2.replace(" ", ""))
   }
 
   private def validateDate(key: String, date: LocalDate): Either[Seq[FormError], LocalDate] = {

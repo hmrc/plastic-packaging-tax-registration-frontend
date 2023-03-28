@@ -46,6 +46,12 @@ class ExpectToExceedThresholdDateSpec extends PlaySpec {
         boundForm.value mustBe Some(LocalDate.of(2022, 5, 15))
         boundForm.errors mustBe Nil
       }
+      "date contains white spaces" in {
+        val boundForm = sut.bind(toMap("15", " 5", "2 022"))
+
+        boundForm.value mustBe Some(LocalDate.of(2022, 5, 15))
+        boundForm.errors mustBe Nil
+      }
     }
 
     "error correctly" when {
