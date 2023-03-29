@@ -36,7 +36,11 @@ class TestEmailVerificationMongoComponent @Inject()(
   logger.info("MongoComponent starting...")
 
   private val mongoUri =
-    configuration.get[String]("emailVerificationTestMongodb.uri")
+    configuration.getOptional[String]("emailVerificationTestMongodb.uri") match {
+      case Some(uri) => uri
+      case _ => configuration.get[String]("mongodb.uri")
+    }
+
 
   override lazy val client: MongoClient     = MongoClient(uri = mongoUri)
   override lazy val database: MongoDatabase = client.getDatabase((new ConnectionString(mongoUri)).getDatabase)
