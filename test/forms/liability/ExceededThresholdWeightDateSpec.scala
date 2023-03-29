@@ -47,6 +47,13 @@ class ExceededThresholdWeightDateSpec extends PlaySpec {
       boundForm.errors mustBe Nil
     }
 
+    "bind correctly when date contains spaces" in {
+      val boundForm = sut.bind(toMap("15", "5", "202 2"))
+
+      boundForm.value mustBe Some(LocalDate.of(2022, 5, 15))
+      boundForm.errors mustBe Nil
+    }
+
     "error correctly" when {
       "date is empty" in {
         val boundForm = sut.bind(Map.empty[String, String])
