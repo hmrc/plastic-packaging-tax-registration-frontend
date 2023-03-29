@@ -32,14 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[JourneyMongoRepository])
 trait JourneyRepository {
-  def initialise(journey: Journey): Future[Unit]
-  def submitEmail(journeyId: String, email: String): Future[Option[Journey]]
-  def recordPasscodeAttempt(journeyId: String): Future[Option[Journey]]
-  def recordPasscodeResent(journeyId: String): Future[Option[Journey]]
-
-  def get(journeyId: String): Future[Option[Journey]]
   def findByCredId(credId: String): Future[Seq[Journey]]
-  def countMatchingDocs(credId: String, email: String): Future[Long]
+  def findAll: Future[Seq[Journey]]
 }
 
 @Singleton
@@ -55,63 +49,6 @@ class JourneyMongoRepository @Inject() (mongoComponent: TestEmailVerificationMon
   )
     with JourneyRepository {
 
-  def initialise(journey: Journey): Future[Unit] = {
-    collection.insertOne(
-      JourneyMongoRepository.Entity(
-        journeyId                 = journey.journeyId,
-        credId                    = journey.credId,
-        continueUrl               = journey.continueUrl,
-        origin                    = journey.origin,
-        accessibilityStatementUrl = journey.accessibilityStatementUrl,
-        serviceName               = journey.serviceName,
-        language                  = journey.language,
-        emailAddress              = journey.emailAddress,
-        enterEmailUrl             = journey.enterEmailUrl,
-        backUrl                   = journey.backUrl,
-        pageTitle                 = journey.pageTitle,
-        passcode                  = journey.passcode,
-        createdAt                 = Instant.now(),
-        emailAddressAttempts      = journey.emailAddressAttempts,
-        passcodesSentToEmail      = journey.passcodesSentToEmail,
-        passcodeAttempts          = 0
-      )
-    ).toFuture().map(_ => ())
-  }
-
-  @silent("deprecated") // the "other" findAndUpdate is bad and should feel bad
-  override def submitEmail(journeyId: String, email: String): Future[Option[Journey]] =
-    collection.findOneAndUpdate(
-      filter  = Filters.equal("_id", journeyId),
-      update  = Updates.combine(
-        Updates.set("emailAddress", email),
-        Updates.set("passcodesSentToEmail", 1),
-        Updates.inc("emailAddressAttempts", 1)
-      ),
-      options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-    )
-      .toFutureOption()
-      .map(_.map(_.toJourney))
-
-  @silent("deprecated")
-  override def recordPasscodeAttempt(journeyId: String): Future[Option[Journey]] = collection.findOneAndUpdate(
-    Filters.equal("_id", journeyId),
-    Updates.inc("passcodeAttempts", 1)
-  )
-    .toFutureOption()
-    .map(_.map(_.toJourney))
-
-  @silent("deprecated")
-  override def recordPasscodeResent(journeyId: String): Future[Option[Journey]] = collection.findOneAndUpdate(
-    Filters.equal("_id", journeyId),
-    Updates.inc("passcodesSentToEmail", 1)
-  )
-    .toFutureOption()
-    .map(_.map(_.toJourney))
-
-  override def get(journeyId: String): Future[Option[Journey]] = collection.find(
-    Filters.equal("_id", journeyId))
-    .headOption()
-    .map(_.map(_.toJourney))
 
   def findByCredId(credId: String): Future[Seq[Journey]] = collection.find(
     Filters.equal("credId", credId))
@@ -123,11 +60,6 @@ class JourneyMongoRepository @Inject() (mongoComponent: TestEmailVerificationMon
       .find
       .toFuture()
       .map(_.map(_.toJourney))
-
-  override def countMatchingDocs(credId: String, email: String): Future[Long] = collection.countDocuments(
-    Filters.and(
-      Filters.equal("credId", credId),
-      Filters.equal("emailAddress", email))).toFuture().map(_.longValue())
 }
 
 object JourneyMongoRepository {
