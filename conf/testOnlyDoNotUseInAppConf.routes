@@ -13,7 +13,6 @@
 ->         /                          prod.Routes
 
 GET /register-for-plastic-packaging-tax/test-only/passcode        controllers.testOnly.EmailPasscodeController.testOnlyGetPasscodes
-GET /register-for-plastic-packaging-tax/test-only/passcodes        controllers.testOnly.EmailPasscodeController.testOnlyGetAllPasscodes
 
 GET /register-for-plastic-packaging-tax/test-only/login-returns                controllers.testOnly.SkipAuthStubController.returns()
 GET /register-for-plastic-packaging-tax/test-only/login-registration           controllers.testOnly.SkipAuthStubController.registration()
