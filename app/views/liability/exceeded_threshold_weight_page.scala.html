@@ -16,7 +16,10 @@
 
 @import controllers.liability.{routes => pptRoutes}
 @import views.html.main_template
-@import views.viewmodels.{BackButton, Title}
+@import views.viewmodels._
+@import views.viewmodels.govuk.fieldset._
+@import views.viewmodels.govuk.radios._
+@import views.viewmodels.govuk.errorsummary._
 
 @this(
     formHelper: FormWithCSRF,
@@ -25,103 +28,46 @@
     govukLayout: main_template,
     saveButtons: saveButtons,
     errorSummary: errorSummary,
-    saveAndContinue: saveAndContinue,
-    govukDateInput : GovukDateInput,
-    conditionalYesNo : conditionalYesNoRadio,
-    paragraphBody: paragraphBody,    
+    govukRadios : GovukRadios,
+    inset: inset,
+    paragraphBody: paragraphBody,
+    link: link
 )
 
-@(form: Form[_], backLookChangeEnabled: Boolean)(implicit request: Request[_], messages: Messages)
-
-@ifYes = {
-    @govukDateInput(
-        DateInput(
-            id = "exceeded-threshold-weight-date",
-            hint = Some(Hint(content = Text(messages("liability.exceededThresholdWeightDate.hint")))),
-            errorMessage = errorMessages,
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                content = Text(messages("liability.exceededThresholdWeightDate.title")),
-                classes = gdsFieldsetPageHeading,
-                isPageHeading = true
-                ))
-            )),
-            items = Seq(
-                InputItem(
-                    id = s"${dayField.name}",
-                    name = dayField.name,
-                    label = Some(messages("date.day")),
-                    value = dayField.value,
-                    classes = s"govuk-input--width-2 ${if(dayField.hasErrors) "govuk-input--error"}"
-                ),
-                InputItem(
-                    id = s"${monthField.name}",
-                    name = monthField.name,
-                    label = Some(messages("date.month")),
-                    value = monthField.value,
-                    classes = s"govuk-input--width-2 ${if(monthField.hasErrors) "govuk-input--error"}"
-                ),
-                InputItem(
-                    id = s"${yearField.name}",
-                    name = yearField.name,
-                    label = Some(messages("date.year")),
-                    value = yearField.value,
-                    classes = s"govuk-input--width-4 ${if(yearField.hasErrors) "govuk-input--error"}"
-                )
-            )
-        )
-    )
-}
-
-
-@dayField = @{form("exceeded-threshold-weight-date.day")}
-@monthField = @{form("exceeded-threshold-weight-date.month")}
-@yearField = @{form("exceeded-threshold-weight-date.year")}
-
-@buildKey(partKey: String) = @{
-
-    if(backLookChangeEnabled) {
-        s"liability.exceededThresholdWeight.$partKey"
-    } else {
-        s"liability.exceededThresholdWeight.beforeApril2023.$partKey"
-    }
-
-}
-
-@link = @{
-    if(backLookChangeEnabled) {
-        pptRoutes.ExceededThresholdWeightController.submit()
-    } else {
-        pptRoutes.ExceededThresholdWeightController.submitBeforeApril2023()
-    }
-}
-@errorMessages = @{
-    val errors = form.errors
-        .filter(err => !err.message.contains(buildKey("question.empty.error")))
-        .map(er => messages(er.message, er.args.mkString)).mkString("<br>")
-    if(errors.nonEmpty) Some(ErrorMessage(content = HtmlContent(errors))) else None
-}
-
-
+@(form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @govukLayout(
-    title = Title(buildKey("title")),
-    backButton = Some(BackButton(
-        messages("site.back"), 
-        pptRoutes.ExpectToExceedThresholdWeightController.displayPage(), 
-        messages("site.back.hiddenText")))) {
+    title = Title(form, "liability.exceededThresholdWeight.title"),
+    backButton = Some(BackButtonJs())) {
 
-    @errorSummary(form.errors)
+    @formHelper(action = pptRoutes.ExceededThresholdWeightController.submit(), 'autoComplete -> "off") {
 
-    @sectionHeader(messages("liability.exceededThresholdWeight.sectionHeader"))
+        @errorSummary(form.errors)
+        @sectionHeader(messages("liability.sectionHeader"))
+        @pageHeading(messages("liability.exceededThresholdWeight.title"))
 
-    @pageHeading(messages(buildKey("question")))
-    @paragraphBody(messages(buildKey("line1")))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
-    @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
+        @paragraphBody(messages("liability.exceededThresholdWeight.line1"))
+        @inset(
+            paragraphBody(messages("liability.exceededThresholdWeight.inset")),
+        )
+        @paragraphBody(messages("liability.exceededThresholdWeight.line2"))
+        @paragraphBody(messages("liability.exceededThresholdWeight.line3"))
+        @paragraphBody(messages("liability.exceededThresholdWeight.line4",
+            link(messages("liability.exceededThresholdWeight.line4.link-text"), 
+                Call("GET", "https://www.gov.uk/guidance/when-you-must-register-for-plastic-packaging-tax#when-to-register")
+            )
+        ))
 
-    @formHelper(action = link, 'autoComplete -> "off") {
-        @conditionalYesNo(form, None, Some(ifYes))
+        @govukRadios(RadiosViewModel.yesNo(
+            field = form("value"),
+            legend = Legend(
+                content = Text(messages("liability.exceededThresholdWeight.question")),
+                classes = "govuk-fieldset__legend govuk-fieldset__legend govuk-fieldset__legend--m",
+                isPageHeading = false
+            )).inline()
+            .withHint(Hint(content = Text(messages("liability.exceededThresholdWeight.hint"))))
+        )
+
         @saveButtons()
     }
 }

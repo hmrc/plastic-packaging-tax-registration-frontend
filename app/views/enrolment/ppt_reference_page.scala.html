@@ -34,7 +34,7 @@
 @pptReferenceField = @{form("value")}
 
 @govukLayout(
-  title = Title("enrolment.pptReference.title")) {
+  title = Title(form, "enrolment.pptReference.title")) {
     @errorSummary(form.errors)
 
     @formHelper(action = pptRoutes.PptReferenceController.submit(), 'autoComplete -> "off") {

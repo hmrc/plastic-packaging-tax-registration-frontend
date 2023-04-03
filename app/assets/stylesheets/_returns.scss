@@ -29,6 +29,7 @@ td.govuk-table__cell.row-border {
   }
 
   &__title {
+    color: govuk-colour("white") !important;
     @include govuk-responsive-margin(1, "bottom");
   }
 

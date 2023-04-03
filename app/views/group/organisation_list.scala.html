@@ -56,7 +56,7 @@
 }
 
 @govukLayout(
-    title = Title("group.organisationList.title.multiple", numOrganisations.toString),
+    title = Title(form, "group.organisationList.title.multiple", numOrganisations.toString),
     backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)

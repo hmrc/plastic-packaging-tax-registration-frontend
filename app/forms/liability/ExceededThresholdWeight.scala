@@ -16,50 +16,15 @@
 
 package forms.liability
 
-import play.api.data.Form
-import play.api.data.Forms.mapping
-import play.api.i18n.Messages
-import config.AppConfig
+import forms.CommonFormValidators
 import forms.mappings.Mappings
-import forms.{CommonFormValidators, YesNoValues}
-import uk.gov.voa.play.form.ConditionalMappings.{isEqual, mandatoryIf}
-
-import java.time.{Clock, LocalDate}
-import javax.inject.Inject
-
-//potential refactor: yesNo isnt actually needed here, we can just do date.isDefined, it holds the same meaning
-case class ExceededThresholdWeightAnswer(yesNo: Boolean, date: Option[LocalDate])
-
-class ExceededThresholdWeight @Inject()(appConfig: AppConfig, clock: Clock) extends CommonFormValidators with Mappings {
-
-  val dateFormattingError = "liability.exceededThresholdWeightDate.formatting.error"
-  val dateOutOfRangeError = "liability.exceededThresholdWeightDate.outOfRange.error"
-  val dateEmptyError = "liability.exceededThresholdWeightDate.empty.error"
-  val twoRequiredKey = "liability.exceededThresholdWeightDate.two.required.fields"
-  val requiredKey = "liability.exceededThresholdWeightDate.one.field"
-  val isBeforeLiveDateError = "liability.exceededThresholdWeightDate.before.goLiveDate.error"
+import play.api.data.Form
 
 
-  def form()(implicit messages: Messages): Form[ExceededThresholdWeightAnswer] =
-    Form(
-      mapping(
-        "answer" -> toBoolean(getEmptyError),
-        "exceeded-threshold-weight-date" -> mandatoryIf(isEqual("answer", YesNoValues.YES),
-          localDate(emptyDateKey =
-            dateEmptyError,
-            requiredKey,
-            twoRequiredKey,
-            dateFormattingError
-          ).verifying(
-            isInDateRange(dateOutOfRangeError, isBeforeLiveDateError)(appConfig, clock, messages)
-          )
-        )
-      )(ExceededThresholdWeightAnswer.apply)(ExceededThresholdWeightAnswer.unapply)
-    )
+class ExceededThresholdWeight extends CommonFormValidators with Mappings {
 
-  private def getEmptyError = {
-    if(appConfig.isBackwardLookChangeEnabled)
-      "liability.exceededThresholdWeight.question.empty.error"
-    else "liability.exceededThresholdWeight.beforeApril2023.question.empty.error"
-  }
+  def apply(): Form[Boolean] =
+    Form("value" -> yesNo("liability.exceededThresholdWeight.question.empty.error"))
+
 }
+

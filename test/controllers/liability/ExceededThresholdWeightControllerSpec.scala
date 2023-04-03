@@ -19,7 +19,7 @@ package controllers.liability
 import base.unit.ControllerSpec
 import connectors.DownstreamServiceError
 import forms.Date
-import forms.liability.{ExceededThresholdWeight, ExceededThresholdWeightAnswer}
+import forms.liability.ExceededThresholdWeight
 import models.registration.Registration
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, reset, verify, when}
@@ -31,7 +31,7 @@ import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.json.JsObject
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{await, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.liability.exceeded_threshold_weight_page
@@ -63,7 +63,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
     reset(mockPage, appConfig)
 
-    when(mockPage.apply(any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+    when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("test view"))
   }
 
   "displayPage" when {
@@ -73,6 +73,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         authorizedUser()
         val result: Future[Result] = controller.displayPage()(getRequest())
         status(result) shouldEqual Status.OK
+        contentAsString(result) mustBe "test view"
       }
     }
 
@@ -82,7 +83,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         authorizedUser()
         val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
         when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
-        when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
+
         when(mockRegistrationConnector.find(any[String])(any())).thenReturn(
           Future.successful(Right(Some(existingRegistration)))
         )
@@ -93,24 +94,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         verify(existingRegistration.liabilityDetails).exceededThresholdWeight
 
         val captor = ArgumentCaptor.forClass(classOf[Form[Boolean]])
-        verify(mockPage).apply(captor.capture(), any())(any(), any())
+        verify(mockPage).apply(captor.capture())(any(), any())
         val form: Form[Boolean] = captor.getValue
-        form.value shouldBe Some(ExceededThresholdWeightAnswer(false, None))
+        form.value shouldBe Some(false)
       }
-    }
-
-    "should pass feature flag to view" in {
-      authorizedUser()
-
-      val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
-      when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
-      when(existingRegistration.liabilityDetails.dateExceededThresholdWeight).thenReturn(None)
-      when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
-
-      await(controller.displayPage()(getRequest()))
-
-      verify(appConfig).isBackwardLookChangeEnabled
-      verify(mockPage).apply(any(), ArgumentMatchers.eq(true))(any(),any())
     }
   }
 
@@ -122,10 +109,12 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       "user answers no" in {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
-        val correctForm = Seq("answer" -> "no")
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val correctForm = Seq("value" -> "no")
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(false)
+        // todo reset date to None test.
         redirectLocation(result) mustBe Some(
           routes.TaxStartDateController.displayPage().url
         )
@@ -134,28 +123,17 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       "user answers yes" in {
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdate()
-        val correctForm = Seq("answer" -> "yes",
-          "exceeded-threshold-weight-date.day" -> "5",
-          "exceeded-threshold-weight-date.month" -> "5",
-          "exceeded-threshold-weight-date.year" -> "2022")
+        val correctForm = Seq("value" -> "yes")
 
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
         status(result) mustBe SEE_OTHER
         modifiedRegistration.liabilityDetails.exceededThresholdWeight mustBe Some(true)
-        modifiedRegistration.liabilityDetails.dateExceededThresholdWeight mustBe Some(Date(LocalDate.of(2022,5,5)))
         redirectLocation(result) mustBe Some(
-          routes.TaxStartDateController.displayPage().url
+          routes.ExceededThresholdWeightDateController.displayPage().url
         )
       }
     }
 
-    "should pass feature flag to view on error" in {
-      when(appConfig.isBackwardLookChangeEnabled).thenReturn(true)
-      await(controller.submit()(postRequestEncoded(JsObject.empty)))
-
-      verify(appConfig).isBackwardLookChangeEnabled
-      verify(mockPage).apply(any(), ArgumentMatchers.eq(true))(any(),any())
-    }
     "return an error" when {
       "the form fails to bind" in {
         val result = controller.submit()(postRequestEncoded(JsObject.empty))
@@ -167,10 +145,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         mockRegistrationFind(aRegistration())
         mockRegistrationUpdateFailure()
 
-        val correctForm = Seq("answer" -> "yes",
-          "exceeded-threshold-weight-date.day" -> "5",
-          "exceeded-threshold-weight-date.month" -> "5",
-          "exceeded-threshold-weight-date.year" -> "2022")
+        val correctForm = Seq("value" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[DownstreamServiceError](await(result))
@@ -181,10 +156,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         mockRegistrationFind(aRegistration())
         mockRegistrationException()
 
-        val correctForm = Seq("answer" -> "yes",
-          "exceeded-threshold-weight-date.day" -> "5",
-          "exceeded-threshold-weight-date.month" -> "5",
-          "exceeded-threshold-weight-date.year" -> "2022")
+        val correctForm = Seq("value" -> "yes")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[RuntimeException](await(result))

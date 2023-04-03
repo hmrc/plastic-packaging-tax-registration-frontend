@@ -34,7 +34,7 @@
 @(form: Form[PartnerType])(implicit request: Request[_], messages: Messages)
 
     @govukLayout(
-        title = Title("partnership.type.title"),
+        title = Title(form, "partnership.type.title"),
         backButton = Some(BackButton(messages("site.back"), pptRoutes.OrganisationDetailsTypeController.displayPage(), messages("site.back.hiddenText")))) {
             @errorSummary(form.errors)
 

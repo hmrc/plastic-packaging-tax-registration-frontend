@@ -39,7 +39,7 @@
 @removePartner = @{form("value")}
 
 @govukLayout(
-  title = Title("partnership.removePartner.title", partnerName),
+  title = Title(form, "partnership.removePartner.title", partnerName),
   backButton = Some(BackButtonJs())) {
 
     @errorSummary(form.errors)

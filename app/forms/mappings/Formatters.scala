@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import forms.YesNoValues
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -23,17 +24,17 @@ import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
 
-  private[mappings] def booleanFormatter(msgKey: String): Formatter[Boolean] = new Formatter[Boolean] {
+  private[mappings] def yesNoFormatter(msgKey: String): Formatter[Boolean] = new Formatter[Boolean] {
 
     def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] = {
       data.get(key) match {
-        case Some("yes") => Right(true)
-        case Some("no") => Right(false)
+        case Some(YesNoValues.YES) => Right(true)
+        case Some(YesNoValues.NO) => Right(false)
         case _ => Left(Seq(FormError(key, msgKey)))
       }
     }
 
-    def unbind(key: String, value: Boolean) = Map(key -> value.toString)
+    def unbind(key: String, value: Boolean) = Map(key -> {if (value) YesNoValues.YES else YesNoValues.NO})
   }
 
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] =

@@ -35,7 +35,7 @@
 @phoneNumberField = @{form("value")}
 
 @govukLayout(
-  title = Title(headingKey = "partnership.otherPartners.contactPhoneNumberPage.title", contactName),
+  title = Title(form, headingKey = "partnership.otherPartners.contactPhoneNumberPage.title", contactName),
   backButton = Some(BackButtonJs())) {
   @errorSummary(form.errors)
 

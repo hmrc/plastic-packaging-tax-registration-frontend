@@ -72,7 +72,7 @@
     @linkHint = {<a href=@messages("gform.link") class="govuk-link" id="organisationDetails-type-link">@messages("organisationDetails.type.hint")</a>}
 
     @govukLayout(
-        title = Title(title),
+        title = Title(form, title),
         backButton = Some(BackButtonJs())) {
 
         @errorSummary(form.errors)

@@ -34,7 +34,7 @@
 
 @isUkAddressField = @{form("value")}
 
-@govukLayout(title = Title("enrolment.isUkAddress.title"), backButton = None) {
+@govukLayout(title = Title(form, "enrolment.isUkAddress.title"), backButton = None) {
 
     @errorSummary(form.errors)
 

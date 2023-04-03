@@ -36,7 +36,7 @@
 @caption = @{ if(isNominated) { sectionHeader(messages("contactDetails.member.nominated.caption")) } else { sectionHeader(messages("contactDetails.member.other.caption")) } }
 
 @govukLayout(
-  title = Title(headingKey = "partnership.otherPartners.contactEmailAddressPage.title", contactName),
+  title = Title(form, headingKey = "partnership.otherPartners.contactEmailAddressPage.title", contactName),
 
   backButton = Some(BackButtonJs())) {
 

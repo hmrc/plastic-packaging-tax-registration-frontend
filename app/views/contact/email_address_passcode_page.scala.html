@@ -63,7 +63,7 @@
 
 }
 @govukLayout(
-  title = Title("primaryContactDetails.emailAddress.passcode.title"),
+  title = Title(form, "primaryContactDetails.emailAddress.passcode.title"),
   backButton = Some(BackButtonJs())) {
   @errorSummary(form.errors)
 

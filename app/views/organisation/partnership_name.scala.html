@@ -35,7 +35,7 @@
 @partnershipNameField = @{form("value")}
 
 @govukLayout(
-    title = Title("partnership.name.title"),
+    title = Title(form, "partnership.name.title"),
     backButton = Some(BackButton(messages("site.back"), partnerRoutes.PartnershipTypeController.displayPage(), messages("site.back.hiddenText")))) {
 
     @errorSummary(form.errors)
