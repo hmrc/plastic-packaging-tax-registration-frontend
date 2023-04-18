@@ -16,26 +16,24 @@
 
 package controllers.partner
 
+import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
+import forms.partner.RemovePartner
+import models.registration.{Cacheable, Registration}
+import models.request.JourneyRequest
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import forms.partner.RemovePartner
-import models.registration.{Cacheable, Registration}
-import models.request.JourneyRequest
-import views.html.partner.remove_partner_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.partner.remove_partner_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemovePartnerController @Inject() (
-                                          authenticate: RegistrationAuthAction,
-                                          journeyAction: GetRegistrationAction,
+                                          journeyAction: JourneyAction,
                                           override val registrationConnector: RegistrationConnector,
                                           mcc: MessagesControllerComponents,
                                           page: remove_partner_page
@@ -45,7 +43,7 @@ class RemovePartnerController @Inject() (
   private val logger = Logger(this.getClass)
 
   def displayPage(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
+    journeyAction.register { implicit request: JourneyRequest[AnyContent] =>
       getPartnerName(partnerId) match {
         case Some(partnerName) => Ok(page(RemovePartner.form(), partnerName, partnerId))
         case _ =>
@@ -55,7 +53,7 @@ class RemovePartnerController @Inject() (
     }
 
   def submit(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
+    journeyAction.register.async { implicit request: JourneyRequest[AnyContent] =>
       getPartnerName(partnerId) match {
         case Some(partnerName) =>
           RemovePartner.form()

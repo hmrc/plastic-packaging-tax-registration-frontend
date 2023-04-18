@@ -16,45 +16,29 @@
 
 package controllers.partner
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import config.AppConfig
 import connectors._
-import connectors.grs.{
-  PartnershipGrsConnector,
-  RegisteredSocietyGrsConnector,
-  SoleTraderGrsConnector,
-  UkCompanyGrsConnector
-}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import controllers.organisation.{
-  routes => organisationRoutes
-}
-import controllers.{routes => commonRoutes}
+import connectors.grs.{PartnershipGrsConnector, RegisteredSocietyGrsConnector, SoleTraderGrsConnector, UkCompanyGrsConnector}
+import controllers.actions.JourneyAction
+import controllers.organisation.{routes => organisationRoutes}
 import forms.organisation.PartnerType
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  LIMITED_LIABILITY_PARTNERSHIP,
-  LIMITED_PARTNERSHIP,
-  SCOTTISH_LIMITED_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, LIMITED_LIABILITY_PARTNERSHIP, LIMITED_PARTNERSHIP, SCOTTISH_LIMITED_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import models.genericregistration.PartnershipDetails
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.GRSRedirections
-import views.html.organisation.partnership_type
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.partnership_type
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipTypeController @Inject() (
-                                            authenticate: RegistrationAuthAction,
-                                            journeyAction: GetRegistrationAction,
+                                            journeyAction: JourneyAction,
                                             val appConfig: AppConfig,
                                             val soleTraderGrsConnector: SoleTraderGrsConnector,
                                             val ukCompanyGrsConnector: UkCompanyGrsConnector,
@@ -69,7 +53,7 @@ class PartnershipTypeController @Inject() (
   private val form: Form[PartnerType] = PartnerType.form(PartnerType.FormMode.PartnershipType)
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
           Ok(page(form.fill(PartnerType(partnershipDetails.partnershipType))))
@@ -78,7 +62,7 @@ class PartnershipTypeController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       form
         .bindFromRequest()
         .fold((formWithErrors: Form[PartnerType]) => Future(BadRequest(page(formWithErrors))),

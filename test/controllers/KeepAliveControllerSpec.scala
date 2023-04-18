@@ -40,7 +40,7 @@ class KeepAliveControllerSpec extends ControllerSpec {
   private val mockUserDataRepository = mock[MongoUserDataRepository]
 
   private val controller =
-    new KeepAliveController(authenticate = mockEnrolledAuthAction,
+    new KeepAliveController(authenticate = FakeBasicAuthAction,
                             userDataRepository = mockUserDataRepository,
                             mcc = mcc
     )
@@ -60,12 +60,8 @@ class KeepAliveControllerSpec extends ControllerSpec {
         when(mockUserDataRepository.findBySessionId(any())).thenReturn(
           Future.successful(cachedRegistration)
         )
-        authorizedUser()
-        val result = controller.keepAlive()(
-          new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123")),
-                                   newUser()
-          )
-        )
+
+        val result = controller.keepAlive()(registrationJourneyRequest)
 
         status(result) mustBe OK
         val cacheItemCaptor: ArgumentCaptor[CacheItem] =
@@ -81,23 +77,20 @@ class KeepAliveControllerSpec extends ControllerSpec {
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.keepAlive()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "no record is found for the sessionId" in {
-        authorizedUser()
+
         when(mockUserDataRepository.findBySessionId("123456")).thenReturn(
           Future.failed(SessionRecordNotFound())
         )
         val result =
-          controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
-                                     newUser()
-            )
-          )
+          controller.keepAlive()(registrationJourneyRequest)
+
         status(result) mustBe OK
         verify(mockUserDataRepository, never()).put(any[String])(
           DataKey(ArgumentMatchers.eq("123")),
@@ -105,18 +98,15 @@ class KeepAliveControllerSpec extends ControllerSpec {
         )(any())
       }
       "no value in the record for the sessionId" in {
-        authorizedUser()
+
         val cachedRegistration: CacheItem =
           CacheItem("sessionId", JsObject.empty, Instant.now(), Instant.now())
         when(mockUserDataRepository.findBySessionId(any())).thenReturn(
           Future.successful(cachedRegistration)
         )
         val result =
-          controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("sessionId", "123456")),
-                                     newUser()
-            )
-          )
+          controller.keepAlive()(registrationJourneyRequest)
+
         status(result) mustBe OK
         verify(mockUserDataRepository, never()).put(any[String])(
           DataKey(ArgumentMatchers.eq("123")),
@@ -124,13 +114,10 @@ class KeepAliveControllerSpec extends ControllerSpec {
         )(any())
       }
       "no value for sessionId" in {
-        authorizedUser()
+
         val result =
-          controller.keepAlive()(
-            new AuthenticatedRequest(FakeRequest().withSession(("session", "123456")),
-                                     newUser()
-            )
-          )
+          controller.keepAlive()(registrationJourneyRequest)
+
         intercept[RuntimeException](status(result))
       }
     }

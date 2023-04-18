@@ -23,7 +23,7 @@ class TooManyAttemptsPasscodeViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[too_many_attempts_passcode_page]
 
-  private def createView(): String = page()(request = journeyRequest, messages = messages).toString()
+  private def createView(): String = page()(request = registrationJourneyRequest, messages = messages).toString()
 
   "Too Many Attempts Passcode A11y View" should {
 

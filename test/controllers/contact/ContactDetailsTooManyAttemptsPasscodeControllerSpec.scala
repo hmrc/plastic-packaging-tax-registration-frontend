@@ -37,7 +37,7 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     val registration = aRegistration()
-    mockRegistrationFind(registration)
+    spyJourneyAction.setReg(registration)
     given(page.apply()(any(), any())).willReturn(HtmlFormat.empty)
   }
 
@@ -51,7 +51,7 @@ class ContactDetailsTooManyAttemptsPasscodeControllerSpec extends ControllerSpec
     "be displayed " when {
 
       "display page method is invoked" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK

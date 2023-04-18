@@ -50,7 +50,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
   private val mockUserEnrolmentConnector = mock[UserEnrolmentConnector]
 
   private val controller =
-    new CheckAnswersController(mockAuthAction, mcc, repository, mockUserEnrolmentConnector, page)
+    new CheckAnswersController(FakeRegistrationAuthAction, mcc, repository, mockUserEnrolmentConnector, page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -74,7 +74,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(Some(userEnrolmentDetails))
         )
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -84,7 +84,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
     }
     "throw a RuntimeException" when {
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
@@ -97,7 +97,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(Some(UserEnrolmentDetails()))
         )
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -108,7 +108,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
       "page is submitted" when {
 
         "verification failed enrolment verification " in {
-          authorizedUser()
+
           when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
             Future.successful(
               UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.VerificationFailed)
@@ -125,7 +125,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
         }
 
         "successful enrolment verification " in {
-          authorizedUser()
+
           when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
             Future.successful(UserEnrolmentSuccessResponse("XPPT000123456"))
           )
@@ -138,7 +138,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
         }
 
         "ppt reference number is already enroled " in {
-          authorizedUser()
+
           when(mockUserEnrolmentConnector.enrol(any())(any())).thenReturn(
             Future.successful(
               UserEnrolmentFailedResponse("XPPT000123456", EnrolmentFailureCode.GroupEnrolled)

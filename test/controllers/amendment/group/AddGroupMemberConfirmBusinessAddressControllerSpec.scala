@@ -16,9 +16,10 @@
 
 package controllers.amendment.group
 
-import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{AddressCaptureSpec, ControllerSpec, AmendmentControllerSpec}
+import controllers.actions.getRegistration.GetRegistrationAction
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, spy, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
 import play.api.mvc.{AnyContentAsEmpty, Request}
@@ -28,19 +29,19 @@ import spec.PptTestData
 import forms.contact.Address
 import forms.contact.Address.UKAddress
 import models.registration.GroupDetail
+import play.api.test.FakeRequest
 import views.html.organisation.confirm_business_address
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
 class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec with AddressCaptureSpec
-  with MockAmendmentJourneyAction with PptTestData {
+  with AmendmentControllerSpec with PptTestData {
 
   private val page = mock[confirm_business_address]
   private val mcc = stubMessagesControllerComponents()
 
   private val controller =
     new AddGroupMemberConfirmBusinessAddressController(
-      authenticate = mockEnrolledAuthAction,
-      journeyAction = mockAmendmentJourneyAction,
+      journeyAction = spyJourneyAction,
       registrationConnector = mockRegistrationConnector,
       mockAddressCaptureService,
       mcc = mcc,
@@ -49,9 +50,9 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    inMemoryRegistrationAmendmentRepository.reset()
+    spyJourneyAction.reset()
+    reset(spyJourneyAction)
     when(page.apply(any[Address], any(), any())(any(), any())).thenReturn(HtmlFormat.raw("business registered address"))
-    authorisedUserWithPptSubscription()
     mockRegistrationUpdate()
     simulateSuccessfulAddressCaptureInit(None)
     simulateValidAddressCapture()
@@ -61,8 +62,6 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
     reset(page)
     super.afterEach()
   }
-
-  val getRequestWithSession: Request[AnyContentAsEmpty.type] = getRequest("sessionId" -> "123")
 
   val testMemberId = "dfd64d98-9274-496b-9801-5390da22660e"
 
@@ -74,13 +73,13 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
         Some(GroupDetail(Some(false), Seq(aGroupMember().copy(id = testMemberId)))))
       )
 
-      inMemoryRegistrationAmendmentRepository.put("123", reg)
+      spyJourneyAction.setReg(reg)
 
-      val resp = controller.displayPage(testMemberId)(getRequestWithSession)
+      val resp = controller.displayPage(testMemberId)(FakeRequest())
 
       status(resp) mustBe OK
-
       contentAsString(resp) mustBe "business registered address"
+      verify(spyJourneyAction.amend)
     }
 
     "redirect to address capture" when {
@@ -99,11 +98,12 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
           )))))
         )
 
-        inMemoryRegistrationAmendmentRepository.put("123", reg)
+        spyJourneyAction.setReg(reg)
 
-        val resp = controller.displayPage(testMemberId)(getRequestWithSession)
+        val resp = controller.displayPage(testMemberId)(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
+        verify(spyJourneyAction.amend)
       }
     }
 
@@ -115,9 +115,9 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
             Some(GroupDetail(Some(false), Seq(aGroupMember().copy(id = testMemberId)))))
           )
 
-          inMemoryRegistrationAmendmentRepository.put("123", reg)
+          spyJourneyAction.setReg(reg)
 
-          val resp = controller.addressCaptureCallback(testMemberId)(getRequestWithSession)
+          val resp = controller.addressCaptureCallback(testMemberId)(FakeRequest())
 
           redirectLocation(resp) mustBe Some(
             routes.AddGroupMemberContactDetailsNameController.displayPage(testMemberId).url
@@ -125,6 +125,7 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
 
           modifiedRegistration.groupDetail.get.findGroupMember(Some(testMemberId), None)
             .get.addressDetails mustBe validCapturedAddress
+          verify(spyJourneyAction.amend)
         }
       }
     }

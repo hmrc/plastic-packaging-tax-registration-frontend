@@ -16,22 +16,19 @@
 
 package controllers.amendment.partner
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import controllers.actions.getRegistration.AmendmentJourneyAction
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.OK
-import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.Html
-import views.html.amendment.partner.manage_partners_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
+import views.html.amendment.partner.manage_partners_page
 
-class ManagePartnersControllerSpec extends ControllerSpec with MockAmendmentJourneyAction {
+class ManagePartnersControllerSpec extends ControllerSpec with AmendmentControllerSpec {
 
   private val mcc                    = stubMessagesControllerComponents()
   private val mockManagePartnersPage = mock[manage_partners_page]
@@ -41,10 +38,9 @@ class ManagePartnersControllerSpec extends ControllerSpec with MockAmendmentJour
   )
 
   private val managePartnersController = new ManagePartnersController(
-    authenticate = mockEnrolledAuthAction,
-    amendmentJourneyAction = mockAmendmentJourneyAction,
     mcc = mcc,
-    page = mockManagePartnersPage
+    page = mockManagePartnersPage,
+    journeyAction = spyJourneyAction
   )
 
   override protected def beforeEach(): Unit =
@@ -54,16 +50,14 @@ class ManagePartnersControllerSpec extends ControllerSpec with MockAmendmentJour
 
   "Manage Partners Controller" should {
     "display the manage partners page" in {
-      authorisedUserWithPptSubscription()
-      simulateGetSubscriptionSuccess(partnershipRegistration)
 
-      val resp = managePartnersController.displayPage()(getRequest())
+      spyJourneyAction.setReg(partnershipRegistration)
+
+      val resp = managePartnersController.displayPage()(FakeRequest())
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Manage Partners Page"
     }
   }
 
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

@@ -30,7 +30,7 @@ class EnrolmentFailureViewSpec extends UnitViewSpec with Matchers {
     inject[enrolment_failure_page]
 
   private def createView(flash: Flash = Flash(Map.empty)): Html =
-    page()(journeyRequest, messages, flash)
+    page()(registrationJourneyRequest, messages, flash)
 
   "Enrolment Failure Page" should {
     val view: Html = createView()

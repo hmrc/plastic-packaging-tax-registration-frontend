@@ -32,7 +32,7 @@ class DeregisterCheckYourAnswersViewSpec extends UnitViewSpec with Matchers with
   private val page = inject[deregister_check_your_answers_page]
 
   private def createView(deregistrationDetails: DeregistrationDetails): Document =
-    page(deregistrationDetails)(authenticatedRequest, messages.messages)
+    page(deregistrationDetails)(registrationRequest, messages.messages)
 
   "Deregister Check Answers View with no answers" should {
 

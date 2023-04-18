@@ -25,7 +25,7 @@ class TaskListGroupViewA11ySpec extends BaseViewSpec {
 
   private val page = inject[task_list_group]
   private def render( hasOldLiabilityQuestions: Boolean) =
-    page(aRegistration(), Call(GET,"/foo"), hasOldLiabilityQuestions)(journeyRequest, messages).toString()
+    page(aRegistration(), Call(GET,"/foo"), hasOldLiabilityQuestions)(registrationJourneyRequest, messages).toString()
 
 
   "TaskListGroupView" should {

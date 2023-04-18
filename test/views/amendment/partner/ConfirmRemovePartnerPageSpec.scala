@@ -30,7 +30,7 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
   private val partner = aLimitedCompanyPartner()
 
   private def createView(form: Form[RemovePartner] = RemovePartner.form()): Document =
-    page(form, partner)(journeyRequest, messages)
+    page(form, partner)(registrationJourneyRequest, messages)
 
   "Confirm Remove Partner page" should {
 
@@ -77,8 +77,8 @@ class ConfirmRemovePartnerPageSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(RemovePartner.form(), partner)(journeyRequest, messages)
-    page.render(RemovePartner.form(), partner, journeyRequest, messages)
+    page.f(RemovePartner.form(), partner)(registrationJourneyRequest, messages)
+    page.render(RemovePartner.form(), partner, registrationJourneyRequest, messages)
   }
 
 }

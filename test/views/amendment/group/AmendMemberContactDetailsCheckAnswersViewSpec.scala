@@ -36,7 +36,7 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
     page(groupMember,
          routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id),
          routes.ManageGroupMembersController.displayPage()
-    )(journeyRequest, messages)
+    )(registrationJourneyRequest, messages)
 
   "Contact Details Check Answers View" should {
 
@@ -130,13 +130,13 @@ class AmendMemberContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Ma
     page.f(groupMember,
            routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id),
            routes.ManageGroupMembersController.displayPage()
-    )(journeyRequest, messages)
+    )(registrationJourneyRequest, messages)
     page.render(groupMember,
                 routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(
                   groupMember.id
                 ),
                 routes.ManageGroupMembersController.displayPage(),
-                journeyRequest,
+                registrationJourneyRequest,
                 messages
     )
   }

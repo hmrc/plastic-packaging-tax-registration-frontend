@@ -16,14 +16,13 @@
 
 package controllers
 
+import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Results}
-import connectors.RegistrationConnector
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import views.html.UpdateCompaniesHouseView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
+import views.html.UpdateCompaniesHouseView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -37,14 +36,13 @@ import scala.concurrent.ExecutionContext
  */
 
 class UpdateCompaniesHouseController @Inject()(
-                                                authenticate: RegistrationAuthAction,
-                                                journeyAction: GetRegistrationAction,
+                                                journeyAction: JourneyAction,
                                                 registrationConnector: RegistrationConnector,
                                                 updateCompaniesHouse: UpdateCompaniesHouseView,
                                                 val messagesApi: MessagesApi
 )(implicit ec: ExecutionContext) extends Results with FrontendHeaderCarrierProvider with I18nSupport with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (authenticate andThen journeyAction) {
+  def onPageLoad(): Action[AnyContent] = journeyAction.register {
     implicit request =>
       {for {
         crn <- request.registration.organisationDetails.incorporationDetails.map(_.companyNumber)
@@ -57,7 +55,7 @@ class UpdateCompaniesHouseController @Inject()(
       }
   }
 
-  def reset(): Action[AnyContent] = (authenticate andThen journeyAction).async {
+  def reset(): Action[AnyContent] = journeyAction.register.async {
     implicit request =>
       registrationConnector.update(request.registration.clearAddressFromGrs)
         .map{

@@ -31,7 +31,7 @@ class RemoveGroupMemberViewA11ySpec extends BaseViewSpec {
   private val memberId   = UUID.randomUUID.toString
 
   private def createView(form: Form[RemoveMember] = RemoveMember.form()): String =
-    page(form, memberName, memberId)(journeyRequest, messages).toString()
+    page(form, memberName, memberId)(registrationJourneyRequest, messages).toString()
 
   "Remove Group Member View" should {
 

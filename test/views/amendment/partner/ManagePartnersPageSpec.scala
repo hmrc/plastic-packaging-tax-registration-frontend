@@ -33,7 +33,7 @@ class ManagePartnersPageSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(registration: Registration): Html =
-    page(registration)(journeyRequestWithEnrolledUser, messages)
+    page(registration)(amendsJourneyRequest, messages)
 
   val view: Html = createView(partnershipRegistration)
 
@@ -73,8 +73,8 @@ class ManagePartnersPageSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(partnershipRegistration)(journeyRequest, messages)
-    page.render(partnershipRegistration, journeyRequest, messages)
+    page.f(partnershipRegistration)(registrationJourneyRequest, messages)
+    page.render(partnershipRegistration, registrationJourneyRequest, messages)
   }
 
 }

@@ -35,8 +35,7 @@ class PartnerCheckAnswersControllerSpec
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerCheckAnswersController(authenticate = mockAuthAction,
-                                      journeyAction = mockJourneyAction,
+    new PartnerCheckAnswersController(journeyAction = spyJourneyAction,
                                       registrationConnector = mockRegistrationConnector,
                                       mcc = mcc,
                                       page = page
@@ -48,8 +47,8 @@ class PartnerCheckAnswersControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
-    mockRegistrationFind(partnershipRegistration)
+
+    spyJourneyAction.setReg(partnershipRegistration)
     when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Partner check answers"))
   }
 
@@ -60,8 +59,8 @@ class PartnerCheckAnswersControllerSpec
 
   "Partner Check Answers Controller" should {
     "show new partner detail" in {
-      authorizedUser()
-      mockRegistrationFind(
+
+      spyJourneyAction.setReg(
         aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
       )
       val resp = controller.displayNewPartner()(getRequest())
@@ -96,7 +95,7 @@ class PartnerCheckAnswersControllerSpec
     }
     "throw IllegalStateException" when {
       "nominated partner not present" in {
-        mockRegistrationFind(aRegistration())
+        spyJourneyAction.setReg(aRegistration())
 
         intercept[IllegalStateException] {
           await(

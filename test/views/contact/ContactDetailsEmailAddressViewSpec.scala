@@ -30,9 +30,9 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[EmailAddress] = EmailAddress.form(), isGroup: Boolean = false): Document =
-    page(form, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(registrationJourneyRequest, messages)
 
-  private val mainContact = journeyRequest.registration.primaryContactDetails.name.get
+  private val mainContact = registrationJourneyRequest.registration.primaryContactDetails.name.get
 
   "Email Address View" should {
 
@@ -144,8 +144,8 @@ class ContactDetailsEmailAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(EmailAddress.form(), updateLink, false)(journeyRequest, messages)
-    page.render(EmailAddress.form(), updateLink, false, journeyRequest, messages)
+    page.f(EmailAddress.form(), updateLink, false)(registrationJourneyRequest, messages)
+    page.render(EmailAddress.form(), updateLink, false, registrationJourneyRequest, messages)
   }
 
 }

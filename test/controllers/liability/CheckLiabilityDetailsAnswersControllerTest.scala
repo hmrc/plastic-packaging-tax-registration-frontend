@@ -45,21 +45,20 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
   private val aDate                           = LocalDate.of(2022, 4, 1)
 
   private val controller =
-    new CheckLiabilityDetailsAnswersController(authenticate = mockAuthAction,
-      mockJourneyAction,
+    new CheckLiabilityDetailsAnswersController(journeyAction = spyJourneyAction,
       mcc = mcc,
       mockRegistrationConnector,
       mockTaxStartDateService,
-      appConfig,
+      config,
       page = page
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(page, mockTaxStartDateService, mockRegistrationConnector, appConfig)
+    reset(page, mockTaxStartDateService, mockRegistrationConnector, config)
 
     val registration = aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
-    mockRegistrationFind(registration)
+    spyJourneyAction.setReg(registration)
     given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
     given(mockTaxStartDateService.calculateTaxStartDate(any())).willReturn(TaxStartDate.liableFromBackwardsTest(aDate))
     mockRegistrationUpdate()
@@ -76,10 +75,10 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
       "user is authorised" should {
         "return 200" in {
-          authorizedUser()
+
 
           val registration = aRegistration()
-          mockRegistrationFind(registration)
+          spyJourneyAction.setReg(registration)
 
           val result: Future[Result] = controller.displayPage()(getRequest())
           status(result) shouldEqual Status.OK
@@ -95,7 +94,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
       "check the backward look feature flags" in {
 
-        authorizedUser()
+
         given(page.apply(any())(any(), any())).willReturn(HtmlFormat.empty)
 
         await(controller.displayPage()(getRequest()))
@@ -104,10 +103,10 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       }
 
       "group registration enabled and group of organisation is selected" in {
-        authorizedUser()
+
 
         val registration = aRegistration(withRegistrationType(Some(RegType.GROUP)), r => r.copy(liabilityDetails = r.liabilityDetails.copy(newLiabilityFinished = Some(NewLiability))))
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         given(page.apply(refEq(registration))(any(), any())).willReturn(HtmlFormat.empty)
 
         val result = controller.displayPage()(getRequest())
@@ -120,7 +119,7 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
@@ -129,10 +128,10 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
 
     "updates liability with the correct start date and redirects to registration page" when {
       "user proceed" in {
-        authorizedUser()
+
 
         val registration = aRegistration()
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
 
         val result = controller.submit()(postRequest(Json.toJson(registration)))
 

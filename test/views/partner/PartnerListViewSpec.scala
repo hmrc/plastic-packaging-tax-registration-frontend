@@ -36,7 +36,7 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
     otherPartner: Seq[Partner] = getOtherPartners(partnershipRegistration)
   ): Document =
     page(AddPartner.form(), getNominatedPartner(partnershipRegistration), otherPartner)(
-      journeyRequest,
+      registrationJourneyRequest,
       messages
     )
 
@@ -113,11 +113,11 @@ class PartnerListViewSpec extends UnitViewSpec with Matchers {
     page.f(AddPartner.form(),
            getNominatedPartner(partnershipRegistration),
            getOtherPartners(partnershipRegistration)
-    )(journeyRequest, messages)
+    )(registrationJourneyRequest, messages)
     page.render(AddPartner.form(),
                 getNominatedPartner(partnershipRegistration),
                 getOtherPartners(partnershipRegistration),
-                journeyRequest,
+                registrationJourneyRequest,
                 messages
     )
   }

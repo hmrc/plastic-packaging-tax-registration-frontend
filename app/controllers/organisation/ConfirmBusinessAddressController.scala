@@ -16,28 +16,26 @@
 
 package controllers.organisation
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import uk.gov.hmrc.http.HeaderCarrier
 import connectors.RegistrationConnector
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import controllers.{routes => commonRoutes}
 import forms.contact.Address
 import forms.organisation.OrgType.{OVERSEAS_COMPANY_UK_BRANCH, OrgType}
 import models.registration.Cacheable
 import models.request.JourneyRequest
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AddressCaptureConfig, AddressCaptureService}
-import views.html.organisation.confirm_business_address
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.confirm_business_address
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmBusinessAddressController @Inject() (
-                                                   authenticate: RegistrationAuthAction,
-                                                   journeyAction: GetRegistrationAction,
+                                                   journeyAction: JourneyAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    addressCaptureService: AddressCaptureService,
                                                    mcc: MessagesControllerComponents,
@@ -46,7 +44,7 @@ class ConfirmBusinessAddressController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       val orgType = request.registration.organisationDetails.organisationType
       request.registration.organisationDetails.businessRegisteredAddress match {
         case Some(registeredBusinessAddress) if isAddressValidForOrgType(registeredBusinessAddress, orgType) =>
@@ -68,7 +66,7 @@ class ConfirmBusinessAddressController @Inject() (
     }
 
   def changeBusinessAddress(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(OVERSEAS_COMPANY_UK_BRANCH) => initialiseAddressLookup(request, forceUKAddress = false)
         case _ => initialiseAddressLookup(request, forceUKAddress = true)
@@ -100,7 +98,7 @@ class ConfirmBusinessAddressController @Inject() (
       false
 
   def addressCaptureCallback(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           update { reg =>

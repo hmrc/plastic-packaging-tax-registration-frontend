@@ -16,31 +16,26 @@
 
 package controllers.partner
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc._
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import controllers.partner.{routes => partnerRoutes}
 import controllers.{routes => commonRoutes}
 import forms.contact.JobTitle
-import models.genericregistration.{
-  Partner,
-  PartnerContactDetails
-}
+import models.genericregistration.{Partner, PartnerContactDetails}
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
-import views.html.partner.partner_job_title_page
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.partner.partner_job_title_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnerJobTitleController @Inject() (
-                                            authenticate: RegistrationAuthAction,
-                                            journeyAction: GetRegistrationAction,
+                                            journeyAction: JourneyAction,
                                             override val registrationConnector: RegistrationConnector,
                                             mcc: MessagesControllerComponents,
                                             page: partner_job_title_page
@@ -48,7 +43,7 @@ class PartnerJobTitleController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.inflightPartner.map { partner =>
         renderPageFor(partner,
                       partnerRoutes.PartnerContactNameController.displayNewPartner(),
@@ -58,7 +53,7 @@ class PartnerJobTitleController @Inject() (
     }
 
   def displayExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.findPartner(partnerId).map { partner =>
         renderPageFor(partner,
                       partnerRoutes.PartnerCheckAnswersController.displayExistingPartner(partnerId),
@@ -83,7 +78,7 @@ class PartnerJobTitleController @Inject() (
     }.getOrElse(throw new IllegalStateException("Expected partner contact details missing"))
 
   def submitNewPartner(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.inflightPartner.map { partner =>
         handleSubmission(partner,
                          partnerRoutes.PartnerTypeController.displayNewPartner(),
@@ -98,7 +93,7 @@ class PartnerJobTitleController @Inject() (
     }
 
   def submitExistingPartner(partnerId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       def updateAction(jobTitle: JobTitle): Future[Either[ServiceError, Registration]] =
         updateExistingPartner(jobTitle, partnerId)
 

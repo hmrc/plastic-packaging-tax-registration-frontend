@@ -16,6 +16,7 @@
 
 package controllers.liability
 
+import controllers.actions.JourneyAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import controllers.actions.auth.RegistrationAuthAction
@@ -28,8 +29,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class TaxStartDateController @Inject() (
-                                         authenticate: RegistrationAuthAction,
-                                         journeyAction: GetRegistrationAction,
+                                         journeyAction: JourneyAction,
                                          taxStarDateService: TaxStartDateService,
                                          mcc: MessagesControllerComponents,
                                          page: tax_start_date_page,
@@ -37,7 +37,7 @@ class TaxStartDateController @Inject() (
   extends FrontendController(mcc) with I18nSupport {
 
   def displayPage: Action[AnyContent] = 
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
       taxStartDate.act(
         notLiableAction = Redirect(routes.NotLiableController.displayPage()),
@@ -46,7 +46,7 @@ class TaxStartDateController @Inject() (
   }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) {
+    journeyAction.register {
       Redirect(routes.LiabilityWeightController.displayPage())
     }
 

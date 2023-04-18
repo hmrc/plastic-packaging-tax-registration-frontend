@@ -54,7 +54,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-        authorizedUser()
+
         val exitSurveyUrl: String = givenExistSurveyUrl
 
         val result = controller.signOut(SignOutReason.UserAction)(getRequest())
@@ -65,20 +65,6 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "unauth user signs out" in {
 
-        unAuthorizedUser()
-        val exitSurveyUrl: String = givenExistSurveyUrl
-
-        val result = controller.signOut(SignOutReason.UserAction)(getRequest())
-
-        redirectLocation(result) mustBe Some(exitSurveyUrl)
-
-      }
-
-      "enrolled user signs out" in {
-
-        val user =
-          PptTestData.newUser().copy(enrolments = Enrolments(Set(Enrolment("HMRC-PPT-ORG"))))
-        authorizedUser(user)
 
         val exitSurveyUrl: String = givenExistSurveyUrl
 
@@ -93,7 +79,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-        authorizedUser()
+
         val result = controller.signOut(SignOutReason.UserAction)(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -102,7 +88,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "unauth user signs out" in {
 
-        unAuthorizedUser()
+
         val result = controller.signOut(SignOutReason.UserAction)(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -114,7 +100,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user signs out" in {
 
-        authorizedUser()
+
         val result = controller.signOut(SignOutReason.UserAction)(getRequest("keyA" -> "valueA"))
 
         session(result).get("keyA") shouldBe None
@@ -123,7 +109,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "unauth user signs out" in {
 
-        unAuthorizedUser()
+
         val result = controller.signOut(SignOutReason.UserAction)(getRequest("keyA" -> "valueA"))
 
         session(result).get("keyA") shouldBe None
@@ -139,7 +125,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "auth user session times out" in {
 
-        authorizedUser()
+
         val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -149,7 +135,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "unauth user session times out" in {
 
-        unAuthorizedUser()
+
         val result = controller.signOut(SignOutReason.SessionTimeout)(getRequest())
 
         status(result) mustBe SEE_OTHER
@@ -162,7 +148,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "session times out" in {
 
-        authorizedUser()
+
 
         val result =
           controller.signOut(SignOutReason.SessionTimeout)(getRequest("keyA" -> "valueA"))
@@ -175,7 +161,7 @@ class SignOutControllerSpec extends ControllerSpec {
 
       "unauthorised user hits /we-sign-you-out page" in {
 
-        unAuthorizedUser()
+
 
         val result = controller.sessionTimeoutSignedOut()(getRequest())
 

@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import com.google.inject.ImplementedBy
 import controllers.actions.auth.{AmendAuthAction, RegistrationAuthAction}
 import controllers.actions.getRegistration.{GetRegistrationAction, GetRegistrationForAmendmentAction}
 import models.request.JourneyRequest
@@ -23,17 +24,23 @@ import play.api.mvc.{ActionBuilder, AnyContent}
 
 import javax.inject.Inject
 
-class JourneyAction @Inject()(
+@ImplementedBy(classOf[JourneyActionImpl])
+trait JourneyAction {
+  def register: ActionBuilder[JourneyRequest, AnyContent]
+  def amend: ActionBuilder[JourneyRequest, AnyContent]
+}
+
+class JourneyActionImpl @Inject()(
                                registrationAuth: RegistrationAuthAction,
                                getRegistrationAction: GetRegistrationAction,
                                amendAuthAction: AmendAuthAction,
                                getRegistrationForAmendmentAction: GetRegistrationForAmendmentAction
-                             ){
+                             ) extends JourneyAction {
 
-  def register: ActionBuilder[JourneyRequest, AnyContent] =
+  override def register: ActionBuilder[JourneyRequest, AnyContent] =
     registrationAuth andThen getRegistrationAction
 
-  def amend: ActionBuilder[JourneyRequest, AnyContent] =
+  override def amend: ActionBuilder[JourneyRequest, AnyContent] =
     amendAuthAction andThen getRegistrationForAmendmentAction
 
 }

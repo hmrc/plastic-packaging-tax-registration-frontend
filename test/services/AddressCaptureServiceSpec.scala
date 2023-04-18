@@ -16,15 +16,11 @@
 
 package services
 
-import base.PptTestData.newUser
 import base.unit.MockAddressCaptureDetailRepository
-import controllers.actions.getRegistration.AmendmentJourneyAction
+import controllers.address.routes
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.test.FakeRequest
 import spec.PptTestData
-import controllers.address.routes
-import models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext
 
@@ -68,10 +64,6 @@ class AddressCaptureServiceSpec
     }
   }
 
-  private def getRequest() =
-    new AuthenticatedRequest(
-      request = FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")),
-      user = newUser()
-    )
+  private def getRequest() = registrationJourneyRequest.authenticatedRequest
 
 }

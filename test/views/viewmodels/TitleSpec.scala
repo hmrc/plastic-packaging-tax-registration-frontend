@@ -18,9 +18,13 @@ package views.viewmodels
 
 import base.unit.MessagesSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 import spec.PptTestData
 
-class TitleSpec extends MessagesSpec with Matchers with PptTestData {
+class TitleSpec extends MessagesSpec with Matchers {
+
+  implicit val req: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
   val serviceName = messages("service.name")
 

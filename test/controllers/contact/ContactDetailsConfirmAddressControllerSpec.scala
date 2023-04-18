@@ -41,8 +41,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsConfirmAddressController(authenticate = mockAuthAction,
-                                               mockJourneyAction,
+    new ContactDetailsConfirmAddressController(spyJourneyAction,
                                                mockRegistrationConnector,
                                                mcc = mcc,
                                                page = page
@@ -80,8 +79,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
     "redirect to update Companies House" when {
       "Incorporation address is missing country code" in {
-        authorizedUser()
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(
             withOrganisationDetails(
               OrganisationDetails(organisationType = Some(UK_COMPANY),
@@ -102,8 +100,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(
             withOrganisationDetails(
               OrganisationDetails(organisationType = Some(UK_COMPANY),
@@ -120,8 +117,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
     }
 
     "show page for group membership" in {
-      authorizedUser()
-      mockRegistrationFind(
+      spyJourneyAction.setReg(
         aRegistration(
           withOrganisationDetails(
             OrganisationDetails(organisationType = Some(UK_COMPANY),
@@ -150,8 +146,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           ),
           withRegisteredBusinessAddress(testBusinessAddress)
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -168,8 +163,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           ),
           withRegisteredBusinessAddress(testBusinessAddress)
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -185,8 +180,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             )
           )
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -202,8 +197,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             )
           )
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -217,8 +212,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
             OrganisationDetails(organisationType = Some(CHARITABLE_INCORPORATED_ORGANISATION))
           )
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val result = controller.displayPage()(getRequest())
@@ -248,8 +243,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "return 303 (OK) for " when {
         "user accepts the registered address" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdate()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes")
@@ -267,8 +262,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         }
 
         "user does not accept the registered address" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdate()
 
           val correctForm = Seq("useRegisteredAddress" -> "no")
@@ -290,8 +285,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "return 400 (BAD_REQUEST)"  when {
         "user does not enter mandatory fields" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty))
 
@@ -302,7 +297,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
       "return an error"  when {
 
         "user is not authorised" in {
-          unAuthorizedUser()
+
           val result = controller.displayPage()(getRequest())
 
           intercept[RuntimeException](status(result))
@@ -312,8 +307,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           val registration = aRegistration(
             withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
           )
-          authorizedUser()
-          mockRegistrationFind(registration)
+
+          spyJourneyAction.setReg(registration)
 
           val result = controller.displayPage()(getRequest())
 
@@ -321,8 +316,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         }
 
         "user submits form and the registration update fails" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes")
@@ -332,8 +327,8 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         }
 
         "user submits form and a registration update runtime exception occurs" in {
-          authorizedUser()
-          mockRegistrationFind(registrationWithoutPrimaryContactAddress)
+
+          spyJourneyAction.setReg(registrationWithoutPrimaryContactAddress)
           mockRegistrationException()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes")

@@ -39,8 +39,7 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
   val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
   val controller: ExpectToExceedThresholdWeightController =
-    new ExpectToExceedThresholdWeightController(authenticate = mockAuthAction,
-      mockJourneyAction,
+    new ExpectToExceedThresholdWeightController(journeyAction = spyJourneyAction,
       mockRegistrationConnector,
       mcc = mcc,
       page = mockPage,
@@ -53,8 +52,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
     "return 200 (OK)" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
 
         val result = controller.displayPage()(getRequest())
 
@@ -66,8 +65,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           aRegistration(
             withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = Some(true)))
           )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -79,8 +78,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           aRegistration(
             withLiabilityDetails(LiabilityDetails(expectToExceedThresholdWeight = None))
           )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -92,8 +91,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
   "submit" should {
     "return 303 (REDIRECT)" when {
       "user submits 'Yes' answer" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
@@ -104,8 +103,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
       }
 
       "user submits 'No' answer" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val correctForm = Seq("value" -> "no")
@@ -119,8 +118,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
 
       "return 400 (BAD_REQUEST)" when {
         "the form fails to bind" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty))
 
@@ -131,15 +130,15 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
       "return an error" when {
 
         "user is not authorised" in {
-          unAuthorizedUser()
+
           val result = controller.displayPage()(getRequest())
 
           intercept[RuntimeException](status(result))
         }
 
         "user submits form and the registration update fails" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdateFailure()
 
           val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
@@ -148,8 +147,8 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
         }
 
         "user submits form and a registration update runtime exception occurs" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationException()
 
           val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))

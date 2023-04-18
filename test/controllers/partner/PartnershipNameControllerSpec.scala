@@ -33,9 +33,8 @@ class PartnershipNameControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller = new PartnershipNameController(
-    authenticate = mockAuthAction,
-    journeyAction = mockJourneyAction,
-    appConfig = appConfig,
+    journeyAction = spyJourneyAction,
+    appConfig = config,
     partnershipGrsConnector = mockPartnershipGrsConnector,
     registrationConnector = mockRegistrationConnector,
     mcc = mcc,
@@ -48,16 +47,16 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
+
     when(page.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Partnership name capture"))
-    mockRegistrationFind(partnershipRegistration)
+    spyJourneyAction.setReg(partnershipRegistration)
     mockRegistrationUpdate()
     mockCreatePartnershipGrsJourneyCreation("/partnership-grs-journey")
 
-    when(appConfig.generalPartnershipJourneyUrl).thenReturn(
+    when(config.generalPartnershipJourneyUrl).thenReturn(
       "/general-partnership-grs-journey-creation"
     )
-    when(appConfig.scottishPartnershipJourneyUrl).thenReturn(
+    when(config.scottishPartnershipJourneyUrl).thenReturn(
       "/scottish-partnership-grs-journey-creation"
     )
   }
@@ -71,7 +70,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           contentAsString(resp) mustBe "Partnership name capture"
         }
         "registration does contain partnership name" in {
-          mockRegistrationFind(
+          spyJourneyAction.setReg(
             aRegistration(
               withPartnershipDetails(
                 Some(generalPartnershipDetails.copy(partnershipName = Some("Partners in Plastics")))
@@ -87,7 +86,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     }
 
     "update partnership name" in {
-      authorizedUser()
+
 
       await(
         controller.submit()(
@@ -101,7 +100,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     }
 
     "redirect to general partnership grs journey" in {
-      authorizedUser()
+
 
       await(
         controller.submit()(
@@ -111,12 +110,12 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       val (_, grsJourneyCreationUrl) = lastPartnershipGrsJourneyCreation()
 
-      grsJourneyCreationUrl mustBe appConfig.generalPartnershipJourneyUrl
+      grsJourneyCreationUrl mustBe config.generalPartnershipJourneyUrl
     }
 
     "redirect to scottish partnership grs journey" in {
-      authorizedUser()
-      mockRegistrationFind(aRegistration(withPartnershipDetails(Some(scottishPartnershipDetails))))
+
+      spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(scottishPartnershipDetails))))
 
       await(
         controller.submit()(
@@ -126,7 +125,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       val (_, grsJourneyCreationUrl) = lastPartnershipGrsJourneyCreation()
 
-      grsJourneyCreationUrl mustBe appConfig.scottishPartnershipJourneyUrl
+      grsJourneyCreationUrl mustBe config.scottishPartnershipJourneyUrl
     }
 
     "reject invalid partnership names" in {
@@ -140,14 +139,14 @@ class PartnershipNameControllerSpec extends ControllerSpec {
     "throw exception" when {
       "attempting to display partnership name capture page" when {
         "user not authorized" in {
-          unAuthorizedUser()
+
 
           intercept[RuntimeException] {
             await(controller.displayPage()(getRequest()))
           }
         }
         "partnership details absent from the registration" in {
-          mockRegistrationFind(
+          spyJourneyAction.setReg(
             partnershipRegistration.copy(organisationDetails =
               partnershipRegistration.organisationDetails.copy(partnershipDetails = None)
             )
@@ -161,7 +160,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
       "submitting partnership name" when {
         "user not authorized" in {
-          unAuthorizedUser()
+
 
           intercept[RuntimeException] {
             await(
@@ -173,7 +172,7 @@ class PartnershipNameControllerSpec extends ControllerSpec {
           }
         }
         "registration is of unexpected partnership type" in {
-          mockRegistrationFind(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
+          spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
 
           intercept[IllegalStateException] {
             await(

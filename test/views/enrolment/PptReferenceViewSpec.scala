@@ -28,7 +28,7 @@ class PptReferenceViewSpec extends UnitViewSpec with Matchers {
   private val page = inject[ppt_reference_page]
 
   private def createView(form: Form[PptReference] = PptReference.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form)(registrationJourneyRequest, messages)
 
   "The Initial PPT Reference View" should {
 

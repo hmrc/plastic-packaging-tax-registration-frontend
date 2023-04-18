@@ -16,24 +16,22 @@
 
 package controllers
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import connectors.RegistrationConnector
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import controllers.liability.{routes => liabilityRoutes}
 import models.registration.Cacheable
 import models.request.JourneyRequest
-import views.html.{task_list_group, task_list_partnership, task_list_single_entity}
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.{task_list_group, task_list_partnership, task_list_single_entity}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class TaskListController @Inject()(
-                                    authenticate: RegistrationAuthAction,
-                                    journeyAction: GetRegistrationAction,
+                                    journeyAction: JourneyAction,
                                     mcc: MessagesControllerComponents,
                                     singleEntityPage: task_list_single_entity,
                                     groupPage: task_list_group,
@@ -43,7 +41,7 @@ class TaskListController @Inject()(
   (implicit ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with Cacheable {
 
   def displayPage(): Action[AnyContent] = {
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
 
       val hasOldLiabilityQuestions: Boolean = request.registration.hasOldLiabilityQuestions
       if (hasOldLiabilityQuestions)

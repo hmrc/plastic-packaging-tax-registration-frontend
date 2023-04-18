@@ -16,22 +16,14 @@
 
 package controllers.contact
 
+import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
+import forms.contact.Address
+import models.registration.{Cacheable, PrimaryContactDetails, Registration}
+import models.request.JourneyRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import forms.contact.Address
-import models.registration.{
-  Cacheable,
-  PrimaryContactDetails,
-  Registration
-}
-import models.request.JourneyRequest
-import services.{
-  AddressCaptureConfig,
-  AddressCaptureService
-}
+import services.{AddressCaptureConfig, AddressCaptureService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -39,8 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsAddressController @Inject() (
-                                                  authenticate: RegistrationAuthAction,
-                                                  journeyAction: GetRegistrationAction,
+                                                  journeyAction: JourneyAction,
                                                   override val registrationConnector: RegistrationConnector,
                                                   addressCaptureService: AddressCaptureService,
                                                   mcc: MessagesControllerComponents
@@ -48,7 +39,7 @@ class ContactDetailsAddressController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       addressCaptureService.initAddressCapture(
         AddressCaptureConfig(
           backLink = routes.ContactDetailsConfirmAddressController.displayPage().url,
@@ -64,7 +55,7 @@ class ContactDetailsAddressController @Inject() (
     }
 
   def update(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
           updateRegistration(capturedAddress).map {

@@ -36,8 +36,7 @@ class ContactDetailsCheckAnswersControllerSpec
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsCheckAnswersController(authenticate = mockAuthAction,
-                                             journeyAction = mockJourneyAction,
+    new ContactDetailsCheckAnswersController(journeyAction = spyJourneyAction,
                                              registrationConnector = mockRegistrationConnector,
                                              mcc = mcc,
                                              page = page
@@ -45,8 +44,8 @@ class ContactDetailsCheckAnswersControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
-    mockRegistrationFind(
+
+    spyJourneyAction.setReg(
       aRegistration(
         withGroupDetail(
           Some(GroupDetail(membersUnderGroupControl = Some(true), members = Seq(groupMember)))
@@ -73,14 +72,14 @@ class ContactDetailsCheckAnswersControllerSpec
 
     "throw exception" when {
       "user not authorised" in {
-        unAuthorizedUser()
+
 
         intercept[RuntimeException] {
           await(controller.displayPage(groupMember.id)(getRequest()))
         }
       }
       "group member missing from registration" in {
-        mockRegistrationFind(aRegistration(withGroupDetail(Some(groupDetails))))
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails))))
 
         intercept[IllegalStateException] {
           await(controller.displayPage(groupMember.id)(getRequest()))

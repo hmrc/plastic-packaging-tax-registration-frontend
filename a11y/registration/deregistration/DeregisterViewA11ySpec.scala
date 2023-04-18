@@ -28,7 +28,7 @@ class DeregisterViewA11ySpec extends BaseViewSpec {
   private val page                  = inject[deregister_page]
 
   private def createView(form: Form[Boolean] = DeregisterForm.form()): String =
-    page(form)(authenticatedRequest, messages).toString()
+    page(form)(registrationRequest, messages).toString()
 
   "The Initial Deregister View" should {
 

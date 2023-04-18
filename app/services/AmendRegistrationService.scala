@@ -17,7 +17,7 @@
 package services
 
 import connectors.SubscriptionsConnector
-import models.registration.Registration
+import models.registration.{Registration, RegistrationUpdater}
 import models.request.JourneyRequest
 import models.subscriptions.SubscriptionCreateOrUpdateResponse
 import repositories.RegistrationAmendmentRepository
@@ -31,7 +31,7 @@ class AmendRegistrationService @Inject()(
                                           registrationAmendmentRepository: RegistrationAmendmentRepository
                                         )(implicit val executionContext: ExecutionContext) {
 
-  def updateRegistration(
+  def updateSubscriptionWithRegistration(
                           updateFunction: Registration => Registration = identity
                         )(implicit request: JourneyRequest[_], headerCarrier: HeaderCarrier): Future[SubscriptionCreateOrUpdateResponse] =
     registrationAmendmentRepository.update(updateFunction)(request.authenticatedRequest).flatMap { registration =>

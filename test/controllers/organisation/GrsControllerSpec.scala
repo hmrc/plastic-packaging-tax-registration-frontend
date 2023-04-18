@@ -46,8 +46,7 @@ class GrsControllerSpec extends ControllerSpec {
 
   private val controller =
     new GrsController(
-      authenticate = mockAuthAction,
-      mockJourneyAction,
+      journeyAction = spyJourneyAction,
       mockRegistrationConnector,
       mockUkCompanyGrsConnector,
       mockSoleTraderGrsConnector,
@@ -178,8 +177,8 @@ class GrsControllerSpec extends ControllerSpec {
 
     "throw exception" when {
       "organisation type is invalid" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration(withOrganisationDetails(OrganisationDetails())))
+
+        spyJourneyAction.setReg(aRegistration(withOrganisationDetails(OrganisationDetails())))
 
         intercept[InternalServerException] {
           await(controller.grsCallback("uuid-id")(getRequest()))
@@ -187,9 +186,9 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "generalPartnership details are missing" in {
-        authorizedUser()
+
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           unregisteredGeneralPartnership.copy(organisationDetails =
             unregisteredGeneralPartnership.organisationDetails.copy(partnershipDetails = None)
           )
@@ -202,10 +201,10 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "scottishPartnership details are missing" in {
-        authorizedUser()
+
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
 
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           unregisteredScottishPartnership.copy(organisationDetails =
             unregisteredScottishPartnership.organisationDetails.copy(partnershipDetails = None)
           )
@@ -218,8 +217,8 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "DB registration update fails" in {
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockGetUkCompanyDetails(incorporationDetails)
         mockRegistrationUpdateFailure()
 
@@ -229,8 +228,8 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "GRS call fails" in {
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockGetUkCompanyDetailsFailure(new RuntimeException("error"))
 
         intercept[RuntimeException] {
@@ -241,9 +240,9 @@ class GrsControllerSpec extends ControllerSpec {
 
     "show error page" when {
       "business partner id is absent" in {
-        authorizedUser()
+
         mockGetUkCompanyDetails(unregisteredIncorporationDetails)
-        mockRegistrationFind(unregisteredLimitedCompany)
+        spyJourneyAction.setReg(unregisteredLimitedCompany)
         mockRegistrationUpdate()
     
         val result: Future[Result] = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
@@ -255,7 +254,7 @@ class GrsControllerSpec extends ControllerSpec {
 
     "show verification error page" when {
       "business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED" in {
-        authorizedUser()
+
         val result = simulateBusinessVerificationFailureLimitedCompanyCallback()
 
         status(result) mustBe SEE_OTHER
@@ -263,9 +262,9 @@ class GrsControllerSpec extends ControllerSpec {
       }
 
       "sole trader business verification status is FAIL and registrationStatus is REGISTRATION_NOT_CALLED" in {
-        authorizedUser()
+
         mockGetSoleTraderDetails(verificationFailedSoleTraderDetails)
-        mockRegistrationFind(verificationFailedSoleTrader)
+        spyJourneyAction.setReg(verificationFailedSoleTrader)
         mockRegistrationUpdate()
 
         val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
@@ -277,9 +276,9 @@ class GrsControllerSpec extends ControllerSpec {
 
     "show duplicate subscription page" when {
       "a ppt registration already exists for the organisation" in {
-        authorizedUser()
+
         mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationFind(registeredLimitedCompany)
+        spyJourneyAction.setReg(registeredLimitedCompany)
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
@@ -292,11 +291,11 @@ class GrsControllerSpec extends ControllerSpec {
 
     "show nominated organisation already registered page" when {
       "a ppt registration already exists for the organisation" in {
-        authorizedUser()
+
         mockGetUkCompanyDetails(incorporationDetails)
         val registeredCompanyForGroup =
           registeredLimitedCompany.copy(registrationType = Some(RegType.GROUP))
-        mockRegistrationFind(registeredCompanyForGroup)
+        spyJourneyAction.setReg(registeredCompanyForGroup)
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
@@ -310,9 +309,9 @@ class GrsControllerSpec extends ControllerSpec {
     "show registration failed page" when {
       "the registration fails and the identifiers dont match" in {
         val grsResponse = incorporationDetails.copy(registration = Some(failedRegistrationDetails))
-        authorizedUser()
+
         mockGetUkCompanyDetails(grsResponse)
-        mockRegistrationFind(registeredLimitedCompany)
+        spyJourneyAction.setReg(registeredLimitedCompany)
         mockRegistrationUpdate()
 
         val result = controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
@@ -326,18 +325,18 @@ class GrsControllerSpec extends ControllerSpec {
   }
 
   private def simulateLimitedCompanyCallback(incorporationDetails: IncorporationDetails) = {
-    authorizedUser()
+
     mockGetUkCompanyDetails(incorporationDetails)
-    mockRegistrationFind(unregisteredLimitedCompany)
+    spyJourneyAction.setReg(unregisteredLimitedCompany)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateRegisteredSocietyCallback() = {
-    authorizedUser()
+
     mockGetRegisteredSocietyDetails(incorporationDetails)
-    mockRegistrationFind(registeredRegisteredSociety)
+    spyJourneyAction.setReg(registeredRegisteredSociety)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
@@ -345,36 +344,36 @@ class GrsControllerSpec extends ControllerSpec {
 
 
   private def simulateBusinessVerificationFailureLimitedCompanyCallback() = {
-    authorizedUser()
+
     mockGetUkCompanyDetails(verificationFailedIncorporationDetails)
-    mockRegistrationFind(verificationFailedLimitedCompany)
+    spyJourneyAction.setReg(verificationFailedLimitedCompany)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateSoleTraderCallback(soleTraderDetails: SoleTraderDetails) = {
-    authorizedUser()
+
     mockGetSoleTraderDetails(soleTraderDetails)
-    mockRegistrationFind(unregisteredSoleTrader)
+    spyJourneyAction.setReg(unregisteredSoleTrader)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateGeneralPartnershipCallback(partnershipBusinessDetails: PartnershipBusinessDetails) = {
-    authorizedUser()
+
     mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
-    mockRegistrationFind(unregisteredGeneralPartnership)
+    spyJourneyAction.setReg(unregisteredGeneralPartnership)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())
   }
 
   private def simulateScottishPartnershipCallback(partnershipBusinessDetails: PartnershipBusinessDetails) = {
-    authorizedUser()
+
     mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
-    mockRegistrationFind(unregisteredScottishPartnership)
+    spyJourneyAction.setReg(unregisteredScottishPartnership)
     mockRegistrationUpdate()
 
     controller.grsCallback(registration.incorpJourneyId.get)(getRequest())

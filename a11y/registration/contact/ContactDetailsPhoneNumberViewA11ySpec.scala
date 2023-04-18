@@ -28,7 +28,7 @@ class ContactDetailsPhoneNumberViewA11ySpec extends BaseViewSpec {
   private val updateLink = Call("GET", "/update")
 
   private def createView(form: Form[PhoneNumber] = PhoneNumber.form(), isGroup: Boolean = false): String =
-    page(form, updateLink, isGroup)(journeyRequest, messages).toString()
+    page(form, updateLink, isGroup)(registrationJourneyRequest, messages).toString()
 
   "Primary Contact Details Phone Number View" should {
 

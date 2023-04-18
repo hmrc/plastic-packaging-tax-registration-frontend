@@ -26,7 +26,7 @@ class ReferenceNumberAlreadyUsedFailurePageSpec extends UnitViewSpec with Matche
   private val page = inject[reference_number_already_used_failure_page]
 
   private def createView(): Document =
-    page()(journeyRequest, messages)
+    page()(registrationJourneyRequest, messages)
 
   "PPT reference number already been used failure page" should {
 

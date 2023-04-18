@@ -16,8 +16,16 @@
 
 package base.unit
 
+import base.PptTestData
 import base.PptTestData.nrsCredentials
-import base.{MockAuthAction, PptTestData}
+import config.AppConfig
+import controllers.actions.JourneyAction
+import controllers.actions.auth.{AmendAuthAction, BasicAuthAction, RegistrationAuthAction}
+import models.SignedInUser
+import models.registration.Registration
+import models.request.AuthenticatedRequest.{PPTEnrolledRequest, RegistrationRequest}
+import models.request.{AuthenticatedRequest, IdentityData, JourneyRequest}
+import org.mockito.Mockito.spy
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -29,10 +37,6 @@ import play.api.test.Helpers.contentAsString
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, Injecting}
 import play.twirl.api.Html
 import spec.PptTestData
-import config.AppConfig
-import models.SignedInUser
-import models.request.{AuthenticatedRequest, IdentityData}
-import models.request.AuthenticatedRequest.RegistrationRequest
 import utils.FakeRequestCSRFSupport._
 
 import java.lang.reflect.Field
@@ -40,13 +44,65 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
     extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
-    with GuiceOneAppPerSuite with MockAuthAction with BeforeAndAfterEach with DefaultAwaitTimeout
-    with MockJourneyAction with MockConnectors with PptTestData with Injecting {
+    with GuiceOneAppPerSuite with BeforeAndAfterEach with DefaultAwaitTimeout
+      with MockConnectors with PptTestData with Injecting {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
+  def getAuthenticatedRequest[A](request: Request[A]): RegistrationRequest[A] = RegistrationRequest[A](request, IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)))
+  val spyJourneyAction: FakeJourneyAction.type = spy(FakeJourneyAction)
+
+  object FakeBasicAuthAction extends BasicAuthAction {
+    override def parser: BodyParser[AnyContent] = ???
+
+    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.RegistrationRequest[A] => Future[Result]): Future[Result] =
+      block(getAuthenticatedRequest(request))
+
+    override protected def executionContext: ExecutionContext = ec
+  }
+
+  object FakeAmendAuthAction extends AmendAuthAction {
+    override def parser: BodyParser[AnyContent] = ???
+
+    override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.PPTEnrolledRequest[A] => Future[Result]): Future[Result] =
+      block(PPTEnrolledRequest(request = request, identityData = IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)), pptReference = "test-ppt-reference"))
+
+    override protected def executionContext: ExecutionContext = ec
+  }
+
+  object FakeRegistrationAuthAction extends RegistrationAuthAction {
+    override def parser: BodyParser[AnyContent] = ???
+
+    override def invokeBlock[A](request: Request[A], block: RegistrationRequest[A] => Future[Result]): Future[Result] =
+      block(getAuthenticatedRequest(request))
+
+    override protected def executionContext: ExecutionContext = ec
+  }
+
+  object FakeJourneyAction extends JourneyAction {
+
+    //todo better
+    var registration: Registration = null
+    def setReg(reg: Registration): Unit = registration = reg
+    def reset(): Unit = registration = null
+
+    private val ab = new ActionBuilder[JourneyRequest, AnyContent] {
+      override def parser: BodyParser[AnyContent] = ???
+
+      override def invokeBlock[A](request: Request[A], block: JourneyRequest[A] => Future[Result]): Future[Result] =
+        block(JourneyRequest(getAuthenticatedRequest(request), registration))
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+
+    override def register: ActionBuilder[JourneyRequest, AnyContent] = ab
+    override def amend: ActionBuilder[JourneyRequest, AnyContent] = ab
+  }
+
+
 
   implicit val config: AppConfig = mock[AppConfig]
 
+  @deprecated("just use FakeRequest")
   def getRequest(session: (String, String) = "" -> ""): Request[AnyContentAsEmpty.type] =
     FakeRequest("GET", "").withSession(session).withCSRFToken
 
@@ -58,6 +114,7 @@ trait ControllerSpec
 
   def authRequest[A](fakeRequest: FakeRequest[A]) =
     RegistrationRequest(fakeRequest, IdentityData(Some("internalId"), Some(nrsCredentials)))
+
 
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 

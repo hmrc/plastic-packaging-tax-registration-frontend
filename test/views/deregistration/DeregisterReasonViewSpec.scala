@@ -30,7 +30,7 @@ class DeregisterReasonViewSpec extends UnitViewSpec with Matchers {
   private val page = inject[deregister_reason_page]
 
   private def createView(form: Form[DeregisterReasonForm] = DeregisterReasonForm.form()): Document =
-    page(form)(authenticatedRequest, messages)
+    page(form)(registrationRequest, messages)
 
   "Confirm Deregistration Reason View" should {
 

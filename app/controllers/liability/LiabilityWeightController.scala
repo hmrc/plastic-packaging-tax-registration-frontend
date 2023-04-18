@@ -16,15 +16,14 @@
 
 package controllers.liability
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import forms.liability.LiabilityWeight
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import views.html.liability.liability_weight_page
 
 import javax.inject.{Inject, Singleton}
@@ -32,8 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LiabilityWeightController @Inject() (
-                                            authenticate: RegistrationAuthAction,
-                                            journeyAction: GetRegistrationAction,
+                                            journeyAction: JourneyAction,
                                             override val registrationConnector: RegistrationConnector,
                                             mcc: MessagesControllerComponents,
                                             page: liability_weight_page
@@ -41,7 +39,7 @@ class LiabilityWeightController @Inject() (
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.liabilityDetails.expectedWeightNext12m match {
         case Some(data) => Ok(page(LiabilityWeight.form().fill(data)))
         case _          => Ok(page(LiabilityWeight.form()))
@@ -49,7 +47,7 @@ class LiabilityWeightController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       LiabilityWeight.form()
         .bindFromRequest()
         .fold(

@@ -40,8 +40,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
   private val aRegistration = super.aRegistration()
 
   val sut = new TaxStartDateController(
-    mockAuthAction,
-    mockJourneyAction,
+    journeyAction = spyJourneyAction,
     mockTaxStartDateService,
     mcc,
     page,
@@ -54,8 +53,8 @@ class TaxStartDateControllerSpec extends ControllerSpec {
   }
 
   private def authoriseAndSetRegistration = {
-    authorizedUser()
-    mockRegistrationFind(aRegistration())
+
+    spyJourneyAction.setReg(aRegistration())
   }
 
   "display page" should {
@@ -82,7 +81,7 @@ class TaxStartDateControllerSpec extends ControllerSpec {
 
     "return an error" when {
       "user is not authorised and display page method is invoked" in {
-        unAuthorizedUser()
+
         val result = sut.displayPage()(getRequest())
         intercept[RuntimeException](status(result))
       }

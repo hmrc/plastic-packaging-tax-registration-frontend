@@ -36,7 +36,7 @@ class ExpectToExceedThresholdWeightDateViewA11ySpec extends BaseViewSpec {
   private val form = formProvider()(messages)
 
   private def render(form: Form[LocalDate] = form) : String =
-    page(form)(journeyRequest, messages).toString()
+    page(form)(registrationJourneyRequest, messages).toString()
 
   "view" should {
     "pass accessibility checks without error" in {

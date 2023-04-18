@@ -31,7 +31,7 @@ class PartnerJobTitleViewA11ySpec extends BaseViewSpec {
   private val contactName = "A Contact"
 
   private def createView(form: Form[JobTitle] = JobTitle.form()): String =
-    page(form, contactName, updateLink)(journeyRequest, messages).toString()
+    page(form, contactName, updateLink)(registrationJourneyRequest, messages).toString()
 
   "Job title View" should {
 

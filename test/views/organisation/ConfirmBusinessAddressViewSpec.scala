@@ -38,7 +38,7 @@ class ConfirmBusinessAddressViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(): Document =
-    page(addressConversionUtils.toPptAddress(incorporationAddressDetails), "company name", "url")(journeyRequest, messages)
+    page(addressConversionUtils.toPptAddress(incorporationAddressDetails), "company name", "url")(registrationJourneyRequest, messages)
 
   "Confirm Address View" should {
 
@@ -71,10 +71,10 @@ class ConfirmBusinessAddressViewSpec extends UnitViewSpec with Matchers {
 
   override def exerciseGeneratedRenderingMethods() = {
     page.f(addressConversionUtils.toPptAddress(incorporationAddressDetails),
-      "company name", "url")(journeyRequest, messages)
+      "company name", "url")(registrationJourneyRequest, messages)
 
     page.render(addressConversionUtils.toPptAddress(incorporationAddressDetails),
-      "company name", "url", journeyRequest, messages)
+      "company name", "url", registrationJourneyRequest, messages)
   }
 
 }

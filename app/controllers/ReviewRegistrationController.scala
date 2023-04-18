@@ -16,23 +16,22 @@
 
 package controllers
 
-import com.kenshoo.play.metrics.Metrics
-import play.api.i18n.I18nSupport
-import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
 import audit.Auditor
+import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 import connectors._
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import models.nrs.NrsDetails
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
 import models.response.FlashKeys
 import models.subscriptions.{EisError, SubscriptionCreateOrUpdateResponseFailure, SubscriptionCreateOrUpdateResponseSuccess}
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import services.RegistrationGroupFilterService
-import views.html.review_registration_page
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.review_registration_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,8 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ReviewRegistrationController @Inject() (
                                                appConfig: AppConfig,
-                                               authenticate: RegistrationAuthAction,
-                                               journeyAction: GetRegistrationAction,
+                                               journeyAction: JourneyAction,
                                                mcc: MessagesControllerComponents,
                                                subscriptionsConnector: SubscriptionsConnector,
                                                metrics: Metrics,
@@ -59,7 +57,7 @@ class ReviewRegistrationController @Inject() (
     metrics.defaultRegistry.counter("ppt.registration.failed.submission.counter")
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
         if (request.registration.isCheckAndSubmitReady)
           displayReviewRegistrationPage()
         else 
@@ -67,7 +65,7 @@ class ReviewRegistrationController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       // Don't let user submit with old liability answers
       if (!request.registration.hasOldLiabilityQuestions)
         submitRegistration(request)
@@ -111,7 +109,7 @@ class ReviewRegistrationController @Inject() (
     )
     if (response.enrolmentInitiatedSuccessfully.contains(true))
       Redirect(routes.ConfirmationController.displayPage())
-        .flashing(
+        .flashing( //TODO NO NO NO NO
           Flash(
             Map(FlashKeys.referenceId -> response.pptReference,
                 FlashKeys.groupReg    -> registration.isGroup.toString
@@ -120,7 +118,7 @@ class ReviewRegistrationController @Inject() (
         )
     else
       Redirect(routes.NotableErrorController.enrolmentFailure())
-        .flashing(
+        .flashing( //TODO NO NO NO NO
           Flash(
             Map(FlashKeys.referenceId -> response.pptReference,
                 FlashKeys.groupReg    -> registration.isGroup.toString

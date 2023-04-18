@@ -35,7 +35,7 @@ class ErrorHandlerTest
     "standardErrorTemplate" in {
 
       val result =
-        errorHandler.standardErrorTemplate("title", "heading", "message")(journeyRequest).body
+        errorHandler.standardErrorTemplate("title", "heading", "message")(registrationJourneyRequest).body
 
       result must include("title")
       result must include("heading")

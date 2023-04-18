@@ -29,7 +29,7 @@ class ManagePartnersPageSpec extends BaseViewSpec {
   )
 
   private def createView(registration: Registration): String =
-    page(registration)(journeyRequestWithEnrolledUser, messages).toString()
+    page(registration)(amendsJourneyRequest, messages).toString()
 
   val view = createView(partnershipRegistration)
 

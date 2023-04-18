@@ -30,7 +30,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationViewSpec extends UnitViewSpe
   "Email Address Passcode Confirmation View" should {
 
     val view = page(updateCall, Some(messages("primaryContactDetails.sectionHeader")))(
-      request = journeyRequest,
+      request = registrationJourneyRequest,
       messages = messages
     )
 

@@ -23,7 +23,7 @@ import views.html.deregistration.deregistration_submitted_page
 
 class DeregistrationSubmittedViewSpec extends UnitViewSpec with Matchers {
 
-  override val appConfig: AppConfig = inject[AppConfig]
+  val appConfig: AppConfig = inject[AppConfig]
   private val page                  = inject[deregistration_submitted_page]
 
   "The Deregistration Submitted View" should {

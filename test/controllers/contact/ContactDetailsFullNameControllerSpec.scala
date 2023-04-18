@@ -38,8 +38,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsFullNameController(authenticate = mockAuthAction,
-                                         mockJourneyAction,
+    new ContactDetailsFullNameController(journeyAction = spyJourneyAction,
                                          mockRegistrationConnector,
                                          mcc = mcc,
                                          page = page
@@ -60,15 +59,15 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(
             withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName")))
           )
@@ -81,8 +80,8 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
 
     "return 303 (OK) " when {
       "user submits or saves the contact full name" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val result =
@@ -103,21 +102,21 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
 
-        authorizedUser()
+
         val result = controller.submit()(postRequestEncoded(FullName("")))
 
         status(result) mustBe BAD_REQUEST
       }
 
       "user enters a long name" in {
-        authorizedUser()
+
         val result = controller.submit()(postRequestEncoded(FullName("abced" * 40)))
 
         status(result) mustBe BAD_REQUEST
       }
 
       "user enters non-alphabetic characters" in {
-        authorizedUser()
+
         val result =
           controller.submit()(
             postRequestEncoded(FullName("FirstNam807980234£$ LastName"))
@@ -127,7 +126,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       }
 
       "user enters non-alphabetic no digits" in {
-        authorizedUser()
+
         val result =
           controller.submit()(postRequestEncoded(FullName("()/,& LastName")))
 
@@ -135,7 +134,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       }
 
       "user enters accented characters" in {
-        authorizedUser()
+
         val result =
           controller.submit()(postRequestEncoded(FullName("Chlöe Anne-Marie")))
 
@@ -146,14 +145,14 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
+
         mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
@@ -162,7 +161,7 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
+
         mockRegistrationException()
         val result =
           controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
@@ -172,8 +171,8 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
     }
 
     "display page for a group organisation" in {
-      authorizedUser()
-      mockRegistrationFind(
+
+      spyJourneyAction.setReg(
         aRegistration(
           withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
           withGroupDetail(Some(groupDetailsWithMembers))

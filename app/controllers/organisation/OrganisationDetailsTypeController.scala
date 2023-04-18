@@ -20,8 +20,7 @@ import audit.Auditor
 import config.AppConfig
 import connectors._
 import connectors.grs._
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import controllers.group.OrganisationDetailsTypeHelper
 import forms.organisation.{ActionEnum, OrgType, OrganisationType, PartnerTypeEnum}
 import models.genericregistration.PartnershipDetails
@@ -39,8 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OrganisationDetailsTypeController @Inject() (
                                                     auditor: Auditor,
-                                                    authenticate: RegistrationAuthAction,
-                                                    journeyAction: GetRegistrationAction,
+                                                    journeyAction: JourneyAction,
                                                     override val appConfig: AppConfig,
                                                     override val soleTraderGrsConnector: SoleTraderGrsConnector,
                                                     override val ukCompanyGrsConnector: UkCompanyGrsConnector,
@@ -62,7 +60,7 @@ class OrganisationDetailsTypeController @Inject() (
   def submit(): Action[AnyContent]                     = doSubmit(ActionEnum.Org)
 
   private def doDisplayPage(action: ActionEnum.Type) =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.organisationDetails.organisationType match {
         case Some(data) =>
           Future(
@@ -80,7 +78,7 @@ class OrganisationDetailsTypeController @Inject() (
     }
 
   private def doSubmit(action: ActionEnum.Type) =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       OrganisationType.form(action)
         .bindFromRequest()
         .fold(

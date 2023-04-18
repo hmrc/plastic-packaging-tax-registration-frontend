@@ -35,12 +35,12 @@ class DeregistrationSubmittedControllerSpec
   when(mockPage.apply()(any(), any())).thenReturn(HtmlFormat.raw("Deregistration Submitted"))
 
   private val deregistrationSubmittedController =
-    new DeregistrationSubmittedController(mockEnrolledAuthAction, mcc, mockPage)
+    new DeregistrationSubmittedController(FakeAmendAuthAction, mcc, mockPage)
 
   "Deregistration Submitted Controller" should {
     "display page" when {
       "user authenticated" in {
-        authorizedUser()
+
 
         val resp = deregistrationSubmittedController.displayPage()(getRequest())
 
@@ -51,7 +51,7 @@ class DeregistrationSubmittedControllerSpec
 
     "throw exception" when {
       "user not authenticated" in {
-        unAuthorizedUser()
+
 
         intercept[RuntimeException] {
           await(deregistrationSubmittedController.displayPage()(getRequest()))

@@ -30,7 +30,7 @@ class ContactDetailsFullNameViewSpec extends UnitViewSpec with Matchers {
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[FullName] = FullName.form(), isGroup: Boolean = false): Document =
-    page(form, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(registrationJourneyRequest, messages)
 
   "Primary Contact Details Full Name View" should {
 

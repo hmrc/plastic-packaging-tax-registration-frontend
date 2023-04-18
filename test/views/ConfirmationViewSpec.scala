@@ -37,7 +37,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   private def createView(flash: Flash = new Flash(Map.empty)): Html =
-    page()(authenticatedRequest, messages, flash)
+    page()(registrationRequest, messages, flash)
 
   "Confirmation Page view" should {
 
@@ -168,8 +168,8 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers with Injecting {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f()(authenticatedRequest, messages, new Flash(Map.empty))
-    page.render(authenticatedRequest, messages, new Flash(Map.empty))
+    page.f()(registrationRequest, messages, new Flash(Map.empty))
+    page.render(registrationRequest, messages, new Flash(Map.empty))
   }
 
 }

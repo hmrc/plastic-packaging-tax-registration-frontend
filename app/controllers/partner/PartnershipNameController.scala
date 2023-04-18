@@ -23,12 +23,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import connectors._
 import connectors.grs.PartnershipGrsConnector
+import controllers.actions.JourneyAction
 import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
-import forms.organisation.PartnerTypeEnum.{
-  GENERAL_PARTNERSHIP,
-  SCOTTISH_PARTNERSHIP
-}
+import forms.organisation.PartnerTypeEnum.{GENERAL_PARTNERSHIP, SCOTTISH_PARTNERSHIP}
 import forms.organisation.PartnershipName
 import models.genericregistration.PartnershipGrsCreateRequest
 import models.registration.{Cacheable, Registration}
@@ -41,8 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PartnershipNameController @Inject() (
-                                            authenticate: RegistrationAuthAction,
-                                            journeyAction: GetRegistrationAction,
+                                            journeyAction: JourneyAction,
                                             appConfig: AppConfig,
                                             partnershipGrsConnector: PartnershipGrsConnector,
                                             override val registrationConnector: RegistrationConnector,
@@ -52,7 +49,7 @@ class PartnershipNameController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.organisationDetails.partnershipDetails match {
         case Some(partnershipDetails) =>
           partnershipDetails.partnershipName match {
@@ -65,7 +62,7 @@ class PartnershipNameController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       PartnershipName.form()
         .bindFromRequest()
         .fold((formWithErrors: Form[PartnershipName]) => Future(BadRequest(page(formWithErrors))),

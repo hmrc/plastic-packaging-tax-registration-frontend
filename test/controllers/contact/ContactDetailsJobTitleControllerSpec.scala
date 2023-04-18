@@ -41,8 +41,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ContactDetailsJobTitleController(authenticate = mockAuthAction,
-                                         journeyAction = mockJourneyAction,
+    new ContactDetailsJobTitleController(journeyAction = spyJourneyAction,
                                          registrationConnector = mockRegistrationConnector,
                                          mcc = mcc,
                                          page = page
@@ -63,15 +62,15 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -80,8 +79,8 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
 
       "return 303 (OK)" when {
         "user submits the job title" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdate()
 
           val result =
@@ -109,8 +108,8 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withPrimaryContactDetails(PrimaryContactDetails(jobTitle = Some("tester"))))
         )
 
@@ -121,8 +120,8 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     }
 
     "display page for a group organisation" in {
-      authorizedUser()
-      mockRegistrationFind(
+
+      spyJourneyAction.setReg(
         aRegistration(
           withPrimaryContactDetails(PrimaryContactDetails(name = Some("FirstName LastName"))),
           withGroupDetail(Some(groupDetailsWithMembers))
@@ -139,7 +138,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid job title" in {
-        authorizedUser()
+
         val result =
           controller.submit()(postRequest(Json.toJson(JobTitle("$%^"))))
 
@@ -150,14 +149,14 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
+
         mockRegistrationUpdateFailure()
         val result =
           controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
@@ -166,7 +165,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
+
         mockRegistrationException()
         val result =
           controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))

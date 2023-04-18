@@ -32,8 +32,7 @@ class CheckAnswersControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new CheckAnswersController(authenticate = mockAuthAction,
-                               journeyAction = mockJourneyAction,
+    new CheckAnswersController(journeyAction = spyJourneyAction,
                                registrationConnector = mockRegistrationConnector,
                                mcc = mcc,
                                page = page
@@ -52,7 +51,7 @@ class CheckAnswersControllerSpec extends ControllerSpec {
   "Check Answers Controller" should {
     "display the check answers page" when {
       "user is authorised" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -62,7 +61,7 @@ class CheckAnswersControllerSpec extends ControllerSpec {
     }
     "throw a RuntimeException" when {
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))

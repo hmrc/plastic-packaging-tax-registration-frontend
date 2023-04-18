@@ -29,7 +29,7 @@ class OrganisationAlreadyInGroupViewA11ySpec extends BaseViewSpec {
   private val groupError = GroupError(MEMBER_IN_GROUP, "Member Name")
 
   private def createView(groupError: GroupError = groupError): String =
-    page(groupError)(journeyRequest, messages).toString()
+    page(groupError)(registrationJourneyRequest, messages).toString()
 
   "Organisation Already In Group Page" should {
 

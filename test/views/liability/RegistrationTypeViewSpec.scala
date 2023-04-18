@@ -32,7 +32,7 @@ class RegistrationTypeViewSpec extends UnitViewSpec with Matchers {
   private val page     = inject[registration_type_page]
 
   private def createView(form: Form[RegistrationType] = RegistrationType.form()): Document =
-    page(form, backLink)(journeyRequest, messages)
+    page(form, backLink)(registrationJourneyRequest, messages)
 
   "Registration Type View" should {
 
@@ -108,8 +108,8 @@ class RegistrationTypeViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(form(), backLink)(journeyRequest, messages)
-    page.render(form(), backLink, journeyRequest, messages)
+    page.f(form(), backLink)(registrationJourneyRequest, messages)
+    page.render(form(), backLink, registrationJourneyRequest, messages)
   }
 
 }

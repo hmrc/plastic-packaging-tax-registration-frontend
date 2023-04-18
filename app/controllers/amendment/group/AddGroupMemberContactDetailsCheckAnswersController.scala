@@ -50,7 +50,7 @@ class AddGroupMemberContactDetailsCheckAnswersController @Inject() (
 
   def submit(): Action[AnyContent] =
     journeyAction.amend.async { implicit request =>
-      amendRegistrationService.updateRegistration().map {
+      amendRegistrationService.updateSubscriptionWithRegistration().map {
         case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManageGroupMembersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>

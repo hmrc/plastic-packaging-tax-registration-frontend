@@ -16,29 +16,28 @@
 
 package controllers.group
 
-import javax.inject.{Inject, Singleton}
+import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
+import forms.group.AddOrganisationForm.form
+import models.registration.Cacheable
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.RegistrationConnector
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import forms.group.AddOrganisationForm.form
-import models.registration.Cacheable
-import views.html.group.organisation_list
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.group.organisation_list
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class OrganisationListController @Inject() (
-                                             authenticate: RegistrationAuthAction,
-                                             journeyAction: GetRegistrationAction,
+                                             journeyAction: JourneyAction,
                                              override val registrationConnector: RegistrationConnector,
                                              mcc: MessagesControllerComponents,
                                              page: organisation_list
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.groupDetail.fold(
         Redirect(controllers.routes.TaskListController.displayPage())
       )(
@@ -59,7 +58,7 @@ class OrganisationListController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       form().bindFromRequest().fold(
         (formWithErrors: Form[Boolean]) =>
           BadRequest(

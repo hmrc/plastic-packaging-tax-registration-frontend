@@ -18,8 +18,7 @@ package controllers.liability
 
 import config.AppConfig
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import controllers.{routes => commonRoutes}
 import forms.OldDate
 import models.registration.{Cacheable, LiabilityDetails, NewLiability, Registration}
@@ -34,8 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckLiabilityDetailsAnswersController @Inject() (authenticate: RegistrationAuthAction,
-                                                        journeyAction: GetRegistrationAction,
+class CheckLiabilityDetailsAnswersController @Inject() (journeyAction: JourneyAction,
                                                         mcc: MessagesControllerComponents,
                                                         override val registrationConnector: RegistrationConnector,
                                                         taxStarDateService: TaxStartDateService,
@@ -45,7 +43,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: Registrati
   with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
 
       taxStartDate.act(
@@ -57,7 +55,7 @@ class CheckLiabilityDetailsAnswersController @Inject() (authenticate: Registrati
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       val taxStartDate = taxStarDateService.calculateTaxStartDate(request.registration.liabilityDetails)
 
       taxStartDate.act(

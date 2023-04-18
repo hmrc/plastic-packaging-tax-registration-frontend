@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NotableErrorController @Inject() (
                                          authenticate: BasicAuthAction,
-                                         journeyAction: GetRegistrationAction,
+                                         getRegistration: GetRegistrationAction,
                                          mcc: MessagesControllerComponents,
                                          nominatedOrganisationAlreadyRegisteredPage: nominated_organisation_already_registered_page,
                                          organisationAlreadyInGroupPage: organisation_already_in_group_page,
@@ -37,12 +37,12 @@ class NotableErrorController @Inject() (
 ) extends FrontendController(mcc) with I18nSupport {
 
   def nominatedOrganisationAlreadyRegistered(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen getRegistration) { implicit request =>
       Ok(nominatedOrganisationAlreadyRegisteredPage())
     }
 
   def organisationAlreadyInGroup(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen getRegistration) { implicit request =>
       request.registration.groupDetail.flatMap(_.groupError) match {
         case Some(groupError) => Ok(organisationAlreadyInGroupPage(groupError))
         case _                => Redirect(groupRoutes.OrganisationListController.displayPage())
@@ -50,7 +50,7 @@ class NotableErrorController @Inject() (
     }
 
   def groupMemberAlreadyRegistered(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen getRegistration) { implicit request =>
       request.registration.groupDetail.flatMap(_.groupError) match {
         case Some(groupError) => Ok(groupMemberAlreadyRegisteredPage(groupError))
         case _                => Redirect(groupRoutes.OrganisationListController.displayPage())

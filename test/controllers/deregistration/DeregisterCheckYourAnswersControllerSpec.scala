@@ -16,7 +16,7 @@
 
 package controllers.deregistration
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
+import base.unit.{ControllerSpec, AmendmentControllerSpec}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -44,7 +44,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import scala.concurrent.Future
 
 class DeregisterCheckYourAnswersControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction {
+    extends ControllerSpec with AmendmentControllerSpec {
   private val page                      = mock[deregister_check_your_answers_page]
   private val mcc                       = stubMessagesControllerComponents()
   private val mockCache                 = mock[UserDataRepository]
@@ -57,7 +57,7 @@ class DeregisterCheckYourAnswersControllerSpec
     )
 
   private val controller =
-    new DeregisterCheckYourAnswersController(authenticate = mockEnrolledAuthAction,
+    new DeregisterCheckYourAnswersController(authenticate = FakeAmendAuthAction,
                                              mcc = mcc,
                                              deregistrationDetailRepository = repository,
                                              deregistrationConnector = mockDegistrationConnector,
@@ -82,14 +82,13 @@ class DeregisterCheckYourAnswersControllerSpec
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "submit the answers" in {
-        authorisedUserWithPptSubscription()
         when(
           mockDegistrationConnector.deregister(ArgumentMatchers.eq("XMPPT0000000123"),
                                                ArgumentMatchers.eq(initialDeregistrationDetails)
@@ -107,7 +106,6 @@ class DeregisterCheckYourAnswersControllerSpec
       }
 
       "when error in the response status" in {
-        authorisedUserWithPptSubscription()
         when(mockDegistrationConnector.deregister(any(), any())(any())).thenReturn(
           Future.successful(
             Left(DownstreamServiceError("failed", new FailedToDeregister("failed to de-register")))
@@ -120,7 +118,7 @@ class DeregisterCheckYourAnswersControllerSpec
 
       "throw a RuntimeException" when {
         "user is not authorised" in {
-          unAuthorizedUser()
+
           val result = controller.displayPage()(getRequest())
 
           intercept[RuntimeException](status(result))

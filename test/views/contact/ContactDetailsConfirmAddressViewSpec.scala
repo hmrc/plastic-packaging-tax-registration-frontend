@@ -40,7 +40,7 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
   )
 
   private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form(), isGroup: Boolean = false): Document = {
-    page(form, addressConversionUtils.toPptAddress(incorporationAddressDetails), isGroup)(journeyRequest, messages)
+    page(form, addressConversionUtils.toPptAddress(incorporationAddressDetails), isGroup)(registrationJourneyRequest, messages)
   }
 
   "Confirm Address View" should {
@@ -116,12 +116,12 @@ class ContactDetailsConfirmAddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-      page.f(ConfirmAddress.form(), addressConversionUtils.toPptAddress(incorporationAddressDetails), false)(journeyRequest, messages)
+      page.f(ConfirmAddress.form(), addressConversionUtils.toPptAddress(incorporationAddressDetails), false)(registrationJourneyRequest, messages)
 
       page.render(ConfirmAddress.form(),
         addressConversionUtils.toPptAddress(incorporationAddressDetails),
         false,
-        journeyRequest,
+        registrationJourneyRequest,
         messages
       )
     }

@@ -32,8 +32,7 @@ class PartnerContactAddressControllerSpec
   protected val newRegistrationUpdater = new NewRegistrationUpdateService(mockRegistrationConnector)
 
   private val controller =
-    new PartnerContactAddressController(authenticate = mockAuthAction,
-                                        journeyAction = mockJourneyAction,
+    new PartnerContactAddressController(journeyAction = spyJourneyAction,
                                         registrationUpdater = newRegistrationUpdater,
                                         addressCaptureService = mockAddressCaptureService,
                                         mcc = mcc
@@ -60,7 +59,7 @@ class PartnerContactAddressControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
+
     mockRegistrationUpdate()
     simulateSuccessfulAddressCaptureInit(None)
     simulateValidAddressCapture()
@@ -72,14 +71,14 @@ class PartnerContactAddressControllerSpec
   "Partner Contact Address Controller" should {
     "Redirect to address capture" when {
       "capturing address for new partner" in {
-        mockRegistrationFind(partnershipRegistrationWithInflightPartner)
+        spyJourneyAction.setReg(partnershipRegistrationWithInflightPartner)
 
         val resp = controller.captureNewPartner()(getRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
       }
       "capturing address for existing partner" in {
-        mockRegistrationFind(partnershipRegistrationWithExistingPartner)
+        spyJourneyAction.setReg(partnershipRegistrationWithExistingPartner)
 
         val resp = controller.captureExistingPartner(
           partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
@@ -91,7 +90,7 @@ class PartnerContactAddressControllerSpec
 
     "Populate returned address, promote inflight and redirect to partner check answers" when {
       "receive address capture callback for new partner" in {
-        mockRegistrationFind(partnershipRegistrationWithInflightPartner)
+        spyJourneyAction.setReg(partnershipRegistrationWithInflightPartner)
 
         val resp = controller.addressCaptureCallbackNewPartner()(getRequest())
 
@@ -105,7 +104,7 @@ class PartnerContactAddressControllerSpec
       }
       "receive address capture callback for existing partner" in {
         val nominatedPartnerId = partnershipRegistrationWithExistingPartner.nominatedPartner.get.id
-        mockRegistrationFind(partnershipRegistrationWithExistingPartner)
+        spyJourneyAction.setReg(partnershipRegistrationWithExistingPartner)
 
         val resp =
           controller.addressCaptureCallbackExistingPartner(nominatedPartnerId)(getRequest())

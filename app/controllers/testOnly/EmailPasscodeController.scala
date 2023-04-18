@@ -29,13 +29,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class EmailPasscodeController @Inject() (
                                           authenticate: BasicAuthAction,
                                           mcc: MessagesControllerComponents,
-                                          journeyAction: GetRegistrationAction,
                                           emailTestOnlyPasscodeConnector: EmailTestOnlyPasscodeConnector
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with I18nSupport {
 
   def testOnlyGetPasscodes(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    authenticate.async { implicit request =>
       emailTestOnlyPasscodeConnector.getTestOnlyPasscode.flatMap {
         case Right(response) => Future.successful(Ok(response))
         case Left(error)     => throw error

@@ -16,7 +16,7 @@
 
 package controllers.actions.auth
 
-import com.google.inject.Inject
+import com.google.inject.{ImplementedBy, Inject}
 import config.AppConfig
 import models.request.AuthenticatedRequest.RegistrationRequest
 import models.request.IdentityData
@@ -31,11 +31,14 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BasicAuthAction @Inject()(
+@ImplementedBy(classOf[BasicAuthActionImpl])
+trait BasicAuthAction extends ActionBuilder[RegistrationRequest, AnyContent]
+
+class BasicAuthActionImpl @Inject()(
  override val authConnector: AuthConnector,
  override val parser: BodyParsers.Default,
  appConfig: AppConfig
-)(implicit val executionContext: ExecutionContext) extends ActionBuilder[RegistrationRequest, AnyContent]
+)(implicit val executionContext: ExecutionContext) extends BasicAuthAction
   with ActionFunction[Request, RegistrationRequest] with AuthorisedFunctions with Logging {
 
   private val retrievals = internalId and credentials

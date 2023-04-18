@@ -31,7 +31,7 @@ class ContactDetailsNameViewA11ySpec extends BaseViewSpec {
   private val organisationName = "Organisation"
 
   private def createView(form: Form[MemberName] = MemberName.form()): String =
-    page(form, organisationName, updateLink, groupMember.id)(journeyRequest, messages).toString()
+    page(form, organisationName, updateLink, groupMember.id)(registrationJourneyRequest, messages).toString()
 
   "Member name View" should {
 

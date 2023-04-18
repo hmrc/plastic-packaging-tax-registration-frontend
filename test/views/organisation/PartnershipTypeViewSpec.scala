@@ -44,7 +44,7 @@ class PartnershipTypeViewSpec extends UnitViewSpec with Matchers {
   private def createView(
     form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)
   ): Document =
-    page(form)(journeyRequest, messages)
+    page(form)(registrationJourneyRequest, messages)
 
   "Partnership Type View" should {
 

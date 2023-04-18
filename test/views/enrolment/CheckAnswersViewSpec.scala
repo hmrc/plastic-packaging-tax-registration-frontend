@@ -30,7 +30,7 @@ class CheckAnswersViewSpec extends UnitViewSpec with Matchers with PptTestData {
   private val page = inject[check_answers_page]
 
   private def createView(answers: UserEnrolmentDetails = UserEnrolmentDetails()): Document =
-    page(answers)(journeyRequest, messages)
+    page(answers)(registrationJourneyRequest, messages)
 
   "Check Answers View with no answers" should {
 

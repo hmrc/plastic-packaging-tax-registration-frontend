@@ -24,7 +24,7 @@ class AmendErrorPageA11ySpec extends BaseViewSpec {
   private val page = inject[amend_error_page]
 
   private def createView(): String =
-    page()(journeyRequest, messages).toString()
+    page()(registrationJourneyRequest, messages).toString()
 
   "Amend Error page" should {
 

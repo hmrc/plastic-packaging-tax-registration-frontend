@@ -36,7 +36,7 @@ class PartnerEmailAddressViewA11ySpec extends BaseViewSpec {
         form,
         Call(POST, "update"),
         "contactName",
-        isNominatedPartner)(journeyRequest, messages).toString()
+        isNominatedPartner)(registrationJourneyRequest, messages).toString()
 
     "pass accessibility checks without error" when {
       "is nominated partner" in {

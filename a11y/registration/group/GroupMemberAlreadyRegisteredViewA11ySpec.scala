@@ -28,7 +28,7 @@ class GroupMemberAlreadyRegisteredViewA11ySpec extends BaseViewSpec {
 
   private val groupError = GroupError(MEMBER_IS_ALREADY_REGISTERED, "Plastic Packaging Ltd")
 
-  private def createView(): String = page(groupError)(journeyRequest, messages).toString()
+  private def createView(): String = page(groupError)(registrationJourneyRequest, messages).toString()
 
   "Group member Already Registered Page" should {
 

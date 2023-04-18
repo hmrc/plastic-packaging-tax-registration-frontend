@@ -16,28 +16,26 @@
 
 package controllers.organisation
 
+import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
+import models.registration.Cacheable
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import connectors.RegistrationConnector
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import models.registration.Cacheable
-import views.html.organisation.check_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.organisation.check_answers_page
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CheckAnswersController @Inject() (
-                                         authenticate: RegistrationAuthAction,
-                                         journeyAction: GetRegistrationAction,
+                                         journeyAction: JourneyAction,
                                          override val registrationConnector: RegistrationConnector,
                                          mcc: MessagesControllerComponents,
                                          page: check_answers_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       Ok(page())
     }
 

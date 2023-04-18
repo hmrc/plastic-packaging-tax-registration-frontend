@@ -16,8 +16,7 @@
 
 package controllers.amendment.partner
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import controllers.actions.getRegistration.AmendmentJourneyAction
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,12 +26,12 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.Html
-import views.html.amendment.partner.amend_partner_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import utils.FakeRequestCSRFSupport._
+import views.html.amendment.partner.amend_partner_contact_check_answers_page
 
 class PartnerContactDetailsCheckAnswersControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction {
+    extends ControllerSpec with AmendmentControllerSpec {
 
   private val mcc                 = stubMessagesControllerComponents()
   private val mockPartnerCYAsPage = mock[amend_partner_contact_check_answers_page]
@@ -42,15 +41,14 @@ class PartnerContactDetailsCheckAnswersControllerSpec
   )
 
   private val controller = new PartnerContactDetailsCheckAnswersController(
-    authenticate = mockEnrolledAuthAction,
-    amendmentJourneyAction = mockAmendmentJourneyAction,
     mcc = mcc,
-    page = mockPartnerCYAsPage
+    page = mockPartnerCYAsPage,
+    journeyAction = spyJourneyAction,
+    amendRegistrationService = mockAmendRegService
   )
 
   override protected def beforeEach(): Unit = {
-    authorisedUserWithPptSubscription()
-    simulateGetSubscriptionSuccess(partnershipRegistration)
+    spyJourneyAction.setReg(partnershipRegistration)
 
     when(
       mockPartnerCYAsPage.apply(ArgumentMatchers.eq(partnershipRegistration.nominatedPartner.get))(
@@ -63,7 +61,7 @@ class PartnerContactDetailsCheckAnswersControllerSpec
   "Partner Contact Details Check Answers Controllers" should {
     "display amend partner check answers page" in {
       val resp =
-        controller.displayPage(partnershipRegistration.nominatedPartner.get.id)(getRequest())
+        controller.displayPage(partnershipRegistration.nominatedPartner.get.id)(FakeRequest())
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "Amend Partner CYAs Page"
@@ -71,19 +69,16 @@ class PartnerContactDetailsCheckAnswersControllerSpec
 
     "throw IllegalStateException is requested partner is not found" in {
       intercept[IllegalStateException] {
-        await(controller.displayPage("xxx")(getRequest()))
+        await(controller.displayPage("xxx")(FakeRequest()))
       }
     }
 
     "redirect to partners list when submitted" in {
-      val resp = controller.submit()(getRequest())
+      val resp = controller.submit()(FakeRequest())
 
       status(resp) mustBe SEE_OTHER
       redirectLocation(resp) mustBe Some(routes.PartnersListController.displayPage().url)
     }
   }
-
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

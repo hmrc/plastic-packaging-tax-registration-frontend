@@ -33,7 +33,7 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   private val countryService = inject[CountryService]
 
   private def createView(form: Form[MemberName] = MemberName.form()): Document =
-    page(groupMember)(journeyRequest, messages)
+    page(groupMember)(registrationJourneyRequest, messages)
 
   "Contact Details Check Answers View" should {
 
@@ -114,8 +114,8 @@ class ContactDetailsCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(groupMember)(journeyRequest, messages)
-    page.render(groupMember, journeyRequest, messages)
+    page.f(groupMember)(registrationJourneyRequest, messages)
+    page.render(groupMember, registrationJourneyRequest, messages)
   }
 
 }

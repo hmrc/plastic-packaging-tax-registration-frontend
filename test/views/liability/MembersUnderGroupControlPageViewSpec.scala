@@ -33,7 +33,7 @@ class MembersUnderGroupControlPageViewSpec extends UnitViewSpec with Matchers {
   private def createView(
     form: Form[MembersUnderGroupControl] = MembersUnderGroupControl.form()
   ): Document =
-    page(form)(journeyRequest, messages)
+    page(form)(registrationJourneyRequest, messages)
 
   "Members under group control view" should {
 

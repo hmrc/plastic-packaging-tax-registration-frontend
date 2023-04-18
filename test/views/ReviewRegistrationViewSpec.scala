@@ -53,7 +53,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
   private val nominatedPartnerSection = 2
 
   private def createView(reg: Registration): Document =
-    page(reg)(journeyRequest, messages)
+    page(reg)(registrationJourneyRequest, messages)
 
   "Review registration View" should {
 
@@ -202,7 +202,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      startDate = Some(OldDate(Some(1), Some(4), Some(2022)))
                     )
                   )
-                )(journeyRequest, messages = messages)
+                )(registrationJourneyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
                 "liability.checkAnswers.exceededThreshold"
@@ -238,7 +238,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
                                      startDate = Some(OldDate(Some(6), Some(3), Some(2022)))
                     )
                   )
-                )(journeyRequest, messages = messages)
+                )(registrationJourneyRequest, messages = messages)
 
               getKeyFor(liabilitySection, 0, liabilityView) must containMessage(
                 "liability.checkAnswers.expectToExceededThreshold"
@@ -545,16 +545,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
             )
             val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
-              JourneyRequest(
-                authenticatedRequest =
-                  new AuthenticatedRequest(FakeRequest(),
-                                           userWithPPTEnrolment,
-                                           pptReference =
-                                             pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
-                  ),
-                registration = partnershipRegistration,
-                pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
-              )
+              registrationJourneyRequest.copy(registration = partnershipRegistration)
             val partnershipView =
               page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
 
@@ -643,13 +634,7 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
               )
             )
             val journeyRequestWithEnrolledUser: JourneyRequest[AnyContent] =
-              JourneyRequest(authenticatedRequest =
-                               new AuthenticatedRequest(FakeRequest(),
-                                                        userWithPPTEnrolment
-                               ),
-                             registration = partnershipRegistration,
-                             pptReference = pptReferenceFromUsersEnrolments(userWithPPTEnrolment)
-              )
+              registrationJourneyRequest.copy(registration = partnershipRegistration)
             val otherPartnersView =
               page(partnershipRegistration)(journeyRequestWithEnrolledUser, messages)
 
@@ -740,8 +725,8 @@ class ReviewRegistrationViewSpec extends UnitViewSpec with Matchers with TableDr
 
   override def exerciseGeneratedRenderingMethods() = {
     val registration = aRegistration()
-    page.f(registration)(journeyRequest, messages)
-    page.render(registration, journeyRequest, messages)
+    page.f(registration)(registrationJourneyRequest, messages)
+    page.render(registration, registrationJourneyRequest, messages)
   }
 
 }

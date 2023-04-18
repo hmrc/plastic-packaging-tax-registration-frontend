@@ -38,7 +38,7 @@ abstract class AmendmentController(
     registrationAmendment: Registration => Registration,
     successfulRedirect: Call = routes.AmendRegistrationController.displayPage()
   )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
-    service.updateRegistration(registrationAmendment).map {
+    service.updateSubscriptionWithRegistration(registrationAmendment).map {
       case _: SubscriptionCreateOrUpdateResponseSuccess =>
         Redirect(successfulRedirect)
       case _: SubscriptionCreateOrUpdateResponseFailure =>
@@ -49,7 +49,7 @@ abstract class AmendmentController(
     registrationAmendment: Registration => Registration,
     memberId: String
   )(implicit request: JourneyRequest[_], hc: HeaderCarrier) =
-    service.updateRegistration(registrationAmendment)
+    service.updateSubscriptionWithRegistration(registrationAmendment)
       .map(
         _ => Redirect(amendGroupRoutes.ContactDetailsCheckAnswersController.displayPage(memberId))
       )

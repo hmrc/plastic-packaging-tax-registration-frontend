@@ -30,7 +30,7 @@ class AmendMemberContactDetailsCheckAnswersViewA11ySpec extends BaseViewSpec {
     page(groupMember,
          routes.AddGroupMemberContactDetailsConfirmAddressController.displayPage(groupMember.id),
          routes.ManageGroupMembersController.displayPage()
-    )(journeyRequest, messages).toString()
+    )(registrationJourneyRequest, messages).toString()
 
   "Contact Details Check Answers View" should {
 

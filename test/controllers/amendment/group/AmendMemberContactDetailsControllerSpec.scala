@@ -16,8 +16,7 @@
 
 package controllers.amendment.group
 
-import base.unit.{AddressCaptureSpec, ControllerSpec, MockAmendmentJourneyAction}
-import controllers.actions.getRegistration.AmendmentJourneyAction
+import base.unit.{AddressCaptureSpec, ControllerSpec, AmendmentControllerSpec}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -45,7 +44,7 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import scala.concurrent.Future
 
 class AmendMemberContactDetailsControllerSpec
-    extends ControllerSpec with AddressCaptureSpec with MockAmendmentJourneyAction
+    extends ControllerSpec with AddressCaptureSpec with AmendmentControllerSpec
     with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
@@ -67,9 +66,9 @@ class AmendMemberContactDetailsControllerSpec
   )
 
   private val controller =
-    new AmendMemberContactDetailsController(mockEnrolledAuthAction,
+    new AmendMemberContactDetailsController(spyJourneyAction,
                                             mcc,
-                                            mockAmendmentJourneyAction,
+                                            mockAmendRegService,
                                             mockAddressCaptureService,
                                             amendNamePage,
                                             amendPhoneNumberPage,
@@ -83,9 +82,8 @@ class AmendMemberContactDetailsControllerSpec
   private val memberId = groupMember.id
 
   override protected def beforeEach(): Unit = {
-    inMemoryRegistrationAmendmentRepository.reset()
-    reset(mockSubscriptionConnector)
-    simulateGetSubscriptionSuccess(populatedRegistration)
+    spyJourneyAction.reset()
+    reset(mockAmendRegService, spyJourneyAction)
   }
 
   "Amend Member Contact Details Controller" should {
@@ -114,22 +112,23 @@ class AmendMemberContactDetailsControllerSpec
           expectedContent: String
         ) =>
           s"$testName page requested and registration populated" in {
-            authorisedUserWithPptSubscription()
+            spyJourneyAction.setReg(populatedRegistration)
 
-            val resp = call(getRequest())
+            val resp = call(FakeRequest())
 
             status(resp) mustBe OK
             contentAsString(resp) mustBe expectedContent
+            verify(spyJourneyAction.amend)
           }
 
           s"$testName page requested and registration unpopulated" in {
-            simulateGetSubscriptionSuccess(Registration("123"))
-            authorisedUserWithPptSubscription()
+            spyJourneyAction.setReg(populatedRegistration)
 
-            val resp = call(getRequest())
+            val resp = call(FakeRequest())
 
             status(resp) mustBe OK
             contentAsString(resp) mustBe expectedContent
+            verify(spyJourneyAction.amend)
           }
       }
     }
@@ -183,10 +182,9 @@ class AmendMemberContactDetailsControllerSpec
         ) =>
           s"supplied $testName fails validation" in {
             val registration = aRegistration()
-            authorisedUserWithPptSubscription()
-            inMemoryRegistrationAmendmentRepository.put("123", registration)
+            spyJourneyAction.setReg(registration)
 
-            val resp = call(postRequestEncoded(form = createInvalidForm(), sessionId = "123"))
+            val resp = call(FakeRequest().withFormUrlEncodedBody(getTuples(createInvalidForm()):_*))
 
             status(resp) mustBe BAD_REQUEST
             contentAsString(resp) mustBe expectedPageContent
@@ -208,24 +206,20 @@ class AmendMemberContactDetailsControllerSpec
             val registration = aRegistration(
               withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
             )
-            authorisedUserWithPptSubscription()
-            inMemoryRegistrationAmendmentRepository.put("123", registration)
+            spyJourneyAction.setReg(registration)
 
-            await(call(postRequestEncoded(form = createValidForm(), sessionId = "123")))
+            await(call(FakeRequest().withFormUrlEncodedBody(getTuples(createValidForm()):_*)))
 
-            val registrationCaptor: ArgumentCaptor[Registration] =
-              ArgumentCaptor.forClass(classOf[Registration])
-            verify(mockSubscriptionConnector).updateSubscription(any(),
-                                                                 registrationCaptor.capture()
-            )(any())
+            val registrationCaptor: ArgumentCaptor[Registration => Registration] =
+              ArgumentCaptor.forClass(classOf[Registration => Registration])
+            verify(mockAmendRegService).updateSubscriptionWithRegistration(registrationCaptor.capture())(any(), any())
 
-            test(registrationCaptor.getValue)
+            test(registrationCaptor.getValue.apply(registration))
           }
       }
     }
 
     "redirect to address capture controller when updating address" in {
-      authorisedUserWithPptSubscription()
 
       val expectedAddressCaptureConfig =
         AddressCaptureConfig(backLink = amendRoutes.AmendRegistrationController.displayPage().url,
@@ -242,28 +236,25 @@ class AmendMemberContactDetailsControllerSpec
         )
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
-      val resp = controller.address(memberId)(getRequest())
+      val resp = controller.address(memberId)(FakeRequest())
       redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
     }
 
     "update address on address capture callback" in {
-      authorisedUserWithPptSubscription()
       simulateValidAddressCapture()
 
       populatedRegistration.findMember(memberId).flatMap(
         _.contactDetails.flatMap(_.address)
       ) mustNot equal(validCapturedAddress)
 
-      await(controller.updateAddress(memberId)(getRequest()))
+      await(controller.updateAddress(memberId)(FakeRequest()))
 
-      getUpdatedRegistration().findMember(memberId).flatMap(_.contactDetails).flatMap(
+      getUpdatedRegistrationMethod().apply(populatedRegistration).findMember(memberId).flatMap(_.contactDetails).flatMap(
         _.address
       ) mustBe Some(validCapturedAddress)
     }
 
   }
 
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

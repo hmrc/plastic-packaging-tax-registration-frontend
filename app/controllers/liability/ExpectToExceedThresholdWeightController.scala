@@ -17,8 +17,7 @@
 package controllers.liability
 
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import forms.Date
 import forms.liability.ExpectToExceedThresholdWeight
 import models.registration.{Cacheable, NewLiability, Registration}
@@ -33,8 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ExpectToExceedThresholdWeightController @Inject() (
-                                                          authenticate: RegistrationAuthAction,
-                                                          journeyAction: GetRegistrationAction,
+                                                          journeyAction: JourneyAction,
                                                           override val registrationConnector: RegistrationConnector,
                                                           mcc: MessagesControllerComponents,
                                                           page: expect_to_exceed_threshold_weight_page,
@@ -43,7 +41,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.liabilityDetails.expectToExceedThresholdWeight match {
         case Some(yesNo) => Ok(page(form().fill(yesNo)))
         case _ => Ok(page(form()))
@@ -51,7 +49,7 @@ class ExpectToExceedThresholdWeightController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       form()
         .bindFromRequest()
         .fold(formWithErrors =>

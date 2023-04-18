@@ -33,6 +33,8 @@ import uk.gov.hmrc.mongo.CurrentTimestampSupport
 import uk.gov.hmrc.mongo.test.MongoSupport
 import config.AppConfig
 import models.request.AuthenticatedRequest
+import models.request.AuthenticatedRequest.RegistrationRequest
+import spec.PptTestData
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,7 +42,7 @@ import scala.concurrent.duration.FiniteDuration
 
 class UserDataRepositorySpec
     extends AnyWordSpec with Matchers with ScalaFutures with MockitoSugar with BeforeAndAfterEach
-    with DefaultAwaitTimeout with MongoSupport {
+    with DefaultAwaitTimeout with MongoSupport with PptTestData {
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
 
@@ -55,8 +57,9 @@ class UserDataRepositorySpec
   val repository = new MongoUserDataRepository(mongoComponent, mockConfig, mockTimeStampSupport)
 
   def authRequest(sessionId: String): AuthenticatedRequest[Any] =
-    new AuthenticatedRequest(FakeRequest().withSession("sessionId" -> sessionId),
-                             PptTestData.newUser("123")
+    RegistrationRequest(
+      FakeRequest().withSession("sessionId" -> sessionId),
+      identityData
     )
 
   override def beforeEach(): Unit = {

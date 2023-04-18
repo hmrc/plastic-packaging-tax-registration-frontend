@@ -42,17 +42,6 @@ trait MockRegistrationConnector
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenAnswer(inv => Future.successful(Right(inv.getArgument(0))))
 
-  def   mockRegistrationFind(
-    dataToReturn: Registration
-  ): OngoingStubbing[Future[Either[ServiceError, Option[Registration]]]] =
-    when(mockRegistrationConnector.find(any[String])(any()))
-      .thenReturn(Future.successful(Right(Some(dataToReturn))))
-
-  def mockRegistrationFindFailure()
-    : OngoingStubbing[Future[Either[ServiceError, Option[Registration]]]] =
-    when(mockRegistrationConnector.find(any[String])(any()))
-      .thenThrow(new IllegalStateException("BANG!"))
-
   def mockRegistrationException(): OngoingStubbing[Future[Either[ServiceError, Registration]]] =
     when(mockRegistrationConnector.update(any[Registration])(any()))
       .thenThrow(new RuntimeException("some error"))

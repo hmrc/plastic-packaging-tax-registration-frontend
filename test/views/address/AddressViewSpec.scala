@@ -35,7 +35,7 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   private val contactName = Some("the contact")
 
   private def createView(form: Form[Address] = Address.form()): Document =
-    page(form, countryService.getAll(), updateLink, headingKey, contactName)(journeyRequest, messages)
+    page(form, countryService.getAll(), updateLink, headingKey, contactName)(registrationJourneyRequest, messages)
 
   "Address View" should {
 
@@ -148,8 +148,8 @@ class AddressViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None)(journeyRequest, messages)
-    page.render(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None, journeyRequest, messages)
+    page.f(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None)(registrationJourneyRequest, messages)
+    page.render(Address.form(), countryService.getAll(), updateLink, headingKey, contactName, None, registrationJourneyRequest, messages)
   }
 
 }

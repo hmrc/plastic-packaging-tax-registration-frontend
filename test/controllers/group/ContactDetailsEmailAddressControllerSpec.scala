@@ -45,8 +45,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
   )
 
   private val controller =
-    new ContactDetailsEmailAddressController(authenticate = mockAuthAction,
-                                             journeyAction = mockJourneyAction,
+    new ContactDetailsEmailAddressController(journeyAction = spyJourneyAction,
                                              mcc = mcc,
                                              page = page,
                                              registrationUpdater = mockNewRegistrationUpdater
@@ -66,9 +65,9 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     "return 200" when {
       "user is authorised display page method is invoked" in {
-        authorizedUser()
+
         val member = groupMember.copy(contactDetails = None)
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -77,8 +76,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -89,8 +88,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
       "return 303 (OK)" when {
         "user submits the email" in {
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
           )
           mockRegistrationUpdate()
@@ -121,8 +120,8 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
@@ -135,7 +134,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid email" in {
-        authorizedUser()
+
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("$%^"))))
 
@@ -146,14 +145,14 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage(groupMember.id)(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
+
         mockRegistrationUpdateFailure()
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
@@ -162,7 +161,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
+
         mockRegistrationException()
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))

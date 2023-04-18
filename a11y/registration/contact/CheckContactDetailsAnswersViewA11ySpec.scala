@@ -46,7 +46,7 @@ class CheckContactDetailsAnswersViewA11ySpec extends BaseViewSpec {
 
 
   private def createView(reg: Registration = registration): String =
-    page(reg)(journeyRequest, messages).toString()
+    page(reg)(registrationJourneyRequest, messages).toString()
 
   "Check primary contact details answers View" should {
 

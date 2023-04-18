@@ -16,26 +16,20 @@
 
 package controllers.amendment.partner
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import controllers.actions.getRegistration.AmendmentJourneyAction
-import org.mockito.ArgumentCaptor
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
+import controllers.amendment.{routes => amendRoutes}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
-import play.api.mvc.{AnyContentAsEmpty, Request}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import controllers.amendment.{routes => amendRoutes}
-import models.registration.Registration
-import views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
+import views.html.amendment.partner.amend_add_partner_contact_check_answers_page
 
 class AddPartnerContactDetailsCheckAnswersControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction {
+    extends ControllerSpec with AmendmentControllerSpec {
 
   private val mcc     = stubMessagesControllerComponents()
   private val cyaPage = mock[amend_add_partner_contact_check_answers_page]
@@ -43,8 +37,8 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
   when(cyaPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Reg - New Partner CYA"))
 
   private val controller = new AddPartnerContactDetailsCheckAnswersController(
-    authenticate = mockEnrolledAuthAction,
-    journeyAction = mockAmendmentJourneyAction,
+    amendRegistrationService = mockAmendRegService,
+    journeyAction = spyJourneyAction,
     mcc = mcc,
     page = cyaPage
   )
@@ -56,9 +50,9 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
   )
 
   override protected def beforeEach(): Unit = {
-    inMemoryRegistrationAmendmentRepository.reset()
-    reset(mockSubscriptionConnector)
-    simulateGetSubscriptionSuccess(partnerRegistrationInAmendment)
+    reset(mockAmendRegService, spyJourneyAction)
+    spyJourneyAction.reset()
+    spyJourneyAction.setReg(partnerRegistrationInAmendment)
     simulateUpdateSubscriptionSuccess()
   }
 
@@ -67,8 +61,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
     "displaying page" should {
       "display successfully" when {
         "partner present" in {
-          authorisedUserWithPptSubscription()
-          mockRegistrationFind(partnerRegistrationInAmendment)
+          spyJourneyAction.setReg(partnerRegistrationInAmendment)
           val resp = controller.displayPage()(getRequest())
 
           status(resp) mustBe OK
@@ -79,22 +72,16 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
 
     "details confirmed" should {
       "update subscription at the ETMP back end" in {
-        authorisedUserWithPptSubscription()
 
         await(controller.submit()(postRequest(JsObject.empty)))
 
-        val registrationCaptor: ArgumentCaptor[Registration] =
-          ArgumentCaptor.forClass(classOf[Registration])
-        verify(mockSubscriptionConnector).updateSubscription(any(), registrationCaptor.capture())(
-          any()
-        )
+        val updated = getUpdatedRegistrationMethod()(partnerRegistrationInAmendment)
 
-        registrationCaptor.getValue.inflightPartner mustBe None
-        registrationCaptor.getValue.newPartner mustBe Some(aSoleTraderPartner())
+        updated.inflightPartner mustBe None
+        updated.newPartner mustBe Some(aSoleTraderPartner())
       }
 
       "redirect to the manage group page when update successful" in {
-        authorisedUserWithPptSubscription()
 
         val resp = controller.submit()(postRequest(JsObject.empty))
 
@@ -103,7 +90,6 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
       }
       "redirect to the post reg amend error page" when {
         "update fails due to exception being thrown" in {
-          authorisedUserWithPptSubscription()
           simulateUpdateSubscriptionFailure(new RuntimeException("BANG!"))
 
           val resp = controller.submit()(postRequest(JsObject.empty))
@@ -114,7 +100,6 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
           )
         }
         "update fails due to error returned from ETMP" in {
-          authorisedUserWithPptSubscription()
           simulateUpdateSubscriptionFailureReturnedError()
 
           val resp = controller.submit()(postRequest(JsObject.empty))
@@ -127,8 +112,5 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
       }
     }
   }
-
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

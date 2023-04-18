@@ -16,7 +16,7 @@
 
 package controllers.actions.auth
 
-import com.google.inject.Inject
+import com.google.inject.{ImplementedBy, Inject}
 import config.AppConfig
 import models.enrolment.PptEnrolment
 import models.request.AuthenticatedRequest.PPTEnrolledRequest
@@ -35,12 +35,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 //todo should this be called enrolledAuthAction or something? While its mostly use for amend there is exceptions
-class AmendAuthAction @Inject()(
+@ImplementedBy(classOf[AmendAuthActionImpl])
+trait AmendAuthAction extends ActionBuilder[PPTEnrolledRequest, AnyContent]
+
+class AmendAuthActionImpl @Inject()(
  override val authConnector: AuthConnector,
  override val parser: BodyParsers.Default,
  returnsSessionRepository: ReturnsSessionRepository,
  appConfig: AppConfig
-)(implicit val executionContext: ExecutionContext) extends ActionBuilder[PPTEnrolledRequest, AnyContent]
+)(implicit val executionContext: ExecutionContext) extends AmendAuthAction
   with ActionFunction[Request, PPTEnrolledRequest] with AuthorisedFunctions with Logging {
 
   private val retrievals = credentials and internalId and allEnrolments and affinityGroup
@@ -77,7 +80,6 @@ class AmendAuthAction @Inject()(
       case _: IncorrectCredentialStrength =>
         upliftCredentialStrength(continueUrl)
       case _: InsufficientEnrolments =>
-        println(Console.RED + " HERE " + Console.RESET)
         Results.Redirect(appConfig.pptNotEnrolledUrl)
       case _: UnsupportedCredentialRole =>
         Results.Redirect(controllers.unauthorised.routes.UnauthorisedController.showAssistantUnauthorised())

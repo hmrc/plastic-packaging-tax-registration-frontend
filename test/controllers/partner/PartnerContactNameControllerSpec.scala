@@ -41,8 +41,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
   )
 
   private val controller =
-    new PartnerContactNameController(authenticate = mockAuthAction,
-                                     journeyAction = mockJourneyAction,
+    new PartnerContactNameController(journeyAction = spyJourneyAction,
                                      registrationUpdateService =
                                        mockNewRegistrationUpdater,
                                      mcc = mcc,
@@ -81,8 +80,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected nominated partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.displayNewPartner()(getRequest())
 
@@ -90,8 +89,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "displaying an existing partner to edit their contact name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
         val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
@@ -101,8 +100,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "update inflight registration" when {
       "user submits a complete contact name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
@@ -123,8 +122,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "nominated partner submits a contact name and is prompted for job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
@@ -138,8 +137,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user submits an amendment to an existing partners contact name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
@@ -157,8 +156,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
           controller.submitNewPartner()(
@@ -169,8 +168,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user enters a long name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
           postRequestEncoded(MemberName("abced" * 40, "Smith"))
@@ -180,8 +179,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user enters non-alphabetic characters" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
           controller.submitNewPartner()(
@@ -195,7 +194,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
 
         val result = controller.displayNewPartner()(getRequest())
 
@@ -203,8 +202,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user tries to display an non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
         val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
 
@@ -212,8 +211,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user submits an amendment to a non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
@@ -224,8 +223,8 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
         val result =

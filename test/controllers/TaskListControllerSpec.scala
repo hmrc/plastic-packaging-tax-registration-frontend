@@ -39,8 +39,7 @@ class TaskListControllerSpec extends ControllerSpec {
   private val partnershipPage  = mock[task_list_partnership]
 
   private val controller = new TaskListController(
-    authenticate = mockAuthAction,
-    mockJourneyAction,
+    journeyAction = spyJourneyAction,
     mcc = mcc,
     singleEntityPage = singleEntityPage,
     groupPage = groupPage,
@@ -70,8 +69,8 @@ class TaskListControllerSpec extends ControllerSpec {
       "display registration page" when {
 
         "a 'businessPartnerId' exists" in {
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(
               withOrganisationDetails(organisationDetails =
                 registeredUkCompanyOrgDetails()
@@ -86,7 +85,7 @@ class TaskListControllerSpec extends ControllerSpec {
         }
 
         "a 'businessPartnerId' does not exist" in {
-          authorizedUser()
+
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
@@ -96,8 +95,8 @@ class TaskListControllerSpec extends ControllerSpec {
         }
 
         "a group registration is being performed" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration().copy(registrationType = Some(RegType.GROUP)))
+
+          spyJourneyAction.setReg(aRegistration().copy(registrationType = Some(RegType.GROUP)))
           val result = controller.displayPage()(getRequest())
 
           status(result) mustBe OK
@@ -105,8 +104,8 @@ class TaskListControllerSpec extends ControllerSpec {
         }
 
         "show partnership task-list when a partnership with partners registration is being preformed" in {
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
           )
 
@@ -117,8 +116,8 @@ class TaskListControllerSpec extends ControllerSpec {
         }
 
         "show single entity task-list when an LLP registration is being preformed" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
+
+          spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
 
           val result = controller.displayPage()(getRequest())
 
@@ -129,9 +128,9 @@ class TaskListControllerSpec extends ControllerSpec {
     }
     
     "old liability answers should be removed" in {
-      authorizedUser()
+
       val registration = mock[Registration]
-      mockRegistrationFind(registration)
+      spyJourneyAction.setReg(registration)
       when(registration.hasOldLiabilityQuestions).thenReturn(true)
       when(registration.organisationDetails).thenReturn(aRegistration().organisationDetails)
       
@@ -144,9 +143,9 @@ class TaskListControllerSpec extends ControllerSpec {
     }
     
     "old liability answers should not be removed" in {
-      authorizedUser()
+
       val registration = mock[Registration]
-      mockRegistrationFind(registration)
+      spyJourneyAction.setReg(registration)
       when(registration.hasOldLiabilityQuestions).thenReturn(false)
       when(registration.organisationDetails).thenReturn(aRegistration().organisationDetails)
       
@@ -164,8 +163,8 @@ class TaskListControllerSpec extends ControllerSpec {
           ))
         )
 
-      mockRegistrationFind(partialLiabilityDetails)
-      authorizedUser()
+      spyJourneyAction.setReg(partialLiabilityDetails)
+
 
       val result = controller.displayPage()(getRequest())
 
@@ -175,8 +174,8 @@ class TaskListControllerSpec extends ControllerSpec {
 
     "liability redirect to check your answer page when task is completed" in {
 
-      mockRegistrationFind(aRegistration())
-      authorizedUser()
+      spyJourneyAction.setReg(aRegistration())
+
 
       val result = controller.displayPage()(getRequest())
 
@@ -187,7 +186,7 @@ class TaskListControllerSpec extends ControllerSpec {
 
     "return error" when {
       "user is not authorised" in {
-        unAuthorizedUser()
+
         mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
         mockGetSubscriptionStatusFailure(new RuntimeException("error"))
         val result = controller.displayPage()(getRequest())

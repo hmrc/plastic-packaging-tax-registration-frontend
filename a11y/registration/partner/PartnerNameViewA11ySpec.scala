@@ -30,7 +30,7 @@ class PartnerNameViewA11ySpec extends BaseViewSpec {
   private val updateLink = Call("GET", "/update")
 
   private def createView(form: Form[PartnerName] = PartnerName.form()): String =
-    page(form, backLink, updateLink)(journeyRequest, messages).toString()
+    page(form, backLink, updateLink)(registrationJourneyRequest, messages).toString()
 
   "Email address View" should {
 

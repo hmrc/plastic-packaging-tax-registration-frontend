@@ -31,7 +31,7 @@ class RemovePartnerViewA11ySpec extends BaseViewSpec{
   private val partnerId   = UUID.randomUUID.toString
 
   private def createView(form: Form[RemovePartner] = RemovePartner.form()): String =
-    page(form, partnerName, partnerId)(journeyRequest, messages).toString()
+    page(form, partnerName, partnerId)(registrationJourneyRequest, messages).toString()
 
   "Remove Partner View" should {
 

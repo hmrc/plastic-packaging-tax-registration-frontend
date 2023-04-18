@@ -39,8 +39,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
 
   private val soleTraderPartner = aSoleTraderPartner()
 
-  private val removePartnerController = new RemovePartnerController(mockAuthAction,
-                                                                    mockJourneyAction,
+  private val removePartnerController = new RemovePartnerController(journeyAction = spyJourneyAction,
                                                                     mockRegistrationConnector,
                                                                     mcc,
                                                                     mockPage
@@ -61,8 +60,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
   "Remove Partner Controller" should {
 
     "display page when partner found in registration" in {
-      authorizedUser()
-      mockRegistrationFind(partnershipRegistration)
+
+      spyJourneyAction.setReg(partnershipRegistration)
 
       val result = removePartnerController.displayPage(aSoleTraderPartner().id)(getRequest())
 
@@ -71,8 +70,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     }
 
     "redirect to partner list when partner not found in registration" in {
-      authorizedUser()
-      mockRegistrationFind(partnershipRegistration)
+
+      spyJourneyAction.setReg(partnershipRegistration)
 
       val result = removePartnerController.displayPage(s"${soleTraderPartner.id}xxx")(getRequest())
 
@@ -81,8 +80,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     }
 
     "remove identified partner when remove action confirmed" in {
-      authorizedUser()
-      mockRegistrationFind(partnershipRegistration)
+
+      spyJourneyAction.setReg(partnershipRegistration)
       mockRegistrationUpdate()
 
       await(
@@ -97,8 +96,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     }
 
     "removing last other partner should redirect to PartnerType selection page" in {
-      authorizedUser()
-      mockRegistrationFind(partnershipRegistration)
+
+      spyJourneyAction.setReg(partnershipRegistration)
       mockRegistrationUpdate()
 
       await(
@@ -111,7 +110,7 @@ class RemovePartnerControllerSpec extends ControllerSpec {
       modifiedRegistration.organisationDetails.partnershipDetails.get.partners.head mustBe
         partnershipRegistration.organisationDetails.partnershipDetails.get.partners.lift(1).get
 
-      mockRegistrationFind(modifiedRegistration)
+      spyJourneyAction.setReg(modifiedRegistration)
       mockRegistrationUpdate()
       val result = removePartnerController.submit("456")(postJsonRequestEncoded(("value", "yes")))
       status(result) mustBe SEE_OTHER
@@ -119,8 +118,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     }
 
     "leave registration unchanged when unknown partner id specified" in {
-      authorizedUser()
-      mockRegistrationFind(partnershipRegistration)
+
+      spyJourneyAction.setReg(partnershipRegistration)
       mockRegistrationUpdate()
 
       await(
@@ -133,8 +132,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     }
 
     "redirect to partner list when remove confirmation is negative" in {
-      authorizedUser()
-      mockRegistrationFind(partnershipRegistration)
+
+      spyJourneyAction.setReg(partnershipRegistration)
 
       val result =
         removePartnerController.submit(soleTraderPartner.id)(
@@ -146,9 +145,9 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     }
 
     "redirect to partner list when partner removal fails" in {
-      authorizedUser()
+
       mockRegistrationUpdate()
-      mockRegistrationFind(partnershipRegistration)
+      spyJourneyAction.setReg(partnershipRegistration)
       mockRegistrationUpdateFailure()
 
       val result =
@@ -163,8 +162,8 @@ class RemovePartnerControllerSpec extends ControllerSpec {
     "display validation error" when {
 
       "no selection made" in {
-        authorizedUser()
-        mockRegistrationFind(partnershipRegistration)
+
+        spyJourneyAction.setReg(partnershipRegistration)
 
         val emptySelection = Seq()
         val result =

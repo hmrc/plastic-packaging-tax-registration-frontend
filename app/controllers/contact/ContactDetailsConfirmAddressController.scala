@@ -20,9 +20,9 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
+import controllers.actions.JourneyAction
 import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
-
 import controllers.{routes => commonRoutes}
 import forms.contact.{Address, ConfirmAddress}
 import models.registration.{Cacheable, Registration}
@@ -35,8 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsConfirmAddressController @Inject() (
-                                                         authenticate: RegistrationAuthAction,
-                                                         journeyAction: GetRegistrationAction,
+                                                         journeyAction: JourneyAction,
                                                          override val registrationConnector: RegistrationConnector,
                                                          mcc: MessagesControllerComponents,
                                                          page: confirm_address
@@ -44,7 +43,7 @@ class ContactDetailsConfirmAddressController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       val businessRegisteredAddress = request.registration.organisationDetails.businessRegisteredAddress.getOrElse(
         throw new IllegalStateException("Registered business address must be present")
       )
@@ -64,7 +63,7 @@ class ContactDetailsConfirmAddressController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       request.registration.incorpJourneyId match {
         case Some(_) =>
           ConfirmAddress.form()

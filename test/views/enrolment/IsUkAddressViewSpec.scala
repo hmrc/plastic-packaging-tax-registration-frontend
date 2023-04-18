@@ -28,7 +28,7 @@ class IsUkAddressViewSpec extends UnitViewSpec with Matchers {
   private val page = inject[is_uk_address_page]
 
   private def createView(form: Form[IsUkAddress] = IsUkAddress.form()): Document =
-    page(form)(journeyRequest, messages)
+    page(form)(registrationJourneyRequest, messages)
 
   "The Initial Is UK Address View" should {
 

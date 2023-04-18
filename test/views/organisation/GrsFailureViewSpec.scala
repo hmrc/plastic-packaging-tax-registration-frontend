@@ -30,7 +30,7 @@ class GrsFailureViewSpec extends UnitViewSpec with Matchers {
   private val page: grs_failure_page =
     inject[grs_failure_page]
 
-  private def createView(): Html = page()(journeyRequest, messages)
+  private def createView(): Html = page()(registrationJourneyRequest, messages)
 
   "Business Registration Failure Page" should {
     val view: Html = createView()

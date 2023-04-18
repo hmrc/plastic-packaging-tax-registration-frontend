@@ -43,7 +43,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
   private val mockCache  = mock[UserDataRepository]
   private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
-  private val controller = new IsUkAddressController(mockAuthAction, mcc, repository, page)
+  private val controller = new IsUkAddressController(FakeRegistrationAuthAction, mcc, repository, page)
 
   private val pptReference            = PptReference("XAPPT000123456")
   private val initialEnrolmentDetails = UserEnrolmentDetails(pptReference = Some(pptReference))
@@ -71,7 +71,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
             Some(initialEnrolmentDetails.copy(isUkAddress = Some(IsUkAddress(Some(true)))))
           )
         )
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -81,7 +81,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(None)
         )
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -90,7 +90,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
     }
     "throw a RuntimeException" when {
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
@@ -99,7 +99,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
 
     "redisplay the is uk address page with a BAD REQUEST status" when {
       "no selection is made" in {
-        authorizedUser()
+
         val result = controller.submit()(postRequestEncoded(IsUkAddress(None)))
 
         status(result) mustBe BAD_REQUEST
@@ -115,7 +115,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
           Future.successful(expectedEnrolmentDetails)
         )
 
-        authorizedUser()
+
         val result = controller.submit()(postJsonRequestEncoded(("value", "yes")))
 
         status(result) mustBe SEE_OTHER
@@ -135,7 +135,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
           Future.successful(expectedEnrolmentDetails)
         )
 
-        authorizedUser()
+
         val result = controller.submit()(postJsonRequestEncoded(("value", "no")))
 
         status(result) mustBe SEE_OTHER

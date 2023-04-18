@@ -26,7 +26,7 @@ class TooManyAttemptsPasscodeViewSpec extends UnitViewSpec with Matchers {
 
   "Too Many Attempts Passcode View" should {
 
-    val view = page()(request = journeyRequest, messages = messages)
+    val view = page()(request = registrationJourneyRequest, messages = messages)
 
     "contain timeout dialog function" in {
 

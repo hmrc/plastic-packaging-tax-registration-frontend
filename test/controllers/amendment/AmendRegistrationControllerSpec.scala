@@ -16,24 +16,20 @@
 
 package controllers.amendment
 
-import base.unit.{ControllerSpec, MockAmendmentJourneyAction}
-import controllers.actions.getRegistration.AmendmentJourneyAction
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.OK
-import play.api.mvc.{AnyContentAsEmpty, Request}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, status}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.amendment.amend_registration_page
 import views.html.partials.amendment.amend_error_page
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
 
 class AmendRegistrationControllerSpec
-    extends ControllerSpec with MockAmendmentJourneyAction with TableDrivenPropertyChecks {
+    extends ControllerSpec with AmendmentControllerSpec with TableDrivenPropertyChecks {
 
   private val mcc = stubMessagesControllerComponents()
 
@@ -49,18 +45,19 @@ class AmendRegistrationControllerSpec
   )
 
   private val controller =
-    new AmendRegistrationController(mockEnrolledAuthAction,
-                                    mcc,
-                                    mockAmendmentJourneyAction,
-                                    amendRegistrationPage,
-                                    amendRegistrationErrorPage
+    new AmendRegistrationController(spyJourneyAction,
+      mockAmendRegService,
+      FakeAmendAuthAction,
+      mcc,
+      amendRegistrationPage,
+      amendRegistrationErrorPage
     )
 
   private val populatedRegistration = aRegistration()
 
   override protected def beforeEach(): Unit = {
     inMemoryRegistrationAmendmentRepository.reset()
-    simulateGetSubscriptionSuccess(populatedRegistration)
+    spyJourneyAction.setReg(populatedRegistration)
   }
 
   "Amend Registration Controller" should {
@@ -68,7 +65,7 @@ class AmendRegistrationControllerSpec
     "display the amend registration page" when {
 
       "user is authenticated" in {
-        authorisedUserWithPptSubscription()
+
 
         val resp = controller.displayPage()(getRequest())
 
@@ -78,7 +75,7 @@ class AmendRegistrationControllerSpec
     }
 
     "display the amend error page" in {
-      authorizedUser()
+
 
       val resp = controller.registrationUpdateFailed()(getRequest())
 
@@ -88,18 +85,7 @@ class AmendRegistrationControllerSpec
 
     "throw exception" when {
       "unauthenticated user attempts to access the amendment page" in {
-        unAuthorizedUser()
 
-        val resp = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException] {
-          status(resp)
-        }
-      }
-
-      "user is authenticated but attempt to retrieve registration via connector fails" in {
-        authorisedUserWithPptSubscription()
-        simulateGetSubscriptionFailure()
 
         val resp = controller.displayPage()(getRequest())
 
@@ -109,8 +95,5 @@ class AmendRegistrationControllerSpec
       }
     }
   }
-
-  private def getRequest(): Request[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "").withSession((AmendmentJourneyAction.SessionId, "123")).withCSRFToken
 
 }

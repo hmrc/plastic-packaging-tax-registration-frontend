@@ -45,7 +45,7 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
   }
 
   val form: Form[Boolean]        = AddOrganisationForm.form()
-  val sut: HtmlFormat.Appendable = view(form, fakeViewModel)(journeyRequest, messages)
+  val sut: HtmlFormat.Appendable = view(form, fakeViewModel)(registrationJourneyRequest, messages)
 
   "manage_group_members_page" must {
 
@@ -76,7 +76,7 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
     "include the error summary" when {
       "the form has errors" in {
         val errorForm = form.withError("foo", "site.button.tryAgain")
-        val sut       = view(errorForm, fakeViewModel)(journeyRequest, messages)
+        val sut       = view(errorForm, fakeViewModel)(registrationJourneyRequest, messages)
 
         sut.select(".govuk-error-summary__title").size() mustBe 1
       }
@@ -84,8 +84,8 @@ class ListGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecting
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    view.f(form, fakeViewModel)(journeyRequest, messages)
-    view.render(form, fakeViewModel, journeyRequest, messages)
+    view.f(form, fakeViewModel)(registrationJourneyRequest, messages)
+    view.render(form, fakeViewModel, registrationJourneyRequest, messages)
   }
 
 }

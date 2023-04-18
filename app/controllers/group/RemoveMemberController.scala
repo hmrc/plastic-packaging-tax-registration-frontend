@@ -16,36 +16,32 @@
 
 package controllers.group
 
-import play.api.Logger
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import forms.group.RemoveMember
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
-import views.html.group.remove_group_member_page
+import play.api.Logging
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.group.remove_group_member_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemoveMemberController @Inject() (
-                                         authenticate: RegistrationAuthAction,
-                                         journeyAction: GetRegistrationAction,
+                                         journeyAction: JourneyAction,
                                          override val registrationConnector: RegistrationConnector,
                                          mcc: MessagesControllerComponents,
                                          page: remove_group_member_page
 )(implicit ec: ExecutionContext)
-    extends FrontendController(mcc) with Cacheable with I18nSupport with RemoveMemberAction {
-
-  private val logger = Logger(this.getClass)
+    extends FrontendController(mcc) with Cacheable with I18nSupport with RemoveMemberAction with Logging {
 
   def displayPage(groupMemberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request: JourneyRequest[AnyContent] =>
+    journeyAction.register { implicit request: JourneyRequest[AnyContent] =>
       getGroupMemberName(groupMemberId) match {
         case Some(groupMemberName) => Ok(page(RemoveMember.form(), groupMemberName, groupMemberId))
         case _ =>
@@ -55,7 +51,7 @@ class RemoveMemberController @Inject() (
     }
 
   def submit(groupMemberId: String): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request: JourneyRequest[AnyContent] =>
+    journeyAction.register.async { implicit request: JourneyRequest[AnyContent] =>
       getGroupMemberName(groupMemberId) match {
         case Some(groupMemberName) =>
           RemoveMember.form()

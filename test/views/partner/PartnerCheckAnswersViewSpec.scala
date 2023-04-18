@@ -36,7 +36,7 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   private val partnershipPartner    = aPartnershipPartner()
 
   private def createView(partner: Partner): Document =
-    page(partner)(journeyRequest, messages)
+    page(partner)(registrationJourneyRequest, messages)
 
   "Partner Check Answers View" should {
 
@@ -204,8 +204,8 @@ class PartnerCheckAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(limitedCompanyPartner)(journeyRequest, messages)
-    page.render(limitedCompanyPartner, journeyRequest, messages)
+    page.f(limitedCompanyPartner)(registrationJourneyRequest, messages)
+    page.render(limitedCompanyPartner, registrationJourneyRequest, messages)
   }
 
 }

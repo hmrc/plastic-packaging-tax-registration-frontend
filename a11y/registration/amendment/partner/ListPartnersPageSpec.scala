@@ -31,7 +31,7 @@ class ListPartnersPageSpec extends BaseViewSpec {
   )
 
   private def createView(registration: Registration): String =
-    page(AddOrganisationForm.form(), registration)(journeyRequestWithEnrolledUser, messages).toString()
+    page(AddOrganisationForm.form(), registration)(amendsJourneyRequest, messages).toString()
 
   val view = createView(partnershipRegistration)
 
@@ -43,7 +43,7 @@ class ListPartnersPageSpec extends BaseViewSpec {
 
     "pass accessibility checks with error" in {
       val errorForm = form.withError("foo", "site.button.tryAgain")
-      val view = page(errorForm, partnershipRegistration)(journeyRequestWithEnrolledUser, messages).toString()
+      val view = page(errorForm, partnershipRegistration)(amendsJourneyRequest, messages).toString()
 
       view must passAccessibilityChecks
     }

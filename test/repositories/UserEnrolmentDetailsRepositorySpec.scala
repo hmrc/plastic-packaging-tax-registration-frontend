@@ -16,31 +16,27 @@
 
 package repositories
 
-import base.PptTestData
+import forms.enrolment._
+import models.registration.UserEnrolmentDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar.mock
 import org.scalatestplus.play.PlaySpec
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import forms.enrolment._
-import models.registration.UserEnrolmentDetails
-import models.request.AuthenticatedRequest
 import repositories.UserEnrolmentDetailsRepository.repositoryKey
+import spec.PptTestData
 
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEach {
+class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEach with PptTestData {
 
   val mockUserDataRepository: UserDataRepository = mock[UserDataRepository]
 
   val sut = new UserEnrolmentDetailsRepository(mockUserDataRepository)(global)
 
-  implicit val request: AuthenticatedRequest[Any] = new AuthenticatedRequest(FakeRequest(), PptTestData.newUser("123"))
-
-  private val userEnrolmentDetails =
+  override val userEnrolmentDetails =
     UserEnrolmentDetails(pptReference = Some(PptReference("ppt-ref")),
                          isUkAddress = Some(IsUkAddress(Some(true))),
                          postcode = Some(Postcode("LS1 1AA")),
@@ -57,25 +53,25 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
     "get" when {
       "there is one" in {
         when(mockUserDataRepository.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(Some(userEnrolmentDetails)))
-        val result = await(sut.get()(request))
+        val result = await(sut.get()(authenticatedRequest))
 
-        verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, request)
+        verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
         result mustBe userEnrolmentDetails
       }
       "there is NOT one" in {
         when(mockUserDataRepository.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.successful(None))
-        val result = await(sut.get()(request))
+        val result = await(sut.get()(authenticatedRequest))
 
-        verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, request)
+        verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
         result mustBe UserEnrolmentDetails()
       }
     }
     "put" in {
       when(mockUserDataRepository.putData[Any](any(), any())(any(), any())).thenReturn(Future.successful(userEnrolmentDetails))
-      val result = await(sut.put(userEnrolmentDetails)(request))
+      val result = await(sut.put(userEnrolmentDetails)(authenticatedRequest))
 
       verify(mockUserDataRepository)
-        .putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, request)
+        .putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, authenticatedRequest)
       result mustBe userEnrolmentDetails
     }
 
@@ -87,17 +83,17 @@ class UserEnrolmentDetailsRepositorySpec extends PlaySpec with BeforeAndAfterEac
 
       val result = await(sut.update(updateFunc))
 
-      verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, request)
+      verify(mockUserDataRepository).getData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
       verify(updateFunc).apply(userEnrolmentDetails)
-      verify(mockUserDataRepository).putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, request)
+      verify(mockUserDataRepository).putData(repositoryKey, userEnrolmentDetails)(UserEnrolmentDetails.format, authenticatedRequest)
       result mustBe userEnrolmentDetails
     }
 
     "delete" in {
       when(mockUserDataRepository.deleteData[UserEnrolmentDetails](any())(any(), any())).thenReturn(Future.unit)
-      await(sut.delete()(request))
+      await(sut.delete()(authenticatedRequest))
 
-      verify(mockUserDataRepository).deleteData(repositoryKey)(UserEnrolmentDetails.format, request)
+      verify(mockUserDataRepository).deleteData(repositoryKey)(UserEnrolmentDetails.format, authenticatedRequest)
     }
   }
 }

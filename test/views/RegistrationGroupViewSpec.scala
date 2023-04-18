@@ -19,7 +19,7 @@ package views
 import base.unit.UnitViewSpec
 import org.jsoup.nodes.Element
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.Call
+import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.twirl.api.Html
 import controllers.contact.{routes => contactRoutes}
 import controllers.organisation.{routes => organisationRoutes}
@@ -27,10 +27,11 @@ import forms.liability.LiabilityWeight
 import forms.liability.RegType.GROUP
 import forms.{Date, OldDate}
 import models.registration._
+import play.api.test.FakeRequest
+import spec.PptTestData
 import views.html.task_list_group
 
 import java.time.LocalDate
-
 
 class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
 
@@ -445,8 +446,8 @@ class RegistrationGroupViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    registrationPage.f(aRegistration(), liabilityStartLink, false)(journeyRequest, messages)
-    registrationPage.render(aRegistration(), liabilityStartLink, false, journeyRequest, messages)
+    registrationPage.f(aRegistration(), liabilityStartLink, false)(registrationJourneyRequest, messages)
+    registrationPage.render(aRegistration(), liabilityStartLink, false, registrationJourneyRequest, messages)
   }
 
 }

@@ -38,7 +38,7 @@ class ContactDetailsConfirmAddressViewA11ySpec extends BaseViewSpec {
   )
 
   private def createView(form: Form[ConfirmAddress] = ConfirmAddress.form(), isGroup: Boolean = false): String = {
-    page(form, addressConversionUtils.toPptAddress(incorporationAddressDetails), isGroup)(journeyRequest, messages).toString()
+    page(form, addressConversionUtils.toPptAddress(incorporationAddressDetails), isGroup)(registrationJourneyRequest, messages).toString()
   }
 
   "Confirm Address View" should {

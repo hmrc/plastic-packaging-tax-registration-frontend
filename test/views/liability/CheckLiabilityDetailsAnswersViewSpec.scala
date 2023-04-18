@@ -33,7 +33,7 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   private val registration = aRegistration()
 
   "Check liability details answers View" should {
-    val view = createView(reg = registration)(journeyRequest)
+    val view = createView(reg = registration)(registrationJourneyRequest)
 
     "have the correct title" in {
       view.select("title").first must containMessage("liability.checkAnswers.title")
@@ -104,8 +104,8 @@ class CheckLiabilityDetailsAnswersViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(registration)(journeyRequest, messages)
-    page.render(registration, journeyRequest, messages)
+    page.f(registration)(registrationJourneyRequest, messages)
+    page.render(registration, registrationJourneyRequest, messages)
   }
 
   private def createView(reg: Registration)(implicit request: JourneyRequest[AnyContent]): Document =

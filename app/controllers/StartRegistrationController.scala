@@ -16,25 +16,21 @@
 
 package controllers
 
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import controllers.liability.{routes => liabilityRoutes}
-import models.request.JourneyRequest
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class StartRegistrationController @Inject() (
-                                              authenticate: RegistrationAuthAction,
-                                              journeyAction: GetRegistrationAction,
+                                              journeyAction: JourneyAction,
                                               mcc: MessagesControllerComponents
 ) extends FrontendController(mcc) {
 
   def startRegistration(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       if (request.registration.isStarted)
         Redirect(routes.TaskListController.displayPage())
       else

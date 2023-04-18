@@ -28,7 +28,7 @@ class ContactDetailsJobTitleViewA11ySpec extends BaseViewSpec {
   private val updateLink = Call("GET", "/update")
 
   private def createView(form: Form[JobTitle] = JobTitle.form(), isGroup: Boolean = false): String =
-    page(form, updateLink, isGroup)(journeyRequest, messages).toString()
+    page(form, updateLink, isGroup)(registrationJourneyRequest, messages).toString()
 
   "Primary Contact Details Job Title View" should {
 

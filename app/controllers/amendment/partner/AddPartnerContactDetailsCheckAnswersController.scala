@@ -42,7 +42,7 @@ class AddPartnerContactDetailsCheckAnswersController @Inject() (
 
   def submit(): Action[AnyContent] =
    journeyAction.amend.async { implicit request =>
-     amendRegistrationService.updateRegistration(_ => request.registration.withPromotedInflightPartner()).map {
+     amendRegistrationService.updateSubscriptionWithRegistration(_ => request.registration.withPromotedInflightPartner()).map {
         case _: SubscriptionCreateOrUpdateResponseSuccess =>
           Redirect(routes.ManagePartnersController.displayPage())
         case _: SubscriptionCreateOrUpdateResponseFailure =>

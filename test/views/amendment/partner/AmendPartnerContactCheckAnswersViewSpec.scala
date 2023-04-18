@@ -33,7 +33,7 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
 
   "Amend Partner Contact Check Answers View" should {
 
-    val view: Document = page(partner)(journeyRequest, messages)
+    val view: Document = page(partner)(registrationJourneyRequest, messages)
 
     "contain timeout dialog function" in {
       containTimeoutDialogFunction(view) mustBe true
@@ -100,8 +100,8 @@ class AmendPartnerContactCheckAnswersViewSpec extends UnitViewSpec with Matchers
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(partner)(journeyRequest, messages)
-    page.render(partner, journeyRequest, messages)
+    page.f(partner)(registrationJourneyRequest, messages)
+    page.render(partner, registrationJourneyRequest, messages)
   }
 
 }

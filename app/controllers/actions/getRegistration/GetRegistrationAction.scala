@@ -17,23 +17,25 @@
 package controllers.actions.getRegistration
 
 import audit.Auditor
+import com.google.inject.ImplementedBy
 import connectors.{RegistrationConnector, ServiceError}
 import models.registration.Registration
 import models.request.{AuthenticatedRequest, JourneyRequest}
 import play.api.Logging
 import play.api.mvc.{ActionRefiner, Result}
-import uk.gov.hmrc.auth.core.InsufficientEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetRegistrationAction @Inject()(
+@ImplementedBy(classOf[GetRegistrationActionImpl])
+trait GetRegistrationAction extends ActionRefiner[AuthenticatedRequest, JourneyRequest]
+
+class GetRegistrationActionImpl @Inject()(
   registrationConnector: RegistrationConnector,
   auditor: Auditor,
-)(implicit val executionContext: ExecutionContext)
-    extends ActionRefiner[AuthenticatedRequest, JourneyRequest] with Logging {
+)(implicit val executionContext: ExecutionContext) extends GetRegistrationAction with Logging {
 
   override protected def refine[A](
     request: AuthenticatedRequest[A]

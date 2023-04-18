@@ -32,7 +32,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NotableErrorController @Inject() (
                                          authenticate: RegistrationAuthAction,
-                                         journeyAction: GetRegistrationAction,
+                                         getRegistration: GetRegistrationAction,
                                          mcc: MessagesControllerComponents,
                                          errorPage: error_page,
                                          errorNoSavePage: enrolment_failure_page,
@@ -69,7 +69,7 @@ class NotableErrorController @Inject() (
     }
 
   def duplicateRegistration(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    (authenticate andThen getRegistration) { implicit request =>
       Ok(duplicateSubscriptionPage())
     }
 

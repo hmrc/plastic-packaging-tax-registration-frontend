@@ -37,8 +37,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerListController(authenticate = mockAuthAction,
-                              journeyAction = mockJourneyAction,
+    new PartnerListController(journeyAction = spyJourneyAction,
                               registrationConnector = mockRegistrationConnector,
                               mcc = mcc,
                               page = page
@@ -50,8 +49,8 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
-    mockRegistrationFind(partnershipRegistration)
+
+    spyJourneyAction.setReg(partnershipRegistration)
     when(page.apply(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Partner list"))
   }
 
@@ -98,7 +97,7 @@ class PartnerListControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
     "throw IllegalStateException" when {
       "nominated partner absent from registration" in {
-        mockRegistrationFind(withAllPartnersRemoved(partnershipRegistration))
+        spyJourneyAction.setReg(withAllPartnersRemoved(partnershipRegistration))
 
         intercept[IllegalStateException] {
           await(controller.displayPage()(getRequest()))

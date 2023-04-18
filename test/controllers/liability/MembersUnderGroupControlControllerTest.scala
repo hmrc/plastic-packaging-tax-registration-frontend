@@ -36,11 +36,10 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new MembersUnderGroupControlController(authenticate = mockAuthAction,
-                                           mcc = mcc,
-                                           mockJourneyAction,
-                                           page = page,
-                                           mockRegistrationConnector
+    new MembersUnderGroupControlController(journeyAction = spyJourneyAction,
+      mcc = mcc,
+      page = page,
+      mockRegistrationConnector
     )
 
   override protected def beforeEach(): Unit = {
@@ -58,17 +57,17 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
 
       "user has previously selected an answer and display page method is invoked" in {
-        authorizedUser()
+
         val registration =
           aRegistration(withGroupDetail(Some(GroupDetail(membersUnderGroupControl = Some(true)))))
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -78,8 +77,8 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
     "redirect to check your answers page" when {
       "user selects 'yes'" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val correctForm = Seq("value" -> "yes")
@@ -95,8 +94,8 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
     "redirect to not not able to apply as a group page " when {
       "user selects 'no'" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val correctForm = Seq("value" -> "no")
@@ -113,7 +112,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
@@ -121,7 +120,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
       "display a BAD REQUEST status" when {
         "no selection is made" in {
-          authorizedUser()
+
           val result = controller.submit()(postRequestEncoded(MembersUnderGroupControl(None)))
 
           status(result) mustBe BAD_REQUEST
@@ -129,7 +128,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
+
         mockRegistrationUpdateFailure()
         val correctForm = Seq("value" -> "no")
         val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))

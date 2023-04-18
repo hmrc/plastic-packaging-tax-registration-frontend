@@ -32,13 +32,13 @@ class RegisterAsOtherOrganisationControllerSpec extends ControllerSpec {
   val controller =
     new RegisterAsOtherOrganisationController(stubMessagesControllerComponents(),
                                               page,
-                                              authenticate = mockAuthAction
+                                              authenticate = FakeRegistrationAuthAction
     )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     when(page.apply()(any(), any())).thenReturn(HtmlFormat.empty)
-    authorizedUser()
+
   }
 
   override protected def afterEach(): Unit = {

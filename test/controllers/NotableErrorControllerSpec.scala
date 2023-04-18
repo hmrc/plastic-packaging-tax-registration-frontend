@@ -17,6 +17,7 @@
 package controllers
 
 import base.unit.ControllerSpec
+import controllers.actions.getRegistration.GetRegistrationAction
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -43,8 +44,8 @@ class NotableErrorControllerSpec extends ControllerSpec {
   private val registrationFailedPage = mock[registration_failed_page]
 
   private val controller =
-    new NotableErrorController(authenticate = mockAuthAction,
-      mockJourneyAction,
+    new NotableErrorController(authenticate = FakeRegistrationAuthAction,
+      getRegistration = mock[GetRegistrationAction], //todo PAN
       mcc = mcc,
       errorPage = errorPage,
       errorNoSavePage = enrolmentFailurePage,
@@ -75,7 +76,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
 
   "NotableErrorController" should {
     "present the generic error page on subscription failure" in {
-      authorizedUser()
+
       val resp = controller.subscriptionFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -83,7 +84,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the generic error no save page on enrolment failure" in {
-      authorizedUser()
+
       val resp = controller.enrolmentFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -91,7 +92,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the business verification failed page" in {
-      authorizedUser()
+
       val resp = controller.businessVerificationFailure()(getRequest())
 
       status(resp) mustBe OK
@@ -99,7 +100,7 @@ class NotableErrorControllerSpec extends ControllerSpec {
     }
 
     "present the sole trader verification failed page" in {
-      authorizedUser()
+
       val resp = controller.soleTraderVerificationFailure()(getRequest())
 
       status(resp) mustBe OK

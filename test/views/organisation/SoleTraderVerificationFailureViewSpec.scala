@@ -26,7 +26,7 @@ class SoleTraderVerificationFailureViewSpec extends UnitViewSpec with Matchers {
   private val page: sole_trader_verification_failure_page =
     inject[sole_trader_verification_failure_page]
 
-  private def createView(): Html = page()(journeyRequest, messages)
+  private def createView(): Html = page()(registrationJourneyRequest, messages)
 
   "Sole Trader Verification Failure Page" should {
 

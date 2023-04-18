@@ -47,8 +47,7 @@ class ContactDetailsTelephoneNumberControllerSpec
   )
 
   private val controller =
-    new ContactDetailsTelephoneNumberController(authenticate = mockAuthAction,
-                                                journeyAction = mockJourneyAction,
+    new ContactDetailsTelephoneNumberController(journeyAction = spyJourneyAction,
                                                 mcc = mcc,
                                                 page = page,
                                                 registrationUpdater = mockNewRegistrationUpdater
@@ -69,9 +68,9 @@ class ContactDetailsTelephoneNumberControllerSpec
     "return 200" when {
 
       "user is authorised display page method is invoked" in {
-        authorizedUser()
+
         val member = groupMember.copy(contactDetails = None)
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -80,8 +79,8 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -92,8 +91,8 @@ class ContactDetailsTelephoneNumberControllerSpec
 
     "return 303 (OK)" when {
         "user submits the phone number" in {
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
           )
           mockRegistrationUpdate()
@@ -121,8 +120,8 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
@@ -135,7 +134,7 @@ class ContactDetailsTelephoneNumberControllerSpec
     "return 400 (BAD_REQUEST)" when {
 
       "user submits invalid phone number" in {
-        authorizedUser()
+
         val result = controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("$%^"))))
 
         status(result) mustBe BAD_REQUEST
@@ -145,14 +144,14 @@ class ContactDetailsTelephoneNumberControllerSpec
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage(groupMember.id)(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
+
         mockRegistrationUpdateFailure()
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
@@ -161,7 +160,7 @@ class ContactDetailsTelephoneNumberControllerSpec
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
+
         mockRegistrationException()
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))

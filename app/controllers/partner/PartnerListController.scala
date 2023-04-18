@@ -21,6 +21,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
 import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import controllers.{routes => commonRoutes}
@@ -32,20 +33,19 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 @Singleton
 class PartnerListController @Inject() (
-                                        authenticate: RegistrationAuthAction,
-                                        journeyAction: GetRegistrationAction,
+                                        journeyAction: JourneyAction,
                                         override val registrationConnector: RegistrationConnector,
                                         mcc: MessagesControllerComponents,
                                         page: partner_list_page
 ) extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       Ok(page(AddPartner.form(), getNominatedPartner(request), getOtherPartners(request)))
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       AddPartner.form()
         .bindFromRequest()
         .fold(

@@ -49,9 +49,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
   )
 
   private val controller = new PartnerTypeController(
-    authenticate = mockAuthAction,
-    journeyAction = mockJourneyAction,
-    appConfig = appConfig,
+    journeyAction = spyJourneyAction,
+    appConfig = config,
     soleTraderGrsConnector = mockSoleTraderGrsConnector,
     ukCompanyGrsConnector = mockUkCompanyGrsConnector,
     partnershipGrsConnector = mockPartnershipGrsConnector,
@@ -70,18 +69,18 @@ class PartnerTypeControllerSpec extends ControllerSpec {
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    authorizedUser()
+
     when(page.apply(any(), any(), any())(any(), any())).thenReturn(
       HtmlFormat.raw("Nominated partner type capture")
     )
-    mockRegistrationFind(partnershipRegistration)
+    spyJourneyAction.setReg(partnershipRegistration)
     mockRegistrationUpdate()
     mockCreatePartnershipGrsJourneyCreation("/partnership-grs-journey")
 
-    when(appConfig.generalPartnershipJourneyUrl).thenReturn(
+    when(config.generalPartnershipJourneyUrl).thenReturn(
       "/general-partnership-grs-journey-creation"
     )
-    when(appConfig.scottishPartnershipJourneyUrl).thenReturn(
+    when(config.scottishPartnershipJourneyUrl).thenReturn(
       "/scottish-partnership-grs-journey-creation"
     )
   }
@@ -96,8 +95,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
           )
         )
 
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayNewPartner()(getRequest())
 
@@ -111,8 +110,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
           )
         )
 
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayExistingPartner("123")(getRequest())
 
@@ -160,8 +159,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
           s"a ${partnershipDetails._1} type was selected" in {
             val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
-            authorizedUser()
-            mockRegistrationFind(registration)
+
+            spyJourneyAction.setReg(registration)
             mockRegistrationUpdate()
 
             mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
@@ -234,8 +233,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
           s"a ${partnershipDetails._1} type was selected" in {
             val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
-            authorizedUser()
-            mockRegistrationFind(registration)
+
+            spyJourneyAction.setReg(registration)
             mockRegistrationUpdate()
 
             mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
@@ -260,8 +259,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         val registration =
           aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         mockCreateSoleTraderPartnershipGrsJourneyCreation("http://test/redirect/soletrader")
 
@@ -280,8 +279,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         val registration =
           aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
         val correctForm =
@@ -303,8 +302,8 @@ class PartnerTypeControllerSpec extends ControllerSpec {
         )
       )
 
-      authorizedUser()
-      mockRegistrationFind(registration)
+
+      spyJourneyAction.setReg(registration)
       mockRegistrationUpdateFailure()
 
       val result = controller.submitNewPartner()(postJsonRequestEncoded())
@@ -320,7 +319,7 @@ class PartnerTypeControllerSpec extends ControllerSpec {
           contentAsString(resp) mustBe "Nominated partner type capture"
         }
         "registration does contain nominated partnership type" in {
-          mockRegistrationFind(
+          spyJourneyAction.setReg(
             aRegistration(
               withPartnershipDetails(
                 Some(

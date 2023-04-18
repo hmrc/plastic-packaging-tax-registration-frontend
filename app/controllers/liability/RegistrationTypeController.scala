@@ -20,19 +20,20 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import connectors.RegistrationConnector
+import controllers.actions.JourneyAction
 import controllers.actions.auth.RegistrationAuthAction
 import controllers.actions.getRegistration.GetRegistrationAction
 import forms.liability.{RegType, RegistrationType}
 import models.registration.Cacheable
 import models.request.JourneyRequest
 import views.html.liability.registration_type_page
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RegistrationTypeController @Inject() (
-                                             authenticate: RegistrationAuthAction,
-                                             journeyAction: GetRegistrationAction,
+                                             journeyAction: JourneyAction,
                                              override val registrationConnector: RegistrationConnector,
                                              mcc: MessagesControllerComponents,
                                              page: registration_type_page
@@ -40,7 +41,7 @@ class RegistrationTypeController @Inject() (
     extends LiabilityController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.registrationType match {
         case Some(regType) =>
           Ok(page(RegistrationType.form().fill(RegistrationType(Some(regType))), backLink))
@@ -49,7 +50,7 @@ class RegistrationTypeController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       RegistrationType.form()
         .bindFromRequest()
         .fold(

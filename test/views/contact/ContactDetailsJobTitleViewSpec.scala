@@ -31,9 +31,9 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
   private val updateLink = Call("PUT", "/update")
 
   private def createView(form: Form[JobTitle] = JobTitle.form(), isGroup: Boolean = false): Document =
-    page(form, updateLink, isGroup)(journeyRequest, messages)
+    page(form, updateLink, isGroup)(registrationJourneyRequest, messages)
 
-  val contactName = journeyRequest.registration.primaryContactDetails.name.get
+  val contactName = registrationJourneyRequest.registration.primaryContactDetails.name.get
 
   "Job Title View" should {
 
@@ -126,8 +126,8 @@ class ContactDetailsJobTitleViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods() = {
-    page.f(JobTitle.form(), updateLink, false)(journeyRequest, messages)
-    page.render(JobTitle.form(), updateLink, false, journeyRequest, messages)
+    page.f(JobTitle.form(), updateLink, false)(registrationJourneyRequest, messages)
+    page.render(JobTitle.form(), updateLink, false, registrationJourneyRequest, messages)
   }
 
 }

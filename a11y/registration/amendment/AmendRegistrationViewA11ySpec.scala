@@ -37,7 +37,7 @@ class AmendRegistrationViewA11ySpec extends BaseViewSpec {
   private val partnershipRegistration        = aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
   private def createView(registration: Registration): String =
-    page(registration)(journeyRequestWithEnrolledUser, messages).toString()
+    page(registration)(amendsJourneyRequest, messages).toString()
 
   Seq((Organisation, singleOrganisationRegistration),
     (SoleTrader, soleTraderRegistration),

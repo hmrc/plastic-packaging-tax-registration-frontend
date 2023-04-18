@@ -26,7 +26,7 @@ class LiabilityWeightViewA11ySpec extends BaseViewSpec {
   private val page = inject[liability_weight_page]
 
   private def createView(form: Form[LiabilityWeight] = LiabilityWeight.form()): String =
-    page(form)(journeyRequest, messages).toString()
+    page(form)(registrationJourneyRequest, messages).toString()
 
   "Liability Weight View" should {
 

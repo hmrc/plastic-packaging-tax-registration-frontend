@@ -43,8 +43,7 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
   private val page = mock[partnership_type]
   private val mcc  = stubMessagesControllerComponents()
 
-  val controller = new PartnershipTypeController(authenticate = mockAuthAction,
-                                                 journeyAction = mockJourneyAction,
+  val controller = new PartnershipTypeController(journeyAction = spyJourneyAction,
                                                  appConfig = config,
                                                  soleTraderGrsConnector =
                                                    mockSoleTraderGrsConnector,
@@ -70,8 +69,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       "no previous partnership type in registration" in {
         val registration = aRegistration(withPartnershipDetails(None))
 
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -81,8 +80,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
       "previous partnership type in registration" in {
         val registration = aRegistration(withPartnershipDetails(Some(generalPartnershipDetails)))
 
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -100,8 +99,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         s"a ${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
-          authorizedUser()
-          mockRegistrationFind(registration)
+
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
 
@@ -123,8 +122,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         s"a ${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
 
-          authorizedUser()
-          mockRegistrationFind(registration)
+
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
 
           val correctForm =
@@ -147,8 +146,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
         s"update registration with $partnershipType type" in {
           val registration = aRegistration(withPartnershipDetails(None))
 
-          authorizedUser()
-          mockRegistrationFind(registration)
+
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> partnershipType.toString)
@@ -166,8 +165,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     "throw errors resulting from failed registration updates for General Partnership" in {
       val registration = aRegistration(withPartnershipDetails(None))
 
-      authorizedUser()
-      mockRegistrationFind(registration)
+
+      spyJourneyAction.setReg(registration)
       mockRegistrationUpdateFailure()
 
       val correctForm = Seq("answer" -> GENERAL_PARTNERSHIP.toString)
@@ -180,8 +179,8 @@ class PartnershipTypeControllerSpec extends ControllerSpec {
     "returns bad request when empty form submitted" in {
       val registration = aRegistration(withPartnershipDetails(None))
 
-      authorizedUser()
-      mockRegistrationFind(registration)
+
+      spyJourneyAction.setReg(registration)
       mockRegistrationUpdateFailure()
 
       val result = controller.submit()(postJsonRequestEncoded())

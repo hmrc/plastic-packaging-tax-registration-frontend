@@ -38,7 +38,7 @@ class ListGroupMembersPageA11ySpec extends BaseViewSpec {
   val form: Form[Boolean]        = AddOrganisationForm.form()
 
   private def createView(): String =
-    page(form, fakeViewModel)(journeyRequest, messages).toString()
+    page(form, fakeViewModel)(registrationJourneyRequest, messages).toString()
 
   val view = createView()
 
@@ -50,7 +50,7 @@ class ListGroupMembersPageA11ySpec extends BaseViewSpec {
 
     "pass accessibility checks with error" in {
       val errorForm = form.withError("foo", "site.button.tryAgain")
-      val view = page(errorForm, fakeViewModel)(journeyRequest, messages).toString()
+      val view = page(errorForm, fakeViewModel)(registrationJourneyRequest, messages).toString()
 
       view must passAccessibilityChecks
     }

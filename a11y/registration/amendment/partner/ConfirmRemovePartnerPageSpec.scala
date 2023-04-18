@@ -28,7 +28,7 @@ class ConfirmRemovePartnerPageSpec extends BaseViewSpec {
   private val partner = aLimitedCompanyPartner()
 
   private def createView(form: Form[RemovePartner] = RemovePartner.form()): String =
-    page(form, partner)(journeyRequest, messages).toString()
+    page(form, partner)(registrationJourneyRequest, messages).toString()
 
   "Confirm Remove Partner page" should {
 

@@ -46,8 +46,7 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   )
 
   private val controller =
-    new OrganisationDetailsTypeController(authenticate = mockAuthAction,
-                                          journeyAction = mockJourneyAction,
+    new OrganisationDetailsTypeController(journeyAction = spyJourneyAction,
                                           mcc = mcc,
                                           page = page,
                                           ukCompanyGrsConnector = mockUkCompanyGrsConnector,
@@ -77,16 +76,16 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       "user is authorised and display page method is invoked" when {
         "adding new group member" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdate()
           val result = controller.displayPageNewMember()(getRequest())
 
           status(result) mustBe OK
         }
         "amending existing group member" in {
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(withGroupDetail(groupDetail = Some(groupDetailsWithMembers)))
           )
           mockRegistrationUpdate()
@@ -97,8 +96,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user is authorised and display page method for next group member" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(
             withGroupDetail(
               Some(
@@ -127,8 +126,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "group user submits organisation type: " + PARTNERSHIP in {
           val registration: Registration =
             aRegistration(withRegistrationType(Some(RegType.GROUP)))
-          authorizedUser()
-          mockRegistrationFind(registration)
+
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> PARTNERSHIP.toString)
@@ -140,8 +139,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         "user submits organisation type: " + PARTNERSHIP in {
           val registration: Registration =
             aRegistration(withRegistrationType(Some(RegType.SINGLE_ENTITY)))
-          authorizedUser()
-          mockRegistrationFind(registration)
+
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> PARTNERSHIP.toString)
@@ -186,8 +185,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
                                          )
                                        )
         )
-        authorizedUser()
-        mockRegistrationFind(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
+
+        spyJourneyAction.setReg(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
         mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> orgType.toString)
@@ -201,8 +200,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       "return 400 (BAD_REQUEST) " when {
         "user does not enter mandatory fields" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           val result =
             controller.submitNewMember()(postRequestEncoded(JsObject.empty))
 
@@ -210,8 +209,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
 
         "user enters invalid data" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           val incorrectForm = Seq("answer" -> "maybe")
           val result        = controller.submitNewMember()(postJsonRequestEncoded(incorrectForm: _*))
 
@@ -222,15 +221,15 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "return an error" when {
 
         "user is not authorised" in {
-          unAuthorizedUser()
+
           val result = controller.displayPageNewMember()(getRequest())
 
           intercept[RuntimeException](status(result))
         }
 
         "user submits form and the registration update fails" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
+
+          spyJourneyAction.setReg(aRegistration(withGroupDetail(groupDetail = Some(groupDetails))))
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)
@@ -240,8 +239,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
 
         "user submits form and a registration update runtime exception occurs" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationException()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)

@@ -36,10 +36,10 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
   private val notNominated     = false
 
   private def createViewNominated(form: Form[EmailAddress] = EmailAddress.form()): Document =
-    page(form, updateLink, contactName, nominated)(journeyRequest, messages)
+    page(form, updateLink, contactName, nominated)(registrationJourneyRequest, messages)
 
   private def createViewOther(form: Form[EmailAddress] = EmailAddress.form()): Document =
-    page(form, updateLink, contactName, notNominated)(journeyRequest, messages)
+    page(form, updateLink, contactName, notNominated)(registrationJourneyRequest, messages)
 
   "Email address View" should {
 
@@ -126,8 +126,8 @@ class PartnerEmailAddressPageViewSpec extends UnitViewSpec with Matchers {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(EmailAddress.form(), updateLink, contactName, nominated)(journeyRequest, messages)
-    page.render(EmailAddress.form(), updateLink, contactName, nominated, journeyRequest, messages)
+    page.f(EmailAddress.form(), updateLink, contactName, nominated)(registrationJourneyRequest, messages)
+    page.render(EmailAddress.form(), updateLink, contactName, nominated, registrationJourneyRequest, messages)
   }
 
 }

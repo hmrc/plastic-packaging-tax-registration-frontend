@@ -46,13 +46,12 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
   private val mcc: MessagesControllerComponents = stubMessagesControllerComponents()
 
   private val sut = new ExpectToExceedThresholdWeightDateController(
-    mockAuthAction,
-    mockJourneyAction,
+    journeyAction = spyJourneyAction,
     mockRegistrationConnector,
     mcc,
     page,
     mockFormProvider,
-    appConfig
+    config
   )
 
   override def beforeEach() = {
@@ -66,8 +65,8 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
 
     "return 200" in {
 
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         when(mockFormProvider.apply()(any())).thenReturn(form)
 
         val result = sut.displayPage()()(getRequest())
@@ -76,11 +75,11 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
     }
 
     "display a view with empty date" in {
-      authorizedUser()
+
       val registration =
         aRegistration(withLiabilityDetails(LiabilityDetails(dateRealisedExpectedToExceedThresholdWeight = None)))
 
-      mockRegistrationFind(registration)
+      spyJourneyAction.setReg(registration)
       when(mockFormProvider.apply()(any())).thenReturn(form)
 
       await(sut.displayPage()(getRequest()))
@@ -90,8 +89,8 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
     }
 
     "display a view with a date" in {
-      authorizedUser()
-      mockRegistrationFind(aRegistration())
+
+      spyJourneyAction.setReg(aRegistration())
       when(mockFormProvider.apply()(any())).thenReturn(form)
       when(form.fill(any())).thenReturn(form)
 
@@ -102,7 +101,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
     }
 
     "return Unauthorised" in {
-      unAuthorizedUser()
+
 
       val result = sut.displayPage()(getRequest())
 
@@ -126,8 +125,8 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
     "save the date to cache" in {
       setUpMockForSubmit()
       val reg = aRegistration()
-      mockRegistrationFind(reg)
-      when(appConfig.isBackwardLookChangeEnabled).thenReturn(false)
+      spyJourneyAction.setReg(reg)
+      when(config.isBackwardLookChangeEnabled).thenReturn(false)
 
       await(sut.submit()(FakeRequest()))
 
@@ -157,7 +156,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
   }
 
   private def setUpMockForSubmit(bindForm: Form[LocalDate] = createForm): Unit = {
-    authorizedUser()
+
     when(mockFormProvider.apply()(any())).thenReturn(form)
     when(form.bindFromRequest()(any(), any())).thenReturn(bindForm)
     mockRegistrationUpdate()
@@ -174,7 +173,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
   }
 
   private def createForm: Form[LocalDate] =  {
-    new ExpectToExceedThresholdWeightDate(appConfig).apply()(mock[Messages])
+    new ExpectToExceedThresholdWeightDate(config).apply()(mock[Messages])
       .fill(LocalDate.of(2022,4,1))
   }
 

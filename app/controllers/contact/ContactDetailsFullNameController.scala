@@ -16,26 +16,23 @@
 
 package controllers.contact
 
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import connectors.{RegistrationConnector, ServiceError}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import controllers.{routes => commonRoutes}
+import controllers.actions.JourneyAction
 import forms.contact.FullName
 import models.registration.{Cacheable, Registration}
 import models.request.JourneyRequest
-import views.html.contact.full_name_page
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.contact.full_name_page
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ContactDetailsFullNameController @Inject() (
-                                                   authenticate: RegistrationAuthAction,
-                                                   journeyAction: GetRegistrationAction,
+                                                   journeyAction: JourneyAction,
                                                    override val registrationConnector: RegistrationConnector,
                                                    mcc: MessagesControllerComponents,
                                                    page: full_name_page
@@ -43,7 +40,7 @@ class ContactDetailsFullNameController @Inject() (
     extends FrontendController(mcc) with Cacheable with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       request.registration.primaryContactDetails.name match {
         case Some(data) =>
           Ok(buildPage(FullName.form().fill(FullName(data))))
@@ -53,7 +50,7 @@ class ContactDetailsFullNameController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction).async { implicit request =>
+    journeyAction.register.async { implicit request =>
       FullName.form()
         .bindFromRequest()
         .fold(

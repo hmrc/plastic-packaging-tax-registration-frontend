@@ -46,7 +46,7 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
                                                 )
   )
 
-  val sut: HtmlFormat.Appendable = view(registration)(journeyRequest, messages)
+  val sut: HtmlFormat.Appendable = view(registration)(registrationJourneyRequest, messages)
 
   "manage_group_members_page" must {
     "contain title" in {
@@ -80,8 +80,8 @@ class ManageGroupMembersPageSpec extends UnitViewSpec with Matchers with Injecti
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    view.f(registration)(journeyRequest, messages)
-    view.render(registration, journeyRequest, messages)
+    view.f(registration)(registrationJourneyRequest, messages)
+    view.render(registration, registrationJourneyRequest, messages)
   }
 
 }

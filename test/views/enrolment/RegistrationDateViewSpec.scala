@@ -34,7 +34,7 @@ class RegistrationDateViewSpec extends UnitViewSpec with Matchers {
     form: Form[RegistrationDate] = RegistrationDate.form(),
     previousPage: Call = previousPage
   ): Document =
-    page(form, previousPage)(journeyRequest, messages)
+    page(form, previousPage)(registrationJourneyRequest, messages)
 
   "The Initial Registration Date View" should {
 

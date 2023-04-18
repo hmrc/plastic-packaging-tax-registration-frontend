@@ -16,6 +16,7 @@
 
 package controllers.organisation
 
+import audit.Auditor
 import base.unit.ControllerSpec
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{atLeastOnce, reset, verify, when}
@@ -39,25 +40,26 @@ import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
   private val page = mock[organisation_type]
   private val mcc  = stubMessagesControllerComponents()
+  val mockAuditor: Auditor = mock[Auditor]
 
   private val mockNewRegistrationUpdater = new NewRegistrationUpdateService(
     mockRegistrationConnector
   )
 
   private val controller =
-    new OrganisationDetailsTypeController(auditor = mockAuditor,
-                                          authenticate = mockAuthAction,
-                                          journeyAction = mockJourneyAction,
-                                          registrationConnector = mockRegistrationConnector,
-                                          mcc = mcc,
-                                          page = page,
-                                          ukCompanyGrsConnector = mockUkCompanyGrsConnector,
-                                          registeredSocietyGrsConnector =
-                                            mockRegisteredSocietyGrsConnector,
-                                          soleTraderGrsConnector = mockSoleTraderGrsConnector,
-                                          appConfig = config,
-                                          partnershipGrsConnector = mockPartnershipGrsConnector,
-                                          registrationUpdater = mockNewRegistrationUpdater
+    new OrganisationDetailsTypeController(journeyAction = spyJourneyAction,
+      auditor = mockAuditor,
+      registrationConnector = mockRegistrationConnector,
+      mcc = mcc,
+      page = page,
+      ukCompanyGrsConnector = mockUkCompanyGrsConnector,
+      registeredSocietyGrsConnector =
+        mockRegisteredSocietyGrsConnector,
+      soleTraderGrsConnector = mockSoleTraderGrsConnector,
+      appConfig = config,
+      partnershipGrsConnector = mockPartnershipGrsConnector,
+      registrationUpdater = mockNewRegistrationUpdater,
+
     )
 
   override protected def beforeEach(): Unit = {
@@ -79,8 +81,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         val result = controller.displayPage()(getRequest())
 
@@ -91,8 +93,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY)))
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayPage()(getRequest())
 
@@ -100,8 +102,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user is authorised and display page method is invoked for representative member" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         val result = controller.displayPageRepresentativeMember()(getRequest())
 
@@ -112,8 +114,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         val registration = aRegistration(
           withOrganisationDetails(OrganisationDetails(organisationType = Some(OrgType.UK_COMPANY)))
         )
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
 
         val result = controller.displayPageRepresentativeMember()(getRequest())
 
@@ -140,8 +142,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser()
-          mockRegistrationFind(aRegistration(withRegistrationType(Some(RegType.GROUP))))
+
+          spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(RegType.GROUP))))
           mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> PARTNERSHIP.toString)
@@ -157,8 +159,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type Limited Liability Partnership in group with partnership details present: " + PARTNERSHIP in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(withRegistrationType(Some(RegType.GROUP)),
                           withPartnershipDetails(
                             Some(
@@ -206,8 +208,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
         "user submits organisation type Limited Liability Partnership in group: " + PARTNERSHIP + " for representative member" in {
           mockCreatePartnershipGrsJourneyCreation("http://test/redirect/partnership")
-          authorizedUser()
-          mockRegistrationFind(aRegistration(withRegistrationType(Some(RegType.GROUP))))
+
+          spyJourneyAction.setReg(aRegistration(withRegistrationType(Some(RegType.GROUP))))
           mockRegistrationUpdate()
 
           val correctForm = Seq("answer" -> PARTNERSHIP.toString)
@@ -226,8 +228,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         orgType: OrgType,
         redirectUrl: String
       ): Unit = {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
 
         val correctForm = Seq("answer" -> orgType.toString)
@@ -245,8 +247,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
 
       "return 400 (BAD_REQUEST)" when {
         "user does not enter mandatory fields" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           val result =
             controller.submit()(postRequestEncoded(JsObject.empty))
 
@@ -254,8 +256,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
 
         "user enters invalid data" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           val incorrectForm = Seq("answer" -> "maybe")
           val result        = controller.submit()(postJsonRequestEncoded(incorrectForm: _*))
 
@@ -266,15 +268,15 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       "return an error" when {
 
         "user is not authorised" in {
-          unAuthorizedUser()
+
           val result = controller.displayPage()(getRequest())
 
           intercept[RuntimeException](status(result))
         }
 
         "user submits form and the registration update fails" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)
@@ -284,8 +286,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         }
 
         "user submits form and a registration update runtime exception occurs" in {
-          authorizedUser()
-          mockRegistrationFind(aRegistration())
+
+          spyJourneyAction.setReg(aRegistration())
           mockRegistrationException()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)
@@ -299,8 +301,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
     "should return error when create journey" when {
 
       "user submits form for sole trader" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         mockSoleTraderCreateIncorpJourneyIdException()
 
@@ -313,8 +315,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user submits form for uk company" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         mockUkCompanyCreateIncorpJourneyIdException()
 
@@ -327,8 +329,8 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
       }
 
       "user submits form for registered society" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         mockRegisteredSocietyCreateIncorpJourneyIdException()
 

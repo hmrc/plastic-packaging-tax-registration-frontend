@@ -36,8 +36,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new PartnerJobTitleController(authenticate = mockAuthAction,
-                                  journeyAction = mockJourneyAction,
+    new PartnerJobTitleController(journeyAction = spyJourneyAction,
                                   registrationConnector =
                                     mockRegistrationConnector,
                                   mcc = mcc,
@@ -76,8 +75,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
     "return 200" when {
       "user is authorised, a registration already exists with already collected nominated partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.displayNewPartner()(getRequest())
 
@@ -85,8 +84,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "displaying an existing partner to edit their job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
         val result = controller.displayExistingPartner(existingPartner.id)(getRequest())
 
@@ -96,8 +95,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
     "update inflight registration" when {
       "user submits a complete job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndNonNominatedInflightPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitNewPartner()(
@@ -115,8 +114,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "user submits an amendment to an existing partners job title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
@@ -133,8 +132,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
 
     "return 400 (BAD_REQUEST)" when {
       "user does not enter name" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
           controller.submitNewPartner()(postRequestEncoded(JobTitle("")))
@@ -143,8 +142,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "user enters a long title" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result = controller.submitNewPartner()(
           postRequestEncoded(JobTitle("abced" * 40))
@@ -154,8 +153,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "user enters non-alphabetic characters" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
 
         val result =
           controller.submitNewPartner()(
@@ -169,7 +168,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
 
         val result = controller.displayNewPartner()(getRequest())
 
@@ -177,8 +176,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "user tries to display an non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
 
         val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
 
@@ -186,8 +185,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "user submits an amendment to a non existent partner" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithExistingPartner)
+
+        spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner("not-an-existing-partners-id")(
@@ -198,8 +197,8 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationFind(registrationWithPartnershipDetailsAndInflightPartner)
+
+        spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
         val result =

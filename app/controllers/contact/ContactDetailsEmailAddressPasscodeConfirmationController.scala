@@ -16,26 +16,23 @@
 
 package controllers.contact
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
+import controllers.actions.JourneyAction
 import models.request.JourneyRequest
-import views.html.contact.email_address_passcode_confirmation_page
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.i18n.Messages
+import views.html.contact.email_address_passcode_confirmation_page
 
 import javax.inject.Inject
 
 class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
-                                                                           authenticate: RegistrationAuthAction,
-                                                                           journeyAction: GetRegistrationAction,
+                                                                           journeyAction: JourneyAction,
                                                                            mcc: MessagesControllerComponents,
                                                                            page: email_address_passcode_confirmation_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       Ok(
         page(routes.ContactDetailsEmailAddressPasscodeConfirmationController.submit(),
              Some(sectionName())
@@ -44,7 +41,7 @@ class ContactDetailsEmailAddressPasscodeConfirmationController @Inject() (
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { _ =>
+    journeyAction.register { _ =>
       Redirect(routes.ContactDetailsTelephoneNumberController.displayPage())
     }
 

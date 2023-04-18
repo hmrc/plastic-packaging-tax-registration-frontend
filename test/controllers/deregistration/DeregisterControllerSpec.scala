@@ -42,10 +42,10 @@ class DeregisterControllerSpec
     ArgumentCaptor.forClass(classOf[Form[Boolean]])
 
   private val deregisterController = new DeregisterController(
-    mockEnrolledAuthAction,
+    FakeAmendAuthAction,
     mcc,
     inMemoryDeregistrationDetailRepository,
-    appConfig,
+    config,
     mockPage
   )
 
@@ -53,7 +53,7 @@ class DeregisterControllerSpec
     when(mockPage.apply(formCaptor.capture())(any(), any())).thenReturn(
       HtmlFormat.raw("Deregister?")
     )
-    when(appConfig.pptAccountUrl).thenReturn("/account")
+    when(config.pptAccountUrl).thenReturn("/account")
   }
 
   override protected def afterEach(): Unit = {
@@ -79,7 +79,7 @@ class DeregisterControllerSpec
 
     "redirect to the deregistration reason page and update repository" when {
       "user suggests they would like to deregister" in {
-        authorizedUser()
+
 
         val correctForm = Seq("deregister" -> "yes")
         val resp        = await(deregisterController.submit()(postJsonRequestEncoded(correctForm: _*)))
@@ -96,7 +96,7 @@ class DeregisterControllerSpec
 
     "redirect to the PPT account page" when {
       "user suggests they do not want to deregister" in {
-        authorizedUser()
+
 
         val correctForm = Seq("deregister" -> "no")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -107,7 +107,7 @@ class DeregisterControllerSpec
 
     "redisplay the deregister page" when {
       "user does not select an answer" in {
-        authorizedUser()
+
 
         val correctForm = Seq("deregister" -> "")
         val resp        = deregisterController.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -119,14 +119,14 @@ class DeregisterControllerSpec
 
     "throw exception when user not authenticated" when {
       "displaying page" in {
-        unAuthorizedUser()
+
 
         intercept[RuntimeException] {
           await(deregisterController.displayPage()(getRequest()))
         }
       }
       "submitting answer" in {
-        unAuthorizedUser()
+
 
         intercept[RuntimeException] {
           val correctForm = Seq("deregister" -> "yes")
@@ -137,7 +137,7 @@ class DeregisterControllerSpec
   }
 
   private def deregisterPageDisplayedAsExpected() = {
-    authorizedUser()
+
 
     val resp = deregisterController.displayPage()(getRequest())
 

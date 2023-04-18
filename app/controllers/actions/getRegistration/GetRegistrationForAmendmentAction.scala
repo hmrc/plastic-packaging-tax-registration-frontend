@@ -16,6 +16,7 @@
 
 package controllers.actions.getRegistration
 
+import com.google.inject.ImplementedBy
 import connectors.SubscriptionsConnector
 import models.request.AuthenticatedRequest.PPTEnrolledRequest
 import models.request.JourneyRequest
@@ -27,10 +28,13 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class GetRegistrationForAmendmentAction @Inject()(
+@ImplementedBy(classOf[GetRegistrationForAmendmentActionImpl])
+trait GetRegistrationForAmendmentAction extends ActionTransformer[PPTEnrolledRequest, JourneyRequest]
+
+class GetRegistrationForAmendmentActionImpl @Inject()(
   subscriptionsConnector: SubscriptionsConnector,
   registrationAmendmentRepository: RegistrationAmendmentRepository
-)(implicit val executionContext: ExecutionContext) extends ActionTransformer[PPTEnrolledRequest, JourneyRequest] {
+)(implicit val executionContext: ExecutionContext) extends GetRegistrationForAmendmentAction {
 
   override protected def transform[A](request: PPTEnrolledRequest[A]): Future[JourneyRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)

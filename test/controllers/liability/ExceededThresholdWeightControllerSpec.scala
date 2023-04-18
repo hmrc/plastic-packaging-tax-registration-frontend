@@ -24,7 +24,7 @@ import models.registration.Registration
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{RETURNS_DEEP_STUBS, reset, verify, when}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{BeforeAndAfterEach, color}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status
@@ -49,9 +49,8 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
   val form = inject[ExceededThresholdWeight]
 
   val controller = new ExceededThresholdWeightController(
-    authenticate = mockAuthAction,
-    mockJourneyAction,
-    appConfig,
+    journeyAction = spyJourneyAction,
+    config,
     mockRegistrationConnector,
     mcc = mcc,
     form,
@@ -61,7 +60,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
   override def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(mockPage, appConfig)
+    reset(mockPage, config)
 
     when(mockPage.apply(any())(any(), any())).thenReturn(HtmlFormat.raw("test view"))
   }
@@ -70,7 +69,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
     "user is authorised" should {
       "return 200" in {
-        authorizedUser()
+
         val result: Future[Result] = controller.displayPage()(getRequest())
         status(result) shouldEqual Status.OK
         contentAsString(result) mustBe "test view"
@@ -80,7 +79,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
     "continuing an existing registration" should {
 
       "populate the form with the previous answer" in {
-        authorizedUser()
+
         val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
         when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
 
@@ -102,12 +101,12 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
   }
 
   "submit" should {
-    authorizedUser()
+
 
     "update registration and redirect" when {
 
       "user answers no" in {
-        mockRegistrationFind(aRegistration())
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         val correctForm = Seq("value" -> "no")
         val result = controller.submit()(postJsonRequestEncoded(correctForm: _*))
@@ -121,7 +120,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       }
 
       "user answers yes" in {
-        mockRegistrationFind(aRegistration())
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdate()
         val correctForm = Seq("value" -> "yes")
 
@@ -141,8 +140,8 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationUpdateFailure()
 
         val correctForm = Seq("value" -> "yes")
@@ -152,8 +151,8 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
-        mockRegistrationFind(aRegistration())
+
+        spyJourneyAction.setReg(aRegistration())
         mockRegistrationException()
 
         val correctForm = Seq("value" -> "yes")
@@ -166,26 +165,4 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
   }
 
-  "In general" when {
-    "the user is unauthorised" should {
-      object TestingException extends Exception
-
-      "displayPage will result in an exception" in {
-        when(mockAuthConnector.authorise(any(), any())(any(), any())).thenReturn(
-          Future.failed(TestingException)
-        )
-        val result = controller.displayPage()(getRequest())
-        intercept[TestingException.type](await(result))
-      }
-
-      "submit will result in an exception" in {
-        when(mockAuthConnector.authorise(any(), any())(any(), any())).thenReturn(
-          Future.failed(TestingException)
-        )
-        val result: Future[Result] = controller.submit()(getRequest())
-        intercept[TestingException.type](await(result))
-      }
-
-    }
-  }
 }

@@ -55,8 +55,7 @@ class PartnerGrsControllerSpec extends ControllerSpec {
   )
 
   private val controller =
-    new PartnerGrsController(authenticate = mockAuthAction,
-                             mockJourneyAction,
+    new PartnerGrsController(journeyAction = spyJourneyAction,
                              mockUkCompanyGrsConnector,
                              mockSoleTraderGrsConnector,
                              mockPartnershipGrsConnector,
@@ -120,8 +119,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
       ) { partnershipDetails =>
         s"${partnershipDetails._1} type was selected" in {
           val registration = aRegistration(withPartnershipDetails(Some(partnershipDetails._2)))
-          authorizedUser()
-          mockRegistrationFind(registration)
+
+          spyJourneyAction.setReg(registration)
           mockRegistrationUpdate()
 
           partnershipDetails._1 match {
@@ -161,8 +160,8 @@ class PartnerGrsControllerSpec extends ControllerSpec {
         val registration =
           aRegistration(withPartnershipDetails(Some(generalPartnershipDetailsWithPartners)))
 
-        authorizedUser()
-        mockRegistrationFind(registration)
+
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         mockGetSoleTraderDetails(soleTraderDetails)
         val result =
@@ -187,9 +186,9 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             )
           )
         )
-        authorizedUser()
+
         mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
 
@@ -214,9 +213,9 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             )
           )
         )
-        authorizedUser()
+
         mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)
@@ -253,9 +252,9 @@ class PartnerGrsControllerSpec extends ControllerSpec {
             )
           )
         )
-        authorizedUser()
+
         mockGetUkCompanyDetails(incorporationDetails)
-        mockRegistrationFind(registration)
+        spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
         mockGetSubscriptionStatus(SubscriptionStatusResponse(SUBSCRIBED, Some("XDPPT1234567890")))
         mockGetPartnershipBusinessDetails(partnershipBusinessDetails)

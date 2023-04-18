@@ -42,7 +42,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
   private val repository = new UserEnrolmentDetailsRepository(mockCache)
 
   private val controller =
-    new RegistrationDateController(mockAuthAction, mcc, repository, page)
+    new RegistrationDateController(FakeRegistrationAuthAction, mcc, repository, page)
 
   private val registrationDate = RegistrationDate(DateData("1", "2", "2021"))
   private val enrolmentDetails = UserEnrolmentDetails(registrationDate = Some(registrationDate))
@@ -66,7 +66,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
   "Registration Date Controller" should {
     "display the registration data page" when {
       "user is authorised" in {
-        authorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -74,7 +74,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
       }
 
       "user is authorised and cache is empty" in {
-        authorizedUser()
+
         when(mockCache.getData[UserEnrolmentDetails](any())(any(), any())).thenReturn(
           Future.successful(None)
         )
@@ -86,7 +86,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
     }
     "throw a RuntimeException" when {
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))
@@ -95,7 +95,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
 
     "redisplay the registration date page with a BAD REQUEST status" when {
       "an invalid registration date is submitted" in {
-        authorizedUser()
+
         val correctForm = Seq("date.day" -> registrationDate.value.day,
                               "date.month" -> registrationDate.value.month,
                               "date.year"  -> "1980"
@@ -114,7 +114,7 @@ class RegistrationDateControllerSpec extends ControllerSpec {
           Future.successful(enrolmentDetails)
         )
 
-        authorizedUser()
+
 
         val correctForm = Seq("date.day" -> registrationDate.value.day,
                               "date.month" -> registrationDate.value.month,

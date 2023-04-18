@@ -16,30 +16,28 @@
 
 package controllers.liability
 
+import controllers.actions.JourneyAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import controllers.actions.auth.RegistrationAuthAction
-import controllers.actions.getRegistration.GetRegistrationAction
-import views.html.liability.not_members_under_group_control_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.liability.not_members_under_group_control_page
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NotMembersUnderGroupControlController @Inject() (
-                                                        authenticate: RegistrationAuthAction,
+                                                        journeyAction: JourneyAction,
                                                         mcc: MessagesControllerComponents,
-                                                        journeyAction: GetRegistrationAction,
                                                         page: not_members_under_group_control_page
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayPage(): Action[AnyContent] =
-    (authenticate andThen journeyAction) { implicit request =>
+    journeyAction.register { implicit request =>
       Ok(page())
     }
 
   def submit(): Action[AnyContent] =
-    (authenticate andThen journeyAction) {
+    journeyAction.register {
       Redirect(routes.RegistrationTypeController.displayPage())
     }
 

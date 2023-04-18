@@ -71,8 +71,8 @@ class TaxStartDateViewSpec extends UnitViewSpec {
   }
 
   override def exerciseGeneratedRenderingMethods(): Unit = {
-    page.f(aDate, true)(journeyRequest, messages)
-    page.render(aDate, isDateFromBackwardsTest = true, journeyRequest, messages)
+    page.f(aDate, true)(registrationJourneyRequest, messages)
+    page.render(aDate, isDateFromBackwardsTest = true, registrationJourneyRequest, messages)
   }
 
 }

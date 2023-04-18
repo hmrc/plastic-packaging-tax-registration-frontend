@@ -16,27 +16,26 @@
 
 package repositories
 
-import base.PptTestData.newUser
 import builders.RegistrationBuilder
+import config.AppConfig
+import models.registration.Registration
+import models.request.AuthenticatedRequest.RegistrationRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 import play.api.test.Helpers.await
-import config.AppConfig
-import models.registration.Registration
-import models.request.AuthenticatedRequest
+import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import spec.PptTestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class MongoRegistrationAmendmentRepositorySpec
     extends AnyWordSpec with RegistrationBuilder with Matchers with MockitoSugar
-    with BeforeAndAfterEach with DefaultAwaitTimeout {
+    with BeforeAndAfterEach with DefaultAwaitTimeout with PptTestData {
 
-  private val appConfig: AppConfig   = mock[AppConfig]
   private val mockUserDataRepository = mock[UserDataRepository]
 
   private val mongoRegistrationAmendmentRepository = new RegistrationAmendmentRepositoryImpl(
@@ -45,7 +44,7 @@ class MongoRegistrationAmendmentRepositorySpec
 
   private val sessionId        = "123"
   private val registration     = aRegistration()
-  private implicit val request = new AuthenticatedRequest(FakeRequest(), newUser())
+  private implicit val authRequest = registrationRequest
 
   override protected def beforeEach(): Unit = {
     reset(mockUserDataRepository)

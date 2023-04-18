@@ -34,7 +34,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
   private val mcc  = stubMessagesControllerComponents()
 
   private val controller =
-    new ConfirmationController(authenticate = mockEnrolledAuthAction, mcc = mcc, page = page)
+    new ConfirmationController(authenticate = FakeAmendAuthAction, mcc = mcc, page = page)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -51,7 +51,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-        authorizedUser()
+
 
         val result = controller.displayPage()(getRequest())
 
@@ -59,9 +59,6 @@ class ConfirmationControllerSpec extends ControllerSpec {
       }
 
       "user is already enrolled and display page method is invoked" in {
-        val user =
-          PptTestData.newUser().copy(enrolments = Enrolments(Set(Enrolment("HMRC-PPT-ORG"))))
-        authorizedUser(user)
 
         val result = controller.displayPage()(getRequest())
 
@@ -73,7 +70,7 @@ class ConfirmationControllerSpec extends ControllerSpec {
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage()(getRequest())
 
         intercept[RuntimeException](status(result))

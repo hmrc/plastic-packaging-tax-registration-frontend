@@ -45,8 +45,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
   )
 
   private val controller =
-    new ContactDetailsNameController(authenticate = mockAuthAction,
-                                     journeyAction = mockJourneyAction,
+    new ContactDetailsNameController(journeyAction = spyJourneyAction,
                                      mcc = mcc,
                                      page = page,
                                      registrationUpdater = mockNewRegistrationUpdater
@@ -67,9 +66,9 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
     "return 200" when {
 
       "user is authorised display page method is invoked" in {
-        authorizedUser()
+
         val member = groupMember.copy(contactDetails = None)
-        mockRegistrationFind(
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(member)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -78,8 +77,8 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user is authorised, a registration already exists and display page method is invoked" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
         val result = controller.displayPage(groupMember.id)(getRequest())
@@ -90,8 +89,8 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
       "return 303 (OK)" when {
         "user submits the member name" in {
-          authorizedUser()
-          mockRegistrationFind(
+
+          spyJourneyAction.setReg(
             aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
           )
           mockRegistrationUpdate()
@@ -123,8 +122,8 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "data exist" in {
-        authorizedUser()
-        mockRegistrationFind(
+
+        spyJourneyAction.setReg(
           aRegistration(withGroupDetail(Some(groupDetails.copy(members = Seq(groupMember)))))
         )
 
@@ -138,14 +137,14 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
     "return 400 (BAD_REQUEST)" when {
 
       "user submits numbers in firstname" in {
-        authorizedUser()
+
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("123", "andy"))))
 
         status(result) mustBe BAD_REQUEST
       }
       "user submits numbers in lastname" in {
-        authorizedUser()
+
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("andy", "123"))))
 
@@ -153,7 +152,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user submits accented member name" in {
-        authorizedUser()
+
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("Chlöe", "Bòb"))))
 
@@ -161,7 +160,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user submits invalid member name" in {
-        authorizedUser()
+
         val result =
           controller.submit(groupMember.id)(postRequest(Json.toJson(MemberName("$%^", "£$£¬"))))
 
@@ -172,14 +171,14 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
     "return an error" when {
 
       "user is not authorised" in {
-        unAuthorizedUser()
+
         val result = controller.displayPage(groupMember.id)(getRequest())
 
         intercept[RuntimeException](status(result))
       }
 
       "user submits form and the registration update fails" in {
-        authorizedUser()
+
         mockRegistrationUpdateFailure()
         val result =
           controller.submit(groupMember.id)(
@@ -190,7 +189,7 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       }
 
       "user submits form and a registration update runtime exception occurs" in {
-        authorizedUser()
+
         mockRegistrationException()
         val result =
           controller.submit(groupMember.id)(

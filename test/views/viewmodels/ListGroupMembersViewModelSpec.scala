@@ -24,6 +24,7 @@ import spec.PptTestData
 import controllers.amendment.group.routes
 import models.registration.group.GroupMember
 import models.registration.{GroupDetail, Registration}
+import org.scalatestplus.mockito.MockitoSugar.mock
 
 class ListGroupMembersViewModelSpec extends PlaySpec with PptTestData {
 

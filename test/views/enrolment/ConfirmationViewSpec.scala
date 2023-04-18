@@ -27,7 +27,7 @@ class ConfirmationViewSpec extends UnitViewSpec with Matchers {
   private val page: confirmation_page = inject[confirmation_page]
 
   private def createView(): Html =
-    page()(journeyRequest, messages)
+    page()(registrationJourneyRequest, messages)
 
   "Confirmation Page view" should {
 

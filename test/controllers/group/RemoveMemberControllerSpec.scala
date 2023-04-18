@@ -47,8 +47,7 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     withGroupDetail(Some(GroupDetail(members = List(groupMember1, groupMember2))))
   )
 
-  private val removeMemberController = new RemoveMemberController(mockAuthAction,
-                                                                  mockJourneyAction,
+  private val removeMemberController = new RemoveMemberController(journeyAction = spyJourneyAction,
                                                                   mockRegistrationConnector,
                                                                   mcc,
                                                                   mockPage
@@ -69,8 +68,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
   "Remove Member Controller" should {
 
     "display page when group member found in registration" in {
-      authorizedUser()
-      mockRegistrationFind(groupRegistration)
+
+      spyJourneyAction.setReg(groupRegistration)
 
       val result = removeMemberController.displayPage(groupMember1.id)(getRequest())
 
@@ -79,8 +78,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     }
 
     "redirect to group member list when group member not found in registration" in {
-      authorizedUser()
-      mockRegistrationFind(groupRegistration)
+
+      spyJourneyAction.setReg(groupRegistration)
 
       val result = removeMemberController.displayPage(s"${groupMember1.id}xxx")(getRequest())
 
@@ -89,8 +88,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     }
 
     "remove identified group member when remove action confirmed" in {
-      authorizedUser()
-      mockRegistrationFind(groupRegistration)
+
+      spyJourneyAction.setReg(groupRegistration)
       mockRegistrationUpdate()
 
       await(
@@ -106,8 +105,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     }
 
     "leave registration unchanged when unknown group member id specified" in {
-      authorizedUser()
-      mockRegistrationFind(groupRegistration)
+
+      spyJourneyAction.setReg(groupRegistration)
       mockRegistrationUpdate()
 
       await(
@@ -120,8 +119,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     }
 
     "redirect to group member list when remove confirmation is negative" in {
-      authorizedUser()
-      mockRegistrationFind(groupRegistration)
+
+      spyJourneyAction.setReg(groupRegistration)
 
       val result =
         removeMemberController.submit(groupMember1.id)(postJsonRequestEncoded(("value", "no")))
@@ -131,8 +130,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     }
 
     "redirect to group member list when member removal fails" in {
-      authorizedUser()
-      mockRegistrationFind(groupRegistration)
+
+      spyJourneyAction.setReg(groupRegistration)
 
       mockRegistrationUpdateFailure()
 
@@ -146,8 +145,8 @@ class RemoveMemberControllerSpec extends ControllerSpec {
     "display validation error" when {
 
       "no selection made" in {
-        authorizedUser()
-        mockRegistrationFind(groupRegistration)
+
+        spyJourneyAction.setReg(groupRegistration)
 
         val emptySelection = Seq()
         val result =
