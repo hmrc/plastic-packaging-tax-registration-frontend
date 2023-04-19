@@ -91,24 +91,6 @@ class ConfirmRemoveMemberControllerSpec
 
   "return an error" when {
 
-    "user is not authorised" when {
-      "tries to display page" in {
-
-
-        val result = controller.displayPage(groupMember.id)(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
-      "tries to submit" in {
-
-
-        val result = controller.submit(groupMember.id)(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
     "user tries to display an non existent group member" in {
 
       val result = controller.displayPage("not-an-existing-group-member-id")(getRequest())

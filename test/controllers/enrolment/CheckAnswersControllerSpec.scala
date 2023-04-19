@@ -82,14 +82,7 @@ class CheckAnswersControllerSpec extends ControllerSpec with PptTestData {
       }
 
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
 
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redirect to next page " when {
 

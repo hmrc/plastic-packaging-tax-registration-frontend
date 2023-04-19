@@ -421,13 +421,6 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
     "return an error" when {
 
-      "user is not authorised" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()

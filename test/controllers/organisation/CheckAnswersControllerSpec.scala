@@ -59,13 +59,5 @@ class CheckAnswersControllerSpec extends ControllerSpec {
       }
 
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
   }
 }

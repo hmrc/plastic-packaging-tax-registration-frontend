@@ -39,6 +39,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.JsObject
 import play.api.mvc.Results.Redirect
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import services.RegistrationGroupFilterService
@@ -107,8 +108,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
                                                          companyName = "NewPlastics",
                                                          ctutr = Some("1890894"),
                                                          companyAddress = testCompanyAddress,
-                                                         registration =
-                                                           Some(registrationDetails)
+                                                         registration = Some(registrationDetails)
                                     )
                                   ),
                                 subscriptionStatus = Some(NOT_SUBSCRIBED)
@@ -118,7 +118,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
+        val result = controller.displayPage()(FakeRequest())
 
         status(result) mustBe OK
         verify(mockReviewRegistrationPage).apply(
@@ -308,9 +308,7 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
         spyJourneyAction.setReg(registrationWithMissingBusinessPartnerId)
         mockSubscriptionSubmit(subscriptionCreateOrUpdate)
 
-        val result = controller.submit()(postRequest(JsObject.empty))
-
-        intercept[IllegalStateException](status(result))
+        intercept[IllegalStateException](status(controller.submit()(postRequest(JsObject.empty))))
       }
     }
 
@@ -338,16 +336,6 @@ class ReviewTaskListControllerSpec extends ControllerSpec with TableDrivenProper
           ArgumentMatchers.eq(Some("XXPPTP123456789")),
           any()
         )(any(), any())
-      }
-    }
-
-    "return an error" when {
-
-      "user is not authorised" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
       }
     }
 

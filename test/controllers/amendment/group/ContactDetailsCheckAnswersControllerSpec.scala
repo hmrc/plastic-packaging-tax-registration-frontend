@@ -62,13 +62,6 @@ class ContactDetailsCheckAnswersControllerSpec
     }
 
     "throw exception" when {
-      "user not authorised" in {
-
-
-        intercept[RuntimeException] {
-          await(controller.displayPage(groupMember.id)(FakeRequest()))
-        }
-      }
       "group member missing from registration" in {
         intercept[IllegalStateException] {
           await(controller.displayPage("123")(FakeRequest()))

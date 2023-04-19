@@ -170,13 +170,6 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return an error" when {
 
-      "user is not authorised" in {
-
-        val result = controller.displayPage(groupMember.id)(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()

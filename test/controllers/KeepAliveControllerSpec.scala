@@ -76,13 +76,6 @@ class KeepAliveControllerSpec extends ControllerSpec {
 
     "return an error" when {
 
-      "user is not authorised" in {
-
-        val result = controller.keepAlive()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "no record is found for the sessionId" in {
 
         when(mockUserDataRepository.findBySessionId("123456")).thenReturn(

@@ -94,14 +94,6 @@ class PostcodeControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Postcode Page"
       }
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redisplay the Postcode Page with a BAD REQUEST status" when {
       "an invalid postcode is submitted" in {

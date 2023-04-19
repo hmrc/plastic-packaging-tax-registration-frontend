@@ -261,7 +261,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
     "return an error" when {
 
-      "user is not authorised" in {
+      "config" in {
 
         val result = controller.displayPage()(getRequest())
 

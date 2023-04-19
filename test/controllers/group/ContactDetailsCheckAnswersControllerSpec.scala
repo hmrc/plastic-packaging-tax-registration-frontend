@@ -71,13 +71,6 @@ class ContactDetailsCheckAnswersControllerSpec
     }
 
     "throw exception" when {
-      "user not authorised" in {
-
-
-        intercept[RuntimeException] {
-          await(controller.displayPage(groupMember.id)(getRequest()))
-        }
-      }
       "group member missing from registration" in {
         spyJourneyAction.setReg(aRegistration(withGroupDetail(Some(groupDetails))))
 

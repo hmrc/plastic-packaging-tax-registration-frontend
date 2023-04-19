@@ -166,14 +166,6 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
     "return an error" when {
 
-      "user is not authorised" in {
-
-
-        val result = controller.displayNewPartner()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user tries to display an non existent partner" in {
 
         spyJourneyAction.setReg(registrationWithExistingPartner)

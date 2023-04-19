@@ -17,6 +17,7 @@
 package spec
 
 
+import base.PptTestData
 import builders.RegistrationBuilder
 import forms.contact.Address
 import forms.contact.Address.UKAddress
@@ -47,10 +48,10 @@ trait PptTestData extends RegistrationBuilder {
 
   val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  val identityData = IdentityData(Some("testData-internal-id"), None)
+  val identityData = IdentityData(Some("testData-internal-id"), Some(PptTestData.nrsCredentials))
 
   val registrationRequest: RegistrationRequest[AnyContent] =
-    RegistrationRequest(FakeRequest(), identityData)
+    RegistrationRequest(request, identityData)
 
   val pptEnrolledRequest: PPTEnrolledRequest[AnyContent] =
     PPTEnrolledRequest(FakeRequest(), identityData, "testData-ppt-ref")

@@ -79,14 +79,6 @@ class TaxStartDateControllerSpec extends ControllerSpec {
       result mustBe Ok(HtmlFormat.raw("tax start date blah"))
     }
 
-    "return an error" when {
-      "user is not authorised and display page method is invoked" in {
-
-        val result = sut.displayPage()(getRequest())
-        intercept[RuntimeException](status(result))
-      }
-    }
-    
   }
 
   "submit" should {

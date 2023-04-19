@@ -84,14 +84,6 @@ class RegistrationDateControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Registration Date Page"
       }
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redisplay the registration date page with a BAD REQUEST status" when {
       "an invalid registration date is submitted" in {

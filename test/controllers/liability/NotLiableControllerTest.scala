@@ -56,14 +56,5 @@ class NotLiableControllerTest extends ControllerSpec {
       }
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
   }
 }

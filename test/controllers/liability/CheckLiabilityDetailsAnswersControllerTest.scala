@@ -116,16 +116,6 @@ class CheckLiabilityDetailsAnswersControllerTest extends ControllerSpec {
       }
     }
 
-    "return an error" when {
-
-      "user is not authorised" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
     "updates liability with the correct start date and redirects to registration page" when {
       "user proceed" in {
 

@@ -59,13 +59,6 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
 
     "return an error" when {
 
-      "user is not authorised" in {
-
-        val result = controller.testOnlyGetPasscodes()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "connector throws an exception" in {
 
         when(

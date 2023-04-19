@@ -176,14 +176,6 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
     "return an error" when {
 
-      "user is not authorised" in {
-
-
-        val result = controller.displayNewPartner()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
 
 

@@ -51,7 +51,7 @@
   useCustomContentWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
-@useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]]}
+@useTimeoutDialog = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
 
 @head = {
     @hmrcTrackingConsentSnippet()

@@ -31,6 +31,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Play.materializer
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.Helpers.contentAsString
@@ -52,7 +53,7 @@ trait ControllerSpec
   val spyJourneyAction: FakeJourneyAction.type = spy(FakeJourneyAction)
 
   object FakeBasicAuthAction extends BasicAuthAction {
-    override def parser: BodyParser[AnyContent] = ???
+    override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.RegistrationRequest[A] => Future[Result]): Future[Result] =
       block(getAuthenticatedRequest(request))
@@ -61,7 +62,7 @@ trait ControllerSpec
   }
 
   object FakeAmendAuthAction extends AmendAuthAction {
-    override def parser: BodyParser[AnyContent] = ???
+    override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.PPTEnrolledRequest[A] => Future[Result]): Future[Result] =
       block(PPTEnrolledRequest(request = request, identityData = IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)), pptReference = "test-ppt-reference"))
@@ -70,7 +71,7 @@ trait ControllerSpec
   }
 
   object FakeRegistrationAuthAction extends RegistrationAuthAction {
-    override def parser: BodyParser[AnyContent] = ???
+    override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
     override def invokeBlock[A](request: Request[A], block: RegistrationRequest[A] => Future[Result]): Future[Result] =
       block(getAuthenticatedRequest(request))
@@ -80,16 +81,15 @@ trait ControllerSpec
 
   object FakeJourneyAction extends JourneyAction {
 
-    //todo better
-    var registration: Registration = null
-    def setReg(reg: Registration): Unit = registration = reg
-    def reset(): Unit = registration = null
+    var registration: Option[Registration] = None
+    def setReg(reg: Registration): Unit = registration = Some(reg)
+    def reset(): Unit = registration = None
 
-    private val ab = new ActionBuilder[JourneyRequest, AnyContent] {
-      override def parser: BodyParser[AnyContent] = ???
+    private def ab = new ActionBuilder[JourneyRequest, AnyContent] {
+      override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
       override def invokeBlock[A](request: Request[A], block: JourneyRequest[A] => Future[Result]): Future[Result] =
-        block(JourneyRequest(getAuthenticatedRequest(request), registration))
+        block(JourneyRequest(getAuthenticatedRequest(request), registration.getOrElse(fail("registration is not set in FakeJourneyAction"))))
 
       override protected def executionContext: ExecutionContext = ec
     }

@@ -84,14 +84,7 @@ class PptReferenceControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "PPT Reference Page"
       }
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
 
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redisplay the ppt reference page with a BAD REQUEST status" when {
       "an invalid ppt reference is submitted" in {

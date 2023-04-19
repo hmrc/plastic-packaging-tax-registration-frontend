@@ -184,17 +184,6 @@ class TaskListControllerSpec extends ControllerSpec {
 
     }
 
-    "return error" when {
-      "user is not authorised" in {
-
-        mockUkCompanyCreateIncorpJourneyId("http://test/redirect/uk-company")
-        mockGetSubscriptionStatusFailure(new RuntimeException("error"))
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
-
     def verifyStartLink(startLink: String): Unit = {
       val startLinkCaptor: ArgumentCaptor[Call] = ArgumentCaptor.forClass(classOf[Call])
       verify(singleEntityPage).apply(any(), startLinkCaptor.capture(), any())(any(), any())

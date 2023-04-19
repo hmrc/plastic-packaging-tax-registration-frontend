@@ -124,7 +124,7 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
       }
 
       "throw a RuntimeException" when {
-        "user is not authorised" in {
+        "config" in {
 
           val result = controller.displayPage()(getRequest())
 

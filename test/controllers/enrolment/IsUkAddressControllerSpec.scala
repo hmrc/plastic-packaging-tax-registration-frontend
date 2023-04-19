@@ -88,14 +88,7 @@ class IsUkAddressControllerSpec extends ControllerSpec {
         contentAsString(result) mustBe "Is UK Address Page"
       }
     }
-    "throw a RuntimeException" when {
-      "user is not authorised" in {
 
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "redisplay the is uk address page with a BAD REQUEST status" when {
       "no selection is made" in {

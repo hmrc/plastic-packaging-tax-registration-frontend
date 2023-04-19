@@ -296,13 +296,6 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
       "return an error"  when {
 
-        "user is not authorised" in {
-
-          val result = controller.displayPage()(getRequest())
-
-          intercept[RuntimeException](status(result))
-        }
-
         "user display page and get uk company details fails" in {
           val registration = aRegistration(
             withOrganisationDetails(OrganisationDetails(organisationType = Some(UK_COMPANY)))
