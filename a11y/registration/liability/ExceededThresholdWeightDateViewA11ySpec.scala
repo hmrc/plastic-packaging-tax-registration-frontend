@@ -16,7 +16,9 @@
 
 package registration.liability
 
+import config.AppConfig
 import forms.liability.ExceededThresholdWeightDate
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.data.Form
 import support.BaseViewSpec
 import views.html.liability.exceeded_threshold_weight_date_page
@@ -25,6 +27,8 @@ import java.time.{Clock, Instant, LocalDate}
 import java.util.TimeZone
 
 class ExceededThresholdWeightDateViewA11ySpec extends BaseViewSpec {
+
+  val appConfig = mock[AppConfig]
 
   private val page = inject[exceeded_threshold_weight_date_page]
   private val formProvider = new ExceededThresholdWeightDate(appConfig)

@@ -24,7 +24,7 @@ import views.html.deregistration.deregister_page
 
 class DeregisterViewA11ySpec extends BaseViewSpec {
 
-  override val appConfig: AppConfig = inject[AppConfig]
+  val appConfig: AppConfig = inject[AppConfig]
   private val page                  = inject[deregister_page]
 
   private def createView(form: Form[Boolean] = DeregisterForm.form()): String =
