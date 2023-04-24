@@ -273,9 +273,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-          intercept[DownstreamServiceError](status(result))
+          intercept[DownstreamServiceError](status(
+            controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
 
         "user submits form and a registration update runtime exception occurs" in {
@@ -284,9 +285,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationException()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-          intercept[RuntimeException](status(result))
+          intercept[RuntimeException](status(
+            controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
       }
     }
@@ -300,10 +302,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockSoleTraderCreateIncorpJourneyIdException()
 
         val correctForm = Seq("answer" -> SOLE_TRADER.toString)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[RuntimeException](
-          status(result)
+          status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
         ).getMessage mustBe "sole trader create journey error"
       }
 
@@ -314,10 +315,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockUkCompanyCreateIncorpJourneyIdException()
 
         val correctForm = Seq("answer" -> UK_COMPANY.toString)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[RuntimeException](
-          status(result)
+          status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
         ).getMessage mustBe "uk company create journey error"
       }
 
@@ -328,10 +328,9 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
         mockRegisteredSocietyCreateIncorpJourneyIdException()
 
         val correctForm = Seq("answer" -> REGISTERED_SOCIETY.toString)
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
         intercept[RuntimeException](
-          status(result)
+          status(controller.submit()(postJsonRequestEncoded(correctForm: _*)))
         ).getMessage mustBe "registered society create journey error"
       }
     }

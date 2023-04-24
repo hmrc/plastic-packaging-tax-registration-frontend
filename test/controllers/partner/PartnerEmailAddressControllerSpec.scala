@@ -484,22 +484,20 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
     }
 
     "return an error" when {
-      
+
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
 
 
-        val result = controller.displayNewPartner()(getRequest())
-
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(controller.displayNewPartner()(getRequest())))
       }
 
       "user tries to display an non existent partner" in {
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
-
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+        ))
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -507,11 +505,12 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(EmailAddress("test@localhost"))
-        )
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submitExistingPartner("not-an-existing-partners-id")(
+            postRequestEncoded(EmailAddress("test@localhost"))
+          )
+        ))
       }
 
       "user submits form and the registration update fails" in {
@@ -520,9 +519,11 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
         mockRegistrationUpdateFailure()
 
         val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[DownstreamServiceError](status(result))
+
+        intercept[DownstreamServiceError](status(
+          controller.submitNewPartner()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+        ))
       }
     }
   }

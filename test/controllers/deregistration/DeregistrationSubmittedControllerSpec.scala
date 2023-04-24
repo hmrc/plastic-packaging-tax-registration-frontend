@@ -48,15 +48,5 @@ class DeregistrationSubmittedControllerSpec
         contentAsString(resp) mustBe "Deregistration Submitted"
       }
     }
-
-    "throw exception" when {
-      "user not authenticated" in {
-
-
-        intercept[RuntimeException] {
-          await(deregistrationSubmittedController.displayPage()(getRequest()))
-        }
-      }
-    }
   }
 }

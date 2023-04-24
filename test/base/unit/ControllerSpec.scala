@@ -44,7 +44,7 @@ import java.lang.reflect.Field
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpec
-    extends AnyWordSpecLike with MockRegistrationConnector with MockitoSugar with Matchers
+    extends AnyWordSpecLike with MockRegistrationConnector with MockSubscriptionConnector with MockitoSugar with Matchers
     with GuiceOneAppPerSuite with BeforeAndAfterEach with DefaultAwaitTimeout
       with MockConnectors with PptTestData with Injecting {
 
@@ -65,7 +65,7 @@ trait ControllerSpec
     override def parser: BodyParser[AnyContent] = PlayBodyParsers().default
 
     override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest.PPTEnrolledRequest[A] => Future[Result]): Future[Result] =
-      block(PPTEnrolledRequest(request = request, identityData = IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)), pptReference = "test-ppt-reference"))
+      block(PPTEnrolledRequest(request = request, identityData = IdentityData(Some("Internal-ID"), Some(PptTestData.nrsCredentials)), pptReference = "XMPPT0000000123"))
 
     override protected def executionContext: ExecutionContext = ec
   }

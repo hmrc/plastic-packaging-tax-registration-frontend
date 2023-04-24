@@ -51,6 +51,7 @@ class CheckAnswersControllerSpec extends ControllerSpec {
   "Check Answers Controller" should {
     "display the check answers page" when {
       "user is authorised" in {
+        spyJourneyAction.setReg(aRegistration())
 
         val result = controller.displayPage()(getRequest())
 

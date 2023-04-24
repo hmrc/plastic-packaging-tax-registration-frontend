@@ -66,13 +66,13 @@ class ConfirmRemoveMemberControllerSpec
           controller.displayPage(groupMember.id)(getRequest())
 
         status(resp) mustBe OK
-        verify(spyJourneyAction.amend)
+        verify(spyJourneyAction).amend
       }
 
       "update registration" when {
         "signed in user when a ppt registration requests removal of an existing group member" in {
           spyJourneyAction.setReg(populatedRegistrationWithGroupMembers)
-          simulateUpdateSubscriptionSuccess()
+          simulateUpdateWithRegSubscriptionSuccess()
 
           // postRequestEncoded will not encode a yes form correctly so we have to manually construct this
           val correctlyEncodedForm = Seq("value" -> "yes")
@@ -81,9 +81,9 @@ class ConfirmRemoveMemberControllerSpec
           )
 
           status(resp) mustBe SEE_OTHER
-          verify(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any()))
+          verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
           redirectLocation(resp) mustBe Some(routes.GroupMembersListController.displayPage().url)
-          verify(spyJourneyAction.amend)
+          verify(spyJourneyAction).amend
         }
       }
     }
@@ -92,10 +92,9 @@ class ConfirmRemoveMemberControllerSpec
   "return an error" when {
 
     "user tries to display an non existent group member" in {
+      spyJourneyAction.setReg(populatedRegistrationWithGroupMembers)
 
-      val result = controller.displayPage("not-an-existing-group-member-id")(getRequest())
-
-      intercept[RuntimeException](status(result))
+      intercept[RuntimeException](status(controller.displayPage("not-an-existing-group-member-id")(getRequest())))
     }
   }
 

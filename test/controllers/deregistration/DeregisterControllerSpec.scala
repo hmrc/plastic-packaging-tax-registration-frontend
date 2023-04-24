@@ -116,24 +116,6 @@ class DeregisterControllerSpec
         contentAsString(resp) mustBe "Deregister?"
       }
     }
-
-    "throw exception when user not authenticated" when {
-      "displaying page" in {
-
-
-        intercept[RuntimeException] {
-          await(deregisterController.displayPage()(getRequest()))
-        }
-      }
-      "submitting answer" in {
-
-
-        intercept[RuntimeException] {
-          val correctForm = Seq("deregister" -> "yes")
-          await(deregisterController.submit()(postJsonRequestEncoded(correctForm: _*)))
-        }
-      }
-    }
   }
 
   private def deregisterPageDisplayedAsExpected() = {

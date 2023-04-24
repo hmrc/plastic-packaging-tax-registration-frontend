@@ -83,7 +83,7 @@ class AmendEmailAddressControllerSpec
   private val mockEmailVerificationService = mock[EmailVerificationService]
 
   private val pptReference = "XMPPT0000000123"
-  private val sessionId    = "ABC"
+  private val cacheId    = amendsJourneyRequest.authenticatedRequest.cacheId
 
   private val populatedRegistration = {
     val basicRegistration = aRegistration()
@@ -93,9 +93,9 @@ class AmendEmailAddressControllerSpec
   }
 
   override protected def beforeEach(): Unit = {
-    reset(mockEmailVerificationService)
+    reset(mockEmailVerificationService, mockAmendRegService)
     spyJourneyAction.setReg(populatedRegistration)
-    simulateUpdateSubscriptionSuccess()
+    simulateUpdateWithRegSubscriptionSuccess()
     simulateAllEmailsUnverified()
     simulateSendingEmailVerificationCodeSuccess()
   }
@@ -147,7 +147,7 @@ class AmendEmailAddressControllerSpec
       forAll(showPageTestData) {
         (testName: String, call: Request[AnyContent] => Future[Result], expectedContent: String) =>
           s"$testName page requested and registration populated" in {
-            val resp = call(getRequest())
+            val resp = call(FakeRequest())
 
             status(resp) mustBe OK
             contentAsString(resp) mustBe expectedContent
@@ -156,8 +156,7 @@ class AmendEmailAddressControllerSpec
           s"$testName page requested and registration unpopulated" in {
             spyJourneyAction.setReg(populatedRegistration)
 
-
-            val resp = call(getRequest())
+            val resp = call(FakeRequest())
 
             status(resp) mustBe OK
             contentAsString(resp) mustBe expectedContent
@@ -170,7 +169,7 @@ class AmendEmailAddressControllerSpec
         val resp = controller.updateEmail()(
           postRequestEncoded(form =
                                EmailAddress(populatedRegistration.primaryContactDetails.email.get),
-                             sessionId = sessionId
+                             sessionId = cacheId
           )
         )
 
@@ -185,12 +184,11 @@ class AmendEmailAddressControllerSpec
       "email address already verified" in {
         val previouslyVerifiedEmail = "verified@ppt.com"
         simulatePreviouslyVerifiedEmailAddress(previouslyVerifiedEmail)
+        spyJourneyAction.setReg(populatedRegistration)
+        inMemoryRegistrationAmendmentRepository.put(populatedRegistration)
 
         val resp = controller.updateEmail()(
-          postRequestEncoded(form =
-                               EmailAddress(previouslyVerifiedEmail),
-                             sessionId = sessionId
-          )
+          FakeRequest().withFormUrlEncodedBody(getTuples(EmailAddress(previouslyVerifiedEmail)):_*)
         )
 
         status(resp) mustBe SEE_OTHER
@@ -198,20 +196,22 @@ class AmendEmailAddressControllerSpec
 
         await(resp)
 
-        val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(sessionId))
-        updatedReg.get.primaryContactDetails.email mustBe Some(previouslyVerifiedEmail)
+        val updatedReg = getUpdatedRegistrationMethod()(populatedRegistration)
+        updatedReg.primaryContactDetails.email mustBe Some(previouslyVerifiedEmail)
       }
     }
 
     "send a verification code and prompt the user for this" when {
       "email is *not* already verified" in {
+
+        inMemoryRegistrationAmendmentRepository.put(populatedRegistration)
         val unverifiedEmail = "unverified@ppt.com"
         simulateAllEmailsUnverified()
 
         val resp = controller.updateEmail()(
           postRequestEncoded(form =
                                EmailAddress(unverifiedEmail),
-                             sessionId = sessionId
+                             sessionId = cacheId
           )
         )
 
@@ -222,7 +222,7 @@ class AmendEmailAddressControllerSpec
 
         await(resp)
 
-        val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(sessionId))
+        val updatedReg = await(inMemoryRegistrationAmendmentRepository.get(cacheId))
         updatedReg.get.primaryContactDetails.email mustBe populatedRegistration.primaryContactDetails.email
         verifyEmailVerificationCodeSentAsExpected(unverifiedEmail)
       }
@@ -234,7 +234,7 @@ class AmendEmailAddressControllerSpec
         simulateEmailVerificationPassword(goodPasscode, COMPLETE)
 
         val resp = controller.checkEmailVerificationCode()(
-          postRequestEncoded(form = EmailAddressPasscode(goodPasscode), sessionId = sessionId)
+          postRequestEncoded(form = EmailAddressPasscode(goodPasscode), sessionId = cacheId)
         )
 
         status(resp) mustBe SEE_OTHER
@@ -270,7 +270,7 @@ class AmendEmailAddressControllerSpec
         val invalidEmail = "xxx"
 
         val resp = controller.updateEmail()(
-          postRequestEncoded(form = EmailAddress(invalidEmail), sessionId = sessionId)
+          postRequestEncoded(form = EmailAddress(invalidEmail), sessionId = cacheId)
         )
 
         status(resp) mustBe BAD_REQUEST
@@ -281,7 +281,7 @@ class AmendEmailAddressControllerSpec
         val invalidPasscode = ""
 
         val resp = controller.checkEmailVerificationCode()(
-          postRequestEncoded(form = EmailAddressPasscode(invalidPasscode), sessionId = sessionId)
+          postRequestEncoded(form = EmailAddressPasscode(invalidPasscode), sessionId = cacheId)
         )
 
         status(resp) mustBe BAD_REQUEST
@@ -293,7 +293,7 @@ class AmendEmailAddressControllerSpec
         simulateEmailVerificationPassword(badPasscode, INCORRECT_PASSCODE)
 
         val resp = controller.checkEmailVerificationCode()(
-          postRequestEncoded(form = EmailAddressPasscode(badPasscode), sessionId = sessionId)
+          postRequestEncoded(form = EmailAddressPasscode(badPasscode), sessionId = cacheId)
         )
 
         status(resp) mustBe BAD_REQUEST
@@ -305,7 +305,7 @@ class AmendEmailAddressControllerSpec
         simulateEmailVerificationPassword(passcode, JOURNEY_NOT_FOUND)
 
         val resp = controller.checkEmailVerificationCode()(
-          postRequestEncoded(form = EmailAddressPasscode(passcode), sessionId = sessionId)
+          postRequestEncoded(form = EmailAddressPasscode(passcode), sessionId = cacheId)
         )
 
         status(resp) mustBe BAD_REQUEST
@@ -319,7 +319,7 @@ class AmendEmailAddressControllerSpec
         simulateEmailVerificationPassword(passcode, TOO_MANY_ATTEMPTS)
 
         val resp = controller.checkEmailVerificationCode()(
-          postRequestEncoded(form = EmailAddressPasscode(passcode), sessionId = sessionId)
+          postRequestEncoded(form = EmailAddressPasscode(passcode), sessionId = cacheId)
         )
 
         status(resp) mustBe SEE_OTHER

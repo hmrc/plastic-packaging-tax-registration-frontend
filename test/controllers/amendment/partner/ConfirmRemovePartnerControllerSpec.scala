@@ -93,7 +93,7 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
 
     "remove the partner and redirect to the partner list page" when {
       "the user opts to remove the partner" in {
-        simulateUpdateSubscriptionSuccess()
+        simulateUpdateWithRegSubscriptionSuccess()
 
         val resp = confirmRemovePartnerController.submit(
           partnershipRegistration.otherPartners.head.id

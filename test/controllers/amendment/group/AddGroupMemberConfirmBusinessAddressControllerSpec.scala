@@ -79,7 +79,7 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "business registered address"
-      verify(spyJourneyAction.amend)
+      verify(spyJourneyAction).amend
     }
 
     "redirect to address capture" when {
@@ -103,7 +103,7 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
         val resp = controller.displayPage(testMemberId)(FakeRequest())
 
         redirectLocation(resp) mustBe Some(addressCaptureRedirect.url)
-        verify(spyJourneyAction.amend)
+        verify(spyJourneyAction).amend
       }
     }
 
@@ -125,7 +125,7 @@ class AddGroupMemberConfirmBusinessAddressControllerSpec extends ControllerSpec 
 
           modifiedRegistration.groupDetail.get.findGroupMember(Some(testMemberId), None)
             .get.addressDetails mustBe validCapturedAddress
-          verify(spyJourneyAction.amend)
+          verify(spyJourneyAction).amend
         }
       }
     }

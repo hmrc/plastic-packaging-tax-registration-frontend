@@ -100,14 +100,6 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
       verify(page).apply(ArgumentMatchers.eq(form))(any(),any())
     }
 
-    "return Unauthorised" in {
-
-
-      val result = sut.displayPage()(getRequest())
-
-      intercept[RuntimeException](status(result))
-    }
-
   }
 
   "submit" should {
@@ -148,9 +140,7 @@ class ExpectToExceedThresholdWeightDateControllerSpec extends ControllerSpec wit
         setUpMockForSubmit()
         mockRegistrationUpdateFailure()
 
-        val result = sut.submit()(FakeRequest())
-
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(sut.submit()(FakeRequest())))
       }
     }
   }

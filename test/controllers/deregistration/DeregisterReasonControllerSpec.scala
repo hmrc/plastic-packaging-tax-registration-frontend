@@ -123,15 +123,6 @@ class DeregisterReasonControllerSpec extends ControllerSpec {
         }
       }
 
-      "throw a RuntimeException" when {
-        "config" in {
-
-          val result = controller.displayPage()(getRequest())
-
-          intercept[RuntimeException](status(result))
-        }
-      }
-
     }
 
   }

@@ -83,6 +83,7 @@ class AmendMemberContactDetailsControllerSpec
 
   override protected def beforeEach(): Unit = {
     spyJourneyAction.reset()
+    inMemoryRegistrationAmendmentRepository.reset()
     reset(mockAmendRegService, spyJourneyAction)
   }
 
@@ -118,7 +119,7 @@ class AmendMemberContactDetailsControllerSpec
 
             status(resp) mustBe OK
             contentAsString(resp) mustBe expectedContent
-            verify(spyJourneyAction.amend)
+            verify(spyJourneyAction).amend
           }
 
           s"$testName page requested and registration unpopulated" in {
@@ -128,7 +129,7 @@ class AmendMemberContactDetailsControllerSpec
 
             status(resp) mustBe OK
             contentAsString(resp) mustBe expectedContent
-            verify(spyJourneyAction.amend)
+            verify(spyJourneyAction).amend
           }
       }
     }
@@ -182,6 +183,7 @@ class AmendMemberContactDetailsControllerSpec
         ) =>
           s"supplied $testName fails validation" in {
             val registration = aRegistration()
+            inMemoryRegistrationAmendmentRepository.put("123", registration)
             spyJourneyAction.setReg(registration)
 
             val resp = call(FakeRequest().withFormUrlEncodedBody(getTuples(createInvalidForm()):_*))
@@ -206,7 +208,9 @@ class AmendMemberContactDetailsControllerSpec
             val registration = aRegistration(
               withGroupDetail(groupDetail = Some(groupDetails.copy(members = Seq(groupMember))))
             )
+            inMemoryRegistrationAmendmentRepository.put("123", registration)
             spyJourneyAction.setReg(registration)
+            simulateUpdateWithRegSubscriptionSuccess()
 
             await(call(FakeRequest().withFormUrlEncodedBody(getTuples(createValidForm()):_*)))
 
@@ -220,7 +224,7 @@ class AmendMemberContactDetailsControllerSpec
     }
 
     "redirect to address capture controller when updating address" in {
-
+      spyJourneyAction.setReg(populatedRegistration)
       val expectedAddressCaptureConfig =
         AddressCaptureConfig(backLink = amendRoutes.AmendRegistrationController.displayPage().url,
                              successLink =
@@ -234,6 +238,7 @@ class AmendMemberContactDetailsControllerSpec
                              pptHintKey = None,
                              forceUkAddress = false
         )
+      simulateUpdateWithRegSubscriptionSuccess()
       simulateSuccessfulAddressCaptureInit(Some(expectedAddressCaptureConfig))
 
       val resp = controller.address(memberId)(FakeRequest())
@@ -241,7 +246,9 @@ class AmendMemberContactDetailsControllerSpec
     }
 
     "update address on address capture callback" in {
+      spyJourneyAction.setReg(populatedRegistration)
       simulateValidAddressCapture()
+      simulateUpdateWithRegSubscriptionSuccess()
 
       populatedRegistration.findMember(memberId).flatMap(
         _.contactDetails.flatMap(_.address)

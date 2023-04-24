@@ -173,23 +173,23 @@ class ContactDetailsNameControllerSpec extends ControllerSpec with DefaultAwaitT
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()
-        val result =
+
+        intercept[DownstreamServiceError](status(
           controller.submit(groupMember.id)(
             postRequest(Json.toJson(MemberName(firstName = "Test", lastName = "User")))
           )
-
-        intercept[DownstreamServiceError](status(result))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
-        val result =
+
+        intercept[RuntimeException](status(
           controller.submit(groupMember.id)(
             postRequest(Json.toJson(MemberName(firstName = "Test", lastName = "User")))
           )
-
-        intercept[RuntimeException](status(result))
+        ))
       }
 
   }

@@ -62,19 +62,13 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-      }
-
-      "user is authorised, a registration already exists and display page method is invoked" in {
-
         spyJourneyAction.setReg(aRegistration())
+
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
       }
+
     }
 
       "return 303 (OK)" when {
@@ -151,19 +145,19 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()
-        val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(
+          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
-        val result =
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
+        ))
       }
     
   }

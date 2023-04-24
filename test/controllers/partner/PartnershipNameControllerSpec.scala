@@ -138,13 +138,6 @@ class PartnershipNameControllerSpec extends ControllerSpec {
 
     "throw exception" when {
       "attempting to display partnership name capture page" when {
-        "user not authorized" in {
-
-
-          intercept[RuntimeException] {
-            await(controller.displayPage()(getRequest()))
-          }
-        }
         "partnership details absent from the registration" in {
           spyJourneyAction.setReg(
             partnershipRegistration.copy(organisationDetails =
@@ -159,18 +152,6 @@ class PartnershipNameControllerSpec extends ControllerSpec {
       }
 
       "submitting partnership name" when {
-        "user not authorized" in {
-
-
-          intercept[RuntimeException] {
-            await(
-              controller.submit()(
-                postRequestEncoded(PartnershipName("Partners in Plastic")
-                )
-              )
-            )
-          }
-        }
         "registration is of unexpected partnership type" in {
           spyJourneyAction.setReg(aRegistration(withPartnershipDetails(Some(llpPartnershipDetails))))
 

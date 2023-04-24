@@ -147,19 +147,19 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()
-        val result =
-          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(
+          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
-        val result =
-          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+        ))
       }
 
   }

@@ -57,6 +57,7 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
+        spyJourneyAction.setReg(aRegistration())
 
         val result = controller.displayPage()(getRequest())
 
@@ -124,9 +125,11 @@ class MembersUnderGroupControlControllerTest extends ControllerSpec {
 
         mockRegistrationUpdateFailure()
         val correctForm = Seq("value" -> "no")
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        intercept[DownstreamServiceError](status(result))
+
+        intercept[DownstreamServiceError](status(
+          controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        ))
       }
     }
   }

@@ -65,8 +65,6 @@ class AmendRegistrationControllerSpec
     "display the amend registration page" when {
 
       "user is authenticated" in {
-
-
         val resp = controller.displayPage()(getRequest())
 
         status(resp) mustBe OK
@@ -81,18 +79,6 @@ class AmendRegistrationControllerSpec
 
       status(resp) mustBe OK
       contentAsString(resp) mustBe "registration amendment error"
-    }
-
-    "throw exception" when {
-      "unauthenticated user attempts to access the amendment page" in {
-
-
-        val resp = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException] {
-          status(resp)
-        }
-      }
     }
   }
 

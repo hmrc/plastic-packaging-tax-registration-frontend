@@ -60,6 +60,7 @@ abstract class ContactDetailsConfirmAddressControllerBase(
     journeyAction.async { implicit request =>
       addressCaptureService.getCapturedAddress()(request.authenticatedRequest).flatMap {
         capturedAddress =>
+
           registrationUpdater.updateRegistration { registration =>
             registration.copy(groupDetail =
               registration.groupDetail.map(

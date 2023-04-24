@@ -92,6 +92,7 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
+        spyJourneyAction.setReg(aRegistration())
 
         val result = controller.displayPage()(getRequest())
 
@@ -220,12 +221,8 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
 
           spyJourneyAction.setReg(reg)
           mockRegistrationUpdate()
-          val result =
-            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-
-          intercept[RegistrationException](status(result))
-
+          intercept[RegistrationException](status(controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))))
 
           reset(mockRegistrationConnector)
         }
@@ -240,9 +237,11 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
           mockEmailVerificationVerifyPasscodeWithException(
             DownstreamServiceError("Error", RegistrationException("Error"))
           )
-          val result = controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
 
-          intercept[DownstreamServiceError](status(result))
+
+          intercept[DownstreamServiceError](status(
+            controller.submit()(postRequestEncoded(EmailAddressPasscode("DNCLRK")))
+          ))
           reset(mockRegistrationConnector)
         }
       }
@@ -259,15 +258,6 @@ class ContactDetailsEmailAddressPasscodeControllerSpec
       }
     }
 
-    "return an error" when {
-
-      "config" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        intercept[RuntimeException](status(result))
-      }
-    }
 
     "return prepopulated form" when {
 

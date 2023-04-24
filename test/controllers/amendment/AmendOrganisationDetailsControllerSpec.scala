@@ -47,7 +47,7 @@ class AmendOrganisationDetailsControllerSpec
 
     inMemoryRegistrationAmendmentRepository.reset()
     spyJourneyAction.setReg(registration)
-    simulateUpdateSubscriptionSuccess()
+    simulateUpdateWithRegSubscriptionSuccess()
   }
 
   "Amend Organisation Details Controller" should {

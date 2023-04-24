@@ -44,7 +44,7 @@ class PartnershipPartnerTypeViewSpec extends UnitViewSpec with Matchers with Ppt
     form: Form[PartnerType] = PartnerType.form(FormMode.NominatedPartnerType)
   ): Document =
     page(form, registrationWithOtherPartners.nominatedPartner.map(_.id), submitLink)(
-      registrationJourneyRequest,
+      registrationJourneyRequest.copy(registration = registrationWithOtherPartners),
       messages
     )
 

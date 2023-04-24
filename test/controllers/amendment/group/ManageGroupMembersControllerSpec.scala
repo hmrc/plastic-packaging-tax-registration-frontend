@@ -51,7 +51,7 @@ class ManageGroupMembersControllerSpec extends ControllerSpec with AmendmentCont
       status(result) shouldBe OK
       contentAsString(result) shouldBe "view"
       verify(view).apply(refEq(registration))(any(), any())
-      verify(spyJourneyAction.amend)
+      verify(spyJourneyAction).amend
     }
   }
 }

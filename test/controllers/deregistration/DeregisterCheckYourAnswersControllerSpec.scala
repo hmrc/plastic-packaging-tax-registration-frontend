@@ -16,28 +16,18 @@
 
 package controllers.deregistration
 
-import base.unit.{ControllerSpec, AmendmentControllerSpec}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.{
-  DeregistrationConnector,
-  DownstreamServiceError,
-  FailedToDeregister
-}
-import models.deregistration.{
-  DeregistrationDetails,
-  DeregistrationReason
-}
-import repositories.{
-  DeregistrationDetailRepositoryImpl,
-  UserDataRepository
-}
+import connectors.{DeregistrationConnector, DownstreamServiceError, FailedToDeregister}
+import models.deregistration.{DeregistrationDetails, DeregistrationReason}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchersSugar.any
+import org.mockito.MockitoSugar.{reset, verify, when}
+import repositories.{DeregistrationDetailRepositoryImpl, UserDataRepository}
 import views.html.deregistration.deregister_check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 
@@ -66,8 +56,8 @@ class DeregisterCheckYourAnswersControllerSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    when(page.apply(any[DeregistrationDetails])(any(), any())).thenReturn(HtmlFormat.empty)
-    when(mockCache.getData[DeregistrationDetails](any())(any(), any())).thenReturn(
+    when(page.apply(any[DeregistrationDetails])(any, any)).thenReturn(HtmlFormat.empty)
+    when(mockCache.getData[DeregistrationDetails](any)(any, any)).thenReturn(
       Future.successful(Some(initialDeregistrationDetails))
     )
   }
@@ -92,8 +82,9 @@ class DeregisterCheckYourAnswersControllerSpec
         when(
           mockDegistrationConnector.deregister(ArgumentMatchers.eq("XMPPT0000000123"),
                                                ArgumentMatchers.eq(initialDeregistrationDetails)
-          )(any())
+          )(any)
         ).thenReturn(Future.successful(Right()))
+
         val result: Future[Result] = controller.continue()(request)
 
         status(result) mustBe SEE_OTHER
@@ -101,19 +92,18 @@ class DeregisterCheckYourAnswersControllerSpec
           routes.DeregistrationSubmittedController.displayPage().url
         )
 
-        verify(mockCache).deleteData[DeregistrationDetails](any())(any(), any())
+        verify(mockCache).deleteData[DeregistrationDetails](any)(any, any)
 
       }
 
       "when error in the response status" in {
-        when(mockDegistrationConnector.deregister(any(), any())(any())).thenReturn(
+        when(mockDegistrationConnector.deregister(any, any)(any)).thenReturn(
           Future.successful(
             Left(DownstreamServiceError("failed", new FailedToDeregister("failed to de-register")))
           )
         )
-        val result = controller.continue()(request)
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(controller.continue()(request)))
       }
 
     }

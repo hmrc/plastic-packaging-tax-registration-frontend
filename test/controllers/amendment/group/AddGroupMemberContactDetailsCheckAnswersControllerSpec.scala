@@ -48,7 +48,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
   override protected def beforeEach(): Unit = {
     reset(spyJourneyAction, mockAmendRegService)
     spyJourneyAction.reset()
-    simulateUpdateSubscriptionSuccess()
+    simulateUpdateWithRegSubscriptionSuccess()
   }
 
   "AddGroupMemberContactDetailsCheckAnswersController" when {
@@ -63,11 +63,12 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
           status(resp) mustBe OK
           contentAsString(resp) mustBe "Amend Reg - New Group Member CYA"
-          verify(spyJourneyAction.amend)
+          verify(spyJourneyAction).amend
         }
       }
       "throw IllegalStateException" when {
         "group member is absent" in {
+          spyJourneyAction.setReg(groupRegistrationInAmendment)
 
           intercept[IllegalStateException] {
             await(controller.displayPage("XXX")(FakeRequest()))
@@ -83,7 +84,7 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
         await(controller.submit()(FakeRequest()))
 
         verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
-        verify(spyJourneyAction.amend)
+        verify(spyJourneyAction).amend
       }
 
       "redirect to the manage group page when update successful" in {
@@ -93,28 +94,28 @@ class AddGroupMemberContactDetailsCheckAnswersControllerSpec extends ControllerS
 
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.ManageGroupMembersController.displayPage().toString)
-        verify(spyJourneyAction.amend)
+        verify(spyJourneyAction).amend
       }
       "redirect to the post reg amend error page" when {
         "update fails due to exception being thrown" in {
           spyJourneyAction.setReg(groupRegistrationInAmendment)
-          simulateUpdateSubscriptionFailure(new RuntimeException("BANG!"))
+          simulateUpdateWithRegSubscriptionFailure(new RuntimeException("BANG!"))
 
           val resp = controller.submit()(FakeRequest())
 
           status(resp) mustBe SEE_OTHER
           redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
-          verify(spyJourneyAction.amend)
+          verify(spyJourneyAction).amend
         }
         "update fails due to error returned from ETMP" in {
           spyJourneyAction.setReg(groupRegistrationInAmendment)
-          simulateUpdateSubscriptionFailureReturnedError()
+          simulateUpdateSubscriptionWithRegFailureReturnedError()
 
           val resp = controller.submit()(FakeRequest())
 
           status(resp) mustBe SEE_OTHER
           redirectLocation(resp) mustBe Some(amendRoutes.AmendRegistrationController.registrationUpdateFailed().toString)
-          verify(spyJourneyAction.amend)
+          verify(spyJourneyAction).amend
         }
       }
     }

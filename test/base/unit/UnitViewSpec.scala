@@ -16,8 +16,9 @@
 
 package base.unit
 
+import models.request.JourneyRequest
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import spec.{PptTestData, ViewMatchers}
 
@@ -26,7 +27,7 @@ abstract class UnitViewSpec
 
   protected val emptyFormData: Map[String, String]   = Map.empty
 
-  implicit val req: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  implicit val req: JourneyRequest[AnyContent] = registrationJourneyRequest
 
   "Exercise generated rendering methods" in {
     exerciseGeneratedRenderingMethods()

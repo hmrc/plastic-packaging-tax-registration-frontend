@@ -41,7 +41,9 @@ class AddressCaptureControllerSpec
 
   private val mcc = stubMessagesControllerComponents()
 
-  private val addressCaptureService = mock[AddressCaptureService]
+  private val addressCaptureService = new AddressCaptureService(
+    inMemoryAddressCaptureDetailRepository
+  )
 
   private val realAppConfig = inject[AppConfig]
   override val addressConversionUtils: AddressConversionUtils = inject[AddressConversionUtils]
@@ -81,7 +83,7 @@ class AddressCaptureControllerSpec
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    when(addressCaptureService.initAddressCapture(any())(any())).thenReturn(Future.successful(Call("TEST", "/root")))
+    addressCaptureService.initAddressCapture(addressCaptureConfig)(registrationJourneyRequest.authenticatedRequest)
 
     when(mockAddressLookupFrontendConnector.initialiseJourney(any())(any(), any())).thenReturn(
       Future.successful(AddressLookupOnRamp("/alf-on-ramp"))

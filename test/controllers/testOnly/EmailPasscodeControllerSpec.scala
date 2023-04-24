@@ -73,9 +73,8 @@ class EmailPasscodeControllerSpec extends ControllerSpec {
             )
           )
         )
-        val result = controller.testOnlyGetPasscodes()(getRequest())
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(controller.testOnlyGetPasscodes()(getRequest())))
       }
     }
   }

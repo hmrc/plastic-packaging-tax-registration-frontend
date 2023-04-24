@@ -44,23 +44,23 @@ trait DeregistrationDetailRepository {
 class DeregistrationDetailRepositoryImpl @Inject() (userDataRepository: UserDataRepository)(implicit executionContext: ExecutionContext)
     extends DeregistrationDetailRepository {
 
-  def put(
+  override def put(
     deregistrationDetails: DeregistrationDetails
   )(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
     userDataRepository.putData[DeregistrationDetails](repositoryKey, deregistrationDetails)
 
-  def get()(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
+  override def get()(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
     userDataRepository.getData[DeregistrationDetails](repositoryKey).map {
       case Some(deregistrationDetails) => deregistrationDetails
       case None                        => DeregistrationDetails(None, None)
     }
 
-  def update(
+  override def update(
     update: DeregistrationDetails => DeregistrationDetails
   )(implicit request: AuthenticatedRequest[Any]): Future[DeregistrationDetails] =
     get().flatMap(deregistrationDetails => put(update(deregistrationDetails)))
 
-  def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
+  override def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
     userDataRepository.deleteData[DeregistrationDetails](repositoryKey)
 
   def reset(): Unit = userDataRepository.reset()

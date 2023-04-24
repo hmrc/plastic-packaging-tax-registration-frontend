@@ -53,7 +53,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
     reset(mockAmendRegService, spyJourneyAction)
     spyJourneyAction.reset()
     spyJourneyAction.setReg(partnerRegistrationInAmendment)
-    simulateUpdateSubscriptionSuccess()
+    simulateUpdateWithRegSubscriptionSuccess()
   }
 
   "AddPartnerContactDetailsCheckAnswersController" when {
@@ -90,7 +90,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
       }
       "redirect to the post reg amend error page" when {
         "update fails due to exception being thrown" in {
-          simulateUpdateSubscriptionFailure(new RuntimeException("BANG!"))
+          simulateUpdateWithRegSubscriptionFailure(new RuntimeException("BANG!"))
 
           val resp = controller.submit()(postRequest(JsObject.empty))
 
@@ -100,7 +100,7 @@ class AddPartnerContactDetailsCheckAnswersControllerSpec
           )
         }
         "update fails due to error returned from ETMP" in {
-          simulateUpdateSubscriptionFailureReturnedError()
+          simulateUpdateSubscriptionWithRegFailureReturnedError()
 
           val resp = controller.submit()(postRequest(JsObject.empty))
 

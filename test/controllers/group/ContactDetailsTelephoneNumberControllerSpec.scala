@@ -146,19 +146,19 @@ class ContactDetailsTelephoneNumberControllerSpec
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()
-        val result =
-          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(
+          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
-        val result =
-          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
+        ))
       }
     }
   }

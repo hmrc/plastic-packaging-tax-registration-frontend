@@ -170,9 +170,10 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
         spyJourneyAction.setReg(registrationWithExistingPartner)
 
-        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+        ))
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -180,20 +181,18 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
+        intercept[RuntimeException](status(
+          controller.submitExistingPartner("not-an-existing-partners-id")(
           postRequestEncoded(PartnerName("Amended name"))
-        )
-
-        intercept[RuntimeException](status(result))
+        )))
       }
 
       "user tries to set a name on a partner with a type which has a GRS provided name" in {
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
 
-        val result = controller.displayNewPartner()(getRequest())
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(controller.displayNewPartner()(getRequest())))
       }
 
       "user tries to submit a name on a partner with a type which has a GRS provided name" in {
@@ -201,10 +200,10 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightIncorporatedPartner)
         mockRegistrationUpdate()
 
-        val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
+        ))
       }
 
       "user submits form and the registration update fails" in {
@@ -212,10 +211,10 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-        val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(
+          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
+        ))
       }
     }
   }

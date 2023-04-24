@@ -179,18 +179,18 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
 
 
-        val result = controller.displayNewPartner()(getRequest())
-
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.displayNewPartner()(getRequest())
+        ))
       }
 
       "user tries to display an non existent partner" in {
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
-        val result = controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
-
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.displayExistingPartner("not-an-existing-partner-id")(getRequest())
+        ))
       }
 
       "user submits an amendment to a non existent partner" in {
@@ -198,31 +198,33 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
 
-        val result = controller.submitExistingPartner("not-an-existing-partners-id")(
-          postRequestEncoded(PhoneNumber("987654321"))
-        )
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submitExistingPartner("not-an-existing-partners-id")(
+            postRequestEncoded(PhoneNumber("987654321"))
+          )
+        ))
       }
 
       "user tries to submit before contact name for partner has been provided" in {
 
         spyJourneyAction.setReg(registrationWithInflightPartnerWithMissingContactName)
 
-        val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
+        ))
       }
 
       "user submits form and the registration update fails" in {
 
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
         mockRegistrationUpdateFailure()
-        val result =
-          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
 
-        intercept[DownstreamServiceError](status(result))
+
+        intercept[DownstreamServiceError](status(
+          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
+        ))
       }
     }
   }

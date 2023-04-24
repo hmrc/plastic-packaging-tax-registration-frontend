@@ -85,10 +85,9 @@ class UserDataRepositorySpec
       "user's session id used as id to findBySessionId" in {
         implicit val request: AuthenticatedRequest[Any] = authRequest("12345")
         await(repository.putData("testKey", "testData"))
-        val registration: (String, JsValue) =
-          "testKey" -> Json.toJson("testData")
-        await(repository.findBySessionId("12345").map(_.data)) mustBe
-          JsObject.apply(Map(registration))
+        val registration: (String, JsValue) = "testKey" -> Json.toJson("testData")
+
+        await(repository.findBySessionId(request.cacheId).map(_.data)) mustBe JsObject.apply(Map(registration))
       }
       "no cacheItem found for sessionId" in {
         implicit val request: AuthenticatedRequest[Any] = authRequest("123456")

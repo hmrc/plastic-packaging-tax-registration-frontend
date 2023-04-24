@@ -135,7 +135,7 @@
         None
 }
 
-@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]]}
+@isAuthenticated = @{request.isInstanceOf[AuthenticatedRequest[_]] || request.isInstanceOf[JourneyRequest[_]]}
 @feedbackUrl = @{
     if (isAuthenticated) {
         s"${appConfig.authenticatedFeedbackUrl()}&backUrl=${appConfig.selfBaseUrl}${request.uri}"

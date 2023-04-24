@@ -134,9 +134,9 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           spyJourneyAction.setReg(aRegistration())
           mockRegistrationUpdateFailure()
 
-          val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
-
-          intercept[DownstreamServiceError](status(result))
+          intercept[DownstreamServiceError](status(
+            controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
+          ))
         }
 
         "user submits form and a registration update runtime exception occurs" in {
@@ -144,9 +144,9 @@ class ExpectToExceedThresholdWeightControllerSpec extends ControllerSpec {
           spyJourneyAction.setReg(aRegistration())
           mockRegistrationException()
 
-          val result = controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
-
-          intercept[RuntimeException](status(result))
+          intercept[RuntimeException](status(
+            controller.submit()(postJsonRequestEncoded(createRequestBody: _*))
+          ))
         }
       }
     }

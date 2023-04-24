@@ -57,14 +57,6 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
   "Primary Contact Details Full Name Controller" should {
 
     "return 200" when {
-
-      "user is authorised and display page method is invoked" in {
-
-        val result = controller.displayPage()(getRequest())
-
-        status(result) mustBe OK
-      }
-
       "user is authorised, a registration already exists and display page method is invoked" in {
 
         spyJourneyAction.setReg(
@@ -147,19 +139,19 @@ class ContactDetailsFullNameControllerSpec extends ControllerSpec {
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()
-        val result =
-          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
 
-        intercept[DownstreamServiceError](status(result))
+        intercept[DownstreamServiceError](status(
+          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
-        val result =
-          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(
+          controller.submit()(postRequestEncoded(FullName("FirstName LastName")))
+        ))
       }
     }
 

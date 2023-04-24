@@ -21,7 +21,7 @@ import forms.contact._
 import models.registration.Registration
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -73,7 +73,8 @@ class AmendContactDetailsControllerSpec
 
   override protected def beforeEach(): Unit = {
     spyJourneyAction.setReg(populatedRegistration)
-    simulateUpdateSubscriptionSuccess()
+    reset(mockAmendRegService)
+    simulateUpdateWithRegSubscriptionSuccess()
   }
 
   "Amend Contact Details Controller" should {

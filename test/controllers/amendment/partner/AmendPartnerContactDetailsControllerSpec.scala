@@ -94,7 +94,7 @@ class AmendPartnerContactDetailsControllerSpec
 
   override protected def beforeEach(): Unit = {
     spyJourneyAction.setReg(partnershipRegistration)
-    simulateUpdateSubscriptionSuccess()
+    simulateUpdateWithRegSubscriptionSuccess()
 
     when(mockContactNamePage.apply(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.raw("Amend Partner Contact Name"))
 
@@ -107,7 +107,7 @@ class AmendPartnerContactDetailsControllerSpec
   }
 
   override protected def afterEach(): Unit = {
-    reset(spyJourneyAction, mockEmailVerificationService)
+    reset(spyJourneyAction, mockEmailVerificationService, mockAmendRegService)
     super.afterEach()
   }
 
@@ -382,7 +382,7 @@ class AmendPartnerContactDetailsControllerSpec
       "user submits a new email for a nominated partner and is sent for email verification" in {
 
         // No subscription update expected.
-
+        inMemoryRegistrationAmendmentRepository.put(partnershipRegistration)
         // Email verification will check if this address is already verified; trying to let the user through with no
         // friction if we already know this address
         when(mockEmailVerificationService.isEmailVerified(ArgumentMatchers.eq("new-email@ppt.com"), any())(any())).thenReturn(
@@ -397,14 +397,15 @@ class AmendPartnerContactDetailsControllerSpec
           )(any())
         ).thenReturn(Future.successful("an-email-verification-journey-id"))
 
-        val resp = await(controller.updateEmailAddress(nominatedPartner.id)(postRequestEncoded(EmailAddress("new-email@ppt.com"))))
+        val resp = controller.updateEmailAddress(nominatedPartner.id)(postRequestEncoded(EmailAddress("new-email@ppt.com")))
 
-        status(Future.successful(resp)) mustBe SEE_OTHER
-        redirectLocation(Future.successful(resp)) mustBe Some(routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url)
+        status(resp) mustBe SEE_OTHER
+        redirectLocation(resp) mustBe Some(routes.AmendPartnerContactDetailsController.confirmEmailCode(nominatedPartner.id).url)
 
-        val updatedRegistration = getUpdatedRegistrationMethod().apply(partnershipRegistration)
-          updatedRegistration.primaryContactDetails.prospectiveEmail mustBe Some("new-email@ppt.com")
-          updatedRegistration.primaryContactDetails.journeyId mustBe Some("an-email-verification-journey-id")
+        inMemoryRegistrationAmendmentRepository.get().map { updatedRegistration =>
+          updatedRegistration.get.primaryContactDetails.prospectiveEmail mustBe Some("new-email@ppt.com")
+          updatedRegistration.get.primaryContactDetails.journeyId mustBe Some("an-email-verification-journey-id")
+        }
       }
 
       "user is prompted to enter verification code for nominated partner email address" in {
@@ -419,7 +420,7 @@ class AmendPartnerContactDetailsControllerSpec
             primaryContactDetailsWithEmailVerificationJourney
           )
         )
-        simulateUpdateSubscriptionSuccess()
+        simulateUpdateWithRegSubscriptionSuccess()
 
         val resp = controller.confirmEmailCode(nominatedPartner.id)(FakeRequest())
 
@@ -437,7 +438,7 @@ class AmendPartnerContactDetailsControllerSpec
             primaryContactDetailsWithEmailVerificationJourney
           )
         )
-        simulateUpdateSubscriptionSuccess()
+        simulateUpdateWithRegSubscriptionSuccess()
 
         // Email verification will be called to check the user submitted code
         when(
@@ -465,7 +466,7 @@ class AmendPartnerContactDetailsControllerSpec
             primaryContactDetailsWithEmailVerificationJourney
           )
         )
-        simulateUpdateSubscriptionSuccess()
+        simulateUpdateWithRegSubscriptionSuccess()
 
         val resp = controller.emailVerified(nominatedPartner.id)(FakeRequest())
 
@@ -482,7 +483,7 @@ class AmendPartnerContactDetailsControllerSpec
           primaryContactDetailsWithEmailVerificationJourney
         )
         spyJourneyAction.setReg(reg)
-        simulateUpdateSubscriptionSuccess()
+        simulateUpdateWithRegSubscriptionSuccess()
 
         // Email verification will be called to check this email address has actually been verified
         // and that the user has not url skipped to the end of the journey
@@ -500,7 +501,7 @@ class AmendPartnerContactDetailsControllerSpec
       "nominated partner job title is updated" in {
         // Non table test to fill coverage hole
         spyJourneyAction.setReg(partnershipRegistration)
-        simulateUpdateSubscriptionSuccess()
+        simulateUpdateWithRegSubscriptionSuccess()
 
         val resp = controller.updateJobTitle(nominatedPartner.id)(postRequestEncoded(JobTitle("New job title")))
         status(resp) mustBe SEE_OTHER

@@ -35,7 +35,7 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
   val mockAmendRegService: AmendRegistrationService = mock[AmendRegistrationService]
   val mockRegistrationUpdater: RegistrationUpdater = mock[RegistrationUpdater]
 
-  protected def simulateUpdateSubscriptionSuccess() =
+  protected def simulateUpdateWithRegSubscriptionSuccess() =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(
         SubscriptionCreateOrUpdateResponseSuccess(pptReference = "XMPPT0000000123",
@@ -49,14 +49,14 @@ trait AmendmentControllerSpec extends MockitoSugar with MockRegistrationAmendmen
       )
     )
 
-  protected def simulateUpdateSubscriptionFailure(
+  protected def simulateUpdateWithRegSubscriptionFailure(
                                                    ex: RuntimeException
                                                  ): OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.failed(ex)
     )
 
-  protected def simulateUpdateSubscriptionFailureReturnedError()
+  protected def simulateUpdateSubscriptionWithRegFailureReturnedError()
   : OngoingStubbing[Future[SubscriptionCreateOrUpdateResponse]] =
     when(mockAmendRegService.updateSubscriptionWithRegistration(any())(any(), any())).thenReturn(
       Future.successful(

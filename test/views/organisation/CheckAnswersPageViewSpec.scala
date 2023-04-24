@@ -16,34 +16,17 @@
 
 package views.organisation
 
-import base.PptTestData
 import base.unit.UnitViewSpec
-import org.jsoup.nodes.{Document, Element}
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
-import play.api.test.FakeRequest
 import controllers.organisation.routes
 import forms.contact.Address
 import forms.liability.RegType.{GROUP, SINGLE_ENTITY}
 import forms.organisation.OrgType
-import utils.FakeRequestCSRFSupport._
-import forms.organisation.OrgType.{
-  PARTNERSHIP,
-  SOLE_TRADER,
-  UK_COMPANY
-}
-import models.registration.group.{
-  GroupMember,
-  OrganisationDetails => GroupMemberOrganisationDetails
-}
-import models.registration.{
-  GroupDetail,
-  OrganisationDetails
-}
-import models.request.{
-  AuthenticatedRequest,
-  JourneyRequest
-}
+import forms.organisation.OrgType.{PARTNERSHIP, SOLE_TRADER, UK_COMPANY}
+import models.registration.group.{GroupMember, OrganisationDetails => GroupMemberOrganisationDetails}
+import models.registration.{GroupDetail, OrganisationDetails}
+import org.jsoup.nodes.{Document, Element}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import views.html.organisation.check_answers_page
 
 class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDrivenPropertyChecks {
@@ -168,7 +151,7 @@ class CheckAnswersPageViewSpec extends UnitViewSpec with Matchers with TableDriv
                                 incorporationDetails = None
             )
           )
-          val journeyReq = registrationJourneyRequest
+          val journeyReq = registrationJourneyRequest.copy(registration = soleTraderRegistration)
           val soleTraderView = page()(journeyReq, messages)
 
           getKeyFor(0, soleTraderView) must containMessage(

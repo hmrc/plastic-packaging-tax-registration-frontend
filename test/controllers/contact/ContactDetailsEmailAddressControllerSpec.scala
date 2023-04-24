@@ -95,7 +95,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -424,19 +424,18 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
       "user submits form and the registration update fails" in {
 
         mockRegistrationUpdateFailure()
-        val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[DownstreamServiceError](status(result))
+
+        intercept[DownstreamServiceError](status(
+          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
 
         mockRegistrationException()
-        val result =
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
 
-        intercept[RuntimeException](status(result))
+        intercept[RuntimeException](status(controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))))
       }
 
   }

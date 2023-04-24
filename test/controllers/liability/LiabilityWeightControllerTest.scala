@@ -57,7 +57,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     "return 200" when {
 
       "user is authorised and display page method is invoked" in {
-
+        spyJourneyAction.setReg(aRegistration())
         val result = controller.displayPage()(getRequest())
 
         status(result) mustBe OK
@@ -115,17 +115,19 @@ class LiabilityWeightControllerTest extends ControllerSpec {
     "user submits form and the registration update fails" in {
 
       mockRegistrationUpdateFailure()
-      val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
 
-      intercept[DownstreamServiceError](status(result))
+      intercept[DownstreamServiceError](status(
+        controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+      ))
     }
 
     "user submits form and a registration update runtime exception occurs" in {
 
       mockRegistrationException()
-      val result = controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
 
-      intercept[RuntimeException](status(result))
+      intercept[RuntimeException](status(
+        controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+      ))
     }
   }
 }

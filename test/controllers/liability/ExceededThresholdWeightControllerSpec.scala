@@ -69,6 +69,7 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
 
     "user is authorised" should {
       "return 200" in {
+        spyJourneyAction.setReg(aRegistration())
 
         val result: Future[Result] = controller.displayPage()(getRequest())
         status(result) shouldEqual Status.OK
@@ -79,13 +80,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
     "continuing an existing registration" should {
 
       "populate the form with the previous answer" in {
-
         val existingRegistration = mock[Registration](RETURNS_DEEP_STUBS)
         when(existingRegistration.liabilityDetails.exceededThresholdWeight).thenReturn(Some(false))
+        spyJourneyAction.setReg(existingRegistration)
 
-        when(mockRegistrationConnector.find(any[String])(any())).thenReturn(
-          Future.successful(Right(Some(existingRegistration)))
-        )
 
         val result = controller.displayPage()(getRequest())
         status(result) mustBe Status.OK
@@ -145,9 +143,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         mockRegistrationUpdateFailure()
 
         val correctForm = Seq("value" -> "yes")
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        intercept[DownstreamServiceError](await(result))
+        intercept[DownstreamServiceError](await(
+          controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        ))
       }
 
       "user submits form and a registration update runtime exception occurs" in {
@@ -156,9 +155,10 @@ class ExceededThresholdWeightControllerSpec extends ControllerSpec with BeforeAn
         mockRegistrationException()
 
         val correctForm = Seq("value" -> "yes")
-        val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-        intercept[RuntimeException](await(result))
+        intercept[RuntimeException](await(
+          controller.submit()(postJsonRequestEncoded(correctForm: _*))
+        ))
       }
 
     }

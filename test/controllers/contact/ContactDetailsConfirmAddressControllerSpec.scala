@@ -216,9 +216,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
         spyJourneyAction.setReg(registration)
         mockRegistrationUpdate()
 
-        val result = controller.displayPage()(getRequest())
-
-        intercept[IllegalStateException](status(result))
+        intercept[IllegalStateException](status(controller.displayPage()(getRequest())))
       }
     }
 
@@ -303,9 +301,7 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
 
           spyJourneyAction.setReg(registration)
 
-          val result = controller.displayPage()(getRequest())
-
-          intercept[IllegalStateException](status(result))
+          intercept[IllegalStateException](status(controller.displayPage()(getRequest())))
         }
 
         "user submits form and the registration update fails" in {
@@ -314,9 +310,10 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes")
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-          intercept[DownstreamServiceError](status(result))
+          intercept[DownstreamServiceError](status(
+            controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
 
         "user submits form and a registration update runtime exception occurs" in {
@@ -325,9 +322,10 @@ class ContactDetailsConfirmAddressControllerSpec extends ControllerSpec {
           mockRegistrationException()
 
           val correctForm = Seq("useRegisteredAddress" -> "yes")
-          val result      = controller.submit()(postJsonRequestEncoded(correctForm: _*))
 
-          intercept[RuntimeException](status(result))
+          intercept[RuntimeException](status(
+            controller.submit()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
 
       }

@@ -226,9 +226,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationUpdateFailure()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)
-          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
-          intercept[DownstreamServiceError](status(result))
+          intercept[DownstreamServiceError](status(
+            controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
 
         "user submits form and a registration update runtime exception occurs" in {
@@ -237,9 +238,10 @@ class OrganisationDetailsTypeControllerSpec extends ControllerSpec {
           mockRegistrationException()
 
           val correctForm = Seq("answer" -> UK_COMPANY.toString)
-          val result      = controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
 
-          intercept[RuntimeException](status(result))
+          intercept[RuntimeException](status(
+            controller.submitNewMember()(postJsonRequestEncoded(correctForm: _*))
+          ))
         }
       }
     }
