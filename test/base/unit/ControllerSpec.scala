@@ -119,12 +119,12 @@ trait ControllerSpec
   protected def viewOf(result: Future[Result]): Html = Html(contentAsString(result))
 
   protected def postRequest(body: JsValue): Request[AnyContentAsJson] =
-    postRequest()
+    postRequest
       .withJsonBody(body)
       .withHeaders(testUserHeaders.toSeq: _*)
       .withCSRFToken
 
-  protected def postRequest(sessionId: String = "123"): FakeRequest[AnyContentAsEmpty.type] =
+  protected def postRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "")
 
   protected def postRequestEncoded(
@@ -138,7 +138,7 @@ trait ControllerSpec
     formTuples: Seq[(String, String)],
     sessionId: String = "123"
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequest(sessionId)
+    postRequest
       .withFormUrlEncodedBody(formTuples: _*)
       .withCSRFToken
 
@@ -165,7 +165,7 @@ trait ControllerSpec
   protected def postJsonRequestEncoded(
     body: (String, String)*
   ): Request[AnyContentAsFormUrlEncoded] =
-    postRequest()
+    postRequest
       .withFormUrlEncodedBody(body: _*)
       .withCSRFToken
 

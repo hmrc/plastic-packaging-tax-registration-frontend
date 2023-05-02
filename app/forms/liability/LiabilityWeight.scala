@@ -65,7 +65,7 @@ object LiabilityWeight {
     )
 
   def fromForm(totalKg: Option[String]): LiabilityWeight =
-    new LiabilityWeight(totalKg.map(BigInt(_).longValue()))
+    new LiabilityWeight(totalKg.map(BigInt(_).longValue))
 
   def toForm(liabilityWeight: LiabilityWeight): Option[Option[String]] =
     Some(liabilityWeight.totalKg.map(_.toString))

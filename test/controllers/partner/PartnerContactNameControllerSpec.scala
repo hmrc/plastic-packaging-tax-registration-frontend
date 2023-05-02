@@ -17,19 +17,18 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.group.MemberName
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.group.MemberName
-import models.registration.NewRegistrationUpdateService
-import views.html.partner.partner_member_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.partner.partner_member_name_page
 
 class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -142,7 +141,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequest(Json.toJson(MemberName("Jane", "Smith")))
+          postRequestEncoded(MemberName("Jane", "Smith"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -222,7 +221,7 @@ class PartnerContactNameControllerSpec extends ControllerSpec with DefaultAwaitT
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequest(Json.toJson(MemberName("John", "Smith"))))
+          controller.submitNewPartner()(postRequestEncoded(MemberName("John", "Smith")))
         ))
       }
     }

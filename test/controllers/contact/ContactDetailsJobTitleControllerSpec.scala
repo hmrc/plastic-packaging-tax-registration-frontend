@@ -17,10 +17,12 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.JobTitle
+import models.registration.PrimaryContactDetails
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -28,12 +30,8 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import controllers.{routes => pptRoutes}
-import forms.contact.JobTitle
-import models.registration.PrimaryContactDetails
-import views.html.contact.job_title_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.job_title_page
 
 class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -147,7 +145,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError](status(
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
+          controller.submit()(postRequestEncoded(JobTitle("tester")))
         ))
       }
 
@@ -156,7 +154,7 @@ class ContactDetailsJobTitleControllerSpec extends ControllerSpec with DefaultAw
         mockRegistrationException()
 
         intercept[RuntimeException](status(
-          controller.submit()(postRequest(Json.toJson(JobTitle("tester"))))
+          controller.submit()(postRequestEncoded(JobTitle("tester")))
         ))
       }
     

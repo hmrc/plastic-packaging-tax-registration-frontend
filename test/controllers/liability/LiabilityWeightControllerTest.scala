@@ -117,7 +117,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       mockRegistrationUpdateFailure()
 
       intercept[DownstreamServiceError](status(
-        controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+        controller.submit()(postRequestEncoded(LiabilityWeight(Some(1000))))
       ))
     }
 
@@ -126,7 +126,7 @@ class LiabilityWeightControllerTest extends ControllerSpec {
       mockRegistrationException()
 
       intercept[RuntimeException](status(
-        controller.submit()(postRequest(Json.toJson(LiabilityWeight(Some(1000)))))
+        controller.submit()(postRequestEncoded(LiabilityWeight(Some(1000))))
       ))
     }
   }

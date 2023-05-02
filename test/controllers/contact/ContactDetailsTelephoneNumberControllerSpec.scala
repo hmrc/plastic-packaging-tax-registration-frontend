@@ -147,7 +147,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError](status(
-          controller.submit()(postRequest(Json.toJson(PhoneNumber("077123"))))
+          controller.submit()(postRequestEncoded(PhoneNumber("077123")))
         ))
       }
 
@@ -156,7 +156,7 @@ class ContactDetailsTelephoneNumberControllerSpec extends ControllerSpec with De
         mockRegistrationException()
 
         intercept[RuntimeException](status(
-          controller.submit()(postRequest(Json.toJson(PhoneNumber("077123"))))
+          controller.submit()(postRequestEncoded(PhoneNumber("077123")))
         ))
       }
     }

@@ -17,30 +17,22 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.{EmailAddress, EmailAddressPasscode}
+import models.emailverification.EmailVerificationJourneyStatus
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.contact.{
-  EmailAddress,
-  EmailAddressPasscode
-}
-import models.emailverification.EmailVerificationJourneyStatus
-import models.registration.NewRegistrationUpdateService
 import services.EmailVerificationService
-import views.html.contact.{
-  email_address_passcode_confirmation_page,
-  email_address_passcode_page,
-  too_many_attempts_passcode_page
-}
-import views.html.partner.partner_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.{email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
+import views.html.partner.partner_email_address_page
 
 import scala.concurrent.Future
 
@@ -480,19 +472,14 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
           _.contactDetails.flatMap(_.emailAddress)
         ) mustBe Some("an-email@localhost")
       }
-
     }
 
     "return an error" when {
-
       "user is authorised but does not have an inflight journey and display page method is invoked" in {
-
-
         intercept[RuntimeException](status(controller.displayNewPartner()(getRequest())))
       }
 
       "user tries to display an non existent partner" in {
-
         spyJourneyAction.setReg(registrationWithPartnershipDetailsAndInflightPartnerWithContactName)
 
         intercept[RuntimeException](status(
@@ -501,10 +488,8 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       }
 
       "user submits an amendment to a non existent partner" in {
-
         spyJourneyAction.setReg(registrationWithExistingPartner)
         mockRegistrationUpdate()
-
 
         intercept[RuntimeException](status(
           controller.submitExistingPartner("not-an-existing-partners-id")(
@@ -514,15 +499,11 @@ class PartnerEmailAddressControllerSpec extends ControllerSpec with DefaultAwait
       }
 
       "user submits form and the registration update fails" in {
-
         spyJourneyAction.setReg(registrationWithExistingPartnerAndInflightPartner)
         mockRegistrationUpdateFailure()
 
-        val result =
-
-
         intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submitNewPartner()(postRequestEncoded(EmailAddress("test@test.com")))
         ))
       }
     }

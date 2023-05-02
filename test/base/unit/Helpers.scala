@@ -17,6 +17,7 @@
 package base.unit
 
 import scala.util.Random
+import scala.language.postfixOps
 
 trait CommonTestUtils {
 

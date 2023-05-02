@@ -16,41 +16,24 @@
 
 package controllers.amendment
 
-import base.unit.{ControllerSpec, AmendmentControllerSpec}
+import base.unit.{AmendmentControllerSpec, ControllerSpec}
+import forms.contact.{EmailAddress, EmailAddressPasscode}
+import models.emailverification.EmailVerificationJourneyStatus
+import models.emailverification.EmailVerificationJourneyStatus.{COMPLETE, INCORRECT_PASSCODE, JOURNEY_NOT_FOUND, TOO_MANY_ATTEMPTS}
+import models.registration.Registration
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import utils.FakeRequestCSRFSupport._
-import forms.contact.{
-  EmailAddress,
-  EmailAddressPasscode
-}
-import models.emailverification.EmailVerificationJourneyStatus
-import models.emailverification.EmailVerificationJourneyStatus.{
-  COMPLETE,
-  INCORRECT_PASSCODE,
-  JOURNEY_NOT_FOUND,
-  TOO_MANY_ATTEMPTS
-}
-import models.registration.{
-  AmendRegistrationUpdateService,
-  Registration
-}
 import services.EmailVerificationService
-import views.html.contact.{
-  email_address_page,
-  email_address_passcode_confirmation_page,
-  email_address_passcode_page,
-  too_many_attempts_passcode_page
-}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.{email_address_page, email_address_passcode_confirmation_page, email_address_passcode_page, too_many_attempts_passcode_page}
 
 import scala.concurrent.Future
 
@@ -188,7 +171,7 @@ class AmendEmailAddressControllerSpec
         inMemoryRegistrationAmendmentRepository.put(populatedRegistration)
 
         val resp = controller.updateEmail()(
-          FakeRequest().withFormUrlEncodedBody(getTuples(EmailAddress(previouslyVerifiedEmail)):_*)
+          postRequest.withFormUrlEncodedBody(getTuples(EmailAddress(previouslyVerifiedEmail)):_*)
         )
 
         status(resp) mustBe SEE_OTHER

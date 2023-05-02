@@ -17,10 +17,13 @@
 package controllers.group
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import controllers.group.{routes => groupRoutes}
+import forms.contact.EmailAddress
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -28,12 +31,8 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import controllers.group.{routes => groupRoutes}
-import forms.contact.EmailAddress
-import models.registration.NewRegistrationUpdateService
-import views.html.group.member_email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.group.member_email_address_page
 
 class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -149,7 +148,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError](status(
-          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))
         ))
       }
 
@@ -158,7 +157,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
         mockRegistrationException()
 
         intercept[RuntimeException](status(
-          controller.submit(groupMember.id)(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit(groupMember.id)(postRequestEncoded(EmailAddress("test@test.com")))
         ))
       }
 

@@ -17,10 +17,13 @@
 package controllers.group
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import controllers.group.{routes => groupRoutes}
+import forms.contact.PhoneNumber
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,12 +32,8 @@ import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import spec.PptTestData
-import connectors.DownstreamServiceError
-import controllers.group.{routes => groupRoutes}
-import forms.contact.PhoneNumber
-import models.registration.NewRegistrationUpdateService
-import views.html.group.member_phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.group.member_phone_number_page
 
 class ContactDetailsTelephoneNumberControllerSpec
     extends ControllerSpec with DefaultAwaitTimeout with PptTestData {
@@ -148,7 +147,7 @@ class ContactDetailsTelephoneNumberControllerSpec
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError](status(
-          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
+          controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
         ))
       }
 
@@ -157,7 +156,7 @@ class ContactDetailsTelephoneNumberControllerSpec
         mockRegistrationException()
 
         intercept[RuntimeException](status(
-          controller.submit(groupMember.id)(postRequest(Json.toJson(PhoneNumber("077123"))))
+          controller.submit(groupMember.id)(postRequestEncoded(PhoneNumber("077123")))
         ))
       }
     }

@@ -17,11 +17,15 @@
 package controllers.contact
 
 import base.unit.ControllerSpec
+import connectors.{DownstreamServiceError, ServiceError}
+import controllers.{routes => pptRoutes}
+import forms.contact.{Address, EmailAddress}
+import models.emailverification.{EmailStatus, VerificationStatus}
+import models.registration.{MetaData, PrimaryContactDetails}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.Inspectors.forAll
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -29,14 +33,9 @@ import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{await, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.{DownstreamServiceError, ServiceError}
-import controllers.{routes => pptRoutes}
-import forms.contact.{Address, EmailAddress}
-import models.emailverification.{EmailStatus, VerificationStatus}
-import models.registration.{MetaData, PrimaryContactDetails}
 import services.EmailVerificationService
-import views.html.contact.email_address_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.contact.email_address_page
 
 import scala.concurrent.Future
 
@@ -427,7 +426,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
 
         intercept[DownstreamServiceError](status(
-          controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))
+          controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))
         ))
       }
 
@@ -435,7 +434,7 @@ class ContactDetailsEmailAddressControllerSpec extends ControllerSpec with Defau
 
         mockRegistrationException()
 
-        intercept[RuntimeException](status(controller.submit()(postRequest(Json.toJson(EmailAddress("test@test.com"))))))
+        intercept[RuntimeException](status(controller.submit()(postRequestEncoded(EmailAddress("test@test.com")))))
       }
 
   }

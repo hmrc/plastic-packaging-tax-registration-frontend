@@ -17,18 +17,17 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.JobTitle
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.contact.JobTitle
-import views.html.partner.partner_job_title_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.partner.partner_job_title_page
 
 class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -119,7 +118,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         mockRegistrationUpdate()
 
         val result = controller.submitExistingPartner(existingPartner.id)(
-          postRequest(Json.toJson(JobTitle("Company secretary")))
+          postRequestEncoded(JobTitle("Company secretary"))
         )
 
         status(result) mustBe SEE_OTHER
@@ -193,7 +192,7 @@ class PartnerJobTitleControllerSpec extends ControllerSpec with DefaultAwaitTime
         mockRegistrationUpdateFailure()
 
         intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequest(Json.toJson(JobTitle("Director"))))
+          controller.submitNewPartner()(postRequestEncoded(JobTitle("Director")))
         ))
       }
     }

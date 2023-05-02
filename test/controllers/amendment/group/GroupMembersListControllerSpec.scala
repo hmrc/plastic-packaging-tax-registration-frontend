@@ -69,7 +69,7 @@ class GroupMembersListControllerSpec
     "bind the form and redirect" when {
       "submitted yes" in {
         val request: Request[AnyContent] =
-          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "yes").withCSRFToken
+          postRequest.withFormUrlEncodedBody("addOrganisation" -> "yes").withCSRFToken
 
         val result: Future[Result] = sut.onSubmit()(request)
 
@@ -80,7 +80,7 @@ class GroupMembersListControllerSpec
 
       "submitted no" in {
         val myRequest =
-          FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "no").withCSRFToken
+          postRequest.withFormUrlEncodedBody("addOrganisation" -> "no").withCSRFToken
 
         val result: Future[Result] = sut.onSubmit()(myRequest)
 

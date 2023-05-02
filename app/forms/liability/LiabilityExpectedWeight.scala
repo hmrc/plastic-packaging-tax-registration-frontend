@@ -83,7 +83,7 @@ object LiabilityExpectedWeight extends CommonFormValues {
   def fromForm(answer: Option[String], totalKg: Option[String]): LiabilityExpectedWeight =
     answer match {
       case Some(YES) =>
-        new LiabilityExpectedWeight(Some(true), totalKg.map(BigInt(_).longValue()))
+        new LiabilityExpectedWeight(Some(true), totalKg.map(BigInt(_).longValue))
       case _ => new LiabilityExpectedWeight(Some(false), None)
     }
 

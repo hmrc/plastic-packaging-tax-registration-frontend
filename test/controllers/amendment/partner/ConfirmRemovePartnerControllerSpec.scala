@@ -18,23 +18,18 @@ package controllers.amendment.partner
 
 import base.unit.{AmendmentControllerSpec, ControllerSpec}
 import models.genericregistration.Partner
-import models.registration.Registration
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.Play.materializer
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
+import play.api.test.Helpers.{POST, await, contentAsString, redirectLocation, status}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
 import views.html.amendment.partner.confirm_remove_partner_page
 
 class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentControllerSpec {
-
-  private val sessionId = "123"
 
   private val mcc                          = stubMessagesControllerComponents()
   private val mockConfirmRemovePartnerPage = mock[confirm_remove_partner_page]
@@ -85,7 +80,7 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
       "the user opts NOT to remove the partner" in {
         val resp = confirmRemovePartnerController.submit(
           partnershipRegistration.otherPartners.head.id
-        )(FakeRequest().withFormUrlEncodedBody("value" -> "no"))
+        )(FakeRequest(POST, "").withFormUrlEncodedBody("value" -> "no"))
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.PartnersListController.displayPage().url)
       }
@@ -97,7 +92,7 @@ class ConfirmRemovePartnerControllerSpec extends ControllerSpec with AmendmentCo
 
         val resp = confirmRemovePartnerController.submit(
           partnershipRegistration.otherPartners.head.id
-        )(FakeRequest().withFormUrlEncodedBody("value" -> "yes"))
+        )(FakeRequest(POST, "").withFormUrlEncodedBody("value" -> "yes"))
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.PartnersListController.displayPage().url)
 

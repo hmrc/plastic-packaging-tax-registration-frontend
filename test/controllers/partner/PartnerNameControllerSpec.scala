@@ -17,19 +17,18 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.partner.PartnerName
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.{redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.partner.PartnerName
-import models.registration.NewRegistrationUpdateService
-import views.html.partner.partner_name_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.partner.partner_name_page
 
 class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -202,7 +201,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
 
         intercept[RuntimeException](status(
-          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
+          controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))
         ))
       }
 
@@ -213,7 +212,7 @@ class PartnerNameControllerSpec extends ControllerSpec with DefaultAwaitTimeout 
 
 
         intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequest(Json.toJson(PartnerName("Test Partner"))))
+          controller.submitNewPartner()(postRequestEncoded(PartnerName("Test Partner")))
         ))
       }
     }

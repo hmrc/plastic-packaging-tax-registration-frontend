@@ -17,19 +17,18 @@
 package controllers.partner
 
 import base.unit.ControllerSpec
+import connectors.DownstreamServiceError
+import forms.contact.PhoneNumber
+import models.registration.NewRegistrationUpdateService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.test.DefaultAwaitTimeout
 import play.api.test.Helpers.status
 import play.twirl.api.HtmlFormat
-import connectors.DownstreamServiceError
-import forms.contact.PhoneNumber
-import models.registration.NewRegistrationUpdateService
-import views.html.partner.partner_phone_number_page
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.partner.partner_phone_number_page
 
 class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitTimeout {
 
@@ -212,7 +211,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
 
         intercept[RuntimeException](status(
-          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
+          controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321")))
         ))
       }
 
@@ -223,7 +222,7 @@ class PartnerPhoneNumberControllerSpec extends ControllerSpec with DefaultAwaitT
 
 
         intercept[DownstreamServiceError](status(
-          controller.submitNewPartner()(postRequest(Json.toJson(PhoneNumber("12345678"))))
+          controller.submitNewPartner()(postRequestEncoded(PhoneNumber("987654321")))
         ))
       }
     }

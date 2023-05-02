@@ -19,20 +19,18 @@ package controllers.amendment
 import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
 import forms.contact._
 import models.registration.Registration
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
 import services.AddressCaptureConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
-import utils.FakeRequestCSRFSupport._
 import views.html.contact._
 
 import scala.concurrent.Future
@@ -191,8 +189,7 @@ class AmendContactDetailsControllerSpec
 
             spyJourneyAction.setReg(registration)
 
-            await(call(FakeRequest().withFormUrlEncodedBody(getTuples(createValidForm()):_*)))
-
+            await(call(FakeRequest("POST", "").withFormUrlEncodedBody(getTuples(createValidForm()):_*)))
 
             verify(mockAmendRegService).updateSubscriptionWithRegistration(any())(any(), any())
             val updatedRegistration = getUpdatedRegistrationMethod().apply(registration)

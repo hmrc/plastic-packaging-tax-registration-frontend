@@ -69,7 +69,7 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
       "selects to add new partner" in {
         spyJourneyAction.setReg(partnershipRegistration)
 
-        val resp = listPartnersController.submit()(FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "yes"))
+        val resp = listPartnersController.submit()(postRequest.withFormUrlEncodedBody("addOrganisation" -> "yes"))
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(
           routes.AddPartnerOrganisationDetailsTypeController.displayPage().url
@@ -81,7 +81,7 @@ class PartnersListControllerSpec extends ControllerSpec with AmendmentController
       "selects NOT to add new partner" in {
         spyJourneyAction.setReg(partnershipRegistration)
 
-        val resp = listPartnersController.submit()(FakeRequest().withFormUrlEncodedBody("addOrganisation" -> "no"))
+        val resp = listPartnersController.submit()(postRequest.withFormUrlEncodedBody("addOrganisation" -> "no"))
         status(resp) mustBe SEE_OTHER
         redirectLocation(resp) mustBe Some(routes.ManagePartnersController.displayPage().url)
       }

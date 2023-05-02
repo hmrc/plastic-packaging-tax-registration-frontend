@@ -16,7 +16,11 @@
 
 package controllers.amendment.group
 
-import base.unit.{AddressCaptureSpec, ControllerSpec, AmendmentControllerSpec}
+import base.unit.{AddressCaptureSpec, AmendmentControllerSpec, ControllerSpec}
+import controllers.amendment.{routes => amendRoutes}
+import forms.contact._
+import forms.group.MemberName
+import models.registration.Registration
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
@@ -24,22 +28,13 @@ import org.scalatest
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, contentAsString, redirectLocation, status}
 import play.twirl.api.HtmlFormat
-import controllers.amendment.{routes => amendRoutes}
-import forms.contact._
-import forms.group.MemberName
-import models.registration.Registration
 import services.AddressCaptureConfig
-import utils.FakeRequestCSRFSupport._
-import views.html.group.{
-  member_email_address_page,
-  member_name_page,
-  member_phone_number_page
-}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
+import views.html.group.{member_email_address_page, member_name_page, member_phone_number_page}
 
 import scala.concurrent.Future
 
@@ -212,7 +207,7 @@ class AmendMemberContactDetailsControllerSpec
             spyJourneyAction.setReg(registration)
             simulateUpdateWithRegSubscriptionSuccess()
 
-            await(call(FakeRequest().withFormUrlEncodedBody(getTuples(createValidForm()):_*)))
+            await(call(postRequest.withFormUrlEncodedBody(getTuples(createValidForm()):_*)))
 
             val registrationCaptor: ArgumentCaptor[Registration => Registration] =
               ArgumentCaptor.forClass(classOf[Registration => Registration])
