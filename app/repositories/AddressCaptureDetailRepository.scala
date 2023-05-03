@@ -22,8 +22,7 @@ import repositories.AddressCaptureDetailRepository.repositoryKey
 import services.AddressCaptureDetail
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[AddressCaptureDetailRepositoryImpl])
 trait AddressCaptureDetailRepository {
@@ -42,8 +41,10 @@ trait AddressCaptureDetailRepository {
 }
 
 @Singleton
-class AddressCaptureDetailRepositoryImpl @Inject() (userDataRepository: UserDataRepository)
-    extends AddressCaptureDetailRepository {
+class AddressCaptureDetailRepositoryImpl @Inject()
+(userDataRepository: UserDataRepository)
+(implicit ec: ExecutionContext)
+  extends AddressCaptureDetailRepository {
 
   def put(
     addressCaptureDetail: AddressCaptureDetail
@@ -59,7 +60,7 @@ class AddressCaptureDetailRepositoryImpl @Inject() (userDataRepository: UserData
     get().flatMap {
       case Some(addressCaptureDetail) => put(update(addressCaptureDetail))
       case _                          => throw new IllegalStateException("Existing address capture detail not found")
-    }
+    }(ec)
 
   def delete()(implicit request: AuthenticatedRequest[Any]): Future[Unit] =
     userDataRepository.deleteData[AddressCaptureDetail](repositoryKey)

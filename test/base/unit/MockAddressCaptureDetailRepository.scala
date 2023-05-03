@@ -21,6 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import repositories.AddressCaptureDetailRepositoryImpl
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait MockAddressCaptureDetailRepository extends RegistrationBuilder with MockitoSugar {
 
