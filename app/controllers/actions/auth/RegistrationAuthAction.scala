@@ -53,7 +53,8 @@ class RegistrationAuthActionImpl @Inject()(
     val continueUrl = request.target.path
 
     authorised(
-      CredentialStrength(CredentialStrength.strong).and(AffinityGroup.Organisation.or(AffinityGroup.Individual)))
+      (AffinityGroup.Organisation.or(AffinityGroup.Individual)).and(User).and(CredentialStrength(CredentialStrength.strong))
+    )
       .retrieve(retrievals) {
         case _ ~ _ ~ allEnrolments if allEnrolments.getEnrolment(PptEnrolment.Key).isDefined =>
           Future.successful(Redirect(appConfig.pptAccountUrl))
